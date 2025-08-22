@@ -14,15 +14,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Cấu hình routing
-  async rewrites() {
-    return [
-      {
-        source: '/(.*)',
-        destination: '/',
-      },
-    ];
-  },
 };
 
 export default nextConfig;
