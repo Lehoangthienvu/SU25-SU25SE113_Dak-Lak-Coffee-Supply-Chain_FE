@@ -224,6 +224,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               warehouseCode: "INV-001",
               warehouseName: "Kho chính",
               warehouseCapacity: undefined,
+              batchId: "1",
+              batchCode: "BATCH-001",
+              coffeeTypeName: "Arabica",
+              quantity: 100,
+              unit: "Kg",
             },
             {
               inventoryId: "2",
@@ -232,6 +237,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               warehouseCode: "INV-002",
               warehouseName: "Kho phụ",
               warehouseCapacity: undefined,
+              batchId: "2",
+              batchCode: "BATCH-002",
+              coffeeTypeName: "Robusta",
+              quantity: 150,
+              unit: "Kg",
             },
             {
               inventoryId: "3",
@@ -240,6 +250,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               warehouseCode: "INV-003",
               warehouseName: "Kho lưu trữ",
               warehouseCapacity: undefined,
+              batchId: "3",
+              batchCode: "BATCH-003",
+              coffeeTypeName: "Culi",
+              quantity: 80,
+              unit: "Kg",
             },
           ]);
         }
@@ -271,6 +286,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             warehouseCode: "INV-001",
             warehouseName: "Kho chính",
             warehouseCapacity: undefined,
+            batchId: "1",
+            batchCode: "BATCH-001",
+            coffeeTypeName: "Arabica",
+            quantity: 100,
+            unit: "Kg",
           },
           {
             inventoryId: "2",
@@ -279,6 +299,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             warehouseCode: "INV-002",
             warehouseName: "Kho phụ",
             warehouseCapacity: undefined,
+            batchId: "2",
+            batchCode: "BATCH-002",
+            coffeeTypeName: "Robusta",
+            quantity: 150,
+            unit: "Kg",
           },
           {
             inventoryId: "3",
@@ -287,6 +312,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             warehouseCode: "INV-003",
             warehouseName: "Kho lưu trữ",
             warehouseCapacity: undefined,
+            batchId: "3",
+            batchCode: "BATCH-003",
+            coffeeTypeName: "Culi",
+            quantity: 80,
+            unit: "Kg",
           },
         ]);
       } finally {
@@ -298,6 +328,87 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
   // Helpers
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
+
+  // Hàm xử lý khi inventory thay đổi
+  const handleInventoryChange = (inventoryId: string) => {
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === inventoryId
+    );
+
+    if (selectedInventory) {
+      // Tự động điền batchId và coffeeTypeId
+      if (selectedInventory.batchId) {
+        setField("batchId", selectedInventory.batchId);
+      }
+
+      if (selectedInventory.coffeeTypeName) {
+        // Tìm coffeeTypeId từ coffeeTypeName
+        const matchingCoffeeType = coffeeTypes.find(
+          (type) => type.typeName === selectedInventory.coffeeTypeName
+        );
+        if (matchingCoffeeType) {
+          setField("coffeeTypeId", matchingCoffeeType.coffeeTypeId);
+        }
+      }
+
+      // Tự động điền số lượng có sẵn
+      if (selectedInventory.quantity !== undefined) {
+        setField("quantityAvailable", selectedInventory.quantity);
+      }
+
+      // Tự động điền đơn vị nếu có
+      if (selectedInventory.unit) {
+        setField("unit", selectedInventory.unit as ProductUnit);
+      }
+    }
+  };
+
+  // Hàm kiểm tra xem có thể chỉnh sửa batch và coffee type không
+  const canEditBatch = () => {
+    // Luôn disable cho đến khi chọn inventory
+    if (!form.inventoryId) return false;
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === form.inventoryId
+    );
+    return !selectedInventory?.batchId;
+  };
+
+  const canEditCoffeeType = () => {
+    // Luôn disable cho đến khi chọn inventory
+    if (!form.inventoryId) return false;
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === form.inventoryId
+    );
+    return !selectedInventory?.coffeeTypeName;
+  };
+
+  // Hàm kiểm tra xem có thể chỉnh sửa đơn vị không
+  const canEditUnit = () => {
+    // Luôn disable cho đến khi chọn inventory
+    if (!form.inventoryId) return false;
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === form.inventoryId
+    );
+    return !selectedInventory?.unit;
+  };
+
+  // Lấy số lượng tối đa có thể nhập
+  const getMaxQuantity = () => {
+    if (!form.inventoryId) return undefined;
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === form.inventoryId
+    );
+    return selectedInventory?.quantity;
+  };
+
+  // Kiểm tra xem đơn vị có được chọn tự động không
+  const isUnitAutoSelected = () => {
+    if (!form.inventoryId) return false;
+    const selectedInventory = inventoryOptions.find(
+      (inv) => inv.inventoryId === form.inventoryId
+    );
+    return !!selectedInventory?.unit;
+  };
 
   const [saving, setSaving] = React.useState(false);
 
@@ -318,6 +429,17 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       return toast.error("Giá bán phải lớn hơn 0.");
     if (!(Number(data.quantityAvailable) >= 0))
       return toast.error("Số lượng phải lớn hơn hoặc bằng 0.");
+
+    // Kiểm tra số lượng không được vượt quá số lượng có sẵn trong kho
+    const maxQuantity = getMaxQuantity();
+    if (
+      maxQuantity !== undefined &&
+      Number(data.quantityAvailable) > maxQuantity
+    ) {
+      return toast.error(
+        `Số lượng không được vượt quá ${maxQuantity} ${data.unit} có sẵn trong kho.`
+      );
+    }
     if (!data.batchId) return toast.error("Vui lòng chọn mã mẻ sơ chế.");
     if (!data.inventoryId) return toast.error("Vui lòng chọn mã kho.");
     if (!data.coffeeTypeId) return toast.error("Vui lòng chọn loại cà phê.");
@@ -512,6 +634,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             <Input
               type="number"
               min={0}
+              max={getMaxQuantity()}
               step={0.1}
               value={form.quantityAvailable}
               onChange={(e) =>
@@ -523,14 +646,25 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               placeholder="0"
               className="no-spinner"
             />
+            {form.inventoryId && getMaxQuantity() !== undefined && (
+              <div className="text-xs text-blue-600 mt-1">
+                Số lượng có sẵn trong kho: {getMaxQuantity()} {form.unit}
+                {Number(form.quantityAvailable) > (getMaxQuantity() || 0) && (
+                  <span className="text-red-600 ml-2">
+                    ⚠️ Vượt quá số lượng có sẵn
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">Đơn vị *</label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.unit}
               onChange={(e) => setField("unit", e.target.value as ProductUnit)}
+              disabled={loadingOptions || !canEditUnit()}
             >
               {Object.values(ProductUnit).map((unit) => (
                 <option key={unit} value={unit}>
@@ -538,6 +672,19 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 </option>
               ))}
             </select>
+            {!form.inventoryId ? (
+              <div className="text-xs text-gray-500 mt-1">
+                Vui lòng chọn kho trước
+              </div>
+            ) : !canEditUnit() ? (
+              <div className="text-xs text-blue-600 mt-1">
+                Đã tự động chọn từ kho
+              </div>
+            ) : (
+              <div className="text-xs text-green-600 mt-1">
+                Có thể chỉnh sửa
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -554,10 +701,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               Mã mẻ sơ chế *
             </label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.batchId}
               onChange={(e) => setField("batchId", e.target.value)}
-              disabled={loadingOptions}
+              disabled={loadingOptions || !canEditBatch()}
             >
               <option value="">-- Chọn mẻ sơ chế --</option>
               {batchOptions.map((batch) => (
@@ -566,6 +713,19 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 </option>
               ))}
             </select>
+            {!form.inventoryId ? (
+              <div className="text-xs text-gray-500 mt-1">
+                Vui lòng chọn kho trước
+              </div>
+            ) : !canEditBatch() ? (
+              <div className="text-xs text-blue-600 mt-1">
+                Đã tự động chọn từ kho
+              </div>
+            ) : (
+              <div className="text-xs text-green-600 mt-1">
+                Có thể chỉnh sửa
+              </div>
+            )}
             {/* Debug info */}
             {/* {process.env.NODE_ENV === 'development' && (
               <div className="text-xs text-gray-500 mt-1">
@@ -579,7 +739,11 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             <select
               className="w-full p-2 border rounded"
               value={form.inventoryId}
-              onChange={(e) => setField("inventoryId", e.target.value)}
+              onChange={(e) => {
+                const inventoryId = e.target.value;
+                setField("inventoryId", inventoryId);
+                handleInventoryChange(inventoryId);
+              }}
               disabled={loadingOptions}
             >
               <option value="">-- Chọn kho --</option>
@@ -589,6 +753,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   value={inventory.inventoryId}
                 >
                   {inventory.inventoryCode} - {inventory.warehouseName}
+                  {inventory.batchCode && ` (${inventory.batchCode})`}
+                  {inventory.coffeeTypeName && ` - ${inventory.coffeeTypeName}`}
+                  {inventory.quantity !== undefined &&
+                    ` - ${inventory.quantity} ${inventory.unit || "kg"}`}
                 </option>
               ))}
             </select>
@@ -609,10 +777,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               Loại cà phê *
             </label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.coffeeTypeId}
               onChange={(e) => setField("coffeeTypeId", e.target.value)}
-              disabled={loadingOptions}
+              disabled={loadingOptions || !canEditCoffeeType()}
             >
               <option value="">-- Chọn loại cà phê --</option>
               {coffeeTypes.map((type) => (
@@ -621,6 +789,19 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 </option>
               ))}
             </select>
+            {!form.inventoryId ? (
+              <div className="text-xs text-gray-500 mt-1">
+                Vui lòng chọn kho trước
+              </div>
+            ) : !canEditCoffeeType() ? (
+              <div className="text-xs text-blue-600 mt-1">
+                Đã tự động chọn từ kho
+              </div>
+            ) : (
+              <div className="text-xs text-green-600 mt-1">
+                Có thể chỉnh sửa
+              </div>
+            )}
             {/* Debug info
             {process.env.NODE_ENV === 'development' && (
               <div className="text-xs text-gray-500 mt-1">
