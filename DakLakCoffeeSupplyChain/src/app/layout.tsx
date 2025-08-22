@@ -8,6 +8,7 @@ import Script from "next/script";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
+
 export default function RootLayout({
   children,
 }: {
