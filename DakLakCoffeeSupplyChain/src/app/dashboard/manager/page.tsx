@@ -39,9 +39,9 @@ export default function ManagerDashboard() {
         if (batches) {
           const stats = {
             total: batches.length,
-            pending: batches.filter((b) => b.status === 0).length, // NotStarted
-            processing: batches.filter((b) => b.status === 1).length, // InProgress
-            completed: batches.filter((b) => b.status === 2).length, // Completed
+            pending: batches.filter((b) => String(b.status) === '0').length,
+            processing: batches.filter((b) => String(b.status) === '1').length,
+            completed: batches.filter((b) => String(b.status) === '2').length,
           };
           setProcessingStats(stats);
         }
@@ -56,35 +56,46 @@ export default function ManagerDashboard() {
   }, []);
 
   return (
-    <div className="w-full bg-orange-50 min-h-screen">
-      <div className="p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+      <div className="p-6 max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Tổng quan Business Manager
-          </h1>
-          <p className="text-gray-600">
-            Quản lý và theo dõi toàn bộ hoạt động kinh doanh
-          </p>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl shadow-lg">
+              <FiBriefcase className="text-white text-2xl" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                Business Manager Dashboard
+              </h1>
+              <p className="text-gray-600 text-lg">
+                Quản lý và theo dõi toàn bộ hoạt động kinh doanh
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Processing Statistics Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-              <FiCoffee className="text-orange-500" />
-              Thống kê sơ chế cà phê
-            </h2>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg">
+                <FiCoffee className="text-white text-xl" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800">
+                Thống kê sơ chế cà phê
+              </h2>
+            </div>
             <Link
               href="/dashboard/manager/processing/batches"
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               Xem chi tiết
             </Link>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <StatsCard
               title="Tổng lô"
               value={processingStats.total}
@@ -116,11 +127,12 @@ export default function ManagerDashboard() {
           </div>
 
           {/* Processing Chart */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-200 p-8">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <FiBarChart2 className="text-orange-500" />
               Biểu đồ tiến độ sơ chế
             </h3>
-            <div className="h-64 flex items-end justify-center gap-4">
+            <div className="h-64 flex items-end justify-center gap-6">
               {loading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -166,148 +178,124 @@ export default function ManagerDashboard() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Hợp đồng cung ứng */}
-          <Link href="/dashboard/manager/contracts">
-            <DashboardCard
-              icon={<FiFileText className="text-orange-500 text-xl" />}
-              title="Hợp đồng cung ứng"
-              description="Quản lý các hợp đồng bán hàng ký kết với doanh nghiệp."
-              isLink
-            />
-          </Link>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg">
+              <FiBriefcase className="text-white text-xl" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Quản lý nghiệp vụ
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Hợp đồng cung ứng */}
+            <Link href="/dashboard/manager/contracts">
+              <DashboardCard
+                icon={<FiFileText className="text-orange-500 text-xl" />}
+                title="Hợp đồng cung ứng"
+                description="Quản lý các hợp đồng bán hàng ký kết với doanh nghiệp."
+                isLink
+              />
+            </Link>
 
-          {/* Lịch giao hàng */}
-          <Link href="/dashboard/manager/contract-delivery-batches">
-            <DashboardCard
-              icon={<FiCalendar className="text-orange-500 text-xl" />}
-              title="Lịch giao hàng"
-              description="Xem và quản lý các đợt giao hàng từ hợp đồng cung ứng."
-              isLink
-            />
-          </Link>
+            {/* Lịch giao hàng */}
+            <Link href="/dashboard/manager/contract-delivery-batches">
+              <DashboardCard
+                icon={<FiCalendar className="text-orange-500 text-xl" />}
+                title="Lịch giao hàng"
+                description="Xem và quản lý các đợt giao hàng từ hợp đồng cung ứng."
+                isLink
+              />
+            </Link>
 
-          {/* Kế hoạch thu mua */}
-          <Link href="/dashboard/manager/procurement-plans">
-            <DashboardCard
-              icon={<FiClipboard className="text-orange-500 text-xl" />}
-              title="Kế hoạch thu mua"
-              description="Tạo và theo dõi kế hoạch thu mua từ nông dân để đáp ứng hợp đồng cung ứng."
-              isLink
-            />
-          </Link>
-          <DashboardCard
-            icon={<FiUsers className="text-orange-500 text-xl" />}
-            title="Danh sách nông dân"
-            description="Xem và tương tác với các nông hộ đang hợp tác."
-          />
-          <DashboardCard
-            icon={<FiPackage className="text-orange-500 text-xl" />}
-            title="Mẻ sơ chế"
-            description="Quản lý và theo dõi các mẻ sơ chế theo mùa vụ."
-          />
-          <DashboardCard
-            icon={<FiBarChart2 className="text-orange-500 text-xl" />}
-            title="Báo cáo sản lượng"
-            description="Thống kê về sản lượng, chất lượng và tiến độ."
-          />
+            {/* Kế hoạch thu mua */}
+            <Link href="/dashboard/manager/procurement-plans">
+              <DashboardCard
+                icon={<FiClipboard className="text-orange-500 text-xl" />}
+                title="Kế hoạch thu mua"
+                description="Tạo và theo dõi kế hoạch thu mua từ nông dân để đáp ứng hợp đồng cung ứng."
+                isLink
+              />
+            </Link>
 
-          {/* Kho hàng */}
-          <Link href="/dashboard/manager/warehouses">
-            <DashboardCard
-              icon={<FiHome className="text-orange-500 text-xl" />}
-              title="Kho hàng"
-              description="Quản lý danh sách kho, thêm và xoá kho mới."
-              isLink
-            />
-          </Link>
-
-          {/* Yêu cầu xuất kho */}
-          <Link href="/dashboard/manager/warehouse-request">
-            <DashboardCard
-              icon={<FiTruck className="text-orange-500 text-xl" />}
-              title="Yêu cầu xuất kho"
-              description="Gửi yêu cầu và theo dõi các yêu cầu xuất hàng từ kho."
-              isLink
-            />
-          </Link>
-
-          {/* Tồn kho */}
-          <Link href="/dashboard/manager/inventories">
-            <DashboardCard
-              icon={<FiPackage className="text-orange-500 text-xl" />}
-              title="Tồn kho"
-              description="Xem danh sách hàng tồn trong các kho do bạn quản lý."
-              isLink
-            />
-          </Link>
-
-          {/* Lịch sử tồn kho */}
-          <Link href="/dashboard/manager/inventory-logs">
-            <DashboardCard
-              icon={<FiClock className="text-orange-500 text-xl" />}
-              title="Lịch sử tồn kho"
-              description="Xem toàn bộ lịch sử thay đổi tồn kho theo công ty bạn."
-              isLink
-            />
-          </Link>
-
-          {/* Quản lý nhân viên */}
-          <Link href="/dashboard/manager/business-staffs">
             <DashboardCard
               icon={<FiUsers className="text-orange-500 text-xl" />}
-              title="Nhân viên"
-              description="Xem, tạo và quản lý danh sách nhân viên thuộc công ty bạn."
-              isLink
+              title="Danh sách nông dân"
+              description="Xem và tương tác với các nông hộ đang hợp tác."
             />
-          </Link>
 
-          {/* Báo cáo sản lượng */}
-          <DashboardCard
-            icon={<FiBarChart2 className="text-orange-500 text-xl" />}
-            title="Báo cáo sản lượng"
-            description="Thống kê về sản lượng, chất lượng và tiến độ."
-          />
-
-          {/* Đơn hàng */}
-          <Link href="/dashboard/manager/orders">
             <DashboardCard
-              icon={<FiShoppingCart className="text-orange-500 text-xl" />}
-              title="Đơn hàng"
-              description="Quản lý và theo dõi các đơn hàng bán ra."
-              isLink
+              icon={<FiPackage className="text-orange-500 text-xl" />}
+              title="Mẻ sơ chế"
+              description="Quản lý và theo dõi các mẻ sơ chế theo mùa vụ."
             />
-          </Link>
 
-          {/* Lô giao hàng */}
-          <Link href="/dashboard/manager/shipments">
             <DashboardCard
-              icon={<FiSend className="text-orange-500 text-xl" />}
-              title="Lô giao hàng"
-              description="Quản lý các lô giao hàng/shipments từ kho tới khách."
-              isLink
+              icon={<FiBarChart2 className="text-orange-500 text-xl" />}
+              title="Báo cáo sản lượng"
+              description="Thống kê về sản lượng, chất lượng và tiến độ."
             />
-          </Link>
 
-          {/* Khách hàng doanh nghiệp */}
-          <Link href="/dashboard/manager/business-buyers">
-            <DashboardCard
-              icon={<FiBriefcase className="text-orange-500 text-xl" />}
-              title="Khách hàng doanh nghiệp"
-              description="Danh sách khách hàng B2B, tạo mới và quản lý quan hệ."
-              isLink
-            />
-          </Link>
+            {/* Kho hàng */}
+            <Link href="/dashboard/manager/warehouses">
+              <DashboardCard
+                icon={<FiHome className="text-orange-500 text-xl" />}
+                title="Kho hàng"
+                description="Quản lý danh sách kho, thêm và xoá kho mới."
+                isLink
+              />
+            </Link>
 
-          {/* Sản phẩm */}
-          <Link href="/dashboard/manager/products">
-            <DashboardCard
-              icon={<FiTag className="text-orange-500 text-xl" />}
-              title="Sản phẩm"
-              description="Quản lý danh mục sản phẩm, quy cách và giá."
-              isLink
-            />
-          </Link>
+            {/* Yêu cầu xuất kho */}
+            <Link href="/dashboard/manager/warehouse-request">
+              <DashboardCard
+                icon={<FiTruck className="text-orange-500 text-xl" />}
+                title="Yêu cầu xuất kho"
+                description="Gửi yêu cầu và theo dõi các yêu cầu xuất hàng từ kho."
+                isLink
+              />
+            </Link>
+
+            {/* Tồn kho */}
+            <Link href="/dashboard/manager/inventories">
+              <DashboardCard
+                icon={<FiPackage className="text-orange-500 text-xl" />}
+                title="Tồn kho"
+                description="Xem danh sách hàng tồn trong các kho do bạn quản lý."
+                isLink
+              />
+            </Link>
+
+            {/* Lịch sử tồn kho */}
+            <Link href="/dashboard/manager/inventory-logs">
+              <DashboardCard
+                icon={<FiClock className="text-orange-500 text-xl" />}
+                title="Lịch sử tồn kho"
+                description="Xem toàn bộ lịch sử thay đổi tồn kho theo công ty bạn."
+                isLink
+              />
+            </Link>
+
+            {/* Đơn hàng */}
+            <Link href="/dashboard/manager/orders">
+              <DashboardCard
+                icon={<FiShoppingCart className="text-orange-500 text-xl" />}
+                title="Đơn hàng"
+                description="Quản lý các đơn hàng từ khách hàng."
+                isLink
+              />
+            </Link>
+
+            {/* Vận chuyển */}
+            <Link href="/dashboard/manager/shipments">
+              <DashboardCard
+                icon={<FiSend className="text-orange-500 text-xl" />}
+                title="Vận chuyển"
+                description="Theo dõi và quản lý các đơn vận chuyển."
+                isLink
+              />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -335,16 +323,16 @@ function StatsCard({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-200 p-6 hover:shadow-2xl transition-all duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+          <p className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
             {loading ? "..." : value}
           </p>
         </div>
         <div
-          className={`p-3 rounded-lg ${
+          className={`p-4 rounded-xl shadow-lg ${
             colorClasses[color as keyof typeof colorClasses]
           }`}
         >
@@ -398,13 +386,15 @@ function DashboardCard({
 }) {
   return (
     <div
-      className={`p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition ${
-        isLink ? "cursor-pointer" : ""
+      className={`p-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 hover:border-orange-200 ${
+        isLink ? "cursor-pointer hover:-translate-y-1" : ""
       }`}
     >
-      <div className="flex items-center gap-3 mb-2">
-        {icon}
-        <h2 className="text-lg font-semibold">{title}</h2>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="p-3 bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl">
+          {icon}
+        </div>
+        <h2 className="text-xl font-bold text-gray-800">{title}</h2>
       </div>
       <p className="text-gray-500 text-sm">{description}</p>
     </div>
