@@ -20,11 +20,8 @@ const NotificationBell: React.FC = () => {
     }
     return n.isRead === false; // Only count as unread if explicitly false
   }).length;
-  
-  const finalUnreadCount = unreadCount > 0 ? unreadCount : calculatedUnreadCount;
 
-  // Debug badge rendering
-  console.log("🎯 Badge should show:", finalUnreadCount > 0 ? `YES (${finalUnreadCount})` : "NO");
+  const finalUnreadCount = unreadCount > 0 ? unreadCount : calculatedUnreadCount;
 
   const handleMarkAsRead = async (notificationId: string) => {
     await markAsRead(notificationId);
@@ -47,9 +44,9 @@ const NotificationBell: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { 
-        addSuffix: true, 
-        locale: vi 
+      return formatDistanceToNow(new Date(dateString), {
+        addSuffix: true,
+        locale: vi
       });
     } catch {
       return "Vừa xong";
@@ -66,8 +63,8 @@ const NotificationBell: React.FC = () => {
       >
         <Bell className="h-5 w-5" />
         {finalUnreadCount > 0 && (
-          <Badge 
-            variant="destructive" 
+          <Badge
+            variant="destructive"
             className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
           >
             {finalUnreadCount > 99 ? "99+" : finalUnreadCount}
@@ -114,9 +111,8 @@ const NotificationBell: React.FC = () => {
                 {notifications.map((notification) => (
                   <div
                     key={notification.notificationId}
-                    className={`p-4 hover:bg-gray-50 transition-colors ${
-                      !notification.isRead ? "bg-blue-50" : ""
-                    }`}
+                    className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? "bg-blue-50" : ""
+                      }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="text-2xl">

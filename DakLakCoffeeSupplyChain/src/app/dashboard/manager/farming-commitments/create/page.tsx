@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
 } from "@/lib/api/cultivationRegistrations";
 import { LoadingButton } from "@/components/ui/loadingProgress";
 
-export default function CreateFarmingCommitmentPage() {
+function CreateFarmingCommitmentContent() {
   useAuthGuard(["manager"]);
 
   // const formatDate = (d: string) => new Date(d).toISOString().split("T")[0];
@@ -343,6 +343,7 @@ export default function CreateFarmingCommitmentPage() {
                         }
                         required
                         className='block w-full rounded border border-gray-300 px-3 py-2 cursor-pointer'
+                        aria-label={`Chọn chi tiết đơn đăng ký cho chi tiết cam kết ${index + 1}`}
                       >
                         <option value=''>-- Chọn chi tiết --</option>
                         {options?.map((registrationDetail) => (
@@ -530,5 +531,13 @@ export default function CreateFarmingCommitmentPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function CreateFarmingCommitmentPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateFarmingCommitmentContent />
+    </Suspense>
   );
 }

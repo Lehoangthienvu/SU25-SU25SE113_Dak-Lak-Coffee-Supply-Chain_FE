@@ -2,10 +2,10 @@
 
 import ShipmentForm from "@/components/shipments/ShipmentForm";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { getAllUserAccounts } from "@/lib/api/userAccounts";
 
-export default function CreateShipmentPage() {
+function CreateShipmentContent() {
   const router = useRouter();
   const params = useSearchParams();
   const orderId = params.get("orderId") || undefined;
@@ -32,5 +32,13 @@ export default function CreateShipmentPage() {
       orderId={orderId}
       deliveryStaffOptions={staffOptions}
     />
+  );
+}
+
+export default function CreateShipmentPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateShipmentContent />
+    </Suspense>
   );
 }

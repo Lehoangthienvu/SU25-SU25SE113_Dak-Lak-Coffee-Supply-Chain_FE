@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createExpertAdvice, createExpertAdviceWithFiles } from '@/lib/api/expertAdvice';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, MessageSquare, Upload, FileText } from 'lucide-react';
 
-export default function CreateAnomalyPage() {
+function CreateAnomalyContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const reportId = searchParams.get('reportId');
@@ -227,5 +227,13 @@ export default function CreateAnomalyPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function CreateAnomalyPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CreateAnomalyContent />
+        </Suspense>
     );
 }

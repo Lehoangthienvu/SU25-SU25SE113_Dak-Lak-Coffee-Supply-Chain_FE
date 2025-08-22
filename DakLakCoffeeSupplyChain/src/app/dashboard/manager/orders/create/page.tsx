@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import OrderForm from "@/components/orders/OrderForm";
 
-export default function OrderCreatePage() {
+function OrderCreateContent() {
   const router = useRouter();
   const search = useSearchParams();
 
@@ -18,5 +19,13 @@ export default function OrderCreatePage() {
         onSuccess={() => router.push("/dashboard/manager/orders")}
       />
     </div>
+  );
+}
+
+export default function OrderCreatePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OrderCreateContent />
+    </Suspense>
   );
 }
