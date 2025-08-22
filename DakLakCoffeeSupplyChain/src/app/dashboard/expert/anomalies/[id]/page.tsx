@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, ArrowLeft, FileText, User, Calendar, CheckCircle, XCircle, Image, Video, Maximize2, MessageSquare } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, FileText, User, Calendar, XCircle, Maximize2, MessageSquare } from 'lucide-react';
 import { GeneralFarmerReportViewDetailsDto, getFarmerReportById } from '@/lib/api/generalFarmerReports';
 import { ExpertAdvice, getAllExpertAdvices } from '@/lib/api/expertAdvice';
 import { formatDateTimeVN } from '@/lib/utils';
@@ -39,7 +39,7 @@ export default function AnomalyDetailPage() {
             } else {
                 setError('Không tìm thấy báo cáo');
             }
-        } catch (err) {
+        } catch {
             setError('Không thể tải chi tiết báo cáo');
             toast.error('Không thể tải chi tiết báo cáo');
         } finally {
@@ -139,12 +139,12 @@ export default function AnomalyDetailPage() {
                                 <div className="flex items-center gap-2">
                                     <User className="w-4 h-4 text-gray-500" />
                                     <span className="font-medium">Nông dân:</span>
-                                    <span>{report.farmerName}</span>
+                                    <span>{report.reportedByName || 'N/A'}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Calendar className="w-4 h-4 text-gray-500" />
                                     <span className="font-medium">Ngày báo cáo:</span>
-                                    <span>{formatDateTimeVN(report.createdAt)}</span>
+                                    <span>{formatDateTimeVN(report.reportedAt)}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className="font-medium">Trạng thái:</span>
@@ -156,8 +156,8 @@ export default function AnomalyDetailPage() {
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="font-medium">Loại báo cáo:</span>
-                                    <span>{report.reportType}</span>
+                                    <span className="font-medium">Giai đoạn:</span>
+                                    <span>{report.cropStageName || 'N/A'}</span>
                                 </div>
                             </div>
 
@@ -169,36 +169,35 @@ export default function AnomalyDetailPage() {
                             </div>
 
                             {/* Media Files */}
-                            {(report.imageUrls && report.imageUrls.length > 0) ||
-                                (report.videoUrls && report.videoUrls.length > 0) ? (
+                            {(report.imageUrl || report.videoUrl) ? (
                                 <div>
                                     <span className="font-medium block mb-3">Tệp đính kèm:</span>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {report.imageUrls?.map((url, index) => (
-                                            <div key={`img-${index}`} className="relative group">
+                                        {report.imageUrl && (
+                                            <div className="relative group">
                                                 <img
-                                                    src={url}
-                                                    alt={`Hình ảnh ${index + 1}`}
+                                                    src={report.imageUrl}
+                                                    alt="Hình ảnh báo cáo"
                                                     className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                                                    onClick={() => handleViewMedia('image', url)}
+                                                    onClick={() => handleViewMedia('image', report.imageUrl!)}
                                                 />
                                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
                                                     <Maximize2 className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 </div>
                                             </div>
-                                        ))}
-                                        {report.videoUrls?.map((url, index) => (
-                                            <div key={`vid-${index}`} className="relative group">
+                                        )}
+                                        {report.videoUrl && (
+                                            <div className="relative group">
                                                 <video
-                                                    src={url}
+                                                    src={report.videoUrl}
                                                     className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                                                    onClick={() => handleViewMedia('video', url)}
+                                                    onClick={() => handleViewMedia('video', report.videoUrl!)}
                                                 />
                                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
                                                     <Maximize2 className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 </div>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
                                 </div>
                             ) : null}
@@ -216,8 +215,8 @@ export default function AnomalyDetailPage() {
                         <CardContent>
                             {advices.length > 0 ? (
                                 <div className="space-y-4">
-                                    {advices.map((advice, index) => (
-                                        <div key={advice.id} className="border-l-4 border-blue-500 pl-4 py-3 bg-blue-50 rounded-r-lg">
+                                    {advices.map((advice) => (
+                                        <div key={advice.adviceId} className="border-l-4 border-blue-500 pl-4 py-3 bg-blue-50 rounded-r-lg">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <User className="w-4 h-4 text-gray-500" />

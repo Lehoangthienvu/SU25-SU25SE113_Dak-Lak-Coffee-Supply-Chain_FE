@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import ExpertAdviceForm from './create/page';
+
 import { GeneralFarmerReportViewAllDto, getAllFarmerReports, getFarmerReportById, GeneralFarmerReportViewDetailsDto } from '@/lib/api/generalFarmerReports';
 import { ExpertAdvice, getAllExpertAdvices } from '@/lib/api/expertAdvice';
 import AdviceHistoryDialog from './AdviceHistoryDialog';
@@ -283,28 +283,51 @@ export default function ReportResponsePage() {
                                 setSelectedReportId(null);
                                 setFilteredAdvices([]);
                             }}
+                            aria-label="Đóng form"
+                            title="Đóng form"
                         >
                             <XCircle className="w-5 h-5" />
                         </button>
 
-                        <ExpertAdviceForm
-                            reportId={selectedReportId}
-                            onSuccess={() => {
-                                setShowFormDialog(false);
-                                setSelectedReportId(null);
-                                setFilteredAdvices([]);
+                        <div className="space-y-4">
+                            <div className="text-center">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                    Gửi phản hồi cho báo cáo
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                    Báo cáo ID: {selectedReportId}
+                                </p>
+                            </div>
 
-                                Promise.all([getAllExpertAdvices(), getAllFarmerReports()])
-                                    .then(([advices, reports]) => {
-                                        setAllAdvices(advices);
-                                        setReports(reports);
+                            <div className="text-center space-y-3">
+                                <Button
+                                    onClick={() => {
+                                        setShowFormDialog(false);
+                                        setSelectedReportId(null);
+                                        setFilteredAdvices([]);
 
-                                        const filtered = advices.filter((a) => a.reportId === selectedReportId);
-                                        setFilteredAdvices(filtered);
-                                    })
-                                    .catch(() => toast.error('Không thể tải lại dữ liệu sau khi gửi phản hồi'));
-                            }}
-                        />
+                                        // Chuyển đến trang create với reportId
+                                        window.location.href = `/dashboard/expert/anomalies/create?reportId=${selectedReportId}`;
+                                    }}
+                                    className="bg-orange-600 hover:bg-orange-700 text-white w-full"
+                                >
+                                    <MessageSquare className="w-4 h-4 mr-2" />
+                                    Tạo phản hồi mới
+                                </Button>
+
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setShowFormDialog(false);
+                                        setSelectedReportId(null);
+                                        setFilteredAdvices([]);
+                                    }}
+                                    className="w-full"
+                                >
+                                    Hủy
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
