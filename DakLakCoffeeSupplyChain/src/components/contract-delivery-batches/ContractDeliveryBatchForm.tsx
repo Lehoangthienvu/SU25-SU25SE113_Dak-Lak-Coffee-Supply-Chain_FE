@@ -36,6 +36,7 @@ type DeliveryBatchFormState = {
     deliveryItemId?: string; // Có thể undefined cho items mới
     contractItemId: string;
     plannedQuantity: number;
+    fulfilledQuantity?: number; // Khối lượng đã giao (cần thiết cho update)
     note?: string;
   }[];
 };
@@ -104,6 +105,7 @@ export default function ContractDeliveryBatchForm({
             deliveryItemId: x.deliveryItemId,
             contractItemId: x.contractItemId,
             plannedQuantity: x.plannedQuantity ?? 0,
+            fulfilledQuantity: x.fulfilledQuantity ?? 0, // Lấy khối lượng đã giao
             note: x.note ?? "",
           }));
 
@@ -203,14 +205,19 @@ export default function ContractDeliveryBatchForm({
       ...(prev as DeliveryBatchFormState),
       contractDeliveryItems: [
         ...((prev as DeliveryBatchFormState).contractDeliveryItems || []),
-        { contractItemId: "", plannedQuantity: 0, note: "" },
+        {
+          contractItemId: "",
+          plannedQuantity: 0,
+          fulfilledQuantity: 0,
+          note: "",
+        },
       ],
     }));
   };
 
   const updateRow = (
     index: number,
-    field: "contractItemId" | "plannedQuantity" | "note",
+    field: "contractItemId" | "plannedQuantity" | "fulfilledQuantity" | "note",
     value: any
   ) => {
     setFormData((prev) => {
@@ -357,6 +364,7 @@ export default function ContractDeliveryBatchForm({
             deliveryBatchId: initialData.deliveryBatchId,
             contractItemId: item.contractItemId,
             plannedQuantity: item.plannedQuantity,
+            fulfilledQuantity: item.fulfilledQuantity || 0, // Bao gồm khối lượng đã giao
             note: item.note || "",
           })),
         };
@@ -365,21 +373,21 @@ export default function ContractDeliveryBatchForm({
         toast.success("Cập nhật đợt giao thành công!");
         router.back();
       } else {
-        const payload: ContractDeliveryBatchCreateDto = {
+        // Tạo payload riêng cho create để tránh vấn đề deliveryBatchId
+        const createPayload = {
           contractId: data.contractId,
           deliveryRound: data.deliveryRound,
           expectedDeliveryDate: expected,
           totalPlannedQuantity: data.totalPlannedQuantity,
           status: data.status,
           contractDeliveryItems: data.contractDeliveryItems.map((item) => ({
-            deliveryBatchId: "",
             contractItemId: item.contractItemId,
             plannedQuantity: item.plannedQuantity,
             note: item.note || "",
           })),
         };
 
-        await createContractDeliveryBatch(payload);
+        await createContractDeliveryBatch(createPayload as any);
         toast.success("Tạo đợt giao thành công!");
         onSuccess();
       }
@@ -776,16 +784,28 @@ export default function ContractDeliveryBatchForm({
         )}
 
         {(formData.contractDeliveryItems?.length ?? 0) > 0 && (
-          <div className="hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground">
+          <div
+            className={`hidden md:grid gap-2 mb-1 text-xs font-medium text-muted-foreground ${
+              isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
+            }`}
+          >
             <span>Loại cà phê</span>
             <span className="text-left">Số lượng (kg)</span>
-            <span className="col-span-3">Ghi chú</span>
+            {isEdit && <span className="text-left">Đã giao (kg)</span>}
+            <span className={isEdit ? "col-span-3" : "col-span-3"}>
+              Ghi chú
+            </span>
             <span></span>
           </div>
         )}
 
         {(formData.contractDeliveryItems || []).map((row, idx) => (
-          <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2">
+          <div
+            key={idx}
+            className={`grid grid-cols-1 gap-2 mb-2 ${
+              isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
+            }`}
+          >
             <select
               value={row.contractItemId}
               onChange={(e) => updateRow(idx, "contractItemId", e.target.value)}
@@ -833,17 +853,33 @@ export default function ContractDeliveryBatchForm({
               </p>
             )}
 
+            {/* Hiển thị khối lượng đã giao */}
+            {isEdit && (
+              <Input
+                type="number"
+                min={0}
+                step={0.1}
+                value={row.fulfilledQuantity ?? 0}
+                onChange={(e) =>
+                  updateRow(idx, "fulfilledQuantity", Number(e.target.value))
+                }
+                className="no-spinner text-left"
+                title="Khối lượng đã giao"
+              />
+            )}
+
             <Input
               placeholder="Ghi chú"
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
-              className="md:col-span-3"
+              className={isEdit ? "md:col-span-3" : "md:col-span-3"}
             />
 
             <Button
               type="button"
               variant="destructive"
               onClick={() => removeRow(idx)}
+              className="whitespace-nowrap"
             >
               Xoá
             </Button>
