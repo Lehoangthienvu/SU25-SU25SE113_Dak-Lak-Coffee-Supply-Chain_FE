@@ -33,7 +33,7 @@ import { formatQuantity } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 
-export function getDeliveryBatchStatusDisplay(
+function getDeliveryBatchStatusDisplay(
   status: ContractDeliveryBatchStatus | "ALL"
 ) {
   switch (status) {
