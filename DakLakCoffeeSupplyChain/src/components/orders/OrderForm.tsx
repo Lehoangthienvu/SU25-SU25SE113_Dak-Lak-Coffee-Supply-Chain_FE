@@ -82,6 +82,10 @@ export default function OrderForm({
   // Hiển thị code đợt giao
   const [deliveryBatchCode, setDeliveryBatchCode] = useState<string>("");
 
+  // Thêm state cho error handling
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [businessErrors, setBusinessErrors] = useState<string[]>([]);
+
   // -------------------- form state (không-null để tránh lỗi hooks) --------------------
   const [form, setForm] = useState<FormState>({
     deliveryBatchId: deliveryBatchId ?? "",
@@ -189,8 +193,23 @@ export default function OrderForm({
   }, [form.deliveryBatchId]);
 
   // Helpers
-  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...(prev as FormState), [key]: value }));
+
+    // Clear field error when user starts typing
+    if (fieldErrors[key]) {
+      setFieldErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[key];
+        return newErrors;
+      });
+    }
+
+    // Clear business errors when user makes any change
+    if (businessErrors.length > 0) {
+      setBusinessErrors([]);
+    }
+  };
 
   const ensureItems = () =>
     setForm((prev) => ({
@@ -220,7 +239,7 @@ export default function OrderForm({
     idx: number,
     key: K,
     value: OrderItemRow[K]
-  ) =>
+  ) => {
     setForm((prev) => {
       const base = { ...(prev as FormState) };
       const arr = [...(base.orderItems || [])];
@@ -235,6 +254,22 @@ export default function OrderForm({
       return base;
     });
 
+    // Clear field error when user starts typing
+    const fieldKey = `orderItems.${idx}.${key}`;
+    if (fieldErrors[fieldKey]) {
+      setFieldErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldKey];
+        return newErrors;
+      });
+    }
+
+    // Clear business errors when user makes any change
+    if (businessErrors.length > 0) {
+      setBusinessErrors([]);
+    }
+  };
+
   const removeRow = (idx: number) =>
     setForm((prev) => {
       const base = { ...(prev as FormState) };
@@ -243,6 +278,29 @@ export default function OrderForm({
       base.orderItems = arr;
       return base;
     });
+
+  // Helper function to get error for a specific field
+  const getFieldError = (fieldName: string): string | undefined => {
+    return fieldErrors[fieldName];
+  };
+
+  // Helper function to check if field has error
+  const hasFieldError = (fieldName: string): boolean => {
+    return !!fieldErrors[fieldName];
+  };
+
+  // Helper function to get error for order item field
+  const getOrderItemError = (
+    index: number,
+    field: string
+  ): string | undefined => {
+    return fieldErrors[`orderItems.${index}.${field}`];
+  };
+
+  // Helper function to check if order item field has error
+  const hasOrderItemError = (index: number, field: string): boolean => {
+    return !!fieldErrors[`orderItems.${index}.${field}`];
+  };
 
   // Tính tổng
   const items = form.orderItems ?? [];
@@ -273,18 +331,57 @@ export default function OrderForm({
     e.preventDefault();
     if (saving) return;
 
+    // Clear previous errors
+    setFieldErrors({});
+    setBusinessErrors([]);
+
     const data = form;
 
     // Validate
-    if (!data.deliveryBatchId) return toast.error("Vui lòng chọn đợt giao.");
-    if (!data.orderItems.length)
-      return toast.error("Cần ít nhất 1 dòng sản phẩm.");
-    if (data.orderItems.some((r) => !r.contractDeliveryItemId || !r.productId))
-      return toast.error("Vui lòng chọn mặt hàng & sản phẩm cho tất cả dòng.");
-    if (data.orderItems.some((r) => !(Number(r.quantity) > 0)))
-      return toast.error("Số lượng từng dòng phải > 0.");
-    if (data.orderItems.some((r) => !(Number(r.unitPrice) > 0)))
-      return toast.error("Đơn giá từng dòng phải > 0.");
+    const clientErrors: Record<string, string> = {};
+
+    if (!data.deliveryBatchId) {
+      clientErrors.deliveryBatchId = "Vui lòng chọn đợt giao.";
+    }
+    if (!data.orderItems.length) {
+      clientErrors.orderItems = "Cần ít nhất 1 dòng sản phẩm.";
+    } else {
+      data.orderItems.forEach((item, index) => {
+        if (!item.contractDeliveryItemId) {
+          clientErrors[`orderItems.${index}.contractDeliveryItemId`] =
+            "Vui lòng chọn mặt hàng đợt giao.";
+        }
+        if (!item.productId) {
+          clientErrors[`orderItems.${index}.productId`] =
+            "Vui lòng chọn sản phẩm.";
+        }
+        if (!(Number(item.quantity) > 0)) {
+          clientErrors[`orderItems.${index}.quantity`] =
+            "Số lượng phải lớn hơn 0.";
+        }
+        if (!(Number(item.unitPrice) > 0)) {
+          clientErrors[`orderItems.${index}.unitPrice`] =
+            "Đơn giá phải lớn hơn 0.";
+        }
+      });
+    }
+
+    // Validate ngày giao thực tế không được trước ngày tạo đơn hàng
+    if (data.actualDeliveryDate && data.orderDate) {
+      const actualDate = new Date(data.actualDeliveryDate);
+      const orderDate = new Date(data.orderDate);
+      if (actualDate < orderDate) {
+        clientErrors.actualDeliveryDate =
+          "Ngày giao thực tế không được trước ngày tạo đơn hàng.";
+      }
+    }
+
+    // If there are client-side errors, display them and stop
+    if (Object.keys(clientErrors).length > 0) {
+      setFieldErrors(clientErrors);
+      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      return;
+    }
 
     // Convert ngày: yyyy-MM-dd -> ISO (orderDate) và giữ yyyy-MM-dd (actual)
     const orderDateIso = data.orderDate
@@ -372,7 +469,7 @@ export default function OrderForm({
         toast.promise(req, {
           loading: "Đang tạo đơn hàng...",
           success: "Tạo đơn hàng thành công!",
-          error: "Tạo đơn hàng thất bại.",
+          error: "Cập nhật đơn hàng thất bại.",
         });
         await req;
       }
@@ -380,9 +477,160 @@ export default function OrderForm({
       // Chỉ gọi khi request thành công
       onSuccess();
     } catch (err) {
-      console.error(err);
-      // Ở đây KHÔNG điều hướng, chỉ báo lỗi
-      toast.error("Đã xảy ra lỗi khi lưu đơn hàng.");
+      // KHÔNG log console.error để tránh hiển thị error box
+      // console.error(err);
+
+      // Xử lý lỗi validation từ backend
+      if (err && typeof err === "object" && "errors" in err && err.errors) {
+        const validationErrors = err.errors as Record<string, string[]>;
+        const newFieldErrors: Record<string, string> = {};
+        const newBusinessErrors: string[] = [];
+
+        // Phân loại lỗi: field validation vs business logic
+        Object.entries(validationErrors).forEach(([field, messages]) => {
+          if (Array.isArray(messages) && messages.length > 0) {
+            const message = messages[0];
+
+            // Lỗi nghiệp vụ thường có đặc điểm:
+            const isBusinessError =
+              message.length > 50 ||
+              message.includes("vượt quá") ||
+              message.includes("đã tồn tại") ||
+              message.includes("không được") ||
+              message.includes("phải") ||
+              message.includes("cùng loại") ||
+              message.includes("tổng khối lượng") ||
+              message.includes("tổng giá trị") ||
+              message.includes("tổng trị giá") ||
+              message.includes("đã tồn tại trong hệ thống") ||
+              message.includes("không có quyền") ||
+              message.includes("không tìm thấy") ||
+              message.includes("vượt quá tổng") ||
+              message.includes("không được có 2 dòng") ||
+              message.includes("không được âm") ||
+              message.includes("phải lớn hơn") ||
+              message.includes("phải nhỏ hơn") ||
+              message.includes("dòng hợp đồng") ||
+              message.includes("hợp đồng đã khai báo") ||
+              message.includes("kg) vượt quá") ||
+              message.includes("VND) vượt quá") ||
+              message.includes("từ các dòng") ||
+              message.includes("đã khai báo") ||
+              message.includes("các dòng hợp đồng") ||
+              message.includes("đã khai báo (") ||
+              message.includes(") vượt quá") ||
+              message.includes("quản lý doanh nghiệp") ||
+              message.includes("thông tin bên mua") ||
+              message.includes("Số hợp đồng") ||
+              message.includes("khối lượng từ các dòng") ||
+              message.includes("trị giá từ các dòng") ||
+              message.includes("vượt quá tổng khối lượng") ||
+              message.includes("vượt quá tổng giá trị") ||
+              message.includes("vượt quá tổng trị giá") ||
+              message.includes("hiện có") ||
+              message.includes("thêm") ||
+              message.includes("từ các dòng hợp đồng") ||
+              message.includes("Tổng khối lượng từ các dòng") ||
+              message.includes("Tổng trị giá từ các dòng") ||
+              message.includes("vượt quá tổng khối lượng hợp đồng") ||
+              message.includes("vượt quá tổng giá trị hợp đồng") ||
+              message.includes("vượt quá tổng trị giá hợp đồng") ||
+              message.includes("Tổng khối lượng từ các dòng hợp đồng") ||
+              message.includes("Tổng trị giá từ các dòng hợp đồng") ||
+              message.includes(
+                "vượt quá tổng khối lượng hợp đồng đã khai báo"
+              ) ||
+              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
+              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
+              message.includes("Tổng khối lượng từ các dòng hợp đồng (") ||
+              message.includes("Tổng trị giá từ các dòng hợp đồng (") ||
+              message.includes(
+                "vượt quá tổng khối lượng hợp đồng đã khai báo ("
+              ) ||
+              message.includes(
+                "vượt quá tổng giá trị hợp đồng đã khai báo ("
+              ) ||
+              message.includes(
+                "vượt quá tổng trị giá hợp đồng đã khai báo ("
+              ) ||
+              message.includes("kg) vượt quá tổng khối lượng") ||
+              message.includes("VND) vượt quá tổng giá trị") ||
+              message.includes(
+                "vượt quá tổng khối lượng hợp đồng đã khai báo"
+              ) ||
+              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
+              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
+              message.includes("Lô giao hàng này đã có đơn hàng") ||
+              message.includes("Bạn không có quyền") ||
+              message.includes("Không tìm thấy lô giao hàng") ||
+              message.includes("Không tìm thấy Manager hoặc Staff") ||
+              message.includes("Ngày đặt hàng không được vượt quá") ||
+              message.includes("Ngày giao thực tế không được") ||
+              message.includes("Đơn hàng phải có ít nhất") ||
+              message.includes("Có sản phẩm bị trùng lặp") ||
+              message.includes("Đợt giao hàng phải lớn hơn") ||
+              message.includes("Giảm giá không được vượt quá") ||
+              message.includes("Giảm giá không được âm");
+
+            if (isBusinessError) {
+              newBusinessErrors.push(message);
+            } else {
+              // Xử lý lỗi cho order items (dạng: OrderItems[0].Quantity)
+              if (field.startsWith("OrderItems[") && field.includes("].")) {
+                const match = field.match(/OrderItems\[(\d+)\]\.(\w+)/);
+                if (match) {
+                  const index = match[1];
+                  const itemField = match[2];
+                  newFieldErrors[
+                    `orderItems.${index}.${itemField.toLowerCase()}`
+                  ] = message;
+                }
+              } else {
+                // Xử lý lỗi cho các field chính
+                newFieldErrors[field] = message;
+              }
+            }
+          }
+        });
+
+        // Set errors theo loại
+        if (Object.keys(newFieldErrors).length > 0) {
+          setFieldErrors(newFieldErrors);
+        }
+
+        if (newBusinessErrors.length > 0) {
+          setBusinessErrors(newBusinessErrors);
+        }
+
+        // Hiển thị toast với thông tin cụ thể
+        if (
+          Object.keys(newFieldErrors).length > 0 ||
+          newBusinessErrors.length > 0
+        ) {
+          toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+        }
+      } else {
+        // Xử lý lỗi khác - kiểm tra message trực tiếp
+        let errorMessage = "Đã xảy ra lỗi khi lưu đơn hàng.";
+
+        if (err && typeof err === "object" && "message" in err) {
+          const message = String(err.message);
+
+          // Kiểm tra các lỗi nghiệp vụ cụ thể
+          if (message.includes("Lô giao hàng này đã có đơn hàng")) {
+            setBusinessErrors([message]);
+            errorMessage = "Lỗi nghiệp vụ: " + message;
+          } else if (message.includes("Bạn không có quyền")) {
+            setBusinessErrors([message]);
+            errorMessage = "Lỗi quyền truy cập: " + message;
+          } else if (message.includes("Không tìm thấy")) {
+            setBusinessErrors([message]);
+            errorMessage = "Lỗi dữ liệu: " + message;
+          }
+        }
+
+        toast.error(errorMessage);
+      }
     } finally {
       setSaving(false);
     }
@@ -394,6 +642,77 @@ export default function OrderForm({
         {isEdit ? "Chỉnh sửa đơn hàng" : "Tạo đơn hàng mới"}
       </h2>
 
+      {/* Hiển thị lỗi nghiệp vụ */}
+      {businessErrors.length > 0 && (
+        <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-orange-800 font-medium">
+              Cần tuân thủ quy tắc nghiệp vụ:
+            </h3>
+            <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
+              {businessErrors.length} quy tắc
+            </span>
+          </div>
+
+          {/* Tóm tắt nhanh */}
+          <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
+            <strong> Tóm tắt:</strong>
+            {businessErrors.some((err) => err.includes("vượt quá")) &&
+              " Cần điều chỉnh thông tin đơn hàng"}
+            {businessErrors.some((err) => err.includes("cùng loại")) &&
+              " Cần loại bỏ sản phẩm trùng lặp"}
+            {businessErrors.some((err) => err.includes("đã tồn tại")) &&
+              " Cần đổi thông tin đơn hàng"}
+            {businessErrors.some((err) => err.includes("không có quyền")) &&
+              " Cần liên hệ admin"}
+            {businessErrors.some((err) =>
+              err.includes("Lô giao hàng này đã có đơn hàng")
+            ) && " Lô giao hàng đã được sử dụng"}
+            {businessErrors.some((err) => err.includes("Không tìm thấy")) &&
+              " Dữ liệu không tồn tại"}
+          </div>
+
+          {/* Hướng dẫn giải quyết */}
+          <div className="mt-3 pt-3 border-t border-orange-200">
+            <p className="text-orange-600 text-sm font-medium mb-2">
+              💡 Hướng dẫn:
+            </p>
+            <ul className="text-orange-600 text-xs space-y-1">
+              {businessErrors.some((err) => err.includes("vượt quá")) && (
+                <li>• Kiểm tra lại thông tin đơn hàng</li>
+              )}
+              {businessErrors.some((err) => err.includes("cùng loại")) && (
+                <li>• Không được có 2 dòng đơn hàng cùng sản phẩm</li>
+              )}
+              {businessErrors.some((err) => err.includes("đã tồn tại")) && (
+                <li>• Thông tin đơn hàng đã tồn tại, hãy đổi thông tin khác</li>
+              )}
+              {businessErrors.some((err) => err.includes("không có quyền")) && (
+                <li>• Liên hệ admin để được cấp quyền phù hợp</li>
+              )}
+              {businessErrors.some((err) =>
+                err.includes("Lô giao hàng này đã có đơn hàng")
+              ) && <li>• Mỗi lô giao hàng chỉ có thể tạo 1 đơn hàng</li>}
+              {businessErrors.some((err) =>
+                err.includes("Ngày đặt hàng không được vượt quá")
+              ) && <li>• Ngày đặt hàng không được vượt quá ngày hiện tại</li>}
+              {businessErrors.some((err) =>
+                err.includes("Ngày giao thực tế không được")
+              ) && <li>• Ngày giao thực tế không được trước ngày đặt hàng</li>}
+              {businessErrors.some((err) =>
+                err.includes("Giảm giá không được vượt quá")
+              ) && <li>• Giảm giá không được vượt quá tổng thành tiền</li>}
+              {businessErrors.some((err) =>
+                err.includes("Giảm giá không được âm")
+              ) && <li>• Giảm giá không được âm</li>}
+              {businessErrors.some((err) => err.includes("Không tìm thấy")) && (
+                <li>• Dữ liệu không tồn tại hoặc đã bị xóa</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* DeliveryBatch */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Đợt giao (create = select, edit = read-only) */}
@@ -403,7 +722,9 @@ export default function OrderForm({
           {!isEdit ? (
             // CREATE: cho phép chọn
             <select
-              className="w-full p-2 border rounded"
+              className={`w-full p-2 border rounded ${
+                hasFieldError("deliveryBatchId") ? "border-red-500" : ""
+              }`}
               value={form.deliveryBatchId}
               onChange={(e) => {
                 const id = e.target.value;
@@ -430,6 +751,11 @@ export default function OrderForm({
               className="bg-muted/40"
             />
           )}
+          {hasFieldError("deliveryBatchId") && (
+            <p className="text-red-500 text-xs mt-1">
+              {getFieldError("deliveryBatchId")}
+            </p>
+          )}
         </div>
 
         {/* Số đợt */}
@@ -452,16 +778,22 @@ export default function OrderForm({
           />
         </div>
 
-        {/* Ngày đặt */}
+        {/* Ngày tạo đơn hàng */}
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Ngày đặt (OrderDate)
+            Ngày tạo đơn hàng
           </label>
           <DatePicker
             value={form.orderDate}
             onChange={(v) => setField("orderDate", v)}
             placeholder="yyyy-MM-dd"
+            disabled={isEdit} // Disable khi edit vì ngày tạo không được thay đổi
           />
+          {isEdit && (
+            <p className="text-xs text-gray-500 mt-1">
+              Ngày tạo đơn hàng không thể thay đổi
+            </p>
+          )}
         </div>
       </div>
 
@@ -524,6 +856,15 @@ export default function OrderForm({
           Danh sách mặt hàng
         </label>
 
+        {/* Hiển thị lỗi tổng quát cho order items */}
+        {hasFieldError("orderItems") && (
+          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm font-medium">
+              {getFieldError("orderItems")}
+            </p>
+          </div>
+        )}
+
         {(form.orderItems ?? []).length > 0 && (
           <>
             {/* Header giống contract, thêm cột Sản phẩm => 7 cột */}
@@ -549,7 +890,11 @@ export default function OrderForm({
                   onChange={(e) =>
                     updateRow(idx, "contractDeliveryItemId", e.target.value)
                   }
-                  className="p-2 border rounded"
+                  className={`p-2 border rounded ${
+                    hasOrderItemError(idx, "contractDeliveryItemId")
+                      ? "border-red-500"
+                      : ""
+                  }`}
                   disabled={loadingOptions}
                 >
                   <option value="">-- Chọn mặt hàng --</option>
@@ -562,12 +907,19 @@ export default function OrderForm({
                     </option>
                   ))}
                 </select>
+                {hasOrderItemError(idx, "contractDeliveryItemId") && (
+                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
+                    {getOrderItemError(idx, "contractDeliveryItemId")}
+                  </p>
+                )}
 
                 {/* Sản phẩm */}
                 <select
                   value={row.productId}
                   onChange={(e) => updateRow(idx, "productId", e.target.value)}
-                  className="p-2 border rounded"
+                  className={`p-2 border rounded ${
+                    hasOrderItemError(idx, "productId") ? "border-red-500" : ""
+                  }`}
                   disabled={loadingOptions}
                 >
                   <option value="">-- Chọn sản phẩm --</option>
@@ -577,6 +929,11 @@ export default function OrderForm({
                     </option>
                   ))}
                 </select>
+                {hasOrderItemError(idx, "productId") && (
+                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
+                    {getOrderItemError(idx, "productId")}
+                  </p>
+                )}
 
                 {/* Số lượng */}
                 <Input
@@ -591,12 +948,19 @@ export default function OrderForm({
                       e.target.value === "" ? "" : Number(e.target.value)
                     )
                   }
-                  className="no-spinner"
+                  className={`no-spinner ${
+                    hasOrderItemError(idx, "quantity") ? "border-red-500" : ""
+                  }`}
                   onKeyDown={(e) => {
                     if (e.key === "-" || e.key.toLowerCase() === "e")
                       e.preventDefault();
                   }}
                 />
+                {hasOrderItemError(idx, "quantity") && (
+                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
+                    {getOrderItemError(idx, "quantity")}
+                  </p>
+                )}
 
                 {/* Đơn giá */}
                 <Input
@@ -611,12 +975,19 @@ export default function OrderForm({
                       e.target.value === "" ? "" : Number(e.target.value)
                     )
                   }
-                  className="no-spinner"
+                  className={`no-spinner ${
+                    hasOrderItemError(idx, "unitPrice") ? "border-red-500" : ""
+                  }`}
                   onKeyDown={(e) => {
                     if (e.key === "-" || e.key.toLowerCase() === "e")
                       e.preventDefault();
                   }}
                 />
+                {hasOrderItemError(idx, "unitPrice") && (
+                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
+                    {getOrderItemError(idx, "unitPrice")}
+                  </p>
+                )}
 
                 {/* Giảm trừ (%) */}
                 <Input
