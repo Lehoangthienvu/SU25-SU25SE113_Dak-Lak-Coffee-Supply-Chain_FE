@@ -2,7 +2,7 @@
 
 import ShipmentForm from "@/components/shipments/ShipmentForm";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllUserAccounts } from "@/lib/api/userAccounts";
 
 export default function CreateShipmentPage() {
