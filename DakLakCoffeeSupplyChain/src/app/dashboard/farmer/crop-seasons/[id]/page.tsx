@@ -245,7 +245,6 @@ export default function CropSeasonDetail() {
                     <CardContent className="p-4">
                         <CropSeasonDetailTable
                             details={season.details}
-                            cropSeasonId={season.cropSeasonId}
                             onReload={loadSeason}
                         />
                     </CardContent>
