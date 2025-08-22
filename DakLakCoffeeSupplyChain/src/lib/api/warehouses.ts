@@ -1,4 +1,4 @@
-const API_URL = "https://localhost:7163/api/Warehouses";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/Warehouses`;
 
 // ✅ Hàm tiện ích dùng chung gọi API an toàn, hỗ trợ cả ServiceResult và JSON thuần
 async function safeFetch(

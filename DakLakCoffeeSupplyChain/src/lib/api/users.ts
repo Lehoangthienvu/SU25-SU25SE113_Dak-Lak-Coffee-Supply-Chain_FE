@@ -66,7 +66,7 @@ export interface RoleItem {
   status: string; // 'Active' | 'Inactive' hoặc enum nếu muốn
 }
 
-const API_URL = "https://localhost:7163/api/UserAccounts";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/UserAccounts`;
 
 export async function getAllUsers(): Promise<UserProfile[]> {
   const token = localStorage.getItem("token");

@@ -1,4 +1,4 @@
-const BASE_URL = "https://localhost:7163/api/BusinessStaffs";
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/BusinessStaffs`;
 
 // ✅ Interface dùng đúng key theo JSON trả về
 export interface BusinessStaffListDto {
