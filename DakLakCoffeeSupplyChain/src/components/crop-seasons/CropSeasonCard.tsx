@@ -23,7 +23,7 @@ export default function CropSeasonCard({ season, onDeleted }: Props) {
 
         try {
             const result = await deleteCropSeasonById(season.cropSeasonId);
-            if (result.code === 200 || result.code === 'SUCCESS_DELETE') {
+            if (result.code === 200) {
                 toast.success('Đã xoá mùa vụ thành công.');
                 onDeleted?.(season.cropSeasonId);
             } else {

@@ -12,18 +12,16 @@ import { useConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
 import { Edit, Trash, Eye, Coffee, MapPin, Calendar, TrendingUp, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import UpdateCropSeasonDetailDialog from "@/app/dashboard/farmer/crop-seasons/[id]/details/edit/page";
+import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
 import { softDeleteCropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 
 interface Props {
   details: CropSeasonDetail[];
-  cropSeasonId: string;
   onReload: () => void;
 }
 
 export default function CropSeasonDetailTable({
   details,
-  cropSeasonId,
   onReload,
 }: Props) {
   const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
@@ -188,7 +186,6 @@ export default function CropSeasonDetailTable({
                       <DialogContent title="Chỉnh sửa vùng trồng">
                         <UpdateCropSeasonDetailDialog
                           detailId={detail.detailId}
-                          cropSeasonId={cropSeasonId}
                           onClose={() => setEditingDetailId(null)}
                           onSuccess={onReload}
                         />
@@ -225,7 +222,7 @@ export default function CropSeasonDetailTable({
           </tbody>
         </table>
       </div>
-      
+
       {/* Confirmation Dialog */}
       <ConfirmationDialog />
     </>
