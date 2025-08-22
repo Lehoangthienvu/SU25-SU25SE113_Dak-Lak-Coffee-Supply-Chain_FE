@@ -312,9 +312,9 @@ export default function ManagerCropSeasonsPage() {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={cn(
                                                         "inline-flex px-2 py-1 text-xs font-semibold rounded-full",
-                                                        getStatusColor(season.status)
+                                                        getStatusColor(season.status as CropSeasonStatusValue)
                                                     )}>
-                                                        {CropSeasonStatusMap[season.status]?.label || season.status}
+                                                        {CropSeasonStatusMap[season.status as CropSeasonStatusValue]?.label || season.status}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
