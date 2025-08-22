@@ -10,7 +10,7 @@ if (!apiUrl) {
 
 const api: AxiosInstance = axios.create({
   baseURL: apiUrl,
-  timeout: 200000, 
+  timeout: 30000, // Giảm timeout xuống 30 giây thay vì 200 giây
   headers: {
     "Content-Type": "application/json",
   },

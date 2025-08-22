@@ -35,9 +35,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const loadNotifications = async (page: number = 1, pageSize: number = 10) => {
     try {
       setLoading(true);
-      console.log("🔍 Loading notifications...");
       const response: NotificationResponse = await notificationService.getUserNotifications(page, pageSize);
-      console.log("📨 Notifications response:", response);
       setNotifications(response.data);
     } catch (error) {
       console.error("❌ Error loading notifications:", error);
@@ -49,9 +47,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const markAsRead = async (notificationId: string) => {
     try {
       await notificationService.markAsRead(notificationId);
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif.notificationId === notificationId 
+      setNotifications(prev =>
+        prev.map(notif =>
+          notif.notificationId === notificationId
             ? { ...notif, isRead: true, readAt: new Date().toISOString() }
             : notif
         )
@@ -65,7 +63,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const markAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(notif => ({ ...notif, isRead: true, readAt: new Date().toISOString() }))
       );
       setUnreadCount(0);
@@ -76,9 +74,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
   const refreshUnreadCount = async () => {
     try {
-      console.log("🔢 Refreshing unread count...");
       const response = await notificationService.getUnreadCount();
-      console.log("🔢 Unread count response:", response);
       setUnreadCount(response.data);
     } catch (error) {
       console.error("❌ Error refreshing unread count:", error);
@@ -86,7 +82,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   };
 
   useEffect(() => {
-    console.log("🚀 NotificationContext mounted, loading initial data...");
     loadNotifications();
     refreshUnreadCount();
   }, []);

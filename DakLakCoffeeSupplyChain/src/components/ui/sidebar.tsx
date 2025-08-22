@@ -330,11 +330,6 @@ export function SidebarGroup() {
           <Link
             key={item.href}
             href={item.href}
-            onClick={() => {
-              console.log("🔍 DEBUG: Clicking navigation item:", item.title);
-              console.log("🔍 DEBUG: Navigation href:", item.href);
-              console.log("🔍 DEBUG: Current pathname:", pathname);
-            }}
             className={cn(
               "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
               isActive
