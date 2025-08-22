@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "rootDirectory": "DakLakCoffeeSupplyChain",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://daklak.coffee.techtheworld.id.vn/api"
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
