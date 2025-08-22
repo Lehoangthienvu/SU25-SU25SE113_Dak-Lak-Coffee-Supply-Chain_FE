@@ -113,6 +113,40 @@ export default function ContractDeliveryBatchForm({
           setFormData((prev) =>
             prev ? { ...prev, contractDeliveryItems: rows } : null
           );
+
+          // Tự động cập nhật trạng thái sau khi load items
+          setTimeout(() => {
+            if (rows.length > 0) {
+              // Tính toán trạng thái dựa trên khối lượng đã giao
+              const totalPlanned = rows.reduce(
+                (acc, x) => acc + (Number(x.plannedQuantity) || 0),
+                0
+              );
+              const totalFulfilled = rows.reduce(
+                (acc, x) => acc + (Number(x.fulfilledQuantity) || 0),
+                0
+              );
+
+              if (totalPlanned > 0 && totalFulfilled >= totalPlanned) {
+                // Nếu tổng đã giao >= tổng dự kiến thì chuyển sang "Hoàn thành"
+                setFormData((prev) =>
+                  prev
+                    ? { ...prev, status: ContractDeliveryBatchStatus.Fulfilled }
+                    : null
+                );
+              } else if (totalFulfilled > 0 && totalFulfilled < totalPlanned) {
+                // Nếu đã giao một phần thì chuyển sang "Đang thực hiện"
+                setFormData((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        status: ContractDeliveryBatchStatus.InProgress,
+                      }
+                    : null
+                );
+              }
+            }
+          }, 200);
         } catch (e) {
           console.error(e);
           toast.error("Không tải được danh sách mặt hàng của đợt giao.");
@@ -158,6 +192,34 @@ export default function ContractDeliveryBatchForm({
       }
     })();
   }, [formData?.contractId]);
+
+  // useEffect tự động cập nhật trạng thái khi khối lượng đã giao thay đổi
+  useEffect(() => {
+    if (!formData || !isEdit) return;
+
+    const totalPlanned = sumPlannedQuantity();
+    const totalFulfilled = sumFulfilledQuantity();
+
+    if (totalPlanned > 0 && totalFulfilled >= totalPlanned) {
+      // Nếu tổng đã giao >= tổng dự kiến thì chuyển sang "Hoàn thành"
+      if (formData.status !== ContractDeliveryBatchStatus.Fulfilled) {
+        setFormData((prev) =>
+          prev
+            ? { ...prev, status: ContractDeliveryBatchStatus.Fulfilled }
+            : null
+        );
+      }
+    } else if (totalFulfilled > 0 && totalFulfilled < totalPlanned) {
+      // Nếu đã giao một phần thì chuyển sang "Đang thực hiện"
+      if (formData.status !== ContractDeliveryBatchStatus.InProgress) {
+        setFormData((prev) =>
+          prev
+            ? { ...prev, status: ContractDeliveryBatchStatus.InProgress }
+            : null
+        );
+      }
+    }
+  }, [formData?.contractDeliveryItems, isEdit]);
 
   if (!formData) {
     return (
@@ -274,6 +336,12 @@ export default function ContractDeliveryBatchForm({
   const sumPlannedQuantity = () =>
     (formData.contractDeliveryItems || []).reduce(
       (acc, x) => acc + (Number(x.plannedQuantity) || 0),
+      0
+    );
+
+  const sumFulfilledQuantity = () =>
+    (formData.contractDeliveryItems || []).reduce(
+      (acc, x) => acc + (Number(x.fulfilledQuantity) || 0),
       0
     );
 
@@ -733,11 +801,15 @@ export default function ContractDeliveryBatchForm({
               )
             }
           >
-            {Object.values(ContractDeliveryBatchStatus).map((s) => (
-              <option key={s} value={s}>
-                {ContractDeliveryBatchStatusLabel[s]}
-              </option>
-            ))}
+            {Object.values(ContractDeliveryBatchStatus)
+              .filter(
+                (status) => status !== ContractDeliveryBatchStatus.Planned
+              )
+              .map((s) => (
+                <option key={s} value={s}>
+                  {ContractDeliveryBatchStatusLabel[s]}
+                </option>
+              ))}
           </select>
         </div>
       ) : (
@@ -860,9 +932,9 @@ export default function ContractDeliveryBatchForm({
                 min={0}
                 step={0.1}
                 value={row.fulfilledQuantity ?? 0}
-                onChange={(e) =>
-                  updateRow(idx, "fulfilledQuantity", Number(e.target.value))
-                }
+                onChange={(e) => {
+                  updateRow(idx, "fulfilledQuantity", Number(e.target.value));
+                }}
                 className="no-spinner text-left"
                 title="Khối lượng đã giao"
               />
@@ -899,6 +971,25 @@ export default function ContractDeliveryBatchForm({
           <div className="text-sm text-gray-600">
             Tổng khối lượng dòng:{" "}
             <strong>{sumPlannedQuantity().toLocaleString()}</strong> kg
+            {isEdit && (
+              <>
+                <br />
+                Tổng đã giao:{" "}
+                <strong
+                  className={
+                    sumFulfilledQuantity() >= sumPlannedQuantity()
+                      ? "text-green-600"
+                      : "text-blue-600"
+                  }
+                >
+                  {sumFulfilledQuantity().toLocaleString()}
+                </strong>{" "}
+                kg
+                {sumFulfilledQuantity() >= sumPlannedQuantity() && (
+                  <span className="ml-2 text-green-600">✅ Hoàn thành</span>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
