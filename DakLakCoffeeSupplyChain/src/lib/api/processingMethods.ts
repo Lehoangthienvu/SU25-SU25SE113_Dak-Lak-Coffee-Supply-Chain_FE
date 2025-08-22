@@ -12,7 +12,7 @@ export interface ProcessingMethod {
 
 export const getAllProcessingMethods = async (): Promise<ProcessingMethod[]> => {
   try {
-    const response = await api.get('/ProcessingMethods');
+    const response = await api.get('/ProcessingMethod');
     return response.data;
   } catch (error) {
     console.error('Error fetching processing methods:', error);
@@ -22,7 +22,7 @@ export const getAllProcessingMethods = async (): Promise<ProcessingMethod[]> => 
 
 export const getProcessingMethodById = async (id: string): Promise<ProcessingMethod> => {
   try {
-    const response = await api.get(`/ProcessingMethods/${id}`);
+    const response = await api.get(`/ProcessingMethod/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching processing method:', error);
@@ -32,7 +32,7 @@ export const getProcessingMethodById = async (id: string): Promise<ProcessingMet
 
 export const createProcessingMethod = async (data: Partial<ProcessingMethod>): Promise<ProcessingMethod> => {
   try {
-    const response = await api.post('/ProcessingMethods', data);
+    const response = await api.post('/ProcessingMethod', data);
     return response.data;
   } catch (error) {
     console.error('Error creating processing method:', error);
@@ -42,7 +42,7 @@ export const createProcessingMethod = async (data: Partial<ProcessingMethod>): P
 
 export const updateProcessingMethod = async (id: string, data: Partial<ProcessingMethod>): Promise<ProcessingMethod> => {
   try {
-    const response = await api.put(`/ProcessingMethods/${id}`, data);
+    const response = await api.put(`/ProcessingMethod/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('Error updating processing method:', error);
@@ -52,7 +52,7 @@ export const updateProcessingMethod = async (id: string, data: Partial<Processin
 
 export const deleteProcessingMethod = async (id: string): Promise<void> => {
   try {
-    await api.delete(`/ProcessingMethods/${id}`);
+    await api.delete(`/ProcessingMethod/${id}`);
   } catch (error) {
     console.error('Error deleting processing method:', error);
     throw error;
