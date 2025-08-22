@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Script from "next/script";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export default function RootLayout({
   children,
@@ -28,12 +29,14 @@ export default function RootLayout({
         <Script src="https://cdn.lordicon.com/lordicon.js" strategy="afterInteractive" />
       </head>
       <body className="bg-white text-black">
-        {showHeaderFooter && <Header />}
-        <main className="min-h-screen">
-          {children}
-          <Toaster richColors />
-        </main>
-        {showHeaderFooter && <Footer />}
+        <AuthProvider>
+          {showHeaderFooter && <Header />}
+          <main className="min-h-screen">
+            {children}
+            <Toaster richColors />
+          </main>
+          {showHeaderFooter && <Footer />}
+        </AuthProvider>
       </body>
     </html>
   );

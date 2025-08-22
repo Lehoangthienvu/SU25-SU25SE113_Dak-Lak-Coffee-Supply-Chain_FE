@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { roleRawToDisplayName } from "@/lib/constants/role";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { LogOut, User, Settings } from "lucide-react";
+import { authService } from "@/lib/auth/authService";
 
 const pathTitleMap: Record<string, string> = {
   dashboard: "Tổng quan",
@@ -57,9 +58,20 @@ export default function HeaderDashboard() {
   const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    setUserName(localStorage.getItem("user_name"));
-    setUserRole(localStorage.getItem("user_role_raw"));
-    setAvatar(localStorage.getItem("user_avatar"));
+    const user = authService.getUser();
+    console.log('🔍 HeaderDashboard useEffect:', { user });
+    if (user) {
+      setUserName(user.name);
+      // Sử dụng roleRawToDisplayName để hiển thị tên tiếng Việt
+      const displayRole = roleRawToDisplayName[user.roleRaw] || user.roleRaw;
+      console.log('🔍 HeaderDashboard setUserRole:', {
+        roleRaw: user.roleRaw,
+        displayRole,
+        roleRawToDisplayName: roleRawToDisplayName
+      });
+      setUserRole(displayRole);
+      setAvatar(user.avatar || null);
+    }
   }, []);
 
   const currentTitle = useMemo(() => {
@@ -132,8 +144,7 @@ export default function HeaderDashboard() {
                   {userName ?? "Ẩn danh"}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {roleRawToDisplayName[userRole ?? ""] ??
-                    "Vai trò không xác định"}
+                  {userRole ?? "Vai trò không xác định"}
                 </p>
               </div>
               <div className="relative">
@@ -165,8 +176,7 @@ export default function HeaderDashboard() {
                       {userName ?? "Ẩn danh"}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {roleRawToDisplayName[userRole ?? ""] ??
-                        "Vai trò không xác định"}
+                      {userRole ?? "Vai trò không xác định"}
                     </p>
                   </div>
                 </div>
@@ -197,8 +207,7 @@ export default function HeaderDashboard() {
               <DropdownMenu.Item
                 className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200"
                 onClick={() => {
-                  localStorage.clear();
-                  router.push("/auth/login");
+                  authService.logout();
                 }}
               >
                 <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">

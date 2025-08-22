@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { HTTP_ERROR_MESSAGES } from "../constants/httpErrors";
+import { authService } from "../auth/authService";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -26,7 +27,7 @@ api.interceptors.request.use(
     // Can thiệp khi là FormData
     const isFD = typeof FormData !== "undefined" && config.data instanceof FormData;
     if (isFD && config.headers) {
-      delete (config.headers as any)["Content-Type"]; // để browser tự set boundary
+      delete (config.headers as Record<string, unknown>)["Content-Type"]; // để browser tự set boundary
     }
     return config;
   },
@@ -49,6 +50,18 @@ api.interceptors.response.use(
     // LỖI TỪ BACKEND CÓ RESPONSE
     if (error.response) {
       const status = error.response.status;
+      
+      // Xử lý lỗi xác thực (401 Unauthorized)
+      if (status === 401) {
+        authService.forceLogout('Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.');
+        return Promise.reject(new Error('Phiên đăng nhập đã hết hạn'));
+      }
+      
+      // Xử lý lỗi quyền truy cập (403 Forbidden)
+      if (status === 403) {
+        authService.forceLogout('Bạn không có quyền truy cập vào tài nguyên này.');
+        return Promise.reject(new Error('Không có quyền truy cập'));
+      }
       
       // Giữ nguyên cấu trúc lỗi validation (400 Bad Request)
       if (status === 400 && error.response.data?.errors) {

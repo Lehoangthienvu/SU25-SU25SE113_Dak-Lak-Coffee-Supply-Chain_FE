@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import React from "react";
+import { authService } from "@/lib/auth/authService";
 import {
   FiPieChart,
   FiUsers,
@@ -123,8 +124,10 @@ export function SidebarGroup() {
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("user_role"); // slug: "admin", "expert", ...
-    setRole(storedRole);
+    const user = authService.getUser();
+    if (user) {
+      setRole(user.role);
+    }
   }, []);
 
   const navigationItems: Record<
@@ -975,8 +978,10 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedName = localStorage.getItem("user_name");
-    setUserName(storedName);
+    const user = authService.getUser();
+    if (user) {
+      setUserName(user.name);
+    }
   }, []);
 
   if (isCollapsed) return null;
@@ -991,10 +996,10 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
       </div>
       <button
         onClick={() => {
-          localStorage.clear();
-          window.location.href = "/auth/login";
+          authService.logout();
         }}
         className="text-red-600 text-sm hover:underline transition-all"
+        title="Đăng xuất và về trang chính"
       >
         Đăng xuất
       </button>

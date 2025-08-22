@@ -2,17 +2,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Coffee, Loader2 } from "lucide-react";
+import { authService } from "@/lib/auth/authService";
 
 export default function DashboardRootPage() {
   const [redirecting, setRedirecting] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const roleSlug = localStorage.getItem("user_role");
-    if (roleSlug) {
-      router.push(`/dashboard/${roleSlug}`);
+    const user = authService.getUser();
+    if (user) {
+      router.push(`/dashboard/${user.role}`);
     } else {
-      router.push("/not-found");
+      router.push("/");
     }
 
     setRedirecting(false);

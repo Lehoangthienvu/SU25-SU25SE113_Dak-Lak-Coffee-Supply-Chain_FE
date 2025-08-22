@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { User, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { authService } from "@/lib/auth/authService";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,9 +16,9 @@ export default function Header() {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const role = localStorage.getItem("user_role"); // đã là slug (e.g. "farmer", "manager")
-    if (role) {
-      setUserRole(role);
+    const user = authService.getUser();
+    if (user) {
+      setUserRole(user.role);
     }
   }, []);
 
@@ -27,10 +28,10 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const storedName = localStorage.getItem("user_name");
-    if (storedName) {
+    const user = authService.getUser();
+    if (user) {
       setIsLoggedIn(true);
-      setUserName(storedName);
+      setUserName(user.name);
     }
   }, []);
 
@@ -100,8 +101,7 @@ export default function Header() {
                     <DropdownMenu.Item
                       className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors duration-200"
                       onClick={() => {
-                        localStorage.clear();
-                        router.push("/auth/login");
+                        authService.logout();
                       }}
                     >
                       Đăng xuất
@@ -179,8 +179,7 @@ export default function Header() {
                   </button>
                   <button
                     onClick={() => {
-                      localStorage.clear();
-                      router.push("/auth/login");
+                      authService.logout();
                     }}
                     className="text-left text-red-600 hover:bg-red-50 transition-colors duration-200 px-3 py-2 rounded-lg"
                   >
