@@ -45,9 +45,7 @@ export default function CreateProcessingProgressForm({
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        console.log("🔍 DEBUG: Fetching batches for create progress form...");
         const res = await getAllProcessingBatches();
-        console.log("🔍 DEBUG: All batches:", res);
 
         const filtered = (res || []).filter((b) =>
           b.status === ProcessingStatus.NotStarted ||
@@ -55,30 +53,22 @@ export default function CreateProcessingProgressForm({
           b.status === ProcessingStatus.AwaitingEvaluation
         );
 
-        console.log("🔍 DEBUG: Filtered batches:", filtered);
-        console.log("🔍 DEBUG: Available statuses:", filtered.map(b => ({ batchCode: b.batchCode, status: b.status })));
-
         setBatches(filtered);
 
         // Nếu có defaultBatchId, tự động select và load stage
         if (defaultBatchId) {
-          console.log("🔍 DEBUG: Auto-selecting batch:", defaultBatchId);
           const targetBatch = filtered.find((b: ProcessingBatch) => b.batchId === defaultBatchId);
           if (targetBatch) {
-            console.log("🔍 DEBUG: Found target batch:", targetBatch);
             setSelectedBatch(targetBatch);
             setForm(prev => ({ ...prev, batchId: defaultBatchId }));
             fetchStagesForBatch(targetBatch.methodId);
           } else {
-            console.log("🔍 DEBUG: Target batch not found in filtered batches, using defaultBatchData");
             // Sử dụng defaultBatchData nếu có, hoặc tạo từ context
             if (defaultBatchData) {
-              console.log("🔍 DEBUG: Using defaultBatchData:", defaultBatchData);
               setSelectedBatch(defaultBatchData);
               setForm(prev => ({ ...prev, batchId: defaultBatchId }));
               fetchStagesForBatch(defaultBatchData.methodId);
             } else {
-              console.log("🔍 DEBUG: No defaultBatchData, creating from context");
               const contextBatch = {
                 batchId: defaultBatchId,
                 batchCode: `BATCH-${defaultBatchId}`,
@@ -126,9 +116,7 @@ export default function CreateProcessingProgressForm({
   const fetchStagesForBatch = async (methodId: number) => {
     try {
       setLoadingStages(true);
-      console.log("🔍 DEBUG: Fetching stages for methodId:", methodId);
       const stagesData = await getProcessingStagesByMethodId(methodId);
-      console.log("🔍 DEBUG: Stages data:", stagesData);
       setStages(stagesData || []);
     } catch (error) {
       console.error("❌ Error fetching stages:", error);
@@ -169,7 +157,6 @@ export default function CreateProcessingProgressForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("DEBUG: Form submitted");
     setLoading(true);
     setError("");
     setSuccess("");
@@ -235,11 +222,6 @@ export default function CreateProcessingProgressForm({
     const totalSize = totalPhotoSize + totalVideoSize;
     const totalSizeMB = totalSize / 1024 / 1024;
 
-    console.log("📊 File size analysis:");
-    console.log("  Photos:", form.photoFiles.length, "files,", (totalPhotoSize / 1024 / 1024).toFixed(2), "MB");
-    console.log("  Videos:", form.videoFiles.length, "files,", (totalVideoSize / 1024 / 1024).toFixed(2), "MB");
-    console.log("  Total:", totalSizeMB.toFixed(2), "MB");
-
     // Giới hạn tổng kích thước (50MB)
     if (totalSizeMB > 50) {
       setError(`Tổng kích thước files (${totalSizeMB.toFixed(2)}MB) vượt quá giới hạn 50MB`);
@@ -258,15 +240,12 @@ export default function CreateProcessingProgressForm({
     try {
       let compressedPhotos: File[] = [];
       if (form.photoFiles.length > 0) {
-        console.log("📷 Compressing", form.photoFiles.length, "photos...");
         const photoPromises = form.photoFiles.map(async (photo) => {
-          console.log("📷 Kích thước ảnh gốc:", photo.size / 1024 / 1024, "MB");
           const compressedPhoto = await imageCompression(photo, {
             maxSizeMB: 0.5,
             maxWidthOrHeight: 1000,
             useWebWorker: true,
           });
-          console.log("📷 Kích thước ảnh sau nén:", compressedPhoto.size / 1024 / 1024, "MB");
 
           // Tạo file mới với tên gốc
           return new File([compressedPhoto], photo.name, {
@@ -282,24 +261,6 @@ export default function CreateProcessingProgressForm({
       const parameterName = firstParameter.name.trim();
       const parameterValue = firstParameter.value.trim();
       const unit = firstParameter.unit.trim();
-
-      console.log("🚀 Submitting with data:", {
-        batchId: form.batchId,
-        progressDate: form.progressDate,
-        outputQuantity: form.outputQuantity,
-        outputUnit: form.outputUnit,
-        photoCount: compressedPhotos.length,
-        hasVideo: !!form.videoFiles.length,
-        parameterName,
-        parameterValue,
-        unit
-      });
-
-      // Tạo array tất cả files để gửi
-      const allFiles = [...compressedPhotos];
-      if (form.videoFiles.length > 0) {
-        allFiles.push(...form.videoFiles);
-      }
 
       await createProcessingBatchProgressWithMedia(form.batchId, {
         stageId: undefined, // Để Backend tự động xác định stage đầu tiên
@@ -612,7 +573,6 @@ export default function CreateProcessingProgressForm({
             type="button"
             variant="outline"
             onClick={() => {
-              console.log("DEBUG: Cancel button clicked");
               onSuccess?.();
             }}
             className="px-8 py-3 hover:bg-gray-50 border-gray-300 text-gray-700 font-medium transition-all duration-200"

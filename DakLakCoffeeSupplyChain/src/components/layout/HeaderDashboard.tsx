@@ -59,16 +59,10 @@ export default function HeaderDashboard() {
 
   useEffect(() => {
     const user = authService.getUser();
-    console.log('🔍 HeaderDashboard useEffect:', { user });
     if (user) {
       setUserName(user.name);
       // Sử dụng roleRawToDisplayName để hiển thị tên tiếng Việt
       const displayRole = roleRawToDisplayName[user.roleRaw] || user.roleRaw;
-      console.log('🔍 HeaderDashboard setUserRole:', {
-        roleRaw: user.roleRaw,
-        displayRole,
-        roleRawToDisplayName: roleRawToDisplayName
-      });
       setUserRole(displayRole);
       setAvatar(user.avatar || null);
     }
