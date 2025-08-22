@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import Script from "next/script";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/AuthProvider";
-import ClientLayout from "@/components/layout/ClientLayout";
+
 
 export default function RootLayout({
   children,
