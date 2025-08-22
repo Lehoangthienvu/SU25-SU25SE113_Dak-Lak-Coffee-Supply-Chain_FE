@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import {
   Search,
   PackagePlus,
@@ -47,6 +48,7 @@ export default function FarmerDeliveryRequestListPage() {
     status: true
   });
   const router = useRouter();
+  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,17 +67,25 @@ export default function FarmerDeliveryRequestListPage() {
   }, []);
 
   const handleCancel = async (id: string) => {
-    if (!confirm("Bạn có chắc muốn huỷ yêu cầu này không?")) return;
-    setLoadingId(id);
-    try {
-      const res = await cancelInboundRequest(id);
-      toast.success(res.message);
-      setRequests((prev) => prev.filter((r) => r.inboundRequestId !== id));
-    } catch (error: any) {
-      toast.error("Lỗi khi huỷ yêu cầu: " + error.message);
-    } finally {
-      setLoadingId(null);
-    }
+    openDialog({
+      title: "Xác nhận hủy yêu cầu",
+      message: "Bạn có chắc chắn muốn hủy yêu cầu này không? Hành động này không thể hoàn tác.",
+      confirmText: "Hủy yêu cầu",
+      cancelText: "Không",
+      type: "danger",
+      onConfirm: async () => {
+        setLoadingId(id);
+        try {
+          const res = await cancelInboundRequest(id);
+          toast.success(res.message);
+          setRequests((prev) => prev.filter((r) => r.inboundRequestId !== id));
+        } catch (error: any) {
+          toast.error("Lỗi khi huỷ yêu cầu: " + error.message);
+        } finally {
+          setLoadingId(null);
+        }
+      }
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -623,6 +633,9 @@ export default function FarmerDeliveryRequestListPage() {
           </main>
         </div>
       </div>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }

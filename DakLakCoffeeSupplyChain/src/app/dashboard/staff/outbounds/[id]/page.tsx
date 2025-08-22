@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { getOutboundRequestById, acceptOutboundRequest } from '@/lib/api/warehouseOutboundRequest';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import {
   ArrowLeft,
   Package,
@@ -22,6 +24,7 @@ export default function ViewOutboundRequestDetailStaff() {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   useEffect(() => {
     if (!id || typeof id !== 'string') return;
@@ -31,22 +34,29 @@ export default function ViewOutboundRequestDetailStaff() {
         if (res?.data) setData(res.data);
         else throw new Error(res?.message || 'Không lấy được dữ liệu');
       })
-      .catch((err) => alert('❌ ' + err.message))
+      .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
   }, [id]);
 
   const handleAccept = async () => {
     if (!data) return;
-    const ok = window.confirm('Duyệt yêu cầu này?');
-    if (!ok) return;
-
-    try {
-      const result = await acceptOutboundRequest(data.outboundRequestId);
-      alert('✅ ' + result.message);
-      router.push('/dashboard/staff/outbounds');
-    } catch (err: any) {
-      alert('❌ ' + err.message);
-    }
+    
+    openDialog({
+      title: "Xác nhận duyệt yêu cầu",
+      message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
+      confirmText: "Duyệt",
+      cancelText: "Hủy",
+      type: "success",
+      onConfirm: async () => {
+        try {
+          const result = await acceptOutboundRequest(data.outboundRequestId);
+          toast.success(result.message);
+          router.push('/dashboard/staff/outbounds');
+        } catch (err: any) {
+          toast.error(err.message);
+        }
+      }
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -145,6 +155,9 @@ export default function ViewOutboundRequestDetailStaff() {
           </div>
         </div>
       </div>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }

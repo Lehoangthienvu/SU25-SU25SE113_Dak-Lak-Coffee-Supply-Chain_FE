@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, Eye, Plus, Search, Warehouse, MapPin, Package, TrendingUp, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import Link from 'next/link';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -27,6 +28,7 @@ export default function WarehouseListPage() {
   const [usedCapacities, setUsedCapacities] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   useEffect(() => {
     async function fetchData() {
@@ -48,7 +50,7 @@ export default function WarehouseListPage() {
         }
         setUsedCapacities(usageMap);
       } catch (error) {
-        toast.error('❌ Lỗi khi tải danh sách kho');
+        toast.error('Lỗi khi tải danh sách kho');
       } finally {
         setLoading(false);
       }
@@ -76,15 +78,22 @@ export default function WarehouseListPage() {
   });
 
   const handleDelete = async (id: string) => {
-    if (confirm('Bạn chắc chắn muốn xoá kho này?')) {
-      const res = await deleteWarehouse(id);
-      if (res.status === 1) {
-        toast.success('✅ Đã xoá kho');
-        setWarehouses((prev) => prev.filter((w) => w.warehouseId !== id));
-      } else {
-        toast.error('❌ ' + res.message);
+    openDialog({
+      title: "Xác nhận xóa kho",
+      message: "Bạn có chắc chắn muốn xóa kho này không? Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.",
+      confirmText: "Xóa kho",
+      cancelText: "Hủy",
+      type: "danger",
+      onConfirm: async () => {
+        const res = await deleteWarehouse(id);
+        if (res.status === 1) {
+          toast.success('Đã xoá kho');
+          setWarehouses((prev) => prev.filter((w) => w.warehouseId !== id));
+        } else {
+          toast.error(res.message);
+        }
       }
-    }
+    });
   };
 
   return (
@@ -333,6 +342,9 @@ export default function WarehouseListPage() {
           })}
         </div>
       )}
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }

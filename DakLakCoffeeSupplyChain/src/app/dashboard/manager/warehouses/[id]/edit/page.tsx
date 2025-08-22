@@ -7,6 +7,7 @@ import { getWarehouseById, updateWarehouse } from '@/lib/api/warehouses';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function EditWarehousePage() {
@@ -34,7 +35,7 @@ export default function EditWarehousePage() {
           managerId: w.managerId ?? '',
         });
       } else {
-        alert('❌ Không thể tải thông tin kho');
+        toast.error('Không thể tải thông tin kho');
         router.push('/dashboard/manager/warehouses');
       }
     };
@@ -61,10 +62,10 @@ export default function EditWarehousePage() {
     setLoading(false);
 
     if (res.status === 1) {
-      alert('✅ Cập nhật kho thành công');
+      toast.success('Cập nhật kho thành công');
       router.push('/dashboard/manager/warehouses');
     } else {
-      alert('❌ ' + res.message);
+      toast.error(res.message);
     }
   };
 

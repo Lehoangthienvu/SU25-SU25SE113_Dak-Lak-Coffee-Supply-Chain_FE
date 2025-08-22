@@ -6,6 +6,7 @@ import { createWarehouseReceipt } from "@/lib/api/warehouseReceipt";
 import { getAllWarehouses } from "@/lib/api/warehouses";
 import { getAllInboundRequests } from "@/lib/api/warehouseInboundRequest";
 import { getInventoriesByWarehouseId, createInventory } from "@/lib/api/inventory";
+import { toast } from "sonner";
 
 import {
   Card, CardHeader, CardTitle, CardContent
@@ -90,10 +91,10 @@ export default function CreateReceiptPage() {
       try {
         const res = await getAllWarehouses();
         if (res.status === 1) setWarehouses(res.data);
-        else alert("❌ Không thể tải danh sách kho: " + res.message);
+        else toast.error("Không thể tải danh sách kho: " + res.message);
       } catch (err: any) {
         console.error("❌ getAllWarehouses:", err);
-        alert("❌ Lỗi không xác định khi tải danh sách kho");
+        toast.error("Lỗi không xác định khi tải danh sách kho");
       }
 
       try {
@@ -102,11 +103,11 @@ export default function CreateReceiptPage() {
           const approved = resInbound.data.filter((r: any) => r.status === "Approved");
           setInboundRequests(approved);
         } else {
-          alert("❌ Không thể tải phiếu yêu cầu nhập kho: " + resInbound.message);
+          toast.error("Không thể tải phiếu yêu cầu nhập kho: " + resInbound.message);
         }
       } catch (err: any) {
         console.error("❌ getAllInboundRequests:", err);
-        alert("❌ Lỗi không xác định khi tải phiếu yêu cầu nhập kho");
+        toast.error("Lỗi không xác định khi tải phiếu yêu cầu nhập kho");
       }
     };
 
@@ -177,7 +178,7 @@ export default function CreateReceiptPage() {
       };
       const res = await createInventory(payload);
       if ((res.status >= 200 && res.status < 300) || res.status === 200 || res.status === 201) {
-        alert("✅ Đã tạo tồn kho trống cho kho + lô này.");
+        toast.success("Đã tạo tồn kho trống cho kho + lô này.");
         const payloadAfter = await getInventoriesByWarehouseId(warehouseId);
         const listRaw = Array.isArray(payloadAfter) ? payloadAfter : (payloadAfter?.data ?? []);
         setAllInvOfWarehouse((listRaw || []).map(normalizeInventory));
@@ -224,7 +225,7 @@ export default function CreateReceiptPage() {
     try {
       const res = await createWarehouseReceipt(inboundRequestId, receiptData);
       if (res.status === 1) {
-        alert('✅ Tạo phiếu nhập kho thành công');
+        toast.success('Tạo phiếu nhập kho thành công');
         router.push('/dashboard/staff/receipts');
       } else {
         setError(res.message || "Tạo phiếu thất bại từ server.");

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Eye, Check, X, TrendingDown, Clock, CheckCircle, XCircle, Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 export default function StaffOutboundRequestList() {
   const [data, setData] = useState<any[]>([]);
@@ -22,6 +23,7 @@ export default function StaffOutboundRequestList() {
   const pageSize = 4;
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   useEffect(() => {
     // Lấy status filter từ URL query params
@@ -66,42 +68,79 @@ export default function StaffOutboundRequestList() {
   const totalQuantity = filteredData.reduce((sum, req) => sum + (req.requestedQuantity || 0), 0);
 
   const handleAccept = async (id: string) => {
-    if (!window.confirm('Bạn chắc chắn muốn duyệt yêu cầu này?')) return;
-
-    try {
-      const result = await acceptOutboundRequest(id);
-      if (result.status === 1) {
-        toast.success(result.message);
-        location.reload();
-      } else {
-        toast.error(result.message);
+    openDialog({
+      title: "Xác nhận duyệt yêu cầu",
+      message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
+      confirmText: "Duyệt",
+      cancelText: "Hủy",
+      type: "success",
+      onConfirm: async () => {
+        try {
+          const result = await acceptOutboundRequest(id);
+          if (result.status === 1) {
+            toast.success(result.message);
+            location.reload();
+          } else {
+            toast.error(result.message);
+          }
+        } catch (err: any) {
+          toast.error(err.message);
+        }
       }
-    } catch (err: any) {
-      toast.error(err.message);
-    }
+    });
   };
 
-  const handleReject = async (id: string) => {
-    const reason = prompt('Nhập lý do từ chối yêu cầu:');
-    if (!reason || !reason.trim()) return;
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
 
-    try {
-      const result = await rejectOutboundRequest(id, reason);
-      if (result.status === 1) {
-        toast.success(result.message);
-        setData((prev) =>
-          prev.map((item) =>
-            item.outboundRequestId === id
-              ? { ...item, status: 'Rejected', rejectReason: reason }
-              : item
-          )
-        );
-      } else {
-        toast.error(result.message);
+  const handleReject = async (id: string) => {
+    setRejectingId(id);
+    setRejectReason('');
+    
+    openDialog({
+      title: "Từ chối yêu cầu xuất kho",
+      message: (
+        <div className="space-y-3">
+          <p>Vui lòng nhập lý do từ chối yêu cầu:</p>
+          <textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="Nhập lý do từ chối..."
+            className="w-full p-2 border border-gray-300 rounded-md resize-none"
+            rows={3}
+          />
+        </div>
+      ),
+      confirmText: "Từ chối",
+      cancelText: "Hủy",
+      type: "danger",
+      onConfirm: async () => {
+        if (!rejectReason.trim()) {
+          toast.error('Vui lòng nhập lý do từ chối');
+          return;
+        }
+
+        try {
+          const result = await rejectOutboundRequest(id, rejectReason.trim());
+          if (result.status === 1) {
+            toast.success(result.message);
+            setData((prev) =>
+              prev.map((item) =>
+                item.outboundRequestId === id
+                  ? { ...item, status: 'Rejected', rejectReason: rejectReason.trim() }
+                  : item
+              )
+            );
+            setRejectingId(null);
+            setRejectReason('');
+          } else {
+            toast.error(result.message);
+          }
+        } catch (err: any) {
+          toast.error(err.message);
+        }
       }
-    } catch (err: any) {
-      toast.error(err.message);
-    }
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -376,6 +415,9 @@ export default function StaffOutboundRequestList() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }

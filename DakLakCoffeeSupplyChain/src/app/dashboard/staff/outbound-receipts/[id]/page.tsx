@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import {
   getOutboundReceiptById,
   confirmOutboundReceipt,
@@ -40,7 +41,7 @@ export default function OutboundReceiptDetailPage() {
       setConfirmedQuantity(data?.quantity?.toString() || '');
       setDestinationNote(data?.destinationNote || '');
     } catch (err: any) {
-      alert('❌ Lỗi khi tải chi tiết: ' + err.message);
+      toast.error('Lỗi khi tải chi tiết: ' + err.message);
       router.push('/dashboard/staff/outbound-receipts');
     } finally {
       setLoading(false);
@@ -74,7 +75,7 @@ export default function OutboundReceiptDetailPage() {
     setSubmitting(true);
     try {
       await confirmOutboundReceipt(id as string, input);
-      alert('✅ Xác nhận xuất kho thành công!');
+      toast.success('Xác nhận xuất kho thành công!');
       await fetchDetail();
     } catch (err: any) {
       setError('❌ Xác nhận thất bại: ' + err.message);
