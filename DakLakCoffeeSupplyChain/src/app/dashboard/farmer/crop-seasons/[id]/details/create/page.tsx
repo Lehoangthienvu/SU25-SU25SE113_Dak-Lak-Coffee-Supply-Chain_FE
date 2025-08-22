@@ -90,8 +90,8 @@ export default function CreateCropSeasonDetailPage() {
 
         const details = matched.farmingCommitmentDetails.map((detail: Partial<FarmingCommitmentDetail>) => ({
           commitmentDetailId: detail.commitmentDetailId || "",
-          commitmentDetailCode: detail.commitmentDetailCode,
-          note: detail.note,
+          commitmentDetailCode: detail.commitmentDetailCode || "",
+          note: detail.note || "",
           committedQuantity: detail.committedQuantity || 0,
           estimatedDeliveryStart: detail.estimatedDeliveryStart || "",
           estimatedDeliveryEnd: detail.estimatedDeliveryEnd || "",

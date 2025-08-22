@@ -33,9 +33,9 @@ import { toast } from "sonner";
 const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
     const code = stageCode.toLowerCase();
     const name = stageName.toLowerCase();
-    
+
     // Specific mappings for known stage codes
-    if (code.includes('plant') || code.includes('giao') || code.includes('trong') || 
+    if (code.includes('plant') || code.includes('giao') || code.includes('trong') ||
         name.includes('giao') || name.includes('trồng')) {
         return (
             <div className="w-6 h-6 flex items-center justify-center rounded-full bg-green-100">
@@ -43,7 +43,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('flower') || code.includes('hoa') || code.includes('nở') ||
         name.includes('hoa') || name.includes('nở')) {
         return (
@@ -52,7 +52,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('fruit') || code.includes('quả') || code.includes('trái') ||
         name.includes('quả') || name.includes('trái')) {
         return (
@@ -61,7 +61,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('ripen') || code.includes('chín') || code.includes('mature') ||
         name.includes('chín') || name.includes('trưởng')) {
         return (
@@ -70,7 +70,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('harvest') || code.includes('thu') || code.includes('gặt') ||
         name.includes('thu') || name.includes('gặt')) {
         return (
@@ -79,7 +79,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('seed') || code.includes('hạt') || code.includes('mầm') ||
         name.includes('hạt') || name.includes('mầm')) {
         return (
@@ -88,7 +88,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('growth') || code.includes('tăng') || code.includes('phát') ||
         name.includes('tăng') || name.includes('phát')) {
         return (
@@ -97,7 +97,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     if (code.includes('coffee') || code.includes('cà phê') ||
         name.includes('cà phê') || name.includes('coffee')) {
         return (
@@ -106,14 +106,14 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
             </div>
         );
     }
-    
+
     // Fallback: generate icon based on stage name or code
     const fallbackIcon = (
         <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
             <TreePine className="h-4 w-4 text-gray-600" />
         </div>
     );
-    
+
     return fallbackIcon;
 };
 
