@@ -149,7 +149,7 @@ export default function LoginPage() {
                                 {/* Forgot Password */}
                                 <div className="text-right">
                                     <Link
-                                        href="/auth/forgot_password"
+                                        href="/auth/forgot-password"
                                         className="text-sm text-orange-600 hover:text-orange-700 font-medium hover:underline transition-colors"
                                     >
                                         Quên mật khẩu?

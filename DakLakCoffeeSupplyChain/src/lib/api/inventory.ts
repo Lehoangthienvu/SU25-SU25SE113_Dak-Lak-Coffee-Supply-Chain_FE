@@ -41,6 +41,32 @@ export async function getInventoriesByWarehouseId(warehouseId: string) {
   return await res.json(); // ✅ Trả mảng tồn kho theo kho
 }
 
+// ✅ Thêm function mới để lấy tồn kho với khuyến nghị FIFO
+export async function getInventoriesByWarehouseIdWithFifo(warehouseId: string, requestedQuantity?: number) {
+  const token = localStorage.getItem("token");
+  const url = requestedQuantity 
+    ? `https://localhost:7163/api/Inventories/warehouse/${warehouseId}/fifo?requestedQuantity=${requestedQuantity}`
+    : `https://localhost:7163/api/Inventories/warehouse/${warehouseId}/fifo`;
+    
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Không lấy được tồn kho với khuyến nghị FIFO.");
+  }
+
+  const contentType = res.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return [];
+  }
+
+  return await res.json(); // ✅ Trả mảng tồn kho với thông tin FIFO
+}
+
 // ✅ Thêm function mới để lấy TẤT CẢ tồn kho (cả sơ chế và tươi) cho warehouse detail
 export async function getInventoriesByWarehouseIdForDetail(warehouseId: string) {
   const token = localStorage.getItem("token");

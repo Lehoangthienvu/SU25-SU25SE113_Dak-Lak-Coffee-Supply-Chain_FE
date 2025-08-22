@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { createWarehouseOutboundRequest } from '@/lib/api/warehouseOutboundRequest';
+import { createWarehouseOutboundRequest, getOrderItemsWithRemainingQuantity } from '@/lib/api/warehouseOutboundRequest';
 import { getAllWarehouses } from '@/lib/api/warehouses';
-import { getInventoriesByWarehouseId } from '@/lib/api/inventory';
-import { getOrders, getOrderDetails } from '@/lib/api/orders';
+import { getInventoriesByWarehouseIdWithFifo } from '@/lib/api/inventory';
+import { getOrders } from '@/lib/api/orders';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,13 +26,37 @@ import {
   CheckCircle,
   MapPin,
   Hash,
-  BarChart3
+  BarChart3,
+  Clock,
+  Star
 } from 'lucide-react';
 
 type Warehouse = { warehouseId: string; name: string; location?: string };
-type Inventory = { inventoryId: string; inventoryCode: string; quantity: number; unit?: string };
+
 type Order = { orderId: string; orderCode: string; contractNumber?: string; deliveryBatchCode?: string };
-type OrderItem = { orderItemId: string; productName: string; quantity?: number | null };
+
+type OrderItem = { 
+  orderItemId: string; 
+  productName: string; 
+  quantity?: number | null;
+  totalQuantity: number;
+  confirmedQuantity: number;
+  remainingQuantity: number;
+  coffeeTypeName: string;
+};
+
+type Inventory = {
+  inventoryId: string;
+  inventoryCode: string;
+  quantity: number;
+  unit: string;
+  productName: string;
+  batchCode: string;
+  createdAt: string;
+  fifoPriority: number;
+  isRecommended: boolean;
+  fifoRecommendation: string;
+};
 
 export default function CreateOutboundRequestPage() {
   const router = useRouter();
@@ -83,13 +107,43 @@ export default function CreateOutboundRequestPage() {
     }
     (async () => {
       try {
-        const data = await getInventoriesByWarehouseId(form.warehouseId);
+        const requestedQty = parseFloat(form.requestedQuantity) || undefined;
+        const data = await getInventoriesByWarehouseIdWithFifo(form.warehouseId, requestedQty);
         setInventories(data || []);
+        
+        // Tự động chọn inventory được khuyến nghị đầu tiên
+        const recommendedInventory = data?.find((inv: Inventory) => inv.isRecommended);
+        if (recommendedInventory && !form.inventoryId) {
+          setForm((p) => ({ ...p, inventoryId: recommendedInventory.inventoryId }));
+        }
       } catch (e: any) {
         toast.error(e.message || 'Không thể tải tồn kho');
       }
     })();
-  }, [form.warehouseId]);
+  }, [form.warehouseId, form.requestedQuantity]);
+
+  // Khi thay đổi số lượng yêu cầu → cập nhật khuyến nghị FIFO
+  useEffect(() => {
+    if (!form.warehouseId) return;
+    
+    const timeoutId = setTimeout(async () => {
+      try {
+        const requestedQty = parseFloat(form.requestedQuantity) || undefined;
+        const data = await getInventoriesByWarehouseIdWithFifo(form.warehouseId, requestedQty);
+        setInventories(data || []);
+        
+        // Tự động chọn inventory được khuyến nghị đầu tiên
+        const recommendedInventory = data?.find((inv: Inventory) => inv.isRecommended);
+        if (recommendedInventory && !form.inventoryId) {
+          setForm((p) => ({ ...p, inventoryId: recommendedInventory.inventoryId }));
+        }
+      } catch (e: any) {
+        console.error('Lỗi khi cập nhật khuyến nghị FIFO:', e);
+      }
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [form.requestedQuantity, form.warehouseId]);
 
   // Khi chọn đơn hàng → reset orderItemId + nạp danh sách item theo đơn
   useEffect(() => {
@@ -100,8 +154,8 @@ export default function CreateOutboundRequestPage() {
     }
     (async () => {
       try {
-        const detail = await getOrderDetails(form.orderId);
-        setOrderItems(detail?.orderItems || []);
+        const detail = await getOrderItemsWithRemainingQuantity(form.orderId);
+        setOrderItems(detail || []);
       } catch (e: any) {
         toast.error(e.message || 'Không thể tải danh sách mục hàng');
       }
@@ -122,6 +176,23 @@ export default function CreateOutboundRequestPage() {
       setForm((p) => ({ ...p, orderId: value, orderItemId: '' }));
       return;
     }
+    if (name === 'orderItemId') {
+      setForm((p) => ({ ...p, orderItemId: value }));
+      
+      // ✅ Tự động điền số lượng yêu cầu bằng số lượng còn lại của order item
+      if (value) {
+        const selectedItem = orderItems.find(item => item.orderItemId === value);
+        if (selectedItem && selectedItem.remainingQuantity > 0) {
+          setForm((p) => ({ 
+            ...p, 
+            orderItemId: value,
+            requestedQuantity: selectedItem.remainingQuantity.toString(),
+            unit: 'kg'
+          }));
+        }
+      }
+      return;
+    }
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -137,6 +208,14 @@ export default function CreateOutboundRequestPage() {
       return;
     }
 
+    // ✅ Kiểm tra số lượng yêu cầu không vượt quá số lượng còn lại của order item
+    if (form.orderItemId && selectedOrderItem) {
+      if (qty > selectedOrderItem.remainingQuantity) {
+        toast.error(`Số lượng yêu cầu (${qty}) vượt quá số lượng còn lại của đơn hàng (${selectedOrderItem.remainingQuantity})`);
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       const payload = {
@@ -144,10 +223,13 @@ export default function CreateOutboundRequestPage() {
         inventoryId: form.inventoryId,
         requestedQuantity: qty,
         unit: form.unit.trim(),
-        purpose: form.purpose || undefined,
-        reason: form.reason || undefined,
-        orderItemId: form.orderItemId || undefined,
+        purpose: form.purpose?.trim() || undefined,
+        reason: form.reason?.trim() || undefined,
+        orderItemId: form.orderItemId && form.orderItemId !== '' ? form.orderItemId : undefined,
       };
+
+      console.log('DEBUG: Form data:', form);
+      console.log('DEBUG: Payload being sent:', payload);
 
       const message = await createWarehouseOutboundRequest(payload);
       toast.success(message || 'Tạo yêu cầu thành công');
@@ -162,6 +244,7 @@ export default function CreateOutboundRequestPage() {
   // Tính toán thống kê
   const selectedWarehouse = warehouses.find(w => w.warehouseId === form.warehouseId);
   const selectedInventory = inventories.find(inv => inv.inventoryId === form.inventoryId);
+  const selectedOrderItem = orderItems.find(item => item.orderItemId === form.orderItemId);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 p-4">
@@ -230,14 +313,14 @@ export default function CreateOutboundRequestPage() {
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Package className="w-4 h-4 text-blue-600" />
-                        Chọn tồn kho *
+                        Chọn tồn kho * (FIFO)
                       </Label>
                       <select
                         name="inventoryId"
                         value={form.inventoryId}
                         onChange={handleChange}
                         disabled={!form.warehouseId}
-                        className={`w-full h-10 border-2 rounded-lg px-3 focus:outline-none focus:ring-2 transition-all duration-200 text-sm ${
+                        className={`w-full border-2 rounded-lg px-3 focus:outline-none focus:ring-2 transition-all duration-200 text-sm ${
                           !form.warehouseId 
                             ? 'border-gray-200 bg-gray-50 text-gray-400' 
                             : 'border-blue-200 focus:border-blue-500 focus:ring-blue-200 bg-white'
@@ -246,10 +329,24 @@ export default function CreateOutboundRequestPage() {
                         <option value="">-- Chọn tồn kho --</option>
                         {inventories.map((inv) => (
                           <option key={inv.inventoryId} value={inv.inventoryId}>
-                            {inv.inventoryCode} – {inv.quantity} {inv.unit ?? ''}
+                            {inv.isRecommended ? '⭐ ' : ''}{inv.inventoryCode} – {inv.quantity} {inv.unit ?? ''} 
+                            {inv.isRecommended ? ' (Khuyến nghị)' : ''}
                           </option>
                         ))}
                       </select>
+                      
+                      {/* Hiển thị thông tin khuyến nghị FIFO */}
+                      {selectedInventory && selectedInventory.isRecommended && (
+                        <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center gap-2 text-green-700 text-sm">
+                            <Star className="w-4 h-4 text-green-600" />
+                            <span className="font-medium">Khuyến nghị FIFO:</span>
+                          </div>
+                          <p className="text-green-600 text-xs mt-1 ml-6">
+                            {selectedInventory.fifoRecommendation}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -347,7 +444,8 @@ export default function CreateOutboundRequestPage() {
                         <option value="">-- Chọn mục hàng --</option>
                         {orderItems.map((item) => (
                           <option key={item.orderItemId} value={item.orderItemId}>
-                            {item.productName} – {item.quantity ?? 0}
+                            {item.productName} – Còn lại: {item.remainingQuantity} kg
+                            {item.remainingQuantity <= 0 ? ' (Hết hàng)' : ''}
                           </option>
                         ))}
                       </select>
@@ -443,6 +541,88 @@ export default function CreateOutboundRequestPage() {
               </Card>
             )}
 
+            {/* Thông tin tồn kho đã chọn */}
+            {selectedInventory && (
+              <Card className="bg-white shadow-lg border-0">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 p-3">
+                  <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
+                    <Package className="w-4 h-4 text-blue-600" />
+                    Tồn kho đã chọn
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3">
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Hash className="w-3 h-3 text-blue-600" />
+                      <span className="font-semibold text-gray-800">{selectedInventory.inventoryCode}</span>
+                    </div>
+                    <div className="text-gray-600">{selectedInventory.productName}</div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Số lượng:</span>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                        {selectedInventory.quantity} {selectedInventory.unit}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Thứ tự FIFO:</span>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                        #{selectedInventory.fifoPriority}
+                      </Badge>
+                    </div>
+                    {selectedInventory.isRecommended && (
+                      <div className="flex items-center gap-2 mt-2 p-2 bg-green-50 border border-green-200 rounded">
+                        <Star className="w-3 h-3 text-green-600" />
+                        <span className="text-green-700 text-xs font-medium">Được khuyến nghị</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Thông tin mục hàng đã chọn */}
+            {selectedOrderItem && (
+              <Card className="bg-white shadow-lg border-0">
+                <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-3">
+                  <CardTitle className="text-sm font-bold text-purple-800 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-purple-600" />
+                    Mục hàng đã chọn
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3">
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3 h-3 text-purple-600" />
+                      <span className="font-semibold text-gray-800">{selectedOrderItem.productName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Tổng số lượng:</span>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                        {selectedOrderItem.totalQuantity} kg
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Đã xuất:</span>
+                      <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
+                        {selectedOrderItem.confirmedQuantity} kg
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Còn lại:</span>
+                      <Badge variant="secondary" className={`text-xs ${
+                        selectedOrderItem.remainingQuantity > 0 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {selectedOrderItem.remainingQuantity} kg
+                        {selectedOrderItem.remainingQuantity <= 0 ? ' (Hết hàng)' : ''}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Help gọn */}
             <Card className="bg-white shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 p-3">
@@ -457,6 +637,21 @@ export default function CreateOutboundRequestPage() {
                   <p>• Nhập số lượng và đơn vị chính xác</p>
                   <p>• Ghi rõ mục đích và lý do xuất kho</p>
                   <p>• Có thể liên kết với đơn hàng (tùy chọn)</p>
+                </div>
+                <div className="mt-3 pt-3 border-t border-green-100">
+                  <div className="text-xs text-orange-700 space-y-1">
+                    <p className="font-medium">⭐ Hệ thống áp dụng FIFO (First In, First Out)</p>
+                    <p>• Tồn kho nhập trước sẽ được khuyến nghị xuất trước</p>
+                    <p>• Giúp tối ưu hóa quản lý tồn kho và chất lượng sản phẩm</p>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-green-100">
+                  <div className="text-xs text-purple-700 space-y-1">
+                    <p className="font-medium">📊 Tính năng thông minh:</p>
+                    <p>• Tự động tính số lượng còn lại của đơn hàng</p>
+                    <p>• Tự động điền số lượng khi chọn mục hàng</p>
+                    <p>• Kiểm tra giới hạn số lượng trước khi tạo yêu cầu</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

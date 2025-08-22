@@ -28,6 +28,8 @@ export async function createWarehouseOutboundRequest(
 ): Promise<string> {
   const token = getToken();
 
+  console.log('DEBUG: Sending request with payload:', input);
+
   const response = await fetch(ENDPOINT, {
     method: "POST",
     headers: {
@@ -37,8 +39,17 @@ export async function createWarehouseOutboundRequest(
     body: JSON.stringify(input),
   });
 
+  console.log('DEBUG: Response status:', response.status);
+  console.log('DEBUG: Response headers:', response.headers);
+
   const result = await response.json();
-  if (!response.ok || result.status !== 1) {
+  console.log('DEBUG: Response body:', result);
+
+  if (!response.ok) {
+    throw new Error(result.message || `HTTP ${response.status}: Gửi yêu cầu thất bại`);
+  }
+
+  if (result.status !== 1) {
     throw new Error(result.message || "Gửi yêu cầu thất bại");
   }
 
@@ -102,6 +113,23 @@ export async function rejectOutboundRequest(id: string, reason: string): Promise
     },
     body: JSON.stringify({ rejectReason: reason }),
   });
+
+  return await res.json();
+}
+
+// ✅ Thêm function mới để lấy order items với số lượng còn lại
+export async function getOrderItemsWithRemainingQuantity(orderId: string): Promise<any[]> {
+  const token = getToken();
+  const res = await fetch(`${ENDPOINT}/order/${orderId}/items`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Không lấy được danh sách mục hàng với số lượng còn lại.");
+  }
 
   return await res.json();
 }

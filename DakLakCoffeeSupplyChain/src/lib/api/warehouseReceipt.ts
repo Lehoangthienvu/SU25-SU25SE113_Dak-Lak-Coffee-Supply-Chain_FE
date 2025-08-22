@@ -1,4 +1,4 @@
-const BASE_URL = "https://localhost:7163/api/WarehouseReceipts";
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/WarehouseReceipts`;
 
 // Hàm tiện ích dùng chung để gọi API an toàn
 async function safeFetch(
