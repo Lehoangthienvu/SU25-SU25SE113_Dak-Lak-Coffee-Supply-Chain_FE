@@ -27,6 +27,7 @@ import {
   softDeleteContractDeliveryBatch,
 } from "@/lib/api/contractDeliveryBatches";
 import FilterDeliveryBatchStatusPanel from "@/components/contract-delivery-batches/FilterDeliveryBatchStatusPanel";
+import { deliveryBatchDisplayMap } from "@/lib/constants/contractDeliveryBatchStatus";
 import { Tooltip } from "@/components/ui/tooltip";
 import { formatQuantity } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -136,7 +137,6 @@ export default function ContractDeliveryBatchesPage() {
 
   const statusList: (ContractDeliveryBatchStatus | "ALL")[] = [
     "ALL",
-    ContractDeliveryBatchStatus.Planned,
     ContractDeliveryBatchStatus.InProgress,
     ContractDeliveryBatchStatus.Fulfilled,
     ContractDeliveryBatchStatus.Cancelled,
@@ -146,6 +146,33 @@ export default function ContractDeliveryBatchesPage() {
     acc[item.status] = (acc[item.status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
+  // Lọc statusCounts để chỉ chứa các trạng thái cần hiển thị
+  const filteredStatusCounts: Record<string, number> = {
+    [ContractDeliveryBatchStatus.InProgress]:
+      statusCounts[ContractDeliveryBatchStatus.InProgress] || 0,
+    [ContractDeliveryBatchStatus.Fulfilled]:
+      statusCounts[ContractDeliveryBatchStatus.Fulfilled] || 0,
+    [ContractDeliveryBatchStatus.Cancelled]:
+      statusCounts[ContractDeliveryBatchStatus.Cancelled] || 0,
+  };
+
+  // Tính tổng số lượng cho "Tất cả trạng thái"
+  const totalFilteredCount = Object.values(filteredStatusCounts).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+
+  // Tạo displayMap đã lọc, bỏ trạng thái "Chuẩn bị giao" (Planned)
+  const filteredDisplayMap: Record<string, any> = {
+    ALL: { ...deliveryBatchDisplayMap.ALL, count: totalFilteredCount },
+    [ContractDeliveryBatchStatus.InProgress]:
+      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.InProgress],
+    [ContractDeliveryBatchStatus.Fulfilled]:
+      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.Fulfilled],
+    [ContractDeliveryBatchStatus.Cancelled]:
+      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.Cancelled],
+  };
 
   useEffect(() => {
     setCurrentPage(1);
@@ -201,7 +228,8 @@ export default function ContractDeliveryBatchesPage() {
         <FilterDeliveryBatchStatusPanel
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
-          statusCounts={statusCounts}
+          statusCounts={filteredStatusCounts}
+          displayMap={filteredDisplayMap}
         />
       </aside>
 
