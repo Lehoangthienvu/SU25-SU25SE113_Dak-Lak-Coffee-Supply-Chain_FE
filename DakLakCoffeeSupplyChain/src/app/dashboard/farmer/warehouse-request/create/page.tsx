@@ -104,13 +104,19 @@ export default function CreateDeliveryRequestPage() {
   const batchesWithRemaining = useMemo(() => {
     if (!availableBatchesData || availableBatchesData.length === 0) return [];
 
-    return availableBatchesData.map((batch: any) => {
-      // Tính toán số lượng còn lại cho yêu cầu mới
-      const totalRequested = (inboundRequests || [])
-        .filter((req) => req.batchId === batch.batchId)
-        .reduce((sum, req) => sum + (req.requestedQuantity || 0), 0);
+    console.log('🔍 DEBUG batchesWithRemaining:');
+    console.log('  - availableBatchesData:', availableBatchesData);
+    console.log('  - inboundRequests:', inboundRequests);
 
-      const availableForNewRequest = Math.max(0, (batch.availableQuantity || 0) - totalRequested);
+    return availableBatchesData.map((batch: any) => {
+      // 🔧 FIX: Sử dụng availableQuantity từ backend thay vì tính lại
+      // Backend đã tính đúng rồi, không cần trừ thêm
+      const availableForNewRequest = batch.availableQuantity || 0;
+
+      console.log(`  - Batch ${batch.batchCode}:`);
+      console.log(`    * batch.availableQuantity: ${batch.availableQuantity}`);
+      console.log(`    * Using backend calculation: ${availableForNewRequest}`);
+      console.log(`    * Backend already subtracted: ${batch.totalRequested}`);
 
       return {
         batchId: batch.batchId,
@@ -132,12 +138,9 @@ export default function CreateDeliveryRequestPage() {
     if (!availableCropDetailsData || availableCropDetailsData.length === 0) return [];
 
     return availableCropDetailsData.map((detail: any) => {
-      // Tính toán số lượng còn lại cho yêu cầu mới
-      const totalRequested = (inboundRequests || [])
-        .filter((req) => req.detailId === detail.detailId)
-        .reduce((sum, req) => sum + (req.requestedQuantity || 0), 0);
-
-      const availableForNewRequest = Math.max(0, (detail.availableQuantity || 0) - totalRequested);
+      // 🔧 FIX: Sử dụng availableQuantity từ backend thay vì tính lại
+      // Backend đã tính đúng rồi, không cần trừ thêm
+      const availableForNewRequest = detail.availableQuantity || 0;
 
       return {
         detailId: detail.detailId,
@@ -203,10 +206,10 @@ export default function CreateDeliveryRequestPage() {
         detailId: undefined, // Chỉ gửi batchId cho cà phê sơ chế
       });
 
-      toast.success('✅ ' + message);
+      toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('❌ Lỗi: ' + err.message);
+      toast.error('Lỗi: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -262,10 +265,10 @@ export default function CreateDeliveryRequestPage() {
         detailId: detailId,
       });
 
-      toast.success('✅ ' + message);
+      toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('❌ Lỗi: ' + err.message);
+      toast.error('Lỗi: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -277,6 +280,11 @@ export default function CreateDeliveryRequestPage() {
         // Lấy danh sách batches có available quantity từ API mới
         const availableBatchesData = await getAvailableBatchesForWarehouseRequest();
         console.log('🔍 Available Batches for Warehouse Request:', availableBatchesData);
+        console.log('🔍 DEBUG - Raw API Response Structure:');
+        if (availableBatchesData && availableBatchesData.length > 0) {
+          console.log('  - First batch keys:', Object.keys(availableBatchesData[0]));
+          console.log('  - First batch values:', availableBatchesData[0]);
+        }
         
         // Lưu dữ liệu available batches
         setAvailableBatchesData(availableBatchesData || []);
@@ -347,6 +355,8 @@ export default function CreateDeliveryRequestPage() {
             <strong>🔒 Bảo mật:</strong> Mỗi form chỉ xử lý loại cà phê tương ứng, không thể nhầm lẫn giữa cà phê tươi và cà phê sơ chế.
           </div>
         </div>
+
+
 
         <TabsContent value="processed" className="space-y-6">
           <Card className="border-orange-200 bg-orange-50/30">

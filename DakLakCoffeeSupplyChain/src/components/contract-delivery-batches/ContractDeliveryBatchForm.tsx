@@ -36,6 +36,7 @@ type DeliveryBatchFormState = {
     deliveryItemId?: string; // Có thể undefined cho items mới
     contractItemId: string;
     plannedQuantity: number;
+    fulfilledQuantity?: number; // Khối lượng đã giao (cần thiết cho update)
     note?: string;
   }[];
 };
@@ -104,6 +105,7 @@ export default function ContractDeliveryBatchForm({
             deliveryItemId: x.deliveryItemId,
             contractItemId: x.contractItemId,
             plannedQuantity: x.plannedQuantity ?? 0,
+            fulfilledQuantity: x.fulfilledQuantity ?? 0, // Lấy khối lượng đã giao
             note: x.note ?? "",
           }));
 
@@ -111,6 +113,40 @@ export default function ContractDeliveryBatchForm({
           setFormData((prev) =>
             prev ? { ...prev, contractDeliveryItems: rows } : null
           );
+
+          // Tự động cập nhật trạng thái sau khi load items
+          setTimeout(() => {
+            if (rows.length > 0) {
+              // Tính toán trạng thái dựa trên khối lượng đã giao
+              const totalPlanned = rows.reduce(
+                (acc, x) => acc + (Number(x.plannedQuantity) || 0),
+                0
+              );
+              const totalFulfilled = rows.reduce(
+                (acc, x) => acc + (Number(x.fulfilledQuantity) || 0),
+                0
+              );
+
+              if (totalPlanned > 0 && totalFulfilled >= totalPlanned) {
+                // Nếu tổng đã giao >= tổng dự kiến thì chuyển sang "Hoàn thành"
+                setFormData((prev) =>
+                  prev
+                    ? { ...prev, status: ContractDeliveryBatchStatus.Fulfilled }
+                    : null
+                );
+              } else if (totalFulfilled > 0 && totalFulfilled < totalPlanned) {
+                // Nếu đã giao một phần thì chuyển sang "Đang thực hiện"
+                setFormData((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        status: ContractDeliveryBatchStatus.InProgress,
+                      }
+                    : null
+                );
+              }
+            }
+          }, 200);
         } catch (e) {
           console.error(e);
           toast.error("Không tải được danh sách mặt hàng của đợt giao.");
@@ -156,6 +192,34 @@ export default function ContractDeliveryBatchForm({
       }
     })();
   }, [formData?.contractId]);
+
+  // useEffect tự động cập nhật trạng thái khi khối lượng đã giao thay đổi
+  useEffect(() => {
+    if (!formData || !isEdit) return;
+
+    const totalPlanned = sumPlannedQuantity();
+    const totalFulfilled = sumFulfilledQuantity();
+
+    if (totalPlanned > 0 && totalFulfilled >= totalPlanned) {
+      // Nếu tổng đã giao >= tổng dự kiến thì chuyển sang "Hoàn thành"
+      if (formData.status !== ContractDeliveryBatchStatus.Fulfilled) {
+        setFormData((prev) =>
+          prev
+            ? { ...prev, status: ContractDeliveryBatchStatus.Fulfilled }
+            : null
+        );
+      }
+    } else if (totalFulfilled > 0 && totalFulfilled < totalPlanned) {
+      // Nếu đã giao một phần thì chuyển sang "Đang thực hiện"
+      if (formData.status !== ContractDeliveryBatchStatus.InProgress) {
+        setFormData((prev) =>
+          prev
+            ? { ...prev, status: ContractDeliveryBatchStatus.InProgress }
+            : null
+        );
+      }
+    }
+  }, [formData?.contractDeliveryItems, isEdit]);
 
   if (!formData) {
     return (
@@ -203,14 +267,19 @@ export default function ContractDeliveryBatchForm({
       ...(prev as DeliveryBatchFormState),
       contractDeliveryItems: [
         ...((prev as DeliveryBatchFormState).contractDeliveryItems || []),
-        { contractItemId: "", plannedQuantity: 0, note: "" },
+        {
+          contractItemId: "",
+          plannedQuantity: 0,
+          fulfilledQuantity: 0,
+          note: "",
+        },
       ],
     }));
   };
 
   const updateRow = (
     index: number,
-    field: "contractItemId" | "plannedQuantity" | "note",
+    field: "contractItemId" | "plannedQuantity" | "fulfilledQuantity" | "note",
     value: any
   ) => {
     setFormData((prev) => {
@@ -267,6 +336,12 @@ export default function ContractDeliveryBatchForm({
   const sumPlannedQuantity = () =>
     (formData.contractDeliveryItems || []).reduce(
       (acc, x) => acc + (Number(x.plannedQuantity) || 0),
+      0
+    );
+
+  const sumFulfilledQuantity = () =>
+    (formData.contractDeliveryItems || []).reduce(
+      (acc, x) => acc + (Number(x.fulfilledQuantity) || 0),
       0
     );
 
@@ -357,6 +432,7 @@ export default function ContractDeliveryBatchForm({
             deliveryBatchId: initialData.deliveryBatchId,
             contractItemId: item.contractItemId,
             plannedQuantity: item.plannedQuantity,
+            fulfilledQuantity: item.fulfilledQuantity || 0, // Bao gồm khối lượng đã giao
             note: item.note || "",
           })),
         };
@@ -365,21 +441,21 @@ export default function ContractDeliveryBatchForm({
         toast.success("Cập nhật đợt giao thành công!");
         router.back();
       } else {
-        const payload: ContractDeliveryBatchCreateDto = {
+        // Tạo payload riêng cho create để tránh vấn đề deliveryBatchId
+        const createPayload = {
           contractId: data.contractId,
           deliveryRound: data.deliveryRound,
           expectedDeliveryDate: expected,
           totalPlannedQuantity: data.totalPlannedQuantity,
           status: data.status,
           contractDeliveryItems: data.contractDeliveryItems.map((item) => ({
-            deliveryBatchId: "",
             contractItemId: item.contractItemId,
             plannedQuantity: item.plannedQuantity,
             note: item.note || "",
           })),
         };
 
-        await createContractDeliveryBatch(payload);
+        await createContractDeliveryBatch(createPayload as any);
         toast.success("Tạo đợt giao thành công!");
         onSuccess();
       }
@@ -725,11 +801,15 @@ export default function ContractDeliveryBatchForm({
               )
             }
           >
-            {Object.values(ContractDeliveryBatchStatus).map((s) => (
-              <option key={s} value={s}>
-                {ContractDeliveryBatchStatusLabel[s]}
-              </option>
-            ))}
+            {Object.values(ContractDeliveryBatchStatus)
+              .filter(
+                (status) => status !== ContractDeliveryBatchStatus.Planned
+              )
+              .map((s) => (
+                <option key={s} value={s}>
+                  {ContractDeliveryBatchStatusLabel[s]}
+                </option>
+              ))}
           </select>
         </div>
       ) : (
@@ -776,16 +856,28 @@ export default function ContractDeliveryBatchForm({
         )}
 
         {(formData.contractDeliveryItems?.length ?? 0) > 0 && (
-          <div className="hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground">
+          <div
+            className={`hidden md:grid gap-2 mb-1 text-xs font-medium text-muted-foreground ${
+              isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
+            }`}
+          >
             <span>Loại cà phê</span>
             <span className="text-left">Số lượng (kg)</span>
-            <span className="col-span-3">Ghi chú</span>
+            {isEdit && <span className="text-left">Đã giao (kg)</span>}
+            <span className={isEdit ? "col-span-3" : "col-span-3"}>
+              Ghi chú
+            </span>
             <span></span>
           </div>
         )}
 
         {(formData.contractDeliveryItems || []).map((row, idx) => (
-          <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2">
+          <div
+            key={idx}
+            className={`grid grid-cols-1 gap-2 mb-2 ${
+              isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
+            }`}
+          >
             <select
               value={row.contractItemId}
               onChange={(e) => updateRow(idx, "contractItemId", e.target.value)}
@@ -833,17 +925,33 @@ export default function ContractDeliveryBatchForm({
               </p>
             )}
 
+            {/* Hiển thị khối lượng đã giao */}
+            {isEdit && (
+              <Input
+                type="number"
+                min={0}
+                step={0.1}
+                value={row.fulfilledQuantity ?? 0}
+                onChange={(e) => {
+                  updateRow(idx, "fulfilledQuantity", Number(e.target.value));
+                }}
+                className="no-spinner text-left"
+                title="Khối lượng đã giao"
+              />
+            )}
+
             <Input
               placeholder="Ghi chú"
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
-              className="md:col-span-3"
+              className={isEdit ? "md:col-span-3" : "md:col-span-3"}
             />
 
             <Button
               type="button"
               variant="destructive"
               onClick={() => removeRow(idx)}
+              className="whitespace-nowrap"
             >
               Xoá
             </Button>
@@ -863,6 +971,25 @@ export default function ContractDeliveryBatchForm({
           <div className="text-sm text-gray-600">
             Tổng khối lượng dòng:{" "}
             <strong>{sumPlannedQuantity().toLocaleString()}</strong> kg
+            {isEdit && (
+              <>
+                <br />
+                Tổng đã giao:{" "}
+                <strong
+                  className={
+                    sumFulfilledQuantity() >= sumPlannedQuantity()
+                      ? "text-green-600"
+                      : "text-blue-600"
+                  }
+                >
+                  {sumFulfilledQuantity().toLocaleString()}
+                </strong>{" "}
+                kg
+                {sumFulfilledQuantity() >= sumPlannedQuantity() && (
+                  <span className="ml-2 text-green-600">✅ Hoàn thành</span>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

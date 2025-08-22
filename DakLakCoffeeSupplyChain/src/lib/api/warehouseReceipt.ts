@@ -88,3 +88,12 @@ export async function confirmWarehouseReceipt(
     body: JSON.stringify(confirmData),
   });
 }
+
+// ================================
+// ❌ CANCEL RECEIPT
+// ================================
+export async function cancelWarehouseReceipt(receiptId: string) {
+  return await safeFetch(`${BASE_URL}/${receiptId}/cancel`, {
+    method: "PATCH",
+  });
+}

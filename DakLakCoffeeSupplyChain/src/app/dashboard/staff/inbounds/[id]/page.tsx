@@ -9,6 +9,7 @@ import {
 } from "@/lib/api/warehouseInboundRequest";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   Package,
@@ -36,7 +37,7 @@ export default function InboundRequestDetailPage() {
       if (res.status === 1) {
         setRequest(res.data);
       } else {
-        alert("Lỗi: " + res.message);
+        toast.error("Lỗi: " + res.message);
         router.push("/dashboard/staff/inbounds");
       }
     }
@@ -46,14 +47,14 @@ export default function InboundRequestDetailPage() {
   const handleApprove = async () => {
     setLoading(true);
     const res = await approveInboundRequest(id as string);
-    alert(res.message);
+    toast.success(res.message);
     router.push("/dashboard/staff/inbounds");
   };
 
   const handleReject = async () => {
     setLoading(true);
     const res = await rejectInboundRequest(id as string);
-    alert(res.message);
+    toast.success(res.message);
     router.push("/dashboard/staff/inbounds");
   };
 

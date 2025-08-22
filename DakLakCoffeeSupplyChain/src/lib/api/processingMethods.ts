@@ -1,72 +1,60 @@
 import api from "./axios";
 
 export interface ProcessingMethod {
-  methodId: number;
+  methodId: string;
   methodCode: string;
-  methodName: string; // Thay đổi từ 'name' thành 'methodName'
+  name: string;
   description: string;
-  steps: number; // Thay đổi từ 'string' thành 'number'
+  isDeleted: boolean;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
-export interface CreateProcessingMethodData {
-  methodCode: string;
-  methodName: string; // Thay đổi từ 'name' thành 'methodName'
-  description: string;
-  steps: number; // Thay đổi từ 'string' thành 'number'
-}
-
-export async function getAllProcessingMethods(): Promise<ProcessingMethod[]> {
+export const getAllProcessingMethods = async (): Promise<ProcessingMethod[]> => {
   try {
-    const res = await api.get("/ProcessingMethod");
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi getAllProcessingMethods:", err);
-    return [];
+    const response = await api.get('/ProcessingMethods');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching processing methods:', error);
+    throw error;
   }
-}
+};
 
-export async function getProcessingMethodById(id: number): Promise<ProcessingMethod> {
+export const getProcessingMethodById = async (id: string): Promise<ProcessingMethod> => {
   try {
-    const res = await api.get(`/ProcessingMethod/${id}`);
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi getProcessingMethodById:", err);
-    throw err;
+    const response = await api.get(`/ProcessingMethods/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching processing method:', error);
+    throw error;
   }
-}
+};
 
-export async function createProcessingMethod(
-  data: CreateProcessingMethodData
-) {
+export const createProcessingMethod = async (data: Partial<ProcessingMethod>): Promise<ProcessingMethod> => {
   try {
-    const res = await api.post("/ProcessingMethod", data);
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi createProcessingMethod:", err);
-    throw err;
+    const response = await api.post('/ProcessingMethods', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating processing method:', error);
+    throw error;
   }
-}
+};
 
-export async function updateProcessingMethod(
-  id: number,
-  data: CreateProcessingMethodData
-) {
+export const updateProcessingMethod = async (id: string, data: Partial<ProcessingMethod>): Promise<ProcessingMethod> => {
   try {
-    const res = await api.put(`/ProcessingMethod/${id}`, data);
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi updateProcessingMethod:", err);
-    throw err;
+    const response = await api.put(`/ProcessingMethods/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating processing method:', error);
+    throw error;
   }
-}
+};
 
-export async function deleteProcessingMethod(id: number) {
+export const deleteProcessingMethod = async (id: string): Promise<void> => {
   try {
-    await api.delete(`/ProcessingMethod/${id}`);
-  } catch (err) {
-    console.error("Lỗi deleteProcessingMethod:", err);
-    throw err;
+    await api.delete(`/ProcessingMethods/${id}`);
+  } catch (error) {
+    console.error('Error deleting processing method:', error);
+    throw error;
   }
-}
+};

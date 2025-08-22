@@ -223,3 +223,24 @@ export function fromDateOnly(v?: string | Date | null): Date | undefined {
   const d = new Date(v);                    // string 'YYYY-MM-DD' -> Date
   return isNaN(d.getTime()) ? undefined : d;
 }
+
+export function getApiErrorMessage(err: any): string {
+  // axios
+  if (err?.response?.data) {
+    const d = err.response.data;
+    if (typeof d === "string" && d.trim()) return d;                      // plain text
+    if (typeof d === "object") {
+      if (typeof d.title === "string" && d.title) return d.title;
+      if (typeof d.message === "string" && d.message) return d.message;
+      if (d.errors && typeof d.errors === "object") {
+        const first = Object.values(d.errors).flat?.()?.[0];
+        if (first) return String(first);
+      }
+    }
+  }
+  // fetch wrapper tự ném { data: '...' }
+  if (typeof err?.data === "string" && err.data.trim()) return err.data;
+  if (typeof err?.message === "string" && err.message.trim()) return err.message;
+
+  return "Đã xảy ra lỗi khi lưu đơn hàng.";
+}

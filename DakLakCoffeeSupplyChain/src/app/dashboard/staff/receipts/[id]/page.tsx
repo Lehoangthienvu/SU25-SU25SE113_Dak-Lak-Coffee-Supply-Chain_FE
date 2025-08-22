@@ -5,13 +5,15 @@ import { useParams, useRouter } from "next/navigation";
 import {
   getWarehouseReceiptById,
   confirmWarehouseReceipt,
+  cancelWarehouseReceipt,
 } from "@/lib/api/warehouseReceipt";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
-  ArrowLeft, Package, Boxes, CalendarClock, ClipboardCheck, User, FileText, CheckCircle, Clock, Leaf, Coffee
+  ArrowLeft, Package, Boxes, CalendarClock, ClipboardCheck, User, FileText, CheckCircle, Clock, Leaf, Coffee, TrendingUp, X, AlertTriangle
 } from "lucide-react";
 
 export default function ReceiptDetailPage() {
@@ -28,14 +30,18 @@ export default function ReceiptDetailPage() {
   const [success, setSuccess] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
+  // State cho modal hủy phiếu
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+
   const isConfirmed = Boolean(receipt?.receivedAt);
 
   // Helper function to determine coffee type
   const getCoffeeType = (receipt: any) => {
     // Cà phê đã sơ chế: có batchId, không có detailId
-    if (receipt?.batchId && !receipt?.detailId) return 'processed';
-    // Cà phê tươi: không có batchId, có detailId
-    if (!receipt?.batchId && receipt?.detailId) return 'fresh';
+    if (receipt?.batchId && receipt.batchId !== '00000000-0000-0000-0000-000000000000' && !receipt?.detailId) return 'processed';
+    // Cà phê tươi: không có batchId (hoặc batchId là Guid.Empty), có detailId
+    if ((!receipt?.batchId || receipt.batchId === '00000000-0000-0000-0000-000000000000') && receipt?.detailId) return 'fresh';
     return 'unknown';
   };
 
@@ -86,6 +92,29 @@ export default function ReceiptDetailPage() {
     fetchReceipt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Function xử lý hủy phiếu
+  const handleCancelReceipt = async () => {
+    if (!receipt) return;
+    
+    setCancelling(true);
+    try {
+      const res = await cancelWarehouseReceipt(receipt.receiptId);
+      
+      if (res.status === 1) {
+        toast.success('Hủy phiếu nhập kho thành công!');
+        // Chuyển về trang danh sách
+        router.push('/dashboard/staff/receipts');
+      } else {
+        toast.error(res.message || 'Không thể hủy phiếu nhập kho');
+      }
+    } catch (error) {
+      toast.error('Lỗi khi hủy phiếu nhập kho');
+    } finally {
+      setCancelling(false);
+      setShowCancelModal(false);
+    }
+  };
 
   async function fetchReceipt() {
     setLoading(true);
@@ -157,10 +186,23 @@ export default function ReceiptDetailPage() {
             </h1>
             <p className="text-gray-600">Mã phiếu: {receipt.receiptCode}</p>
           </div>
-          <Button variant="outline" onClick={() => router.back()} className="gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Quay lại
-          </Button>
+          <div className="flex items-center gap-3">
+            {/* Chỉ hiển thị nút hủy cho phiếu chưa xác nhận */}
+            {!isConfirmed && (
+              <Button 
+                variant="outline" 
+                onClick={() => setShowCancelModal(true)}
+                className="gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+              >
+                <X className="w-4 h-4" />
+                Hủy phiếu
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => router.back()} className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Quay lại
+            </Button>
+          </div>
         </div>
 
         {/* Coffee Type Badge */}
@@ -177,7 +219,7 @@ export default function ReceiptDetailPage() {
                     ? 'bg-purple-100 text-purple-800 border-purple-200'
                     : 'bg-gray-100 text-gray-800 border-gray-200'
                 }`}>
-                  {coffeeTypeLabel}
+                  {coffeeType === 'fresh' ? 'Cà phê tươi' : coffeeType === 'processed' ? 'Cà phê đã sơ chế' : 'Không xác định'}
                 </Badge>
                 {coffeeType === 'fresh' && (
                   <span className="text-sm text-orange-600">🌱 Tươi</span>
@@ -196,6 +238,28 @@ export default function ReceiptDetailPage() {
             <DetailItem icon={<Package className="text-green-600" />} label="Kho" value={receipt.warehouseName} />
             <DetailItem icon={coffeeInfo.icon} label={coffeeInfo.label} value={coffeeInfo.value} />
             <DetailItem icon={<ClipboardCheck className="text-blue-600" />} label="Số lượng nhận" value={`${receipt.receivedQuantity} kg`} />
+            
+
+            
+            {/* Số lượng yêu cầu ban đầu */}
+            {receipt.requestedQuantity && (
+              <DetailItem icon={<Package className="text-orange-600" />} label="Số lượng yêu cầu ban đầu" value={`${receipt.requestedQuantity.toLocaleString()} kg`} />
+            )}
+            
+            {/* Số lượng còn lại có thể nhập (tham khảo) */}
+            {receipt.requestedQuantity && (
+              <DetailItem icon={<TrendingUp className="text-yellow-600" />} label="Số lượng còn lại (tham khảo)" value={`${(receipt.requestedQuantity - (receipt.receivedQuantity || 0)).toLocaleString()} kg`} />
+            )}
+            
+            {/* Số lượng còn lại thực tế (từ backend) */}
+            {receipt.remainingQuantity != null && (
+              <DetailItem icon={<TrendingUp className="text-green-600" />} label="✅ Số lượng còn lại thực tế" value={`${receipt.remainingQuantity.toLocaleString()} kg`} />
+            )}
+            
+            {/* Tổng số lượng đã xác nhận */}
+            {receipt.totalReceivedSoFar != null && (
+              <DetailItem icon={<ClipboardCheck className="text-blue-600" />} label="Tổng số lượng đã xác nhận" value={`${receipt.totalReceivedSoFar.toLocaleString()} kg`} />
+            )}
             <DetailItem
               icon={<CalendarClock className="text-red-500" />}
               label="Ngày nhận"
@@ -216,7 +280,7 @@ export default function ReceiptDetailPage() {
         </div>
 
         {/* Additional Coffee Info */}
-        {coffeeType === 'fresh' && receipt?.cropSeasonName && (
+        {coffeeType === 'fresh' && (
           <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-orange-100 rounded-full">
@@ -227,7 +291,7 @@ export default function ReceiptDetailPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="font-medium text-orange-700">Mùa vụ:</span>
-                    <span className="ml-2 text-orange-800 font-semibold">{receipt.cropSeasonName}</span>
+                    <span className="ml-2 text-orange-800 font-semibold">{receipt.cropSeasonName || receipt.detailCode || 'N/A'}</span>
                   </div>
                   {receipt.coffeeType && (
                     <div>
@@ -247,7 +311,7 @@ export default function ReceiptDetailPage() {
           </div>
         )}
 
-        {coffeeType === 'processed' && receipt?.batchCode && (
+        {coffeeType === 'processed' && (
           <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-4">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-purple-100 rounded-full">
@@ -258,7 +322,7 @@ export default function ReceiptDetailPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="font-medium text-purple-700">Mã lô:</span>
-                    <span className="ml-2 text-purple-800 font-semibold">{receipt.batchCode}</span>
+                    <span className="ml-2 text-purple-800 font-semibold">{receipt.batchCode || 'N/A'}</span>
                   </div>
                   {receipt.coffeeType && (
                     <div>
@@ -280,6 +344,33 @@ export default function ReceiptDetailPage() {
         {!isConfirmed && (
           <div className="bg-white shadow rounded-2xl p-6 border border-gray-100 space-y-4">
             <h2 className="text-xl font-semibold text-gray-700">✅ Xác nhận phiếu nhập</h2>
+            
+            {/* Thông tin số lượng để staff tham khảo */}
+            {receipt.requestedQuantity && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-blue-800">
+                    <Package className="w-4 h-4" />
+                    <span className="font-medium">Yêu cầu ban đầu: {receipt.requestedQuantity.toLocaleString()} kg</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-green-700">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="font-medium">✅ Còn lại có thể nhập: {receipt.remainingQuantity != null ? receipt.remainingQuantity.toLocaleString() : 'Đang tính...'} kg</span>
+                  </div>
+                </div>
+                {receipt.totalReceivedSoFar != null && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-2">
+                    <div className="flex items-center gap-2 text-orange-700">
+                      <ClipboardCheck className="w-4 h-4" />
+                      <span className="font-medium">Đã xác nhận: {receipt.totalReceivedSoFar.toLocaleString()} kg</span>
+                    </div>
+                  </div>
+                )}
+                <p className="text-blue-600 text-sm mt-2">
+                  💡 <strong>Thông tin chính xác:</strong> Số lượng còn lại được tính toán từ backend và bao gồm tất cả các phiếu đã xác nhận trước đó.
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleConfirm} className="space-y-4">
               <div className="space-y-2">
@@ -324,6 +415,50 @@ export default function ReceiptDetailPage() {
                 {submitting ? "Đang xác nhận..." : "Xác nhận"}
               </Button>
             </form>
+          </div>
+        )}
+
+        {/* Modal xác nhận hủy phiếu */}
+        {showCancelModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-100 rounded-full">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Xác nhận hủy phiếu</h3>
+                  <p className="text-sm text-gray-600">Bạn có chắc chắn muốn hủy phiếu này?</p>
+                </div>
+              </div>
+              
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div className="text-sm text-red-800">
+                  <p className="font-medium mb-2">Thông tin phiếu:</p>
+                  <p><span className="font-medium">Mã phiếu:</span> {receipt.receiptCode}</p>
+                  <p><span className="font-medium">Kho:</span> {receipt.warehouseName}</p>
+                  <p><span className="font-medium">Loại:</span> {coffeeTypeLabel}</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCancelModal(false)}
+                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                  disabled={cancelling}
+                >
+                  Hủy bỏ
+                </Button>
+                <Button
+                  onClick={handleCancelReceipt}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  disabled={cancelling}
+                >
+                  {cancelling ? 'Đang hủy...' : 'Xác nhận hủy'}
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
