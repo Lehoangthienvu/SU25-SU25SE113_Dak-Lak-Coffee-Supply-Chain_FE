@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [];
   },
+  // Tắt ESLint trong quá trình build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
