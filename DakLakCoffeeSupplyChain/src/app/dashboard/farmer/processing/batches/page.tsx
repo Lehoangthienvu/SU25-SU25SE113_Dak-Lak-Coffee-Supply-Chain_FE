@@ -412,17 +412,41 @@ export default function ProcessingBatchesPage() {
                       return (
                         <tr key={batch.batchId} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="px-4 py-3">
-                            <span className="font-medium text-gray-800">{batch.batchCode}</span>
+                            <button
+                              onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
+                              className="font-medium text-gray-800 hover:text-orange-600 transition-colors cursor-pointer text-left"
+                            >
+                              {batch.batchCode}
+                            </button>
                           </td>
-                          <td className="px-4 py-3">{batch.cropSeasonName || `ID: ${batch.cropSeasonId}`}</td>
-                          <td className="px-4 py-3">{batch.methodName || `ID: ${batch.methodId}`}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
+                              className="text-gray-700 hover:text-orange-600 transition-colors cursor-pointer text-left"
+                            >
+                              {batch.cropSeasonName || `ID: ${batch.cropSeasonId}`}
+                            </button>
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
+                              className="text-gray-700 hover:text-orange-600 transition-colors cursor-pointer text-left"
+                            >
+                              {batch.methodName || `ID: ${batch.methodId}`}
+                            </button>
+                          </td>
                           <td className="px-4 py-3">
                             <Badge className={statusInfo.color}>
                               {statusInfo.label}
                             </Badge>
                           </td>
                           <td className="px-4 py-3">
-                            {batch.createdAt ? new Date(batch.createdAt).toLocaleDateString("vi-VN") : "—"}
+                            <button
+                              onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
+                              className="text-gray-700 hover:text-orange-600 transition-colors cursor-pointer text-left"
+                            >
+                              {batch.createdAt ? new Date(batch.createdAt).toLocaleDateString("vi-VN") : "—"}
+                            </button>
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
