@@ -801,11 +801,15 @@ export default function ContractDeliveryBatchForm({
               )
             }
           >
-            {Object.values(ContractDeliveryBatchStatus).map((s) => (
-              <option key={s} value={s}>
-                {ContractDeliveryBatchStatusLabel[s]}
-              </option>
-            ))}
+            {Object.values(ContractDeliveryBatchStatus)
+              .filter(
+                (status) => status !== ContractDeliveryBatchStatus.Planned
+              )
+              .map((s) => (
+                <option key={s} value={s}>
+                  {ContractDeliveryBatchStatusLabel[s]}
+                </option>
+              ))}
           </select>
         </div>
       ) : (
