@@ -5,5 +5,11 @@
   "installCommand": "npm install",
   "env": {
     "NEXT_PUBLIC_API_URL": "https://daklak.coffee.techtheworld.id.vn/api"
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
 }

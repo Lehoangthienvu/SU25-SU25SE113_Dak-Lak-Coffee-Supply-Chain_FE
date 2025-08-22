@@ -10,15 +10,18 @@ const nextConfig: NextConfig = {
   },
   // Đảm bảo tương thích với Vercel
   trailingSlash: false,
-  async redirects() {
-    return [];
-  },
-  async rewrites() {
-    return [];
-  },
   // Tắt ESLint trong quá trình build
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  // Cấu hình routing
+  async rewrites() {
+    return [
+      {
+        source: '/(.*)',
+        destination: '/',
+      },
+    ];
   },
 };
 
