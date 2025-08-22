@@ -35,7 +35,7 @@ import {
 } from "@/lib/api/contracts";
 import ContractDeliveryItemFormDialog from "@/components/contract-delivery-batches/ContractDeliveryItemFormDialog";
 
-export const contractDeliveryBatchStatusMap: Record<
+const contractDeliveryBatchStatusMap: Record<
   string,
   { label: string; className: string }
 > = {
@@ -191,9 +191,8 @@ export default function ContractDeliveryBatchDetailPage() {
             <div>
               <strong>Trạng thái:</strong>
               <span
-                className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
-                  contractDeliveryBatchStatusMap[batch.status]?.className
-                }`}
+                className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${contractDeliveryBatchStatusMap[batch.status]?.className
+                  }`}
               >
                 {contractDeliveryBatchStatusMap[batch.status]?.label ||
                   batch.status}
@@ -364,13 +363,13 @@ export default function ContractDeliveryBatchDetailPage() {
         initialData={
           editingItem
             ? ({
-                deliveryItemId: editingItem.deliveryItemId,
-                deliveryBatchId: batch.deliveryBatchId,
-                contractItemId: editingItem.contractItemId,
-                plannedQuantity: editingItem.plannedQuantity,
-                fulfilledQuantity: editingItem.fulfilledQuantity ?? undefined,
-                note: editingItem.note,
-              } as ContractDeliveryItemUpdateDto)
+              deliveryItemId: editingItem.deliveryItemId,
+              deliveryBatchId: batch.deliveryBatchId,
+              contractItemId: editingItem.contractItemId,
+              plannedQuantity: editingItem.plannedQuantity,
+              fulfilledQuantity: editingItem.fulfilledQuantity ?? undefined,
+              note: editingItem.note,
+            } as ContractDeliveryItemUpdateDto)
             : undefined
         }
         mode={editingItem ? "edit" : "create"}
@@ -381,21 +380,21 @@ export default function ContractDeliveryBatchDetailPage() {
         }}
       />
       {/* Dialog xác nhận xoá mặt hàng */}
-             <ConfirmDialog
-         open={showDeleteDialog}
-         onOpenChange={setShowDeleteDialog}
-         title="Xoá mặt hàng?"
-         description={
-           <span>
-             Bạn có chắc chắn muốn xoá mặt hàng{" "}
-             <strong>{itemToDelete?.coffeeTypeName}</strong> khỏi đợt giao
-             không? Hành động này không thể hoàn tác.
-           </span>
-         }
-         confirmText="Xoá"
-         cancelText="Huỷ"
-         onConfirm={handleDelete}
-       />
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Xoá mặt hàng?"
+        description={
+          <span>
+            Bạn có chắc chắn muốn xoá mặt hàng{" "}
+            <strong>{itemToDelete?.coffeeTypeName}</strong> khỏi đợt giao
+            không? Hành động này không thể hoàn tác.
+          </span>
+        }
+        confirmText="Xoá"
+        cancelText="Huỷ"
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
