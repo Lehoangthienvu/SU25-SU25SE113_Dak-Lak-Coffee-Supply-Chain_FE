@@ -155,10 +155,18 @@ export async function getAvailableBatchesForWarehouseRequest(): Promise<any[]> {
   try {
     const res = await api.get("/ProcessingBatch/warehouse-request/available");
     
+    console.log('🔍 DEBUG API Response:');
+    console.log('  - Full response:', res);
+    console.log('  - res.data:', res.data);
+    console.log('  - res.data.status:', res.data?.status);
+    console.log('  - res.data.data:', res.data?.data);
+    
     // Backend trả về ServiceResult {status, message, data}
     if (res.data && res.data.status === 1 && res.data.data) {
+      console.log('  ✅ Returning data:', res.data.data);
       return res.data.data;
     } else {
+      console.log('  ❌ No valid data found, returning empty array');
       return [];
     }
   } catch (err: any) {

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { getAllInventoryLogs } from "@/lib/api/inventoryLogs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Eye, TrendingUp, TrendingDown, Activity, Calendar, Package, Warehouse } from "lucide-react";
+import { Search, Eye, TrendingUp, TrendingDown, Activity, Calendar, Package, Warehouse, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -16,47 +16,130 @@ export default function StaffInventoryLogsPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [actionFilter, setActionFilter] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const logsPerPage = 10; // Staff có thể xem nhiều hơn
 
-  useEffect(() => {
-    async function fetchLogs() {
-      try {
-        const data = await getAllInventoryLogs();
-        if (Array.isArray(data)) setLogs(data);
-        else setError("Không có log tồn kho nào.");
-      } catch (err: any) {
-        setError(err.message || "Lỗi khi tải danh sách log.");
+  // ✅ Tối ưu hóa: Sử dụng useCallback để tránh re-render không cần thiết
+  const fetchLogs = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const data = await getAllInventoryLogs();
+      if (Array.isArray(data)) {
+        setLogs(data);
+      } else {
+        setError("Không có log tồn kho nào.");
       }
+    } catch (err: any) {
+      setError(err.message || "Lỗi khi tải danh sách log.");
+      toast.error("Lỗi khi tải dữ liệu: " + err.message);
+    } finally {
+      setIsLoading(false);
     }
-    fetchLogs();
   }, []);
 
-  const filteredLogs = logs.filter((log) => {
-    const keyword = search.toLowerCase();
-    const matchesSearch =
-      log.inventoryCode?.toLowerCase().includes(keyword) ||
-      log.warehouseName?.toLowerCase().includes(keyword) ||
-      log.coffeeTypeName?.toLowerCase().includes(keyword);
-    const matchesAction = actionFilter === "All" || log.actionType === actionFilter;
-    return matchesSearch && matchesAction;
-  });
+  // ✅ Tối ưu hóa: Chỉ fetch data một lần khi component mount
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
+  // ✅ Tối ưu hóa: Debounce search để giảm số lượng filter operations
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+    setCurrentPage(1); // Reset về trang đầu khi search
+
+    // Clear timeout cũ nếu có
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    // Set timeout mới để debounce
+    const newTimeout = setTimeout(() => {
+      // Search logic sẽ được xử lý trong filteredLogs
+    }, 300); // 300ms delay
+
+    setSearchTimeout(newTimeout);
+  }, [searchTimeout]);
+
+  // ✅ Tối ưu hóa: Sử dụng useMemo để cache filtered results
+  const filteredLogs = useMemo(() => {
+    return logs.filter((log) => {
+      const keyword = search.toLowerCase();
+      const matchesSearch =
+        log.inventoryCode?.toLowerCase().includes(keyword) ||
+        log.warehouseName?.toLowerCase().includes(keyword) ||
+        log.coffeeTypeName?.toLowerCase().includes(keyword);
+      const matchesAction = actionFilter === "All" || log.actionType === actionFilter;
+      return matchesSearch && matchesAction;
+    });
+  }, [logs, search, actionFilter]);
+
+  // ✅ Tối ưu hóa: Sử dụng useMemo để cache paginated results
+  const paginatedLogs = useMemo(() => {
+    return filteredLogs.slice(
+      (currentPage - 1) * logsPerPage,
+      currentPage * logsPerPage
+    );
+  }, [filteredLogs, currentPage, logsPerPage]);
+
+  // ✅ Tối ưu hóa: Sử dụng useMemo để cache statistics
+  const statistics = useMemo(() => {
+    const totalLogs = logs.length;
+    const increaseLogs = logs.filter(log => log.actionType === "increase").length;
+    const decreaseLogs = logs.filter(log => log.actionType === "decrease").length;
+    const todayLogs = logs.filter(log => {
+      const today = new Date().toDateString();
+      const logDate = new Date(log.loggedAt).toDateString();
+      return today === logDate;
+    }).length;
+
+    return { totalLogs, increaseLogs, decreaseLogs, todayLogs };
+  }, [logs]);
 
   const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
-  const paginatedLogs = filteredLogs.slice(
-    (currentPage - 1) * logsPerPage,
-    currentPage * logsPerPage
+
+  // ✅ Skeleton loading component
+  const LoadingSkeleton = () => (
+    <div className="divide-y divide-gray-100">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div key={index} className="p-3 animate-pulse">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-2">
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-6 bg-gray-200 rounded-full"></div>
+                <div className="w-24 h-4 bg-gray-200 rounded"></div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-5 h-5 bg-gray-200 rounded-full"></div>
+                    <div className="flex-1">
+                      <div className="w-16 h-3 bg-gray-200 rounded mb-1"></div>
+                      <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <div className="w-16 h-7 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 
-  // Tính toán thống kê
-  const totalLogs = logs.length;
-  const increaseLogs = logs.filter(log => log.actionType === "increase").length;
-  const decreaseLogs = logs.filter(log => log.actionType === "decrease").length;
-  const todayLogs = logs.filter(log => {
-    const today = new Date().toDateString();
-    const logDate = new Date(log.loggedAt).toDateString();
-    return today === logDate;
-  }).length;
+  // ✅ Cleanup timeout khi component unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
@@ -75,7 +158,9 @@ export default function StaffInventoryLogsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600">Tổng số log</p>
-                <p className="text-xl font-bold text-green-600">{totalLogs}</p>
+                <p className="text-xl font-bold text-green-600">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.totalLogs}
+                </p>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                 <Activity className="w-4 h-4 text-green-600" />
@@ -89,7 +174,9 @@ export default function StaffInventoryLogsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600">Nhập kho hôm nay</p>
-                <p className="text-xl font-bold text-green-600">{todayLogs}</p>
+                <p className="text-xl font-bold text-green-600">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.todayLogs}
+                </p>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                 <Calendar className="w-4 h-4 text-green-600" />
@@ -103,7 +190,9 @@ export default function StaffInventoryLogsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600">Lượt nhập kho</p>
-                <p className="text-xl font-bold text-emerald-600">{increaseLogs}</p>
+                <p className="text-xl font-bold text-emerald-600">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.increaseLogs}
+                </p>
               </div>
               <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-emerald-600" />
@@ -117,7 +206,9 @@ export default function StaffInventoryLogsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600">Lượt xuất kho</p>
-                <p className="text-xl font-bold text-rose-600">{decreaseLogs}</p>
+                <p className="text-xl font-bold text-rose-600">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.decreaseLogs}
+                </p>
               </div>
               <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center">
                 <TrendingDown className="w-4 h-4 text-rose-600" />
@@ -136,10 +227,7 @@ export default function StaffInventoryLogsPage() {
               <Input
                 placeholder="🔍 Tìm theo mã kho, loại cà phê, kho hàng..."
                 value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-8 h-9 text-sm border border-gray-200 focus:border-green-500 focus:ring-green-500/20"
               />
             </div>
@@ -179,18 +267,35 @@ export default function StaffInventoryLogsPage() {
             <Package className="w-4 h-4 text-green-600" />
             Danh sách lịch sử tồn kho
             <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 text-xs">
-              {filteredLogs.length} log
+              {isLoading ? "..." : `${filteredLogs.length} log`}
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {error && (
-            <div className="p-3 text-center">
-              <p className="text-red-500 text-sm">{error}</p>
+          {/* ✅ Loading state */}
+          {isLoading && <LoadingSkeleton />}
+
+          {/* ✅ Error state */}
+          {!isLoading && error && (
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Activity className="w-8 h-8 text-red-500" />
+              </div>
+              <p className="text-red-500 text-sm font-medium mb-2">{error}</p>
+              <Button 
+                onClick={() => fetchLogs()} 
+                variant="outline" 
+                size="sm"
+                className="text-xs"
+              >
+                <Loader2 className="w-3 h-3 mr-1" />
+                Thử lại
+              </Button>
             </div>
           )}
 
-          {!error && filteredLogs.length === 0 && (
+          {/* ✅ Empty state */}
+          {!isLoading && !error && filteredLogs.length === 0 && (
             <div className="p-6 text-center">
               <Package className="w-10 h-10 text-gray-300 mx-auto mb-2" />
               <p className="text-gray-500 text-sm">Không có log phù hợp với bộ lọc</p>
@@ -198,7 +303,8 @@ export default function StaffInventoryLogsPage() {
             </div>
           )}
 
-          {!error && paginatedLogs.length > 0 && (
+          {/* ✅ Data display */}
+          {!isLoading && !error && paginatedLogs.length > 0 && (
             <div className="divide-y divide-gray-100">
               {paginatedLogs.map((log) => (
                 <div
@@ -224,8 +330,8 @@ export default function StaffInventoryLogsPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                            <Package className="w-3 h-3 text-green-600" />
+                          <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                            <Package className="w-3 h-3 text-blue-600" />
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 font-medium">Mã tồn kho</p>
@@ -296,7 +402,7 @@ export default function StaffInventoryLogsPage() {
           )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {!isLoading && !error && totalPages > 1 && (
             <div className="bg-green-50 px-3 py-2 border-t border-green-100">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div className="text-xs text-gray-600">

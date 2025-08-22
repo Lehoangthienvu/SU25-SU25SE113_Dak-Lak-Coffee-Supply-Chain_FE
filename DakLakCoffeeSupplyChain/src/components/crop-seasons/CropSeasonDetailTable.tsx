@@ -8,6 +8,7 @@ import {
   CropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { toast } from "sonner";
+import { useConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
 import { Edit, Trash, Eye, Coffee, MapPin, Calendar, TrendingUp, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
@@ -27,6 +28,7 @@ export default function CropSeasonDetailTable({
 }: Props) {
   const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
   const router = useRouter();
+  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   const formatDate = (date?: string) => {
     if (!date) return "Chưa cập nhật";
@@ -49,19 +51,23 @@ export default function CropSeasonDetailTable({
   };
 
   const handleDelete = async (detailId: string, name: string) => {
-    const confirmDelete = window.confirm(
-      `Bạn có chắc muốn xoá vùng trồng: ${name}?`
-    );
-    if (!confirmDelete) return;
-
-    try {
-      await softDeleteCropSeasonDetail(detailId);
-      toast.success("Xoá vùng trồng thành công");
-      onReload();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Xoá vùng trồng thất bại";
-      toast.error(errorMessage);
-    }
+    openDialog({
+      title: "Xác nhận xóa vùng trồng",
+      message: `Bạn có chắc muốn xoá vùng trồng: ${name}?`,
+      confirmText: "Xóa",
+      cancelText: "Hủy",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          await softDeleteCropSeasonDetail(detailId);
+          toast.success("Xoá vùng trồng thành công");
+          onReload();
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : "Xoá vùng trồng thất bại";
+          toast.error(errorMessage);
+        }
+      }
+    });
   };
 
   if (details.length === 0) {
@@ -219,6 +225,9 @@ export default function CropSeasonDetailTable({
           </tbody>
         </table>
       </div>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </>
   );
 }

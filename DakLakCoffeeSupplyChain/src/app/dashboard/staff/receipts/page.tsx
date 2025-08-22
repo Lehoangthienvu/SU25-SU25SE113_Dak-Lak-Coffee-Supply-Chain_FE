@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAllWarehouseReceipts, getDebugInfo } from '@/lib/api/warehouseReceipt';
+import { getAllWarehouseReceipts, getDebugInfo, cancelWarehouseReceipt } from '@/lib/api/warehouseReceipt';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, Search, ChevronLeft, ChevronRight, Package, TrendingUp, CheckCircle, Clock, Plus, Leaf, Coffee } from 'lucide-react';
+import { Eye, Search, ChevronLeft, ChevronRight, Package, TrendingUp, CheckCircle, Clock, Plus, Leaf, Coffee, X, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -18,6 +18,11 @@ export default function ReceiptListPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const pageSize = 15;
+  
+  // State cho modal hủy phiếu
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [receiptToCancel, setReceiptToCancel] = useState<any>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -92,6 +97,35 @@ export default function ReceiptListPage() {
   };
 
   // Helper function to get coffee information
+  // Function xử lý hủy phiếu
+  const handleCancelReceipt = async () => {
+    if (!receiptToCancel) return;
+    
+    setCancelling(true);
+    try {
+      const res = await cancelWarehouseReceipt(receiptToCancel.receiptId);
+      
+      if (res.status === 1) {
+        toast.success('Hủy phiếu nhập kho thành công!');
+        // Cập nhật danh sách - xóa phiếu đã hủy
+        setReceipts(prev => prev.filter(r => r.receiptId !== receiptToCancel.receiptId));
+        setShowCancelModal(false);
+        setReceiptToCancel(null);
+      } else {
+        toast.error(res.message || 'Không thể hủy phiếu nhập kho');
+      }
+    } catch (error) {
+      toast.error('Lỗi khi hủy phiếu nhập kho');
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const openCancelModal = (receipt: any) => {
+    setReceiptToCancel(receipt);
+    setShowCancelModal(true);
+  };
+
   const getCoffeeInfo = (receipt: any) => {
     if (receipt.batchId && !receipt.detailId) {
       // Cà phê sơ chế
@@ -374,15 +408,30 @@ export default function ReceiptListPage() {
                             )}
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <Link href={`/dashboard/staff/receipts/${r.receiptId}`}>
-                              <Button
-                                size="icon"
-                                variant="outline"
-                                className="text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </Link>
+                            <div className="flex items-center justify-center gap-2">
+                              <Link href={`/dashboard/staff/receipts/${r.receiptId}`}>
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  className="text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              </Link>
+                              
+                              {/* Chỉ hiển thị nút hủy cho phiếu chưa xác nhận */}
+                              {!isConfirmed && (
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  onClick={() => openCancelModal(r)}
+                                  className="text-red-600 hover:text-red-800 border-red-200 hover:bg-red-50"
+                                  title="Hủy phiếu"
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -433,6 +482,53 @@ export default function ReceiptListPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal xác nhận hủy phiếu */}
+      {showCancelModal && receiptToCancel && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-full">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Xác nhận hủy phiếu</h3>
+                <p className="text-sm text-gray-600">Bạn có chắc chắn muốn hủy phiếu này?</p>
+              </div>
+            </div>
+            
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="text-sm text-red-800">
+                <p className="font-medium mb-2">Thông tin phiếu:</p>
+                <p><span className="font-medium">Mã phiếu:</span> {receiptToCancel.receiptCode}</p>
+                <p><span className="font-medium">Kho:</span> {receiptToCancel.warehouseName}</p>
+                <p><span className="font-medium">Loại:</span> {getCoffeeTypeLabel(receiptToCancel)}</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCancelModal(false);
+                  setReceiptToCancel(null);
+                }}
+                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                disabled={cancelling}
+              >
+                Hủy bỏ
+              </Button>
+              <Button
+                onClick={handleCancelReceipt}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                disabled={cancelling}
+              >
+                {cancelling ? 'Đang hủy...' : 'Xác nhận hủy'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

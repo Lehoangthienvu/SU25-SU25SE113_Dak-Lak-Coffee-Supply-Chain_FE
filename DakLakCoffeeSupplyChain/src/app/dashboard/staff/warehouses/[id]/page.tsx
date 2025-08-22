@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getWarehouseById } from '@/lib/api/warehouses';
-import { getInventoriesByWarehouseId } from '@/lib/api/inventory';
+import { getInventoriesByWarehouseIdForDetail } from '@/lib/api/inventory';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   ArrowLeft,
@@ -36,10 +37,10 @@ export default function WarehouseDetailPage() {
         if (res.status === 1 && res.data) {
           setWarehouse(res.data);
         } else {
-          alert('❌ Không thể lấy dữ liệu kho: ' + res.message);
+          toast.error('Không thể lấy dữ liệu kho: ' + res.message);
         }
       } catch {
-        alert('❌ Lỗi khi tải chi tiết kho');
+        toast.error('Lỗi khi tải chi tiết kho');
       } finally {
         setLoading(false);
       }
@@ -47,7 +48,7 @@ export default function WarehouseDetailPage() {
 
     const fetchInventories = async () => {
       try {
-        const res = await getInventoriesByWarehouseId(id as string);
+        const res = await getInventoriesByWarehouseIdForDetail(id as string);
         if (Array.isArray(res)) {
           setInventories(res);
         }
@@ -94,15 +95,12 @@ export default function WarehouseDetailPage() {
         {/* Chi tiết kho */}
         <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-100">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
-            <DetailItem icon={<Hash />} label="Mã kho (GUID)" value={warehouse.warehouseId} />
-            <DetailItem icon={<Building2 className="text-orange-600" />} label="Mã kho (Code)" value={warehouse.warehouseCode} />
+            <DetailItem icon={<Building2 className="text-orange-600" />} label="Mã kho" value={warehouse.warehouseCode} />
             <DetailItem icon={<MapPin className="text-blue-600" />} label="Vị trí" value={warehouse.location} />
             <DetailItem icon={<Boxes className="text-green-600" />} label="Dung lượng" value={`${warehouse.capacity?.toLocaleString()} kg`} />
             <DetailItem icon={<User className="text-indigo-600" />} label="Người quản lý" value={warehouse.managerName} />
             <DetailItem icon={<CalendarDays className="text-rose-600" />} label="Ngày tạo" value={new Date(warehouse.createdAt).toLocaleString('vi-VN')} />
             <DetailItem icon={<RefreshCw className="text-gray-600" />} label="Ngày cập nhật" value={new Date(warehouse.updatedAt).toLocaleString('vi-VN')} />
-
-            {/* ✅ DetailItem kiểu thẻ – Tồn kho dropdown */}
             <DetailItem
               icon={<PackageOpen className="text-orange-500" />}
               label={
@@ -137,7 +135,7 @@ export default function WarehouseDetailPage() {
   );
 }
 
-// DetailItem component
+// Component hiển thị chi tiết
 function DetailItem({
   icon,
   label,
