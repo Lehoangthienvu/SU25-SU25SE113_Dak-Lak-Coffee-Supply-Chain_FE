@@ -582,11 +582,16 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   setField("status", e.target.value as ProductStatus)
                 }
               >
-                {Object.values(ProductStatus).map((s) => (
-                  <option key={s} value={s}>
-                    {ProductStatusLabel[s]}
-                  </option>
-                ))}
+                {Object.values(ProductStatus)
+                  .filter(status => 
+                    status !== ProductStatus.Draft && 
+                    status !== ProductStatus.InStock
+                  )
+                  .map((s) => (
+                    <option key={s} value={s}>
+                      {ProductStatusLabel[s]}
+                    </option>
+                  ))}
               </select>
             </div>
           )}
@@ -618,12 +623,19 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               min={0}
               step={1000}
               value={form.unitPrice}
-              onChange={(e) =>
-                setField(
-                  "unitPrice",
-                  e.target.value === "" ? "" : Number(e.target.value)
-                )
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+                // Chỉ cho phép nhập số nguyên dương
+                if (value === "" || /^\d+$/.test(value)) {
+                  setField("unitPrice", value === "" ? "" : Number(value));
+                }
+              }}
+              onKeyDown={(e) => {
+                // Chặn các ký tự không phải số
+                if (!/[\d\b\Delete\ArrowLeft\ArrowRight\Tab]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               placeholder="0"
               className="no-spinner"
             />
@@ -637,12 +649,23 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               max={getMaxQuantity()}
               step={0.1}
               value={form.quantityAvailable}
-              onChange={(e) =>
-                setField(
-                  "quantityAvailable",
-                  e.target.value === "" ? "" : Number(e.target.value)
-                )
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+                // Chỉ cho phép nhập số thập phân dương
+                if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                  setField("quantityAvailable", value === "" ? "" : Number(value));
+                }
+              }}
+              onKeyDown={(e) => {
+                // Chặn các ký tự không phải số, dấu chấm, và phím điều hướng
+                if (!/[\d\b\Delete\ArrowLeft\ArrowRight\Tab\.]/.test(e.key)) {
+                  e.preventDefault();
+                }
+                // Chặn dấu chấm nếu đã có dấu chấm
+                if (e.key === "." && e.currentTarget.value.includes(".")) {
+                  e.preventDefault();
+                }
+              }}
               placeholder="0"
               className="no-spinner"
             />
