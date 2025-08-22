@@ -14,25 +14,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Cấu hình routing
-  async rewrites() {
-    return [
-      {
-        source: '/(.*)',
-        destination: '/',
-      },
-    ];
-  },
-  // Thêm cấu hình cho Vercel
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/',
-        permanent: false,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
