@@ -23,6 +23,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Thêm cấu hình cho Vercel
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
