@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
@@ -14,7 +14,7 @@ import {
 import FarmingCommitmentForm, { FarmingCommitmentFormData } from "@/components/farming-commitments/FarmingCommitmentForm";
 import { getCommitmentById, updateFarmingCommitment } from "@/lib/api/farmingCommitments";
 
-export default function EditFarmmingCommitmentPage() {
+function EditFarmmingCommitmentContent() {
   useAuthGuard(["manager"]);
 
   const router = useRouter();
@@ -248,5 +248,13 @@ export default function EditFarmmingCommitmentPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function EditFarmmingCommitmentPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditFarmmingCommitmentContent />
+    </Suspense>
   );
 }

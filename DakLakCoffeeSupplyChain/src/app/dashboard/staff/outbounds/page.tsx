@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import {
   getAllOutboundRequests,
   acceptOutboundRequest,
@@ -26,7 +26,7 @@ interface OutboundRequest {
   rejectReason?: string;
 }
 
-export default function StaffOutboundRequestList() {
+function StaffOutboundRequestListContent() {
   const [data, setData] = useState<OutboundRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -442,5 +442,13 @@ export default function StaffOutboundRequestList() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function StaffOutboundRequestList() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <StaffOutboundRequestListContent />
+    </Suspense>
   );
 }

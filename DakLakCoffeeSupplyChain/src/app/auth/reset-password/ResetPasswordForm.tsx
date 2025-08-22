@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Eye, EyeOff, ArrowLeft, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
-export function ResetPasswordForm() {
+function ResetPasswordFormContent() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +47,7 @@ export function ResetPasswordForm() {
                 } else {
                     setTokenValid(false);
                 }
-            } catch (error) {
+            } catch {
                 setTokenValid(false);
             } finally {
                 setValidating(false);
@@ -114,7 +114,7 @@ export function ResetPasswordForm() {
                 const errorMessage = result.message || result.title || "Đặt lại mật khẩu thất bại";
                 toast.error(`❌ ${errorMessage}`);
             }
-        } catch (error) {
+        } catch {
             toast.error("❌ Lỗi kết nối. Vui lòng thử lại.");
         } finally {
             setLoading(false);
@@ -343,5 +343,13 @@ export function ResetPasswordForm() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export function ResetPasswordForm() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ResetPasswordFormContent />
+        </Suspense>
     );
 }

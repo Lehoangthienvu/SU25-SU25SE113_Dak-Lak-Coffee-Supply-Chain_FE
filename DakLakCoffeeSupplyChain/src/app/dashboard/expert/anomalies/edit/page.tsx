@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, MessageSquare, Save, FileText } from "lucide-react";
 import { toast } from "sonner";
 
-export default function EditAnomalyPage() {
+function EditAnomalyContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const adviceId = searchParams.get('adviceId');
@@ -238,5 +238,13 @@ export default function EditAnomalyPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function EditAnomalyPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <EditAnomalyContent />
+        </Suspense>
     );
 }
