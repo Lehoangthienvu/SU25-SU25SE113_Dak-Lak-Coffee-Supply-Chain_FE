@@ -3,6 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
+  "rootDirectory": ".",
   "env": {
     "NEXT_PUBLIC_API_URL": "https://daklak.coffee.techtheworld.id.vn/api"
   },
