@@ -48,7 +48,7 @@ export default function StaffWarehouseListPage() {
         }
         setUsedCapacities(usageMap);
       } catch (error) {
-        toast.error('❌ Lỗi khi tải danh sách kho');
+        toast.error('Lỗi khi tải danh sách kho');
       } finally {
         setLoading(false);
       }

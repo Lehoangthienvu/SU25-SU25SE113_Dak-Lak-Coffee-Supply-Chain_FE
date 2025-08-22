@@ -39,10 +39,20 @@ export default function InventoryDetailManagerPage() {
 
   // Helper function to determine coffee type (giống như Staff và List)
   const getCoffeeType = (inventory: any) => {
+    console.log('🔍 getCoffeeType input:', { batchId: inventory.batchId, detailId: inventory.detailId });
+    
     // Cà phê đã sơ chế: có batchId, không có detailId
-    if (inventory.batchId && !inventory.detailId) return 'processed';
+    if (inventory.batchId && !inventory.detailId) {
+      console.log('🔍 Returning processed');
+      return 'processed';
+    }
     // Cà phê tươi: không có batchId, có detailId
-    if (!inventory.batchId && inventory.detailId) return 'fresh';
+    if (!inventory.batchId && inventory.detailId) {
+      console.log('🔍 Returning fresh');
+      return 'fresh';
+    }
+    
+    console.log('🔍 Returning unknown');
     return 'unknown';
   };
 
@@ -106,6 +116,27 @@ export default function InventoryDetailManagerPage() {
 
   return (
     <div className="p-6 space-y-4 max-w-5xl mx-auto">
+      {/* Debug Info */}
+      <Card className="shadow-lg border rounded-xl bg-yellow-50 border-yellow-200">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-yellow-800">🔍 Debug Info</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p><strong>BatchId:</strong> {inventory.batchId || 'NULL'}</p>
+              <p><strong>DetailId:</strong> {inventory.detailId || 'NULL'}</p>
+              <p><strong>Coffee Type:</strong> {coffeeType}</p>
+            </div>
+            <div>
+              <p><strong>BatchCode:</strong> {inventory.batchCode || 'NULL'}</p>
+              <p><strong>CropSeasonName:</strong> {inventory.cropSeasonName || 'NULL'}</p>
+              <p><strong>CoffeeTypeName:</strong> {inventory.coffeeTypeName || 'NULL'}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-lg border rounded-xl bg-white">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-orange-600 flex items-center gap-2">

@@ -40,6 +40,30 @@ export async function getInventoriesByWarehouseId(warehouseId: string) {
 
   return await res.json(); // ✅ Trả mảng tồn kho theo kho
 }
+
+// ✅ Thêm function mới để lấy TẤT CẢ tồn kho (cả sơ chế và tươi) cho warehouse detail
+export async function getInventoriesByWarehouseIdForDetail(warehouseId: string) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`https://localhost:7163/api/Inventories/warehouse/${warehouseId}/detail`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Không lấy được tồn kho theo kho.");
+  }
+
+  const contentType = res.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return [];
+  }
+
+  return await res.json(); // ✅ Trả mảng TẤT CẢ tồn kho theo kho (cả cà phê sơ chế và tươi)
+}
+
+
 export async function createInventory(data: any) {
   const token = localStorage.getItem("token");
 
@@ -95,3 +119,5 @@ export async function softDeleteInventory(id: string) {
     message: text,
   };
 }
+
+

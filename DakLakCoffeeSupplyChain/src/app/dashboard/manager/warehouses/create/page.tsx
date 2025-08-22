@@ -6,6 +6,7 @@ import { createWarehouse } from '@/lib/api/warehouses';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function CreateWarehousePage() {
@@ -27,7 +28,7 @@ export default function CreateWarehousePage() {
     const { name, location, capacity } = form;
 
     if (!name || !location || !capacity) {
-      alert('❌ Vui lòng nhập đầy đủ thông tin');
+      toast.error('Vui lòng nhập đầy đủ thông tin');
       return;
     }
 
@@ -43,18 +44,18 @@ export default function CreateWarehousePage() {
       setLoading(false);
 
       if (res.status === 1) {
-        alert('✅ Tạo kho thành công');
+        toast.success('Tạo kho thành công');
         router.push('/dashboard/manager/warehouses');
       } else {
         if (res.message?.includes('đã tồn tại')) {
-          alert('⚠️ Tên kho đã tồn tại. Vui lòng chọn tên khác.');
+          toast.warning('Tên kho đã tồn tại. Vui lòng chọn tên khác.');
         } else {
-          alert('❌ ' + res.message);
+          toast.error(res.message);
         }
       }
     } catch (err) {
       setLoading(false);
-      alert('❌ Lỗi không xác định khi gửi yêu cầu');
+      toast.error('Lỗi không xác định khi gửi yêu cầu');
     }
   };
 

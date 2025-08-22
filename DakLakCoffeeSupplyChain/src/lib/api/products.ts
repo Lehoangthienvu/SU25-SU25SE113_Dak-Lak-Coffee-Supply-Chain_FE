@@ -35,6 +35,13 @@ export interface InventoryOption {
   warehouseCode: string;
   warehouseName: string;
   warehouseCapacity?: number;
+  // Thêm các trường mới để tự động điền form
+  batchId?: string;
+  batchCode?: string;
+  coffeeTypeId?: string;
+  coffeeTypeName?: string;
+  quantity?: number;
+  unit?: string;
 }
 
 // DTO: ProductViewAllDto tương ứng backend
@@ -242,7 +249,13 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
       inventoryCode: i.inventoryCode,
       warehouseCode: i.inventoryCode, // Fallback vì không có warehouseCode
       warehouseName: i.warehouseName,
-      warehouseCapacity: undefined // Không có capacity trong response
+      warehouseCapacity: undefined, // Không có capacity trong response
+      // Map thêm các trường mới
+      batchId: i.batchId,
+      batchCode: i.batchCode,
+      coffeeTypeName: i.coffeeTypeName,
+      quantity: i.quantity,
+      unit: i.unit
     }));
     
     console.log("Mapped inventory options:", mappedData);
@@ -271,7 +284,13 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
         inventoryCode: i.inventoryCode,
         warehouseCode: i.inventoryCode,
         warehouseName: i.warehouseName,
-        warehouseCapacity: undefined
+        warehouseCapacity: undefined,
+        // Map thêm các trường mới
+        batchId: i.batchId,
+        batchCode: i.batchCode,
+        coffeeTypeName: i.coffeeTypeName,
+        quantity: i.quantity,
+        unit: i.unit
       }));
     } catch (fallbackError) {
       console.error("Error fetching inventories from /inventories:", fallbackError);
@@ -297,7 +316,13 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
           inventoryCode: i.inventoryCode,
           warehouseCode: i.inventoryCode,
           warehouseName: i.warehouseName,
-          warehouseCapacity: undefined
+          warehouseCapacity: undefined,
+          // Map thêm các trường mới
+          batchId: i.batchId,
+          batchCode: i.batchCode,
+          coffeeTypeName: i.coffeeTypeName,
+          quantity: i.quantity,
+          unit: i.unit
         }));
       } catch (finalError) {
         console.error("Error fetching inventories from /Inventory:", finalError);

@@ -85,6 +85,7 @@ export default function ProductsPage() {
     currentPage * pageSize
   );
 
+  // Chỉ hiển thị các trạng thái cần thiết trong bộ lọc
   const statusCounts = products.reduce<Record<ProductStatusValue, number>>(
     (acc, s) => {
       const status = s.status as ProductStatusValue;
@@ -101,6 +102,24 @@ export default function ProductsPage() {
       Archived: 0,
     }
   );
+
+  // Lọc ra chỉ các trạng thái cần hiển thị
+  const filteredStatusCounts: Record<string, number> = {
+    Pending: statusCounts.Pending,
+    Approved: statusCounts.Approved,
+    Rejected: statusCounts.Rejected,
+    OutOfStock: statusCounts.OutOfStock,
+    Archived: statusCounts.Archived,
+  };
+
+  // Tạo statusMap đã lọc chỉ cho các trạng thái cần hiển thị
+  const filteredStatusMap: Record<string, any> = {
+    Pending: ProductStatusMap.Pending,
+    Approved: ProductStatusMap.Approved,
+    Rejected: ProductStatusMap.Rejected,
+    OutOfStock: ProductStatusMap.OutOfStock,
+    Archived: ProductStatusMap.Archived,
+  };
 
   return (
     <div className="flex min-h-screen bg-amber-50 p-6 gap-6">
@@ -126,8 +145,8 @@ export default function ProductsPage() {
         <FilterStatusPanel<ProductStatusValue>
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
-          statusCounts={statusCounts}
-          statusMap={ProductStatusMap}
+          statusCounts={filteredStatusCounts}
+          statusMap={filteredStatusMap}
         />
       </aside>
 

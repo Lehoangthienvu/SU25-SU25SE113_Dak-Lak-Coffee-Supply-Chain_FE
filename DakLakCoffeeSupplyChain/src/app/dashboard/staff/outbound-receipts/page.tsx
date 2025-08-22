@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { Eye, CheckCircle, Clock, Package, TrendingDown, Plus, Receipt, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface OutboundReceiptItem {
@@ -58,7 +59,7 @@ export default function OutboundReceiptListPage() {
 
         setReceipts(enriched);
       } catch (err: any) {
-        alert('❌ Lỗi khi tải danh sách: ' + err.message);
+        toast.error('Lỗi khi tải danh sách: ' + err.message);
       } finally {
         setLoading(false);
       }
