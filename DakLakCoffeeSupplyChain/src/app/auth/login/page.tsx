@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { login } from "@/lib/api/auth";
+import { authService } from "@/lib/auth/authService";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { roleRawToDisplayName } from "@/lib/constants/role";
 import { User, Mail, Phone, Shield, Edit3, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { authService } from "@/lib/auth/authService";
 
 export default function UserInfoPage() {
     const [userInfo, setUserInfo] = useState({
@@ -15,21 +16,22 @@ export default function UserInfoPage() {
     });
 
     useEffect(() => {
-        const rawAvatar = localStorage.getItem("user_avatar")?.trim();
-        const name = localStorage.getItem("user_name") || "Ẩn danh";
+        const user = authService.getUser();
+        if (user) {
+            const rawAvatar = user.avatar?.trim();
+            const name = user.name || "Ẩn danh";
 
-        setUserInfo({
-            name,
-            email: localStorage.getItem("email") || "",
-            phone: localStorage.getItem("phone") || "Chưa cập nhật",
-            role:
-                roleRawToDisplayName[localStorage.getItem("user_role_raw") ?? ""] ||
-                "Không xác định",
-            avatar:
-                rawAvatar && rawAvatar !== ""
-                    ? rawAvatar
-                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FD7622&color=fff`,
-        });
+            setUserInfo({
+                name,
+                email: user.email || "",
+                phone: localStorage.getItem("phone") || "Chưa cập nhật",
+                role: roleRawToDisplayName[user.roleRaw] || "Không xác định",
+                avatar:
+                    rawAvatar && rawAvatar !== ""
+                        ? rawAvatar
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FD7622&color=fff`,
+            });
+        }
     }, []);
 
     return (

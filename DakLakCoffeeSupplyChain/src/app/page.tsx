@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { authService } from "@/lib/auth/authService";
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const isLoggedIn = authService.isAuthenticated();
+    setIsLoggedIn(isLoggedIn);
   }, []);
 
   return (

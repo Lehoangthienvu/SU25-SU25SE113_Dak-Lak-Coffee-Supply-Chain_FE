@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useState, useEffect } from "react";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { authService } from "@/lib/auth/authService";
+import { roleRawToDisplayName } from "@/lib/constants/role";
 
 export default function AdminLayout({
   children,
@@ -19,8 +21,11 @@ export default function AdminLayout({
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("user_role_raw");
-    setRole(storedRole);
+    const user = authService.getUser();
+    if (user) {
+      // Sử dụng roleRawToDisplayName để hiển thị tên tiếng Việt
+      setRole(roleRawToDisplayName[user.roleRaw] || user.roleRaw);
+    }
   }, []);
 
   return (

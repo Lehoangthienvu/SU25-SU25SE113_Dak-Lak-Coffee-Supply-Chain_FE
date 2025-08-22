@@ -1365,88 +1365,88 @@ export default function ContractForm({
               {/* Preview cho ảnh */}
               {(data.contractFileUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
                 selectedFile?.type.startsWith("image/")) && (
-                <div className="mt-2">
-                  {filePreviewUrl ? (
-                    <img
-                      src={filePreviewUrl}
-                      alt="Preview"
-                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
-                      onError={() => toast.error("Không thể tải ảnh preview")}
-                      onClick={() => {
-                        if (filePreviewUrl) {
-                          setModalImageUrl(filePreviewUrl);
-                          setShowImageModal(true);
-                        }
-                      }}
-                      title="Click để xem ảnh rõ hơn"
-                    />
-                  ) : data.contractFileUrl?.startsWith("http") ? (
-                    <img
-                      src={data.contractFileUrl}
-                      alt="Preview"
-                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
-                      onError={() => toast.error("Không thể tải ảnh preview")}
-                      onClick={() => {
-                        if (data.contractFileUrl) {
-                          setModalImageUrl(data.contractFileUrl);
-                          setShowImageModal(true);
-                        }
-                      }}
-                      title="Click để xem ảnh rõ hơn"
-                    />
-                  ) : (
-                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">
-                        📷{" "}
-                        {selectedFile
-                          ? selectedFile.name
-                          : data.contractFileUrl}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
+                  <div className="mt-2">
+                    {filePreviewUrl ? (
+                      <img
+                        src={filePreviewUrl}
+                        alt="Preview"
+                        className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                        onError={() => toast.error("Không thể tải ảnh preview")}
+                        onClick={() => {
+                          if (filePreviewUrl) {
+                            setModalImageUrl(filePreviewUrl);
+                            setShowImageModal(true);
+                          }
+                        }}
+                        title="Click để xem ảnh rõ hơn"
+                      />
+                    ) : data.contractFileUrl?.startsWith("http") ? (
+                      <img
+                        src={data.contractFileUrl}
+                        alt="Preview"
+                        className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                        onError={() => toast.error("Không thể tải ảnh preview")}
+                        onClick={() => {
+                          if (data.contractFileUrl) {
+                            setModalImageUrl(data.contractFileUrl);
+                            setShowImageModal(true);
+                          }
+                        }}
+                        title="Click để xem ảnh rõ hơn"
+                      />
+                    ) : (
+                      <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">
+                          📷{" "}
+                          {selectedFile
+                            ? selectedFile.name
+                            : data.contractFileUrl}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* Preview cho PDF */}
               {(data.contractFileUrl?.match(/\.pdf$/i) ||
                 selectedFile?.name?.match(/\.pdf$/i)) && (
-                <div className="mt-2">
-                  {data.contractFileUrl?.startsWith("http") ? (
-                    <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
-                      <a
-                        href={data.contractFileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        📄 Xem PDF: {data.contractFileUrl.split("/").pop()}
-                      </a>
-                    </div>
-                  ) : (
-                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">
-                        📄{" "}
-                        {selectedFile
-                          ? selectedFile.name
-                          : data.contractFileUrl}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
+                  <div className="mt-2">
+                    {data.contractFileUrl?.startsWith("http") ? (
+                      <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
+                        <a
+                          href={data.contractFileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          📄 Xem PDF: {data.contractFileUrl.split("/").pop()}
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">
+                          📄{" "}
+                          {selectedFile
+                            ? selectedFile.name
+                            : data.contractFileUrl}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* Preview cho Word */}
               {(data.contractFileUrl?.match(/\.(doc|docx)$/i) ||
                 selectedFile?.name?.match(/\.(doc|docx)$/i)) && (
-                <div className="mt-2">
-                  <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
-                    <span className="text-blue-600 text-sm font-medium">
-                      📝{" "}
-                      {selectedFile ? selectedFile.name : data.contractFileUrl}
-                    </span>
+                  <div className="mt-2">
+                    <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
+                      <span className="text-blue-600 text-sm font-medium">
+                        📝{" "}
+                        {selectedFile ? selectedFile.name : data.contractFileUrl}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Remove file buttons */}
               <div className="mt-3 flex gap-2">
@@ -1492,9 +1492,8 @@ export default function ContractForm({
           <select
             value={data.buyerId}
             onChange={(e) => handleChange("buyerId", e.target.value)}
-            className={`w-full p-2 border rounded ${
-              hasFieldError("buyerId") ? "border-red-500" : ""
-            }`}
+            className={`w-full p-2 border rounded ${hasFieldError("buyerId") ? "border-red-500" : ""
+              }`}
             required
           >
             <option value="">-- Chọn đối tác --</option>
@@ -1607,9 +1606,8 @@ export default function ContractForm({
           <div>
             <label className="block mb-1 text-sm font-medium">Trạng thái</label>
             <select
-              className={`w-full p-2 border rounded ${
-                hasFieldError("status") ? "border-red-500" : ""
-              }`}
+              className={`w-full p-2 border rounded ${hasFieldError("status") ? "border-red-500" : ""
+                }`}
               value={data.status}
               onChange={(e) => handleChange("status", e.target.value)}
             >
@@ -1689,9 +1687,8 @@ export default function ContractForm({
             <label className="block mb-1 text-sm font-medium">Trạng thái</label>
             <div className="p-2 border rounded bg-gray-50">
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  getStatusDisplay(data.status).className
-                }`}
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusDisplay(data.status).className
+                  }`}
               >
                 {getStatusDisplay(data.status).label}
               </span>
@@ -1763,11 +1760,10 @@ export default function ContractForm({
                     onChange={(e) =>
                       updateContractItem(index, "coffeeTypeId", e.target.value)
                     }
-                    className={`p-2 border rounded ${
-                      hasFieldError(`contractItems.${index}.coffeeTypeId`)
+                    className={`p-2 border rounded ${hasFieldError(`contractItems.${index}.coffeeTypeId`)
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   >
                     <option value="">-- Chọn loại cà phê --</option>
                     {coffeeTypes.map((type) => (

@@ -2,20 +2,20 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { authService } from './authService';
 
 export function useAuthGuard(allowedRoles: string[] = []) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('user_role');
-
-    if (!token) {
-      router.replace('/auth/login');
+    // Kiểm tra xác thực thông qua authService
+    if (!authService.isAuthenticated()) {
+      router.replace('/');
       return;
     }
 
-    if (allowedRoles.length > 0 && !allowedRoles.includes(role ?? '')) {
+    // Kiểm tra role
+    if (allowedRoles.length > 0 && !authService.hasRole(allowedRoles)) {
       router.replace('/unauthorized');
     }
   }, [allowedRoles, router]);
