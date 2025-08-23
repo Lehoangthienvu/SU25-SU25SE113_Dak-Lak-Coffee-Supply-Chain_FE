@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
     Search,
-    Plus,
     Filter,
     Calendar,
     MapPin,
@@ -33,7 +32,7 @@ export default function ManagerCropSeasonsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<CropSeasonStatusValue | null>(null);
-    const [selectedFarmer, setSelectedFarmer] = useState<string | null>(null);
+    const [selectedFarmer] = useState<string | null>(null);
     const pageSize = 10;
 
     useEffect(() => {
@@ -61,7 +60,7 @@ export default function ManagerCropSeasonsPage() {
     const filteredSeasons = cropSeasons.filter((season) => {
         const matchesSearch = !search ||
             season.seasonName.toLowerCase().includes(search.toLowerCase()) ||
-            season.farmerName.toLowerCase().includes(search.toLowerCase());
+            (season.farmerName && season.farmerName.toLowerCase().includes(search.toLowerCase()));
 
         const matchesStatus = !selectedStatus || season.status === selectedStatus;
 
@@ -301,7 +300,7 @@ export default function ManagerCropSeasonsPage() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900">
-                                                        {season.farmerName}
+                                                        {season.farmerName || "Chưa xác định"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">

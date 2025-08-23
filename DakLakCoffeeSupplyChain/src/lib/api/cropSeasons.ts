@@ -2,23 +2,37 @@ import api from "./axios";
 import { CropSeasonStatusValue, CropSeasonStatusValueToNumber } from "../constants/cropSeasonStatus";
 
 // Define types locally since they're not exported from a types file
-interface CropSeason {
+export interface CropSeason {
   id: string;
   name: string;
+  seasonName: string;
   description?: string;
   startDate: string;
   endDate: string;
   status: CropSeasonStatusValue;
+  note?: string;
+  commitmentName?: string;
+  area?: number;
+  details?: CropSeasonDetail[];
+  farmerName?: string;
+  registrationCode?: string;
+  cropSeasonId?: string;
+  commitmentId?: string;
   // Add other properties as needed
 }
 
-interface CropSeasonListItem {
+export interface CropSeasonListItem {
   id: string;
   name: string;
+  seasonName: string;
   description?: string;
   startDate: string;
   endDate: string;
   status: CropSeasonStatusValue;
+  cropSeasonId: string;
+  area?: number;
+  farmerId: string;
+  farmerName: string;
   // Add other properties as needed
 }
 

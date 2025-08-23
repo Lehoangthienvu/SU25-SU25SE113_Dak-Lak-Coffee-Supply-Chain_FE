@@ -45,7 +45,7 @@ export default function EditProcessingBatchPage() {
   const [coffeeTypes, setCoffeeTypes] = useState<any[]>([]);
   const [cropSeasons, setCropSeasons] = useState<CropSeasonListItem[]>([]);
 
-      // Load dữ liệu lô sơ chế
+  // Load dữ liệu lô sơ chế
   useEffect(() => {
     async function fetchBatch() {
       try {
@@ -76,7 +76,7 @@ export default function EditProcessingBatchPage() {
     }
   }, [batchId, router]);
 
-      // Load danh sách mùa vụ
+  // Load danh sách mùa vụ
   useEffect(() => {
     async function fetchCropSeasons() {
       try {
@@ -121,10 +121,10 @@ export default function EditProcessingBatchPage() {
       AppToast.success("Cập nhật lô sơ chế thành công!");
       router.push(`/dashboard/farmer/processing/batches/${batchId}`);
     } catch (err: any) {
-              console.error("Lỗi cập nhật batch:", err);
-      
+      console.error("Lỗi cập nhật batch:", err);
+
       let errorMessage = "Cập nhật lô sơ chế thất bại!";
-      
+
       if (err?.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (err?.message) {
@@ -138,7 +138,7 @@ export default function EditProcessingBatchPage() {
       } else if (err?.response?.status >= 500) {
         errorMessage = "Lỗi hệ thống. Vui lòng thử lại sau.";
       }
-      
+
       AppToast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -210,10 +210,10 @@ export default function EditProcessingBatchPage() {
           description="Cập nhật thông tin lô sơ chế"
           showCreateButton={false}
         />
-        
+
         <div className="flex justify-end">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => router.back()}
             className="flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
           >
@@ -231,7 +231,7 @@ export default function EditProcessingBatchPage() {
             <div className="space-y-1">
               <h3 className="font-semibold text-blue-900">Hướng dẫn chỉnh sửa</h3>
               <p className="text-sm text-blue-700">
-                Chỉnh sửa thông tin cơ bản của lô sơ chế. 
+                Chỉnh sửa thông tin cơ bản của lô sơ chế.
                 Một số thông tin có thể không được phép thay đổi sau khi đã tạo.
               </p>
             </div>
@@ -246,7 +246,7 @@ export default function EditProcessingBatchPage() {
               Thông tin lô sơ chế
             </h2>
           </div>
-          
+
           <div className="p-6 space-y-6">
             {/* Mã lô (Read-only) */}
             <div className="space-y-2">
@@ -277,7 +277,7 @@ export default function EditProcessingBatchPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {cropSeasons.map((cs) => (
-                    <SelectItem key={cs.cropSeasonId} value={cs.cropSeasonId}>
+                    <SelectItem key={cs.cropSeasonId} value={cs.cropSeasonId || ""}>
                       {cs.seasonName}
                     </SelectItem>
                   ))}
@@ -301,8 +301,8 @@ export default function EditProcessingBatchPage() {
 
             {/* Submit Button */}
             <div className="flex justify-end pt-4">
-              <Button 
-                onClick={handleSubmit} 
+              <Button
+                onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl"
               >

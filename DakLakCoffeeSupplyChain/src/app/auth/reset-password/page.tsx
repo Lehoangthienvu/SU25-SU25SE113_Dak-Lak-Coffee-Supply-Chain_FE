@@ -22,7 +22,7 @@ function ResetPasswordContent() {
     const [validating, setValidating] = useState(true);
     const [tokenValid, setTokenValid] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
-    
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
@@ -79,7 +79,7 @@ function ResetPasswordContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (newPassword !== confirmPassword) {
             toast.error("❌ Mật khẩu xác nhận không khớp!");
             return;
@@ -161,7 +161,7 @@ function ResetPasswordContent() {
                                 <li>• Link không đúng định dạng</li>
                             </ul>
                         </div>
-                        
+
                         <Button
                             onClick={() => router.push("/auth/forgot-password")}
                             className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
@@ -198,7 +198,7 @@ function ResetPasswordContent() {
                                 <li>• Link reset đã được vô hiệu hóa</li>
                             </ul>
                         </div>
-                        
+
                         <Button
                             onClick={() => router.push("/auth/login")}
                             className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
@@ -215,18 +215,122 @@ function ResetPasswordContent() {
 
 
     return (
-        <Suspense fallback={
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 flex items-center justify-center p-4">
-                <div className="w-full max-w-md bg-white shadow-xl border-0 rounded-lg p-8">
-                    <div className="text-center">
-                        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-600">Đang tải...</p>
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 flex items-center justify-center p-4">
+            <Card className="w-full max-w-md bg-white shadow-xl border-0">
+                <CardHeader className="text-center pb-4">
+                    <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                        <Lock className="w-8 h-8 text-orange-600" />
                     </div>
-                </div>
-            </div>
-        }>
-            <ResetPasswordForm />
-        </Suspense>
+                    <CardTitle className="text-2xl font-bold text-gray-800">
+                        Đặt lại mật khẩu
+                    </CardTitle>
+                    <p className="text-gray-600 mt-2">
+                        Nhập mật khẩu mới cho tài khoản của bạn
+                    </p>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="newPassword">Mật khẩu mới</Label>
+                            <div className="relative">
+                                <Input
+                                    id="newPassword"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Nhập mật khẩu mới"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="pr-10"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
+                            <div className="relative">
+                                <Input
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Nhập lại mật khẩu mới"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="pr-10"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Password validation indicators */}
+                        {newPassword && (
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Yêu cầu mật khẩu:</Label>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className={`flex items-center gap-2 ${passwordValidation.errors.length ? 'text-red-600' : 'text-green-600'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${passwordValidation.errors.length ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                                        Tối thiểu 8 ký tự
+                                    </div>
+                                    <div className={`flex items-center gap-2 ${passwordValidation.errors.upperCase ? 'text-red-600' : 'text-green-600'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${passwordValidation.errors.upperCase ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                                        Chữ hoa (A-Z)
+                                    </div>
+                                    <div className={`flex items-center gap-2 ${passwordValidation.errors.lowerCase ? 'text-red-600' : 'text-green-600'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${passwordValidation.errors.lowerCase ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                                        Chữ thường (a-z)
+                                    </div>
+                                    <div className={`flex items-center gap-2 ${passwordValidation.errors.numbers ? 'text-red-600' : 'text-green-600'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${passwordValidation.errors.numbers ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                                        Số (0-9)
+                                    </div>
+                                    <div className={`flex items-center gap-2 ${passwordValidation.errors.specialChar ? 'text-red-600' : 'text-green-600'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${passwordValidation.errors.specialChar ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                                        Ký tự đặc biệt
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <Button
+                            type="submit"
+                            disabled={loading || !newPassword || !confirmPassword}
+                            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-50"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                    Đang xử lý...
+                                </>
+                            ) : (
+                                "Đặt lại mật khẩu"
+                            )}
+                        </Button>
+
+                        <div className="text-center">
+                            <Link
+                                href="/auth/login"
+                                className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center justify-center gap-2"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                Quay lại đăng nhập
+                            </Link>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
