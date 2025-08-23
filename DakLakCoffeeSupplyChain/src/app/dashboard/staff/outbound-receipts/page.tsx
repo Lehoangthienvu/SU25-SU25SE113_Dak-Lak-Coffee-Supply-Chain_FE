@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Eye, CheckCircle, Clock, Package, TrendingDown, Plus, Receipt, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getAllOutboundReceipts, getOutboundReceiptById } from '@/lib/api/warehouseOutboundReceipt';
 
 interface OutboundReceiptItem {
   outboundReceiptId: string;
@@ -28,28 +29,17 @@ export default function OutboundReceiptListPage() {
   useEffect(() => {
     const fetchReceiptsWithNote = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Chưa đăng nhập');
-
         // Fetch danh sách ban đầu
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/WarehouseOutboundReceipts`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) throw new Error(await res.text());
-        const list = await res.json();
+        const response = await getAllOutboundReceipts();
+        const list = response.data || response;
         if (!Array.isArray(list)) throw new Error('Dữ liệu không hợp lệ');
 
         // Fetch chi tiết từng phiếu để lấy `note`
         const enriched = await Promise.all(
           list.map(async (r: any) => {
             try {
-              const detailRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/WarehouseOutboundReceipts/${r.outboundReceiptId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-
-              if (!detailRes.ok) throw new Error();
-              const detail = await detailRes.json();
+              const detailResponse = await getOutboundReceiptById(r.outboundReceiptId);
+              const detail = detailResponse.data || detailResponse;
               return { ...r, note: detail.note };
             } catch {
               return r;

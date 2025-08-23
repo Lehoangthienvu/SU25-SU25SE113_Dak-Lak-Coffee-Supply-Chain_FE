@@ -138,7 +138,7 @@ export default function CreateOutboundRequestPage() {
           setForm((p) => ({ ...p, inventoryId: recommendedInventory.inventoryId }));
         }
       } catch (e: any) {
-        console.error('Lỗi khi cập nhật khuyến nghị FIFO:', e);
+        // Lỗi khi cập nhật khuyến nghị FIFO - không hiển thị toast để tránh spam
       }
     }, 500); // Debounce 500ms
 
@@ -228,8 +228,7 @@ export default function CreateOutboundRequestPage() {
         orderItemId: form.orderItemId && form.orderItemId !== '' ? form.orderItemId : undefined,
       };
 
-      console.log('DEBUG: Form data:', form);
-      console.log('DEBUG: Payload being sent:', payload);
+      // Debug logs removed for performance
 
       const message = await createWarehouseOutboundRequest(payload);
       toast.success(message || 'Tạo yêu cầu thành công');

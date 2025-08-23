@@ -54,6 +54,7 @@ async function safeFetch(
     console.error("❌ Fetch exception:", err);
     return { status: 0, message: "Lỗi kết nối hoặc token không hợp lệ" };
   }
+
 }
 
 // ============================
@@ -96,7 +97,7 @@ export async function updateWarehouse(id: string, data: any) {
 // ❌ XOÁ KHO (MỀM)
 // ============================
 export async function deleteWarehouse(id: string) {
-  return await safeFetch(`${API_URL}/${id}`, {
-    method: "DELETE",
+  return await safeFetch(`${API_URL}/soft-delete/${id}`, {
+    method: "PATCH",
   });
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAllInboundRequests } from "@/lib/api/warehouseInboundRequest";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeft, ChevronRight, Search, Eye, Package, TrendingUp, Clock, CheckCircle, XCircle, Leaf, Coffee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export default function InboundRequestListPage() {
+function InboundRequestListContent() {
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -441,5 +441,13 @@ export default function InboundRequestListPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function InboundRequestListPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <InboundRequestListContent />
+    </Suspense>
   );
 }

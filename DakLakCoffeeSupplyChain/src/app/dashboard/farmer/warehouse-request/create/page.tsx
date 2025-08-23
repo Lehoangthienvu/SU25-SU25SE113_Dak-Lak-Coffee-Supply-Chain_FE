@@ -104,7 +104,7 @@ export default function CreateDeliveryRequestPage() {
   const batchesWithRemaining = useMemo(() => {
     if (!availableBatchesData || availableBatchesData.length === 0) return [];
 
-    console.log('🔍 DEBUG batchesWithRemaining:');
+    // Debug log removed for performance
     console.log('  - availableBatchesData:', availableBatchesData);
     console.log('  - inboundRequests:', inboundRequests);
 
@@ -280,7 +280,7 @@ export default function CreateDeliveryRequestPage() {
         // Lấy danh sách batches có available quantity từ API mới
         const availableBatchesData = await getAvailableBatchesForWarehouseRequest();
         console.log('🔍 Available Batches for Warehouse Request:', availableBatchesData);
-        console.log('🔍 DEBUG - Raw API Response Structure:');
+        // Debug log removed for performance
         if (availableBatchesData && availableBatchesData.length > 0) {
           console.log('  - First batch keys:', Object.keys(availableBatchesData[0]));
           console.log('  - First batch values:', availableBatchesData[0]);
