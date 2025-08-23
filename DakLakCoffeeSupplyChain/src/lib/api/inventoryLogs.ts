@@ -1,84 +1,34 @@
+import api from "./axios";
+
 export async function getLogsByInventoryId(inventoryId: string) {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`https://localhost:7163/api/InventoryLogs/by-inventory/${inventoryId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const contentType = res.headers.get("content-type");
-
-  if (!res.ok) {
-    const errorText = contentType?.includes("application/json")
-      ? (await res.json()).message
-      : await res.text();
-
-    console.error("❌ Error response", res.status, errorText);
-    throw new Error(errorText || "Đã có lỗi xảy ra khi tải lịch sử tồn kho.");
+  try {
+    const response = await api.get(`/InventoryLogs/by-inventory/${inventoryId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Đã có lỗi xảy ra khi tải lịch sử tồn kho.");
   }
-
-  // Trả ra mảng log trực tiếp
-  return await res.json();
 }
 export async function getAllInventoryLogs() {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch("https://localhost:7163/api/InventoryLogs", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const contentType = res.headers.get("content-type");
-
-  if (!res.ok) {
-    const msg = contentType?.includes("application/json")
-      ? (await res.json()).message
-      : await res.text();
-    throw new Error(msg || "Không thể tải log tồn kho.");
+  try {
+    const response = await api.get("/InventoryLogs");
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không thể tải log tồn kho.");
   }
-
-  const data = await res.json();
-  return data;
 }
 export async function getInventoryLogById(logId: string) {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(`https://localhost:7163/api/InventoryLogs/${logId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const contentType = res.headers.get("content-type");
-
-  if (!res.ok) {
-    const msg = contentType?.includes("application/json")
-      ? (await res.json()).message
-      : await res.text();
-    throw new Error(msg || "Không thể tải chi tiết log tồn kho.");
+  try {
+    const response = await api.get(`/InventoryLogs/${logId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không thể tải chi tiết log tồn kho.");
   }
-
-  return await res.json(); // log object
 }
 export async function softDeleteInventoryLog(logId: string) {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(`https://localhost:7163/api/InventoryLogs/soft/${logId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const contentType = res.headers.get("content-type");
-
-  if (!res.ok) {
-    const msg = contentType?.includes("application/json")
-      ? (await res.json()).message
-      : await res.text();
-    throw new Error(msg || "Không thể xoá log tồn kho.");
+  try {
+    await api.delete(`/InventoryLogs/soft/${logId}`);
+    return true; // success
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không thể xoá log tồn kho.");
   }
-
-  return true; // success
 }

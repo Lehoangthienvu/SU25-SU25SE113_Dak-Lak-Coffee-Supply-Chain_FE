@@ -15,19 +15,10 @@ import { ChevronLeft, ChevronRight, Eye, Check, X, TrendingDown, Clock, CheckCir
 import { toast } from 'sonner';
 import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
-interface OutboundRequest {
-  outboundRequestId: string;
-  outboundRequestCode: string;
-  warehouseName?: string;
-  productName?: string;
-  requestedQuantity: number;
-  unit?: string;
-  status: string;
-  rejectReason?: string;
-}
 
 function StaffOutboundRequestListContent() {
-  const [data, setData] = useState<OutboundRequest[]>([]);
+  const [data, setData] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -311,7 +302,7 @@ function StaffOutboundRequestListContent() {
                       <tr>
                         <th className="px-4 py-3 text-left border-b border-red-200">Mã yêu cầu</th>
                         <th className="px-4 py-3 text-left border-b border-red-200">Kho</th>
-                        <th className="px-4 py-3 text-left border-b border-red-200">Sản phẩm</th>
+                        <th className="px-4 py-3 text-left border-b border-red-200">Thông tin hàng</th>
                         <th className="px-4 py-3 text-right border-b border-red-200">Số lượng</th>
                         <th className="px-4 py-3 text-center border-b border-red-200">Trạng thái</th>
                         <th className="px-4 py-3 text-center border-b border-red-200">Thao tác</th>
@@ -322,7 +313,7 @@ function StaffOutboundRequestListContent() {
                         <tr key={item.outboundRequestId} className="border-b border-gray-100 hover:bg-red-50 transition-colors">
                           <td className="px-4 py-3 font-mono font-semibold text-gray-900">{item.outboundRequestCode}</td>
                           <td className="px-4 py-3 text-gray-700">{item.warehouseName || 'Không rõ'}</td>
-                          <td className="px-4 py-3 text-gray-700">{item.productName || 'N/A'}</td>
+                          <td className="px-4 py-3 text-gray-700">{item.productName || 'Cà phê'}</td>
                           <td className="px-4 py-3 text-right font-semibold">
                             {item.requestedQuantity} {item.unit || 'kg'}
                           </td>

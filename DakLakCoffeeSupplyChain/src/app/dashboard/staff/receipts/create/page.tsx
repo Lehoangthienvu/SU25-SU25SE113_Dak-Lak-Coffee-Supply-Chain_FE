@@ -213,14 +213,16 @@ export default function CreateReceiptPage() {
       note,
     };
 
-    // Debug logging
-    console.log('🔍 DEBUG: Creating receipt with data:', {
+    // Debug logging removed for performance
+    /*
+    console.log('Creating receipt with data:', {
       warehouseId,
       batchId: selectedRequest.batchId,
       detailId: selectedRequest.detailId,
       requestCode: selectedRequest.requestCode,
       coffeeType: selectedRequest.batchId ? 'Processed' : selectedRequest.detailId ? 'Fresh' : 'Unknown'
     });
+    */
 
     try {
       const res = await createWarehouseReceipt(inboundRequestId, receiptData);
