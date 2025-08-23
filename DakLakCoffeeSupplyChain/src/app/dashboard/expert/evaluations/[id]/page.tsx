@@ -5,13 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getProcessingBatchById, ProcessingBatch } from "@/lib/api/processingBatches";
 import { getEvaluationsByBatch, createProcessingBatchEvaluation, updateProcessingBatchEvaluation, ProcessingBatchEvaluation, CreateEvaluationDto, EVALUATION_RESULTS, getEvaluationResultDisplayName, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
+import { getProcessingStagesByMethodId, ProcessingStage } from "@/lib/api/processingStages";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
-import { FiArrowLeft, FiSave, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiBarChart2, FiX, FiPlus } from "react-icons/fi";
+import { FiArrowLeft, FiSave, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiBarChart2, FiX, FiPlus, FiTrendingUp, FiActivity, FiTarget, FiInfo, FiAward, FiTrendingUp as FiTrendingUpIcon } from "react-icons/fi";
 import * as Dialog from "@radix-ui/react-dialog";
 import StageFailureDisplay from "@/components/processing-batches/StageFailureDisplay";
 import EvaluationFailureInfo from "@/components/processing-batches/EvaluationFailureInfo";
 import FarmerRetryStatus from "@/components/processing-batches/FarmerRetryStatus";
 import RetryGuidanceInfo from "@/components/processing-batches/RetryGuidanceInfo";
+import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
+import { AppToast } from "@/components/ui/AppToast";
 
 export default function ExpertEvaluationDetailPage() {
   useAuthGuard(["expert"]);
@@ -21,23 +24,11 @@ export default function ExpertEvaluationDetailPage() {
 
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
   const [evaluations, setEvaluations] = useState<ProcessingBatchEvaluation[]>([]);
+  const [stages, setStages] = useState<ProcessingStage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showEvaluationForm, setShowEvaluationForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  // Form state
-  const [formData, setFormData] = useState<CreateEvaluationDto>({
-    batchId: batchId,
-    evaluationResult: EVALUATION_RESULTS.PASS,
-    comments: "",
-    detailedFeedback: "",
-    problematicSteps: [],
-    recommendations: "",
-  });
-
-  // Local state for problematic steps
-  const [newProblematicStep, setNewProblematicStep] = useState("");
 
   const fetchData = async () => {
     try {
@@ -53,6 +44,18 @@ export default function ExpertEvaluationDetailPage() {
 
       console.log("🔍 DEBUG: Batch data:", batchData);
       console.log("🔍 DEBUG: Evaluations data:", evaluationsData);
+      
+      // Lấy stages từ methodId của batch
+      let stagesData: ProcessingStage[] = [];
+      if (batchData?.methodId) {
+        try {
+          stagesData = await getProcessingStagesByMethodId(batchData.methodId);
+          console.log("🔍 DEBUG: Stages data:", stagesData);
+        } catch (err) {
+          console.error("❌ Lỗi lấy stages:", err);
+          stagesData = [];
+        }
+      }
       
       // 🔧 CẢI THIỆN: Debug thông tin evaluation
       if (evaluationsData && evaluationsData.length > 0) {
@@ -80,6 +83,7 @@ export default function ExpertEvaluationDetailPage() {
 
       setBatch(batchData);
       setEvaluations(evaluationsData);
+      setStages(stagesData);
     } catch (err: any) {
       console.error("❌ Lỗi fetchData:", err);
       console.error("❌ Error details:", {
@@ -99,130 +103,6 @@ export default function ExpertEvaluationDetailPage() {
     }
   }, [batchId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      setSubmitting(true);
-      
-      // Validation
-      if (formData.evaluationResult === EVALUATION_RESULTS.FAIL && 
-          (!formData.problematicSteps || formData.problematicSteps.length === 0)) {
-        alert("Vui lòng chọn ít nhất một tiến trình có vấn đề khi đánh giá không đạt.");
-        return;
-      }
-      
-      // 🔧 FIX: Thay vì tạo evaluation mới, cập nhật evaluation đã có (được tạo tự động bởi backend)
-      const latestEvaluation = evaluations.find(e => !e.evaluatedBy); // Tìm evaluation chưa được đánh giá
-      
-      if (!latestEvaluation) {
-        alert("Không tìm thấy đánh giá cần cập nhật. Vui lòng thử lại sau.");
-        return;
-      }
-      
-             // 🔧 CẢI THIỆN: Sử dụng helper để tạo comments theo format chuẩn
-       let finalComments = formData.comments;
-       if (formData.evaluationResult === EVALUATION_RESULTS.FAIL && formData.problematicSteps && formData.problematicSteps.length > 0) {
-         // Lấy step đầu tiên để tạo format chuẩn
-         const firstStep = formData.problematicSteps[0];
-         
-         // Sử dụng helper để tạo stage failure info
-         const { createStageFailureFromFormData, createFailureComment, debugStageFailure } = await import('@/lib/helpers/evaluationHelpers');
-         
-         const failureInfo = createStageFailureFromFormData(
-           firstStep,
-           formData.comments || 'Tiến trình có vấn đề',
-           formData.recommendations || 'Cần cải thiện theo hướng dẫn'
-         );
-         
-         if (failureInfo) {
-           // Tạo format chuẩn theo helper
-           finalComments = createFailureComment(
-             failureInfo.failedOrderIndex,
-             failureInfo.failedStageName,
-             failureInfo.failureDetails,
-             failureInfo.recommendations
-           );
-           
-           // Debug log
-           debugStageFailure(finalComments, 'Expert Form Submit');
-         } else {
-           // Fallback nếu không parse được
-           finalComments = `FAILED_STAGE_ID:1|FAILED_STAGE_NAME:Thu hoạch|DETAILS:${formData.comments || 'Tiến trình có vấn đề'}|RECOMMENDATIONS:${formData.recommendations || 'Cần cải thiện theo hướng dẫn'}`;
-         }
-       }
-      
-      // Chuẩn bị data để cập nhật evaluation
-      const updateData = {
-        evaluationResult: formData.evaluationResult,
-        comments: finalComments,
-        detailedFeedback: formData.detailedFeedback,
-        problematicSteps: formData.problematicSteps && formData.problematicSteps.length > 0 
-          ? formData.problematicSteps 
-          : undefined,
-        recommendations: formData.recommendations,
-        evaluatedAt: new Date().toISOString()
-      };
-      
-      console.log("🔍 DEBUG: Original comments:", formData.comments);
-      console.log("🔍 DEBUG: Final comments:", finalComments);
-      console.log("🔍 DEBUG: Updating evaluation with data:", updateData);
-      
-      // Gọi API cập nhật evaluation thay vì tạo mới
-      const result = await updateProcessingBatchEvaluation(latestEvaluation.evaluationId, updateData);
-      
-      console.log("🔍 DEBUG: Update evaluation result:", result);
-      
-             if (result && result.data) {
-         setShowEvaluationForm(false);
-         
-         // 🔧 CẢI THIỆN: Refresh data và đảm bảo hiển thị đúng
-         console.log("🔍 DEBUG: Evaluation updated successfully, refreshing data...");
-         await fetchData(); // Refresh data
-         
-         // 🔧 CẢI THIỆN: Hiển thị thông báo phù hợp với kết quả đánh giá
-         if (formData.evaluationResult === EVALUATION_RESULTS.FAIL) {
-           alert("Đánh giá không đạt đã được cập nhật. Nông dân sẽ được thông báo về các vấn đề cần cải thiện.");
-         } else {
-           alert("Đánh giá đã được cập nhật thành công!");
-         }
-       } else {
-         console.error("❌ DEBUG: No result or no data in result");
-         alert("Có lỗi xảy ra khi cập nhật đánh giá");
-       }
-    } catch (err: any) {
-      console.error("❌ Lỗi handleSubmit:", err);
-      console.error("❌ Error details:", {
-        message: err.message,
-        status: err.response?.status,
-        data: err.response?.data
-      });
-      
-      // Hiển thị lỗi chi tiết hơn
-      const errorMessage = err.message || "Có lỗi xảy ra khi cập nhật đánh giá";
-      alert(`Lỗi: ${errorMessage}`);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const addProblematicStep = () => {
-    if (newProblematicStep.trim() && !formData.problematicSteps?.includes(newProblematicStep.trim())) {
-      setFormData({
-        ...formData,
-        problematicSteps: [...(formData.problematicSteps || []), newProblematicStep.trim()]
-      });
-      setNewProblematicStep("");
-    }
-  };
-
-  const removeProblematicStep = (step: string) => {
-    setFormData({
-      ...formData,
-      problematicSteps: formData.problematicSteps?.filter(s => s !== step) || []
-    });
-  };
-
   const getStatusInfo = (status: ProcessingStatus) => {
     switch (status) {
       case ProcessingStatus.NotStarted:
@@ -238,6 +118,42 @@ export default function ExpertEvaluationDetailPage() {
       default:
         return { text: "Không xác định", color: "text-gray-600 bg-gray-100", icon: <FiAlertCircle className="text-gray-500" /> };
     }
+  };
+
+  // Tính toán đánh giá tổng quan
+  const calculateOverallEvaluation = () => {
+    if (!evaluations || evaluations.length === 0) return null;
+
+    const totalEvaluations = evaluations.length;
+    const passedEvaluations = evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length;
+    const failedEvaluations = evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length;
+    const needsImprovementEvaluations = evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.NEEDS_IMPROVEMENT).length;
+
+    // Tính điểm trung bình (giả định)
+    const averageScore = evaluations.reduce((sum, evaluation) => {
+      let score = 0;
+      switch (evaluation.evaluationResult) {
+        case EVALUATION_RESULTS.PASS: score = 100; break;
+        case EVALUATION_RESULTS.NEEDS_IMPROVEMENT: score = 70; break;
+        case EVALUATION_RESULTS.FAIL: score = 0; break;
+        default: score = 0;
+      }
+      return sum + score;
+    }, 0) / totalEvaluations;
+
+    // Logic đánh giá: Đạt ≥80đ HOẶC ≥67% giai đoạn đạt
+    const passPercentage = (passedEvaluations / totalEvaluations) * 100;
+    const overallResult = (averageScore >= 80 || passPercentage >= 67) ? 'Pass' : 'Fail';
+
+    return {
+      totalEvaluations,
+      passedEvaluations,
+      failedEvaluations,
+      needsImprovementEvaluations,
+      averageScore: Math.round(averageScore * 10) / 10,
+      passPercentage: Math.round(passPercentage * 10) / 10,
+      overallResult
+    };
   };
 
   if (loading) {
@@ -270,15 +186,16 @@ export default function ExpertEvaluationDetailPage() {
 
   const statusInfo = getStatusInfo(batch.status);
   const latestEvaluation = evaluations.length > 0 ? evaluations[0] : null;
+  const overallEval = calculateOverallEvaluation();
 
   return (
-    <div className="p-6 bg-orange-50 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4 transition-colors"
+            className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 mb-6 transition-colors"
           >
             <FiArrowLeft />
             Quay lại
@@ -286,192 +203,337 @@ export default function ExpertEvaluationDetailPage() {
           
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Chi tiết lô sơ chế</h1>
-              <p className="text-gray-600">Mã lô: {batch.batchCode}</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Đánh giá lô sơ chế
+              </h1>
+              <p className="text-gray-600">Mã lô: {batch.batchCode} • Nông dân: {batch.farmerName}</p>
             </div>
             
-                                                   {(batch.status === ProcessingStatus.AwaitingEvaluation || 
-                batch.status === ProcessingStatus.Completed || 
-                batch.status === ProcessingStatus.InProgress) && (
-                <div className="flex flex-col gap-2">
-                  {batch.status === ProcessingStatus.InProgress && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-sm text-blue-700">
-                        <strong>Lưu ý:</strong> Lô này đang trong quá trình xử lý. Bạn có thể tạo đánh giá tạm thời.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+            <button
+              onClick={() => setShowEvaluationForm(true)}
+              className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
+            >
+              <FiSave />
+              Cập nhật đánh giá
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Batch Information */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Thông tin lô sơ chế</h2>
+        {/* 🔥 CẢI THIỆN: UI mới - Layout 2 cột cân đối */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Cột trái: Thông tin cơ bản và tiến trình */}
+          <div className="space-y-6">
+            {/* Batch Information Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6 text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <FiPackage className="w-6 h-6" />
+                  Thông tin lô sơ chế
+                </h2>
+              </div>
               
+              <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <FiPackage className="text-orange-500" />
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <FiPackage className="w-5 h-5 text-indigo-600" />
+                      </div>
                     <div>
                       <p className="text-sm text-gray-600">Mã lô</p>
-                      <p className="font-medium text-gray-900">{batch.batchCode}</p>
+                        <p className="font-semibold text-gray-900">{batch.batchCode}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <FiUser className="text-orange-500" />
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <FiUser className="w-5 h-5 text-green-600" />
+                      </div>
                     <div>
                       <p className="text-sm text-gray-600">Nông dân</p>
-                      <p className="font-medium text-gray-900">{batch.farmerName}</p>
+                        <p className="font-semibold text-gray-900">{batch.farmerName}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <FiCalendar className="text-orange-500" />
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <FiCalendar className="w-5 h-5 text-orange-600" />
+                      </div>
                     <div>
                       <p className="text-sm text-gray-600">Mùa vụ</p>
-                      <p className="font-medium text-gray-900">{batch.cropSeasonName}</p>
+                        <p className="font-semibold text-gray-900">{batch.cropSeasonName}</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <FiBarChart2 className="text-orange-500" />
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <FiTrendingUpIcon className="w-5 h-5 text-blue-600" />
+                      </div>
                     <div>
-                      <p className="text-sm text-gray-600">Khối lượng đầu vào</p>
-                      <p className="font-medium text-gray-900">{batch.totalInputQuantity} kg</p>
+                        <p className="text-sm text-gray-600">Khối lượng vào</p>
+                        <p className="font-semibold text-gray-900">{batch.totalInputQuantity} kg</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <FiBarChart2 className="text-orange-500" />
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <FiTrendingUpIcon className="w-5 h-5 text-purple-600" />
+                      </div>
                     <div>
-                      <p className="text-sm text-gray-600">Khối lượng đầu ra</p>
-                      <p className="font-medium text-gray-900">{batch.totalOutputQuantity} kg</p>
+                        <p className="text-sm text-gray-600">Khối lượng ra</p>
+                        <p className="font-semibold text-gray-900">{batch.totalOutputQuantity} kg</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 flex items-center justify-center">
+                      <div className="p-2 bg-gray-100 rounded-lg">
                       {statusInfo.icon}
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Trạng thái</p>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusInfo.color}`}>
+                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusInfo.color}`}>
                         {statusInfo.text}
                       </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Progresses */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Tiến trình sơ chế</h2>
+            {/* Progresses Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-6 text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <FiActivity className="w-6 h-6" />
+                  Tiến trình sơ chế
+                </h2>
+              </div>
               
+              <div className="p-6">
               {batch.progresses && batch.progresses.length > 0 ? (
                 <div className="space-y-4">
                   {batch.progresses.map((progress, index) => (
-                    <div key={progress.progressId} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">
-                          Bước {index + 1}: {progress.stageName}
+                      <div key={progress.progressId} className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-all duration-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                              {index + 1}
+                            </div>
+                            <h3 className="font-semibold text-gray-900 text-lg">
+                              {progress.stageName}
                         </h3>
-                        <span className="text-sm text-gray-500">
+                          </div>
+                          <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
                           {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString('vi-VN') : 'Chưa bắt đầu'}
                         </span>
                       </div>
                       
-                      <p className="text-sm text-gray-600 mb-2">{progress.stageDescription}</p>
+                        {progress.stageDescription && (
+                          <p className="text-gray-600 mb-3 text-sm">{progress.stageDescription}</p>
+                        )}
                       
                       <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
+                          <div className="flex items-center gap-2">
+                            <FiTrendingUpIcon className="w-4 h-4 text-green-600" />
                           <span className="text-gray-500">Sản lượng:</span>
-                          <span className="ml-2 font-medium">{progress.outputQuantity} {progress.outputUnit}</span>
+                            <span className="font-medium text-gray-900">{progress.outputQuantity} {progress.outputUnit}</span>
                         </div>
-                        <div>
+                          <div className="flex items-center gap-2">
+                            <FiUser className="w-4 h-4 text-blue-600" />
                           <span className="text-gray-500">Cập nhật bởi:</span>
-                          <span className="ml-2 font-medium">{progress.updatedByName}</span>
+                            <span className="font-medium text-gray-900">{progress.updatedByName}</span>
                         </div>
                       </div>
-                      
-
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">Chưa có tiến trình nào được ghi nhận</p>
+                  <div className="text-center py-8 bg-gray-50 rounded-xl">
+                    <FiActivity className="text-gray-400 text-3xl mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm">Chưa có tiến trình nào được ghi nhận</p>
+                  </div>
               )}
+              </div>
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Cột phải: Đánh giá và thống kê */}
           <div className="space-y-6">
-                         {/* Evaluation Status */}
-             <div className="bg-white rounded-xl shadow-sm p-6">
-               <h2 className="text-xl font-semibold text-gray-800 mb-4">Trạng thái đánh giá</h2>
-               
+            {/* 🔥 CẢI THIỆN: Overall Evaluation Card - UI mới đẹp */}
+            {overallEval && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
+                  <h2 className="text-xl font-semibold flex items-center gap-3">
+                    <FiAward className="w-6 h-6" />
+                    Tổng quan đánh giá lô
+                  </h2>
+                  <p className="text-emerald-100 mt-2">Kết quả tổng hợp từ tất cả các giai đoạn</p>
+                </div>
+                
+                <div className="p-6">
+                  {/* Kết quả tổng hợp */}
+                  <div className="text-center mb-6">
+                    <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-xl border-2 ${
+                      overallEval.overallResult === 'Pass' 
+                        ? 'border-emerald-200 bg-emerald-50 text-emerald-800' 
+                        : 'border-red-200 bg-red-50 text-red-800'
+                    }`}>
+                      <div className={`p-2 rounded-lg ${
+                        overallEval.overallResult === 'Pass' ? 'bg-emerald-100' : 'bg-red-100'
+                      }`}>
+                        {overallEval.overallResult === 'Pass' ? (
+                          <FiCheckCircle className="w-6 h-6 text-emerald-600" />
+                        ) : (
+                          <FiX className="w-6 h-6 text-red-600" />
+                        )}
+                      </div>
+                      <span className="font-bold text-lg">
+                        {overallEval.overallResult === 'Pass' ? 'Đạt chuẩn' : 'Không đạt'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Thống kê 3 cột */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    {/* Điểm trung bình */}
+                    <div className="text-center">
+                      <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-xl shadow-lg">
+                        <div className="text-2xl font-bold mb-1">
+                          {overallEval.averageScore}
+                        </div>
+                        <div className="text-sm opacity-90">/100</div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+                        <div 
+                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500" 
+                          style={{ width: `${overallEval.averageScore}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-2 font-medium">Điểm trung bình</p>
+                    </div>
+                    
+                    {/* Giai đoạn đạt */}
+                    <div className="text-center">
+                      <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-xl shadow-lg">
+                        <div className="text-2xl font-bold mb-1">
+                          {overallEval.passedEvaluations}
+                        </div>
+                        <div className="text-sm opacity-90">/{overallEval.totalEvaluations}</div>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-2 font-medium">Giai đoạn đạt</p>
+                    </div>
+                    
+                    {/* Tỷ lệ đạt */}
+                    <div className="text-center">
+                      <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-lg">
+                        <div className="text-2xl font-bold mb-1">
+                          {overallEval.passPercentage}%
+                        </div>
+                        <div className="text-sm opacity-90">Tỷ lệ</div>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-2 font-medium">Tỷ lệ đạt</p>
+                    </div>
+                  </div>
+
+                  {/* Logic đánh giá */}
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-4 text-center">
+                    <div className="text-sm text-blue-800 font-medium">
+                      <span className="font-bold">Logic đánh giá:</span> Đạt ≥80đ HOẶC ≥{Math.ceil(overallEval.totalEvaluations * 0.67)}/{overallEval.totalEvaluations} giai đoạn
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Evaluation Status Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <FiTarget className="w-6 h-6" />
+                  Trạng thái đánh giá
+                </h2>
+              </div>
+              
+              <div className="p-6">
                                {latestEvaluation ? (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 text-sm font-medium rounded-full ${getEvaluationResultColor(latestEvaluation.evaluationResult)}`}>
+                    <div className="flex items-center justify-center">
+                      <span className={`px-6 py-3 text-lg font-medium rounded-xl ${getEvaluationResultColor(latestEvaluation.evaluationResult)}`}>
                         {getEvaluationResultDisplayName(latestEvaluation.evaluationResult)}
                       </span>
                     </div>
                     
                                                               {/* 🔧 CẢI THIỆN: Hiển thị thông tin failure chỉ khi đánh giá không đạt */}
                       {latestEvaluation.comments && latestEvaluation.evaluationResult === EVALUATION_RESULTS.FAIL && (
-                        <div>
-                          <p className="text-sm text-gray-600 mb-2">Nhận xét:</p>
-                                                     <StageFailureDisplay comments={latestEvaluation.comments} batch={batch} />
+                      <div className="space-y-4">
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                          <p className="text-sm text-red-800 font-medium mb-3">Nhận xét:</p>
+                          <StageFailureDisplay comments={latestEvaluation.comments} batch={{
+                            ...batch,
+                            progresses: batch.progresses?.map(progress => ({
+                              ...progress,
+                              stageId: progress.stageId.toString()
+                            }))
+                          }} />
                           
                           {/* 🔧 CẢI THIỆN: Hiển thị trạng thái retry của farmer */}
                           <FarmerRetryStatus 
                             evaluation={latestEvaluation} 
-                            batch={batch}
+                            batch={{
+                              ...batch,
+                              progresses: batch.progresses?.map(progress => ({
+                                ...progress,
+                                stageId: progress.stageId.toString()
+                              }))
+                            }}
                           />
                           
                           {/* 🔧 CẢI THIỆN: Hiển thị hướng dẫn retry */}
                           <RetryGuidanceInfo 
                             evaluation={latestEvaluation} 
-                            batch={batch}
+                            batch={{
+                              ...batch,
+                              progresses: batch.progresses?.map(progress => ({
+                                ...progress,
+                                stageId: progress.stageId.toString()
+                              }))
+                            }}
                           />
+                        </div>
                         </div>
                       )}
                       
                       {/* 🔧 CẢI THIỆN: Hiển thị comments thông thường cho đánh giá đạt */}
-
+                    {latestEvaluation.comments && latestEvaluation.evaluationResult !== EVALUATION_RESULTS.FAIL && (
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                        <p className="text-sm text-green-800 font-medium mb-2">Nhận xét:</p>
+                        <p className="text-sm text-green-800">{latestEvaluation.comments}</p>
+                      </div>
+                    )}
                     
                     {/* 🔧 CẢI THIỆN: Hiển thị thông tin chi tiết khác */}
                     {latestEvaluation.detailedFeedback && (
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Phản hồi chi tiết:</p>
-                        <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded">
-                          {latestEvaluation.detailedFeedback}
-                        </p>
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <p className="text-sm text-blue-800 font-medium mb-2">Phản hồi chi tiết:</p>
+                        <p className="text-sm text-blue-900">{latestEvaluation.detailedFeedback}</p>
                       </div>
                     )}
                     
                     {latestEvaluation.recommendations && (
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Khuyến nghị:</p>
-                        <p className="text-sm text-gray-900 bg-green-50 p-2 rounded">
-                          {latestEvaluation.recommendations}
-                        </p>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                        <p className="text-sm text-emerald-800 font-medium mb-2">Khuyến nghị:</p>
+                        <p className="text-sm text-emerald-900">{latestEvaluation.recommendations}</p>
                       </div>
                     )}
                     
+                    <div className="grid grid-cols-2 gap-4">
                     {latestEvaluation.evaluatedAt && (
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Ngày đánh giá:</p>
-                        <p className="text-sm text-gray-900">
+                        <div className="bg-gray-50 rounded-xl p-4 text-center">
+                          <p className="text-xs text-gray-600 mb-1">Ngày đánh giá</p>
+                          <p className="text-sm font-medium text-gray-900">
                           {new Date(latestEvaluation.evaluatedAt).toLocaleDateString('vi-VN')}
                         </p>
                       </div>
@@ -479,317 +541,80 @@ export default function ExpertEvaluationDetailPage() {
                     
                     {/* 🔧 CẢI THIỆN: Hiển thị người đánh giá nếu có */}
                     {latestEvaluation.evaluatedBy && (
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Đánh giá bởi:</p>
-                        <p className="text-sm text-gray-900">
+                        <div className="bg-gray-50 rounded-xl p-4 text-center">
+                          <p className="text-xs text-gray-600 mb-1">Đánh giá bởi</p>
+                          <p className="text-sm font-medium text-gray-900">
                           {latestEvaluation.expertName || latestEvaluation.evaluatedBy}
                         </p>
                       </div>
                     )}
+                    </div>
                   </div>
                 ) : (
-                  <div className="text-center py-4">
-                    <FiAlertCircle className="text-yellow-500 text-2xl mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-4">Chưa có đánh giá</p>
+                  <div className="text-center py-8 bg-gray-50 rounded-xl">
+                    <FiAlertCircle className="text-yellow-500 text-3xl mx-auto mb-3" />
+                    <p className="text-gray-600 text-sm">Chưa có đánh giá</p>
                   </div>
                 )}
+              </div>
              </div>
 
-                         {/* Actions */}
-             <div className="bg-white rounded-xl shadow-sm p-6">
-               <h2 className="text-xl font-semibold text-gray-800 mb-4">Hành động</h2>
-               
-               <div className="space-y-3">
-                 <button
-                   onClick={() => setShowEvaluationForm(true)}
-                   className="w-full px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
-                 >
-                   <FiSave />
-                   Cập nhật đánh giá
-                 </button>
-                 
-                 <button
-                   onClick={() => router.back()}
-                   className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                 >
-                   <FiArrowLeft />
-                   Quay lại danh sách
-                 </button>
+            {/* Quick Statistics Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-6 text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <FiBarChart2 className="w-6 h-6" />
+                  Thống kê nhanh
+                </h2>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-blue-50 rounded-xl">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {evaluations.length}
                </div>
+                    <div className="text-xs text-blue-700">Lần đánh giá</div>
              </div>
 
-             {/* Evaluation History */}
-             {evaluations.length > 1 && (
-               <div className="bg-white rounded-xl shadow-sm p-6">
-                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Lịch sử đánh giá</h2>
-                 
-                 <div className="space-y-3">
-                   {evaluations.slice(1).map((evaluation, index) => (
-                     <div key={`${evaluation.evaluationId}-${index}`} className="border-l-2 border-gray-200 pl-4">
-                       <div className="flex items-center gap-2 mb-1">
-                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
-                           {getEvaluationResultDisplayName(evaluation.evaluationResult)}
-                         </span>
-                         <span className="text-xs text-gray-500">
-                           {evaluation.evaluatedAt ? new Date(evaluation.evaluatedAt).toLocaleDateString('vi-VN') : 'Chưa có ngày'}
-                         </span>
+                  <div className="text-center p-4 bg-green-50 rounded-xl">
+                    <div className="text-2xl font-bold text-green-600">
+                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length}
+                    </div>
+                    <div className="text-xs text-green-700">Đạt chuẩn</div>
                        </div>
                        
-                                               {evaluation.comments && (
-                          <div className="mt-2">
-                            {/* Hiển thị failure info nếu là failure comment */}
-                                                         {evaluation.evaluationResult === EVALUATION_RESULTS.FAIL && (
-                               <StageFailureDisplay comments={evaluation.comments} batch={batch} />
-                             )}
-                            
-                            {/* Hiển thị comments thông thường nếu không phải failure */}
-                            {evaluation.evaluationResult !== EVALUATION_RESULTS.FAIL && (
-                              <div className="bg-gray-50 rounded-lg p-2">
-                                <p className="text-xs text-gray-700">{evaluation.comments}</p>
+                  <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.NEEDS_IMPROVEMENT).length}
                               </div>
-                            )}
-                            
-                            {/* Hiển thị thông tin chi tiết nếu có */}
-                            {evaluation.detailedFeedback && (
-                              <div className="mt-2 bg-blue-50 rounded-lg p-2">
-                                <p className="text-xs text-blue-700">
-                                  <strong>Chi tiết:</strong> {evaluation.detailedFeedback}
-                                </p>
+                    <div className="text-xs text-yellow-700">Cần cải thiện</div>
                               </div>
-                            )}
-                            
-                            {evaluation.recommendations && (
-                              <div className="mt-2 bg-green-50 rounded-lg p-2">
-                                <p className="text-xs text-green-700">
-                                  <strong>Khuyến nghị:</strong> {evaluation.recommendations}
-                                </p>
+                  
+                  <div className="text-center p-4 bg-red-50 rounded-xl">
+                    <div className="text-2xl font-bold text-red-600">
+                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length}
                               </div>
-                            )}
+                    <div className="text-xs text-red-700">Không đạt</div>
                           </div>
-                        )}
-                        
-                        {/* 🔧 CẢI THIỆN: Hiển thị thông tin người đánh giá */}
-                        {evaluation.evaluatedBy && (
-                          <div className="mt-2 text-xs text-gray-500">
-                            <span className="font-medium">Đánh giá bởi:</span> {evaluation.expertName || evaluation.evaluatedBy}
-                          </div>
-                        )}
                      </div>
-                   ))}
                  </div>
                </div>
-             )}
           </div>
         </div>
 
-        {/* Evaluation Form Modal */}
-        <Dialog.Root open={showEvaluationForm} onOpenChange={setShowEvaluationForm}>
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-50" />
-            <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto z-50">
-              <div className="flex items-center justify-between mb-6">
-                <Dialog.Title className="text-2xl font-bold text-gray-800">
-                  Cập nhật đánh giá cho lô {batch.batchCode}
-                </Dialog.Title>
-                <button
-                  onClick={() => setShowEvaluationForm(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <FiX className="w-6 h-6" />
-                </button>
-              </div>
-              
-                             <form onSubmit={handleSubmit} className="space-y-6">
-                 {/* Batch Status Info */}
-                 {batch.status === ProcessingStatus.InProgress && (
-                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                     <div className="flex items-center gap-2">
-                       <FiClock className="w-5 h-5 text-blue-600" />
-                       <div>
-                         <h4 className="text-sm font-medium text-blue-900">Lô đang trong quá trình xử lý</h4>
-                         <p className="text-sm text-blue-700">
-                           Bạn có thể tạo đánh giá tạm thời để hướng dẫn nông dân cải thiện quá trình.
-                         </p>
-                       </div>
-                     </div>
-                   </div>
-                 )}
-                 
-                 {/* Evaluation Result */}
-                 <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Kết quả đánh giá *
-                  </label>
-                  <select
-                    value={formData.evaluationResult}
-                    onChange={(e) => setFormData({ ...formData, evaluationResult: e.target.value })}
-                    className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white font-medium"
-                    required
-                  >
-                    <option value={EVALUATION_RESULTS.PASS}>✅ Đạt - Chất lượng tốt</option>
-                    <option value={EVALUATION_RESULTS.FAIL}>❌ Không đạt - Cần xử lý lại</option>
-                    <option value={EVALUATION_RESULTS.NEEDS_IMPROVEMENT}>⚠️ Cần cải thiện - Chất lượng chưa đạt chuẩn</option>
-                    <option value={EVALUATION_RESULTS.TEMPORARY}>⏳ Tạm thời - Chờ đánh giá thêm</option>
-                  </select>
-                </div>
-
-                                 {/* Problematic Steps - Chỉ hiển thị khi Fail */}
-                 {formData.evaluationResult === EVALUATION_RESULTS.FAIL && (
-                   <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">
-                     <label className="block text-sm font-semibold text-red-700 mb-3">
-                       🔍 Tiến trình có vấn đề *
-                     </label>
-                     <p className="text-sm text-red-600 mb-4">
-                       Chọn các tiến trình cần được xử lý lại để xác định chính xác vấn đề
-                     </p>
-                     {(!formData.problematicSteps || formData.problematicSteps.length === 0) && (
-                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                         <p className="text-sm text-yellow-700">
-                           ⚠️ <strong>Bắt buộc:</strong> Vui lòng chọn ít nhất một tiến trình có vấn đề khi đánh giá không đạt.
-                         </p>
-                       </div>
-                     )}
-                    <div className="space-y-4">
-                      {/* Add new step */}
-                      <div className="flex gap-2">
-                        <select
-                          value={newProblematicStep}
-                          onChange={(e) => setNewProblematicStep(e.target.value)}
-                          className="flex-1 px-4 py-3 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white"
-                        >
-                          <option value="">Chọn tiến trình có vấn đề...</option>
-                          {batch.progresses && batch.progresses.map((progress, index) => (
-                            <option key={progress.progressId} value={`Bước ${index + 1}: ${progress.stageName}`}>
-                              Bước {index + 1} (OrderIndex: {index + 1}): {progress.stageName}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          type="button"
-                          onClick={addProblematicStep}
-                          disabled={!newProblematicStep}
-                          className="px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <FiPlus className="w-4 h-4" />
-                          Thêm
-                        </button>
-                      </div>
-                      
-                                             {/* Display added steps */}
-                       {formData.problematicSteps && formData.problematicSteps.length > 0 && (
-                         <div className="space-y-3">
-                           <p className="text-sm font-medium text-red-700">Các tiến trình đã chọn:</p>
-                           <div className="space-y-2">
-                             {formData.problematicSteps.map((step, index) => (
-                               <div key={`step-${step}-${index}`} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-red-200 shadow-sm">
-                                 <div className="flex items-center gap-3">
-                                   <span className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-sm font-bold">
-                                     {index + 1}
-                                   </span>
-                                   <div>
-                                     <span className="text-sm font-semibold text-gray-800 block">{step}</span>
-                                     <span className="text-xs text-gray-500">Tiến trình cần xử lý lại</span>
-                                   </div>
-                                 </div>
-                                 <button
-                                   type="button"
-                                   onClick={() => removeProblematicStep(step)}
-                                   className="text-red-500 hover:text-red-700 transition-colors p-2 hover:bg-red-50 rounded-lg"
-                                   title="Xóa tiến trình này"
-                                 >
-                                   <FiX className="w-5 h-5" />
-                                 </button>
-                               </div>
-                             ))}
-                           </div>
-                           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                             <p className="text-sm text-blue-700">
-                               <strong>Lưu ý:</strong> Các tiến trình này sẽ được gửi đến nông dân để họ biết cần xử lý lại những bước nào.
-                             </p>
-                           </div>
-                         </div>
-                       )}
-                    </div>
-                  </div>
-                )}
-                
-                                 {/* Comments */}
-                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     💬 Nhận xét tổng quan
-                   </label>
-                   <textarea
-                     value={formData.comments || ""}
-                     onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
-                     rows={3}
-                     className="w-full px-4 py-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                     placeholder="Nhập nhận xét tổng quan về chất lượng sơ chế..."
-                   />
-                 </div>
-                 
-                 {/* Detailed Feedback */}
-                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     🔍 Phản hồi chi tiết
-                   </label>
-                   <textarea
-                     value={formData.detailedFeedback || ""}
-                     onChange={(e) => setFormData({ ...formData, detailedFeedback: e.target.value })}
-                     rows={4}
-                     className="w-full px-4 py-3 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
-                     placeholder="Mô tả chi tiết các vấn đề hoặc điểm tốt trong quá trình sơ chế..."
-                   />
-                 </div>
-                 
-                 {/* Recommendations */}
-                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     💡 Khuyến nghị cải thiện
-                   </label>
-                   <textarea
-                     value={formData.recommendations || ""}
-                     onChange={(e) => setFormData({ ...formData, recommendations: e.target.value })}
-                     rows={3}
-                     className="w-full px-4 py-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
-                     placeholder="Đưa ra các khuyến nghị để cải thiện chất lượng..."
-                   />
-                 </div>
-                 
-                 {/* Additional Notes */}
-                 <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border border-gray-200">
-                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     📝 Ghi chú bổ sung
-                   </label>
-                   <textarea
-                     value={formData.additionalNotes || ""}
-                     onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
-                     rows={2}
-                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
-                     placeholder="Ghi chú bổ sung cho đánh giá..."
-                   />
-                 </div>
-                
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowEvaluationForm(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
-                  >
-                    {submitting ? "Đang cập nhật..." : "Cập nhật đánh giá"}
-                  </button>
-                </div>
-              </form>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
+        {/* Evaluation Criteria Form Modal */}
+        <EvaluationCriteriaForm
+          batchId={batchId}
+          methodId={batch.methodId?.toString()}
+          isOpen={showEvaluationForm}
+          onClose={() => setShowEvaluationForm(false)}
+          onSuccess={() => {
+            setShowEvaluationForm(false);
+            fetchData(); // Refresh data
+            AppToast.success("Đánh giá đã được cập nhật thành công!");
+          }}
+        />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getAllProcessingBatchEvaluations, ProcessingBatchEvaluation, EVALUATION_RESULTS, getEvaluationResultDisplayName, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { FiEye, FiPlus, FiRefreshCw, FiAlertCircle, FiCheckCircle, FiClock, FiXCircle } from "react-icons/fi";
+import { AppToast } from "@/components/ui/AppToast";
 
 interface EvaluationBatch {
   batchId: string;
@@ -361,7 +362,7 @@ export default function ExpertEvaluationsPage() {
                               
                               if (!batch.batchId) {
                                 console.error("❌ ERROR: batchId is undefined or null");
-                                alert("Lỗi: Không tìm thấy ID của lô");
+                                AppToast.error("Lỗi: Không tìm thấy ID của lô");
                                 return;
                               }
                               

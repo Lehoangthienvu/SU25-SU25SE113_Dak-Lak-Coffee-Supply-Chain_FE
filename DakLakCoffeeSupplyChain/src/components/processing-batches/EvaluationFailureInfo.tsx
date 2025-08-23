@@ -220,7 +220,72 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               </div>
             </div>
           </div>
-                 )}
+        )}
+
+        {/* 🔧 CẢI THIỆN: Hiển thị tiêu chí bị fail cụ thể */}
+        {failureInfo.failedCriteria && failureInfo.failedCriteria.length > 0 && (
+          <div className="bg-white/50 rounded-lg p-3">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-red-900 mb-2">
+                  Tiêu chí không đạt:
+                </h4>
+                <div className="space-y-2">
+                  {failureInfo.failedCriteria.map((criteria, idx) => (
+                    <div key={idx} className="bg-red-50 border border-red-200 rounded-lg p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-red-900">
+                          {criteria.criteriaName}
+                        </span>
+                        <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
+                          {criteria.criteriaId}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-red-800">
+                        <div>
+                          <span className="font-medium">Giá trị thực tế:</span>
+                          <span className="ml-1">{criteria.actualValue} {criteria.unit}</span>
+                        </div>
+                        <div>
+                          <span className="font-medium">Giá trị chuẩn:</span>
+                          <span className="ml-1">{criteria.expectedValue}</span>
+                        </div>
+                      </div>
+                      {criteria.failureReason && (
+                        <div className="mt-1 text-xs text-red-700">
+                          <span className="font-medium">Lý do:</span>
+                          <span className="ml-1">{criteria.failureReason}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 🔧 CẢI THIỆN: Hiển thị lý do không đạt được chọn */}
+        {failureInfo.selectedFailureReasons && failureInfo.selectedFailureReasons.length > 0 && (
+          <div className="bg-white/50 rounded-lg p-3">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="text-sm font-medium text-orange-900 mb-1">
+                  Lý do không đạt được chọn:
+                </h4>
+                <div className="space-y-1">
+                  {failureInfo.selectedFailureReasons.map((reason, idx) => (
+                    <div key={idx} className="text-sm text-orange-800 bg-orange-50 px-2 py-1 rounded">
+                      • {reason}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
        </div>
 
        {/* 🔧 CẢI THIỆN: Hiển thị thông tin về retry của farmer */}

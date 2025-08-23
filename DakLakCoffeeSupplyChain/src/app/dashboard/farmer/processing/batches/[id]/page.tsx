@@ -29,7 +29,8 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Pencil
+  Pencil,
+  Target
 } from "lucide-react";
 import {
   Dialog,
@@ -38,16 +39,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProcessingBatchProgress } from "@/lib/api/processingBatchProgress";
+import { ProcessingBatchProgress, ProcessingParameter } from "@/lib/api/processingBatchProgress";
 import { ProcessingWaste } from "@/lib/api/processingBatchWastes";
 import CreateProcessingProgressForm from "@/components/processing-batches/CreateProcessingProgressForm";
 import AdvanceProcessingProgressForm from "@/components/processing-batches/AdvanceProcessingProgressForm";
 import UpdateAfterEvaluationForm from "@/components/processing-batches/UpdateAfterEvaluationForm";
+import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
 import FailureInfoCard from "@/components/processing-batches/FailureInfoCard";
 import ProgressGuidanceCard from "@/components/processing-batches/ProgressGuidanceCard";
+
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { StageFailureParser, StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 import { getProcessingStagesByMethodId } from "@/lib/api/processingStages";
+import BatchOverallEvaluation from "@/components/processing-batches/BatchOverallEvaluation";
 
 export default function ViewProcessingBatch() {
   const { id } = useParams();
@@ -58,6 +62,7 @@ export default function ViewProcessingBatch() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openAdvanceModal, setOpenAdvanceModal] = useState(false);
   const [openUpdateAfterEvaluationModal, setOpenUpdateAfterEvaluationModal] = useState(false);
+  const [openEvaluationCriteriaModal, setOpenEvaluationCriteriaModal] = useState(false);
   const [selectedEvaluation, setSelectedEvaluation] = useState<ProcessingBatchEvaluation | null>(null);
   const [latestProgress, setLatestProgress] = useState<ProcessingBatchProgress | null>(null);
   const [evaluations, setEvaluations] = useState<ProcessingBatchEvaluation[]>([]);
@@ -115,6 +120,8 @@ export default function ViewProcessingBatch() {
     });
     return wastes;
   }, [batch?.progresses]);
+
+
 
   // Hàm mở media viewer với tất cả media
   const openMediaViewer = useCallback((media: { url: string; type: 'image' | 'video'; caption?: string }) => {
@@ -200,11 +207,13 @@ export default function ViewProcessingBatch() {
           setLoading(true);
           setError(null);
           
-          // Tối ưu: Chỉ cần fetch 1 API call thay vì 3
-          const data = await getProcessingBatchById(id);
-          console.log("DEBUG FRONTEND: Fetched batch data:", data);
-          console.log("DEBUG FRONTEND: Batch status:", data.status);
-          setBatch(data);
+                     // Tối ưu: Chỉ cần fetch 1 API call thay vì 3
+           const data = await getProcessingBatchById(id);
+           console.log("🚀 DEBUG FRONTEND: Fetched batch data:", data);
+           console.log("🚀 DEBUG FRONTEND: Batch status:", data.status);
+           console.log("🚀 DEBUG FRONTEND: Progresses count:", data.progresses?.length || 0);
+           console.log("🚀 DEBUG FRONTEND: All progresses:", data.progresses);
+           setBatch(data);
           
         } catch (err: unknown) {
           console.error('Error fetching batch:', err);
@@ -780,9 +789,34 @@ export default function ViewProcessingBatch() {
             <div className="p-6">
               <FailureInfoCard
                 failureInfo={failureInfo}
-                currentStageId={latestProgress?.stageId}
+                currentStageId={latestProgress?.stageId?.toString()}
                 currentStageName={latestProgress?.stageName}
                 isRetryMode={batch.status === ProcessingStatus.InProgress}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 🔧 CẢI THIỆN: Thêm Overall Evaluation Summary vào cột trái - DI CHUYỂN LÊN TRÊN */}
+        {evaluations.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Target className="w-5 h-5" />
+                Tổng quan đánh giá lô
+              </h2>
+              <p className="text-green-100 mt-1">Kết quả tổng hợp từ tất cả các giai đoạn</p>
+            </div>
+            <div className="p-6">
+              <BatchOverallEvaluation
+                batchId={batch.batchId}
+                evaluations={evaluations.map(evaluation => ({
+                  stageCode: parseInt(evaluation.evaluationId) || 0, // Convert string to number
+                  evaluationResult: evaluation.evaluationResult,
+                  score: 0, // Cần tính từ criteria
+                  evaluatedAt: evaluation.evaluatedAt
+                }))}
+                stages={[]} // Cần truyền stages từ batch
               />
             </div>
           </div>
@@ -988,6 +1022,31 @@ export default function ViewProcessingBatch() {
                       </div>
                     )}
 
+                    {/* Parameters Section */}
+                    {(() => {
+                      console.log(`🎯 DEBUG PARAMETERS RENDER: Progress ${progress.stepIndex} (${progress.stageName}):`, {
+                        hasParameters: !!progress.parameters,
+                        parametersLength: progress.parameters?.length || 0,
+                        parameters: progress.parameters,
+                        willRender: !!(progress.parameters && progress.parameters.length > 0)
+                      });
+                      return null;
+                    })()}
+                    {progress.parameters && progress.parameters.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">Thông số kỹ thuật</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {progress.parameters.map((parameter, paramIdx: number) => (
+                            <div key={paramIdx} className="flex items-center gap-2 text-sm text-gray-600">
+                              <Settings className="w-4 h-4 text-blue-600" />
+                              <span className="font-medium">{parameter.parameterName}:</span>
+                              <span>{parameter.parameterValue} {parameter.unit}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Wastes Section */}
                     {progress.wastes && progress.wastes.length > 0 && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
@@ -1017,6 +1076,8 @@ export default function ViewProcessingBatch() {
             )}
           </div>
         </div>
+
+
 
         {/* Waste Section - Tổng hợp từ tất cả progresses */}
         {allWastes.length > 0 && (
@@ -1063,8 +1124,10 @@ export default function ViewProcessingBatch() {
           </div>
         )}
 
-                          {/* Evaluations Section */}
-         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+
+
+         {/* Evaluations Section */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
              <div className="flex items-center justify-between">
                <div>
@@ -1147,7 +1210,7 @@ export default function ViewProcessingBatch() {
                        <div className="flex items-center gap-2 text-sm text-gray-600">
                          <User className="w-4 h-4 text-gray-500" />
                          <span className="font-medium">Đánh giá bởi:</span>
-                         <span>{evaluation.expertName || (evaluation.evaluatedBy ? `Chuyên gia ${evaluation.evaluatedBy}` : 'Hệ thống')}</span>
+                         <span>{evaluation.expertName || 'Chuyên gia'}</span>
                        </div>
                      </div>
                      
@@ -1229,15 +1292,6 @@ export default function ViewProcessingBatch() {
                                  <Edit className="w-4 h-4" />
                                  Cập nhật
                                </Button>
-                               <button
-                                 onClick={() => {
-                                   console.log("DEBUG: Test button clicked");
-                                   alert("Test button works!");
-                                 }}
-                                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg ml-2"
-                               >
-                                 Test
-                               </button>
                              </div>
                            </div>
                          </div>
