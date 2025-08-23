@@ -1,5 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const ENDPOINT = `${API_BASE_URL}/WarehouseOutboundRequests`;
+import api from "./axios";
 
 export interface CreateWarehouseOutboundRequestInput {
   warehouseId: string;
@@ -17,119 +16,76 @@ export interface ServiceResult<T> {
   data: T;
 }
 
-function getToken() {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Chưa đăng nhập");
-  return token;
-}
-
 export async function createWarehouseOutboundRequest(
   input: CreateWarehouseOutboundRequestInput
 ): Promise<string> {
-  const token = getToken();
+  try {
+    const response = await api.post("/WarehouseOutboundRequests", input);
+    const result = response.data;
 
-  console.log('DEBUG: Sending request with payload:', input);
+    if (result.status !== 1) {
+      throw new Error(result.message || "Gửi yêu cầu thất bại");
+    }
 
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(input),
-  });
-
-  console.log('DEBUG: Response status:', response.status);
-  console.log('DEBUG: Response headers:', response.headers);
-
-  const result = await response.json();
-  console.log('DEBUG: Response body:', result);
-
-  if (!response.ok) {
-    throw new Error(result.message || `HTTP ${response.status}: Gửi yêu cầu thất bại`);
+    return result.message || "Gửi yêu cầu thành công";
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Gửi yêu cầu thất bại");
   }
-
-  if (result.status !== 1) {
-    throw new Error(result.message || "Gửi yêu cầu thất bại");
-  }
-
-  return result.message || "Gửi yêu cầu thành công";
 }
 
 export async function getAllOutboundRequests(): Promise<ServiceResult<any[]>> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/all`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    const response = await api.get("/WarehouseOutboundRequests/all");
+    const result = response.data;
+    
+    if (result.status !== 1) {
+      throw new Error(result.message || "Lỗi tải danh sách");
+    }
 
-  const result = await res.json();
-  if (!res.ok || result.status !== 1) {
-    throw new Error(result.message || "Lỗi tải danh sách");
+    return result;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Lỗi tải danh sách");
   }
-
-  return result;
 }
 
 export async function getOutboundRequestById(id: string): Promise<ServiceResult<any>> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    const response = await api.get(`/WarehouseOutboundRequests/${id}`);
+    const result = response.data;
+    
+    if (result.status !== 1) {
+      throw new Error(result.message || "Không tìm thấy yêu cầu");
+    }
 
-  const result = await res.json();
-  if (!res.ok || result.status !== 1) {
-    throw new Error(result.message || "Không tìm thấy yêu cầu");
+    return result;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không tìm thấy yêu cầu");
   }
-
-  return result;
 }
 
 export async function acceptOutboundRequest(id: string): Promise<ServiceResult<any>> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/${id}/accept`, {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return await res.json();
+  const response = await api.put(`/WarehouseOutboundRequests/${id}/accept`);
+  return response.data;
 }
 
 export async function cancelOutboundRequest(id: string): Promise<ServiceResult<any>> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/${id}/cancel`, {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return await res.json();
+  const response = await api.put(`/WarehouseOutboundRequests/${id}/cancel`);
+  return response.data;
 }
-export async function rejectOutboundRequest(id: string, reason: string): Promise<ServiceResult<any>> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/${id}/reject`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ rejectReason: reason }),
-  });
 
-  return await res.json();
+export async function rejectOutboundRequest(id: string, reason: string): Promise<ServiceResult<any>> {
+  const response = await api.put(`/WarehouseOutboundRequests/${id}/reject`, {
+    rejectReason: reason
+  });
+  return response.data;
 }
 
 // ✅ Thêm function mới để lấy order items với số lượng còn lại
 export async function getOrderItemsWithRemainingQuantity(orderId: string): Promise<any[]> {
-  const token = getToken();
-  const res = await fetch(`${ENDPOINT}/order/${orderId}/items`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(errText || "Không lấy được danh sách mục hàng với số lượng còn lại.");
+  try {
+    const response = await api.get(`/WarehouseOutboundRequests/order/${orderId}/items`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không lấy được danh sách mục hàng với số lượng còn lại.");
   }
-
-  return await res.json();
 }

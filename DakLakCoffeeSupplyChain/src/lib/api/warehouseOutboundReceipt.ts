@@ -1,5 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const ENDPOINT = `${API_BASE_URL}/WarehouseOutboundReceipts`;
+import api from "./axios";
 
 export interface CreateOutboundReceiptInput {
   warehouseId: string;
@@ -26,65 +25,55 @@ export interface OutboundRequestSummary {
 }
 
 export async function getAllOutboundReceipts() {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${ENDPOINT}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  try {
+    const response = await api.get("/WarehouseOutboundReceipts");
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Lỗi tải danh sách phiếu xuất kho");
+  }
 }
 
 export async function getOutboundReceiptById(id: string) {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${ENDPOINT}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  try {
+    const response = await api.get(`/WarehouseOutboundReceipts/${id}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Không tìm thấy phiếu xuất kho");
+  }
 }
 
 export async function createOutboundReceipt(
   outboundRequestId: string,
   input: CreateOutboundReceiptInput
 ) {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${ENDPOINT}/${outboundRequestId}/receipt`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(input),
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return await res.text();
+  try {
+    const response = await api.post(`/WarehouseOutboundReceipts/${outboundRequestId}/receipt`, input);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Lỗi tạo phiếu xuất kho");
+  }
 }
 
 export async function confirmOutboundReceipt(
   receiptId: string,
   input: ConfirmOutboundReceiptInput
 ) {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${ENDPOINT}/${receiptId}/confirm`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(input),
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  try {
+    const response = await api.put(`/WarehouseOutboundReceipts/${receiptId}/confirm`, input);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Lỗi xác nhận phiếu xuất kho");
+  }
 }
 
 // ✅ THÊM HÀM NÀY & EXPORT
 export async function getOutboundRequestSummary(
   outboundRequestId: string
 ): Promise<OutboundRequestSummary> {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${ENDPOINT}/${outboundRequestId}/summary`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  try {
+    const response = await api.get(`/WarehouseOutboundReceipts/${outboundRequestId}/summary`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Lỗi tải thông tin summary");
+  }
 }

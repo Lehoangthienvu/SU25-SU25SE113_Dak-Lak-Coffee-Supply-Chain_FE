@@ -21,6 +21,7 @@ type Warehouse = {
   name: string;
   location: string;
   capacity?: number;
+  usedCapacity: number;
 };
 
 export default function WarehouseListPage() {
@@ -38,15 +39,10 @@ export default function WarehouseListPage() {
 
         setWarehouses(list);
 
+        // ✅ Tối ưu hóa: Sử dụng usedCapacity từ API thay vì gọi riêng
         const usageMap: Record<string, number> = {};
         for (const warehouse of list) {
-          try {
-            const inventories = await getInventoriesByWarehouseId(warehouse.warehouseId);
-            const totalUsed = inventories.reduce((sum: number, i: any) => sum + i.quantity, 0);
-            usageMap[warehouse.warehouseId] = totalUsed;
-          } catch {
-            usageMap[warehouse.warehouseId] = 0;
-          }
+          usageMap[warehouse.warehouseId] = warehouse.usedCapacity || 0;
         }
         setUsedCapacities(usageMap);
       } catch (error) {

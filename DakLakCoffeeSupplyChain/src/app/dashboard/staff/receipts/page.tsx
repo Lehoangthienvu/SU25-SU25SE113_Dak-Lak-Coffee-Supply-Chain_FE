@@ -31,20 +31,7 @@ export default function ReceiptListPage() {
         const res = await getAllWarehouseReceipts();
         if (res.status === 1) {
           const data = Array.isArray(res.data) ? res.data : [];
-          console.log('🔍 DEBUG: Receipts data:', data);
-          // Debug logging cho từng receipt
-          data.forEach((receipt, index) => {
-            console.log(`🔍 DEBUG: Receipt ${index + 1}:`, {
-              receiptCode: receipt.receiptCode,
-              batchId: receipt.batchId,
-              detailId: receipt.detailId,
-              batchCode: receipt.batchCode,
-              detailCode: receipt.detailCode,
-              cropSeasonName: receipt.cropSeasonName,
-              coffeeType: receipt.coffeeType,
-              type: getCoffeeType(receipt)
-            });
-          });
+          // Debug logs removed for performance
           setReceipts(data);
         } else {
           toast.error(res.message || 'Không thể tải danh sách phiếu nhập kho');
@@ -56,17 +43,7 @@ export default function ReceiptListPage() {
       }
     })();
 
-    // Debug call
-    (async () => {
-      try {
-        const debugRes = await getDebugInfo();
-        if (debugRes.status === 1) {
-          console.log('🔍 DEBUG API Response:', debugRes.data);
-        }
-      } catch (err) {
-        console.error('❌ Debug API error:', err);
-      }
-    })();
+    // Debug call - REMOVED for performance
   }, []);
 
   // Helper function to determine coffee type
