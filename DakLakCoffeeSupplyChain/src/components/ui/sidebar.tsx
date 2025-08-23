@@ -122,6 +122,7 @@ export function SidebarGroup() {
   const [orderOpen, setOrderOpen] = useState(false);
   const [customerOpen, setCustomerOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [staffOpen, setStaffOpen] = useState(false);
 
   useEffect(() => {
     const user = authService.getUser();
@@ -721,6 +722,46 @@ export function SidebarGroup() {
                 )}
               >
                 Xử lý chất thải lô chế biến
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Dropdown: QUẢN LÝ NHÂN VIÊN cho MANAGER */}
+      {role === "manager" && (
+        <div>
+          <button
+            className={cn(
+              "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200",
+              pathname.startsWith("/dashboard/manager/business-staffs")
+                ? "bg-orange-100 text-orange-700 shadow-sm"
+                : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+            )}
+            onClick={() => setStaffOpen((v) => !v)}
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <span className="shrink-0 w-5 text-center">
+                <FiUsers />
+              </span>
+              <span className="truncate">Quản lý nhân viên</span>
+            </div>
+            <FiChevronDown
+              className={cn("transition-transform duration-200", staffOpen && "rotate-180")}
+            />
+          </button>
+          {staffOpen && (
+            <div className="pl-8 space-y-1">
+              <Link
+                href="/dashboard/manager/business-staffs"
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  pathname === "/dashboard/manager/business-staffs"
+                    ? "bg-orange-100 text-orange-700 shadow-sm"
+                    : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                )}
+              >
+                Danh sách nhân viên
               </Link>
             </div>
           )}

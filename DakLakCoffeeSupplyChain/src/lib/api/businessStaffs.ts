@@ -8,6 +8,7 @@ export interface BusinessStaffListDto {
   email: string;
   position: string;
   department: string;
+  warehouse?: string; // Optional warehouse field
 }
 
 export async function getAllBusinessStaffs(): Promise<BusinessStaffListDto[]> {
