@@ -83,10 +83,11 @@ export default function CropSeasonDetail() {
     }
 
     // Tính toán thống kê
-    const totalDetails = season.details.length;
-    const completedDetails = season.details.filter(d => d.status === 'Completed').length;
-    const inProgressDetails = season.details.filter(d => d.status === 'InProgress').length;
-    const totalArea = season.details.reduce((sum, d) => sum + (d.areaAllocated || 0), 0);
+    const details = season.details || [];
+    const totalDetails = details.length;
+    const completedDetails = details.filter(d => d.status === 'Completed').length;
+    const inProgressDetails = details.filter(d => d.status === 'InProgress').length;
+    const totalArea = details.reduce((sum, d) => sum + (d.areaAllocated || 0), 0);
 
     return (
         <div className="min-h-screen bg-orange-50 p-4">
@@ -244,7 +245,7 @@ export default function CropSeasonDetail() {
                     </CardHeader>
                     <CardContent className="p-4">
                         <CropSeasonDetailTable
-                            details={season.details}
+                            details={details}
                             onReload={loadSeason}
                         />
                     </CardContent>

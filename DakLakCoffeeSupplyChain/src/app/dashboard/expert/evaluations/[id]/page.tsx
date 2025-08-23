@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getProcessingBatchById, ProcessingBatch } from "@/lib/api/processingBatches";
-import { getEvaluationsByBatch, createProcessingBatchEvaluation, updateProcessingBatchEvaluation, ProcessingBatchEvaluation, CreateEvaluationDto, EVALUATION_RESULTS, getEvaluationResultDisplayName, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
-import { getProcessingStagesByMethodId, ProcessingStage } from "@/lib/api/processingStages";
+import { getEvaluationsByBatch, ProcessingBatchEvaluation, EVALUATION_RESULTS, getEvaluationResultDisplayName, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
+
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
-import { FiArrowLeft, FiSave, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiBarChart2, FiX, FiPlus, FiTrendingUp, FiActivity, FiTarget, FiInfo, FiAward, FiTrendingUp as FiTrendingUpIcon } from "react-icons/fi";
-import * as Dialog from "@radix-ui/react-dialog";
+import { FiArrowLeft, FiSave, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiBarChart2, FiX, FiActivity, FiTarget, FiAward, FiTrendingUp as FiTrendingUpIcon } from "react-icons/fi";
 import StageFailureDisplay from "@/components/processing-batches/StageFailureDisplay";
-import EvaluationFailureInfo from "@/components/processing-batches/EvaluationFailureInfo";
 import FarmerRetryStatus from "@/components/processing-batches/FarmerRetryStatus";
 import RetryGuidanceInfo from "@/components/processing-batches/RetryGuidanceInfo";
 import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
@@ -24,17 +22,15 @@ export default function ExpertEvaluationDetailPage() {
 
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
   const [evaluations, setEvaluations] = useState<ProcessingBatchEvaluation[]>([]);
-  const [stages, setStages] = useState<ProcessingStage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showEvaluationForm, setShowEvaluationForm] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log("🔍 DEBUG: Fetching data for batchId:", batchId);
 
       const [batchData, evaluationsData] = await Promise.all([
@@ -44,19 +40,9 @@ export default function ExpertEvaluationDetailPage() {
 
       console.log("🔍 DEBUG: Batch data:", batchData);
       console.log("🔍 DEBUG: Evaluations data:", evaluationsData);
-      
-      // Lấy stages từ methodId của batch
-      let stagesData: ProcessingStage[] = [];
-      if (batchData?.methodId) {
-        try {
-          stagesData = await getProcessingStagesByMethodId(batchData.methodId);
-          console.log("🔍 DEBUG: Stages data:", stagesData);
-        } catch (err) {
-          console.error("❌ Lỗi lấy stages:", err);
-          stagesData = [];
-        }
-      }
-      
+
+
+
       // 🔧 CẢI THIỆN: Debug thông tin evaluation
       if (evaluationsData && evaluationsData.length > 0) {
         const latestEval = evaluationsData[0];
@@ -67,7 +53,7 @@ export default function ExpertEvaluationDetailPage() {
           evaluatedAt: latestEval.evaluatedAt,
           evaluatedBy: latestEval.evaluatedBy
         });
-        
+
         // Debug stage failure info nếu có
         if (latestEval.comments) {
           const { debugStageFailure } = await import('@/lib/helpers/evaluationHelpers');
@@ -83,15 +69,10 @@ export default function ExpertEvaluationDetailPage() {
 
       setBatch(batchData);
       setEvaluations(evaluationsData);
-      setStages(stagesData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("❌ Lỗi fetchData:", err);
-      console.error("❌ Error details:", {
-        message: err.message,
-        status: err.response?.status,
-        data: err.response?.data
-      });
-      setError("Có lỗi xảy ra khi tải dữ liệu");
+      const errorMessage = err instanceof Error ? err.message : "Có lỗi xảy ra khi tải dữ liệu";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -200,7 +181,7 @@ export default function ExpertEvaluationDetailPage() {
             <FiArrowLeft />
             Quay lại
           </button>
-          
+
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
@@ -208,7 +189,7 @@ export default function ExpertEvaluationDetailPage() {
               </h1>
               <p className="text-gray-600">Mã lô: {batch.batchCode} • Nông dân: {batch.farmerName}</p>
             </div>
-            
+
             <button
               onClick={() => setShowEvaluationForm(true)}
               className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
@@ -231,71 +212,71 @@ export default function ExpertEvaluationDetailPage() {
                   Thông tin lô sơ chế
                 </h2>
               </div>
-              
+
               <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-indigo-100 rounded-lg">
                         <FiPackage className="w-5 h-5 text-indigo-600" />
                       </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Mã lô</p>
+                      <div>
+                        <p className="text-sm text-gray-600">Mã lô</p>
                         <p className="font-semibold text-gray-900">{batch.batchCode}</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
+
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-green-100 rounded-lg">
                         <FiUser className="w-5 h-5 text-green-600" />
                       </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Nông dân</p>
+                      <div>
+                        <p className="text-sm text-gray-600">Nông dân</p>
                         <p className="font-semibold text-gray-900">{batch.farmerName}</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
+
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-orange-100 rounded-lg">
                         <FiCalendar className="w-5 h-5 text-orange-600" />
                       </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Mùa vụ</p>
+                      <div>
+                        <p className="text-sm text-gray-600">Mùa vụ</p>
                         <p className="font-semibold text-gray-900">{batch.cropSeasonName}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-blue-100 rounded-lg">
                         <FiTrendingUpIcon className="w-5 h-5 text-blue-600" />
                       </div>
-                    <div>
+                      <div>
                         <p className="text-sm text-gray-600">Khối lượng vào</p>
                         <p className="font-semibold text-gray-900">{batch.totalInputQuantity} kg</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
+
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-purple-100 rounded-lg">
                         <FiTrendingUpIcon className="w-5 h-5 text-purple-600" />
                       </div>
-                    <div>
+                      <div>
                         <p className="text-sm text-gray-600">Khối lượng ra</p>
                         <p className="font-semibold text-gray-900">{batch.totalOutputQuantity} kg</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
+
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-gray-100 rounded-lg">
-                      {statusInfo.icon}
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Trạng thái</p>
+                        {statusInfo.icon}
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Trạng thái</p>
                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusInfo.color}`}>
-                        {statusInfo.text}
-                      </span>
+                          {statusInfo.text}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -311,11 +292,11 @@ export default function ExpertEvaluationDetailPage() {
                   Tiến trình sơ chế
                 </h2>
               </div>
-              
+
               <div className="p-6">
-              {batch.progresses && batch.progresses.length > 0 ? (
-                <div className="space-y-4">
-                  {batch.progresses.map((progress, index) => (
+                {batch.progresses && batch.progresses.length > 0 ? (
+                  <div className="space-y-4">
+                    {batch.progresses.map((progress, index) => (
                       <div key={progress.progressId} className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-all duration-200">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -324,38 +305,38 @@ export default function ExpertEvaluationDetailPage() {
                             </div>
                             <h3 className="font-semibold text-gray-900 text-lg">
                               {progress.stageName}
-                        </h3>
+                            </h3>
                           </div>
                           <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
-                          {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString('vi-VN') : 'Chưa bắt đầu'}
-                        </span>
-                      </div>
-                      
+                            {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString('vi-VN') : 'Chưa bắt đầu'}
+                          </span>
+                        </div>
+
                         {progress.stageDescription && (
                           <p className="text-gray-600 mb-3 text-sm">{progress.stageDescription}</p>
                         )}
-                      
-                      <div className="grid grid-cols-2 gap-4 text-sm">
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="flex items-center gap-2">
                             <FiTrendingUpIcon className="w-4 h-4 text-green-600" />
-                          <span className="text-gray-500">Sản lượng:</span>
+                            <span className="text-gray-500">Sản lượng:</span>
                             <span className="font-medium text-gray-900">{progress.outputQuantity} {progress.outputUnit}</span>
-                        </div>
+                          </div>
                           <div className="flex items-center gap-2">
                             <FiUser className="w-4 h-4 text-blue-600" />
-                          <span className="text-gray-500">Cập nhật bởi:</span>
+                            <span className="text-gray-500">Cập nhật bởi:</span>
                             <span className="font-medium text-gray-900">{progress.updatedByName}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
+                    ))}
+                  </div>
+                ) : (
                   <div className="text-center py-8 bg-gray-50 rounded-xl">
                     <FiActivity className="text-gray-400 text-3xl mx-auto mb-3" />
                     <p className="text-gray-500 text-sm">Chưa có tiến trình nào được ghi nhận</p>
                   </div>
-              )}
+                )}
               </div>
             </div>
           </div>
@@ -372,18 +353,16 @@ export default function ExpertEvaluationDetailPage() {
                   </h2>
                   <p className="text-emerald-100 mt-2">Kết quả tổng hợp từ tất cả các giai đoạn</p>
                 </div>
-                
+
                 <div className="p-6">
                   {/* Kết quả tổng hợp */}
                   <div className="text-center mb-6">
-                    <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-xl border-2 ${
-                      overallEval.overallResult === 'Pass' 
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-800' 
-                        : 'border-red-200 bg-red-50 text-red-800'
-                    }`}>
-                      <div className={`p-2 rounded-lg ${
-                        overallEval.overallResult === 'Pass' ? 'bg-emerald-100' : 'bg-red-100'
+                    <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-xl border-2 ${overallEval.overallResult === 'Pass'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                      : 'border-red-200 bg-red-50 text-red-800'
                       }`}>
+                      <div className={`p-2 rounded-lg ${overallEval.overallResult === 'Pass' ? 'bg-emerald-100' : 'bg-red-100'
+                        }`}>
                         {overallEval.overallResult === 'Pass' ? (
                           <FiCheckCircle className="w-6 h-6 text-emerald-600" />
                         ) : (
@@ -407,14 +386,14 @@ export default function ExpertEvaluationDetailPage() {
                         <div className="text-sm opacity-90">/100</div>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                        <div 
-                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500" 
+                        <div
+                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${overallEval.averageScore}%` }}
                         ></div>
                       </div>
                       <p className="text-sm text-gray-600 mt-2 font-medium">Điểm trung bình</p>
                     </div>
-                    
+
                     {/* Giai đoạn đạt */}
                     <div className="text-center">
                       <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-xl shadow-lg">
@@ -425,7 +404,7 @@ export default function ExpertEvaluationDetailPage() {
                       </div>
                       <p className="text-sm text-gray-600 mt-2 font-medium">Giai đoạn đạt</p>
                     </div>
-                    
+
                     {/* Tỷ lệ đạt */}
                     <div className="text-center">
                       <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-lg">
@@ -456,64 +435,55 @@ export default function ExpertEvaluationDetailPage() {
                   Trạng thái đánh giá
                 </h2>
               </div>
-              
+
               <div className="p-6">
-                               {latestEvaluation ? (
+                {latestEvaluation ? (
                   <div className="space-y-4">
                     <div className="flex items-center justify-center">
                       <span className={`px-6 py-3 text-lg font-medium rounded-xl ${getEvaluationResultColor(latestEvaluation.evaluationResult)}`}>
                         {getEvaluationResultDisplayName(latestEvaluation.evaluationResult)}
                       </span>
                     </div>
-                    
-                                                              {/* 🔧 CẢI THIỆN: Hiển thị thông tin failure chỉ khi đánh giá không đạt */}
-                      {latestEvaluation.comments && latestEvaluation.evaluationResult === EVALUATION_RESULTS.FAIL && (
+
+                    {/* 🔧 CẢI THIỆN: Hiển thị thông tin failure chỉ khi đánh giá không đạt */}
+                    {latestEvaluation.comments && latestEvaluation.evaluationResult === EVALUATION_RESULTS.FAIL && (
                       <div className="space-y-4">
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                           <p className="text-sm text-red-800 font-medium mb-3">Nhận xét:</p>
                           <StageFailureDisplay comments={latestEvaluation.comments} batch={{
                             ...batch,
-                            progresses: batch.progresses?.map(progress => ({
-                              ...progress,
-                              stageId: progress.stageId.toString()
-                            }))
+                            progresses: batch.progresses
                           }} />
-                          
+
                           {/* 🔧 CẢI THIỆN: Hiển thị trạng thái retry của farmer */}
-                          <FarmerRetryStatus 
-                            evaluation={latestEvaluation} 
+                          <FarmerRetryStatus
+                            evaluation={latestEvaluation}
                             batch={{
                               ...batch,
-                              progresses: batch.progresses?.map(progress => ({
-                                ...progress,
-                                stageId: progress.stageId.toString()
-                              }))
+                              progresses: batch.progresses
                             }}
                           />
-                          
+
                           {/* 🔧 CẢI THIỆN: Hiển thị hướng dẫn retry */}
-                          <RetryGuidanceInfo 
-                            evaluation={latestEvaluation} 
+                          <RetryGuidanceInfo
+                            evaluation={latestEvaluation}
                             batch={{
                               ...batch,
-                              progresses: batch.progresses?.map(progress => ({
-                                ...progress,
-                                stageId: progress.stageId.toString()
-                              }))
+                              progresses: batch.progresses
                             }}
                           />
                         </div>
-                        </div>
-                      )}
-                      
-                      {/* 🔧 CẢI THIỆN: Hiển thị comments thông thường cho đánh giá đạt */}
+                      </div>
+                    )}
+
+                    {/* 🔧 CẢI THIỆN: Hiển thị comments thông thường cho đánh giá đạt */}
                     {latestEvaluation.comments && latestEvaluation.evaluationResult !== EVALUATION_RESULTS.FAIL && (
                       <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                         <p className="text-sm text-green-800 font-medium mb-2">Nhận xét:</p>
                         <p className="text-sm text-green-800">{latestEvaluation.comments}</p>
                       </div>
                     )}
-                    
+
                     {/* 🔧 CẢI THIỆN: Hiển thị thông tin chi tiết khác */}
                     {latestEvaluation.detailedFeedback && (
                       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
@@ -521,33 +491,33 @@ export default function ExpertEvaluationDetailPage() {
                         <p className="text-sm text-blue-900">{latestEvaluation.detailedFeedback}</p>
                       </div>
                     )}
-                    
+
                     {latestEvaluation.recommendations && (
                       <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
                         <p className="text-sm text-emerald-800 font-medium mb-2">Khuyến nghị:</p>
                         <p className="text-sm text-emerald-900">{latestEvaluation.recommendations}</p>
                       </div>
                     )}
-                    
+
                     <div className="grid grid-cols-2 gap-4">
-                    {latestEvaluation.evaluatedAt && (
+                      {latestEvaluation.evaluatedAt && (
                         <div className="bg-gray-50 rounded-xl p-4 text-center">
                           <p className="text-xs text-gray-600 mb-1">Ngày đánh giá</p>
                           <p className="text-sm font-medium text-gray-900">
-                          {new Date(latestEvaluation.evaluatedAt).toLocaleDateString('vi-VN')}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* 🔧 CẢI THIỆN: Hiển thị người đánh giá nếu có */}
-                    {latestEvaluation.evaluatedBy && (
+                            {new Date(latestEvaluation.evaluatedAt).toLocaleDateString('vi-VN')}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* 🔧 CẢI THIỆN: Hiển thị người đánh giá nếu có */}
+                      {latestEvaluation.evaluatedBy && (
                         <div className="bg-gray-50 rounded-xl p-4 text-center">
                           <p className="text-xs text-gray-600 mb-1">Đánh giá bởi</p>
                           <p className="text-sm font-medium text-gray-900">
-                          {latestEvaluation.expertName || latestEvaluation.evaluatedBy}
-                        </p>
-                      </div>
-                    )}
+                            {latestEvaluation.expertName || latestEvaluation.evaluatedBy}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -557,7 +527,7 @@ export default function ExpertEvaluationDetailPage() {
                   </div>
                 )}
               </div>
-             </div>
+            </div>
 
             {/* Quick Statistics Card */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -567,39 +537,39 @@ export default function ExpertEvaluationDetailPage() {
                   Thống kê nhanh
                 </h2>
               </div>
-              
+
               <div className="p-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-blue-50 rounded-xl">
                     <div className="text-2xl font-bold text-blue-600">
                       {evaluations.length}
-               </div>
+                    </div>
                     <div className="text-xs text-blue-700">Lần đánh giá</div>
-             </div>
+                  </div>
 
                   <div className="text-center p-4 bg-green-50 rounded-xl">
                     <div className="text-2xl font-bold text-green-600">
                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length}
                     </div>
                     <div className="text-xs text-green-700">Đạt chuẩn</div>
-                       </div>
-                       
+                  </div>
+
                   <div className="text-center p-4 bg-yellow-50 rounded-xl">
                     <div className="text-2xl font-bold text-yellow-600">
                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.NEEDS_IMPROVEMENT).length}
-                              </div>
+                    </div>
                     <div className="text-xs text-yellow-700">Cần cải thiện</div>
-                              </div>
-                  
+                  </div>
+
                   <div className="text-center p-4 bg-red-50 rounded-xl">
                     <div className="text-2xl font-bold text-red-600">
                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length}
-                              </div>
+                    </div>
                     <div className="text-xs text-red-700">Không đạt</div>
-                          </div>
-                     </div>
-                 </div>
-               </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

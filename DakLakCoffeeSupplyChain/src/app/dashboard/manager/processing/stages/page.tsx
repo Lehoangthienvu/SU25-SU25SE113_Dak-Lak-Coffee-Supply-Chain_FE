@@ -59,8 +59,8 @@ export default function ManagerProcessingStagesPage() {
 
   // Cấu hình cột cho table
   const columns = [
-    { 
-      key: "stageId", 
+    {
+      key: "stageId",
       title: "ID",
       render: (value: string) => (
         <span className="font-medium text-blue-600">
@@ -68,15 +68,15 @@ export default function ManagerProcessingStagesPage() {
         </span>
       )
     },
-    { 
-      key: "stageName", 
+    {
+      key: "stageName",
       title: "Tên giai đoạn",
       render: (value: string) => (
         <span className="font-medium">{value}</span>
       )
     },
-    { 
-      key: "orderIndex", 
+    {
+      key: "orderIndex",
       title: "Thứ tự",
       render: (value: number) => (
         <div className="flex items-center justify-center">
@@ -87,15 +87,15 @@ export default function ManagerProcessingStagesPage() {
       ),
       align: "center" as const
     },
-    { 
-      key: "methodId", 
+    {
+      key: "methodId",
       title: "Phương pháp",
       render: (value: number) => (
         <span className="text-sm text-gray-600">ID: {value}</span>
       )
     },
-    { 
-      key: "isRequired", 
+    {
+      key: "isRequired",
       title: "Bắt buộc",
       render: (value: boolean) => (
         <div className="flex items-center justify-center">
@@ -114,8 +114,8 @@ export default function ManagerProcessingStagesPage() {
       ),
       align: "center" as const
     },
-    { 
-      key: "isDeleted", 
+    {
+      key: "isDeleted",
       title: "Trạng thái",
       render: (value: boolean) => {
         return (
@@ -155,7 +155,7 @@ export default function ManagerProcessingStagesPage() {
     {
       label: "Xóa mềm",
       icon: <Trash2 className="w-3 h-3" />,
-      onClick: (stage: ProcessingStage) => handleDelete(stage.stageId),
+      onClick: (stage: ProcessingStage) => handleDelete(stage.stageId.toString()),
       className: "hover:bg-red-50 hover:border-red-300"
     }
   ];
@@ -189,7 +189,7 @@ export default function ManagerProcessingStagesPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
@@ -201,7 +201,7 @@ export default function ManagerProcessingStagesPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center">
               <div className="p-2 bg-gray-100 rounded-lg">
@@ -213,7 +213,7 @@ export default function ManagerProcessingStagesPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">

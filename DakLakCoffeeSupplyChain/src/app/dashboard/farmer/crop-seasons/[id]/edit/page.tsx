@@ -11,7 +11,7 @@ import { AppToast } from '@/components/ui/AppToast';
 import { getCropSeasonById, updateCropSeason } from '@/lib/api/cropSeasons';
 import { getErrorMessage } from '@/lib/utils';
 import { useAuthGuard } from '@/lib/auth/useAuthGuard';
-import { CropSeasonStatusValueToNumber } from '@/lib/constants/cropSeasonStatus';
+
 import { CropSeason } from '@/lib/api/cropSeasons';
 
 export default function EditCropSeasonPage() {
