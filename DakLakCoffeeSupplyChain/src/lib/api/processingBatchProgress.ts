@@ -32,7 +32,7 @@ export interface ProcessingBatchProgress {
   batchId: string;
   batchCode: string;
   stepIndex: number;
-  stageId: string;
+  stageId: number; // Thay đổi từ string sang number để match với backend
   stageName: string;
   stageDescription?: string;
   progressDate: string;

@@ -1,7 +1,7 @@
 import api from "./axios";
 
 export interface ProcessingStage {
-  stageId: string;
+  stageId: number; // Thay đổi từ string sang number để match với backend
   stageName: string;
   orderIndex: number;
   methodId: number;

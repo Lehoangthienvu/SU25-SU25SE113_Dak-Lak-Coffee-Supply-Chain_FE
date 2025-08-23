@@ -15,6 +15,16 @@ export interface StageFailureDisplayInfo {
   orderIndex: number;
   stageId?: string; // Thêm StageId để hiển thị
   rawComments?: string;
+  // 🔧 CẢI THIỆN: Thêm properties để hiển thị tiêu chí bị fail
+  failedCriteria?: Array<{
+    criteriaId: string;
+    criteriaName: string;
+    actualValue: number;
+    expectedValue: string;
+    unit: string;
+    failureReason?: string;
+  }>;
+  selectedFailureReasons?: string[];
 }
 
 /**

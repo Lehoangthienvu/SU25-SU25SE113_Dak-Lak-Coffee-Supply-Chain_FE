@@ -29,6 +29,7 @@ import {
   Edit,
   Trash2
 } from "lucide-react";
+import { AppToast } from "@/components/ui/AppToast";
 
 export default function ViewProcessingBatchManager() {
   // Lấy ID từ URL params
@@ -90,26 +91,26 @@ export default function ViewProcessingBatchManager() {
   const handleViewProgress = () => {
     console.log("Xem tiến độ chi tiết cho lô:", batch?.batchCode);
     // TODO: Implement view progress functionality
-    alert("Chức năng xem tiến độ chi tiết đang được phát triển");
+    AppToast.info("Chức năng xem tiến độ chi tiết đang được phát triển");
   };
 
   const handleViewExpertEvaluation = () => {
     console.log("Xem đánh giá của chuyên gia cho lô:", batch?.batchCode);
     // TODO: Implement view expert evaluation functionality
-    alert("Chức năng xem đánh giá của chuyên gia đang được phát triển");
+    AppToast.info("Chức năng xem đánh giá của chuyên gia đang được phát triển");
   };
 
   const handleEditBatch = () => {
     console.log("Chỉnh sửa thông tin lô:", batch?.batchCode);
     // TODO: Implement edit batch functionality
-    alert("Chức năng chỉnh sửa thông tin đang được phát triển");
+    AppToast.info("Chức năng chỉnh sửa thông tin đang được phát triển");
   };
 
   const handleDeleteBatch = () => {
     console.log("Xóa lô:", batch?.batchCode);
     if (confirm("Bạn có chắc chắn muốn xóa lô sơ chế này?")) {
       // TODO: Implement delete batch functionality
-      alert("Chức năng xóa lô đang được phát triển");
+      AppToast.info("Chức năng xóa lô đang được phát triển");
     }
   };
 
