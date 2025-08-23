@@ -51,7 +51,7 @@ export interface ProcessingBatchProgressForReport {
   batchId: string;
   batchCode: string;
   stepIndex: number;
-  stageId: number;
+  stageId: number; // ✅ Nhất quán với backend C# sử dụng int
   stageName: string;
   stageDescription: string;
   progressDate: string;

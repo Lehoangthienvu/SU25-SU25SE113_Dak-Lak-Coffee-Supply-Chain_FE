@@ -48,7 +48,7 @@ export default function AdvanceProcessingProgressForm({
   
   // State cho stage selection
   const [availableStages, setAvailableStages] = useState<ProcessingStage[]>([]);
-     const [selectedStageId, setSelectedStageId] = useState<string>("");
+     const [selectedStageId, setSelectedStageId] = useState<number | undefined>(undefined); // ✅ Nhất quán với backend C# sử dụng int
    const [loadingStages, setLoadingStages] = useState(false);
 
    // Debug log khi selectedStageId thay đổi
@@ -106,9 +106,9 @@ export default function AdvanceProcessingProgressForm({
            // Tự động chọn stage bị fail hoặc stage tiếp theo
            if (failedStageInfo) {
              // Nếu có stage bị fail, chọn stage đó
-             const failedStage = availableStages.find(s => s.stageId === failedStageInfo.stageId.toString());
+             const failedStage = availableStages.find(s => s.stageId === failedStageInfo.stageId);
              console.log("🔍 DEBUG: Failed stage found:", failedStage);
-             setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || "");
+             setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || undefined);
            } else if (latestProgress) {
              // Nếu không có stage bị fail, chọn stage tiếp theo
              let currentStageIndex = availableStages.findIndex(s => s.stageId === latestProgress.stageId);
@@ -129,22 +129,22 @@ export default function AdvanceProcessingProgressForm({
              if (currentStageIndex >= 0 && currentStageIndex < availableStages.length - 1) {
                const nextStage = availableStages[currentStageIndex + 1];
                console.log("🔍 DEBUG: Next stage selected:", nextStage);
-               setSelectedStageId(nextStage.stageId);
+               setSelectedStageId(nextStage.stageId || undefined);
              } else if (currentStageIndex >= 0) {
                const currentStage = availableStages[currentStageIndex];
                console.log("🔍 DEBUG: Current stage selected (no next):", currentStage);
-               setSelectedStageId(currentStage?.stageId || "");
+               setSelectedStageId(currentStage?.stageId || undefined);
              } else {
                // Nếu không tìm thấy stage hiện tại, chọn stage đầu tiên
                const firstStage = availableStages[0];
                console.log("🔍 DEBUG: First stage selected (fallback):", firstStage);
-               setSelectedStageId(firstStage?.stageId || "");
+               setSelectedStageId(firstStage?.stageId || undefined);
              }
            } else {
              // Nếu chưa có progress nào, chọn stage đầu tiên
              const firstStage = availableStages[0];
              console.log("🔍 DEBUG: First stage selected:", firstStage);
-             setSelectedStageId(firstStage?.stageId || "");
+             setSelectedStageId(firstStage?.stageId || undefined);
            }
         }
       } catch (err) {
@@ -199,7 +199,7 @@ export default function AdvanceProcessingProgressForm({
 
              await advanceToNextProcessingProgress(batchId, {
          stageId: selectedStageId, // Stage được chọn từ dropdown
-         currentStageId: latestProgress?.stageId || "", // Stage hiện tại để backend validate
+         currentStageId: latestProgress?.stageId, // Stage hiện tại để backend validate
          progressDate,
          outputQuantity,
          outputUnit,

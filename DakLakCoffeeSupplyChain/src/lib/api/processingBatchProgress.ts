@@ -31,8 +31,8 @@ export interface ProcessingBatchProgress {
   progressId: string;
   batchId: string;
   batchCode: string;
-  stepIndex: number;
-  stageId: number; // Thay đổi từ string sang number để match với backend
+  stepIndex: number; // ✅ Nhất quán với model database: int StepIndex
+  stageId: number; // ✅ Nhất quán với model database: int StageId
   stageName: string;
   stageDescription?: string;
   progressDate: string;
@@ -59,7 +59,7 @@ export interface CreateProgressDto {
 export interface UpdateProgressDto extends Partial<CreateProgressDto> {}
 
 export interface CreateProgressWithMediaPayload {
-  stageId?: string; // Thêm StageId để validation
+  stageId?: number; // ✅ Nhất quán với model database: int StageId
   progressDate: string;
   outputQuantity: number;
   outputUnit: string;
@@ -72,8 +72,8 @@ export interface CreateProgressWithMediaPayload {
 }
 
 export interface AdvanceProgressWithMediaPayload {
-  stageId?: string; // Stage được chọn từ dropdown
-  currentStageId?: string; // Stage hiện tại để backend validate
+  stageId?: number; // ✅ Nhất quán với model database: int StageId
+  currentStageId?: number; // ✅ Nhất quán với model database: int StageId
   progressDate: string;
   outputQuantity: number;
   outputUnit: string;
@@ -165,7 +165,7 @@ export async function createProcessingBatchProgressWithMedia(
   
   // Thêm StageId nếu có
   if (payload.stageId) {
-    formData.append("stageId", payload.stageId);
+    formData.append("stageId", payload.stageId.toString());
   }
   
   formData.append("progressDate", payload.progressDate);
@@ -245,12 +245,12 @@ export async function advanceToNextProcessingProgress(
   
   // Thêm StageId nếu có
   if (payload.stageId) {
-    formData.append("stageId", payload.stageId);
+    formData.append("stageId", payload.stageId.toString());
   }
   
   // Thêm currentStageId nếu có
   if (payload.currentStageId) {
-    formData.append("currentStageId", payload.currentStageId);
+    formData.append("currentStageId", payload.currentStageId.toString());
   }
   
   formData.append("progressDate", payload.progressDate);

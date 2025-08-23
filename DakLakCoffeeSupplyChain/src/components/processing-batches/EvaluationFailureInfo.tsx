@@ -20,7 +20,7 @@ interface EvaluationFailureInfoProps {
     farmerName: string;
     progresses?: Array<{
       progressId: string;
-      stageId: string;
+      stageId: number; // ✅ Nhất quán với backend C# sử dụng int
       stageName: string;
       stepIndex: number;
       progressDate?: string;

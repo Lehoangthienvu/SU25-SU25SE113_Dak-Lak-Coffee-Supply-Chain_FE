@@ -5,7 +5,7 @@ import { StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 
 interface FailureInfoCardProps {
   failureInfo: StageFailureInfo;
-  currentStageId?: string;
+  currentStageId?: number; // ✅ Nhất quán với backend C# sử dụng int
   currentStageName?: string;
   isRetryMode?: boolean;
 }
