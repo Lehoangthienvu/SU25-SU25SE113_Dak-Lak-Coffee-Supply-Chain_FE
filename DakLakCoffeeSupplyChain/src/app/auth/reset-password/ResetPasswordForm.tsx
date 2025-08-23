@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -13,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Eye, EyeOff, ArrowLeft, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
-function ResetPasswordContent() {
+function ResetPasswordFormContent() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +21,7 @@ function ResetPasswordContent() {
     const [validating, setValidating] = useState(true);
     const [tokenValid, setTokenValid] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
-    
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
@@ -48,7 +47,7 @@ function ResetPasswordContent() {
                 } else {
                     setTokenValid(false);
                 }
-            } catch (error) {
+            } catch {
                 setTokenValid(false);
             } finally {
                 setValidating(false);
@@ -79,7 +78,7 @@ function ResetPasswordContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (newPassword !== confirmPassword) {
             toast.error("❌ Mật khẩu xác nhận không khớp!");
             return;
@@ -115,7 +114,7 @@ function ResetPasswordContent() {
                 const errorMessage = result.message || result.title || "Đặt lại mật khẩu thất bại";
                 toast.error(`❌ ${errorMessage}`);
             }
-        } catch (error) {
+        } catch {
             toast.error("❌ Lỗi kết nối. Vui lòng thử lại.");
         } finally {
             setLoading(false);
@@ -161,7 +160,7 @@ function ResetPasswordContent() {
                                 <li>• Link không đúng định dạng</li>
                             </ul>
                         </div>
-                        
+
                         <Button
                             onClick={() => router.push("/auth/forgot-password")}
                             className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
@@ -198,7 +197,7 @@ function ResetPasswordContent() {
                                 <li>• Link reset đã được vô hiệu hóa</li>
                             </ul>
                         </div>
-                        
+
                         <Button
                             onClick={() => router.push("/auth/login")}
                             className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
@@ -213,27 +212,144 @@ function ResetPasswordContent() {
 
     const passwordValidation = validatePassword(newPassword);
 
-
     return (
-        <Suspense fallback={
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 flex items-center justify-center p-4">
-                <div className="w-full max-w-md bg-white shadow-xl border-0 rounded-lg p-8">
-                    <div className="text-center">
-                        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-600">Đang tải...</p>
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 flex items-center justify-center p-4">
+            <Card className="w-full max-w-md bg-white shadow-xl border-0">
+                <CardHeader className="text-center pb-4">
+                    <div className="flex items-center justify-center mb-4">
+                        <Image
+                            src="/images/Coffee.png"
+                            alt="DakLak Coffee"
+                            width={60}
+                            height={60}
+                            className="rounded-lg"
+                        />
                     </div>
-                </div>
-            </div>
-        }>
-            <ResetPasswordForm />
-        </Suspense>
+                    <CardTitle className="text-2xl font-bold text-gray-800">
+                        Đặt lại mật khẩu
+                    </CardTitle>
+                    <p className="text-gray-600 mt-2">
+                        Nhập mật khẩu mới cho tài khoản của bạn
+                    </p>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="newPassword" className="text-sm font-semibold text-gray-700">
+                                Mật khẩu mới
+                            </Label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <Input
+                                    id="newPassword"
+                                    type={showPassword ? "text" : "password"}
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Nhập mật khẩu mới"
+                                    className="pl-10 pr-10 h-11 border-2 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">
+                                Xác nhận mật khẩu
+                            </Label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <Input
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Nhập lại mật khẩu mới"
+                                    className="pl-10 pr-10 h-11 border-2 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Password validation */}
+                        {newPassword && (
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <h4 className="text-sm font-semibold text-gray-700 mb-2">Yêu cầu mật khẩu:</h4>
+                                <ul className="text-xs space-y-1">
+                                    <li className={`flex items-center ${passwordValidation.errors.length ? 'text-red-600' : 'text-green-600'}`}>
+                                        {passwordValidation.errors.length ? '❌' : '✅'} Ít nhất 8 ký tự
+                                    </li>
+                                    <li className={`flex items-center ${passwordValidation.errors.upperCase ? 'text-red-600' : 'text-green-600'}`}>
+                                        {passwordValidation.errors.upperCase ? '❌' : '✅'} Có chữ hoa
+                                    </li>
+                                    <li className={`flex items-center ${passwordValidation.errors.lowerCase ? 'text-red-600' : 'text-green-600'}`}>
+                                        {passwordValidation.errors.lowerCase ? '❌' : '✅'} Có chữ thường
+                                    </li>
+                                    <li className={`flex items-center ${passwordValidation.errors.numbers ? 'text-red-600' : 'text-green-600'}`}>
+                                        {passwordValidation.errors.numbers ? '❌' : '✅'} Có số
+                                    </li>
+                                    <li className={`flex items-center ${passwordValidation.errors.specialChar ? 'text-red-600' : 'text-green-600'}`}>
+                                        {passwordValidation.errors.specialChar ? '❌' : '✅'} Có ký tự đặc biệt
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Password match validation */}
+                        {confirmPassword && newPassword !== confirmPassword && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <p className="text-sm text-red-600">❌ Mật khẩu xác nhận không khớp</p>
+                            </div>
+                        )}
+
+                        <Button
+                            type="submit"
+                            disabled={loading || !newPassword || !confirmPassword || newPassword !== confirmPassword || !passwordValidation.isValid}
+                            className="w-full h-11 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Đang xử lý...
+                                </>
+                            ) : (
+                                'Đặt lại mật khẩu'
+                            )}
+                        </Button>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <Link
+                            href="/auth/login"
+                            className="inline-flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium hover:underline transition-colors"
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-1" />
+                            Quay lại đăng nhập
+                        </Link>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
-export default function ResetPasswordPage() {
+export function ResetPasswordForm() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <ResetPasswordContent />
+            <ResetPasswordFormContent />
         </Suspense>
     );
 }

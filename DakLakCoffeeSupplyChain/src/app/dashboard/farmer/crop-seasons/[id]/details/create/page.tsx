@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
 import { getAvailableCommitments } from "@/lib/api/farmingCommitments";
 import { FarmingCommitmentDetail } from "@/lib/api/farmingCommitments";
 
-export default function CreateCropSeasonDetailPage() {
+function CreateCropSeasonDetailContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -90,8 +90,8 @@ export default function CreateCropSeasonDetailPage() {
 
         const details = matched.farmingCommitmentDetails.map((detail: Partial<FarmingCommitmentDetail>) => ({
           commitmentDetailId: detail.commitmentDetailId || "",
-          commitmentDetailCode: detail.commitmentDetailCode,
-          note: detail.note,
+          commitmentDetailCode: detail.commitmentDetailCode || "",
+          note: detail.note || "",
           committedQuantity: detail.committedQuantity || 0,
           estimatedDeliveryStart: detail.estimatedDeliveryStart || "",
           estimatedDeliveryEnd: detail.estimatedDeliveryEnd || "",
@@ -342,5 +342,13 @@ export default function CreateCropSeasonDetailPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function CreateCropSeasonDetailPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateCropSeasonDetailContent />
+    </Suspense>
   );
 }

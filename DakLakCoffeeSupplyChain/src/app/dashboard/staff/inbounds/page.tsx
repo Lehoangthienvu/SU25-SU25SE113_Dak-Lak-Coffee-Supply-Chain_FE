@@ -77,14 +77,14 @@ function InboundRequestListContent() {
   };
 
   const filtered = requests.filter((r) => {
-    const matchesSearch = 
+    const matchesSearch =
       r.requestCode?.toLowerCase().includes(search.toLowerCase()) ||
       r.farmerName?.toLowerCase().includes(search.toLowerCase()) ||
       r.batchCode?.toLowerCase().includes(search.toLowerCase()) ||
       r.cropSeasonName?.toLowerCase().includes(search.toLowerCase()) ||
       r.detailCode?.toLowerCase().includes(search.toLowerCase()) ||
       r.coffeeType?.toLowerCase().includes(search.toLowerCase());
-    
+
     // Xử lý lọc trạng thái
     let matchesStatus = true;
     if (statusFilter && statusFilter !== 'all') {
@@ -98,10 +98,10 @@ function InboundRequestListContent() {
     }
 
     // Xử lý lọc loại cà phê
-    const matchesType = 
-      coffeeTypeFilter === 'all' || 
+    const matchesType =
+      coffeeTypeFilter === 'all' ||
       getCoffeeType(r) === coffeeTypeFilter;
-    
+
     return matchesSearch && matchesStatus && matchesType;
   });
 
@@ -349,7 +349,7 @@ function InboundRequestListContent() {
                       const coffeeType = getCoffeeType(req);
                       const coffeeTypeLabel = getCoffeeTypeLabel(req);
                       const coffeeTypeIcon = getCoffeeTypeIcon(req);
-                      
+
                       // Thông tin hiển thị
                       let displayInfo = '';
                       if (coffeeType === 'fresh') {
@@ -367,10 +367,9 @@ function InboundRequestListContent() {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               {coffeeTypeIcon}
-                              <span className={`font-medium ${
-                                coffeeType === 'fresh' ? 'text-orange-700' : 
+                              <span className={`font-medium ${coffeeType === 'fresh' ? 'text-orange-700' :
                                 coffeeType === 'processed' ? 'text-purple-700' : 'text-gray-700'
-                              }`}>
+                                }`}>
                                 {coffeeTypeLabel}
                               </span>
                             </div>

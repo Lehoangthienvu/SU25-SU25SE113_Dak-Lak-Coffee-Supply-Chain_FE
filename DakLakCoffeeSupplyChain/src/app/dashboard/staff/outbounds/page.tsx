@@ -15,8 +15,10 @@ import { ChevronLeft, ChevronRight, Eye, Check, X, TrendingDown, Clock, CheckCir
 import { toast } from 'sonner';
 import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
+
 function StaffOutboundRequestListContent() {
   const [data, setData] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -48,7 +50,7 @@ function StaffOutboundRequestListContent() {
 
   const filteredData = data.filter((item) => {
     if (!statusFilter || statusFilter === 'all') return true;
-    
+
     // Xử lý lọc trạng thái
     if (statusFilter === 'Pending') {
       return item.status === 'Pending' || item.status === 'Processing';
@@ -64,7 +66,6 @@ function StaffOutboundRequestListContent() {
 
   const pendingRequests = filteredData.filter(req => req.status === 'Pending' || req.status === 'Processing');
   const acceptedRequests = filteredData.filter(req => req.status === 'Accepted' || req.status === 'Approved');
-  const completedRequests = filteredData.filter(req => req.status === 'Completed');
   const totalQuantity = filteredData.reduce((sum, req) => sum + (req.requestedQuantity || 0), 0);
 
   const handleAccept = async (id: string) => {
@@ -73,7 +74,7 @@ function StaffOutboundRequestListContent() {
       message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
       confirmText: "Duyệt",
       cancelText: "Hủy",
-      type: "success",
+      type: "info",
       onConfirm: async () => {
         try {
           const result = await acceptOutboundRequest(id);
@@ -83,64 +84,53 @@ function StaffOutboundRequestListContent() {
           } else {
             toast.error(result.message);
           }
-        } catch (err: any) {
-          toast.error(err.message);
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
+          toast.error(errorMessage);
         }
       }
     });
   };
 
   const [rejectReason, setRejectReason] = useState('');
+  const [showRejectInput, setShowRejectInput] = useState(false);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
 
   const handleReject = async (id: string) => {
     setRejectingId(id);
     setRejectReason('');
-    
-    openDialog({
-      title: "Từ chối yêu cầu xuất kho",
-      message: (
-        <div className="space-y-3">
-          <p>Vui lòng nhập lý do từ chối yêu cầu:</p>
-          <textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="Nhập lý do từ chối..."
-            className="w-full p-2 border border-gray-300 rounded-md resize-none"
-            rows={3}
-          />
-        </div>
-      ),
-      confirmText: "Từ chối",
-      cancelText: "Hủy",
-      type: "danger",
-      onConfirm: async () => {
-        if (!rejectReason.trim()) {
-          toast.error('Vui lòng nhập lý do từ chối');
-          return;
-        }
+    setShowRejectInput(true);
+  };
 
-        try {
-          const result = await rejectOutboundRequest(id, rejectReason.trim());
-          if (result.status === 1) {
-            toast.success(result.message);
-            setData((prev) =>
-              prev.map((item) =>
-                item.outboundRequestId === id
-                  ? { ...item, status: 'Rejected', rejectReason: rejectReason.trim() }
-                  : item
-              )
-            );
-            setRejectingId(null);
-            setRejectReason('');
-          } else {
-            toast.error(result.message);
-          }
-        } catch (err: any) {
-          toast.error(err.message);
-        }
+  const confirmReject = async () => {
+    if (!rejectReason.trim()) {
+      toast.error('Vui lòng nhập lý do từ chối');
+      return;
+    }
+
+    if (!rejectingId) return;
+
+    try {
+      const result = await rejectOutboundRequest(rejectingId, rejectReason.trim());
+      if (result.status === 1) {
+        toast.success(result.message);
+        setData((prev) =>
+          prev.map((item) =>
+            item.outboundRequestId === rejectingId
+              ? { ...item, status: 'Rejected', rejectReason: rejectReason.trim() }
+              : item
+          )
+        );
+        setRejectReason('');
+        setShowRejectInput(false);
+        setRejectingId(null);
+      } else {
+        toast.error(result.message);
       }
-    });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
+      toast.error(errorMessage);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -223,7 +213,7 @@ function StaffOutboundRequestListContent() {
                 </p>
               </div>
             </div>
-            
+
             {/* Status Filter */}
             <Select onValueChange={(value) => {
               setStatusFilter(value);
@@ -388,11 +378,10 @@ function StaffOutboundRequestListContent() {
                           <Button
                             key={page}
                             onClick={() => setCurrentPage(page)}
-                            className={`rounded-full px-3 py-1 text-sm ${
-                              page === currentPage
-                                ? 'bg-red-600 text-white'
-                                : 'bg-white text-red-600 border border-red-400 hover:bg-red-50'
-                            }`}
+                            className={`rounded-full px-3 py-1 text-sm ${page === currentPage
+                              ? 'bg-red-600 text-white'
+                              : 'bg-white text-red-600 border border-red-400 hover:bg-red-50'
+                              }`}
                           >
                             {page}
                           </Button>
@@ -415,9 +404,34 @@ function StaffOutboundRequestListContent() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Confirmation Dialog */}
       <ConfirmationDialog />
+
+      {/* Reject Reason Input Modal */}
+      {showRejectInput && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowRejectInput(false)} />
+          <div className="relative bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Nhập lý do từ chối</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Nhập lý do từ chối..."
+              className="w-full p-3 border border-gray-300 rounded-md resize-none mb-4"
+              rows={3}
+            />
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowRejectInput(false)}>
+                Hủy
+              </Button>
+              <Button onClick={confirmReject} className="bg-red-600 hover:bg-red-700">
+                Từ chối
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

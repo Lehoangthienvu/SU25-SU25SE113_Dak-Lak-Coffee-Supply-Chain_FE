@@ -37,6 +37,8 @@ export default function ProcurementPlanDetailPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!id) return;
+
     getProcurementPlanById(id as string)
       .then(setPlan)
       .catch((err) => setError(err.message || "Không thể tải dữ liệu kế hoạch"))
@@ -46,6 +48,11 @@ export default function ProcurementPlanDetailPage() {
   }, [id]);
   //#region APIs call
   const fetchRegistration = async (planId: ParamValue) => {
+    if (!planId || typeof planId !== 'string') {
+      console.error('Invalid planId:', planId);
+      return;
+    }
+
     setLoading(true);
     const data = await getCultivationRegistrationsByPlanId(planId).catch(() => {
       //AppToast.error(getErrorMessage(error));
@@ -60,7 +67,9 @@ export default function ProcurementPlanDetailPage() {
   //#endregion
 
   const handleUpdateRegistration = () => {
-    fetchRegistration(id);
+    if (id) {
+      fetchRegistration(id);
+    }
   };
 
   const formatDate = (date?: string) => {
@@ -169,7 +178,7 @@ export default function ProcurementPlanDetailPage() {
           </CardHeader>
           <CardContent>
             {Array.isArray(plan.procurementPlansDetails) &&
-            plan.procurementPlansDetails.length > 0 ? (
+              plan.procurementPlansDetails.length > 0 ? (
               <Accordion type='multiple' className='w-full'>
                 {plan.procurementPlansDetails.map((detail) => (
                   <AccordionItem
@@ -295,7 +304,7 @@ export default function ProcurementPlanDetailPage() {
               registeredAt={reg.registeredAt}
               note={reg.note}
               status={reg.status}
-              planStatus = {plan.status}
+              planStatus={plan.status}
               commitmentId={reg.commitmentId}
               commitmentStatus={reg.commitmentStatus}
               cultivationRegistrationDetails={

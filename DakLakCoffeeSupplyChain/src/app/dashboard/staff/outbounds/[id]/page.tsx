@@ -40,13 +40,13 @@ export default function ViewOutboundRequestDetailStaff() {
 
   const handleAccept = async () => {
     if (!data) return;
-    
+
     openDialog({
       title: "Xác nhận duyệt yêu cầu",
       message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
       confirmText: "Duyệt",
       cancelText: "Hủy",
-      type: "success",
+      type: "info",
       onConfirm: async () => {
         try {
           const result = await acceptOutboundRequest(data.outboundRequestId);
@@ -146,7 +146,7 @@ export default function ViewOutboundRequestDetailStaff() {
 
           {/* Action */}
           <div className="pt-6 flex gap-4">
-            
+
             {data.status === 'Pending' && (
               <Button className="bg-green-600 text-white" onClick={handleAccept}>
                 Duyệt yêu cầu
@@ -155,7 +155,7 @@ export default function ViewOutboundRequestDetailStaff() {
           </div>
         </div>
       </div>
-      
+
       {/* Confirmation Dialog */}
       <ConfirmationDialog />
     </div>

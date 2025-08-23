@@ -51,7 +51,7 @@ export default function ManagerCropSeasonDetailPage() {
 
                 // Fetch progress for each detail
                 const progressData: Record<string, CropProgressViewAllDto[]> = {};
-                if (seasonData.details && Array.isArray(seasonData.details)) {
+                if (seasonData?.details && Array.isArray(seasonData.details)) {
                     for (const detail of seasonData.details) {
                         try {
                             const progress = await getCropProgressesByDetailId(detail.detailId);

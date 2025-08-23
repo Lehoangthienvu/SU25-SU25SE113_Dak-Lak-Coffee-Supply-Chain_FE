@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +20,8 @@ import {
 import { SeverityLevelEnum, SeverityLevelLabel } from '@/lib/constants/SeverityLevelEnum';
 import { getCropProgressesByDetailId, getAllCropProgressesForCurrentUser, CropProgressViewAllDto } from '@/lib/api/cropProgress';
 
-export default function CreateReportPage() {
+// Separate component that uses useSearchParams
+function CreateReportForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -535,5 +536,40 @@ export default function CreateReportPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+// Loading component for Suspense fallback
+function CreateReportLoading() {
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4">
+            <div className="max-w-3xl mx-auto py-8">
+                <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-6 mb-6">
+                    <div className="animate-pulse">
+                        <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-6">
+                    <div className="animate-pulse space-y-4">
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-10 bg-gray-200 rounded"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                        <div className="h-10 bg-gray-200 rounded"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-20 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Main page component with Suspense boundary
+export default function CreateReportPage() {
+    return (
+        <Suspense fallback={<CreateReportLoading />}>
+            <CreateReportForm />
+        </Suspense>
     );
 }
