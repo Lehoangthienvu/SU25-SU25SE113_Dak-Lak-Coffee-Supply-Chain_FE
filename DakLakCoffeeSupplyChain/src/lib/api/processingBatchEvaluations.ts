@@ -163,17 +163,108 @@ export async function createProcessingBatchEvaluation(
     console.log("🔍 DEBUG: Creating evaluation with data:", data);
     const res = await api.post("/Evaluations", data);
     console.log("🔍 DEBUG: Create evaluation response:", res);
+    
+    // 🔧 CẢI THIỆN: Kiểm tra response data structure trước khi kiểm tra HTTP status
+    if (!res.data) {
+      console.error("❌ ERROR: No response data received");
+      throw new Error("Không nhận được dữ liệu phản hồi từ máy chủ");
+    }
+    
+    console.log("🔍 DEBUG: Response data structure:", {
+      hasStatus: 'status' in res.data,
+      hasMessage: 'message' in res.data,
+      hasData: 'data' in res.data,
+      hasWorkflow: 'workflow' in res.data,
+      hasEvaluationId: 'evaluationId' in res.data,
+      responseKeys: Object.keys(res.data),
+      httpStatus: res.status,
+      fullResponseData: res.data
+    });
+    
+    // 🔧 CẢI THIỆN: Backend có thể trả về nhiều format khác nhau
+    // Format 1: {status: 1, message: '...', data: {...}}
+    // Format 2: {evaluationId: '...', status: '...'}
+    // Format 3: Trực tiếp data object
+    // Format 4: EvaluationWorkflowResponse {data: ProcessingBatchEvaluation, message: string, workflow: {...}}
+    
+    // 🔧 CẢI THIỆN: Nếu có status field, kiểm tra nó
+    if (res.data.status !== undefined) {
+      if (res.data.status !== 1 && res.data.status !== 'Success' && res.data.status !== 'success') {
+        console.error("❌ ERROR: Response data status indicates failure:", res.data.status);
+        throw new Error(res.data.message || "Tạo đánh giá thất bại theo phản hồi từ máy chủ");
+      }
+    }
+    
+    // 🔧 CẢI THIỆN: Nếu có message field và chứa từ khóa lỗi
+    if (res.data.message && typeof res.data.message === 'string') {
+      const lowerMessage = res.data.message.toLowerCase();
+      if (lowerMessage.includes('thất bại') || lowerMessage.includes('lỗi') || lowerMessage.includes('fail')) {
+        console.error("❌ ERROR: Response message indicates failure:", res.data.message);
+        throw new Error(res.data.message);
+      }
+    }
+    
+    console.log("🔍 DEBUG: Full response data:", {
+      status: res.status,
+      statusText: res.statusText,
+      data: res.data,
+      hasData: !!res.data.data,
+      hasWorkflow: !!res.data.workflow,
+      hasEvaluationId: !!res.data.evaluationId,
+      message: res.data.message,
+      messageType: typeof res.data.message
+    });
+    
+    // 🔧 CẢI THIỆN: Kiểm tra nếu là EvaluationWorkflowResponse format
+    if (res.data.data && res.data.workflow) {
+      console.log("✅ SUCCESS: Valid EvaluationWorkflowResponse format detected");
+    }
+    
+    // 🔧 CẢI THIỆN: Nếu backend xử lý thành công (có data hoặc workflow), coi như thành công
+    // ngay cả khi HTTP status là 400 (có thể do validation warning nhưng vẫn xử lý được)
+    if (res.data.data || res.data.workflow || res.data.evaluationId) {
+      console.log("✅ SUCCESS: Backend processed evaluation successfully despite HTTP status:", res.status);
+      return res.data;
+    }
+    
+    // 🔧 CẢI THIỆN: Kiểm tra thêm các dấu hiệu thành công khác
+    if (res.data.message && (
+      res.data.message.toLowerCase().includes('thành công') || 
+      res.data.message.toLowerCase().includes('success') ||
+      res.data.message.toLowerCase().includes('đã tạo') ||
+      res.data.message.toLowerCase().includes('đã gửi')
+    )) {
+      console.log("✅ SUCCESS: Backend message indicates success:", res.data.message);
+      return res.data;
+    }
+    
+    // 🔧 CẢI THIỆN: Kiểm tra HTTP status chỉ khi không có dấu hiệu thành công từ data
+    if (res.status !== 200 && res.status !== 201) {
+      console.error("❌ ERROR: HTTP status not successful and no success indicators in data:", res.status);
+      throw new Error(`HTTP Error: ${res.status} - ${res.statusText}`);
+    }
+    
+    console.log("✅ SUCCESS: Evaluation created successfully");
     return res.data;
   } catch (err: any) {
     console.error("❌ Lỗi createProcessingBatchEvaluation:", err);
     console.error("❌ Error details:", {
       message: err.message,
       status: err.response?.status,
-      data: err.response?.data
+      data: err.response?.data,
+      isAxiosError: err.isAxiosError
     });
     
-    // Throw error để component có thể handle
-    throw new Error(err.response?.data || err.message || "Tạo đánh giá thất bại.");
+    // 🔧 CẢI THIỆN: Xử lý lỗi chi tiết hơn
+    if (err.response?.status === 400) {
+      throw new Error("Dữ liệu đánh giá không hợp lệ. Vui lòng kiểm tra lại thông tin.");
+    } else if (err.response?.status === 500) {
+      throw new Error("Lỗi máy chủ. Vui lòng thử lại sau.");
+    } else if (err.response?.data?.message) {
+      throw new Error(err.response.data.message);
+    } else {
+      throw new Error(err.message || "Tạo đánh giá thất bại.");
+    }
   }
 }
 

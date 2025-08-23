@@ -13,7 +13,7 @@ interface StageEvaluation {
 }
 
 interface ProcessingStage {
-  stageId: number; // Thay đổi từ string sang number để match với backend
+  stageId: number; // ✅ Nhất quán với backend C# sử dụng int
   stageName: string;
   orderIndex: number;
   stageCode?: string;

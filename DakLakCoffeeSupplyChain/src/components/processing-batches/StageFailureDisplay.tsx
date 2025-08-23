@@ -7,7 +7,7 @@ interface StageFailureDisplayProps {
   className?: string;
   batch?: {
     progresses?: Array<{
-      stageId: string;
+      stageId: number; // ✅ Nhất quán với model database và Backend: int StageId
       stageName: string;
       stepIndex: number;
     }>;

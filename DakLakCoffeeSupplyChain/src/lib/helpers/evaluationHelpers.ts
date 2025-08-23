@@ -1,8 +1,8 @@
 export interface StageFailureInfo {
-  failedOrderIndex: number;
-  failedStageId?: string; // Thêm StageId thực tế từ database
+  failedOrderIndex: number; // Thêm lại để tương thích với code hiện tại
+  failedStageId?: number; // ✅ Nhất quán với backend C# sử dụng int
   failedStageName: string;
-  failureDetails: string; // Đổi tên từ details để đồng bộ với Backend
+  failureDetails: string;
   recommendations: string;
   isFailure: boolean;
 }
@@ -13,7 +13,7 @@ export interface StageFailureDisplayInfo {
   details: string;
   recommendations: string;
   orderIndex: number;
-  stageId?: string; // Thêm StageId để hiển thị
+  stageId?: number; // ✅ Nhất quán với backend C# sử dụng int
   rawComments?: string;
   // 🔧 CẢI THIỆN: Thêm properties để hiển thị tiêu chí bị fail
   failedCriteria?: Array<{
