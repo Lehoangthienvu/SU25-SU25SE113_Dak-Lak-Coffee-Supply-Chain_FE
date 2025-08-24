@@ -77,6 +77,9 @@ function InboundRequestListContent() {
   };
 
   const filtered = requests.filter((r) => {
+    // TẠM THỜI ẨN - Lọc bỏ cà phê tươi
+    if (getCoffeeType(r) === 'fresh') return false;
+    
     const matchesSearch =
       r.requestCode?.toLowerCase().includes(search.toLowerCase()) ||
       r.farmerName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -224,21 +227,22 @@ function InboundRequestListContent() {
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Chọn loại cà phê" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả ({requests.length})</SelectItem>
-                    <SelectItem value="fresh">
-                      <div className="flex items-center gap-2">
-                        <Leaf className="w-4 h-4 text-orange-600" />
-                        Cà phê tươi ({freshCoffeeRequests.length})
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="processed">
-                      <div className="flex items-center gap-2">
-                        <Coffee className="w-4 h-4 text-purple-600" />
-                        Cà phê đã sơ chế ({processedCoffeeRequests.length})
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
+                                     <SelectContent>
+                     <SelectItem value="all">Tất cả ({requests.length})</SelectItem>
+                     {/* TẠM THỜI ẨN - Filter cà phê tươi */}
+                     {/* <SelectItem value="fresh">
+                       <div className="flex items-center gap-2">
+                         <Leaf className="w-4 h-4 text-orange-600" />
+                         Cà phê tươi ({freshCoffeeRequests.length})
+                       </div>
+                     </SelectItem> */}
+                     <SelectItem value="processed">
+                       <div className="flex items-center gap-2">
+                         <Coffee className="w-4 h-4 text-purple-600" />
+                         Cà phê đã sơ chế ({processedCoffeeRequests.length})
+                       </div>
+                     </SelectItem>
+                   </SelectContent>
                 </Select>
               </div>
             </div>
@@ -284,33 +288,34 @@ function InboundRequestListContent() {
             </div>
           </div>
 
-          {/* Coffee Type Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Leaf className="w-4 h-4" />
-                    <p className="text-orange-100 text-sm font-medium">Cà phê tươi</p>
-                  </div>
-                  <p className="text-xl font-bold">{freshCoffeeRequests.length} yêu cầu</p>
-                  <p className="text-orange-200 text-sm">{freshCoffeeQuantity.toLocaleString()} kg</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Coffee className="w-4 h-4" />
-                    <p className="text-purple-100 text-sm font-medium">Cà phê đã sơ chế</p>
-                  </div>
-                  <p className="text-xl font-bold">{processedCoffeeRequests.length} yêu cầu</p>
-                  <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
-                </div>
-              </div>
-            </div>
-          </div>
+                     {/* Coffee Type Statistics */}
+           <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
+             {/* TẠM THỜI ẨN - Card thống kê cà phê tươi */}
+             {/* <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
+               <div className="flex items-center justify-between">
+                 <div>
+                   <div className="flex items-center gap-2 mb-1">
+                     <Leaf className="w-4 h-4" />
+                     <p className="text-orange-100 text-sm font-medium">Cà phê tươi</p>
+                   </div>
+                   <p className="text-xl font-bold">{freshCoffeeRequests.length} yêu cầu</p>
+                   <p className="text-orange-200 text-sm">{freshCoffeeQuantity.toLocaleString()} kg</p>
+                 </div>
+               </div>
+             </div> */}
+             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
+               <div className="flex items-center justify-between">
+                 <div>
+                   <div className="flex items-center gap-2 mb-1">
+                     <Coffee className="w-4 h-4" />
+                     <p className="text-purple-100 text-sm font-medium">Cà phê đã sơ chế</p>
+                   </div>
+                   <p className="text-xl font-bold">{processedCoffeeRequests.length} yêu cầu</p>
+                   <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
+                 </div>
+               </div>
+             </div>
+           </div>
         </div>
 
         {/* Table */}
