@@ -138,16 +138,7 @@ export default function ManagerCropSeasonsPage() {
                                 Theo dõi và quản lý các mùa vụ cà phê của nông dân
                             </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => router.push("/dashboard/manager/progress-deviation")}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                                size="sm"
-                            >
-                                <TrendingUp className="w-4 h-4 mr-2" />
-                                Phân tích sai lệch
-                            </Button>
-                        </div>
+
                     </div>
 
                     {/* Statistics Cards */}
