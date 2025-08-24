@@ -15,6 +15,7 @@ import ProcurementPlanForm, {
   ProcurementPlanFormData,
 } from "@/components/procurement-plan/ProcurementPlanForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementPlanFormGuide";
 
 export default function CreateProcurementPlanPage() {
   useAuthGuard(["manager"]);
@@ -49,6 +50,13 @@ export default function CreateProcurementPlanPage() {
     if (!form.title) newErrors.title = "Vui lòng nhập tên kế hoạch.";
     if (!form.startDate) newErrors.startDate = "Vui lòng chọn ngày bắt đầu.";
     if (!form.endDate) newErrors.endDate = "Vui lòng chọn ngày kết thúc.";
+    if (
+      form.startDate &&
+      new Date(form.startDate) <
+        new Date(new Date().toISOString().split("T")[0])
+    ) {
+      newErrors.startDate = "Ngày bắt đầu không thể là ngày trong quá khứ.";
+    }
     if (new Date(form.startDate) >= new Date(form.endDate))
       newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu.";
     if (!form.description) newErrors.description = "Vui lòng nhập mô tả.";
@@ -60,17 +68,21 @@ export default function CreateProcurementPlanPage() {
         if (!detail.coffeeTypeId) {
           newErrors[`coffeeTypeId-${index}`] = "Vui lòng chọn loại cà phê.";
         }
-        // if (detail.processMethodId === 0) {
-        //   newErrors[`processMethodId-${index}`] =
-        //     "Vui lòng chọn phương pháp sơ chế.";
-        // }
-        if (detail.targetQuantity <= 100) {
+        if (detail.processMethodId === 0) {
+          newErrors[`processMethodId-${index}`] =
+            "Vui lòng chọn phương pháp sơ chế.";
+        }
+        if (detail.targetQuantity < 100) {
           newErrors[`targetQuantity-${index}`] =
-            "Sản lượng mục tiêu phải lớn hơn 100 kg.";
+            "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.";
         }
         if (detail.minimumRegistrationQuantity < 100) {
           newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Số lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+            "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+        }
+        if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
+          newErrors[`minimumRegistrationQuantity-${index}`] =
+            "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.";
         }
         if (detail.minPriceRange < 1000) {
           newErrors[`minPriceRange-${index}`] =
@@ -216,26 +228,56 @@ export default function CreateProcurementPlanPage() {
   //#endregion
 
   return (
-    <div className='max-w-2xl mx-auto py-10 px-4'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Tạo kế hoạch mới</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProcurementPlanForm
-            initialData={form}
-            availableCoffeeTypes={availableCoffeeTypes}
-            availableProcessingMethods={availableProcessingMethods}
-            loading={loading}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            onChange={handleFormChange}
-            onSubmit={handleSubmit}
-            onAddDetail={handleAddDetail}
-            onRemoveDetail={handleRemoveDetail}
-          />
-        </CardContent>
-      </Card>
+    <div className='min-h-screen py-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        {/* Header */}
+        <div className='mb-8'>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            Tạo kế hoạch thu mua mới
+          </h1>
+          <p className='mt-2 text-gray-600'>
+            Thiết lập kế hoạch thu mua cà phê từ nông hộ
+          </p>
+        </div>
+
+        {/* Main content */}
+        <div className='flex flex-col lg:flex-row gap-8'>
+          {/* Left sidebar - Form Guide */}
+          <aside className='lg:w-96 flex-shrink-0'>
+            <div className='sticky top-8'>
+              <ProcurementPlanFormGuide />
+            </div>
+          </aside>
+
+          {/* Right main content - Form */}
+          <main className='flex-1'>
+            <Card className='shadow-lg border-0 p-0'>
+              <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
+                <CardTitle className='text-white text-3xl font-bold pt-6'>
+                  Thông tin kế hoạch
+                </CardTitle>
+                <p className='text-white text-md mt-1 pb-4'>
+                  Điền đầy đủ thông tin để tạo kế hoạch thu mua
+                </p>
+              </CardHeader>
+              <CardContent className='p-6'>
+                <ProcurementPlanForm
+                  initialData={form}
+                  availableCoffeeTypes={availableCoffeeTypes}
+                  availableProcessingMethods={availableProcessingMethods}
+                  loading={loading}
+                  errors={errors}
+                  isSubmitting={isSubmitting}
+                  onChange={handleFormChange}
+                  onSubmit={handleSubmit}
+                  onAddDetail={handleAddDetail}
+                  onRemoveDetail={handleRemoveDetail}
+                />
+              </CardContent>
+            </Card>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

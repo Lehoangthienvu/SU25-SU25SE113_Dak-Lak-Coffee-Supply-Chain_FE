@@ -11,11 +11,20 @@ import Link from "next/dist/client/link";
 import { useEffect, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { usePathname } from "next/navigation";
+import { getTargetRegionOptions } from "@/lib/constants/targetRegion";
 
 export default function MarketplacePage() {
   const [plans, setPlans] = useState<ProcurementPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({
+    coffeeType: "",
+    region: "",
+    minQuantity: "",
+    maxQuantity: "",
+    minPrice: "",
+    maxPrice: "",
+  });
   const pathname = usePathname();
 
   useEffect(() => {
@@ -26,17 +35,86 @@ export default function MarketplacePage() {
     setLoading(true);
     const data = await getAllAvailableProcurementPlans().catch((error) => {
       //AppToast.error(getErrorMessage(error));
+      console.error(error);
       return [];
     });
     setPlans(data);
+    console.log(data);
     setLoading(false);
   };
 
-  const filteredPlans = plans.filter(
-    (plan) =>
-      differenceInCalendarDays(new Date(plan.endDate), new Date()) > 0 &&
-      (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredPlans = plans.filter((plan) => {
+    // Kiểm tra ngày kết thúc
+    if (differenceInCalendarDays(new Date(plan.endDate), new Date()) <= 0) {
+      return false;
+    }
+
+    // Kiểm tra search
+    if (search && !plan.title.toLowerCase().includes(search.toLowerCase())) {
+      return false;
+    }
+
+    // Kiểm tra filter loại cà phê
+    if (filters.coffeeType && !plan.procurementPlansDetails.some(detail => 
+      detail.coffeeType?.typeName === filters.coffeeType
+    )) {
+      return false;
+    }
+
+    // Kiểm tra filter khu vực
+    if (filters.region && !plan.procurementPlansDetails.some(detail => 
+      detail.targetRegion === filters.region
+    )) {
+      return false;
+    }
+
+    // Kiểm tra filter sản lượng
+    if (filters.minQuantity && plan.totalQuantity < Number(filters.minQuantity)) {
+      return false;
+    }
+    if (filters.maxQuantity && plan.totalQuantity > Number(filters.maxQuantity)) {
+      return false;
+    }
+
+    // Kiểm tra filter giá
+    if (filters.minPrice && !plan.procurementPlansDetails.some(detail => 
+      detail.minPriceRange && detail.minPriceRange >= Number(filters.minPrice)
+    )) {
+      return false;
+    }
+    if (filters.maxPrice && !plan.procurementPlansDetails.some(detail => 
+      detail.maxPriceRange && detail.maxPriceRange <= Number(filters.maxPrice)
+    )) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // Hàm lấy danh sách các loại cà phê duy nhất
+  const getUniqueCoffeeTypes = () => {
+    const types = new Set<string>();
+    plans.forEach(plan => {
+      plan.procurementPlansDetails.forEach(detail => {
+        if (detail.coffeeType?.typeName) {
+          types.add(detail.coffeeType.typeName);
+        }
+      });
+    });
+    return Array.from(types).sort();
+  };
+
+  // Hàm reset filters
+  const resetFilters = () => {
+    setFilters({
+      coffeeType: "",
+      region: "",
+      minQuantity: "",
+      maxQuantity: "",
+      minPrice: "",
+      maxPrice: "",
+    });
+  };
 
   // Hàm tạo đường dẫn cho nút "Xem chi tiết"
   const getDetailLink = (planId: string) => {
@@ -84,11 +162,162 @@ export default function MarketplacePage() {
               </div>
             </div>
 
-            <div
-            //className='bg-white p-4 rounded shadow'
-            >
-              {/* component Filter sau này */}
-              {/* <p className='text-gray-600'>Filter (đang phát triển)</p> */}
+            {/* Filter Card */}
+            <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
+              <div className='flex items-center justify-between'>
+                <h2 className='text-sm font-medium text-gray-700'>
+                  Bộ lọc tìm kiếm
+                </h2>
+                <Button
+                  onClick={resetFilters}
+                  variant='secondaryGradient'
+                  size='sm'
+                  className='text-xs px-2 py-1 h-7'
+                >
+                  Reset
+                </Button>
+              </div>
+
+              {/* Loại cà phê */}
+              <div>
+                <label className='block text-xs font-medium text-gray-600 mb-2'>
+                  Loại cà phê
+                </label>
+                <select
+                  value={filters.coffeeType}
+                  onChange={(e) => setFilters({ ...filters, coffeeType: e.target.value })}
+                  className='w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-orange-500 focus:ring-orange-500'
+                >
+                  <option value=''>Tất cả loại cà phê</option>
+                  {getUniqueCoffeeTypes().map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Khu vực */}
+              <div>
+                <label className='block text-xs font-medium text-gray-600 mb-2'>
+                  Khu vực
+                </label>
+                <select
+                  value={filters.region}
+                  onChange={(e) => setFilters({ ...filters, region: e.target.value })}
+                  className='w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-orange-500 focus:ring-orange-500'
+                >
+                  <option value=''>Tất cả khu vực</option>
+                  {getTargetRegionOptions().map((region) => (
+                    <option key={region.value} value={region.value}>
+                      {region.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+                             {/* Sản lượng */}
+               <div>
+                 <label className='block text-xs font-medium text-gray-600 mb-2'>
+                   Sản lượng (kg)
+                 </label>
+                 <div className='space-y-3'>
+                   <div className='flex justify-between text-xs text-gray-500'>
+                     <span>Từ: {filters.minQuantity || '0'} kg</span>
+                     <span>Đến: {filters.maxQuantity || '100,000'} kg</span>
+                   </div>
+                   <div className='relative'>
+                     <input
+                       type='range'
+                       min='0'
+                       max='100000'
+                       step='1000'
+                       value={filters.minQuantity || '0'}
+                       onChange={(e) => setFilters({ ...filters, minQuantity: e.target.value })}
+                       className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider'
+                     />
+                     <input
+                       type='range'
+                       min='0'
+                       max='100000'
+                       step='1000'
+                       value={filters.maxQuantity || '100000'}
+                       onChange={(e) => setFilters({ ...filters, maxQuantity: e.target.value })}
+                       className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider mt-2'
+                     />
+                   </div>
+                   <div className='flex gap-2'>
+                     <Input
+                       type='number'
+                       placeholder='Từ'
+                       value={filters.minQuantity}
+                       onChange={(e) => setFilters({ ...filters, minQuantity: e.target.value })}
+                       //className='flex-1 text-xs border border-gray-300 rounded px-2 py-1 focus:border-orange-500 focus:ring-orange-500'
+                     />
+                     <Input
+                       type='number'
+                       placeholder='Đến'
+                       value={filters.maxQuantity}
+                       onChange={(e) => setFilters({ ...filters, maxQuantity: e.target.value })}
+                       //className='flex-1 text-xs border border-gray-300 rounded px-2 py-1 focus:border-orange-500 focus:ring-orange-500'
+                     />
+                   </div>
+                 </div>
+               </div>
+
+              {/* Giá thu mua */}
+              <div>
+                <label className='block text-xs font-medium text-gray-600 mb-2'>
+                  Giá thu mua (VNĐ/kg)
+                </label>
+                <div className='space-y-3'>
+                  <div className='flex justify-between text-xs text-gray-500'>
+                    <span>Từ: {filters.minPrice ? Number(filters.minPrice).toLocaleString() : '0'} VNĐ</span>
+                    <span>Đến: {filters.maxPrice ? Number(filters.maxPrice).toLocaleString() : '10,000,000,000'} VNĐ</span>
+                  </div>
+                  <div className='relative'>
+                    <input
+                      type='range'
+                      min='0'
+                      max='10000000000'
+                      step='1000'
+                      value={filters.minPrice || '0'}
+                      onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+                      className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider'
+                    />
+                    <input
+                      type='range'
+                      min='0'
+                      max='10000000000'
+                      step='1000'
+                      value={filters.maxPrice || '10000000000'}
+                      onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+                      className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider mt-2'
+                    />
+                  </div>
+                  <div className='flex gap-2'>
+                    <Input
+                      type='number'
+                      placeholder='Từ'
+                      value={filters.minPrice}
+                      onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+                    />
+                    <Input
+                      type='number'
+                      placeholder='Đến'
+                      value={filters.maxPrice}
+                      onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Hiển thị số kết quả */}
+              <div className='pt-2 border-t border-gray-200'>
+                <p className='text-xs text-gray-500 text-center'>
+                  Tìm thấy {filteredPlans.length} kế hoạch
+                </p>
+              </div>
             </div>
           </aside>
           <main className='flex-1'>
@@ -182,7 +411,7 @@ export default function MarketplacePage() {
                             Sản lượng (kg)
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Khu vực thu mua
+                            Khu vực ưu tiên
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
                             Giá (VNĐ/kg)

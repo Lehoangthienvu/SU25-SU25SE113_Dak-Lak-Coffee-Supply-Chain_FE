@@ -19,6 +19,7 @@ import {
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementPlanFormGuide";
 
 export default function EditProcurementPlanPage() {
   useAuthGuard(["manager"]);
@@ -98,14 +99,25 @@ export default function EditProcurementPlanPage() {
   }, [initialData]);
 
   // State để lưu form tạm thời (do form trong component con kiểm soát, cần sync lại ở trang cha)
-  const [formData, setFormData] = useState<ProcurementPlanFormData | null>(null);
+  const [formData, setFormData] = useState<ProcurementPlanFormData | null>(
+    null
+  );
 
   // Validate form
-  const validateForm = (data: ProcurementPlanFormData): { isValid: boolean; errorMessages: string[] } => {
+  const validateForm = (
+    data: ProcurementPlanFormData
+  ): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
     if (!data.title) newErrors.title = "Vui lòng nhập tên kế hoạch.";
     if (!data.startDate) newErrors.startDate = "Vui lòng chọn ngày bắt đầu.";
     if (!data.endDate) newErrors.endDate = "Vui lòng chọn ngày kết thúc.";
+    if (
+      data.startDate &&
+      new Date(data.startDate) <
+        new Date(new Date().toISOString().split("T")[0])
+    ) {
+      newErrors.startDate = "Ngày bắt đầu không thể là ngày trong quá khứ.";
+    }
     if (new Date(data.startDate) >= new Date(data.endDate))
       newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu.";
     if (!data.description) newErrors.description = "Vui lòng nhập mô tả.";
@@ -116,15 +128,19 @@ export default function EditProcurementPlanPage() {
       data.procurementPlansDetails.forEach((detail, index) => {
         if (!detail.coffeeTypeId)
           newErrors[`coffeeTypeId-${index}`] = "Vui lòng chọn loại cà phê.";
-        // if (detail.processMethodId === 0)
-        //   newErrors[`processMethodId-${index}`] =
-        //     "Vui lòng chọn phương pháp sơ chế.";
-        if (detail.targetQuantity <= 100)
+        if (detail.processMethodId === 0)
+          newErrors[`processMethodId-${index}`] =
+            "Vui lòng chọn phương pháp sơ chế.";
+        if (detail.targetQuantity < 100)
           newErrors[`targetQuantity-${index}`] =
-            "Sản lượng mục tiêu phải lớn hơn 100 kg.";
+            "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.";
         if (detail.minimumRegistrationQuantity < 100)
           newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Số lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+            "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+        if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
+          newErrors[`minimumRegistrationQuantity-${index}`] =
+            "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.";
+        }
         if (detail.minPriceRange < 1000)
           newErrors[`minPriceRange-${index}`] =
             "Giá tối thiểu không thể nhỏ hơn 1000 đồng.";
@@ -155,41 +171,51 @@ export default function EditProcurementPlanPage() {
     setIsSubmitting(true);
     const { isValid, errorMessages } = validateForm(formData);
     if (!isValid) {
-    setIsSubmitting(false);
-    AppToast.error(errorMessages.join('\n')); // show errors from validateForm directly
-    return;
-  }
+      setIsSubmitting(false);
+      AppToast.error(errorMessages.join("\n")); // show errors from validateForm directly
+      return;
+    }
 
     const detailsUpdateDto = formData.procurementPlansDetails
-    .filter((item) => item.planDetailsId && item.planDetailsId.trim() !== "")
-    .map((item) => ({
-      planDetailsId: item.planDetailsId,
-      coffeeTypeId: item.coffeeTypeId,
-      processMethodId: item.processMethodId,
-      targetQuantity: item.targetQuantity,
-      targetRegion: item.targetRegion,
-      minimumRegistrationQuantity: item.minimumRegistrationQuantity,
-      minPriceRange: item.minPriceRange,
-      maxPriceRange: item.maxPriceRange,
-      expectedYieldPerHectare: item.expectedYieldPerHectare,
-      note: item.note,
-      //contractItemId: item.contractItemId ?? null,
-    }));
+      .filter((item) => item.planDetailsId && item.planDetailsId.trim() !== "")
+      .map((item) => {
+        const detail: any = {
+          planDetailsId: item.planDetailsId,
+          coffeeTypeId: item.coffeeTypeId,
+          targetQuantity: item.targetQuantity,
+          targetRegion: item.targetRegion,
+          minimumRegistrationQuantity: item.minimumRegistrationQuantity,
+          minPriceRange: item.minPriceRange,
+          maxPriceRange: item.maxPriceRange,
+          expectedYieldPerHectare: item.expectedYieldPerHectare,
+          note: item.note,
+          //contractItemId: item.contractItemId ?? null,
+        };
+        if (item.processMethodId && item.processMethodId !== 0) {
+          detail.processMethodId = item.processMethodId;
+        }
+        return detail;
+      });
 
-  const detailsCreateDto = formData.procurementPlansDetails
-    .filter((item) => !item.planDetailsId || item.planDetailsId.trim() === "")
-    .map((item) => ({
-      coffeeTypeId: item.coffeeTypeId,
-      processMethodId: item.processMethodId,
-      targetQuantity: item.targetQuantity,
-      targetRegion: item.targetRegion,
-      minimumRegistrationQuantity: item.minimumRegistrationQuantity,
-      minPriceRange: item.minPriceRange,
-      maxPriceRange: item.maxPriceRange,
-      expectedYieldPerHectare: item.expectedYieldPerHectare,
-      note: item.note,
-      //contractItemId: item.contractItemId ?? null,
-    }));
+    const detailsCreateDto = formData.procurementPlansDetails
+      .filter((item) => !item.planDetailsId || item.planDetailsId.trim() === "")
+      .map((item) => {
+        const detail: any = {
+          coffeeTypeId: item.coffeeTypeId,
+          targetQuantity: item.targetQuantity,
+          targetRegion: item.targetRegion,
+          minimumRegistrationQuantity: item.minimumRegistrationQuantity,
+          minPriceRange: item.minPriceRange,
+          maxPriceRange: item.maxPriceRange,
+          expectedYieldPerHectare: item.expectedYieldPerHectare,
+          note: item.note,
+          //contractItemId: item.contractItemId ?? null,
+        };
+        if (item.processMethodId && item.processMethodId !== 0) {
+          detail.processMethodId = item.processMethodId;
+        }
+        return detail;
+      });
 
     try {
       await updateProcurementPlan(planId, {
@@ -239,18 +265,18 @@ export default function EditProcurementPlanPage() {
 
   // Xóa chi tiết
   const handleRemoveDetail = (index: number) => {
-  if (!formData) return;
+    if (!formData) return;
 
-  // Chỉ cho phép xóa khi số lượng chi tiết >= 2
-  if (formData.procurementPlansDetails.length <= 1) return;
+    // Chỉ cho phép xóa khi số lượng chi tiết >= 2
+    if (formData.procurementPlansDetails.length <= 1) return;
 
-  setFormData({
-    ...formData,
-    procurementPlansDetails: formData.procurementPlansDetails.filter(
-      (_, i) => i !== index
-    ),
-  });
-};
+    setFormData({
+      ...formData,
+      procurementPlansDetails: formData.procurementPlansDetails.filter(
+        (_, i) => i !== index
+      ),
+    });
+  };
 
   //endregion
 
@@ -263,26 +289,56 @@ export default function EditProcurementPlanPage() {
   }
 
   return (
-    <div className='max-w-2xl mx-auto py-10 px-4'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Chỉnh sửa kế hoạch</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProcurementPlanForm
-            initialData={formData || initialData}
-            availableCoffeeTypes={availableCoffeeTypes}
-            availableProcessingMethods={availableProcessingMethods}
-            loading={loading}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            onChange={handleFormChange}
-            onSubmit={handleSubmit}
-            onAddDetail={handleAddDetail}
-            onRemoveDetail={handleRemoveDetail}
-          />
-        </CardContent>
-      </Card>
+    <div className='min-h-screen py-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        {/* Header */}
+        <div className='mb-8'>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            Chỉnh sửa kế hoạch thu mua
+          </h1>
+          <p className='mt-2 text-gray-600'>
+            Cập nhật thông tin kế hoạch thu mua cà phê
+          </p>
+        </div>
+
+        {/* Main content */}
+        <div className='flex flex-col lg:flex-row gap-8'>
+          {/* Left sidebar - Form Guide */}
+          <aside className='lg:w-96 flex-shrink-0'>
+            <div className='sticky top-8'>
+              <ProcurementPlanFormGuide />
+            </div>
+          </aside>
+
+          {/* Right main content - Form */}
+          <main className='flex-1'>
+            <Card className='shadow-lg border-0 p-0'>
+              <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
+                <CardTitle className='text-white text-3xl font-bold pt-6'>
+                  Thông tin kế hoạch
+                </CardTitle>
+                <p className='text-white text-md mt-1 pb-4'>
+                  Cập nhật thông tin kế hoạch thu mua
+                </p>
+              </CardHeader>
+              <CardContent className='p-6'>
+                <ProcurementPlanForm
+                  initialData={formData || initialData}
+                  availableCoffeeTypes={availableCoffeeTypes}
+                  availableProcessingMethods={availableProcessingMethods}
+                  loading={loading}
+                  errors={errors}
+                  isSubmitting={isSubmitting}
+                  onChange={handleFormChange}
+                  onSubmit={handleSubmit}
+                  onAddDetail={handleAddDetail}
+                  onRemoveDetail={handleRemoveDetail}
+                />
+              </CardContent>
+            </Card>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
