@@ -112,14 +112,7 @@ export default function FarmerCropSeasonsPage() {
             </div>
             <div className="flex items-center gap-2">
               <CropStagesDialog />
-              <Button
-                onClick={() => router.push("/dashboard/farmer/progress-deviation")}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                size="sm"
-              >
-                <Filter className="w-4 h-4 mr-2" />
-                Phân tích sai lệch
-              </Button>
+
               <Button
                 onClick={() => router.push("/dashboard/farmer/crop-seasons/create")}
                 className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg"
