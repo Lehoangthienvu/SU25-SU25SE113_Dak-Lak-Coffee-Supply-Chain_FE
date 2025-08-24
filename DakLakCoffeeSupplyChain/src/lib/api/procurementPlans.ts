@@ -52,6 +52,7 @@ export type ProcurementPlansDetails = {
   expectedYieldPerHectare: number;
   note: string;
   progressPercentage: number;
+  registeredQuantity: number;
   status: string | number;
   createdAt: string;
   updatedAt: string;

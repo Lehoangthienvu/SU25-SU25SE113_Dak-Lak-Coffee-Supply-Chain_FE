@@ -281,7 +281,7 @@ export default function RegistrationCard({
                     >
                       Tạo cam kết
                     </Button>
-                  ) : isRejected || isProcurementPlanCancelled ? (
+                  ) : isRejected || isProcurementPlanCancelled || isCommitmentActive ? (
                     <></>
                   ) : (
                     <div className='flex gap-2'>
