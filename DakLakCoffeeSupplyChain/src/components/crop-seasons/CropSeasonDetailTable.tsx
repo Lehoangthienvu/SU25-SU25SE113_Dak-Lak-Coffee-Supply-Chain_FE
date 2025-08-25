@@ -93,8 +93,8 @@ export default function CropSeasonDetailTable({
               <th className="text-left px-3 py-2">Loại cà phê</th>
               <th className="text-left px-3 py-2">Diện tích</th>
               <th className="text-left px-3 py-2">Chất lượng</th>
-              <th className="text-left px-3 py-2">Năng suất (dự kiến)</th>
-              <th className="text-left px-3 py-2">Năng suất thực</th>
+              <th className="text-left px-3 py-2">Sản lượng dự kiến</th>
+              <th className="text-left px-3 py-2">Sản lượng thu hoạch</th>
               <th className="text-left px-3 py-2">% đạt</th>
               <th className="text-left px-3 py-2">Thời gian thu hoạch</th>
               <th className="text-left px-3 py-2">Trạng thái</th>

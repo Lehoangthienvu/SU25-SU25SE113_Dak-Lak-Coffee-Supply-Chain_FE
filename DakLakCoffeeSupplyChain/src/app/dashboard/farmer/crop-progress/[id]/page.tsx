@@ -161,7 +161,6 @@ export default function CropProgressPage() {
                         <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-neutral-600">
                             <div>Tổng giai đoạn: <span className="font-medium text-neutral-800">{availableStagesCount}</span></div>
                             <div>Đã ghi nhận: <span className="font-medium text-neutral-800">{progressList.length}</span></div>
-                            <div>Tỷ lệ: <span className="font-medium text-neutral-800">{completionPercentage}%</span></div>
                             <div>Sản lượng (thu hoạch): <span className="font-medium text-neutral-800">{currentHarvestYield > 0 ? `${currentHarvestYield} kg` : "-"}</span></div>
                         </div>
                     </CardHeader>

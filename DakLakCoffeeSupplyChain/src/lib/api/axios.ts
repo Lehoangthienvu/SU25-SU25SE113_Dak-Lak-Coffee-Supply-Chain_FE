@@ -35,8 +35,19 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response) => {
+    // Success response
+    return response;
+  },
   (error) => {
+    // console.log("Axios interceptor - Error caught:", {
+    //   error: error,
+    //   message: error.message,
+    //   response: error.response,
+    //   responseData: error.response?.data,
+    //   responseStatus: error.response?.status
+    // });
+    
     // TIMEOUT
     if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
       return Promise.reject(new Error("Yêu cầu mất quá nhiều thời gian, vui lòng thử lại sau."));

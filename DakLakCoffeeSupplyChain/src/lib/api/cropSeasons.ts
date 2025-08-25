@@ -117,23 +117,8 @@ export async function getAllCropSeasons(): Promise<CropSeasonListItem[]> {
       }
     }
     
-    console.warn("Response data không đúng format:", res.data);
     return [];
   } catch (err) {
-    console.error("Lỗi getAllCropSeasons:", err);
-    
-    // Log chi tiết lỗi để debug
-    if (typeof err === 'object' && err !== null) {
-      const errorObj = err as ErrorResponse;
-      if (errorObj.response) {
-        console.error("Response status:", errorObj.response.status);
-        console.error("Response data:", errorObj.response.data);
-      }
-      if (errorObj.message) {
-        console.error("Error message:", errorObj.message);
-      }
-    }
-    
     return [];
   }
 }
@@ -169,7 +154,6 @@ function buildStatusFilter(raw?: string): string | undefined {
   if (enToNumber[s] !== undefined) return `Status eq ${enToNumber[s]}`;
   if (/^\d+$/.test(s)) return `Status eq ${parseInt(s, 10)}`; // fallback nếu truyền số trực tiếp
 
-  console.warn("Không map được status, bỏ qua filter:", s);
   return;
 }
 
@@ -225,7 +209,6 @@ export async function getCropSeasonsForCurrentUser(params: {
         }
       }
       
-      console.warn("Response data không đúng format:", res.data);
       return [];
     } catch (err: unknown) {
       lastError = err;
@@ -234,7 +217,6 @@ export async function getCropSeasonsForCurrentUser(params: {
       if (typeof err === 'object' && err !== null) {
         const errorObj = err as ErrorResponse;
         if (errorObj.message?.includes('mất quá nhiều thời gian') || errorObj.code === 'ECONNABORTED') {
-          console.warn(`Lần thử ${attempt}/${maxRetries}: Timeout khi lấy crop seasons, đang thử lại...`);
           
           // Nếu còn lần thử, chờ một chút rồi thử lại
           if (attempt < maxRetries) {
@@ -249,9 +231,6 @@ export async function getCropSeasonsForCurrentUser(params: {
     }
   }
 
-  // Tối ưu: Cải thiện error handling
-  console.error("Lỗi getCropSeasonsForCurrentUser sau khi thử lại:", lastError);
-  
   // Log chi tiết lỗi để debug
   if (typeof lastError === 'object' && lastError !== null) {
     const errorObj = lastError as ErrorResponse;
@@ -273,7 +252,6 @@ export async function getCropSeasonById(id: string): Promise<CropSeason | null> 
     const res = await api.get<CropSeason>(`/CropSeasons/${id}`);
     return res.data;
   } catch (err) {
-    console.error("Lỗi getCropSeasonById:", err);
     return null;
   }
 }
@@ -286,8 +264,6 @@ export async function deleteCropSeasonById(id: string): Promise<{ code: number; 
       message: res.data || 'Xoá thành công',
     };
   } catch (err: unknown) {
-    console.error("Chi tiết lỗi deleteCropSeasonById:", err);
-    
     let message = 'Xoá mùa vụ thất bại.';
     
     // Type guard để kiểm tra response
@@ -363,8 +339,6 @@ export async function updateCropSeason(
     
     return { success: true };
   } catch (err: unknown) {
-    console.error("Chi tiết lỗi updateCropSeason:", err);
-    
     let message = 'Lỗi không xác định';
     
     // Type guard để kiểm tra response
@@ -429,59 +403,79 @@ export interface CropSeasonCreatePayload {
 
 export async function createCropSeason(data: CropSeasonCreatePayload): Promise<ServiceResult> {
   try {
-    console.log("Gửi request tạo mùa vụ:", data);
+    const res = await api.post<ServiceResult | string>("/CropSeasons", data);
     
-    const res = await api.post<ServiceResult>("/CropSeasons", data);
-    
-    console.log("Response từ backend:", res.data);
-    console.log("Response status:", res.status);
-
     // Kiểm tra response từ backend
     if (res.data) {
-      console.log("Response data type:", typeof res.data);
-      console.log("Response data keys:", Object.keys(res.data));
       
-      // Nếu có message lỗi từ backend (validation error)
-      if (res.data.code === -1 || res.data.code === "-1" || res.data.code === 400 || res.data.code === "400") {
-        console.log("Backend trả về lỗi:", res.data);
-        throw new Error(res.data.message || "Tạo mùa vụ thất bại.");
+      // Nếu response là string
+      if (typeof res.data === 'string') {
+        const message = res.data.toLowerCase();
+        if (message.includes('success') || message.includes('thành công') || message.includes('save data success')) {
+          return { code: 1, message: res.data, data: null };
+        }
       }
       
-      // Nếu thành công (backend trả về code = 1)
-      if (res.data.code === 1 || res.data.code === "1") {
-        console.log("Backend trả về thành công:", res.data);
-        return res.data;
+      // Nếu response là object
+      if (typeof res.data === 'object' && res.data !== null) {
+        
+        // Nếu có message lỗi từ backend (validation error)
+        if (res.data.code === -1 || res.data.code === "-1" || res.data.code === 400 || res.data.code === "400") {
+          throw new Error(res.data.message || "Tạo mùa vụ thất bại.");
+        }
+        
+        // Nếu thành công (backend trả về code = 1)
+        if (res.data.code === 1 || res.data.code === "1") {
+          return res.data;
+        }
+        
+        // Kiểm tra nếu backend trả về message thành công
+        if (res.data.message && typeof res.data.message === 'string') {
+          const message = res.data.message.toLowerCase();
+          if (message.includes('success') || message.includes('thành công') || message.includes('save data success')) {
+            return { code: 1, message: res.data.message, data: res.data.data || null };
+          }
+        }
+        
+        // Nếu có data nhưng code không phải 1, vẫn coi là thành công
+        if (res.data.data) {
+          return res.data;
+        }
+        
+        // Nếu response có vẻ là CropSeasonViewDetailsDto trực tiếp (trường hợp cũ)
+        const responseData = res.data as unknown as Record<string, unknown>;
+        if (responseData.cropSeasonId || responseData.seasonName) {
+          return { code: 1, message: "Tạo mùa vụ thành công", data: res.data };
+        }
+        
       }
-      
-      // Nếu có data nhưng code không phải 1, vẫn coi là thành công
-      if (res.data.data) {
-        console.log("Backend trả về có data, coi như thành công:", res.data);
-        return res.data;
-      }
-      
-      // Nếu response có vẻ là CropSeasonViewDetailsDto trực tiếp (trường hợp cũ)
-      const responseData = res.data as unknown as Record<string, unknown>;
-      if (responseData.cropSeasonId || responseData.seasonName) {
-        console.log("Backend trả về CropSeasonViewDetailsDto trực tiếp, coi như thành công:", res.data);
-        return { code: 1, message: "Tạo mùa vụ thành công", data: res.data };
-      }
-      
-      console.log("Backend trả về code không xác định:", res.data.code);
-      console.log("Backend trả về data:", res.data.data);
     }
 
     // Nếu không có res.data, kiểm tra res.status
     if (res.status >= 200 && res.status < 300) {
-      console.log("HTTP status thành công, coi như thành công");
       return { code: 1, message: "Tạo mùa vụ thành công", data: null };
     }
 
     // Fallback: Nếu response có vẻ thành công nhưng không match format nào, vẫn coi là thành công
-    console.log("Fallback: Response không match format chuẩn, nhưng coi như thành công");
     return { code: 1, message: "Tạo mùa vụ thành công", data: res.data || null };
   } catch (err: unknown) {
     console.error("Chi tiết lỗi createCropSeason:", err);
     console.error("Error type:", typeof err);
+    console.error("Error message:", err instanceof Error ? err.message : 'Unknown error');
+    console.error("Error stack:", err instanceof Error ? err.stack : 'No stack trace');
+    
+    // Kiểm tra nếu đây là một success message bị nhầm lẫn thành error
+    if (err instanceof Error && err.message.toLowerCase().includes('save data success')) {
+      return { code: 1, message: err.message, data: null };
+    }
+    
+    // Kiểm tra nếu đây là một success message khác bị nhầm lẫn thành error
+    if (err instanceof Error) {
+      const message = err.message.toLowerCase();
+      if (message.includes('success') || message.includes('thành công')) {
+        return { code: 1, message: err.message, data: null };
+      }
+    }
     
     let message = 'Tạo mùa vụ thất bại';
     
@@ -528,12 +522,6 @@ export async function createCropSeason(data: CropSeasonCreatePayload): Promise<S
     // Xử lý lỗi từ Error object
     else if (isErrorWithMessage(err)) {
       message = err.message;
-    }
-    
-    // Debug: Log response để hiểu rõ vấn đề
-    if (isResponseError(err)) {
-      console.log("Response data:", err.response?.data);
-      console.log("Response status:", err.response?.status);
     }
     
     throw new Error(message);

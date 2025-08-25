@@ -36,6 +36,7 @@ function CreateCropSeasonDetailContent() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showQualitySuggestions, setShowQualitySuggestions] = useState(false);
   const [commitmentDetailOptions, setCommitmentDetailOptions] = useState<
     {
       commitmentDetailId: string;
@@ -64,12 +65,49 @@ function CreateCropSeasonDetailContent() {
     confirmedPrice: number;
   } | null>(null);
 
-  const QUALITY_OPTIONS = [
-    { label: "Cà phê đặc sản (SCA 80+)", value: "SCA 80+" },
-    { label: "Robusta chất lượng cao (Fine Robusta)", value: "Fine Robusta" },
-    { label: "Loại A", value: "Grade A" },
+  // Hệ thống chất lượng linh hoạt theo loại cà phê
+  const getQualitySuggestions = (coffeeType: string) => {
+    const type = coffeeType.toLowerCase();
+
+    if (type.includes('arabica')) {
+      return [
+        { label: "Cà phê đặc sản (SCA 90+)", value: "SCA 90+" },
+        { label: "Cà phê đặc sản (SCA 85+)", value: "SCA 85+" },
+        { label: "Cà phê đặc sản (SCA 80+)", value: "SCA 80+" },
+        { label: "Premium Arabica", value: "Premium Arabica" },
+        { label: "Standard Arabica", value: "Standard Arabica" },
+      ];
+    } else if (type.includes('robusta')) {
+      return [
+        { label: "Fine Robusta Premium", value: "Fine Robusta Premium" },
+        { label: "Fine Robusta", value: "Fine Robusta" },
+        { label: "Premium Robusta", value: "Premium Robusta" },
+        { label: "Standard Robusta", value: "Standard Robusta" },
+      ];
+    } else if (type.includes('chồn') || type.includes('weasel')) {
+      return [
+        { label: "Cà phê Chồn Premium", value: "Cà phê Chồn Premium" },
+        { label: "Cà phê Chồn Standard", value: "Cà phê Chồn Standard" },
+        { label: "Cà phê Chồn Đặc biệt", value: "Cà phê Chồn Đặc biệt" },
+      ];
+    } else {
+      // Các loại cà phê khác
+      return [
+        { label: "Đặc sản (Premium)", value: "Premium" },
+        { label: "Chất lượng cao (High)", value: "High" },
+        { label: "Chất lượng trung bình (Medium)", value: "Medium" },
+        { label: "Tiêu chuẩn cơ bản (Standard)", value: "Standard" },
+      ];
+    }
+  };
+
+  // Chất lượng chung cho tất cả loại cà phê
+  const COMMON_QUALITY_OPTIONS = [
     { label: "Hữu cơ (Organic)", value: "Organic" },
-    { label: "Tiêu chuẩn cơ bản", value: "Standard" },
+    { label: "Fair Trade", value: "Fair Trade" },
+    { label: "Rainforest Alliance", value: "Rainforest Alliance" },
+    { label: "UTZ Certified", value: "UTZ Certified" },
+    { label: "4C Certified", value: "4C Certified" },
   ];
 
   useEffect(() => {
@@ -288,23 +326,81 @@ function CreateCropSeasonDetailContent() {
 
           <div>
             <Label>Chất lượng dự kiến</Label>
-            <Select
-              value={form.plannedQuality}
-              onValueChange={(value) =>
-                setForm((prev) => ({ ...prev, plannedQuality: value }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="-- Chọn chất lượng --" />
-              </SelectTrigger>
-              <SelectContent>
-                {QUALITY_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Input
+                value={form.plannedQuality}
+                onChange={(e) => {
+                  setForm((prev) => ({ ...prev, plannedQuality: e.target.value }));
+                }}
+                onFocus={() => setShowQualitySuggestions(true)}
+                onBlur={() => setTimeout(() => setShowQualitySuggestions(false), 200)}
+                placeholder="Nhập hoặc chọn chất lượng..."
+                className="w-full"
+              />
+
+              {/* Dropdown gợi ý chất lượng */}
+              {showQualitySuggestions && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {/* Gợi ý theo loại cà phê */}
+                  {selectedCommitmentDetail && (
+                    <>
+                      <div className="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50 border-b">
+                        Gợi ý cho {selectedCommitmentDetail.coffeeTypeName}
+                      </div>
+                      {getQualitySuggestions(selectedCommitmentDetail.coffeeTypeName).map((option) => (
+                        <div
+                          key={option.value}
+                          className="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100"
+                          onClick={() => {
+                            setForm((prev) => ({ ...prev, plannedQuality: option.label }));
+                            setShowQualitySuggestions(false);
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-blue-600">☕</span>
+                            <span className="text-sm">{option.label}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Chất lượng chung */}
+                  <div className="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50 border-b">
+                    Chứng nhận & Tiêu chuẩn chung
+                  </div>
+                  {COMMON_QUALITY_OPTIONS.map((option) => (
+                    <div
+                      key={option.value}
+                      className="px-3 py-2 hover:bg-green-50 cursor-pointer border-b border-gray-100"
+                      onClick={() => {
+                        setForm((prev) => ({ ...prev, plannedQuality: option.label }));
+                        setShowQualitySuggestions(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-green-600">🏆</span>
+                        <span className="text-sm">{option.label}</span>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Tùy chọn nhập tự do */}
+                  <div className="px-3 py-2 text-xs text-gray-500 bg-yellow-50 border-t-2 border-yellow-200">
+                    💡 Hoặc nhập chất lượng tùy chỉnh ở trên
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Hiển thị chất lượng đã chọn */}
+            {form.plannedQuality && (
+              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-xs text-blue-700">
+                  <strong>Chất lượng đã chọn:</strong> {form.plannedQuality}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

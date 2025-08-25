@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AppToast } from '@/components/ui/AppToast';
 import { getErrorMessage } from '@/lib/utils';
-import { getAvailableCommitments, FarmingCommitment } from '@/lib/api/farmingCommitments';
+import { getAvailableCommitments, FarmingCommitment, FarmingCommitmentDetail } from '@/lib/api/farmingCommitments';
+import { Calendar, Coffee, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function CreateCropSeasonPage() {
     useAuthGuard(['farmer']);
@@ -31,12 +32,15 @@ export default function CreateCropSeasonPage() {
     const [selectedCommitment, setSelectedCommitment] = useState<FarmingCommitment | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Load danh sách cam kết khả dụng
     useEffect(() => {
         const fetchCommitments = async () => {
             try {
+                setIsLoadingCommitments(true);
                 const data = await getAvailableCommitments();
                 setAvailableCommitments(data);
-            } catch {
+            } catch (error) {
+                console.error('Error fetching commitments:', error);
                 AppToast.error('Không thể tải danh sách cam kết.');
             } finally {
                 setIsLoadingCommitments(false);
@@ -47,32 +51,43 @@ export default function CreateCropSeasonPage() {
 
     // Tự động điều chỉnh thời gian mùa vụ khi chọn commitment
     useEffect(() => {
-        if (selectedCommitment) {
-            // Tìm thời gian thu hoạch muộn nhất từ commitment details
-            if (selectedCommitment.farmingCommitmentDetails && selectedCommitment.farmingCommitmentDetails.length > 0) {
-                const latestHarvestEnd = selectedCommitment.farmingCommitmentDetails
-                    .filter((detail: any) => detail.estimatedDeliveryEnd)
-                    .reduce((latest: Date, detail: any) => {
-                        const harvestEnd = new Date(detail.estimatedDeliveryEnd);
-                        return latest > harvestEnd ? latest : harvestEnd;
-                    }, new Date(0));
+        if (selectedCommitment && selectedCommitment.farmingCommitmentDetails) {
+            // Kiểm tra nếu có approvedAt từ commitment
+            if (selectedCommitment.approvedAt) {
+                const approvedDate = new Date(selectedCommitment.approvedAt);
 
-                if (latestHarvestEnd > new Date(0)) {
-                    // Tự động tính thời gian mùa vụ bao gồm thời gian thu hoạch
-                    const seasonStart = new Date(latestHarvestEnd);
-                    seasonStart.setFullYear(seasonStart.getFullYear() - 1); // 1 năm trước thu hoạch
-                    seasonStart.setMonth(0); // Tháng 1
-                    seasonStart.setDate(1); // Ngày 1
+                // Tính thời gian mùa vụ dựa trên approvedAt
+                // Start date: bắt đầu từ ngày approved (cùng ngày)
+                const seasonStart = new Date(approvedDate);
 
-                    const seasonEnd = new Date(latestHarvestEnd);
-                    seasonEnd.setDate(seasonEnd.getDate() + 30); // 30 ngày sau thu hoạch
+                // End date: 11 tháng sau start date
+                const seasonEnd = new Date(seasonStart);
+                seasonEnd.setMonth(seasonEnd.getMonth() + 11); // 11 tháng sau start date
 
-                    setForm(prev => ({
-                        ...prev,
-                        startDate: seasonStart.toISOString().split('T')[0],
-                        endDate: seasonEnd.toISOString().split('T')[0]
-                    }));
-                }
+                // Sử dụng local date để tránh timezone issue
+                const formatDateForInput = (date: Date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startDateStr = formatDateForInput(seasonStart);
+                const endDateStr = formatDateForInput(seasonEnd);
+
+                setForm(prev => ({
+                    ...prev,
+                    startDate: startDateStr,
+                    endDate: endDateStr
+                }));
+            } else {
+                // Commitment chưa được duyệt - không thể tạo mùa vụ
+                // Clear form dates
+                setForm(prev => ({
+                    ...prev,
+                    startDate: '',
+                    endDate: ''
+                }));
             }
         }
     }, [selectedCommitment]);
@@ -95,93 +110,144 @@ export default function CreateCropSeasonPage() {
         }
     };
 
-    const formatDate = (d: string) => new Date(d).toISOString().split('T')[0];
+    const validateForm = (): Record<string, string> => {
+        const newErrors: Record<string, string> = {};
+
+        // Validation cơ bản
+        if (!form.seasonName.trim()) {
+            newErrors.seasonName = 'Tên mùa vụ không được để trống';
+        } else if (form.seasonName.trim().length < 3) {
+            newErrors.seasonName = 'Tên mùa vụ phải có ít nhất 3 ký tự';
+        }
+
+        if (!form.startDate) {
+            newErrors.startDate = 'Ngày bắt đầu không được để trống';
+        } else if (selectedCommitment && selectedCommitment.approvedAt) {
+            const startDate = new Date(form.startDate);
+            const approvedDate = new Date(selectedCommitment.approvedAt);
+
+            if (startDate <= approvedDate) {
+                newErrors.startDate = 'Ngày bắt đầu mùa vụ phải sau ngày cam kết được duyệt';
+            }
+        }
+
+        if (!form.endDate) {
+            newErrors.endDate = 'Ngày kết thúc không được để trống';
+        } else if (form.startDate && form.endDate) {
+            const startDate = new Date(form.startDate);
+            const endDate = new Date(form.endDate);
+
+            if (startDate >= endDate) {
+                newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu';
+            } else if (selectedCommitment && selectedCommitment.approvedAt) {
+                // Kiểm tra thời gian mùa vụ phải trong khoảng 11-12 tháng
+                const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                    (endDate.getMonth() - startDate.getMonth());
+
+                if (monthsDiff < 11 || monthsDiff > 13) { // Cho phép sai số 1 tháng
+                    newErrors.endDate = 'Thời gian mùa vụ phải trong khoảng 11-12 tháng';
+                }
+            }
+        }
+
+        if (!form.commitmentId) {
+            newErrors.commitmentId = 'Vui lòng chọn cam kết';
+        } else if (selectedCommitment && !selectedCommitment.approvedAt) {
+            newErrors.commitmentId = 'Chỉ có thể tạo mùa vụ từ cam kết đã được duyệt';
+        }
+
+        // Validation logic
+        if (form.startDate && form.endDate) {
+            const startDate = new Date(form.startDate);
+            const endDate = new Date(form.endDate);
+
+            // Kiểm tra thời gian mùa vụ có bao gồm thời gian thu hoạch không
+            if (selectedCommitment && selectedCommitment.farmingCommitmentDetails) {
+                const harvestDates = selectedCommitment.farmingCommitmentDetails
+                    .filter((detail: Partial<FarmingCommitmentDetail>) => detail.expectedHarvestStart && detail.expectedHarvestEnd)
+                    .map((detail: Partial<FarmingCommitmentDetail>) => ({
+                        start: new Date(detail.expectedHarvestStart!),
+                        end: new Date(detail.expectedHarvestEnd!)
+                    }));
+
+                if (harvestDates.length > 0) {
+                    const latestHarvestEnd = harvestDates.reduce((latest, current) =>
+                        current.end > latest.end ? current : latest
+                    );
+
+                    // Kiểm tra start date phải trước harvest start
+                    if (startDate > latestHarvestEnd.start) {
+                        newErrors.startDate = 'Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến';
+                    }
+
+                    if (endDate < latestHarvestEnd.end) {
+                        newErrors.endDate = 'Thời gian mùa vụ phải bao gồm thời gian thu hoạch dự kiến';
+                    }
+                }
+            }
+        }
+
+        // Kiểm tra start date phải sau hoặc bằng ngày approved
+        if (selectedCommitment?.approvedAt && form.startDate) {
+            const approvedDate = new Date(selectedCommitment.approvedAt);
+            const startDate = new Date(form.startDate);
+            if (startDate < approvedDate) {
+                newErrors.startDate = 'Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)';
+            }
+        }
+
+        return newErrors;
+    };
 
     const handleSubmit = async () => {
         // Reset errors trước khi submit
         setErrors({});
 
-        const { seasonName, startDate, endDate, commitmentId } = form;
-        const requiredFields = [seasonName, startDate, endDate, commitmentId];
-
-        // Validation client-side
-        const newErrors: Record<string, string> = {};
-
-        if (!seasonName.trim()) {
-            newErrors.seasonName = 'Tên mùa vụ không được để trống';
-        }
-        if (!startDate) {
-            newErrors.startDate = 'Ngày bắt đầu không được để trống';
-        }
-        if (!endDate) {
-            newErrors.endDate = 'Ngày kết thúc không được để trống';
-        }
-        if (!commitmentId) {
-            newErrors.commitmentId = 'Vui lòng chọn cam kết';
-        }
-
-        if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-            newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu';
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
+        // Validate form
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            AppToast.error('Vui lòng kiểm tra và sửa các lỗi trong form');
             return;
         }
 
         setIsSubmitting(true);
 
         try {
-            console.log("Bắt đầu tạo mùa vụ với data:", {
-                ...form,
-                startDate: formatDate(startDate),
-                endDate: formatDate(endDate),
-            });
-
             const result = await createCropSeason({
-                ...form,
-                startDate: formatDate(startDate),
-                endDate: formatDate(endDate),
+                commitmentId: form.commitmentId,
+                seasonName: form.seasonName.trim(),
+                startDate: form.startDate,
+                endDate: form.endDate,
+                note: form.note.trim() || undefined,
             });
 
-            console.log("Kết quả tạo mùa vụ:", result);
-
-            AppToast.success('Tạo mùa vụ thành công!');
-            router.push('/dashboard/farmer/crop-seasons');
-        } catch (err) {
-            console.error("Lỗi khi tạo mùa vụ:", err);
-            const msg = getErrorMessage(err);
-
-            // Xử lý các loại lỗi validation cụ thể và hiển thị dưới ô nhập
-            if (msg.includes('Ngày bắt đầu phải trước ngày kết thúc')) {
-                setErrors({ endDate: 'Ngày kết thúc phải sau ngày bắt đầu' });
-            } else if (msg.includes('Thời gian mùa vụ phải bao gồm thời gian thu hoạch')) {
-                setErrors({ endDate: 'Thời gian mùa vụ phải bao gồm thời gian thu hoạch' });
-
-                // Tự động điều chỉnh endDate nếu có selectedCommitment
-                if (selectedCommitment && selectedCommitment.farmingCommitmentDetails) {
-                    const latestHarvestEnd = selectedCommitment.farmingCommitmentDetails
-                        .filter((detail: any) => detail.estimatedDeliveryEnd)
-                        .reduce((latest: Date, detail: any) => {
-                            const harvestEnd = new Date(detail.estimatedDeliveryEnd);
-                            return latest > harvestEnd ? latest : harvestEnd;
-                        }, new Date(0));
-
-                    if (latestHarvestEnd > new Date(0)) {
-                        const suggestedEndDate = new Date(latestHarvestEnd);
-                        suggestedEndDate.setDate(suggestedEndDate.getDate() + 30);
-
-                        setForm(prev => ({
-                            ...prev,
-                            endDate: suggestedEndDate.toISOString().split('T')[0]
-                        }));
-
-                        AppToast.info('Đã tự động điều chỉnh ngày kết thúc để bao gồm thời gian thu hoạch');
-                    }
-                }
+            if (result && result.code === 1) {
+                AppToast.success('Tạo mùa vụ thành công!');
+                router.push('/dashboard/farmer/crop-seasons');
             } else {
-                // Lỗi khác - hiển thị toast
-                AppToast.error(msg);
+                throw new Error(result?.message || 'Tạo mùa vụ thất bại');
+            }
+        } catch (err) {
+            const errorMessage = getErrorMessage(err);
+
+            // Xử lý các loại lỗi cụ thể
+            if (errorMessage.includes('Ngày bắt đầu phải trước ngày kết thúc')) {
+                setErrors({ endDate: 'Ngày kết thúc phải sau ngày bắt đầu' });
+            } else if (errorMessage.includes('Thời gian mùa vụ phải bao gồm thời gian thu hoạch')) {
+                setErrors({ endDate: 'Thời gian mùa vụ phải bao gồm thời gian thu hoạch dự kiến' });
+            } else if (errorMessage.includes('Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến')) {
+                setErrors({ startDate: 'Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến' });
+            } else if (errorMessage.includes('Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt')) {
+                setErrors({ startDate: 'Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)' });
+            } else if (errorMessage.includes('Thời gian mùa vụ phải trong khoảng 11-12 tháng')) {
+                setErrors({ endDate: 'Thời gian mùa vụ phải trong khoảng 11-12 tháng' });
+            } else if (errorMessage.includes('Cam kết này đã có mùa vụ')) {
+                AppToast.error('Cam kết này đã có mùa vụ. Mỗi cam kết chỉ được tạo một mùa vụ duy nhất.');
+            } else if (errorMessage.includes('Thời gian mùa vụ trùng')) {
+                AppToast.error('Thời gian mùa vụ trùng với mùa vụ khác trong cùng cam kết.');
+            } else {
+                AppToast.error(errorMessage);
             }
         } finally {
             setIsSubmitting(false);
@@ -189,121 +255,250 @@ export default function CreateCropSeasonPage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto py-10 px-4">
+        <div className="max-w-4xl mx-auto py-10 px-4">
             <Card>
-                <CardHeader>
-                    <CardTitle>Tạo mùa vụ mới</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50">
+                    <CardTitle className="flex items-center gap-3 text-orange-800">
+                        <Calendar className="w-6 h-6" />
+                        Tạo mùa vụ mới
+                    </CardTitle>
+                    <p className="text-orange-600 text-sm">
+                        Tạo mùa vụ mới dựa trên cam kết sản xuất với doanh nghiệp
+                    </p>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div>
-                        <Label htmlFor="seasonName">Tên mùa vụ</Label>
-                        <Input
-                            name="seasonName"
-                            value={form.seasonName}
-                            onChange={handleChange}
-                            required
-                            className={errors.seasonName ? "border-red-500" : ""}
-                        />
-                        {errors.seasonName && (
-                            <p className="text-red-500 text-sm mt-1">{errors.seasonName}</p>
-                        )}
-                    </div>
+                <CardContent className="space-y-6 p-6">
+                    {/* Thông tin cơ bản */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Coffee className="w-5 h-5 text-orange-600" />
+                            Thông tin cơ bản
+                        </h3>
 
-                    <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="startDate">Ngày bắt đầu</Label>
+                            <Label htmlFor="seasonName" className="text-sm font-medium text-gray-700">
+                                Tên mùa vụ <span className="text-red-500">*</span>
+                            </Label>
                             <Input
-                                type="date"
-                                name="startDate"
-                                value={form.startDate}
+                                id="seasonName"
+                                name="seasonName"
+                                value={form.seasonName}
                                 onChange={handleChange}
-                                required
-                                className={errors.startDate ? "border-red-500" : ""}
+                                placeholder="Ví dụ: Mùa vụ 2025, Mùa vụ Xuân-Hè 2025..."
+                                className={`mt-1 ${errors.seasonName ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
                             />
-                            {errors.startDate && (
-                                <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
+                            {errors.seasonName && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                    <AlertCircle className="w-4 h-4" />
+                                    {errors.seasonName}
+                                </p>
                             )}
                         </div>
-                        <div>
-                            <Label htmlFor="endDate">Ngày kết thúc</Label>
-                            <Input
-                                type="date"
-                                name="endDate"
-                                value={form.endDate}
-                                onChange={handleChange}
-                                required
-                                className={errors.endDate ? "border-red-500" : ""}
-                            />
-                            {errors.endDate && (
-                                <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>
-                            )}
-                        </div>
-                    </div>
 
-                    <div>
-                        <Label htmlFor="note">Ghi chú</Label>
-                        <Textarea name="note" value={form.note} onChange={handleChange} />
-                    </div>
-
-                    {/* Thông tin thời gian thu hoạch */}
-                    {selectedCommitment && (
-                        <div className="p-4 bg-blue-50 rounded-lg">
-                            <h4 className="font-medium text-blue-900 mb-2">Thông tin thời gian thu hoạch:</h4>
-                            <p className="text-sm text-blue-700">
-                                Dự kiến thu hoạch: {selectedCommitment.farmingCommitmentDetails && selectedCommitment.farmingCommitmentDetails.length > 0 ?
-                                    selectedCommitment.farmingCommitmentDetails
-                                        .filter((detail: any) => detail.expectedHarvestStart)
-                                        .map((detail: any) => new Date(detail.expectedHarvestStart).toLocaleDateString('vi-VN'))
-                                        .join(' - ') : 'Chưa xác định'}
-                            </p>
-                            <p className="text-xs text-blue-600 mt-1">
-                                * Thời gian mùa vụ sẽ tự động bao gồm thời gian thu hoạch
-                            </p>
-                        </div>
-                    )}
-
-                    <div>
-                        <Label htmlFor="commitmentId">Cam kết</Label>
-                        {isLoadingCommitments ? (
-                            <p className="text-sm text-gray-500">Đang tải danh sách cam kết...</p>
-                        ) : availableCommitments.length === 0 ? (
-                            <p className="text-red-500 text-sm italic">
-                                Bạn không có cam kết nào khả dụng để tạo mùa vụ.
-                            </p>
-                        ) : (
-                            <>
-                                <select
-                                    name="commitmentId"
-                                    value={form.commitmentId}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="startDate" className="text-sm font-medium text-gray-700">
+                                    Ngày bắt đầu <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="startDate"
+                                    type="date"
+                                    name="startDate"
+                                    value={form.startDate}
                                     onChange={handleChange}
-                                    required
-                                    className={`w-full border rounded px-2 py-2 ${errors.commitmentId ? "border-red-500" : ""}`}
-                                >
-                                    <option value="">-- Chọn cam kết --</option>
-                                    {availableCommitments.map((c) => (
-                                        <option key={c.commitmentId} value={c.commitmentId}>
-                                            {c.commitmentCode} ({c.commitmentName})
-                                        </option>
-                                    ))}
-                                </select>
-                                {form.commitmentId && (
-                                    <p className="text-xs text-gray-600 mt-1 italic">
-                                        Hệ thống sẽ tự động tính diện tích từ đơn đăng ký của cam kết này.
+                                    className={`mt-1 ${errors.startDate ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
+                                />
+                                {errors.startDate && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.startDate}
                                     </p>
                                 )}
-                                {errors.commitmentId && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.commitmentId}</p>
+                            </div>
+                            <div>
+                                <Label htmlFor="endDate" className="text-sm font-medium text-gray-700">
+                                    Ngày kết thúc <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="endDate"
+                                    type="date"
+                                    name="endDate"
+                                    value={form.endDate}
+                                    onChange={handleChange}
+                                    className={`mt-1 ${errors.endDate ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
+                                />
+                                {errors.endDate && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.endDate}
+                                    </p>
                                 )}
-                            </>
+                            </div>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="note" className="text-sm font-medium text-gray-700">
+                                Ghi chú
+                            </Label>
+                            <Textarea
+                                id="note"
+                                name="note"
+                                value={form.note}
+                                onChange={handleChange}
+                                placeholder="Mô tả thêm về mùa vụ, điều kiện đặc biệt..."
+                                className="mt-1"
+                                rows={3}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Chọn cam kết */}
+                    <div className="space-y-4">
+
+
+                        <div>
+                            <Label htmlFor="commitmentId" className="text-sm font-medium text-gray-700">
+                                Cam kết <span className="text-red-500">*</span>
+                            </Label>
+
+                            {isLoadingCommitments ? (
+                                <div className="mt-2 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                    <div className="flex items-center justify-center gap-2 text-gray-500">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600"></div>
+                                        Đang tải danh sách cam kết...
+                                    </div>
+                                </div>
+                            ) : availableCommitments.length === 0 ? (
+                                <div className="mt-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                    <div className="flex items-center gap-2 text-blue-700">
+                                        <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <span className="text-blue-600 text-xs font-bold">ℹ</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">Không có cam kết khả dụng</p>
+                                            <p className="text-sm">Tất cả cam kết của bạn đã có mùa vụ hoặc chưa được duyệt.</p>
+                                            <p className="text-sm mt-1">
+                                                <strong>Lưu ý:</strong> Mỗi cam kết chỉ được tạo một mùa vụ duy nhất.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <select
+                                        id="commitmentId"
+                                        name="commitmentId"
+                                        value={form.commitmentId}
+                                        onChange={handleChange}
+                                        className={`mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.commitmentId ? "border-red-500" : "border-gray-300"
+                                            }`}
+                                        aria-label="Chọn cam kết sản xuất"
+                                    >
+                                        <option value="">-- Chọn cam kết sản xuất --</option>
+                                        {availableCommitments.map((commitment) => (
+                                            <option key={commitment.commitmentId} value={commitment.commitmentId}>
+                                                {commitment.commitmentCode} - {commitment.commitmentName}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    {errors.commitmentId && (
+                                        <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                            <AlertCircle className="w-4 h-4" />
+                                            {errors.commitmentId}
+                                        </p>
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                        {/* Thông tin cam kết được chọn */}
+                        {selectedCommitment && (
+                            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <div className="flex items-start gap-3">
+                                    <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                    <div className="flex-1">
+                                        <h4 className="font-medium text-blue-900 mb-2">
+                                            Thông tin cam kết đã chọn
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                            <div>
+                                                <span className="font-medium text-blue-700">Mã cam kết:</span>
+                                                <p className="text-blue-800">{selectedCommitment.commitmentCode}</p>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium text-blue-700">Tên cam kết:</span>
+                                                <p className="text-blue-800">{selectedCommitment.commitmentName}</p>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium text-blue-700">Doanh nghiệp:</span>
+                                                <p className="text-blue-800">{selectedCommitment.companyName}</p>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium text-blue-700">Tổng giá trị:</span>
+                                                <p className="text-blue-800">{selectedCommitment.totalPrice?.toLocaleString()} VNĐ</p>
+                                            </div>
+                                            {selectedCommitment.approvedAt && (
+                                                <div>
+                                                    <span className="font-medium text-blue-700">Ngày duyệt:</span>
+                                                    <p className="text-blue-800">{new Date(selectedCommitment.approvedAt).toLocaleDateString('vi-VN')}</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {selectedCommitment.farmingCommitmentDetails && selectedCommitment.farmingCommitmentDetails.length > 0 && (
+                                            <div className="mt-3 pt-3 border-t border-blue-200">
+                                                <h5 className="font-medium text-blue-700 mb-2">Chi tiết sản phẩm:</h5>
+                                                <div className="space-y-2">
+                                                    {selectedCommitment.farmingCommitmentDetails.map((detail, index) => (
+                                                        <div key={index} className="flex items-center justify-between p-2 bg-blue-100 rounded">
+                                                            <span className="text-blue-800 text-sm">
+                                                                {detail.coffeeTypeName || 'Không xác định'}
+                                                            </span>
+                                                            <span className="text-blue-700 text-sm font-medium">
+                                                                {detail.committedQuantity || 0} kg
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Thông báo cho trường hợp không có approvedAt */}
+                                        {!selectedCommitment.approvedAt && (
+                                            <div className="mt-3 pt-3 border-t border-red-200">
+                                                <h5 className="font-medium text-red-700 mb-2">⚠️ Lưu ý quan trọng:</h5>
+                                                <div className="p-2 bg-red-100 rounded border border-red-200">
+                                                    <div className="text-xs text-red-700 space-y-1">
+                                                        <p><strong>Cam kết chưa được duyệt:</strong> Chỉ có thể tạo mùa vụ từ cam kết đã được business manager duyệt.</p>
+                                                        <p><strong>Ngày tạo cam kết:</strong> {selectedCommitment.commitmentDate ? new Date(selectedCommitment.commitmentDate).toLocaleDateString('vi-VN') : 'Không có'}</p>
+                                                        <p><strong>Trạng thái:</strong> {selectedCommitment.status}</p>
+                                                        <p className="font-medium">❌ Không thể tự động tính thời gian mùa vụ. Vui lòng chọn cam kết đã được duyệt.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
 
-                    <div className="flex justify-end">
+                    {/* Nút submit */}
+                    <div className="flex justify-end pt-4 border-t border-gray-200">
                         <Button
                             onClick={handleSubmit}
-                            disabled={isSubmitting || !form.commitmentId}
+                            disabled={isSubmitting || !form.commitmentId || isLoadingCommitments || !selectedCommitment?.approvedAt}
+                            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3"
                         >
-                            {isSubmitting ? 'Đang tạo...' : 'Tạo mùa vụ'}
+                            {isSubmitting ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    Đang tạo...
+                                </div>
+                            ) : (
+                                'Tạo mùa vụ'
+                            )}
                         </Button>
                     </div>
                 </CardContent>
