@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
-import { FiMail, FiSmile, FiSearch } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import { Input } from "@/components/ui/input";
 import { roleRawToDisplayName } from "@/lib/constants/role";
@@ -122,11 +122,7 @@ export default function HeaderDashboard() {
 
       {/* Icons + Avatar + Dropdown */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <NotificationBell />
-          <IconWithBadge icon={<FiMail size={18} />} count={68} />
-          <IconWithBadge icon={<FiSmile size={18} />} count={14} />
-        </div>
+        <NotificationBell />
 
         <div className="w-px h-8 bg-gray-200"></div>
 
@@ -213,25 +209,6 @@ export default function HeaderDashboard() {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
       </div>
-    </div>
-  );
-}
-
-function IconWithBadge({
-  icon,
-  count,
-}: {
-  icon: React.ReactNode;
-  count: number;
-}) {
-  return (
-    <div className="relative text-gray-500 hover:text-orange-600 cursor-pointer p-2 rounded-lg hover:bg-orange-50 transition-all duration-200">
-      {icon}
-      {count > 0 && (
-        <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-sm min-w-[18px] h-[18px] flex items-center justify-center">
-          {count > 99 ? "99+" : count}
-        </span>
-      )}
     </div>
   );
 }

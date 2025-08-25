@@ -72,7 +72,7 @@ export default function FarmerReportsListPage() {
                             className="w-fit"
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            Tạo báo cáo mới
+                            Tạo tư vấn
                         </Button>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ export default function FarmerReportsListPage() {
                             </div>
                             <div>
                                 <p className="text-xl font-bold text-gray-800">{reports.length}</p>
-                                <p className="text-xs text-gray-600">Tổng báo cáo</p>
+                                <p className="text-xs text-gray-600">Tổng tư vấn đã gửi</p>
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@ export default function FarmerReportsListPage() {
                         </p>
                         <Button onClick={() => router.push('/dashboard/farmer/request-feedback/create')}>
                             <Plus className="w-4 h-4 mr-2" />
-                            Tạo báo cáo mới
+                            Tạo tư vấn mới
                         </Button>
                     </div>
                 )}

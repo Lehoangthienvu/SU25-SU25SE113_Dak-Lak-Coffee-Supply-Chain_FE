@@ -1,39 +1,18 @@
 'use client';
 
 import { CropSeasonListItem as CropSeason } from '@/lib/api/cropSeasons';
-import { FaUser, FaTrashAlt, FaEdit, FaEye, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
+import { FaUser, FaEdit, FaEye, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import StatusBadge from './StatusBadge';
 import { CropSeasonStatusMap } from '@/lib/constants/cropSeasonStatus';
-import { toast } from 'sonner';
-import { deleteCropSeasonById } from '@/lib/api/cropSeasons';
 import { Button } from '@/components/ui/button';
 
 interface Props {
     season: CropSeason;
-    onDeleted?: (id: string) => void;
 }
 
-export default function CropSeasonCard({ season, onDeleted }: Props) {
+export default function CropSeasonCard({ season }: Props) {
     const router = useRouter();
-
-    const handleDelete = async () => {
-        const confirmed = window.confirm('Bạn có chắc chắn muốn xoá mùa vụ này?');
-        if (!confirmed) return;
-
-        try {
-            const result = await deleteCropSeasonById(season.cropSeasonId);
-            if (result.code === 200) {
-                toast.success('Đã xoá mùa vụ thành công.');
-                onDeleted?.(season.cropSeasonId);
-            } else {
-                toast.error(result.message || 'Xoá mùa vụ thất bại.');
-            }
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Đã xảy ra lỗi khi xoá mùa vụ.';
-            toast.error(errorMessage);
-        }
-    };
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('vi-VN');
@@ -107,16 +86,6 @@ export default function CropSeasonCard({ season, onDeleted }: Props) {
                         title="Sửa"
                     >
                         <FaEdit className="w-3 h-3" />
-                    </Button>
-
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleDelete}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md"
-                        title="Xoá"
-                    >
-                        <FaTrashAlt className="w-3 h-3" />
                     </Button>
                 </div>
             </td>

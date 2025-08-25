@@ -196,7 +196,7 @@ function CreateReportForm() {
                             <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full"></div>
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-800">
-                                    Tạo báo cáo mới
+                                    Tạo tư vấn kỹ thuật mới
                                 </h1>
                                 <p className="text-gray-600 text-sm">
                                     {form.reportType === 'Crop'
@@ -527,7 +527,7 @@ function CreateReportForm() {
                                             Đang gửi...
                                         </>
                                     ) : (
-                                        'Gửi báo cáo'
+                                        'Gửi'
                                     )}
                                 </Button>
                             </div>

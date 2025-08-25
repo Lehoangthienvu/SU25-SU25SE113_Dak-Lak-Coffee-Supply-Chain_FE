@@ -6,33 +6,49 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Edit3, Trash2, Calendar, User, AlertTriangle, Eye, ImageIcon, Video } from 'lucide-react';
+import { Loader2, ArrowLeft, Edit3, Calendar, User, AlertTriangle, Eye, ImageIcon, Video } from 'lucide-react';
 import {
     GeneralFarmerReportViewDetailsDto,
     getFarmerReportById,
-    softDeleteFarmerReport,
 } from '@/lib/api/generalFarmerReports';
 import { SeverityLevelEnum, SeverityLevelLabel } from '@/lib/constants/SeverityLevelEnum';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { stageIconMap, fallbackIcon } from '@/components/crop-stage/stage-icon-map';
-import { toast } from 'sonner';
-import { ConfirmDialog } from '@/components/ui/confirmDialog';
+import { getCropStages, CropStage } from '@/lib/api/cropStage';
 
 export default function ReportDetailsPage() {
     const { id } = useParams();
     const router = useRouter();
     const [report, setReport] = useState<GeneralFarmerReportViewDetailsDto | null>(null);
     const [loading, setLoading] = useState(true);
-    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+    const [cropStages, setCropStages] = useState<CropStage[]>([]);
+    const [stagesLoading, setStagesLoading] = useState(true);
 
-    const stageNameToCodeMap: Record<string, string> = {
-        "Gieo trồng": "PLANTING",
-        "Ra hoa": "FLOWERING",
-        "Kết trái": "FRUITING",
-        "Chín": "RIPENING",
-        "Thu hoạch": "harvesting",
-    };
+    // Fetch crop stages from API
+    useEffect(() => {
+        const fetchCropStages = async () => {
+            try {
+                const stages = await getCropStages();
+                setCropStages(stages);
+            } catch (error) {
+                console.error('Error fetching crop stages:', error);
+            } finally {
+                setStagesLoading(false);
+            }
+        };
+
+        fetchCropStages();
+    }, []);
+
+    // Create dynamic stage mapping from API data
+    const stageNameToCodeMap: Record<string, string> = React.useMemo(() => {
+        const mapping: Record<string, string> = {};
+        cropStages.forEach(stage => {
+            mapping[stage.stageName] = stage.stageCode;
+        });
+        return mapping;
+    }, [cropStages]);
 
     useEffect(() => {
         if (typeof id !== 'string') return;
@@ -42,7 +58,7 @@ export default function ReportDetailsPage() {
             .finally(() => setLoading(false));
     }, [id, router]);
 
-    if (loading) {
+    if (loading || stagesLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex justify-center items-center">
                 <div className="text-center">
@@ -70,27 +86,6 @@ export default function ReportDetailsPage() {
         );
     }
 
-    const handleSoftDelete = () => {
-        setOpenConfirmDialog(true);
-    };
-
-    const confirmDelete = async () => {
-        if (!report) return;
-
-        try {
-            setLoading(true);
-            await softDeleteFarmerReport(report.reportId);
-            toast.success("🗑️ Đã xóa báo cáo.");
-            router.push("/dashboard/farmer/request-feedback");
-        } catch (error) {
-            toast.error("❌ Xóa thất bại.");
-            console.error(error);
-        } finally {
-            setLoading(false);
-            setOpenConfirmDialog(false);
-        }
-    };
-
     const getSeverityColor = (level: SeverityLevelEnum) => {
         switch (level) {
             case SeverityLevelEnum.High:
@@ -102,6 +97,15 @@ export default function ReportDetailsPage() {
             default:
                 return 'bg-gray-100 text-gray-700 border-gray-200';
         }
+    };
+
+    // Get stage icon based on stage name from API
+    const getStageIcon = (stageName: string) => {
+        const stageCode = stageNameToCodeMap[stageName];
+        if (stageCode && stageIconMap[stageCode.toUpperCase()]) {
+            return stageIconMap[stageCode.toUpperCase()];
+        }
+        return fallbackIcon;
     };
 
     return (
@@ -146,15 +150,6 @@ export default function ReportDetailsPage() {
                             >
                                 <Edit3 className="w-4 h-4" />
                             </Button>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={handleSoftDelete}
-                                title="Xóa báo cáo"
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +190,7 @@ export default function ReportDetailsPage() {
                                             Giai đoạn mùa vụ
                                         </Label>
                                         <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-lg border">
-                                            {stageIconMap[stageNameToCodeMap[report.cropStageName] ?? ""] ?? fallbackIcon}
+                                            {getStageIcon(report.cropStageName)}
                                             <span className="font-medium text-gray-800">{report.cropStageName}</span>
                                         </div>
                                     </div>
@@ -337,32 +332,11 @@ export default function ReportDetailsPage() {
                                         <Edit3 className="w-4 h-4 mr-2" />
                                         Chỉnh sửa báo cáo
                                     </Button>
-
-                                    <Button
-                                        onClick={handleSoftDelete}
-                                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                                        variant="outline"
-                                    >
-                                        <Trash2 className="w-4 h-4 mr-2" />
-                                        Xóa báo cáo
-                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
                 </div>
-
-                {/* Confirm Delete Dialog */}
-                <ConfirmDialog
-                    open={openConfirmDialog}
-                    onOpenChange={setOpenConfirmDialog}
-                    title="Xóa báo cáo"
-                    description="Bạn có chắc muốn xóa báo cáo này? Hành động này không thể hoàn tác."
-                    onConfirm={confirmDelete}
-                    cancelText="Hủy"
-                    confirmText="Xóa"
-                    loading={loading}
-                />
             </div>
         </div>
     );
