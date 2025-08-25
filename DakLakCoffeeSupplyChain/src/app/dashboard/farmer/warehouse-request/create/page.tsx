@@ -22,6 +22,10 @@ interface AvailableBatch {
   cropSeasonName: string;
   status: string;
   availableForNewRequest: number;
+  // ✅ THÊM: Thông tin công ty
+  companyId: string;
+  companyName: string;
+  commitmentId: string;
   debug: {
     finalProcessed: number;
     approvedCompletedRequests: number;
@@ -124,6 +128,10 @@ export default function CreateDeliveryRequestPage() {
         cropSeasonName: batch.cropSeasonName || 'Không rõ',
         status: batch.status,
         availableForNewRequest,
+        // ✅ THÊM: Thông tin công ty
+        companyId: batch.companyId || '',
+        companyName: batch.companyName || 'Không rõ công ty',
+        commitmentId: batch.commitmentId || '',
         debug: {
           finalProcessed: batch.maxOutputQuantity || 0,
           totalRequested: batch.totalRequested || 0,
@@ -387,7 +395,7 @@ export default function CreateDeliveryRequestPage() {
                       {batchesWithRemaining
                         .map((batch) => (
                           <option key={batch.batchId} value={batch.batchId}>
-                            {batch.batchCode} - {batch.typeName || 'Không rõ'} ({batch.availableForNewRequest}kg còn lại)
+                            {batch.batchCode} - {batch.typeName || 'Không rõ'} ({batch.availableForNewRequest}kg còn lại) - {batch.companyName || 'Không rõ công ty'}
                           </option>
                         ))}
                     </select>
