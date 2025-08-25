@@ -32,6 +32,25 @@ export default function CreateCropSeasonPage() {
     const [selectedCommitment, setSelectedCommitment] = useState<FarmingCommitment | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Helper function to compare dates accurately
+    const compareDates = (date1: string, date2: string): number => {
+        // Parse dates and create Date objects
+        const d1 = new Date(date1);
+        const d2 = new Date(date2);
+
+        // Check if dates are valid
+        if (isNaN(d1.getTime()) || isNaN(d2.getTime())) {
+            console.error('Invalid date format:', { date1, date2 });
+            return 0;
+        }
+
+        // Create new Date objects with only year, month, day (no time)
+        const dateOnly1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+        const dateOnly2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+
+        return dateOnly1.getTime() - dateOnly2.getTime();
+    };
+
     // Load danh sách cam kết khả dụng
     useEffect(() => {
         const fetchCommitments = async () => {
@@ -122,13 +141,6 @@ export default function CreateCropSeasonPage() {
 
         if (!form.startDate) {
             newErrors.startDate = 'Ngày bắt đầu không được để trống';
-        } else if (selectedCommitment && selectedCommitment.approvedAt) {
-            const startDate = new Date(form.startDate);
-            const approvedDate = new Date(selectedCommitment.approvedAt);
-
-            if (startDate <= approvedDate) {
-                newErrors.startDate = 'Ngày bắt đầu mùa vụ phải sau ngày cam kết được duyệt';
-            }
         }
 
         if (!form.endDate) {
@@ -189,9 +201,19 @@ export default function CreateCropSeasonPage() {
 
         // Kiểm tra start date phải sau hoặc bằng ngày approved
         if (selectedCommitment?.approvedAt && form.startDate) {
-            const approvedDate = new Date(selectedCommitment.approvedAt);
-            const startDate = new Date(form.startDate);
-            if (startDate < approvedDate) {
+            const comparison = compareDates(form.startDate, selectedCommitment.approvedAt);
+
+            console.log('Date comparison debug:', {
+                startDate: form.startDate,
+                approvedAt: selectedCommitment.approvedAt,
+                comparison: comparison,
+                startDateObj: new Date(form.startDate),
+                approvedAtObj: new Date(selectedCommitment.approvedAt),
+                startDateOnly: new Date(new Date(form.startDate).getFullYear(), new Date(form.startDate).getMonth(), new Date(form.startDate).getDate()),
+                approvedAtOnly: new Date(new Date(selectedCommitment.approvedAt).getFullYear(), new Date(selectedCommitment.approvedAt).getMonth(), new Date(selectedCommitment.approvedAt).getDate())
+            });
+
+            if (comparison < 0) {
                 newErrors.startDate = 'Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)';
             }
         }

@@ -73,6 +73,8 @@ export default function CropProgressPage() {
 
 
 
+
+
     useEffect(() => {
         reloadData();
         loadSeasonDetail();
@@ -170,157 +172,150 @@ export default function CropProgressPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {progressList.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
-                                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <div className="w-6 h-6 text-orange-600">🌱</div>
-                                </div>
-                                <p className="text-sm font-medium mb-1">Chưa có tiến độ nào</p>
-                                <p className="text-xs">Bắt đầu ghi nhận tiến độ đầu tiên</p>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-gradient-to-r from-orange-50 to-amber-50 text-gray-700 font-semibold">
-                                        <tr>
-                                            <th className="px-3 py-3 text-left">Giai đoạn</th>
-                                            <th className="px-3 py-3 text-center">Trạng thái</th>
-                                            <th className="px-3 py-3 text-center">Ngày ghi nhận</th>
-                                            <th className="px-3 py-3 text-left">Ghi chú</th>
-                                            <th className="px-3 py-3 text-center">Tài liệu</th>
-                                            <th className="px-3 py-3 text-center">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-orange-100">
-                                        {sortedStages.map((stage, idx) => {
-                                            const progress = progressList.find(p => p.stageCode === stage.stageCode);
-                                            const isCompleted = !!progress;
-                                            const ready = idx === 0 || progressList.some((p, i) => i < idx && p.stageCode === sortedStages[i]?.stageCode);
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gradient-to-r from-orange-50 to-amber-50 text-gray-700 font-semibold">
+                                    <tr>
+                                        <th className="px-3 py-3 text-left">Giai đoạn</th>
+                                        <th className="px-3 py-3 text-center">Trạng thái</th>
+                                        <th className="px-3 py-3 text-center">Ngày ghi nhận</th>
+                                        <th className="px-3 py-3 text-left">Ghi chú</th>
+                                        <th className="px-3 py-3 text-center">Tài liệu</th>
+                                        <th className="px-3 py-3 text-center">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-orange-100">
+                                    {sortedStages.map((stage, idx) => {
+                                        const progress = progressList.find(p => p.stageCode === stage.stageCode);
+                                        const isCompleted = !!progress;
+                                        // Kiểm tra xem tất cả các giai đoạn trước đó đã hoàn thành chưa
+                                        const ready = idx === 0 || sortedStages.slice(0, idx).every(prevStage =>
+                                            progressList.some(p => p.stageCode === prevStage.stageCode)
+                                        );
 
-                                            return (
-                                                <tr key={stage.stageId} className="hover:bg-orange-50 transition-colors">
-                                                    <td className="px-3 py-3">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                                                                {idx + 1}
-                                                            </div>
-                                                            <div>
-                                                                <div className="font-medium text-gray-900">{stage.stageName}</div>
-                                                                <div className="text-xs text-gray-500">{stage.description}</div>
-                                                            </div>
+                                        return (
+                                            <tr key={stage.stageId} className="hover:bg-orange-50 transition-colors">
+                                                <td className="px-3 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                                            {idx + 1}
                                                         </div>
-                                                    </td>
-                                                    <td className="px-3 py-2 align-top text-center">
-                                                        {isCompleted ? (
-                                                            <Badge variant="success" className="text-xs">
-                                                                ✅ Hoàn thành
-                                                            </Badge>
-                                                        ) : ready ? (
-                                                            <Badge variant="outline" className="text-xs">
-                                                                ⏳ Sẵn sàng
-                                                            </Badge>
-                                                        ) : (
-                                                            <Badge variant="secondary" className="text-xs">
-                                                                🔒 Chưa mở
-                                                            </Badge>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-3 py-2 align-top text-neutral-800">
-                                                        {isCompleted ? (
-                                                            <div className="flex items-center gap-1"><CalendarDays className="w-4 h-4 text-neutral-400" />{formatDate(progress?.progressDate)}</div>
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </td>
-                                                    <td className="px-3 py-2 align-top text-neutral-800 max-w-[280px]">
-                                                        {isCompleted && progress?.note ? (
-                                                            <div className="flex items-start gap-2 text-neutral-700">
-                                                                <FileText className="w-4 h-4 shrink-0 text-neutral-400 mt-0.5" />
-                                                                <span className="line-clamp-2">{progress.note}</span>
-                                                            </div>
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </td>
-                                                    <td className="px-3 py-2 align-top">
-                                                        {(isCompleted && (progress?.photoUrl || progress?.videoUrl)) ? (
-                                                            <div className="flex gap-2">
-                                                                {progress?.photoUrl && (
-                                                                    <Dialog>
-                                                                        <DialogTrigger asChild>
-                                                                            <button
-                                                                                className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300"
-                                                                                title="Xem ảnh"
-                                                                            >
-                                                                                <img src={progress.photoUrl} alt="Ảnh" className="h-full w-full object-cover" />
-                                                                            </button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent className="max-w-4xl">
-                                                                            <DialogTitle className="sr-only">Xem ảnh</DialogTitle>
-                                                                            <img src={progress.photoUrl} alt="Ảnh lớn" className="max-h-[75vh] w-auto object-contain mx-auto" />
-                                                                        </DialogContent>
-                                                                    </Dialog>
-                                                                )}
-                                                                {progress?.videoUrl && (
-                                                                    <Dialog>
-                                                                        <DialogTrigger asChild>
-                                                                            <button
-                                                                                className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300 relative"
-                                                                                title="Xem video"
-                                                                            >
-                                                                                <video muted playsInline className="h-full w-full object-cover">
-                                                                                    <source src={progress.videoUrl} />
-                                                                                </video>
-                                                                                <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
-                                                                                    <Play className="w-5 h-5 text-white" />
-                                                                                </div>
-                                                                            </button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent className="max-w-5xl">
-                                                                            <DialogTitle className="sr-only">Xem video</DialogTitle>
-                                                                            <video controls autoPlay className="max-h-[75vh] w-auto mx-auto rounded-md">
+                                                        <div>
+                                                            <div className="font-medium text-gray-900">{stage.stageName}</div>
+                                                            <div className="text-xs text-gray-500">{stage.description}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2 align-top text-center">
+                                                    {isCompleted ? (
+                                                        <Badge variant="success" className="text-xs">
+                                                            Hoàn thành
+                                                        </Badge>
+                                                    ) : ready ? (
+                                                        <Badge variant="outline" className="text-xs">
+                                                            Sẵn sàng
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="secondary" className="text-xs">
+                                                            Chưa mở
+                                                        </Badge>
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 align-top text-neutral-800">
+                                                    {isCompleted ? (
+                                                        <div className="flex items-center gap-1"><CalendarDays className="w-4 h-4 text-neutral-400" />{formatDate(progress?.progressDate)}</div>
+                                                    ) : (
+                                                        "-"
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 align-top text-neutral-800 max-w-[280px]">
+                                                    {isCompleted && progress?.note ? (
+                                                        <div className="flex items-start gap-2 text-neutral-700">
+                                                            <FileText className="w-4 h-4 shrink-0 text-neutral-400 mt-0.5" />
+                                                            <span className="line-clamp-2">{progress.note}</span>
+                                                        </div>
+                                                    ) : (
+                                                        "-"
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 align-top">
+                                                    {(isCompleted && (progress?.photoUrl || progress?.videoUrl)) ? (
+                                                        <div className="flex gap-2">
+                                                            {progress?.photoUrl && (
+                                                                <Dialog>
+                                                                    <DialogTrigger asChild>
+                                                                        <button
+                                                                            className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300"
+                                                                            title="Xem ảnh"
+                                                                        >
+                                                                            <img src={progress.photoUrl} alt="Ảnh" className="h-full w-full object-cover" />
+                                                                        </button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent className="max-w-4xl">
+                                                                        <DialogTitle className="sr-only">Xem ảnh</DialogTitle>
+                                                                        <img src={progress.photoUrl} alt="Ảnh lớn" className="max-h-[75vh] w-auto object-contain mx-auto" />
+                                                                    </DialogContent>
+                                                                </Dialog>
+                                                            )}
+                                                            {progress?.videoUrl && (
+                                                                <Dialog>
+                                                                    <DialogTrigger asChild>
+                                                                        <button
+                                                                            className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300 relative"
+                                                                            title="Xem video"
+                                                                        >
+                                                                            <video muted playsInline className="h-full w-full object-cover">
                                                                                 <source src={progress.videoUrl} />
                                                                             </video>
-                                                                        </DialogContent>
-                                                                    </Dialog>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </td>
-                                                    <td className="px-3 py-2 align-top text-center">
-                                                        {isCompleted ? (
-                                                            <div className="flex items-center justify-center gap-2">
-                                                                <EditProgressDialog
-                                                                    progress={progress!}
-                                                                    onSuccess={handleEditSuccess}
-                                                                    onSeasonDetailUpdate={handleSeasonDetailUpdate}
-                                                                    triggerButton={
-                                                                        <Button variant="outline" size="sm" className="border-neutral-300">Sửa</Button>
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        ) : ready ? (
-                                                            <CreateProgressDialog
-                                                                detailId={cropSeasonDetailId}
-                                                                existingProgress={progressList.map((p) => ({ stageCode: p.stageCode }))}
-                                                                onSuccess={handleCreateSuccess}
+                                                                            <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                                                                                <Play className="w-5 h-5 text-white" />
+                                                                            </div>
+                                                                        </button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent className="max-w-5xl">
+                                                                        <DialogTitle className="sr-only">Xem video</DialogTitle>
+                                                                        <video controls autoPlay className="max-h-[75vh] w-auto mx-auto rounded-md">
+                                                                            <source src={progress.videoUrl} />
+                                                                        </video>
+                                                                    </DialogContent>
+                                                                </Dialog>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        "-"
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 align-top text-center">
+                                                    {isCompleted ? (
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <EditProgressDialog
+                                                                progress={progress!}
+                                                                onSuccess={handleEditSuccess}
+                                                                onSeasonDetailUpdate={handleSeasonDetailUpdate}
                                                                 triggerButton={
-                                                                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Ghi nhận</Button>
+                                                                    <Button variant="outline" size="sm" className="border-neutral-300">Sửa</Button>
                                                                 }
                                                             />
-                                                        ) : (
-                                                            <span className="text-xs text-neutral-500">—</span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                                                        </div>
+                                                    ) : ready ? (
+                                                        <CreateProgressDialog
+                                                            detailId={cropSeasonDetailId}
+                                                            existingProgress={progressList.map((p) => ({ stageCode: p.stageCode }))}
+                                                            onSuccess={handleCreateSuccess}
+                                                            triggerButton={
+                                                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Ghi nhận</Button>
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <span className="text-xs text-neutral-500">—</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
