@@ -15,7 +15,7 @@ export type FarmingCommitment = {
   registrationId: string;
   note: string;
   commitmentDate: string; // ISO date string
-  approvedAt: string; // ISO date string
+  approvedAt?: string; // ISO date string - optional
   rejectionReason: string;
   progressPercentage: number;
   totalRatingByBusiness: number;
@@ -61,8 +61,7 @@ export async function getFarmerCommitments(): Promise<FarmingCommitment[]> {
   try {
     const res = await api.get<FarmingCommitment[]>("/FarmingCommitment/Farmer");
     return res.data;
-  } catch (err) {
-    console.error("Lỗi getFarmerCommitments:", err);
+  } catch {
     return [];
   }
 }
@@ -72,8 +71,7 @@ export async function getBusinessCommitments(): Promise<FarmingCommitment[]> {
   try {
     const res = await api.get<FarmingCommitment[]>("/FarmingCommitment/BusinessManager");
     return res.data;
-  } catch (err) {
-    console.error("Lỗi getBusinessCommitments:", err);
+  } catch {
     return [];
   }
 }
@@ -85,8 +83,7 @@ export async function getAvailableCommitments(): Promise<FarmingCommitment[]> {
       "/FarmingCommitment/Farmer/AvailableForCropSeason"
     );
     return res.data;
-  } catch (err) {
-    console.error("Lỗi getAvailableCommitments:", err);
+  } catch {
     return [];
   }
 }
@@ -96,8 +93,7 @@ export async function getCommitmentById(commitmentId: string): Promise<FarmingCo
   try {
     const res = await api.get<FarmingCommitment>(`/FarmingCommitment/${commitmentId}`);
     return res.data;
-  } catch (err) {
-    console.error("Lỗi getCommitmentById:", err);
+  } catch {
     return null;
   }
 }

@@ -6,11 +6,9 @@ import {
     DialogTrigger,
     DialogContent,
     DialogTitle,
-    DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectTrigger,
@@ -20,10 +18,11 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { AppToast } from "@/components/ui/AppToast";
-import { Upload, X, Image, Video, Leaf, Calendar, Camera, Play } from "lucide-react";
+import { Upload, X, Leaf, Camera, Play, AlertTriangle, Target } from "lucide-react";
 
 import { createCropProgress, CropProgressCreateRequest } from "@/lib/api/cropProgress";
 import { getCropStages, CropStage } from "@/lib/api/cropStage";
+import { getCropSeasonDetailById, CropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 
 // Constants
 const HARVESTING_STAGE_CODE = "harvesting";
@@ -34,7 +33,6 @@ type Props = {
     onSuccess: () => void;
     disabled?: boolean;
     onStagesLoaded?: (availableStagesCount: number) => void;
-    onSeasonDetailUpdate?: (newYield: number) => void;
     triggerButton?: React.ReactNode
 };
 
@@ -44,7 +42,6 @@ export function CreateProgressDialog({
     existingProgress,
     disabled,
     onStagesLoaded,
-    onSeasonDetailUpdate,
     triggerButton
 }: Props) {
     const [note, setNote] = useState("");
@@ -55,10 +52,18 @@ export function CreateProgressDialog({
     const [loading, setLoading] = useState(false);
     const [actualYield, setActualYield] = useState<number | undefined>(undefined);
     const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-    const [dragActive, setDragActive] = useState(false);
+    const [cropSeasonDetail, setCropSeasonDetail] = useState<CropSeasonDetail | null>(null);
+    const [yieldValidationError, setYieldValidationError] = useState<string>("");
+    const [yieldValidationSeverity, setYieldValidationSeverity] = useState<'error' | 'warning' | 'info'>('info');
 
     const STAGE_ORDER = ["PLANTING", "FLOWERING", "FRUITING", "RIPENING", HARVESTING_STAGE_CODE];
     const createdStageCodes = (existingProgress ?? []).map((p) => p.stageCode);
+
+    // Validation constants
+    const MAX_YIELD_OVERFLOW_PERCENT = 150; // Sản lượng thu hoạch không được vượt quá 150% dự kiến
+    const MIN_YIELD_PERCENT = 30; // Sản lượng thu hoạch không được dưới 30% dự kiến
+    const WARNING_YIELD_PERCENT = 70; // Sản lượng dưới 70% cần cảnh báo
+    const COMMITMENT_THRESHOLD = 80; // Ngưỡng tối thiểu để đạt cam kết
 
     const canCreateStage = (stageCode: string) => {
         const normalizedStageCode = stageCode.toUpperCase();
@@ -82,24 +87,160 @@ export function CreateProgressDialog({
             if (onStagesLoaded) {
                 onStagesLoaded(availableStages.length);
             }
-        } catch (error) {
-            console.error("Error loading stages:", error);
-            AppToast.error("Không thể tải danh sách giai đoạn.");
+        } catch {
+            AppToast.error('Không thể tải danh sách giai đoạn.');
         }
     }, [onStagesLoaded]);
+
+    const loadCropSeasonDetail = useCallback(async () => {
+        try {
+            const detail = await getCropSeasonDetailById(detailId);
+            setCropSeasonDetail(detail);
+        } catch {
+            AppToast.error('Không thể tải chi tiết mùa vụ.');
+        }
+    }, [detailId]);
 
     useEffect(() => {
         if (open) {
             loadStageOptions();
+            loadCropSeasonDetail();
             setProgressDate(new Date().toISOString().split("T")[0]);
         }
-    }, [open, loadStageOptions]);
+    }, [open, loadStageOptions, loadCropSeasonDetail]);
+
+    // Validation function for actual yield with different severity levels and commitment impact
+    const validateActualYield = (yieldValue: number): {
+        error: string;
+        severity: 'error' | 'warning' | 'info';
+        canComplete: boolean;
+        commitmentStatus: 'achieved' | 'partial' | 'failed';
+        recommendation: string;
+    } => {
+        if (!cropSeasonDetail?.estimatedYield || cropSeasonDetail.estimatedYield <= 0) {
+            return {
+                error: "",
+                severity: 'info',
+                canComplete: true,
+                commitmentStatus: 'achieved',
+                recommendation: "Không có dữ liệu dự kiến để so sánh"
+            };
+        }
+
+        const estimatedYield = cropSeasonDetail.estimatedYield;
+        const percentage = (yieldValue / estimatedYield) * 100;
+
+        // Trường hợp vượt quá giới hạn trên - KHÔNG CHO PHÉP
+        if (percentage > MAX_YIELD_OVERFLOW_PERCENT) {
+            return {
+                error: `Sản lượng thu hoạch (${yieldValue} kg) vượt quá ${MAX_YIELD_OVERFLOW_PERCENT}% so với dự kiến (${estimatedYield} kg). Vui lòng kiểm tra lại hoặc liên hệ quản lý để điều chỉnh chỉ tiêu.`,
+                severity: 'error',
+                canComplete: false,
+                commitmentStatus: 'failed',
+                recommendation: "Liên hệ quản lý để điều chỉnh chỉ tiêu hoặc kiểm tra lại dữ liệu"
+            };
+        }
+
+        // Trường hợp dưới mức tối thiểu - KHÔNG CHO PHÉP
+        if (percentage < MIN_YIELD_PERCENT) {
+            return {
+                error: `Sản lượng thu hoạch (${yieldValue} kg) chỉ đạt ${percentage.toFixed(1)}% so với dự kiến (${estimatedYield} kg). Sản lượng quá thấp có thể ảnh hưởng đến hiệu quả sản xuất và cam kết. Vui lòng kiểm tra lại hoặc ghi chú lý do.`,
+                severity: 'error',
+                canComplete: false,
+                commitmentStatus: 'failed',
+                recommendation: "Không thể hoàn thành mùa vụ với sản lượng này. Cần kiểm tra lại hoặc liên hệ quản lý"
+            };
+        }
+
+        // Trường hợp dưới ngưỡng cam kết - CẢNH BÁO MẠNH
+        if (percentage < COMMITMENT_THRESHOLD) {
+            return {
+                error: `Sản lượng thu hoạch (${yieldValue} kg) chỉ đạt ${percentage.toFixed(1)}% so với dự kiến (${estimatedYield} kg). KHÔNG ĐẠT CAM KẾT với doanh nghiệp. Vui lòng ghi chú lý do cụ thể và liên hệ quản lý.`,
+                severity: 'warning',
+                canComplete: true, // Vẫn cho phép hoàn thành nhưng cảnh báo
+                commitmentStatus: 'failed',
+                recommendation: "Cần liên hệ quản lý để điều chỉnh cam kết hoặc tìm giải pháp thay thế"
+            };
+        }
+
+        // Trường hợp dưới mức cảnh báo - CẢNH BÁO NHẸ
+        if (percentage < WARNING_YIELD_PERCENT) {
+            return {
+                error: `Sản lượng thu hoạch (${yieldValue} kg) đạt ${percentage.toFixed(1)}% so với dự kiến (${estimatedYield} kg). Sản lượng thấp hơn dự kiến nhưng vẫn đạt cam kết. Vui lòng ghi chú lý do nếu cần.`,
+                severity: 'warning',
+                canComplete: true,
+                commitmentStatus: 'partial',
+                recommendation: "Có thể hoàn thành mùa vụ nhưng cần ghi chú lý do sản lượng thấp"
+            };
+        }
+
+        // Trường hợp trong phạm vi chấp nhận được
+        return {
+            error: "",
+            severity: 'info',
+            canComplete: true,
+            commitmentStatus: 'achieved',
+            recommendation: "Sản lượng đạt yêu cầu, có thể hoàn thành mùa vụ"
+        };
+    };
+
+    // Handle actual yield change with validation
+    const handleActualYieldChange = (value: string) => {
+        const numericValue = value ? parseFloat(value) : undefined;
+        setActualYield(numericValue);
+
+        if (numericValue && numericValue > 0) {
+            const validation = validateActualYield(numericValue);
+            setYieldValidationError(validation.error);
+            setYieldValidationSeverity(validation.severity);
+        } else {
+            setYieldValidationError("");
+            setYieldValidationSeverity('info');
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!stageId) {
             AppToast.error("Vui lòng chọn giai đoạn.");
             return;
+        }
+
+        // Validate actual yield if it's harvesting stage
+        if (stageId && stageOptions.find(s => s.stageId === stageId)?.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE) {
+            if (!actualYield || actualYield <= 0) {
+                AppToast.error("Vui lòng nhập sản lượng thu hoạch hợp lệ (> 0).");
+                return;
+            }
+
+            const validation = validateActualYield(actualYield);
+
+            // Chặn submit nếu có lỗi nghiêm trọng
+            if (validation.severity === 'error') {
+                AppToast.error("Không thể ghi nhận tiến độ do sản lượng không hợp lệ. Vui lòng kiểm tra lại.");
+                return;
+            }
+
+            // Cảnh báo về commitment nếu có warning
+            if (validation.severity === 'warning') {
+                let confirmMessage = `Sản lượng thu hoạch (${actualYield} kg) thấp hơn dự kiến.\n\n`;
+
+                if (validation.commitmentStatus === 'failed') {
+                    confirmMessage += `🚨 QUAN TRỌNG: KHÔNG ĐẠT CAM KẾT với doanh nghiệp!\n`;
+                    confirmMessage += `📋 Bạn cần ghi chú lý do cụ thể và liên hệ quản lý.\n\n`;
+                } else {
+                    confirmMessage += `⚠️ Cảnh báo: Sản lượng thấp hơn dự kiến.\n`;
+                }
+
+                confirmMessage += `Lý do: ${validation.error}\n\n`;
+                confirmMessage += `Khuyến nghị: ${validation.recommendation}\n\n`;
+                confirmMessage += `Bạn có chắc muốn tiếp tục ghi nhận tiến độ này?`;
+
+                const confirmed = window.confirm(confirmMessage);
+                if (!confirmed) {
+                    return;
+                }
+            }
         }
 
         try {
@@ -140,6 +281,8 @@ export function CreateProgressDialog({
         setProgressDate("");
         setActualYield(undefined);
         setMediaFiles([]);
+        setYieldValidationError("");
+        setYieldValidationSeverity('info');
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,19 +405,106 @@ export function CreateProgressDialog({
 
                                     {/* Chỉ hiển thị sản lượng khi chọn giai đoạn thu hoạch */}
                                     {stageId && stageOptions.find(s => s.stageId === stageId)?.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE && (
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">
-                                                Sản lượng (kg)
-                                            </label>
-                                            <Input
-                                                type="number"
-                                                value={actualYield || ""}
-                                                onChange={(e) => setActualYield(e.target.value ? parseFloat(e.target.value) : undefined)}
-                                                min={0}
-                                                step="any"
-                                                className="w-full h-10 text-sm"
-                                                placeholder="Nhập sản lượng thu hoạch..."
-                                            />
+                                        <div className="space-y-2">
+                                            {/* Hiển thị thông tin sản lượng dự kiến */}
+                                            {cropSeasonDetail?.estimatedYield && cropSeasonDetail.estimatedYield > 0 && (
+                                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                                    <div className="flex items-center gap-2 text-blue-800">
+                                                        <Target className="w-4 h-4" />
+                                                        <span className="text-sm font-medium">Sản lượng dự kiến: {cropSeasonDetail.estimatedYield} kg</span>
+                                                    </div>
+                                                    <div className="mt-2 space-y-1 text-xs text-blue-600">
+                                                        <p>📊 <strong>Phạm vi chấp nhận:</strong></p>
+                                                        <div className="ml-4 space-y-1">
+                                                            <p>• <span className="text-green-600">✅ Tốt:</span> 80% - 150% dự kiến (Đạt cam kết)</p>
+                                                            <p>• <span className="text-yellow-600">⚠️ Cảnh báo:</span> 70% - 80% dự kiến (Đạt cam kết một phần)</p>
+                                                            <p>• <span className="text-orange-600">🚨 Cảnh báo mạnh:</span> 30% - 80% dự kiến (KHÔNG đạt cam kết)</p>
+                                                            <p>• <span className="text-red-600">❌ Không cho phép:</span> Dưới 30% hoặc trên 150% dự kiến</p>
+                                                        </div>
+                                                        <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                                                            <p className="text-yellow-800 text-xs">
+                                                                <strong>⚠️ Lưu ý:</strong> Sản lượng dưới 80% sẽ KHÔNG đạt cam kết với doanh nghiệp
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div>
+                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                    Sản lượng thu hoạch (kg) <span className="text-red-500">*</span>
+                                                </label>
+                                                <Input
+                                                    type="number"
+                                                    value={actualYield || ""}
+                                                    onChange={(e) => handleActualYieldChange(e.target.value)}
+                                                    min={0}
+                                                    step="any"
+                                                    className={`w-full h-10 text-sm ${yieldValidationError ?
+                                                        (yieldValidationSeverity === 'error' ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-yellow-300 focus:border-yellow-500 focus:ring-yellow-200')
+                                                        : ''
+                                                        }`}
+                                                    placeholder="Nhập sản lượng thu hoạch..."
+                                                />
+                                                {yieldValidationError && (
+                                                    <div className={`flex items-start gap-2 mt-2 p-2 rounded-md ${yieldValidationSeverity === 'error'
+                                                        ? 'bg-red-50 border border-red-200'
+                                                        : 'bg-yellow-50 border border-yellow-200'
+                                                        }`}>
+                                                        <AlertTriangle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${yieldValidationSeverity === 'error' ? 'text-red-500' : 'text-yellow-500'
+                                                            }`} />
+                                                        <div className="flex-1">
+                                                            <p className={`text-xs leading-relaxed ${yieldValidationSeverity === 'error' ? 'text-red-700' : 'text-yellow-700'
+                                                                }`}>
+                                                                {yieldValidationError}
+                                                            </p>
+                                                            {yieldValidationSeverity === 'warning' && actualYield && cropSeasonDetail?.estimatedYield && (
+                                                                <div className="mt-2 space-y-1">
+                                                                    {(() => {
+                                                                        const validation = validateActualYield(actualYield);
+                                                                        if (validation.commitmentStatus === 'failed') {
+                                                                            return (
+                                                                                <div className="p-2 bg-red-50 border border-red-200 rounded">
+                                                                                    <p className="text-xs text-red-700 font-medium">
+                                                                                        🚨 KHÔNG ĐẠT CAM KẾT với doanh nghiệp!
+                                                                                    </p>
+                                                                                    <p className="text-xs text-red-600 mt-1">
+                                                                                        Khuyến nghị: {validation.recommendation}
+                                                                                    </p>
+                                                                                </div>
+                                                                            );
+                                                                        } else if (validation.commitmentStatus === 'partial') {
+                                                                            return (
+                                                                                <div className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                                                                                    <p className="text-xs text-yellow-700 font-medium">
+                                                                                        ⚠️ Đạt cam kết một phần
+                                                                                    </p>
+                                                                                    <p className="text-xs text-yellow-600 mt-1">
+                                                                                        Khuyến nghị: {validation.recommendation}
+                                                                                    </p>
+                                                                                </div>
+                                                                            );
+                                                                        }
+                                                                        return null;
+                                                                    })()}
+                                                                    <p className="text-xs text-yellow-600 mt-1 font-medium">
+                                                                        ⚠️ Bạn vẫn có thể tiếp tục, nhưng vui lòng ghi chú lý do cụ thể.
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {!yieldValidationError && actualYield && actualYield > 0 && cropSeasonDetail?.estimatedYield && (
+                                                    <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                                                        <div className="flex items-center gap-2 text-green-700">
+                                                            <span className="text-xs font-medium">
+                                                                ✅ Đạt {((actualYield / cropSeasonDetail.estimatedYield) * 100).toFixed(1)}% so với dự kiến
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
 
@@ -367,6 +597,7 @@ export function CreateProgressDialog({
                                                 type="button"
                                                 onClick={() => removeFile(index)}
                                                 className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                                aria-label="Xóa file"
                                             >
                                                 <X className="w-3 h-3" />
                                             </button>
