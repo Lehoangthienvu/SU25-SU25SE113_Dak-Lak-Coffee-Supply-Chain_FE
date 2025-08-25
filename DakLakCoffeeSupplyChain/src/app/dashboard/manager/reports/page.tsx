@@ -139,7 +139,7 @@ export default function ManagerReportsPage() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-blue-600 text-sm font-medium">Tổng báo cáo</p>
+                                <p className="text-blue-600 text-sm font-medium">Tổng tư vấn</p>
                                 <p className="text-3xl font-bold text-blue-900">{totalReports}</p>
                             </div>
                             <FiFileText className="w-8 h-8 text-blue-600" />

@@ -7,13 +7,10 @@ import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
   CropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
-import { toast } from "sonner";
-import { useConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
-import { Edit, Trash, Eye, Coffee, MapPin, Calendar, TrendingUp, Target } from "lucide-react";
+import { Edit, Eye, Coffee, MapPin, Calendar, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
-import { softDeleteCropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 
 interface Props {
   details: CropSeasonDetail[];
@@ -26,7 +23,6 @@ export default function CropSeasonDetailTable({
 }: Props) {
   const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
   const router = useRouter();
-  const { openDialog, ConfirmationDialog } = useConfirmationDialog();
 
   const formatDate = (date?: string) => {
     if (!date) return "Chưa cập nhật";
@@ -48,127 +44,87 @@ export default function CropSeasonDetailTable({
     return "text-green-600";
   };
 
-  const handleDelete = async (detailId: string, name: string) => {
-    openDialog({
-      title: "Xác nhận xóa vùng trồng",
-      message: `Bạn có chắc muốn xoá vùng trồng: ${name}?`,
-      confirmText: "Xóa",
-      cancelText: "Hủy",
-      type: "danger",
-      onConfirm: async () => {
-        try {
-          await softDeleteCropSeasonDetail(detailId);
-          toast.success("Xoá vùng trồng thành công");
-          onReload();
-        } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : "Xoá vùng trồng thất bại";
-          toast.error(errorMessage);
-        }
-      }
-    });
-  };
-
-  if (details.length === 0) {
+  if (details.length === 0)
     return (
-      <div className="text-center py-8">
-        <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <Coffee className="w-6 h-6 text-orange-600" />
-        </div>
-        <p className="text-gray-500 text-sm font-medium mb-1">
-          Không có dữ liệu vùng trồng
-        </p>
-        <p className="text-gray-400 text-xs">
-          Bắt đầu thêm vùng trồng đầu tiên cho mùa vụ này
-        </p>
+      <div className="text-center py-8 text-gray-500">
+        <Coffee className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+        <p>Chưa có vùng trồng nào được tạo.</p>
       </div>
     );
-  }
 
   return (
-    <>
+    <div className="bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gradient-to-r from-green-50 to-emerald-50 text-gray-700 font-semibold">
             <tr>
-              <th className="text-left px-3 py-2">Loại cà phê</th>
-              <th className="text-left px-3 py-2">Diện tích</th>
-              <th className="text-left px-3 py-2">Chất lượng</th>
-              <th className="text-left px-3 py-2">Sản lượng dự kiến</th>
-              <th className="text-left px-3 py-2">Sản lượng thu hoạch</th>
-              <th className="text-left px-3 py-2">% đạt</th>
-              <th className="text-left px-3 py-2">Thời gian thu hoạch</th>
-              <th className="text-left px-3 py-2">Trạng thái</th>
-              <th className="text-left px-3 py-2">Hành động</th>
+              <th className="px-3 py-3 text-left">Loại cà phê</th>
+              <th className="px-3 py-3 text-center">Diện tích (ha)</th>
+              <th className="px-3 py-3 text-center">Sản lượng ước tính</th>
+              <th className="px-3 py-3 text-center">Sản lượng thu hoạch</th>
+              <th className="px-3 py-3 text-center">Tỷ lệ (%)</th>
+              <th className="px-3 py-3 text-center">Trạng thái</th>
+              <th className="px-3 py-3 text-center">Thu hoạch dự kiến</th>
+              <th className="px-3 py-3 text-center">Hành động</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-green-100">
             {details.map((detail) => (
-              <tr key={detail.detailId} className="hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200">
-                <td className="px-3 py-2">
+              <tr key={detail.detailId} className="hover:bg-green-50 transition-colors">
+                <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-md flex items-center justify-center">
-                      <Coffee className="w-3 h-3 text-white" />
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                      <Coffee className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-medium text-gray-800 text-xs">{detail.typeName}</span>
-                  </div>
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-orange-500" />
-                    {detail.areaAllocated && detail.areaAllocated > 0
-                      ? <span className="font-medium text-gray-700 text-xs">{detail.areaAllocated} ha</span>
-                      : <span className="italic text-red-500 text-xs">Chưa nhập</span>}
-                  </div>
-                </td>
-                <td className="px-3 py-2">
-                  {detail.plannedQuality?.trim()
-                    ? <span className="font-medium text-gray-700 text-xs">{detail.plannedQuality}</span>
-                    : <span className="italic text-gray-500 text-xs">Chưa có</span>}
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <Target className="w-3 h-3 text-blue-500" />
-                    <span className="font-medium text-gray-700 text-xs">{detail.estimatedYield ?? "-"} Kg</span>
-                  </div>
-                </td>
-                <td className="px-3 py-2">
-                  {detail.actualYield !== null ? (
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-green-500" />
-                      <span className="font-medium text-gray-700 text-xs">{detail.actualYield} Kg</span>
+                    <div>
+                      <div className="font-medium text-gray-900">{detail.typeName}</div>
+                      <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>Vùng trồng</span>
+                      </div>
                     </div>
-                  ) : (
-                    <span className="italic text-gray-500 text-xs">Chưa thu hoạch</span>
-                  )}
+                  </div>
                 </td>
-                <td className="px-3 py-2">
+                <td className="px-3 py-3 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Target className="w-3 h-3 text-green-500" />
+                    <span className="font-medium text-gray-700">{detail.areaAllocated} ha</span>
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-center">
+                  <span className="font-medium text-gray-700">
+                    {detail.areaAllocated > 0 ? Math.round(detail.estimatedYield / detail.areaAllocated) : 0} kg/ha
+                  </span>
+                </td>
+                <td className="px-3 py-3 text-center">
+                  <span className="font-medium text-gray-700">
+                    {detail.actualYield ? `${detail.actualYield} kg` : "—"}
+                  </span>
+                </td>
+                <td className="px-3 py-3 text-center">
                   {(() => {
                     const percent = calculateYieldPercentage(detail.actualYield, detail.estimatedYield);
-                    if (percent === null) {
-                      return <span className="italic text-gray-500 text-xs">-</span>;
-                    }
+                    if (percent === null) return "—";
                     return (
-                      <span className={`font-bold text-xs ${getYieldColor(percent)}`}>
+                      <span className={`font-medium ${getYieldColor(percent)}`}>
                         {percent}%
                       </span>
                     );
                   })()}
                 </td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-purple-500" />
-                    {detail.expectedHarvestStart
-                      ? <span className="text-xs text-gray-700">
-                        {formatDate(detail.expectedHarvestStart)} - {formatDate(detail.expectedHarvestEnd)}
-                      </span>
-                      : <span className="text-gray-500 text-xs">-</span>}
-                  </div>
+                <td className="px-3 py-3 text-center">
+                  <StatusBadge status={detail.status} map={CropSeasonDetailStatusMap} />
                 </td>
-                <td className="px-3 py-2">
-                  <StatusBadge
-                    status={detail.status}
-                    map={CropSeasonDetailStatusMap}
-                  />
+                <td className="px-3 py-3 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Calendar className="w-3 h-3 text-blue-500" />
+                    <div className="text-xs">
+                      <div className="font-medium text-gray-700">
+                        {formatDate(detail.expectedHarvestStart)}
+                      </div>
+                      <div className="text-gray-500">đến {formatDate(detail.expectedHarvestEnd)}</div>
+                    </div>
+                  </div>
                 </td>
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-1">
@@ -204,17 +160,6 @@ export default function CropSeasonDetailTable({
                     >
                       <Eye className="w-3 h-3" />
                     </Button>
-
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() =>
-                        handleDelete(detail.detailId, detail.typeName)
-                      }
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                    >
-                      <Trash className="w-3 h-3" />
-                    </Button>
                   </div>
                 </td>
               </tr>
@@ -222,9 +167,6 @@ export default function CropSeasonDetailTable({
           </tbody>
         </table>
       </div>
-
-      {/* Confirmation Dialog */}
-      <ConfirmationDialog />
-    </>
+    </div>
   );
 }

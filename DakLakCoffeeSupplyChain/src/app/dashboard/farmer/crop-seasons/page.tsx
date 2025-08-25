@@ -27,12 +27,6 @@ export default function FarmerCropSeasonsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const pageSize = 10;
 
-  const handleSeasonDeleted = (deletedId: string) => {
-    setCropSeasons((prev) =>
-      prev.filter((season) => season.cropSeasonId !== deletedId)
-    );
-  };
-
   useEffect(() => {
     setCurrentPage(1);
   }, [search, selectedStatus]);
@@ -241,7 +235,6 @@ export default function FarmerCropSeasonsPage() {
                           <CropSeasonCard
                             key={season.cropSeasonId}
                             season={season}
-                            onDeleted={handleSeasonDeleted}
                           />
                         ))}
                       </tbody>

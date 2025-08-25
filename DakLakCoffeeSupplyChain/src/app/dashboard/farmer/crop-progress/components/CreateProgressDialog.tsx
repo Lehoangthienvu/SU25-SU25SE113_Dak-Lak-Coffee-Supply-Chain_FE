@@ -85,7 +85,7 @@ export function CreateProgressDialog({
             const availableStages = stages.filter(stage => canCreateStage(stage.stageCode));
             setStageOptions(availableStages);
             if (onStagesLoaded) {
-                onStagesLoaded(availableStages.length);
+                onStagesLoaded(stages.length); // Trả về tổng số giai đoạn thay vì số giai đoạn có thể tạo
             }
         } catch {
             AppToast.error('Không thể tải danh sách giai đoạn.');

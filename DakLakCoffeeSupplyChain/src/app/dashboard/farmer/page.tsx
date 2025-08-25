@@ -261,7 +261,7 @@ export default function FarmerDashboard() {
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                                Dashboard Nông dân
+                                Nông dân
                             </h1>
                             <p className="text-gray-600 text-sm">
                                 Chào mừng bạn trở lại! Theo dõi hoạt động canh tác của bạn
