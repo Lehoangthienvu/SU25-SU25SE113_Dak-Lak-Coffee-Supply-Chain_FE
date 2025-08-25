@@ -21,7 +21,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FiTrash2 } from "react-icons/fi";
+import { FiTrash2, FiMapPin, FiCalendar, FiUser } from "react-icons/fi";
+import { Badge } from "@/components/ui/badge";
 import { LoadingButton } from "@/components/ui/loadingProgress";
 
 export default function MarketplaceDetailPage() {
@@ -36,6 +37,7 @@ export default function MarketplaceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isFarmer, setIsFarmer] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAllDetails, setShowAllDetails] = useState(false);
 
   // Kiểm tra xem có phải từ sidebar không
   const isFromSidebar = pathname.startsWith("/dashboard/farmer/market-place");
@@ -305,68 +307,107 @@ export default function MarketplaceDetailPage() {
               </div>
 
               <div>
-                <h3 className='text-xl font-semibold mb-3'>
-                  Chi tiết kế hoạch
-                </h3>
-                <table className='w-full text-left border-collapse border border-gray-300 rounded-md overflow-hidden'>
-                  <thead className='bg-orange-100 text-orange-800 font-semibold'>
-                    <tr>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Loại cà phê
-                      </th>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Phương pháp sơ chế
-                      </th>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Sản lượng (kg)
-                      </th>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Sản lượng đăng ký tối thiểu(kg)
-                      </th>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Khu vực thu mua
-                      </th>
-                      <th className='py-2 px-3 border-r border-orange-200'>
-                        Giá (VNĐ/kg)
-                      </th>
-                      <th className='py-2 px-3'>Ghi chú</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {plan.procurementPlansDetails.map((detail) => (
-                      <tr
-                        key={detail.planDetailsId}
-                        className='odd:bg-white even:bg-orange-50 hover:bg-orange-100 transition'
-                      >
-                        <td className='py-2 px-3 border-r border-orange-200'>
-                          {detail.coffeeType?.typeName}
-                        </td>
-                        <td className='py-2 px-3 border-r border-orange-200'>
-                          {detail.processingMethodName ? (
-                            <>{detail.processingMethodName}</>
-                          ) : (
-                            <>Không có</>
-                          )}
-                        </td>
-                        <td className='py-2 px-3 border-r border-orange-200'>
-                          {detail.targetQuantity?.toLocaleString()}
-                        </td>
-                        <td className='py-2 px-3 border-r border-orange-200 text-center'>
-                          {detail.minimumRegistrationQuantity?.toLocaleString()}
-                        </td>
-                        <td className='py-2 px-3 border-r border-orange-200'>
-                          {detail.targetRegion}
-                        </td>
-                        <td className='py-2 px-3 border-r border-orange-200'>
-                          {detail.minPriceRange?.toLocaleString()} -{" "}
-                          {detail.maxPriceRange?.toLocaleString()}
-                        </td>
-                        <td className='py-2 px-3'>{detail.note}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p>ID: {plan.planCode}</p>
+                <div className='flex items-center justify-between mb-3'>
+                  <h3 className='text-xl font-semibold'>Chi tiết kế hoạch</h3>
+                  {plan.procurementPlansDetails.length > 4 && (
+                    <Button
+                      type='button'
+                      variant='secondaryGradient'
+                      className='h-8 px-3'
+                      onClick={() => setShowAllDetails((prev) => !prev)}
+                    >
+                      {showAllDetails ? 'Thu gọn' : `Xem thêm (${plan.procurementPlansDetails.length - 4})`}
+                    </Button>
+                  )}
+                </div>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {(showAllDetails
+                    ? plan.procurementPlansDetails
+                    : plan.procurementPlansDetails.slice(0, 4)
+                  ).map((detail) => {
+                    const progress = Math.min(
+                      Math.max(Number(detail.progressPercentage ?? 0), 0),
+                      100
+                    );
+                    return (
+                      <Card key={detail.planDetailsId} className='p-4 shadow-md bg-orange-50 border border-orange-200'>
+                        <div className='flex items-start justify-between mb-2'>
+                          <div>
+                            <p className='text-sm text-gray-500'>Mã chi tiết</p>
+                            <p className='font-semibold'>{detail.planDetailCode}</p>
+                          </div>
+                          <div className='text-right'>
+                            <p className='text-sm text-gray-500'>Loại cà phê</p>
+                            <p className='font-semibold'>{detail.coffeeType?.typeName}</p>
+                          </div>
+                        </div>
+
+                        <div className='grid grid-cols-2 gap-3 text-sm'>
+                          <div>
+                            <p className='text-gray-500'>Phương pháp sơ chế</p>
+                            <p className='font-medium'>
+                              {detail.processingMethodName ?? "Không có"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Khu vực thu mua</p>
+                            <p className='font-medium'>{detail.targetRegion}</p>
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Sản lượng mục tiêu (kg)</p>
+                            <p className='font-medium'>
+                              {detail.targetQuantity?.toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Tối thiểu đăng ký (kg)</p>
+                            <p className='font-medium'>
+                              {detail.minimumRegistrationQuantity?.toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Giá mong muốn (VNĐ/kg)</p>
+                            <p className='font-medium'>
+                              {detail.minPriceRange?.toLocaleString()} - {detail.maxPriceRange?.toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            {/* <p className='text-gray-500'>Năng suất dự kiến (kg/ha)</p>
+                            <p className='font-medium'>
+                              {detail.expectedYieldPerHectare?.toLocaleString?.() ?? detail.expectedYieldPerHectare}
+                            </p> */}
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Đã đăng ký (kg)</p>
+                            <p className='font-medium'>
+                              {detail.registeredQuantity?.toLocaleString?.() ?? detail.registeredQuantity}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-gray-500'>Tiến độ</p>
+                            <div className='mt-1'>
+                              <div className='h-2 w-full bg-orange-100 rounded-full overflow-hidden'>
+                                <div
+                                  className='h-2 bg-orange-500'
+                                  style={{ width: `${progress}%` }}
+                                />
+                              </div>
+                              <p className='text-xs text-gray-600 mt-1'>{progress.toFixed(0)}%</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {detail.note && (
+                          <div className='mt-3 text-sm'>
+                            <p className='text-gray-500'>Ghi chú</p>
+                            <p className='font-medium'>{detail.note}</p>
+                          </div>
+                        )}
+                      </Card>
+                    );
+                  })}
+                </div>
+                <p className='mt-4 text-sm text-gray-600'>Mã kế hoạch: {plan.planCode}</p>
               </div>
             </Card>
 
@@ -375,25 +416,50 @@ export default function MarketplaceDetailPage() {
               <h3 className='text-2xl font-semibold mb-6 text-orange-700'>
                 Danh sách đơn đăng ký
               </h3>
-              {registrations.length === 0 && <p>Chưa có đơn đăng ký nào.</p>}
+              {registrations.length === 0 && (
+                <p className='text-gray-600'>Chưa có đơn đăng ký nào.</p>
+              )}
 
-              <div className='space-y-4 max-h-[400px] overflow-y-auto'>
+              <div className='space-y-3 max-h-[400px] overflow-y-auto pr-1'>
                 {registrations.map((reg) => (
                   <div
                     key={reg.registrationId}
-                    className='border border-gray-300 rounded p-4 bg-white'
+                    className='rounded-lg border border-orange-200 bg-orange-50 p-4 hover:bg-orange-100 transition'
                   >
-                    <p className='font-semibold'>{reg.farmerName}</p>
-                    <p className='text-gray-600 mb-2'>{reg.farmerLocation}</p>
-                    <p>
-                      Diện tích đăng ký: {reg.registeredArea.toLocaleString()}
-                      ha - Số đơn chi tiết:{" "}
-                      {reg.cultivationRegistrationDetails.length}
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                      Ngày đăng ký:{" "}
-                      {format(new Date(reg.registeredAt), "dd/MM/yyyy HH:mm")}
-                    </p>
+                    <div className='flex items-start justify-between'>
+                      <div className='flex items-center gap-2'>
+                        <div className='h-8 w-8 rounded-full bg-orange-200 flex items-center justify-center text-orange-800'>
+                          <FiUser />
+                        </div>
+                        <div>
+                          <p className='font-semibold text-orange-800'>{reg.farmerName}</p>
+                          <div className='flex items-center gap-2 text-sm text-gray-600'>
+                            <FiMapPin className='text-orange-600' />
+                            <span>{reg.farmerLocation}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant='secondary' className='bg-white text-orange-700 border border-orange-200'>
+                        {reg.cultivationRegistrationDetails.length} chi tiết
+                      </Badge>
+                    </div>
+
+                    <div className='mt-3 grid grid-cols-2 gap-3 text-sm'>
+                      <div>
+                        <p className='text-gray-500'>Diện tích đăng ký</p>
+                        <p className='font-medium'>
+                          {reg.registeredArea.toLocaleString()} ha
+                        </p>
+                      </div>
+                      <div className='text-right'>
+                        <div className='inline-flex items-center gap-2 text-gray-600'>
+                          <FiCalendar className='text-orange-600' />
+                          <span className='text-sm'>
+                            {format(new Date(reg.registeredAt), 'dd/MM/yyyy HH:mm')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -454,7 +520,9 @@ export default function MarketplaceDetailPage() {
                         .filter(Boolean);
 
                     const options = plan.procurementPlansDetails.filter(
-                      (d) => !alreadySelected.includes(d.planDetailsId ?? null)
+                      (d) =>
+                        (Number(d.progressPercentage ?? 0) < 100) &&
+                        !alreadySelected.includes(d.planDetailsId ?? null)
                     );
 
                     return (
@@ -549,7 +617,7 @@ export default function MarketplaceDetailPage() {
                         <div className='flex gap-3'>
                           <div className='flex-1'>
                             <Label className='text-sm'>
-                              Ngày bắt đầu thu hoạch{" "}
+                              Ngày bắt đầu thu hoạch dự kiến{" "}
                               <span className='text-red-500'>*</span>
                             </Label>
                             <Input
@@ -572,7 +640,7 @@ export default function MarketplaceDetailPage() {
                           </div>
                           <div className='flex-1'>
                             <Label className='text-sm'>
-                              Ngày kết thúc thu hoạch{" "}
+                              Ngày kết thúc thu hoạch dự kiến{" "}
                               <span className='text-red-500'>*</span>
                             </Label>
                             <Input
@@ -624,10 +692,14 @@ export default function MarketplaceDetailPage() {
                 {/* Nút thêm chi tiết - disable nếu đã chọn toàn bộ chi tiết kế hoạch */}
                 <Tooltip
                   content={
-                    formData.cultivationRegistrationDetailsCreateViewDto
-                      .length >= plan.procurementPlansDetails.length
-                      ? `Kế hoạch này chỉ có ${plan.procurementPlansDetails.length} chi tiết kế hoạch`
-                      : "Thêm chi tiết kế hoạch"
+                    (() => {
+                      const availableCount = plan.procurementPlansDetails.filter(
+                        (d) => Number(d.progressPercentage ?? 0) < 100
+                      ).length;
+                      return formData.cultivationRegistrationDetailsCreateViewDto.length >= availableCount
+                        ? `Hiện chỉ có ${availableCount} chi tiết còn khả dụng`
+                        : "Thêm chi tiết kế hoạch";
+                    })()
                   }
                   side='bottom'
                   align='center'
@@ -636,8 +708,15 @@ export default function MarketplaceDetailPage() {
                     type='button'
                     variant='default'
                     disabled={
-                      formData.cultivationRegistrationDetailsCreateViewDto
-                        .length >= plan.procurementPlansDetails.length
+                      (() => {
+                        const availableCount = plan.procurementPlansDetails.filter(
+                          (d) => Number(d.progressPercentage ?? 0) < 100
+                        ).length;
+                        return (
+                          formData.cultivationRegistrationDetailsCreateViewDto.length >=
+                          availableCount
+                        );
+                      })()
                     }
                     onClick={handleAddDetail}
                   >

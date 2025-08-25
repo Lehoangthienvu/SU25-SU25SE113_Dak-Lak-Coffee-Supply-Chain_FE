@@ -10,9 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PackagePlus, Calendar, ArrowLeft, Coffee, Scale, FileText, Package, Truck, Leaf } from 'lucide-react';
 import { createWarehouseInboundRequest, getAllInboundRequestsForFarmer } from '@/lib/api/warehouseInboundRequest';
-import { getAllProcessingBatches, ProcessingBatch, getAvailableBatchesForWarehouseRequest } from '@/lib/api/processingBatches';
+import { getAvailableBatchesForWarehouseRequest } from '@/lib/api/processingBatches';
 import { getAllProcessingBatchProgresses } from '@/lib/api/processingBatchProgress';
-import { getCropSeasonDetailsForCurrentFarmer } from '@/lib/api/cropSeasonDetail';
 import { ProcessingStatus } from '@/lib/constants/batchStatus';
 import { toast } from 'sonner';
 
@@ -289,16 +288,16 @@ export default function CreateDeliveryRequestPage() {
         // Lưu dữ liệu available batches
         setAvailableBatchesData(availableBatchesData || []);
 
-        // Lấy danh sách crop season details có thể tạo yêu cầu nhập kho
-        const cropDetailsData = await getCropSeasonDetailsForCurrentFarmer();
-        console.log('🔍 Available Crop Season Details:', cropDetailsData);
-        setAvailableCropDetailsData(cropDetailsData || []);
+        // TẠM THỜI ẨN - Không cần lấy crop season details vì chỉ gửi cà phê sơ chế
+        // const cropDetailsData = await getCropSeasonDetailsForCurrentFarmer();
+        // console.log('🔍 Available Crop Season Details:', cropDetailsData);
+        setAvailableCropDetailsData([]);
 
-        // Lấy batch progresses (không cần thiết nữa vì đã có từ API mới)
+        // Lấy batch progresses (cần thiết để tính toán số lượng còn lại)
         const progressesData = await getAllProcessingBatchProgresses();
         setBatchProgresses(progressesData || []);
 
-        // Lấy inbound requests
+        // Lấy inbound requests (cần thiết để tính toán số lượng đã yêu cầu)
         const requestsData = await getAllInboundRequestsForFarmer();
         if (requestsData.status === 1) {
           setInboundRequests(requestsData.data || []);
@@ -335,15 +334,16 @@ export default function CreateDeliveryRequestPage() {
       </div>
 
       <Tabs defaultValue="processed" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="processed" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
             Cà phê đã sơ chế
           </TabsTrigger>
-          <TabsTrigger value="fresh" className="flex items-center gap-2">
+          {/* TẠM THỜI ẨN - Tab cà phê tươi */}
+          {/* <TabsTrigger value="fresh" className="flex items-center gap-2">
             <Leaf className="h-4 w-4" />
             Cà phê tươi
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         
         {/* ✅ THÔNG BÁO RÕ RÀNG CHO TỪNG TAB */}
@@ -450,7 +450,8 @@ export default function CreateDeliveryRequestPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="fresh" className="space-y-6">
+        {/* TẠM THỜI ẨN - Tab content cà phê tươi */}
+        {/* <TabsContent value="fresh" className="space-y-6">
           <Card className="border-green-200 bg-green-50/30">
             <CardHeader className="bg-green-100/50 border-b border-green-200">
               <CardTitle className="flex items-center gap-2 text-green-800">
@@ -540,7 +541,7 @@ export default function CreateDeliveryRequestPage() {
               </form>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

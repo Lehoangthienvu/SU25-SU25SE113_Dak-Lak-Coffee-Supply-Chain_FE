@@ -168,6 +168,9 @@ export default function FarmerDeliveryRequestListPage() {
 
   const filtered = requests.filter(
     (r) => {
+      // TẠM THỜI ẨN - Lọc bỏ cà phê tươi
+      if (getCoffeeType(r) === 'fresh') return false;
+      
       const matchesStatus = !selectedStatus || r.status === selectedStatus;
       const matchesType = !selectedType || getCoffeeType(r) === selectedType;
       const matchesSearch = 
@@ -285,7 +288,8 @@ export default function FarmerDeliveryRequestListPage() {
                 <Coffee className="w-6 h-6 text-amber-200" />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
+            {/* TẠM THỜI ẨN - Card thống kê cà phê tươi */}
+            {/* <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-xs font-medium">Yêu cầu tươi</p>
@@ -293,7 +297,7 @@ export default function FarmerDeliveryRequestListPage() {
                 </div>
                 <Leaf className="w-6 h-6 text-green-200" />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -360,7 +364,10 @@ export default function FarmerDeliveryRequestListPage() {
                         <Filter className="w-4 h-4" />
                         Tất cả ({requests.length})
                       </button>
-                      {Object.entries(typeCounts).map(([type, count]) => (
+                      {/* TẠM THỜI ẨN - Filter cà phê tươi */}
+                      {Object.entries(typeCounts)
+                        .filter(([type]) => type !== 'fresh') // Ẩn cà phê tươi
+                        .map(([type, count]) => (
                         <button
                           key={type}
                           onClick={() => setSelectedType(type)}

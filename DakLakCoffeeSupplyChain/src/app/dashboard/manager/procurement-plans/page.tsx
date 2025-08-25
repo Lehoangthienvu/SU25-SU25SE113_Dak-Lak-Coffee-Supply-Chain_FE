@@ -41,6 +41,8 @@ export default function BusinessProcurementPlansPage() {
   const pageSize = 10;
   const router = useRouter();
 
+
+
   useEffect(() => {
     fetchData();
     setIsLoading(false);
@@ -66,6 +68,19 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
+        
+        // Kiểm tra và điều chỉnh trang ngay lập tức
+        const currentPageItems = procurementPlans.filter(
+          (plan) =>
+            (!selectedStatus || plan.status === selectedStatus) &&
+            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
+        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        
+        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
+        if (currentPageItems.length === 0 && currentPage > 1) {
+          setCurrentPage(1);
+        }
+        
         closeDialog();
         AppToast.success("Kế hoạch đã được mở đăng ký thành công");
       }
@@ -87,14 +102,27 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
+        
+        // Kiểm tra và điều chỉnh trang ngay lập tức
+        const currentPageItems = procurementPlans.filter(
+          (plan) =>
+            (!selectedStatus || plan.status === selectedStatus) &&
+            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
+        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        
+        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
+        if (currentPageItems.length === 0 && currentPage > 1) {
+          setCurrentPage(1);
+        }
+        
         closeDialog();
         AppToast.success("Kế hoạch đã được kết thúc đăng ký thành công");
       }
     } catch (error) {
       AppToast.error(getErrorMessage(error));
-    } finally {
-      setLoadingConfirm(false);
-    }
+          } finally {
+        setLoadingConfirm(false);
+      }
   }
 
   async function handleDelete(planId?: string) {
@@ -103,7 +131,32 @@ export default function BusinessProcurementPlansPage() {
       setLoadingConfirm(true);
       const updatedPlan = await deleteProcurementPlan(planId);
       if (updatedPlan) {
-        await fetchData();
+        // Lấy dữ liệu mới
+        const newData = await getAllProcurementPlans().catch((error) => {
+          AppToast.error(getErrorMessage(error));
+          return [];
+        });
+        
+        // Cập nhật state
+        setProcurementPlans(newData);
+        
+        // Kiểm tra và điều chỉnh trang ngay lập tức với dữ liệu mới
+        const filteredPlans = newData.filter(
+          (plan) =>
+            (!selectedStatus || plan.status === selectedStatus) &&
+            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
+        );
+        const totalPages = Math.ceil(filteredPlans.length / pageSize);
+        
+        // Nếu trang hiện tại vượt quá tổng số trang, chuyển về trang cuối cùng
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages);
+        }
+        // Nếu không còn item nào, chuyển về trang 1
+        else if (totalPages === 0) {
+          setCurrentPage(1);
+        }
+        
         closeDialog();
         AppToast.success("Kế hoạch đã được xóa thành công");
         setIsLoading(false);
@@ -126,6 +179,19 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
+        
+        // Kiểm tra và điều chỉnh trang ngay lập tức
+        const currentPageItems = procurementPlans.filter(
+          (plan) =>
+            (!selectedStatus || plan.status === selectedStatus) &&
+            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
+        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        
+        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
+        if (currentPageItems.length === 0 && currentPage > 1) {
+          setCurrentPage(1);
+        }
+        
         closeDialog();
         AppToast.success("Kế hoạch đã được hủy thành công");
       }
@@ -166,6 +232,11 @@ export default function BusinessProcurementPlansPage() {
       (!selectedStatus || plan.status === selectedStatus) &&
       (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
   );
+
+  // Reset về trang 1 khi thay đổi filter hoặc search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatus, search]);
 
   const totalPages = Math.ceil(filteredPlans.length / pageSize);
   const pagedPlans = filteredPlans.slice(
@@ -293,6 +364,8 @@ export default function BusinessProcurementPlansPage() {
               <>
                 Bạn có chắc chắn muốn mở quá trình nhận đơn đăng ký kế hoạch <b>{selectedPlan?.title}</b>?
                 <br /> Kế hoạch sau khi được mở sẽ tự cập nhật lại thời gian mở đơn đăng ký và sẽ được hiển thị trên sàn thu mua cà phê. Nông hộ sẽ có thể đăng ký kế hoạch này.
+                <br />
+                <b>Lưu ý: Kế hoạch sau khi đã mở sẽ không thể chỉnh sửa được nữa.</b>
               </>
             ) : dialogType === "closed" ? (
               <>
@@ -300,7 +373,7 @@ export default function BusinessProcurementPlansPage() {
                 <br /> Kế hoạch sau khi kết thúc sẽ tự cập nhật lại thời gian kết thúc đơn đăng ký. Sau khi kết thúc, kế hoạch sẽ không còn hiển thị trên sàn thu mua cà phê và cũng không thể mở lại. Các cam kết đã được duyệt vẫn sẽ hoạt động bình thường.
                 <br />
                 <br />
-                <b>Lưu ý:</b> kế hoạch có thể tự kết thúc sau khi đã đạt đủ sản lượng dựa trên các cam kết đã được duyệt từ hai phía.
+                <b>Lưu ý: Kế hoạch có thể tự kết thúc sau khi đã đạt đủ sản lượng dựa trên các cam kết đã được duyệt từ hai phía.</b>
               </>
             ) : dialogType === "cancel" ? (
               <>
