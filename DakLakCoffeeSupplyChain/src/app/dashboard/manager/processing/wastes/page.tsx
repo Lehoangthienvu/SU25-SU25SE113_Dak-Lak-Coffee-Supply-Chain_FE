@@ -74,7 +74,7 @@ export default function ManagerProcessingWastesPage() {
     // MANAGER: Có quyền xóa mềm chất thải
     if (confirm("Bạn có chắc chắn muốn xóa mềm chất thải này? Chất thải sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.")) {
       // TODO: Implement soft delete API call
-      console.log("Soft delete waste:", id);
+      
     }
   };
 

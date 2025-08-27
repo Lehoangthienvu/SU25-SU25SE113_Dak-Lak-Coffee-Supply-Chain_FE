@@ -137,7 +137,7 @@ export default function ManagerProcessingProgressesPage() {
       render: (value: any, item: GroupedProgress) => {
         const getStatusInfo = (status: number) => {
           // Debug: Log status để xem giá trị thực tế
-          console.log("Manager Progresses getStatusInfo received status:", status, "type:", typeof status);
+  
           
           // Xử lý status có thể là number hoặc string
           let statusString: string;
@@ -155,12 +155,12 @@ export default function ManagerProcessingProgressesPage() {
             statusString = status;
           }
           
-                      console.log("Manager Progresses converted statusString:", statusString);
+          
           
           // Kiểm tra xem status có trong enum không
           const isValidStatus = Object.values(ProcessingStatus).includes(statusString as ProcessingStatus);
           
-                      console.log("Manager Progresses is valid status:", isValidStatus);
+          
           
           if (!isValidStatus) {
             return { label: `Không xác định (${statusString})`, color: "bg-gray-100 text-gray-700" };

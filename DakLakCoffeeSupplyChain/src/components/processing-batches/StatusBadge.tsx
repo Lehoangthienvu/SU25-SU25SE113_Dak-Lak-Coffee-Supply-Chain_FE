@@ -10,8 +10,6 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  // Debug: Log status để xem giá trị thực tế
-  console.log("🔍 StatusBadge received status:", status, "type:", typeof status);
   
   // Xử lý status có thể là string hoặc number
   let statusString: string;
@@ -29,13 +27,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     statusString = status;
   }
   
-  console.log("🔍 Converted statusString:", statusString);
-  console.log("🔍 Available enum values:", Object.values(ProcessingStatus));
+  
   
   // Kiểm tra xem status có trong enum không
   const isValidStatus = Object.values(ProcessingStatus).includes(statusString as ProcessingStatus);
   
-  console.log("🔍 Is valid status:", isValidStatus);
+
   
   if (!isValidStatus) {
     return (

@@ -55,7 +55,6 @@ export function EditProgressDialog({
                 progressId: progress.progressId,
                 cropSeasonDetailId: progress.cropSeasonDetailId,
                 stageId: progress.stageId,
-                stageDescription: progress.stageName || "",
                 progressDate,
                 note,
                 // Chỉ gửi sản lượng khi là giai đoạn thu hoạch

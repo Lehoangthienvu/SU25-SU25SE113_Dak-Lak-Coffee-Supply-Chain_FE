@@ -69,6 +69,13 @@ export interface CreateProgressWithMediaPayload {
   parameterValue?: string;
   unit?: string;
   recordedAt?: string;
+  wastes?: Array<{
+    wasteType: string;
+    quantity: number;
+    unit: string;
+    note: string;
+    recordedAt: string;
+  }>;
 }
 
 export interface AdvanceProgressWithMediaPayload {
@@ -84,6 +91,13 @@ export interface AdvanceProgressWithMediaPayload {
   parameterValue?: string;
   unit?: string;
   recordedAt?: string;
+  wastes?: Array<{
+    wasteType: string;
+    quantity: number;
+    unit: string;
+    note: string;
+    recordedAt: string;
+  }>;
 }
 export async function getAllProcessingBatchProgresses(): Promise<ProcessingBatchProgress[]> {
   try {
@@ -196,6 +210,33 @@ export async function createProcessingBatchProgressWithMedia(
     payload.videoFiles.forEach(file => formData.append("videoFiles", file));
   }
 
+  // Thêm waste data nếu có - gửi dưới dạng field riêng biệt giống parameter
+  if (payload.wastes && payload.wastes.length > 0) {
+    const firstWaste = payload.wastes[0]; // Lấy waste đầu tiên
+    if (firstWaste.wasteType && firstWaste.quantity > 0 && firstWaste.unit) {
+      formData.append("WasteType", firstWaste.wasteType);
+      formData.append("WasteQuantity", firstWaste.quantity.toString());
+      formData.append("WasteUnit", firstWaste.unit);
+      if (firstWaste.note) {
+        formData.append("WasteNote", firstWaste.note);
+      }
+      if (firstWaste.recordedAt) {
+        formData.append("WasteRecordedAt", firstWaste.recordedAt);
+      }
+      console.log("🔍 Adding waste fields to FormData:", {
+        WasteType: firstWaste.wasteType,
+        WasteQuantity: firstWaste.quantity,
+        WasteUnit: firstWaste.unit,
+        WasteNote: firstWaste.note,
+        WasteRecordedAt: firstWaste.recordedAt
+      });
+    } else {
+      console.log("🔍 No valid waste data to send");
+    }
+  } else {
+    console.log("🔍 No wastes to send");
+  }
+
   console.log("📤 API: createProcessingBatchProgressWithMedia");
   console.log("📤 BatchId:", batchId);
   console.log("📤 FormData entries:");
@@ -257,10 +298,7 @@ export async function advanceToNextProcessingProgress(
   formData.append("outputQuantity", payload.outputQuantity.toString());
   formData.append("outputUnit", payload.outputUnit);
   
-  // Thêm stageDescription nếu có
-  if (payload.stageDescription) {
-    formData.append("stageDescription", payload.stageDescription);
-  }
+
   
   // Thêm parameters nếu có
   if (payload.parameterName) {
@@ -284,6 +322,33 @@ export async function advanceToNextProcessingProgress(
   // Thêm video files
   if (payload.videoFiles) {
     payload.videoFiles.forEach(file => formData.append("videoFiles", file));
+  }
+
+  // Thêm waste data nếu có - gửi dưới dạng field riêng biệt giống parameter
+  if (payload.wastes && payload.wastes.length > 0) {
+    const firstWaste = payload.wastes[0]; // Lấy waste đầu tiên
+    if (firstWaste.wasteType && firstWaste.quantity > 0 && firstWaste.unit) {
+      formData.append("WasteType", firstWaste.wasteType);
+      formData.append("WasteQuantity", firstWaste.quantity.toString());
+      formData.append("WasteUnit", firstWaste.unit);
+      if (firstWaste.note) {
+        formData.append("WasteNote", firstWaste.note);
+      }
+      if (firstWaste.recordedAt) {
+        formData.append("WasteRecordedAt", firstWaste.recordedAt);
+      }
+      console.log("🔍 Adding waste fields to FormData:", {
+        WasteType: firstWaste.wasteType,
+        WasteQuantity: firstWaste.quantity,
+        WasteUnit: firstWaste.unit,
+        WasteNote: firstWaste.note,
+        WasteRecordedAt: firstWaste.recordedAt
+      });
+    } else {
+      console.log("🔍 No valid waste data to send");
+    }
+  } else {
+    console.log("🔍 No wastes to send");
   }
 
   console.log("📤 API: advanceToNextProcessingProgress");

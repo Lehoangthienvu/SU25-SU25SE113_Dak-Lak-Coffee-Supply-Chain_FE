@@ -4,11 +4,12 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import imageCompression from "browser-image-compression";
 import { advanceToNextProcessingProgress } from "@/lib/api/processingBatchProgress";
 import { getProcessingBatchById } from "@/lib/api/processingBatches";
 import { getProcessingStagesByMethodId, ProcessingStage } from "@/lib/api/processingStages";
+import WasteInput, { WasteInputData } from "./WasteInput";
 
 import { ProcessingBatchProgress } from "@/lib/api/processingBatchProgress";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
@@ -37,12 +38,16 @@ export default function AdvanceProcessingProgressForm({
   );
   const [outputQuantity, setOutputQuantity] = useState<number>(0);
   const [outputUnit, setOutputUnit] = useState("kg");
-  const [stageDescription, setStageDescription] = useState(""); // Thêm state cho description
+  const [stageDescription, setStageDescription] = useState("");
+
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
   const [parameterName, setParameterName] = useState("");
   const [parameterValue, setParameterValue] = useState("");
   const [unit, setUnit] = useState("");
+  const [wastes, setWastes] = useState<WasteInputData[]>([
+    { wasteType: "", quantity: 0, unit: "kg", note: "", recordedAt: new Date().toISOString().split("T")[0] }
+  ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -51,10 +56,7 @@ export default function AdvanceProcessingProgressForm({
      const [selectedStageId, setSelectedStageId] = useState<number | undefined>(undefined); // ✅ Nhất quán với backend C# sử dụng int
    const [loadingStages, setLoadingStages] = useState(false);
 
-   // Debug log khi selectedStageId thay đổi
-   useEffect(() => {
-     console.log("🔍 DEBUG: selectedStageId changed to:", selectedStageId);
-   }, [selectedStageId]);
+   
 
   // Tính toán button text dựa trên failedStageInfo
   const getButtonText = () => {
@@ -83,69 +85,48 @@ export default function AdvanceProcessingProgressForm({
                .filter(stage => !stage.isDeleted)
                .sort((a, b) => a.orderIndex - b.orderIndex);
            } catch (err) {
-             console.log("API chưa có, sử dụng mock data");
-             // Fallback: Sử dụng mock data khi API chưa có
-            //  availableStages = [
-            //    { stageId: "stage_1", stageName: "Thu hoạch", orderIndex: 1, methodId: batch.methodId, isRequired: true, isDeleted: false },
-            //    { stageId: "stage_2", stageName: "Làm sạch", orderIndex: 2, methodId: batch.methodId, isRequired: true, isDeleted: false },
-            //    { stageId: "stage_3", stageName: "Phân loại", orderIndex: 3, methodId: batch.methodId, isRequired: true, isDeleted: false },
-            //    { stageId: "stage_4", stageName: "Phơi", orderIndex: 4, methodId: batch.methodId, isRequired: true, isDeleted: false },
-            //    { stageId: "stage_5", stageName: "Rang", orderIndex: 5, methodId: batch.methodId, isRequired: true, isDeleted: false },
-            //    { stageId: "stage_6", stageName: "Đóng gói", orderIndex: 6, methodId: batch.methodId, isRequired: true, isDeleted: false }
-            //  ];
+
            }
            
            setAvailableStages(availableStages);
            
-           // Debug logs để kiểm tra auto selection
-           console.log("🔍 DEBUG: Auto stage selection");
-           console.log("Available stages:", availableStages.map(s => ({ stageId: s.stageId, stageName: s.stageName, orderIndex: s.orderIndex })));
-           console.log("Latest progress:", latestProgress ? { stageId: latestProgress.stageId, stageName: latestProgress.stageName } : "No progress");
-           console.log("Failed stage info:", failedStageInfo);
+           
            
            // Tự động chọn stage bị fail hoặc stage tiếp theo
            if (failedStageInfo) {
              // Nếu có stage bị fail, chọn stage đó
              const failedStage = availableStages.find(s => s.stageId === failedStageInfo.stageId);
-             console.log("🔍 DEBUG: Failed stage found:", failedStage);
-             setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || undefined);
+                           setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || undefined);
            } else if (latestProgress) {
              // Nếu không có stage bị fail, chọn stage tiếp theo
-             let currentStageIndex = availableStages.findIndex(s => s.stageId === latestProgress.stageId);
-             console.log("🔍 DEBUG: Current stage index (exact match):", currentStageIndex);
+                           let currentStageIndex = availableStages.findIndex(s => s.stageId === latestProgress.stageId);
              
-             // Nếu không tìm thấy exact match, thử tìm theo stageName
-             if (currentStageIndex === -1) {
-               currentStageIndex = availableStages.findIndex(s => s.stageName === latestProgress.stageName);
-               console.log("🔍 DEBUG: Current stage index (name match):", currentStageIndex);
-             }
+                             // Nếu không tìm thấy exact match, thử tìm theo stageName
+                if (currentStageIndex === -1) {
+                  currentStageIndex = availableStages.findIndex(s => s.stageName === latestProgress.stageName);
+                }
              
-             // Nếu vẫn không tìm thấy, thử tìm theo stepIndex
-             if (currentStageIndex === -1 && latestProgress.stepIndex) {
-               currentStageIndex = availableStages.findIndex(s => s.orderIndex === latestProgress.stepIndex);
-               console.log("🔍 DEBUG: Current stage index (step match):", currentStageIndex);
-             }
+                             // Nếu vẫn không tìm thấy, thử tìm theo stepIndex
+                if (currentStageIndex === -1 && latestProgress.stepIndex) {
+                  currentStageIndex = availableStages.findIndex(s => s.orderIndex === latestProgress.stepIndex);
+                }
              
-             if (currentStageIndex >= 0 && currentStageIndex < availableStages.length - 1) {
-               const nextStage = availableStages[currentStageIndex + 1];
-               console.log("🔍 DEBUG: Next stage selected:", nextStage);
-               setSelectedStageId(nextStage.stageId || undefined);
-             } else if (currentStageIndex >= 0) {
-               const currentStage = availableStages[currentStageIndex];
-               console.log("🔍 DEBUG: Current stage selected (no next):", currentStage);
-               setSelectedStageId(currentStage?.stageId || undefined);
-             } else {
-               // Nếu không tìm thấy stage hiện tại, chọn stage đầu tiên
-               const firstStage = availableStages[0];
-               console.log("🔍 DEBUG: First stage selected (fallback):", firstStage);
-               setSelectedStageId(firstStage?.stageId || undefined);
-             }
-           } else {
-             // Nếu chưa có progress nào, chọn stage đầu tiên
-             const firstStage = availableStages[0];
-             console.log("🔍 DEBUG: First stage selected:", firstStage);
-             setSelectedStageId(firstStage?.stageId || undefined);
-           }
+                             if (currentStageIndex >= 0 && currentStageIndex < availableStages.length - 1) {
+                  const nextStage = availableStages[currentStageIndex + 1];
+                  setSelectedStageId(nextStage.stageId || undefined);
+                } else if (currentStageIndex >= 0) {
+                  const currentStage = availableStages[currentStageIndex];
+                  setSelectedStageId(currentStage?.stageId || undefined);
+                } else {
+                  // Nếu không tìm thấy stage hiện tại, chọn stage đầu tiên
+                  const firstStage = availableStages[0];
+                  setSelectedStageId(firstStage?.stageId || undefined);
+                }
+                       } else {
+              // Nếu chưa có progress nào, chọn stage đầu tiên
+              const firstStage = availableStages[0];
+              setSelectedStageId(firstStage?.stageId || undefined);
+            }
         }
       } catch (err) {
         console.error("Error loading stages:", err);
@@ -159,6 +140,7 @@ export default function AdvanceProcessingProgressForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🔍 AdvanceProcessingProgressForm handleSubmit started");
     setLoading(true);
     setError(null);
 
@@ -197,20 +179,52 @@ export default function AdvanceProcessingProgressForm({
         }
       }
 
-             await advanceToNextProcessingProgress(batchId, {
-         stageId: selectedStageId, // Stage được chọn từ dropdown
-         currentStageId: latestProgress?.stageId, // Stage hiện tại để backend validate
-         progressDate,
-         outputQuantity,
-         outputUnit,
-         stageDescription: stageDescription || undefined, // Thêm description
-         photoFiles: compressedPhotos.length ? compressedPhotos : undefined,
-         videoFiles: videoFiles.length ? videoFiles : undefined,
-         parameterName: parameterName || undefined,
-         parameterValue: parameterValue || undefined,
-         unit: unit || undefined,
-         recordedAt: new Date().toISOString(),
-       });
+                                                       // Lọc waste có dữ liệu hợp lệ
+               console.log("🔍 Filtering wastes:", wastes);
+               const validWastes = wastes.filter(waste => {
+                 const isValid = waste.wasteType.trim() && waste.quantity > 0 && waste.unit.trim();
+                 console.log(`🔍 Waste validation:`, {
+                   wasteType: waste.wasteType.trim(),
+                   quantity: waste.quantity,
+                   unit: waste.unit.trim(),
+                   isValid
+                 });
+                 return isValid;
+               });
+               
+               console.log("🔍 Valid wastes:", validWastes);
+               console.log("🔍 All wastes:", wastes);
+               console.log("🔍 First waste details:", wastes[0]);
+               console.log("🔍 First waste validation check:", {
+                 hasWasteType: !!wastes[0]?.wasteType,
+                 wasteTypeLength: wastes[0]?.wasteType?.length || 0,
+                 hasQuantity: wastes[0]?.quantity > 0,
+                 quantityValue: wastes[0]?.quantity,
+                 hasUnit: !!wastes[0]?.unit,
+                 unitLength: wastes[0]?.unit?.length || 0
+               });
+
+             const apiPayload = {
+               stageId: selectedStageId, // Stage được chọn từ dropdown
+               currentStageId: latestProgress?.stageId, // Stage hiện tại để backend validate
+               progressDate,
+               outputQuantity,
+               outputUnit,
+               stageDescription: stageDescription || undefined,
+ 
+               photoFiles: compressedPhotos.length ? compressedPhotos : undefined,
+               videoFiles: videoFiles.length ? videoFiles : undefined,
+               parameterName: parameterName || undefined,
+               parameterValue: parameterValue || undefined,
+               unit: unit || undefined,
+               recordedAt: new Date().toISOString(),
+               wastes: validWastes.length > 0 ? validWastes : undefined,
+             };
+             
+             console.log("🔍 API payload:", apiPayload);
+             console.log("🔍 Calling advanceToNextProcessingProgress...");
+             
+             await advanceToNextProcessingProgress(batchId, apiPayload);
 
       onSuccess?.();
          } catch (err: any) {
@@ -255,7 +269,30 @@ export default function AdvanceProcessingProgressForm({
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => {
+        console.log("🔍 AdvanceProcessingProgressForm onSubmit triggered!");
+        console.log("🔍 Event:", e);
+        console.log("🔍 Form element:", e.currentTarget);
+        console.log("🔍 Submit button clicked - form is submitting!");
+        console.log("🔍 Form state at submit:");
+        console.log("  - batchId:", batchId);
+        console.log("  - progressDate:", progressDate);
+        console.log("  - outputQuantity:", outputQuantity);
+        console.log("  - outputUnit:", outputUnit);
+        console.log("  - selectedStageId:", selectedStageId);
+        console.log("  - Wastes count:", wastes.length);
+        wastes.forEach((waste, index) => {
+          console.log(`  - Waste ${index}:`, {
+            wasteType: waste.wasteType,
+            quantity: waste.quantity,
+            unit: waste.unit,
+            note: waste.note,
+            recordedAt: waste.recordedAt
+          });
+        });
+        console.log("🔍 About to call handleSubmit...");
+        handleSubmit(e);
+      }}
       className="bg-white w-full h-full overflow-hidden"
     >
       {/* Header - Orange gradient */}
@@ -326,8 +363,8 @@ export default function AdvanceProcessingProgressForm({
           )}
         </div>
 
-        {/* Main form - 3 columns horizontal layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+                {/* Main form - 3 columns horizontal layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           
           {/* Column 1 - Basic Info */}
           <div className="space-y-4">
@@ -341,31 +378,6 @@ export default function AdvanceProcessingProgressForm({
             </h3>
 
             <div className="space-y-4">
-                             {/* Stage Selection - Ẩn vì đã auto chọn */}
-               {/* <div>
-                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                   Công đoạn thực hiện
-                 </label>
-                 {loadingStages ? (
-                   <div className="w-full h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
-                   </div>
-                 ) : (
-                   <select
-                     value={selectedStageId}
-                     onChange={(e) => setSelectedStageId(e.target.value)}
-                     className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                   >
-                     <option value="">Chọn công đoạn...</option>
-                     {availableStages.map((stage) => (
-                       <option key={stage.stageId} value={stage.stageId}>
-                         Bước {stage.orderIndex}: {stage.stageName}
-                       </option>
-                     ))}
-                   </select>
-                 )}
-               </div> */}
-
               {/* Hiển thị thông tin stage bị fail khi có failedStageInfo */}
               {failedStageInfo && (
                 <div>
@@ -407,39 +419,38 @@ export default function AdvanceProcessingProgressForm({
                 />
               </div>
 
-                             <div>
-                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                   Đơn vị
-                 </label>
-                 <select
-                   value={outputUnit}
-                   onChange={(e) => setOutputUnit(e.target.value)}
-                   required
-                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                 >
-                   <option value="">Chọn đơn vị...</option>
-                   <option value="kg">Kilogram (kg)</option>
-                   <option value="g">Gram (g)</option>
-                   <option value="tấn">Tấn</option>
-                   <option value="tạ">Tạ</option>
-                   <option value="yến">Yến</option>
-                   <option value="lạng">Lạng</option>
-                   <option value="lb">Pound (lb)</option>
-                   <option value="oz">Ounce (oz)</option>
-                 </select>
-               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Mô tả công đoạn
                 </label>
-                <Textarea
+                <textarea
                   value={stageDescription}
                   onChange={(e) => setStageDescription(e.target.value)}
-                  placeholder="Mô tả chi tiết về công đoạn thực hiện, phương pháp, điều kiện môi trường..."
-                  className="w-full min-h-[100px] border-2 border-gray-200 rounded-lg px-4 py-3 text-sm resize-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                  rows={4}
+                  placeholder="Mô tả chi tiết về công đoạn thực hiện..."
+                  className="w-full h-24 border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 resize-none"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Đơn vị
+                </label>
+                <select
+                  value={outputUnit}
+                  onChange={(e) => setOutputUnit(e.target.value)}
+                  required
+                  className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
+                >
+                  <option value="">Chọn đơn vị...</option>
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="g">Gram (g)</option>
+                  <option value="tấn">Tấn</option>
+                  <option value="tạ">Tạ</option>
+                  <option value="yến">Yến</option>
+                  <option value="lạng">Lạng</option>
+                  <option value="lb">Pound (lb)</option>
+                  <option value="oz">Ounce (oz)</option>
+                </select>
               </div>
             </div>
           </div>
@@ -562,9 +573,113 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {videoFiles.length > 0 ? `${videoFiles.length} video` : 'Chọn video'}
+                    {videoFiles.length > 0 ? `${photoFiles.length} video` : 'Chọn video'}
                   </label>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Waste Input Section - Full width below main form */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl p-6">
+            <h3 className="text-lg font-bold text-red-800 mb-4 flex items-center gap-3">
+              <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              Thông tin phế phẩm
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-red-700 mb-2">
+                  Loại phế phẩm
+                </label>
+                <Input
+                  type="text"
+                  value={wastes[0]?.wasteType || ""}
+                  onChange={(e) => {
+                    const newWastes = [...wastes];
+                    newWastes[0] = { ...newWastes[0], wasteType: e.target.value };
+                    setWastes(newWastes);
+                  }}
+                  placeholder="VD: Vỏ cà phê, Bã..."
+                  className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-red-700 mb-2">
+                  Khối lượng
+                </label>
+                <Input
+                  type="number"
+                  value={wastes[0]?.quantity || 0}
+                  min={0}
+                  step="any"
+                  onChange={(e) => {
+                    const newWastes = [...wastes];
+                    newWastes[0] = { ...newWastes[0], quantity: parseFloat(e.target.value) || 0 };
+                    setWastes(newWastes);
+                  }}
+                  placeholder="Nhập khối lượng..."
+                  className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-red-700 mb-2">
+                  Đơn vị
+                </label>
+                <select
+                  value={wastes[0]?.unit || "kg"}
+                  onChange={(e) => {
+                    const newWastes = [...wastes];
+                    newWastes[0] = { ...newWastes[0], unit: e.target.value };
+                    setWastes(newWastes);
+                  }}
+                  className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
+                >
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="g">Gram (g)</option>
+                  <option value="tấn">Tấn</option>
+                  <option value="tạ">Tạ</option>
+                </select>
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-red-700 mb-2">
+                  Ghi chú
+                </label>
+                <textarea
+                  value={wastes[0]?.note || ""}
+                  onChange={(e) => {
+                    const newWastes = [...wastes];
+                    newWastes[0] = { ...newWastes[0], note: e.target.value };
+                    setWastes(newWastes);
+                  }}
+                  placeholder="Mô tả chi tiết về phế phẩm..."
+                  className="w-full h-24 border-2 border-red-200 rounded-lg px-4 py-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200 resize-none"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-red-700 mb-2">
+                  Ngày ghi nhận
+                </label>
+                <Input
+                  type="date"
+                  value={wastes[0]?.recordedAt || new Date().toISOString().split("T")[0]}
+                  onChange={(e) => {
+                    const newWastes = [...wastes];
+                    newWastes[0] = { ...newWastes[0], recordedAt: e.target.value };
+                    setWastes(newWastes);
+                  }}
+                  className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
+                />
               </div>
             </div>
           </div>

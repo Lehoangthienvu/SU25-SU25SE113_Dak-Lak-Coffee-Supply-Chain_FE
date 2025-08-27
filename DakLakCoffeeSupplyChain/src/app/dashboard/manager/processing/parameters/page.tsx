@@ -55,7 +55,7 @@ export default function ManagerProcessingParametersPage() {
     // MANAGER: Có quyền xóa mềm tham số
     if (confirm("Bạn có chắc chắn muốn xóa mềm tham số này? Tham số sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.")) {
       // TODO: Implement soft delete API call
-      console.log("Soft delete parameter:", id);
+      
     }
   };
 

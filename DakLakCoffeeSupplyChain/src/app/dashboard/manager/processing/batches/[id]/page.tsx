@@ -89,25 +89,25 @@ export default function ViewProcessingBatchManager() {
 
   // Xử lý các thao tác nhanh
   const handleViewProgress = () => {
-    console.log("Xem tiến độ chi tiết cho lô:", batch?.batchCode);
+    
     // TODO: Implement view progress functionality
     AppToast.info("Chức năng xem tiến độ chi tiết đang được phát triển");
   };
 
   const handleViewExpertEvaluation = () => {
-    console.log("Xem đánh giá của chuyên gia cho lô:", batch?.batchCode);
+    
     // TODO: Implement view expert evaluation functionality
     AppToast.info("Chức năng xem đánh giá của chuyên gia đang được phát triển");
   };
 
   const handleEditBatch = () => {
-    console.log("Chỉnh sửa thông tin lô:", batch?.batchCode);
+    
     // TODO: Implement edit batch functionality
     AppToast.info("Chức năng chỉnh sửa thông tin đang được phát triển");
   };
 
   const handleDeleteBatch = () => {
-    console.log("Xóa lô:", batch?.batchCode);
+    
     if (confirm("Bạn có chắc chắn muốn xóa lô sơ chế này?")) {
       // TODO: Implement delete batch functionality
       AppToast.info("Chức năng xóa lô đang được phát triển");
@@ -333,39 +333,73 @@ export default function ViewProcessingBatchManager() {
                 Tiến độ chế biến
               </h2>
               {batch.progresses && batch.progresses.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gradient-to-r from-blue-50 to-cyan-50">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Tên giai đoạn</th>
-                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Chi tiết giai đoạn</th>
-                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Khối lượng đầu ra</th>
-                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Ngày thực hiện</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-blue-100">
-                      {batch.progresses.map((progress, idx) => (
-                        <tr key={idx} className="hover:bg-blue-50/50 transition-all duration-200">
-                          <td className="px-6 py-4">
-                            <span className="font-medium text-gray-800">{progress.stageName}</span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-gray-700">{progress.stageDescription || "Không có mô tả"}</span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-gray-800 font-semibold">
-                              {progress.outputQuantity} {progress.outputUnit}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-gray-600">
-                              {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString("vi-VN") : "—"}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-4">
+                  {batch.progresses
+                    .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
+                    .map((progress, idx) => {
+                      // Kiểm tra xem có phải bước retry không
+                      const isRetryStep = progress.stepIndex > 1 && idx > 0;
+                      const previousProgress = idx > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
+                      const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                      
+                      return (
+                        <div
+                          key={idx}
+                          className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6 ${
+                            isRetry 
+                              ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50' 
+                              : 'border-gray-200 hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                  isRetry 
+                                    ? 'bg-orange-100 text-orange-700' 
+                                    : 'bg-purple-100 text-purple-700'
+                                }`}>
+                                  Bước {progress.stepIndex}
+                                  {isRetry && (
+                                    <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
+                                      Làm lại
+                                    </span>
+                                  )}
+                                </span>
+                                <h3 className="font-semibold text-gray-900 text-lg">
+                                  {progress.stageName}
+                                  {isRetry && (
+                                    <span className="ml-2 text-sm text-orange-600 font-medium">
+                                      (Làm lại)
+                                    </span>
+                                  )}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-100">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Calendar className="w-4 h-4 text-blue-600" />
+                                <span className="font-medium text-gray-700">Ngày thực hiện</span>
+                              </div>
+                              <span className="text-gray-800 font-semibold text-lg">
+                                {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString("vi-VN") : "—"}
+                              </span>
+                            </div>
+                            <div className="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-4 border border-green-100">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Scale className="w-4 h-4 text-green-600" />
+                                <span className="font-medium text-gray-700">Khối lượng đầu ra</span>
+                              </div>
+                              <span className="text-gray-800 font-semibold text-lg">
+                                {progress.outputQuantity} {progress.outputUnit}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               ) : (
                 <div className="text-center py-12 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-100">

@@ -88,7 +88,7 @@ export default function EditProcessingBatchPage() {
       setSaving(true);
       
       // TODO: Implement update API call
-      console.log("Updating batch:", batchId, formData);
+      
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));

@@ -10,6 +10,7 @@ import { getProcessingStagesByMethodId, ProcessingStage } from "@/lib/api/proces
 import imageCompression from "browser-image-compression";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import MediaUploadSection from "./MediaUploadSection";
+import WasteInput, { WasteInputData } from "./WasteInput";
 import { AlertCircle, Plus, X, Calendar, Scale, Settings, Package, PlayCircle } from "lucide-react";
 
 type Props = {
@@ -38,6 +39,7 @@ export default function CreateProcessingProgressForm({
     videoFiles: [] as File[],
     parameters: [{ name: "", value: "", unit: "" }] as Array<{ name: string; value: string; unit: string }>,
     recordedAt: new Date().toISOString(),
+    wastes: [{ wasteType: "", quantity: 0, unit: "kg", note: "", recordedAt: new Date().toISOString().split("T")[0] }] as WasteInputData[],
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -157,18 +159,28 @@ export default function CreateProcessingProgressForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🔍 Form submit started");
     setLoading(true);
     setError("");
     setSuccess("");
 
     // Validation
+    console.log("🔍 Validating form data:", {
+      batchId: form.batchId,
+      progressDate: form.progressDate,
+      outputQuantity: form.outputQuantity,
+      outputUnit: form.outputUnit
+    });
+    
     if (!form.batchId) {
+      console.log("❌ Validation failed: No batchId");
       setError("Vui lòng chọn lô chế biến");
       setLoading(false);
       return;
     }
 
     if (!form.progressDate) {
+      console.log("❌ Validation failed: No progressDate");
       setError("Vui lòng chọn ngày thực hiện");
       setLoading(false);
       return;
@@ -185,6 +197,7 @@ export default function CreateProcessingProgressForm({
     }
 
     if (form.outputQuantity <= 0) {
+      console.log("❌ Validation failed: outputQuantity <= 0");
       setError("Khối lượng đầu ra phải lớn hơn 0");
       setLoading(false);
       return;
@@ -262,7 +275,24 @@ export default function CreateProcessingProgressForm({
       const parameterValue = firstParameter.value.trim();
       const unit = firstParameter.unit.trim();
 
-      await createProcessingBatchProgressWithMedia(form.batchId, {
+                    // Lọc waste có dữ liệu hợp lệ
+        console.log("🔍 Filtering wastes:", form.wastes);
+        const validWastes = form.wastes.filter(waste => {
+          const isValid = waste.wasteType.trim() && waste.quantity > 0 && waste.unit.trim();
+          console.log(`🔍 Waste validation:`, {
+            wasteType: waste.wasteType.trim(),
+            quantity: waste.quantity,
+            unit: waste.unit.trim(),
+            isValid
+          });
+          return isValid;
+        });
+        
+        console.log("🔍 Valid wastes:", validWastes);
+        console.log("🔍 All wastes:", form.wastes);
+        console.log("🔍 About to call API with batchId:", form.batchId);
+
+      const apiPayload = {
         stageId: undefined, // Để Backend tự động xác định stage đầu tiên
         progressDate: form.progressDate,
         outputQuantity: form.outputQuantity,
@@ -273,7 +303,13 @@ export default function CreateProcessingProgressForm({
         parameterValue: parameterValue || undefined,
         unit: unit || undefined,
         recordedAt: form.recordedAt || undefined,
-      });
+        wastes: validWastes.length > 0 ? validWastes : undefined,
+      };
+      
+      console.log("🔍 API payload:", apiPayload);
+      console.log("🔍 Calling createProcessingBatchProgressWithMedia...");
+      
+      await createProcessingBatchProgressWithMedia(form.batchId, apiPayload);
 
       setSuccess("Tạo tiến trình thành công!");
       onSuccess?.();
@@ -306,7 +342,29 @@ export default function CreateProcessingProgressForm({
         <p className="text-sm text-gray-600">Bắt đầu quy trình chế biến cà phê</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+                                                                                                               <form onSubmit={(e) => {
+           console.log("🔍 Form onSubmit triggered!");
+           console.log("🔍 Event:", e);
+           console.log("🔍 Form element:", e.currentTarget);
+           console.log("🔍 Form state at submit:", form);
+           console.log("🔍 Wastes at submit:", form.wastes);
+           console.log("🔍 Form validation check:");
+           console.log("  - batchId:", form.batchId);
+           console.log("  - progressDate:", form.progressDate);
+           console.log("  - outputQuantity:", form.outputQuantity);
+           console.log("  - outputUnit:", form.outputUnit);
+           console.log("  - Wastes count:", form.wastes.length);
+           form.wastes.forEach((waste, index) => {
+             console.log(`  - Waste ${index}:`, {
+               wasteType: waste.wasteType,
+               quantity: waste.quantity,
+               unit: waste.unit,
+               note: waste.note,
+               recordedAt: waste.recordedAt
+             });
+           });
+           handleSubmit(e);
+         }} className="space-y-6">
         {/* Batch Selection - Chỉ hiển thị khi không có defaultBatchId */}
         {!defaultBatchId && (
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
@@ -538,6 +596,31 @@ export default function CreateProcessingProgressForm({
           </div>
         </div>
 
+        {/* Waste Input Section - Full width */}
+        <div className="mb-6">
+                                                                                       <WasteInput
+               wastes={form.wastes}
+               onWastesChange={(wastes) => {
+                 console.log("🔍 WasteInput onChange triggered!");
+                 console.log("🔍 New wastes:", wastes);
+                 console.log("🔍 Previous wastes:", form.wastes);
+                 console.log("🔍 Waste validation check:");
+                 wastes.forEach((waste, index) => {
+                   console.log(`  - Waste ${index}:`, {
+                     wasteType: waste.wasteType,
+                     quantity: waste.quantity,
+                     unit: waste.unit,
+                     note: waste.note,
+                     recordedAt: waste.recordedAt
+                   });
+                 });
+                 console.log("🔍 About to update form state...");
+                 setForm(prev => ({ ...prev, wastes }));
+                 console.log("🔍 Form state updated with new wastes");
+               }}
+             />
+        </div>
+
         {/* Media Upload Section */}
         <MediaUploadSection
           photoFiles={form.photoFiles}
@@ -579,13 +662,33 @@ export default function CreateProcessingProgressForm({
           >
             Huỷ
           </Button>
-          <Button
-            type="submit"
-            disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            {loading ? "Đang lưu..." : "Tạo tiến trình"}
-          </Button>
+                                                                                                                                                                               <Button
+                type="submit"
+                disabled={loading}
+                onClick={() => {
+                  console.log("🔍 Submit button clicked!");
+                  console.log("🔍 Current form state:", form);
+                  console.log("🔍 Current wastes:", form.wastes);
+                  console.log("🔍 Form validation check:");
+                  console.log("  - batchId:", form.batchId);
+                  console.log("  - progressDate:", form.progressDate);
+                  console.log("  - outputQuantity:", form.outputQuantity);
+                  console.log("  - outputUnit:", form.outputUnit);
+                  console.log("  - Wastes count:", form.wastes.length);
+                  form.wastes.forEach((waste, index) => {
+                    console.log(`  - Waste ${index}:`, {
+                      wasteType: waste.wasteType,
+                      quantity: waste.quantity,
+                      unit: waste.unit,
+                      note: waste.note,
+                      recordedAt: waste.recordedAt
+                    });
+                  });
+                }}
+                className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                {loading ? "Đang lưu..." : "Tạo tiến trình"}
+              </Button>
         </div>
       </form>
     </div>

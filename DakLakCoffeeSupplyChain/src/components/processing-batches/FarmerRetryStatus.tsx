@@ -19,7 +19,7 @@ interface FarmerRetryStatusProps {
       stageName: string;
       stepIndex: number;
       progressDate?: string;
-      stageDescription?: string;
+
       updatedByName?: string;
     }>;
   };
@@ -35,7 +35,7 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
     // 🔧 CẢI THIỆN: Kiểm tra trạng thái batch trước
     // Nếu batch đã chuyển sang "AwaitingEvaluation" thì có nghĩa là farmer đã cập nhật lại
     if (batch.status === 'AwaitingEvaluation') {
-      console.log('🔍 DEBUG FarmerRetryStatus: Batch status is AwaitingEvaluation - farmer has retried');
+      
       return true;
     }
     
@@ -49,7 +49,7 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
     });
     
     // 🔧 CẢI THIỆN: Kiểm tra xem có progress nào được tạo sau evaluation không
-    // Và đảm bảo đó là retry thực sự (có stageDescription chứa "Retry" hoặc có stepIndex cao hơn)
+    // Và đảm bảo đó là retry thực sự (có stepIndex cao hơn)
     return failedStageProgresses.some(progress => {
       if (!progress.progressDate) return false;
       const progressDate = new Date(progress.progressDate);
@@ -58,19 +58,9 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
       const isAfterEvaluation = progressDate > evaluationDate;
       
       // Kiểm tra có phải retry thực sự không
-      const isRetry = progress.stageDescription?.toLowerCase().includes('retry') || 
-                     progress.stepIndex > 1; // Nếu stepIndex > 1 thì có thể là retry
+      const isRetry = progress.stepIndex > 1; // Nếu stepIndex > 1 thì có thể là retry
       
-      console.log(`🔍 DEBUG FarmerRetryStatus: Progress ${progress.progressId}:`, {
-        stageName: progress.stageName,
-        progressDate: progress.progressDate,
-        evaluationDate: evaluation.evaluatedAt,
-        isAfterEvaluation,
-        stageDescription: progress.stageDescription,
-        stepIndex: progress.stepIndex,
-        isRetry,
-        finalResult: isAfterEvaluation && isRetry
-      });
+
       
       return isAfterEvaluation && isRetry;
     });
@@ -95,8 +85,7 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
         
         return {
           progressDate: latestProgress.progressDate,
-          updatedByName: latestProgress.updatedByName,
-          stageDescription: latestProgress.stageDescription || 'Đã cập nhật lại theo khuyến nghị'
+          updatedByName: latestProgress.updatedByName
         };
       }
       return null;
@@ -110,8 +99,7 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
       const isAfterEvaluation = progressDate > evaluationDate;
       
       // Kiểm tra có phải retry thực sự không
-      const isRetry = progress.stageDescription?.toLowerCase().includes('retry') || 
-                     progress.stepIndex > 1;
+      const isRetry = progress.stepIndex > 1;
       
       return isAfterEvaluation && isRetry;
     });
@@ -121,11 +109,10 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
         new Date(b.progressDate || '').getTime() - new Date(a.progressDate || '').getTime()
       )[0];
       
-      return {
-        progressDate: latestRetry.progressDate,
-        updatedByName: latestRetry.updatedByName,
-        stageDescription: latestRetry.stageDescription
-      };
+              return {
+          progressDate: latestRetry.progressDate,
+          updatedByName: latestRetry.updatedByName
+        };
     }
     
     return null;
@@ -148,9 +135,7 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
             <div className="text-sm text-green-700 space-y-1">
               <p><strong>Ngày cập nhật:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
               <p><strong>Cập nhật bởi:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || 'Nông dân'}</p>
-              {latestRetryInfo.stageDescription && (
-                <p><strong>Mô tả:</strong> {latestRetryInfo.stageDescription}</p>
-              )}
+              
             </div>
           )}
           

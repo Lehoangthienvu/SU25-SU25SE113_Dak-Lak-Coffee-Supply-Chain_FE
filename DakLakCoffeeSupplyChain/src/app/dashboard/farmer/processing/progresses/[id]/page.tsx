@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getAllProcessingBatches, ProcessingBatch } from '@/lib/api/processingBatches';
 import { getAllProcessingBatchProgresses, ProcessingBatchProgress } from '@/lib/api/processingBatchProgress';
+import { getProcessingStagesByMethodId, ProcessingStage } from '@/lib/api/processingStages';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { ArrowLeft, Calendar, User, Package, TrendingUp, FileImage, FileVideo, Scale, Info, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -15,6 +16,7 @@ export default function ProgressDetailPage() {
   const router = useRouter();
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
   const [progresses, setProgresses] = useState<ProcessingBatchProgress[]>([]);
+  const [totalStages, setTotalStages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -42,11 +44,10 @@ export default function ProgressDetailPage() {
       setLoading(true);
       setError(null);
       
-      console.log('=== DEBUG: Starting fetchBatchData ===');
-      console.log('ID from params:', id);
+      
       
       // Fetch all batches and progresses concurrently with timeout
-      console.log('Calling getAllProcessingBatches and getAllProcessingBatchProgresses');
+      
       
       // Create a timeout promise
       const timeoutPromise = new Promise((_, reject) => {
@@ -60,36 +61,48 @@ export default function ProgressDetailPage() {
       
       const [allBatches, allProgresses] = await Promise.race([fetchPromise, timeoutPromise]) as [any, any];
       
-      console.log('All batches from API:', allBatches);
-      console.log('All progresses from API:', allProgresses);
-      console.log('Number of all batches:', allBatches?.length || 0);
-      console.log('Number of all progresses:', allProgresses?.length || 0);
+      
       
       if (!allBatches) {
-        console.log('No batches data found, setting error');
+        
         setError('Không tìm thấy dữ liệu lô sơ chế');
         return;
       }
       
       // Find the specific batch
       const batchData = allBatches.find((b: ProcessingBatch) => b.batchId === id);
-      console.log('Found batch data:', batchData);
+      
       
       if (!batchData) {
-        console.log('No specific batch found, setting error');
+        
         setError('Không tìm thấy lô sơ chế với ID này');
         return;
       }
       
       // Filter progresses for this batch
-      console.log('Filtering progresses for batchId:', id);
-      const batchProgresses = allProgresses?.filter((p: ProcessingBatchProgress) => p.batchId === id) || [];
-      console.log('Filtered progresses for this batch:', batchProgresses);
-      console.log('Number of filtered progresses:', batchProgresses.length);
       
-      console.log('Setting batch data:', batchData);
+      const batchProgresses = allProgresses?.filter((p: ProcessingBatchProgress) => p.batchId === id) || [];
+      
+      
+      // Fetch total stages for this method
+      let totalStagesCount = 0;
+      if (batchData.methodId) {
+        try {
+          const stages = await getProcessingStagesByMethodId(batchData.methodId);
+          totalStagesCount = stages.filter(stage => !stage.isDeleted).length;
+  
+        } catch (err) {
+          
+          totalStagesCount = batchData.stageCount || 0;
+        }
+      } else {
+        totalStagesCount = batchData.stageCount || 0;
+      }
+      
+      
       setBatch(batchData);
       setProgresses(batchProgresses);
+      setTotalStages(totalStagesCount);
     } catch (err: any) {
       console.error('Error fetching batch:', err);
       console.error('Error details:', err.response?.data);
@@ -154,12 +167,10 @@ export default function ProgressDetailPage() {
     setRetryCount(prev => prev + 1);
   };
 
-  const formatWeight = (kg: number | string | undefined): string => {
-    if (!kg) return "0 kg";
-    const num = typeof kg === 'string' ? parseFloat(kg) : kg;
-    return `${new Intl.NumberFormat("vi-VN").format(num)} kg`;
-  };
 
+
+  // Kiểm tra xem đã hoàn thành tất cả các bước chưa
+  const isAllStepsCompleted = totalStages > 0 && progresses.length >= totalStages;
 
 
   if (loading) {
@@ -288,21 +299,23 @@ export default function ProgressDetailPage() {
             subtitle={`Lô: ${batch.batchCode} - ${progresses.length} bước đã hoàn thành`}
           />
           <div className="flex gap-3">
-            <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white"
-                >
-                  <Plus className="w-4 h-4" />
-                  Cập nhật tiến trình
-                </Button>
-              </DialogTrigger>
-                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-                 <DialogHeader className="sr-only">
-                   <DialogTitle>Cập nhật tiến trình sơ chế</DialogTitle>
-                   <DialogDescription>Form cập nhật thông tin tiến trình sơ chế</DialogDescription>
-                 </DialogHeader>
-                                   {batch && (
+            {/* Chỉ hiển thị nút "Cập nhật tiến trình" khi chưa hoàn thành tất cả các bước */}
+            {!isAllStepsCompleted && (
+              <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Cập nhật tiến trình
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+                  <DialogHeader className="sr-only">
+                    <DialogTitle>Cập nhật tiến trình sơ chế</DialogTitle>
+                    <DialogDescription>Form cập nhật thông tin tiến trình sơ chế</DialogDescription>
+                  </DialogHeader>
+                  {batch && (
                     <AdvanceProcessingProgressForm
                       batchId={batch.batchId}
                       latestProgress={progresses.length > 0 ? progresses[progresses.length - 1] : undefined}
@@ -312,8 +325,22 @@ export default function ProgressDetailPage() {
                       }}
                     />
                   )}
-               </DialogContent>
-            </Dialog>
+                </DialogContent>
+              </Dialog>
+            )}
+            
+            {/* Hiển thị thông báo khi đã hoàn thành tất cả các bước */}
+            {isAllStepsCompleted && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg border border-green-200">
+                <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">Đã hoàn thành tất cả các bước</span>
+              </div>
+            )}
+            
             <Button 
               variant="outline" 
               onClick={() => router.back()}
@@ -419,26 +446,48 @@ export default function ProgressDetailPage() {
           <div className="p-6">
             {progresses && progresses.length > 0 ? (
               <div className="space-y-6">
-                {progresses.map((progress, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
-                            Bước {progress.stepIndex}
-                          </span>
-                          <h3 className="font-semibold text-gray-900 text-lg">
-                            {progress.stageName}
-                          </h3>
-                        </div>
-                        {progress.stageDescription && (
-                          <p className="text-gray-600 text-sm">
-                            {progress.stageDescription}
-                          </p>
-                        )}
+                {progresses
+                  .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
+                  .map((progress, idx) => {
+                    // Kiểm tra xem có phải bước retry không
+                    const isRetryStep = progress.stepIndex > 1 && idx > 0;
+                    const previousProgress = idx > 0 ? progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
+                    const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                    
+                    return (
+                      <div
+                        key={idx}
+                        className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border transition-all duration-300 hover:shadow-lg p-6 ${
+                          isRetry 
+                            ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50' 
+                            : 'border-gray-200 hover:border-purple-300'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                isRetry 
+                                  ? 'bg-orange-100 text-orange-700' 
+                                  : 'bg-purple-100 text-purple-700'
+                              }`}>
+                                Bước {progress.stepIndex}
+                                {isRetry && (
+                                  <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
+                                    Làm lại
+                                  </span>
+                                )}
+                              </span>
+                              <h3 className="font-semibold text-gray-900 text-lg">
+                                {progress.stageName}
+                                {isRetry && (
+                                  <span className="ml-2 text-sm text-orange-600 font-medium">
+                                    (Làm lại)
+                                  </span>
+                                )}
+                              </h3>
+                            </div>
+
                       </div>
                     </div>
                     
@@ -446,7 +495,7 @@ export default function ProgressDetailPage() {
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Scale className="w-4 h-4 text-green-600" />
                         <span className="font-medium">Sản lượng:</span>
-                        <span>{formatWeight(progress.outputQuantity)}</span>
+                        <span>{progress.outputQuantity ? `${new Intl.NumberFormat("vi-VN").format(Number(progress.outputQuantity))} ${progress.outputUnit || 'kg'}` : '0 kg'}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -575,7 +624,8 @@ export default function ProgressDetailPage() {
                       </div>
                     )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-12">
