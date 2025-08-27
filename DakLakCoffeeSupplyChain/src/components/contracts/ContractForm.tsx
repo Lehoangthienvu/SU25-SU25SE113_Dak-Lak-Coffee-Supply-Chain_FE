@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,22 @@ import {
   ContractItemUpdateDto,
 } from "@/lib/api/contractItems";
 import { getErrorMessage } from "@/lib/utils";
+
+// Sử dụng useRef thay vì biến global để tránh vấn đề HMR
+
+function parseDateLocal(d?: string | Date | null) {
+  if (!d) return null;
+  if (d instanceof Date) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  }
+  // string "yyyy-MM-dd"
+  const x = new Date(`${d}T00:00:00`); // ép local midnight
+  if (isNaN(x.getTime())) return null;
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
 
 // Helper: input có suffix đơn vị bên phải
 function InputWithSuffix({
@@ -68,6 +84,7 @@ export default function ContractForm({
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
   const router = useRouter();
+  const lastStatusRef = useRef<ContractStatus | null>(null);
 
   const getStatusDisplay = (status: string) => {
     switch (status) {
@@ -187,6 +204,36 @@ export default function ContractForm({
     setBusinessErrors([]);
   }, [formData]);
 
+  useEffect(() => {
+    if (!formData) return;
+    const s = formData.status;
+
+    // không toast cho Completed/Cancelled
+    if (s === ContractStatus.Completed || s === ContractStatus.Cancelled) {
+      lastStatusRef.current = s;
+      return;
+    }
+
+    // chặn trùng cả khi StrictMode remount
+    if (lastStatusRef.current === s) return;
+
+    // Chỉ toast khi trạng thái thay đổi từ lần trước (không phải lần đầu khởi tạo)
+    if (lastStatusRef.current !== null) {
+      const m =
+        s === ContractStatus.Expired
+          ? "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
+          : s === ContractStatus.InProgress
+          ? "Trạng thái đã tự động cập nhật thành 'Đang thực hiện'"
+          : s === ContractStatus.NotStarted
+          ? "Trạng thái đã tự động cập nhật thành 'Chưa bắt đầu'"
+          : "";
+
+      if (m) toast.info(m, { id: "status-auto" });
+    }
+
+    lastStatusRef.current = s;
+  }, [formData?.status]);
+
   // Cleanup file preview URL when component unmounts
   useEffect(() => {
     return () => {
@@ -208,82 +255,46 @@ export default function ContractForm({
   // Type assertion để TypeScript biết formData không null từ đây
   const data = formData;
 
+  // Định nghĩa type rõ ràng
+  type ContractFormData = ContractCreateDto | ContractUpdateDto;
+  type ContractFormDataNN = NonNullable<ContractFormData>; // thực ra đã non-null
+
+  // deriveStatus chỉ nhận data không-null
+  function deriveStatus(data: ContractFormDataNN): ContractStatus {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const startDate = parseDateLocal(data.startDate as any);
+    const endDate = parseDateLocal(data.endDate as any);
+
+    if (
+      data.status === ContractStatus.Completed ||
+      data.status === ContractStatus.Cancelled
+    ) {
+      return data.status;
+    }
+    if (endDate && endDate < today) return ContractStatus.Expired;
+    if (startDate && startDate <= today) return ContractStatus.InProgress;
+    if (startDate && startDate > today) return ContractStatus.NotStarted;
+    return data.status;
+  }
+
   function handleChange(field: string, value: any) {
     setFormData((prev) => {
-      const newData = {
-        ...prev!,
-        [field]: value,
-      };
+      const newData = { ...prev!, [field]: value } as ContractFormDataNN;
 
-      // Tự động cập nhật trạng thái dựa trên ngày bắt đầu hoặc ngày kết thúc
-      if ((field === "startDate" || field === "endDate") && value) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset giờ về 00:00:00 để so sánh ngày
-
-        const startDate = new Date(newData.startDate || value);
-        startDate.setHours(0, 0, 0, 0);
-        const endDate = new Date(newData.endDate || value);
-        endDate.setHours(0, 0, 0, 0);
-
-        // Chỉ tự động cập nhật nếu trạng thái hiện tại không phải là "Hoàn thành" hoặc "Đã hủy"
-        if (
-          newData.status !== ContractStatus.Completed &&
-          newData.status !== ContractStatus.Cancelled
-        ) {
-          // Kiểm tra ngày kết thúc trước
-          if (newData.endDate) {
-            const endDateNormalized = new Date(newData.endDate);
-            endDateNormalized.setHours(0, 0, 0, 0);
-
-            if (endDateNormalized < today) {
-              // Nếu ngày kết thúc trong quá khứ, chuyển thành "Quá hạn"
-              newData.status = ContractStatus.Expired;
-              if (field === "endDate") {
-                toast.info(
-                  "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
-                );
-              } else {
-                toast.info(
-                  "Trạng thái đã tự động cập nhật thành 'Quá hạn' (ngày kết thúc trong quá khứ)"
-                );
-              }
-            } else if (startDate <= today) {
-              // Nếu ngày bắt đầu là hôm nay hoặc quá khứ, chuyển thành "Đang thực hiện"
-              newData.status = ContractStatus.InProgress;
-              toast.info(
-                "Trạng thái đã tự động cập nhật thành 'Đang thực hiện'"
-              );
-            } else {
-              // Nếu ngày bắt đầu trong tương lai, chuyển thành "Chưa bắt đầu"
-              newData.status = ContractStatus.NotStarted;
-              toast.info("Trạng thái đã tự động cập nhật thành 'Chưa bắt đầu'");
-            }
-          } else {
-            // Không có ngày kết thúc, chỉ kiểm tra ngày bắt đầu
-            if (startDate <= today) {
-              // Nếu ngày bắt đầu là hôm nay hoặc quá khứ, chuyển thành "Đang thực hiện"
-              newData.status = ContractStatus.InProgress;
-              toast.info(
-                "Trạng thái đã tự động cập nhật thành 'Đang thực hiện'"
-              );
-            } else {
-              // Nếu ngày bắt đầu trong tương lai, chuyển thành "Chưa bắt đầu"
-              newData.status = ContractStatus.NotStarted;
-              toast.info("Trạng thái đã tự động cập nhật thành 'Chưa bắt đầu'");
-            }
-          }
-        }
+      if (field === "startDate" || field === "endDate") {
+        const nextStatus = deriveStatus(newData);
+        if (nextStatus !== newData.status) newData.status = nextStatus;
       }
-
       return newData;
     });
 
-    // Clear field error when user starts typing
     if (fieldErrors[field]) {
       setFieldErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
+        const n = { ...prev };
+        delete n[field];
+        return n;
       });
     }
   }
@@ -1365,88 +1376,88 @@ export default function ContractForm({
               {/* Preview cho ảnh */}
               {(data.contractFileUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
                 selectedFile?.type.startsWith("image/")) && (
-                  <div className="mt-2">
-                    {filePreviewUrl ? (
-                      <img
-                        src={filePreviewUrl}
-                        alt="Preview"
-                        className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
-                        onError={() => toast.error("Không thể tải ảnh preview")}
-                        onClick={() => {
-                          if (filePreviewUrl) {
-                            setModalImageUrl(filePreviewUrl);
-                            setShowImageModal(true);
-                          }
-                        }}
-                        title="Click để xem ảnh rõ hơn"
-                      />
-                    ) : data.contractFileUrl?.startsWith("http") ? (
-                      <img
-                        src={data.contractFileUrl}
-                        alt="Preview"
-                        className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
-                        onError={() => toast.error("Không thể tải ảnh preview")}
-                        onClick={() => {
-                          if (data.contractFileUrl) {
-                            setModalImageUrl(data.contractFileUrl);
-                            setShowImageModal(true);
-                          }
-                        }}
-                        title="Click để xem ảnh rõ hơn"
-                      />
-                    ) : (
-                      <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">
-                          📷{" "}
-                          {selectedFile
-                            ? selectedFile.name
-                            : data.contractFileUrl}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="mt-2">
+                  {filePreviewUrl ? (
+                    <img
+                      src={filePreviewUrl}
+                      alt="Preview"
+                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      onError={() => toast.error("Không thể tải ảnh preview")}
+                      onClick={() => {
+                        if (filePreviewUrl) {
+                          setModalImageUrl(filePreviewUrl);
+                          setShowImageModal(true);
+                        }
+                      }}
+                      title="Click để xem ảnh rõ hơn"
+                    />
+                  ) : data.contractFileUrl?.startsWith("http") ? (
+                    <img
+                      src={data.contractFileUrl}
+                      alt="Preview"
+                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      onError={() => toast.error("Không thể tải ảnh preview")}
+                      onClick={() => {
+                        if (data.contractFileUrl) {
+                          setModalImageUrl(data.contractFileUrl);
+                          setShowImageModal(true);
+                        }
+                      }}
+                      title="Click để xem ảnh rõ hơn"
+                    />
+                  ) : (
+                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">
+                        📷{" "}
+                        {selectedFile
+                          ? selectedFile.name
+                          : data.contractFileUrl}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Preview cho PDF */}
               {(data.contractFileUrl?.match(/\.pdf$/i) ||
                 selectedFile?.name?.match(/\.pdf$/i)) && (
-                  <div className="mt-2">
-                    {data.contractFileUrl?.startsWith("http") ? (
-                      <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
-                        <a
-                          href={data.contractFileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-red-600 hover:text-red-800 text-sm font-medium"
-                        >
-                          📄 Xem PDF: {data.contractFileUrl.split("/").pop()}
-                        </a>
-                      </div>
-                    ) : (
-                      <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">
-                          📄{" "}
-                          {selectedFile
-                            ? selectedFile.name
-                            : data.contractFileUrl}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="mt-2">
+                  {data.contractFileUrl?.startsWith("http") ? (
+                    <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
+                      <a
+                        href={data.contractFileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        📄 Xem PDF: {data.contractFileUrl.split("/").pop()}
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">
+                        📄{" "}
+                        {selectedFile
+                          ? selectedFile.name
+                          : data.contractFileUrl}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Preview cho Word */}
               {(data.contractFileUrl?.match(/\.(doc|docx)$/i) ||
                 selectedFile?.name?.match(/\.(doc|docx)$/i)) && (
-                  <div className="mt-2">
-                    <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
-                      <span className="text-blue-600 text-sm font-medium">
-                        📝{" "}
-                        {selectedFile ? selectedFile.name : data.contractFileUrl}
-                      </span>
-                    </div>
+                <div className="mt-2">
+                  <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
+                    <span className="text-blue-600 text-sm font-medium">
+                      📝{" "}
+                      {selectedFile ? selectedFile.name : data.contractFileUrl}
+                    </span>
                   </div>
-                )}
+                </div>
+              )}
 
               {/* Remove file buttons */}
               <div className="mt-3 flex gap-2">
@@ -1492,8 +1503,9 @@ export default function ContractForm({
           <select
             value={data.buyerId}
             onChange={(e) => handleChange("buyerId", e.target.value)}
-            className={`w-full p-2 border rounded ${hasFieldError("buyerId") ? "border-red-500" : ""
-              }`}
+            className={`w-full p-2 border rounded ${
+              hasFieldError("buyerId") ? "border-red-500" : ""
+            }`}
             required
           >
             <option value="">-- Chọn đối tác --</option>
@@ -1606,8 +1618,9 @@ export default function ContractForm({
           <div>
             <label className="block mb-1 text-sm font-medium">Trạng thái</label>
             <select
-              className={`w-full p-2 border rounded ${hasFieldError("status") ? "border-red-500" : ""
-                }`}
+              className={`w-full p-2 border rounded ${
+                hasFieldError("status") ? "border-red-500" : ""
+              }`}
               value={data.status}
               onChange={(e) => handleChange("status", e.target.value)}
             >
@@ -1687,8 +1700,9 @@ export default function ContractForm({
             <label className="block mb-1 text-sm font-medium">Trạng thái</label>
             <div className="p-2 border rounded bg-gray-50">
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusDisplay(data.status).className
-                  }`}
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  getStatusDisplay(data.status).className
+                }`}
               >
                 {getStatusDisplay(data.status).label}
               </span>
@@ -1760,10 +1774,11 @@ export default function ContractForm({
                     onChange={(e) =>
                       updateContractItem(index, "coffeeTypeId", e.target.value)
                     }
-                    className={`p-2 border rounded ${hasFieldError(`contractItems.${index}.coffeeTypeId`)
+                    className={`p-2 border rounded ${
+                      hasFieldError(`contractItems.${index}.coffeeTypeId`)
                         ? "border-red-500"
                         : ""
-                      }`}
+                    }`}
                   >
                     <option value="">-- Chọn loại cà phê --</option>
                     {coffeeTypes.map((type) => (
