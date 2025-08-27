@@ -8,6 +8,7 @@ import { FiTrash2 } from "react-icons/fi";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { LoadingButton } from "@/components/ui/loadingProgress";
 import { CultivationRegistration } from "@/lib/api/cultivationRegistrations";
+import { calculateEstimatedDeliveryDates } from "@/lib/helpers/dateHelpers";
 
 export interface FarmingCommitmentDetailsFormData {
   commitmentDetailId?: string | undefined;
@@ -54,17 +55,7 @@ export default function FarmingCommitmentForm({
     initialData || {
       commitmentName: "",
       note: "",
-      farmingCommitmentDetails: [
-        {
-          registrationDetailId: "",
-          confirmedPrice: 0,
-          advancePayment: 0,
-          committedQuantity: 0,
-          estimatedDeliveryStart: "",
-          estimatedDeliveryEnd: "",
-          note: "",
-        },
-      ],
+      farmingCommitmentDetails: [],
     }
   );
 
@@ -97,15 +88,42 @@ export default function FarmingCommitmentForm({
       "confirmedPrice",
       "advancePayment",
       "committedQuantity",
-      "estimatedDeliveryStart",
-      "estimatedDeliveryEnd",
     ];
 
     const newDetails = [...form.farmingCommitmentDetails];
-    newDetails[index] = {
-      ...newDetails[index],
-      [name]: numberFields.includes(name) ? Number(value) : value,
-    };
+    
+    // Nếu đang chọn registrationDetailId, tự động điền các giá trị khác
+    if (name === "registrationDetailId" && value && registration) {
+      const selectedDetail = registration.cultivationRegistrationDetails.find(
+        (d) => d.cultivationRegistrationDetailId === value
+      );
+      
+      if (selectedDetail) {
+        // Tính toán ngày giao hàng dự kiến
+        const { estimatedDeliveryStart, estimatedDeliveryEnd } = calculateEstimatedDeliveryDates(
+          selectedDetail.expectedHarvestEnd || ""
+        );
+        
+        newDetails[index] = {
+          ...newDetails[index],
+          [name]: value,
+          confirmedPrice: selectedDetail.wantedPrice || 0,
+          committedQuantity: selectedDetail.estimatedYield || 0,
+          estimatedDeliveryStart,
+          estimatedDeliveryEnd,
+        };
+      } else {
+        newDetails[index] = {
+          ...newDetails[index],
+          [name]: value,
+        };
+      }
+    } else {
+      newDetails[index] = {
+        ...newDetails[index],
+        [name]: numberFields.includes(name) ? Number(value) : value,
+      };
+    }
 
     const newForm = { ...form, farmingCommitmentDetails: newDetails };
     setForm(newForm);
@@ -153,7 +171,13 @@ export default function FarmingCommitmentForm({
           />
         </div>
 
-        {form.farmingCommitmentDetails.map((detail, index) => {
+        {form.farmingCommitmentDetails.length === 0 ? (
+          <div className='text-center py-8 text-gray-500'>
+            <p>Chưa có chi tiết cam kết nào.</p>
+            <p className='text-sm mt-1'>Vui lòng chờ dữ liệu được tải hoặc thêm chi tiết thủ công.</p>
+          </div>
+        ) : (
+          form.farmingCommitmentDetails.map((detail, index) => {
           const alreadySelected = form.farmingCommitmentDetails
             .map((d, i) => (i === index ? null : d.registrationDetailId))
             .filter(Boolean);
@@ -162,7 +186,7 @@ export default function FarmingCommitmentForm({
             (d) =>
               !alreadySelected.includes(
               d.cultivationRegistrationDetailId ?? null
-              ) && d.status !== "Rejected"
+              ) && d.status === "Approved"
             );
           return (
             <Card key={index} className='mb-4 border'>
@@ -188,8 +212,7 @@ export default function FarmingCommitmentForm({
                   </Label>
                   {loading ? (
                     <LoadingSpinner />
-                  ) : registration?.cultivationRegistrationDetails.length ===
-                    0 ? (
+                  ) : !options || options.length === 0 ? (
                     <p className='text-red-500 text-sm italic'>
                       Không có chi tiết đơn đăng ký nào đã duyệt để chọn
                     </p>
@@ -216,9 +239,9 @@ export default function FarmingCommitmentForm({
                           >
                             {registrationDetail?.coffeeType}{" "}
                             {" - Thu hoạch dự kiến: "}
-                            {registrationDetail?.estimatedYield} {"kg/ha"}{" "}
+                            {registrationDetail?.estimatedYield}{"kg"}{" "}
                             {" - Giá mong muốn: "}
-                            {registrationDetail?.wantedPrice} {"VNĐ/kg"}
+                            {registrationDetail?.wantedPrice}{"VNĐ/kg"}
                           </option>
                         ))}
                       </select>
@@ -342,7 +365,8 @@ export default function FarmingCommitmentForm({
               </CardContent>
             </Card>
           );
-        })}
+        })
+        )}
 
         <div className='flex justify-start mb-6'>
           <Button

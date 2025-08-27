@@ -154,14 +154,27 @@ export default function ProcurementPlanFormGuide({ className = "" }: Procurement
           </div>
           <div className="flex gap-2">
             <span className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">3</span>
-            <span>Nông hộ đăng ký và cam kết sản lượng</span>
+            <span>Nông hộ đăng ký kế hoạch</span>
           </div>
           <div className="flex gap-2">
             <span className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">4</span>
-            <span>Kết thúc đăng ký và thực hiện thu mua</span>
+            <span>Duyệt đơn đăng ký và tạo đơn cam kết</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">5</span>
+            <span>Nông hộ chấp nhận hoặc từ chối cam kết</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">6</span>
+            <span>Kết thúc quy trình lập kế hoạch thu mua</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">7</span>
+            <span>Bắt đầu quy trình theo dõi tiến độ mùa vụ</span>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
