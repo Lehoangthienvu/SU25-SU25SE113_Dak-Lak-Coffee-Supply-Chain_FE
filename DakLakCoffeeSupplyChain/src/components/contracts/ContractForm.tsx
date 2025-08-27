@@ -1514,7 +1514,9 @@ export default function ContractForm({
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">Đối tác</label>
+          <label className="block mb-1 text-sm font-medium">
+            Đối tác <span className="text-red-500">*</span>
+          </label>
           <select
             value={data.buyerId}
             onChange={(e) => handleChange("buyerId", e.target.value)}
@@ -1539,7 +1541,9 @@ export default function ContractForm({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block mb-1 text-sm font-medium">Số đợt</label>
+            <label className="block mb-1 text-sm font-medium">
+              Số đợt <span className="text-red-500">*</span>
+            </label>
             <Input
               type="number"
               min={1}
@@ -1560,7 +1564,7 @@ export default function ContractForm({
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tổng KL (kg)
+              Tổng KL (kg) <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -1581,7 +1585,7 @@ export default function ContractForm({
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tổng GT (VND)
+              Tổng GT (VND) <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -1601,31 +1605,41 @@ export default function ContractForm({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <DatePicker
-            label="Ngày bắt đầu"
-            value={data.startDate as any}
-            onChange={(date) => handleChange("startDate", date)}
-            required
-            error={hasFieldError("startDate")}
-            errorMessage={getFieldError("startDate")}
-          />
-          <DatePicker
-            label="Ngày kết thúc"
-            value={data.endDate as any}
-            onChange={(date) => handleChange("endDate", date)}
-            required
-            error={hasFieldError("endDate")}
-            errorMessage={getFieldError("endDate")}
-          />
-          <DatePicker
-            label="Ngày ký"
-            value={data.signedAt as any}
-            onChange={(date) => {
-              handleChange("signedAt", date);
-            }}
-            error={hasFieldError("signedAt")}
-            errorMessage={getFieldError("signedAt")}
-          />
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              Ngày bắt đầu <span className="text-red-500">*</span>
+            </label>
+            <DatePicker
+              value={data.startDate as any}
+              onChange={(date) => handleChange("startDate", date)}
+              required
+              error={hasFieldError("startDate")}
+              errorMessage={getFieldError("startDate")}
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              Ngày kết thúc <span className="text-red-500">*</span>
+            </label>
+            <DatePicker
+              value={data.endDate as any}
+              onChange={(date) => handleChange("endDate", date)}
+              required
+              error={hasFieldError("endDate")}
+              errorMessage={getFieldError("endDate")}
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium">Ngày ký</label>
+            <DatePicker
+              value={data.signedAt as any}
+              onChange={(date) => {
+                handleChange("signedAt", date);
+              }}
+              error={hasFieldError("signedAt")}
+              errorMessage={getFieldError("signedAt")}
+            />
+          </div>
         </div>
 
         {/* Chỉ hiển thị trạng thái khi edit */}
@@ -1753,7 +1767,7 @@ export default function ContractForm({
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Danh sách mặt hàng
+            Danh sách mặt hàng <span className="text-red-500">*</span>
           </label>
 
           {/* Hiển thị lỗi tổng quát cho contract items */}

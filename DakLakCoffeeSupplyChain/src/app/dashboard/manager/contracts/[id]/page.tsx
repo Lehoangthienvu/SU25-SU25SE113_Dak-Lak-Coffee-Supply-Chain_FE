@@ -340,7 +340,7 @@ export default function ContractDetailPage() {
 
                           try {
                             // Hiển thị thông báo đang tải
-                            toast.info("Đang tải file từ server...");
+                            //toast.info("Đang tải file từ server...");
 
                             // Tải file về bằng Fetch API
                             const response = await fetch(
@@ -421,17 +421,37 @@ export default function ContractDetailPage() {
                         }
                       }}
                     >
-                      📥 Tải xuống hợp đồng
+                      {/* Icon theo loại file */}
+                      {contract.contractFileUrl.match(
+                        /\.(jpg|jpeg|png|gif|webp)$/i
+                      ) && <span className="text-2xl">🖼️</span>}
+                      {contract.contractFileUrl.match(/\.pdf$/i) && (
+                        <span className="text-2xl">📄</span>
+                      )}
+                      {contract.contractFileUrl.match(/\.(doc|docx)$/i) && (
+                        <span className="text-2xl">📝</span>
+                      )}
+                      {!contract.contractFileUrl.match(
+                        /\.(jpg|jpeg|png|gif|webp|pdf|doc|docx)$/i
+                      ) && <span className="text-2xl">📎</span>}
+                      Tải xuống hợp đồng
                     </a>
-                    <span className="text-gray-400">|</span>
-                    <a
-                      href={contract.contractFileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-green-600 underline hover:text-green-800 text-sm"
-                    >
-                      👁️ Xem trực tiếp
-                    </a>
+                    {/* Chỉ hiển thị "Xem trực tiếp" cho file ảnh */}
+                    {contract.contractFileUrl.match(
+                      /\.(jpg|jpeg|png|gif|webp)$/i
+                    ) && (
+                      <>
+                        <span className="text-gray-400">|</span>
+                        <a
+                          href={contract.contractFileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 underline hover:text-green-800 text-sm"
+                        >
+                          👁️ Xem trực tiếp
+                        </a>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
