@@ -17,6 +17,7 @@ import {
     getProcessingBatchProgressesForCurrentFarmer,
     ProcessingBatchProgressForReport
 } from '@/lib/api/generalFarmerReports';
+import { getAllProcessingBatchProgresses } from '@/lib/api/processingBatchProgress';
 import { SeverityLevelEnum, SeverityLevelLabel } from '@/lib/constants/SeverityLevelEnum';
 import { getCropProgressesByDetailId, getAllCropProgressesForCurrentUser, CropProgressViewAllDto } from '@/lib/api/cropProgress';
 
@@ -33,6 +34,10 @@ function CreateReportForm() {
     // State để nhóm crop progress theo mùa vụ
     const [groupedCropProgress, setGroupedCropProgress] = useState<{ [key: string]: CropProgressViewAllDto[] }>({});
     const [selectedCropSeason, setSelectedCropSeason] = useState<string>('');
+
+    // State để nhóm processing batches theo lô sơ chế
+    const [groupedProcessingBatches, setGroupedProcessingBatches] = useState<{ [key: string]: ProcessingBatchProgressForReport[] }>({});
+    const [selectedProcessingBatch, setSelectedProcessingBatch] = useState<string>('');
 
     const [form, setForm] = useState<GeneralFarmerReportCreateDto>({
         reportType: 'Crop',
@@ -96,8 +101,81 @@ function CreateReportForm() {
 
         const fetchProcessingBatches = async () => {
             try {
-                const data = await getProcessingBatchProgressesForCurrentFarmer();
-                setProcessingBatchOptions(data || []);
+                console.log("🔄 Đang fetch processing batches...");
+                // Thử sử dụng API khác để lấy dữ liệu
+                let data = await getProcessingBatchProgressesForCurrentFarmer();
+
+                // Nếu không có dữ liệu, thử API khác
+                if (!data || data.length === 0) {
+                    console.log("🔄 Thử API getAllProcessingBatchProgresses...");
+                    const allData = await getAllProcessingBatchProgresses();
+                    console.log("📊 All processing batches data:", allData);
+
+                    // Chuyển đổi từ ProcessingBatchProgress sang ProcessingBatchProgressForReport
+                    if (allData && allData.length > 0) {
+                        data = allData.map(item => ({
+                            progressId: item.progressId,
+                            batchId: item.batchId,
+                            batchCode: item.batchCode || 'Unknown',
+                            stepIndex: item.stepIndex,
+                            stageId: item.stageId,
+                            stageName: item.stageName,
+                            stageDescription: item.stageDescription || '',
+                            progressDate: item.progressDate,
+                            outputQuantity: item.outputQuantity || 0,
+                            outputUnit: item.outputUnit || '',
+                            updatedBy: item.updatedByName || '',
+                            photoUrl: item.photoUrl || undefined,
+                            videoUrl: item.videoUrl || undefined,
+                            createdAt: item.createdAt,
+                            updatedAt: item.updatedAt
+                        }));
+                    }
+                }
+                console.log("📊 Raw processing batches data:", data);
+                console.log("📊 Number of processing batches:", data?.length || 0);
+
+                if (!data || data.length === 0) {
+                    console.log("⚠️ Không có dữ liệu processing batches");
+                    setGroupedProcessingBatches({});
+                    setProcessingBatchOptions([]);
+                    return;
+                }
+
+                // Nhóm data theo lô sơ chế
+                const grouped = data.reduce((acc, item) => {
+                    console.log("🔍 Processing item:", item);
+                    // Tạo key lô sơ chế với thông tin có sẵn
+                    let batchKey = '';
+                    if (item.batchCode) {
+                        batchKey = item.batchCode;
+                        if (item.progressDate) {
+                            batchKey += ` • ${new Date(item.progressDate).toLocaleDateString("vi-VN")}`;
+                        }
+                    } else {
+                        batchKey = 'Lô sơ chế không xác định';
+                    }
+
+                    if (!acc[batchKey]) {
+                        acc[batchKey] = [];
+                    }
+                    acc[batchKey].push(item);
+                    return acc;
+                }, {} as { [key: string]: ProcessingBatchProgressForReport[] });
+
+                console.log("📦 Grouped processing batches:", grouped);
+                setGroupedProcessingBatches(grouped);
+
+                // Chọn lô sơ chế đầu tiên làm mặc định
+                const firstBatch = Object.keys(grouped)[0];
+                if (firstBatch) {
+                    setSelectedProcessingBatch(firstBatch);
+                    setProcessingBatchOptions(grouped[firstBatch] || []);
+                    console.log("✅ Selected first batch:", firstBatch);
+                } else {
+                    setProcessingBatchOptions(data || []);
+                    console.log("⚠️ No batches to select");
+                }
             } catch (error) {
                 console.error("❌ Error fetching processing batches:", error);
                 AppToast.error("Không thể tải danh sách lô sơ chế.");
@@ -130,6 +208,18 @@ function CreateReportForm() {
         if (form.reportType === 'Crop') {
             if (!form.cropProgressId) {
                 AppToast.error("Vui lòng chọn tiến độ mùa vụ.");
+                return;
+            }
+        }
+
+        // Validation cho Processing report
+        if (form.reportType === 'Processing') {
+            if (!selectedProcessingBatch) {
+                AppToast.error("Vui lòng chọn lô sơ chế.");
+                return;
+            }
+            if (!form.processingProgressId) {
+                AppToast.error("Vui lòng chọn giai đoạn sơ chế.");
                 return;
             }
         }
@@ -230,6 +320,12 @@ function CreateReportForm() {
                                         cropProgressId: '',
                                         processingProgressId: '',
                                     }));
+                                    // Reset các state selection khi thay đổi loại báo cáo
+                                    if (value === 'Crop') {
+                                        setSelectedProcessingBatch('');
+                                    } else {
+                                        setSelectedCropSeason('');
+                                    }
                                 }}
                             >
                                 <SelectTrigger>
@@ -339,47 +435,90 @@ function CreateReportForm() {
                         {/* Processing Progress ID */}
                         {form.reportType === 'Processing' && (
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium text-gray-700">Tiến độ sơ chế *</Label>
-                                <Select
-                                    value={form.processingProgressId}
-                                    onValueChange={(value) => {
-                                        setForm((prev) => ({
-                                            ...prev,
-                                            processingProgressId: value,
-                                        }));
-                                    }}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="-- Chọn tiến độ sơ chế --" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {processingBatchOptions.map(batch => (
-                                            <SelectItem key={batch.progressId} value={batch.progressId}>
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-medium text-gray-700">
-                                                        {batch.batchCode && `${batch.batchCode}`}
-                                                        {batch.progressDate ? ` • ${new Date(batch.progressDate).toLocaleDateString("vi-VN")}` : ''}
-                                                    </span>
-                                                    <span className="text-sm text-gray-500">{batch.stageName} - Bước {batch.stepIndex}</span>
-                                                </div>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {processingBatchOptions.length === 0 && (
+                                {/* Chọn lô sơ chế trước */}
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium text-gray-700">Chọn lô sơ chế *</Label>
+                                    <Select
+                                        value={selectedProcessingBatch}
+                                        onValueChange={(value) => {
+                                            setSelectedProcessingBatch(value);
+                                            setProcessingBatchOptions(groupedProcessingBatches[value] || []);
+                                            setForm(prev => ({ ...prev, processingProgressId: '' }));
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="-- Chọn lô sơ chế --" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.keys(groupedProcessingBatches).map(batchKey => (
+                                                <SelectItem key={batchKey} value={batchKey}>
+                                                    {batchKey}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* Chọn giai đoạn sau khi đã chọn lô sơ chế */}
+                                {selectedProcessingBatch && (
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-medium text-gray-700">Chọn giai đoạn *</Label>
+                                        <Select
+                                            value={form.processingProgressId}
+                                            onValueChange={(value) => {
+                                                setForm((prev) => ({
+                                                    ...prev,
+                                                    processingProgressId: value,
+                                                }));
+                                            }}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="-- Chọn giai đoạn --" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {processingBatchOptions.map(batch => (
+                                                    <SelectItem key={batch.progressId} value={batch.progressId}>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-xs font-medium text-gray-700">
+                                                                {batch.batchCode && `${batch.batchCode}`}
+                                                                {batch.progressDate ? ` • ${new Date(batch.progressDate).toLocaleDateString("vi-VN")}` : ''}
+                                                            </span>
+                                                            <span className="text-sm text-gray-500">{batch.stageName} - Bước {batch.stepIndex}</span>
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+
+                                {Object.keys(groupedProcessingBatches).length === 0 && (
                                     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                         <p className="text-sm text-gray-600 text-center">
-                                            Không có tiến độ sơ chế nào để chọn.
+                                            Không có lô sơ chế nào để chọn.
                                             <br />
                                             <span className="text-xs text-gray-500">
-                                                Vui lòng tạo tiến độ sơ chế trước khi gửi báo cáo.
+                                                Vui lòng tạo lô sơ chế trước khi gửi báo cáo.
                                             </span>
                                         </p>
                                     </div>
                                 )}
-                                {processingBatchOptions.length > 0 && (
+
+                                {selectedProcessingBatch && processingBatchOptions.length === 0 && (
+                                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                        <p className="text-sm text-gray-600 text-center">
+                                            Lô sơ chế này chưa có giai đoạn nào.
+                                            <br />
+                                            <span className="text-xs text-gray-500">
+                                                Vui lòng tạo giai đoạn cho lô sơ chế này.
+                                            </span>
+                                        </p>
+                                    </div>
+                                )}
+
+                                {selectedProcessingBatch && processingBatchOptions.length > 0 && (
                                     <p className="text-xs text-gray-500">
-                                        Chọn tiến độ sơ chế mà bạn gặp vấn đề để báo cáo
+                                        Chọn giai đoạn lô sơ chế mà bạn gặp vấn đề để báo cáo
                                     </p>
                                 )}
                             </div>

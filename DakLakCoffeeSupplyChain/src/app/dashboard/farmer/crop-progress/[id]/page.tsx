@@ -15,7 +15,7 @@ import { CreateProgressDialog } from "../components/CreateProgressDialog";
 import { EditProgressDialog } from "../components/EditProgressDialog";
 import { CropSeasonDetail, getCropSeasonDetailById } from "@/lib/api/cropSeasonDetail";
 import { CropStage, getCropStages } from "@/lib/api/cropStage";
-import { ArrowLeft, CalendarDays, FileText, Play } from "lucide-react";
+import { ArrowLeft, CalendarDays, FileText, Play, MessageSquare } from "lucide-react";
 
 export default function CropProgressPage() {
     const router = useRouter();
@@ -157,6 +157,13 @@ export default function CropProgressPage() {
                                 <p className="text-sm text-gray-500">Sản lượng thu hoạch</p>
                                 <p className="text-lg font-bold text-green-600">{currentHarvestYield} kg</p>
                             </div>
+                            <Button
+                                onClick={() => router.push(`/dashboard/farmer/request-feedback/create?detailId=${cropSeasonDetailId}`)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                            >
+                                <MessageSquare className="w-4 h-4 mr-2" />
+                                Gửi tư vấn
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -166,7 +166,7 @@ export default function ReportDetailsPage() {
                                         Mô tả chi tiết
                                     </Label>
                                     <div className="bg-gray-50 rounded-lg p-4 border">
-                                        <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+                                        <p className="text-gray-700 whitespace-pre-wrap break-words leading-relaxed">
                                             {report.description}
                                         </p>
                                     </div>
