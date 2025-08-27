@@ -5,14 +5,21 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { calculateEstimatedDeliveryDates } from "@/lib/helpers/dateHelpers";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CultivationRegistration,
   getCultivationRegistrationById,
 } from "@/lib/api/cultivationRegistrations";
-import FarmingCommitmentForm, { FarmingCommitmentFormData } from "@/components/farming-commitments/FarmingCommitmentForm";
-import { getCommitmentById, updateFarmingCommitment } from "@/lib/api/farmingCommitments";
+import FarmingCommitmentForm, {
+  FarmingCommitmentFormData,
+} from "@/components/farming-commitments/FarmingCommitmentForm";
+import {
+  getCommitmentById,
+  updateFarmingCommitment,
+} from "@/lib/api/farmingCommitments";
+import FarmingCommitmentFormGuide from "@/components/farming-commitments/FarmingCommitmentFormGuide";
 
 function EditFarmmingCommitmentContent() {
   useAuthGuard(["manager"]);
@@ -191,7 +198,10 @@ function EditFarmmingCommitmentContent() {
     }
 
     const detailsUpdateDto = formData.farmingCommitmentDetails
-      .filter((item) => item.commitmentDetailId && item.commitmentDetailId.trim() !== "")
+      .filter(
+        (item) =>
+          item.commitmentDetailId && item.commitmentDetailId.trim() !== ""
+      )
       .map((item) => ({
         commitmentDetailId: item.commitmentDetailId,
         registrationDetailId: item.registrationDetailId,
@@ -228,25 +238,55 @@ function EditFarmmingCommitmentContent() {
   }
 
   return (
-    <div className='max-w-2xl mx-auto py-10 px-4'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Chỉnh sửa cam kết</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FarmingCommitmentForm
-            initialData={formData || initialData}
-            registration={registration || undefined}
-            loading={loading}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            onChange={handleFormChange}
-            onSubmit={handleSubmit}
-            onAddDetail={handleAddDetail}
-            onRemoveDetail={handleRemoveDetail}
-          />
-        </CardContent>
-      </Card>
+    <div className='min-h-screen py-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        {/* Header */}
+        <div className='mb-8'>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            Chỉnh sửa cam kết
+          </h1>
+          <p className='text-gray-600 mt-2'>
+            Cập nhật thông tin cam kết thu mua với nông hộ
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className='flex flex-col lg:flex-row gap-8'>
+          {/* Sidebar with Guide */}
+          <aside className='lg:w-96 flex-shrink-0'>
+            <div className='sticky top-8'>
+              <FarmingCommitmentFormGuide />
+            </div>
+          </aside>
+
+          {/* Form Content */}
+          <div className='flex-1'>
+            <Card className='shadow-lg border-0 p-0'>
+              <CardHeader className='bg-gradient-to-r from-orange-600 to-orange-700 text-white px-6 py-6 m-0 rounded-t-xl'>
+                <CardTitle className='text-white text-2xl font-bold'>
+                  Thông tin cam kết
+                </CardTitle>
+                <p className='text-green-100 text-sm mt-1'>
+                  Cập nhật thông tin để chỉnh sửa cam kết thu mua
+                </p>
+              </CardHeader>
+              <CardContent className='p-6'>
+                <FarmingCommitmentForm
+                  initialData={formData || initialData}
+                  registration={registration || undefined}
+                  loading={loading}
+                  errors={errors}
+                  isSubmitting={isSubmitting}
+                  onChange={handleFormChange}
+                  onSubmit={handleSubmit}
+                  onAddDetail={handleAddDetail}
+                  onRemoveDetail={handleRemoveDetail}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

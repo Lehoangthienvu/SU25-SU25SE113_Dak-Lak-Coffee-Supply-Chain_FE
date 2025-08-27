@@ -41,8 +41,6 @@ export default function BusinessProcurementPlansPage() {
   const pageSize = 10;
   const router = useRouter();
 
-
-
   useEffect(() => {
     fetchData();
     setIsLoading(false);
