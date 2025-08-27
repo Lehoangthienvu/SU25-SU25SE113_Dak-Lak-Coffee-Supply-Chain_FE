@@ -22,6 +22,7 @@ export type CropSeasonDetail = {
   status: number;
   farmerId: string;
   farmerName: string;
+  committedQuantity?: number; // ✅ Thêm committedQuantity từ commitmentDetail
 };
 
 // ✅ Tạo vùng trồng – sử dụng commitmentDetailId thay cho coffeeTypeId
