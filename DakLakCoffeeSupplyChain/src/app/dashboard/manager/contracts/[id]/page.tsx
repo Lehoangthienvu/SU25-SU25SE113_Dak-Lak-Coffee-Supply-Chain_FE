@@ -303,10 +303,10 @@ export default function ContractDetailPage() {
                                     }" alt="Hợp đồng" />
                                     <div class="file-info">
                                       <strong>File:</strong> ${
-                                        contract.contractFileUrl
-                                          .split("/")
-                                          .pop() || contract.contractFileUrl
-                                      }
+                                        contract.contractNumber
+                                      } - ${contract.contractTitle}.${
+                              contract.contractFileUrl.split(".").pop() || "pdf"
+                            }
                                     </div>
                                   </div>
                                 </body>
@@ -319,6 +319,11 @@ export default function ContractDetailPage() {
                       <p className="text-xs text-gray-500 mt-1">
                         💡 Click vào ảnh để xem lớn hơn
                       </p>
+                      <p className="text-xs text-blue-600 mt-1">
+                        📁 Tên file khi tải: {contract.contractNumber} -{" "}
+                        {contract.contractTitle}.
+                        {contract.contractFileUrl?.split(".").pop() || "pdf"}
+                      </p>
                     </div>
                   )}
 
@@ -328,19 +333,91 @@ export default function ContractDetailPage() {
                       href={contract.contractFileUrl}
                       download
                       className="text-blue-600 underline hover:text-blue-800 text-sm cursor-pointer"
-                      onClick={(e) => {
-                        // Nếu là URL từ internet, có thể cần xử lý đặc biệt
+                      onClick={async (e) => {
+                        // Nếu là URL từ internet, cần xử lý đặc biệt để đặt tên file
                         if (contract.contractFileUrl?.startsWith("http")) {
-                          // Tạo link tải xuống
-                          const link = document.createElement("a");
-                          link.href = contract.contractFileUrl;
-                          link.download =
-                            contract.contractFileUrl.split("/").pop() ||
-                            "contract";
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                          e.preventDefault();
+                          e.preventDefault(); // Ngăn chặn hành vi mặc định
+
+                          try {
+                            // Hiển thị thông báo đang tải
+                            toast.info("Đang tải file từ server...");
+
+                            // Tải file về bằng Fetch API
+                            const response = await fetch(
+                              contract.contractFileUrl
+                            );
+                            if (!response.ok) {
+                              throw new Error(
+                                `HTTP error! status: ${response.status}`
+                              );
+                            }
+
+                            // Lấy blob data
+                            const blob = await response.blob();
+
+                            // Lấy đuôi file từ URL một cách chính xác hơn
+                            let fileExtension = "pdf"; // Mặc định là PDF
+                            if (contract.contractFileUrl.includes(".")) {
+                              const lastDotIndex =
+                                contract.contractFileUrl.lastIndexOf(".");
+                              if (lastDotIndex !== -1) {
+                                const ext = contract.contractFileUrl.substring(
+                                  lastDotIndex + 1
+                                );
+                                // Chỉ lấy đuôi file hợp lệ
+                                if (
+                                  [
+                                    "pdf",
+                                    "doc",
+                                    "docx",
+                                    "jpg",
+                                    "jpeg",
+                                    "png",
+                                    "gif",
+                                    "webp",
+                                  ].includes(ext.toLowerCase())
+                                ) {
+                                  fileExtension = ext.toLowerCase();
+                                }
+                              }
+                            }
+
+                            // Tạo tên file có ý nghĩa: "Số hợp đồng - Tên hợp đồng.đuôi file"
+                            const fileName = `${contract.contractNumber} - ${contract.contractTitle}.${fileExtension}`;
+
+                            // Loại bỏ các ký tự không hợp lệ trong tên file Windows
+                            const sanitizedFileName = fileName
+                              .replace(/[<>:"/\\|?*]/g, "_")
+                              .replace(/\s+/g, " ") // Thay thế nhiều khoảng trắng thành 1
+                              .trim();
+
+                            // Tạo URL từ blob
+                            const blobUrl = URL.createObjectURL(blob);
+
+                            // Tạo link tải xuống với tên file tùy chỉnh
+                            const link = document.createElement("a");
+                            link.href = blobUrl;
+                            link.download = sanitizedFileName;
+
+                            // Thêm vào DOM, click và xóa
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            // Giải phóng blob URL
+                            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+
+                            // Hiển thị thông báo thành công
+                            toast.success(`Đã tải xuống: ${sanitizedFileName}`);
+                          } catch (error) {
+                            console.error("Lỗi khi tải file:", error);
+                            toast.error(
+                              "Không thể tải file. Vui lòng thử lại."
+                            );
+
+                            // Fallback: mở file trong tab mới
+                            window.open(contract.contractFileUrl, "_blank");
+                          }
                         }
                       }}
                     >

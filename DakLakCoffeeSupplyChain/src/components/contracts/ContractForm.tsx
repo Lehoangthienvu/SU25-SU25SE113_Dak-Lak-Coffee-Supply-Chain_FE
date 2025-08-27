@@ -421,10 +421,17 @@ export default function ContractForm({
 
     if (!data.contractNumber?.trim()) {
       clientErrors.contractNumber = "Số hợp đồng là bắt buộc";
+    } else if (data.contractNumber.trim().length < 3) {
+      clientErrors.contractNumber = "Số hợp đồng phải có ít nhất 3 ký tự";
     }
 
     if (!data.contractTitle?.trim()) {
-      clientErrors.contractTitle = "Tiêu đề hợp đồng là bắt buộc";
+      clientErrors.contractTitle = "Tên hợp đồng là bắt buộc";
+    } else if (data.contractTitle.trim().length < 10) {
+      clientErrors.contractTitle =
+        "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng";
+    } else if (data.contractTitle.trim().length > 200) {
+      clientErrors.contractTitle = "Tên hợp đồng không được quá 200 ký tự";
     }
 
     if (!data.buyerId) {
@@ -1237,10 +1244,10 @@ export default function ContractForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Số hợp đồng
+              Số hợp đồng <span className="text-red-500">*</span>
             </label>
             <Input
-              placeholder="VD: CT001"
+              placeholder="VD: CT001-2024, HD001, CONTRACT-001"
               value={data.contractNumber}
               onChange={(e) => handleChange("contractNumber", e.target.value)}
               required
@@ -1253,12 +1260,17 @@ export default function ContractForm({
                 {getFieldError("contractNumber")}
               </p>
             )}
+            <p className="text-xs text-gray-500 mt-1">
+              💡 Định dạng: CT001-2024, HD001, CONTRACT-001, v.v.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">Tiêu đề</label>
+            <label className="block mb-1 text-sm font-medium">
+              Tên hợp đồng <span className="text-red-500">*</span>
+            </label>
             <Input
-              placeholder="Tiêu đề hợp đồng"
+              placeholder="VD: Hợp đồng cung cấp cà phê Robusta 2024"
               value={data.contractTitle}
               onChange={(e) => handleChange("contractTitle", e.target.value)}
               required
@@ -1269,6 +1281,9 @@ export default function ContractForm({
                 {getFieldError("contractTitle")}
               </p>
             )}
+            <p className="text-xs text-gray-500 mt-1">
+              💡 VD: Hợp đồng cung cấp cà phê Robusta Dak Lak 2024
+            </p>
           </div>
         </div>
 
