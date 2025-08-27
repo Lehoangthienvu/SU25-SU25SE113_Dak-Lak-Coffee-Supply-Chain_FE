@@ -12,14 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Pencil, Leaf, Camera, Play } from "lucide-react";
 import { AppToast } from "@/components/ui/AppToast";
-import { CropProgress, updateCropProgress, CropProgressUpdateRequest } from "@/lib/api/cropProgress";
+import { CropProgressViewAllDto, updateCropProgress, CropProgressUpdateRequest } from "@/lib/api/cropProgress";
 import { getCropSeasonDetailById } from "@/lib/api/cropSeasonDetail";
 
 // Constants
 const HARVESTING_STAGE_CODE = "harvesting";
 
 type Props = {
-    progress: CropProgress;
+    progress: CropProgressViewAllDto;
     onSuccess: () => void;
     onSeasonDetailUpdate?: (newYield: number) => void;
     triggerButton?: React.ReactNode;
@@ -55,6 +55,7 @@ export function EditProgressDialog({
                 progressId: progress.progressId,
                 cropSeasonDetailId: progress.cropSeasonDetailId,
                 stageId: progress.stageId,
+                stageDescription: progress.stageDescription,
                 progressDate,
                 note,
                 // Chỉ gửi sản lượng khi là giai đoạn thu hoạch
