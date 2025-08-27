@@ -30,7 +30,8 @@ import {
   XCircle,
   AlertTriangle,
   Pencil,
-  Target
+  Target,
+  TrendingDown
 } from "lucide-react";
 import {
   Dialog,
@@ -85,14 +86,6 @@ export default function ViewProcessingBatch() {
   }>>([]);
 
   // Tối ưu: Cache các hàm format để tránh tạo lại
-  const formatWeight = useCallback((kg: number | string | undefined): string => {
-    const number = Number(kg);
-    if (isNaN(number)) return "-";
-    if (number >= 1000) return `${(number / 1000).toFixed(2)} tấn`;
-    if (number >= 100) return `${(number / 100).toFixed(1)} tạ`;
-    return `${new Intl.NumberFormat("vi-VN").format(number)} kg`;
-  }, []);
-
   const formatNumber = useCallback((value: number | string | undefined) => {
     const number = Number(value);
     return isNaN(number)
@@ -209,10 +202,7 @@ export default function ViewProcessingBatch() {
 
           // Tối ưu: Chỉ cần fetch 1 API call thay vì 3
           const data = await getProcessingBatchById(id);
-          console.log("🚀 DEBUG FRONTEND: Fetched batch data:", data);
-          console.log("🚀 DEBUG FRONTEND: Batch status:", data.status);
-          console.log("🚀 DEBUG FRONTEND: Progresses count:", data.progresses?.length || 0);
-          console.log("🚀 DEBUG FRONTEND: All progresses:", data.progresses);
+          
           setBatch(data);
 
         } catch (err: unknown) {
@@ -276,13 +266,11 @@ export default function ViewProcessingBatch() {
     const latestEvaluation = evaluations[0];
     const comments = latestEvaluation.comments || '';
 
-    console.log("DEBUG: Parsing failed stage info from comments:", comments);
-    console.log("DEBUG: Comments length:", comments.length);
-    console.log("DEBUG: Comments includes 'FAILED_STAGE_ID':", comments.includes('FAILED_STAGE_ID'));
+    
 
     // Sử dụng StageFailureParser để parse thông tin
     const failureInfo = StageFailureParser.parseFailureFromComments(comments);
-    console.log("DEBUG: StageFailureParser result:", failureInfo);
+    
 
     if (failureInfo) {
       return {
@@ -294,12 +282,12 @@ export default function ViewProcessingBatch() {
     }
 
     // Fallback: Parse stage info từ comments nếu không có format chuẩn
-    console.log("DEBUG: Trying fallback parsing...");
+    
 
     // Pattern 1: "Tiến trình có vấn đề: Bước 1: Thu hoach"
     const stepMatch = comments.match(/Bước\s*(\d+):\s*([^,\n]+)/);
     if (stepMatch) {
-      console.log("DEBUG: Found step pattern:", stepMatch);
+      
       return {
         stageId: parseInt(stepMatch[1]),
         stageName: stepMatch[2].trim(),
@@ -314,7 +302,7 @@ export default function ViewProcessingBatch() {
     const detailsMatch = comments.match(/FailureDetails:\s*([^,\n]+)/);
 
     if (stageIdMatch) {
-      console.log("DEBUG: Found stage pattern:", stageIdMatch);
+      
       return {
         stageId: parseInt(stageIdMatch[1]),
         stageName: stageNameMatch ? stageNameMatch[1].trim() : 'Unknown',
@@ -334,18 +322,16 @@ export default function ViewProcessingBatch() {
     const fetchMaxOrderIndex = async () => {
       if (batch?.methodId) {
         try {
-          console.log("DEBUG: Fetching stages for methodId:", batch.methodId);
+  
           const stages = await getProcessingStagesByMethodId(batch.methodId);
 
           if (stages && stages.length > 0) {
             // Tìm OrderIndex lớn nhất
             const maxIndex = Math.max(...stages.map((stage: any) => stage.orderIndex));
-            console.log("DEBUG: Total stages:", stages.length);
-            console.log("DEBUG: All OrderIndexes:", stages.map((stage: any) => stage.orderIndex));
-            console.log("DEBUG: Max OrderIndex found:", maxIndex);
+
             setMaxOrderIndex(maxIndex);
           } else {
-            console.log("DEBUG: No stages found, using batch.stageCount");
+
             setMaxOrderIndex(batch.stageCount || 0);
           }
         } catch (error) {
@@ -366,22 +352,19 @@ export default function ViewProcessingBatch() {
     const latestProgress = batch.progresses[batch.progresses.length - 1];
     if (!latestProgress) return false;
 
-    console.log("DEBUG LAST STAGE: latestProgress.stepIndex:", latestProgress.stepIndex);
-    console.log("DEBUG LAST STAGE: maxOrderIndex:", maxOrderIndex);
-    console.log("DEBUG LAST STAGE: Total progresses:", batch.progresses.length);
-    console.log("DEBUG LAST STAGE: All stepIndexes:", batch.progresses.map(p => p.stepIndex));
+    
 
     // Nếu maxOrderIndex = 0 (API lỗi), sử dụng logic fallback
     if (maxOrderIndex === 0) {
       // Sử dụng stageCount từ batch
       const expectedMaxStage = batch.stageCount || 0;
       const isLast = expectedMaxStage > 0 && latestProgress.stepIndex >= expectedMaxStage;
-      console.log("DEBUG LAST STAGE: Using fallback logic - expectedMaxStage:", expectedMaxStage, "isLast:", isLast);
+      
       return isLast;
     }
 
     const isLast = latestProgress.stepIndex >= maxOrderIndex;
-    console.log("DEBUG LAST STAGE: Using maxOrderIndex logic - isLast:", isLast);
+    
     return isLast;
   }, [batch?.progresses, maxOrderIndex, batch?.stageCount]);
 
@@ -532,7 +515,7 @@ export default function ViewProcessingBatch() {
             {(!batch.progresses || batch.progresses.length === 0) && (
               <Button
                 onClick={() => {
-                  console.log("DEBUG: Create modal button clicked");
+          
                   setOpenCreateModal(true);
                 }}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200"
@@ -633,7 +616,10 @@ export default function ViewProcessingBatch() {
               <div>
                 <p className="text-sm text-gray-500 font-medium">Khối lượng ra</p>
                 <p className="text-2xl font-bold text-amber-600">
-                  {formatWeight(totalOutputQuantity)}
+                  {batch.progresses && batch.progresses.length > 0 
+                    ? `${batch.progresses[batch.progresses.length - 1].outputQuantity} ${batch.progresses[batch.progresses.length - 1].outputUnit || 'kg'}`
+                    : '0 kg'
+                  }
                 </p>
               </div>
               <div className="p-3 bg-amber-100 rounded-xl">
@@ -865,93 +851,169 @@ export default function ViewProcessingBatch() {
 
             {batch.progresses && batch.progresses.length > 0 ? (
               <div className="space-y-4">
-                {batch.progresses.map((progress, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
-                            Bước {progress.stepIndex}
-                          </span>
-                          <h3 className="font-semibold text-gray-900 text-lg">
-                            {progress.stageName}
-                          </h3>
+                {batch.progresses
+                  .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
+                  .map((progress, idx) => {
+                    // Kiểm tra xem có phải bước retry không
+                    const isRetryStep = progress.stepIndex > 1 && idx > 0;
+                    const previousProgress = idx > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
+                    const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                    
+                    return (
+                      <div
+                        key={idx}
+                        className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6 ${
+                          isRetry 
+                            ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50' 
+                            : 'border-gray-200 hover:border-purple-300'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                isRetry 
+                                  ? 'bg-orange-100 text-orange-700' 
+                                  : 'bg-purple-100 text-purple-700'
+                              }`}>
+                                Bước {progress.stepIndex}
+                                {isRetry && (
+                                  <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
+                                    Làm lại
+                                  </span>
+                                )}
+                              </span>
+                              <h3 className="font-semibold text-gray-900 text-lg">
+                                {progress.stageName}
+                                {isRetry && (
+                                  <span className="ml-2 text-sm text-orange-600 font-medium">
+                                    (Làm lại)
+                                  </span>
+                                )}
+                              </h3>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-gray-600 text-sm">
-                          {progress.stageDescription}
-                        </p>
-                      </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Scale className="w-4 h-4 text-green-600" />
+                            <span className="font-medium">Sản lượng:</span>
+                            <span>{progress.outputQuantity} {progress.outputUnit || 'kg'}</span>
+                          </div>
 
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <TrendingDown className="w-4 h-4 text-red-600" />
+                            <span className="font-medium">Hao hụt:</span>
+                            <span className="text-red-600">
+                              {progress.wastes && progress.wastes.length > 0
+                                ? progress.wastes.reduce((total, waste) => total + Number(waste.quantity), 0).toFixed(1) + ' ' + (progress.wastes[0]?.unit || 'kg')
+                                : '0 kg'
+                              }
+                            </span>
+                          </div>
 
-                    </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <User className="w-4 h-4 text-blue-600" />
+                            <span className="font-medium">Cập nhật bởi:</span>
+                            <span>{progress.updatedByName ?? "-"}</span>
+                          </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Scale className="w-4 h-4 text-green-600" />
-                        <span className="font-medium">Sản lượng:</span>
-                        <span>{formatWeight(progress.outputQuantity)}</span>
-                      </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Calendar className="w-4 h-4 text-purple-600" />
+                            <span className="font-medium">Ngày:</span>
+                            <span>{new Date(progress.progressDate).toLocaleDateString('vi-VN')}</span>
+                          </div>
+                        </div>
 
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <User className="w-4 h-4 text-blue-600" />
-                        <span className="font-medium">Cập nhật bởi:</span>
-                        <span>{progress.updatedByName ?? "-"}</span>
-                      </div>
+                        {/* Media Section */}
+                        {progress.mediaFiles && progress.mediaFiles.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                              {progress.mediaFiles.map((media, mediaIdx) => (
+                                <div key={mediaIdx} className="relative group">
+                                  {media.mediaType === 'image' ? (
+                                    <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
+                                      <img
+                                        src={media.mediaUrl}
+                                        alt={media.caption || `Ảnh ${mediaIdx + 1} của ${progress.stageName}`}
+                                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                                        loading="lazy"
+                                        onClick={() => openMediaViewer({
+                                          url: media.mediaUrl,
+                                          type: 'image',
+                                          caption: media.caption
+                                        })}
+                                      />
+                                      <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
+                                        Ảnh
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
+                                      <video
+                                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                                        preload="metadata"
+                                        onClick={() => openMediaViewer({
+                                          url: media.mediaUrl,
+                                          type: 'video',
+                                          caption: media.caption
+                                        })}
+                                      >
+                                        <source src={media.mediaUrl} type="video/mp4" />
+                                      </video>
+                                      <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
+                                        Video
+                                      </div>
+                                      {/* Play button overlay */}
+                                      <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="bg-black bg-opacity-40 rounded-full p-2">
+                                          <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                          </svg>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {media.caption && (
+                                    <p className="text-xs text-gray-600 mt-2 truncate" title={media.caption}>
+                                      {media.caption}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Calendar className="w-4 h-4 text-purple-600" />
-                        <span className="font-medium">Ngày:</span>
-                        <span>{new Date(progress.progressDate).toLocaleDateString('vi-VN')}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Settings className="w-4 h-4 text-orange-600" />
-                        <span className="font-medium">Trạng thái:</span>
-                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                          Hoàn thành
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Media Section */}
-                    {progress.mediaFiles && progress.mediaFiles.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {progress.mediaFiles.map((media, mediaIdx) => (
-                            <div key={mediaIdx} className="relative group">
-                              {media.mediaType === 'image' ? (
+                        {/* Legacy Media Support (for backward compatibility) */}
+                        {(!progress.mediaFiles || progress.mediaFiles.length === 0) && (progress.photoUrl || progress.videoUrl) && (
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm (Cũ)</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                              {progress.photoUrl && (
                                 <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
                                   <img
-                                    src={media.mediaUrl}
-                                    alt={media.caption || `Ảnh ${mediaIdx + 1} của ${progress.stageName}`}
+                                    src={progress.photoUrl}
+                                    alt={`Photo of ${progress.stageName}`}
                                     className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                                    loading="lazy"
-                                    onClick={() => openMediaViewer({
-                                      url: media.mediaUrl,
-                                      type: 'image',
-                                      caption: media.caption
-                                    })}
+                                    onClick={() => progress.photoUrl && window.open(progress.photoUrl, '_blank')}
                                   />
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
                                     Ảnh
                                   </div>
                                 </div>
-                              ) : media.mediaType === 'video' ? (
+                              )}
+
+                              {progress.videoUrl && (
                                 <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
                                   <video
                                     className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                                     preload="metadata"
-                                    onClick={() => openMediaViewer({
-                                      url: media.mediaUrl,
-                                      type: 'video',
-                                      caption: media.caption
-                                    })}
+                                    onClick={() => progress.videoUrl && window.open(progress.videoUrl, '_blank')}
                                   >
-                                    <source src={media.mediaUrl} />
+                                    <source src={progress.videoUrl} />
                                   </video>
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
                                     Video
@@ -965,105 +1027,45 @@ export default function ViewProcessingBatch() {
                                     </div>
                                   </div>
                                 </div>
-                              ) : null}
-                              {media.caption && (
-                                <p className="text-xs text-gray-600 mt-2 truncate" title={media.caption}>
-                                  {media.caption}
-                                </p>
                               )}
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                          </div>
+                        )}
 
-                    {/* Legacy Media Support (for backward compatibility) */}
-                    {(!progress.mediaFiles || progress.mediaFiles.length === 0) && (progress.photoUrl || progress.videoUrl) && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm (Cũ)</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {progress.photoUrl && (
-                            <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
-                              <img
-                                src={progress.photoUrl}
-                                alt={`Photo of ${progress.stageName}`}
-                                className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                                onClick={() => progress.photoUrl && window.open(progress.photoUrl, '_blank')}
-                              />
-                              <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                Ảnh
-                              </div>
-                            </div>
-                          )}
-
-                          {progress.videoUrl && (
-                            <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
-                              <video
-                                className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                                preload="metadata"
-                                onClick={() => progress.videoUrl && window.open(progress.videoUrl, '_blank')}
-                              >
-                                <source src={progress.videoUrl} />
-                              </video>
-                              <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                Video
-                              </div>
-                              {/* Play button overlay */}
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="bg-black bg-opacity-40 rounded-full p-2">
-                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                  </svg>
+                        {/* Parameters Section */}
+                        {progress.parameters && progress.parameters.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Thông số kỹ thuật</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {progress.parameters.map((parameter, paramIdx: number) => (
+                                <div key={paramIdx} className="flex items-center gap-2 text-sm text-gray-600">
+                                  <Settings className="w-4 h-4 text-blue-600" />
+                                  <span className="font-medium">{parameter.parameterName}:</span>
+                                  <span>{parameter.parameterValue} {parameter.unit}</span>
                                 </div>
-                              </div>
+                              ))}
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                          </div>
+                        )}
 
-                    {/* Parameters Section */}
-                    {(() => {
-                      console.log(`🎯 DEBUG PARAMETERS RENDER: Progress ${progress.stepIndex} (${progress.stageName}):`, {
-                        hasParameters: !!progress.parameters,
-                        parametersLength: progress.parameters?.length || 0,
-                        parameters: progress.parameters,
-                        willRender: !!(progress.parameters && progress.parameters.length > 0)
-                      });
-                      return null;
-                    })()}
-                    {progress.parameters && progress.parameters.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Thông số kỹ thuật</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {progress.parameters.map((parameter, paramIdx: number) => (
-                            <div key={paramIdx} className="flex items-center gap-2 text-sm text-gray-600">
-                              <Settings className="w-4 h-4 text-blue-600" />
-                              <span className="font-medium">{parameter.parameterName}:</span>
-                              <span>{parameter.parameterValue} {parameter.unit}</span>
+                        {/* Wastes Section */}
+                        {progress.wastes && progress.wastes.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Chất thải</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {progress.wastes.map((waste: ProcessingWaste, wasteIdx: number) => (
+                                <div key={wasteIdx} className="flex items-center gap-2 text-sm text-gray-600">
+                                  <Package className="w-4 h-4 text-red-600" />
+                                  <span className="font-medium">{waste.wasteType}:</span>
+                                  <span>{waste.quantity} {waste.unit}</span>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-
-                    {/* Wastes Section */}
-                    {progress.wastes && progress.wastes.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Chất thải</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {progress.wastes.map((waste: ProcessingWaste, wasteIdx: number) => (
-                            <div key={wasteIdx} className="flex items-center gap-2 text-sm text-gray-600">
-                              <Package className="w-4 h-4 text-red-600" />
-                              <span className="font-medium">{waste.wasteType}:</span>
-                              <span>{formatNumber(waste.quantity)} {waste.unit}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                    );
+                  })}
               </div>
             ) : (
               <div className="text-center py-12">
@@ -1109,7 +1111,7 @@ export default function ViewProcessingBatch() {
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Scale className="w-4 h-4 text-red-600" />
                       <span className="font-medium">Khối lượng:</span>
-                      <span>{formatNumber(waste.quantity)} {waste.unit}</span>
+                      <span>{waste.quantity} {waste.unit}</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
@@ -1281,10 +1283,7 @@ export default function ViewProcessingBatch() {
                               </div>
                               <Button
                                 onClick={() => {
-                                  console.log("DEBUG: Update button clicked");
-                                  console.log("DEBUG: Setting openUpdateAfterEvaluationModal to true");
-                                  setOpenUpdateAfterEvaluationModal(true);
-                                  console.log("DEBUG: Modal should be open now");
+                                          setOpenUpdateAfterEvaluationModal(true);
                                 }}
                                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ml-4 cursor-pointer z-10 relative"
                                 style={{ pointerEvents: 'auto' }}
@@ -1387,7 +1386,7 @@ export default function ViewProcessingBatch() {
                 onSuccess={() => {
                   setOpenAdvanceModal(false);
                   // Force refresh data immediately
-                  console.log("DEBUG: Advance progress successful, refreshing data...");
+          
                   window.location.reload();
                 }}
               />
@@ -1396,7 +1395,7 @@ export default function ViewProcessingBatch() {
         </Dialog>
 
         {/* Update After Evaluation Modal */}
-        {(() => { console.log("DEBUG: failedStageInfo:", failedStageInfo); return null; })()}
+
         {failedStageInfo && (
           <UpdateAfterEvaluationForm
             batchId={id as string}

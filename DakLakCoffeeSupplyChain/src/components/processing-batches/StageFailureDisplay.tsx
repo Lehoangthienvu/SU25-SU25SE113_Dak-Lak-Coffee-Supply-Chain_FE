@@ -18,7 +18,7 @@ export default function StageFailureDisplay({ comments, className = '', batch }:
   // Debug log để kiểm tra comments
   React.useEffect(() => {
     if (comments) {
-      console.log("🔍 DEBUG: StageFailureDisplay received comments:", comments);
+      
       debugStageFailure(comments, 'StageFailureDisplay');
     }
   }, [comments]);
@@ -39,7 +39,7 @@ export default function StageFailureDisplay({ comments, className = '', batch }:
   
   // 🔧 CẢI THIỆN: Debug thông tin parsed
   React.useEffect(() => {
-    console.log("🔍 DEBUG: StageFailureDisplay parsed info:", failureInfo);
+    
   }, [failureInfo]);
 
   // 🔧 CẢI THIỆN: Hiển thị thông tin failure hoặc thông tin thường

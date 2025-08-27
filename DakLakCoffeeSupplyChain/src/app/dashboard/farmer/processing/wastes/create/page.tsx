@@ -55,7 +55,7 @@ export default function CreateProcessingWastePage() {
           const farmerId = payload?.userId || payload?.UserId || payload?.sub;
           if (farmerId) {
             const batchesData = await getProcessingBatchesByFarmer(farmerId);
-            console.log('Processing Batches:', batchesData);
+    
             setBatches(batchesData);
           }
         }

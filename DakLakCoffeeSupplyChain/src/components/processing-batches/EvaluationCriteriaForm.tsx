@@ -114,28 +114,9 @@ export default function EvaluationCriteriaForm({
     }
   }, [selectedStageCode]);
 
-  // 🔧 CẢI THIỆN: Debug useEffect để kiểm tra selectedStageName
-  useEffect(() => {
-    console.log('🔍 DEBUG: selectedStageName changed:', {
-      selectedStageName,
-      selectedStageCode,
-      selectedOrderIndex,
-      hasValue: selectedStageName && selectedStageName.trim() !== '',
-      trimmedValue: selectedStageName?.trim()
-    });
-  }, [selectedStageName, selectedStageCode, selectedOrderIndex]);
 
-  // 🔧 CẢI THIỆN: Debug useEffect để kiểm tra button state
-  useEffect(() => {
-    console.log('🔍 DEBUG: Button state check:', {
-      loading,
-      selectedStageCode,
-      selectedStageName,
-      criteriaLength: criteria.length,
-      hasCriteriaValues: criteriaResults.some(r => r.actualValue > 0),
-      buttonDisabled: loading || !selectedStageCode || !selectedStageName || criteria.length === 0 || !criteriaResults.some(r => r.actualValue > 0)
-    });
-  }, [loading, selectedStageCode, selectedStageName, criteria.length, criteriaResults]);
+
+
 
   const loadAvailableStages = async () => {
     try {
@@ -145,7 +126,7 @@ export default function EvaluationCriteriaForm({
         return;
       }
       
-      console.log('🔍 DEBUG: Loading stages for methodId:', methodId);
+
       const stagesData = await getProcessingStagesByMethodId(Number(methodId));
       
       if (!stagesData || stagesData.length === 0) {
@@ -163,11 +144,11 @@ export default function EvaluationCriteriaForm({
         }))
         .sort((a, b) => a.orderIndex - b.orderIndex); // Sắp xếp theo orderIndex
       
-      console.log('✅ SUCCESS: Loaded stages from API:', convertedStages);
+
       setAvailableStages(convertedStages);
       
 
-      console.log('🔧 INFO: Stages loaded, waiting for expert to select stage with issues');
+
       
     } catch (error) {
       console.error('❌ ERROR: Failed to load stages from API:', error);
@@ -191,21 +172,14 @@ export default function EvaluationCriteriaForm({
     
     setLoadingCriteria(true);
     try {
-      console.log('🔍 DEBUG: Loading criteria and reasons for stageId:', {
-        selectedStageCode,
-        type: typeof selectedStageCode,
-        stageName: selectedStageName
-      });
+
       
       const [criteriaData, reasonsData] = await Promise.all([
         getEvaluationCriteriaForStageById(selectedStageCode), // ✅ Đã là number
         getFailureReasonsForStage(selectedStageCode.toString()) // ✅ Convert sang string cho API này
       ]);
 
-      console.log('✅ SUCCESS: Loaded criteria and reasons:', {
-        criteriaCount: criteriaData?.length || 0,
-        reasonsCount: reasonsData?.length || 0
-      });
+
 
       // 🔧 CẢI THIỆN: Kiểm tra data từ Backend
       if (!criteriaData || criteriaData.length === 0) {
@@ -363,13 +337,7 @@ export default function EvaluationCriteriaForm({
         return;
       }
       
-      // 🔧 CẢI THIỆN: Debug log để kiểm tra dữ liệu
-      console.log('🔍 DEBUG: Stage info before creating comment:', {
-        selectedStageCode,
-        selectedStageName: selectedStageName.trim(),
-        selectedOrderIndex,
-        criteriaResultsCount: criteriaResults.length
-      });
+
       
       const failedCriteria = criteriaResults.filter(r => !r.isPass);
       let finalComments = '';
@@ -393,8 +361,7 @@ export default function EvaluationCriteriaForm({
         const stageName = selectedStageName.trim();
         let stageFailureFormat = `STAGE_EVALUATION:${stageName}|FAILED_STAGE_ID:${selectedOrderIndex}|FAILED_STAGE_NAME:${stageName}|DETAILS:Đánh giá STAGE "${stageName}" không đạt: ${failedCriteria.length}/${criteriaResults.length} tiêu chí|RECOMMENDATIONS:${recommendations}|EVALUATION_TYPE:Stage_Fail`;
         
-        // 🔧 CẢI THIỆN: Debug log để kiểm tra format comment
-        console.log('🔍 DEBUG: Created failure comment format:', stageFailureFormat);
+
         
         if (failedCriteriaList.length > 0) {
           const criteriaStr = failedCriteriaList.map(c => 
@@ -424,8 +391,7 @@ export default function EvaluationCriteriaForm({
         finalComments += ` | Ghi chú: ${comments.trim()}`;
       }
 
-      // 🔧 CẢI THIỆN: Debug log để kiểm tra final comment
-      console.log('🔍 DEBUG: Final evaluation comment:', finalComments);
+
 
       const evaluationData = {
         BatchId: batchId,
@@ -438,20 +404,11 @@ export default function EvaluationCriteriaForm({
 
       const response = await createProcessingBatchEvaluation(evaluationData);
       
-      // 🔧 CẢI THIỆN: Debug log chi tiết response
-      console.log('🔍 DEBUG: Full API response:', {
-        response,
-        hasData: !!response?.data,
-        hasWorkflow: !!response?.workflow,
-        hasMessage: !!response?.message,
-        messageContent: response?.message,
-        workflowContent: response?.workflow,
-        dataContent: response?.data
-      });
+
       
       // 🔧 CẢI THIỆN: Kiểm tra response chi tiết hơn
       if (response) {
-        console.log('✅ SUCCESS: Evaluation created successfully:', response);
+
         
         // 🔧 CẢI THIỆN: Kiểm tra xem response có chứa thông tin thành công không
         // EvaluationWorkflowResponse có cấu trúc: {data: ProcessingBatchEvaluation, message: string, workflow: {...}}
@@ -462,14 +419,7 @@ export default function EvaluationCriteriaForm({
           response.message?.toLowerCase().includes('success') ||
           (response.workflow && (response.workflow as any).batchStatusUpdated);
         
-        console.log('🔍 DEBUG: Success indicator check:', {
-          hasData: !!response.data,
-          hasWorkflow: !!response.workflow,
-          messageIncludesSuccess: response.message?.toLowerCase().includes('thành công'),
-          messageIncludesSuccessEn: response.message?.toLowerCase().includes('success'),
-          workflowBatchStatusUpdated: response.workflow && (response.workflow as any).batchStatusUpdated,
-          finalResult: hasSuccessIndicator
-        });
+
         
         // 🔧 CẢI THIỆN: Nếu có response thì coi như thành công (Backend đã xử lý)
         if (response && (hasSuccessIndicator || Object.keys(response).length > 0)) {
@@ -558,12 +508,7 @@ export default function EvaluationCriteriaForm({
                         value={selectedStageCode.toString()} 
                         onValueChange={(value) => {
                           const stageId = Number(value);
-                          console.log('🔍 DEBUG: Selecting stage with ID:', {
-                            value,
-                            stageId,
-                            type: typeof stageId,
-                            isNaN: isNaN(stageId)
-                          });
+
                           
                           // 🔧 CẢI THIỆN: Kiểm tra stageId có hợp lệ không
                           if (isNaN(stageId) || stageId <= 0) {
@@ -576,12 +521,7 @@ export default function EvaluationCriteriaForm({
                           const stage = availableStages.find(s => s.code === stageId);
                           
                           if (stage) {
-                            console.log('🔍 DEBUG: Found stage in availableStages:', {
-                              code: stage.code,
-                              name: stage.name,
-                              orderIndex: stage.orderIndex,
-                              stageId: stageId
-                            });
+
                             
                             // 🔧 CẢI THIỆN: Validation kỹ hơn
                             if (!stage.name || stage.name.trim() === '') {
@@ -602,25 +542,13 @@ export default function EvaluationCriteriaForm({
                             setSelectedOrderIndex(stage.orderIndex); // orderIndex
                             updateURL(stage.code);
                             
-                            console.log('✅ SUCCESS: Stage selected successfully:', {
-                              stageId: stage.code,
-                              stageName: stage.name,
-                              orderIndex: stage.orderIndex
-                            });
+
                             
                             // 🔧 CẢI THIỆN: Kiểm tra xem có load được criteria không
                             if (stage.code) {
-                              console.log('🔍 DEBUG: Will load criteria for stageId:', stage.code);
                             }
                             
-                            // 🔧 CẢI THIỆN: Debug log để kiểm tra state update
-                            setTimeout(() => {
-                              console.log('🔍 DEBUG: State after stage selection:', {
-                                selectedStageCode: stage.code,
-                                selectedStageName: stage.name,
-                                selectedOrderIndex: stage.orderIndex
-                              });
-                            }, 100);
+
                           } else {
                             console.error('❌ ERROR: Stage not found in availableStages for stageId:', stageId);
                             console.error('❌ ERROR: Available stages:', availableStages);
@@ -659,12 +587,12 @@ export default function EvaluationCriteriaForm({
                             EvaluatedAt: new Date().toISOString()
                           };
                           
-                          console.log('🔍 DEBUG: Creating PASS evaluation for batch:', evaluationData);
+
                           
                           const response = await createProcessingBatchEvaluation(evaluationData);
                           
                           if (response) {
-                            console.log('✅ SUCCESS: PASS evaluation created successfully:', response);
+  
                             AppToast.success('Đã đánh giá đạt BATCH và cập nhật trạng thái!');
                             onSuccess();
                             onClose();

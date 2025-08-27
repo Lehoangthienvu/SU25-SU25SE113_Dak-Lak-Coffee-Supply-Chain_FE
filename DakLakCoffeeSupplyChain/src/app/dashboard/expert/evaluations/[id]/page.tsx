@@ -296,40 +296,66 @@ export default function ExpertEvaluationDetailPage() {
               <div className="p-6">
                 {batch.progresses && batch.progresses.length > 0 ? (
                   <div className="space-y-4">
-                    {batch.progresses.map((progress, index) => (
-                      <div key={progress.progressId} className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-all duration-200">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                              {index + 1}
+                    {batch.progresses
+                      .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
+                      .map((progress, index) => {
+                        // Kiểm tra xem có phải bước retry không
+                        const isRetryStep = progress.stepIndex > 1 && index > 0;
+                        const previousProgress = index > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
+                        const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                        
+                        return (
+                          <div
+                            key={index}
+                            className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6 ${
+                              isRetry 
+                                ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50' 
+                                : 'border-gray-200 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                    isRetry 
+                                      ? 'bg-orange-100 text-orange-700' 
+                                      : 'bg-purple-100 text-purple-700'
+                                  }`}>
+                                    Bước {progress.stepIndex}
+                                    {isRetry && (
+                                      <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
+                                        Làm lại
+                                      </span>
+                                    )}
+                                  </span>
+                                  <h3 className="font-semibold text-gray-900 text-lg">
+                                    {progress.stageName}
+                                    {isRetry && (
+                                      <span className="ml-2 text-sm text-orange-600 font-medium">
+                                        (Làm lại)
+                                      </span>
+                                    )}
+                                  </h3>
+                                </div>
+                              </div>
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-lg">
-                              {progress.stageName}
-                            </h3>
+                            
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div className="flex items-center gap-2">
+                                <FiTrendingUpIcon className="w-4 h-4 text-green-600" />
+                                <span className="text-gray-500">Sản lượng:</span>
+                                <span className="font-medium text-gray-900">{progress.outputQuantity} {progress.outputUnit}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FiUser className="w-4 h-4 text-blue-600" />
+                                <span className="text-gray-500">Cập nhật bởi:</span>
+                                <span className="font-medium text-gray-900">{progress.updatedByName}</span>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
-                            {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString('vi-VN') : 'Chưa bắt đầu'}
-                          </span>
-                        </div>
-
-                        {progress.stageDescription && (
-                          <p className="text-gray-600 mb-3 text-sm">{progress.stageDescription}</p>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div className="flex items-center gap-2">
-                            <FiTrendingUpIcon className="w-4 h-4 text-green-600" />
-                            <span className="text-gray-500">Sản lượng:</span>
-                            <span className="font-medium text-gray-900">{progress.outputQuantity} {progress.outputUnit}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <FiUser className="w-4 h-4 text-blue-600" />
-                            <span className="text-gray-500">Cập nhật bởi:</span>
-                            <span className="font-medium text-gray-900">{progress.updatedByName}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                        );
+                      })}
+                      
                   </div>
                 ) : (
                   <div className="text-center py-8 bg-gray-50 rounded-xl">

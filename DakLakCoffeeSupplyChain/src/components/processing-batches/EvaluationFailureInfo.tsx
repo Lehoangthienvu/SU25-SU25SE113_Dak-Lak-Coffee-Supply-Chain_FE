@@ -24,7 +24,6 @@ interface EvaluationFailureInfoProps {
       stageName: string;
       stepIndex: number;
       progressDate?: string;
-      stageDescription?: string;
       updatedByName?: string;
     }>;
   };
@@ -85,7 +84,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
         return {
           progressDate: latestRetry.progressDate,
           updatedByName: latestRetry.updatedByName,
-          stageDescription: latestRetry.stageDescription
+
         };
       }
     }
@@ -96,7 +95,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
   // Debug log
   React.useEffect(() => {
     if (evaluation.comments) {
-      console.log("🔍 DEBUG: EvaluationFailureInfo received evaluation:", evaluation);
+      
       debugStageFailure(evaluation.comments, 'EvaluationFailureInfo');
     }
   }, [evaluation]);
@@ -300,9 +299,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
                <div className="space-y-1 text-sm text-green-800">
                  <p><strong>Ngày cập nhật:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
                  <p><strong>Cập nhật bởi:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || 'Nông dân'}</p>
-                 {latestRetryInfo.stageDescription && (
-                   <p><strong>Mô tả:</strong> {latestRetryInfo.stageDescription}</p>
-                 )}
+                 
                </div>
              </div>
            </div>

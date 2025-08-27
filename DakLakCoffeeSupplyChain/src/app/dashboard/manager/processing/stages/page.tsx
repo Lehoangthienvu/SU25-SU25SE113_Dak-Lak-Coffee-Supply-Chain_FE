@@ -53,7 +53,7 @@ export default function ManagerProcessingStagesPage() {
     // MANAGER: Có quyền xóa mềm giai đoạn
     if (confirm("Bạn có chắc chắn muốn xóa mềm giai đoạn này? Giai đoạn sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.")) {
       // TODO: Implement soft delete API call
-      console.log("Soft delete stage:", id);
+      
     }
   };
 

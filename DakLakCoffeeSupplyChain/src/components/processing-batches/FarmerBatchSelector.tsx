@@ -26,10 +26,9 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
   useEffect(() => {
     const fetchFarmers = async () => {
       try {
-        console.log("🔍 Đang lấy danh sách farmers có batches...");
+
         const data = await getFarmersWithBatchesForBusinessManager();
-        console.log("✅ Đã lấy được farmers:", data);
-        console.log("📊 Số lượng farmers:", data.length);
+        
         setFarmers(data);
       } catch (err) {
         console.error("❌ Lỗi khi lấy danh sách farmers:", err);
@@ -43,18 +42,17 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
   // Lấy batch của farmer được chọn
   const fetchFarmerBatches = async (farmerId: string) => {
     if (!farmerId) {
-      console.log("⚠️ Không có farmerId được truyền vào");
+      
       return;
     }
 
-    console.log("🔍 Đang lấy batch cho farmerId:", farmerId);
+    
     setLoading(true);
     setError("");
 
     try {
       const data = await getProcessingBatchesByFarmerForBusinessManager(farmerId);
-      console.log("✅ Đã lấy được batches cho farmer:", data);
-      console.log("📊 Số lượng batches:", data.length);
+      
       setBatches(data);
     } catch (err) {
       console.error("❌ Lỗi khi lấy batch của farmer:", err);
@@ -66,7 +64,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
   };
 
   const handleFarmerChange = (farmerId: string) => {
-    console.log("🔄 Farmer được chọn:", farmerId);
+    
     setSelectedFarmerId(farmerId);
     if (farmerId) {
       fetchFarmerBatches(farmerId);
@@ -110,8 +108,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
   };
 
   // Debug: Log farmers
-  console.log("👥 Farmers có batches:", farmers);
-  console.log("📊 Số lượng farmers:", farmers.length);
+  
 
   return (
     <div className="space-y-6">

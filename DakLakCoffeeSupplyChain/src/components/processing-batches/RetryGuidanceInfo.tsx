@@ -19,7 +19,7 @@ interface RetryGuidanceInfoProps {
       stageName: string;
       stepIndex: number;
       progressDate?: string;
-      stageDescription?: string;
+    
       updatedByName?: string;
     }>;
   };

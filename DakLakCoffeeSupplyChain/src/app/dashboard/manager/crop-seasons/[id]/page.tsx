@@ -377,7 +377,7 @@ export default function ManagerCropSeasonDetailPage() {
                                                                                 {prog.progressDate ? new Date(prog.progressDate).toLocaleDateString('vi-VN') : 'N/A'}
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-sm text-gray-600 mt-1">{prog.stageDescription}</p>
+
                                                                         {prog.note && (
                                                                             <p className="text-xs text-gray-500 mt-1 italic">"{prog.note}"</p>
                                                                         )}
