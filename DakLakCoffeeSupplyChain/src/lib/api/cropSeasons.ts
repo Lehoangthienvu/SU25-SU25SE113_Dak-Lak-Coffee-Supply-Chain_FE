@@ -61,6 +61,7 @@ interface BackendResponse {
 }
 
 export interface CropSeasonDetail {
+  committedQuantity: any;
   detailId: string;
   coffeeTypeId: string;
   typeName: string;

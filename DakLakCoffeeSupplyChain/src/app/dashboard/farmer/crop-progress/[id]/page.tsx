@@ -220,7 +220,7 @@ export default function CropProgressPage() {
                                                         </Badge>
                                                     ) : ready ? (
                                                         <Badge variant="outline" className="text-xs">
-                                                            Sẵn sàng
+                                                            Đang tiến hành
                                                         </Badge>
                                                     ) : (
                                                         <Badge variant="secondary" className="text-xs">

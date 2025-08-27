@@ -33,6 +33,7 @@ type Props = {
     onSuccess: () => void;
     disabled?: boolean;
     onStagesLoaded?: (availableStagesCount: number) => void;
+    onSeasonDetailUpdate?: (newYield: number) => void;
     triggerButton?: React.ReactNode
 };
 
@@ -42,6 +43,7 @@ export function CreateProgressDialog({
     existingProgress,
     disabled,
     onStagesLoaded,
+    onSeasonDetailUpdate,
     triggerButton
 }: Props) {
     const [note, setNote] = useState("");
@@ -261,6 +263,11 @@ export function CreateProgressDialog({
             setOpen(false);
             resetForm();
             onSuccess();
+
+            // Cập nhật sản lượng nếu là giai đoạn thu hoạch và có sản lượng
+            if (actualYield && onSeasonDetailUpdate) {
+                onSeasonDetailUpdate(actualYield);
+            }
         } catch (error: unknown) {
             let errorMessage = "Tạo tiến độ thất bại.";
             if (typeof error === 'object' && error !== null && 'response' in error) {

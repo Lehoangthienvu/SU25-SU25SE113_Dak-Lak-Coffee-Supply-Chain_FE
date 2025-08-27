@@ -93,7 +93,7 @@ export default function CropSeasonDetailTable({
                 </td>
                 <td className="px-3 py-3 text-center">
                   <span className="font-medium text-gray-700">
-                    {detail.areaAllocated > 0 ? Math.round(detail.estimatedYield / detail.areaAllocated) : 0} kg/ha
+                    {detail.committedQuantity ? `${detail.committedQuantity} kg` : "—"}
                   </span>
                 </td>
                 <td className="px-3 py-3 text-center">
@@ -139,7 +139,7 @@ export default function CropSeasonDetailTable({
                           <Edit className="w-3 h-3" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent title="Chỉnh sửa vùng trồng">
+                      <DialogContent title="Cập nhật chi tiết vùng trồng" className="max-w-lg">
                         <UpdateCropSeasonDetailDialog
                           detailId={detail.detailId}
                           onClose={() => setEditingDetailId(null)}
