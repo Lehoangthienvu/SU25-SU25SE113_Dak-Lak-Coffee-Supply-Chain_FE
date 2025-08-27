@@ -1365,8 +1365,7 @@ export default function ContractForm({
             </p>
           )}
           <p className="text-xs text-gray-500 mt-1">
-            💡 Hỗ trợ: Ảnh (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX), Video
-            (MP4, AVI, MOV) - Tối đa 30MB
+            💡 Hỗ trợ: Ảnh (JPG, PNG, GIF, WebP), Word (DOC, DOCX) - Tối đa 30MB
           </p>
 
           {/* Preview file đã chọn hoặc file hiện tại */}
