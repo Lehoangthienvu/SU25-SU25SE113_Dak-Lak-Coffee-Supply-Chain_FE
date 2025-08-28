@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getAllInboundRequests } from "@/lib/api/warehouseInboundRequest";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { ChevronLeft, ChevronRight, Search, Eye, Package, TrendingUp, Clock, Che
 import { Badge } from "@/components/ui/badge";
 
 function InboundRequestListContent() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -38,16 +40,16 @@ function InboundRequestListContent() {
         if (res.status === 1) {
           setRequests(Array.isArray(res.data) ? res.data : []);
         } else {
-          toast.error(res.message || 'Không thể tải danh sách yêu cầu nhập kho');
+          toast.error(res.message || t('warehouseInboundRequests.error.description'));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        toast.error('Lỗi khi tải dữ liệu từ server.');
+        toast.error(t('warehouseInboundRequests.error.title'));
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [t]);
 
   // Helper function to determine coffee type
   const getCoffeeType = (request: any) => {
@@ -61,9 +63,9 @@ function InboundRequestListContent() {
   const getCoffeeTypeLabel = (request: any) => {
     const type = getCoffeeType(request);
     switch (type) {
-      case 'fresh': return 'Cà phê tươi';
-      case 'processed': return 'Cà phê đã sơ chế';
-      default: return 'Không xác định';
+      case 'fresh': return t('warehouseInboundRequests.table.coffeeTypes.fresh');
+      case 'processed': return t('warehouseInboundRequests.table.coffeeTypes.processed');
+      default: return t('warehouseInboundRequests.table.coffeeTypes.unknown');
     }
   };
 
@@ -127,26 +129,26 @@ function InboundRequestListContent() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Pending":
-        return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
-          <Clock className="w-3 h-3 mr-1" />
-          Đang chờ duyệt
-        </Badge>;
-      case "Approved":
-        return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Đã duyệt
-        </Badge>;
-      case "Completed":
-        return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Hoàn tất
-        </Badge>;
-      case "Rejected":
-        return <Badge className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full">
-          <XCircle className="w-3 h-3 mr-1" />
-          Từ chối
-        </Badge>;
+              case "Pending":
+          return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
+            <Clock className="w-3 h-3 mr-1" />
+            {t('warehouseInboundRequests.table.status.pending')}
+          </Badge>;
+        case "Approved":
+          return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            {t('warehouseInboundRequests.table.status.approved')}
+          </Badge>;
+        case "Completed":
+          return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            {t('warehouseInboundRequests.table.status.completed')}
+          </Badge>;
+        case "Rejected":
+          return <Badge className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full">
+            <XCircle className="w-3 h-3 mr-1" />
+            {t('warehouseInboundRequests.table.status.rejected')}
+          </Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
           {status}
@@ -157,10 +159,10 @@ function InboundRequestListContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-gray-600">Đang tải danh sách yêu cầu nhập kho...</p>
-        </div>
+                  <div className="text-center">
+            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p className="text-gray-600">{t('warehouseInboundRequests.loading.title')}</p>
+          </div>
       </div>
     );
   }
@@ -177,16 +179,16 @@ function InboundRequestListContent() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  📥 Yêu cầu nhập kho
+                  📥 {t('warehouseInboundRequests.title')}
                 </h1>
                 <p className="text-gray-600 text-sm">
-                  Quản lý và duyệt các yêu cầu nhập kho từ nông dân
+                  {t('warehouseInboundRequests.subtitle')}
                 </p>
               </div>
             </div>
             <div className="flex gap-2 items-center relative">
               <Input
-                placeholder="Tìm mã yêu cầu, nông dân, lô..."
+                placeholder={t('warehouseInboundRequests.search.placeholder')}
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -202,33 +204,33 @@ function InboundRequestListContent() {
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Trạng thái:</span>
+                <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.status')}</span>
                 <Select value={statusFilter} onValueChange={(value) => {
                   setStatusFilter(value);
                   setPage(1);
                 }}>
                   <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Chọn trạng thái" />
+                    <SelectValue placeholder={t('warehouseInboundRequests.filters.selectStatus')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="Pending">Đang chờ</SelectItem>
-                    <SelectItem value="Accepted">Đã duyệt</SelectItem>
-                    <SelectItem value="Rejected">Từ chối</SelectItem>
+                    <SelectItem value="all">{t('warehouseInboundRequests.filters.all')}</SelectItem>
+                    <SelectItem value="Pending">{t('warehouseInboundRequests.filters.pending')}</SelectItem>
+                    <SelectItem value="Accepted">{t('warehouseInboundRequests.filters.accepted')}</SelectItem>
+                    <SelectItem value="Rejected">{t('warehouseInboundRequests.filters.rejected')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Loại cà phê:</span>
+                <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.coffeeType')}</span>
                 <Select value={coffeeTypeFilter} onValueChange={(value) => {
                   setCoffeeTypeFilter(value);
                   setPage(1);
                 }}>
                   <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Chọn loại cà phê" />
+                    <SelectValue placeholder={t('warehouseInboundRequests.filters.selectCoffeeType')} />
                   </SelectTrigger>
                                      <SelectContent>
-                     <SelectItem value="all">Tất cả ({requests.length})</SelectItem>
+                     <SelectItem value="all">{t('warehouseInboundRequests.filters.all')} ({requests.length})</SelectItem>
                      {/* TẠM THỜI ẨN - Filter cà phê tươi */}
                      {/* <SelectItem value="fresh">
                        <div className="flex items-center gap-2">
@@ -239,7 +241,7 @@ function InboundRequestListContent() {
                      <SelectItem value="processed">
                        <div className="flex items-center gap-2">
                          <Coffee className="w-4 h-4 text-purple-600" />
-                         Cà phê đã sơ chế ({processedCoffeeRequests.length})
+                         {t('warehouseInboundRequests.table.coffeeTypes.processed')} ({processedCoffeeRequests.length})
                        </div>
                      </SelectItem>
                    </SelectContent>
@@ -253,7 +255,7 @@ function InboundRequestListContent() {
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm font-medium">Tổng yêu cầu</p>
+                  <p className="text-green-100 text-sm font-medium">{t('warehouseInboundRequests.stats.totalRequests')}</p>
                   <p className="text-2xl font-bold">{filtered.length}</p>
                 </div>
                 <Package className="w-8 h-8 text-green-200" />
@@ -262,7 +264,7 @@ function InboundRequestListContent() {
             <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-sm font-medium">Đang chờ</p>
+                  <p className="text-yellow-100 text-sm font-medium">{t('warehouseInboundRequests.stats.pending')}</p>
                   <p className="text-2xl font-bold">{pendingRequests.length}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-200" />
@@ -271,7 +273,7 @@ function InboundRequestListContent() {
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Đã duyệt</p>
+                  <p className="text-blue-100 text-sm font-medium">{t('warehouseInboundRequests.stats.approved')}</p>
                   <p className="text-2xl font-bold">{acceptedRequests.length}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-blue-200" />
@@ -280,8 +282,8 @@ function InboundRequestListContent() {
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Tổng lượng</p>
-                  <p className="text-2xl font-bold">{totalQuantity.toLocaleString()} kg</p>
+                                     <p className="text-purple-100 text-sm font-medium">{t('warehouseInboundRequests.stats.totalQuantity')}</p>
+                   <p className="text-2xl font-bold">{totalQuantity.toLocaleString()} kg</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-purple-200" />
               </div>
@@ -308,10 +310,10 @@ function InboundRequestListContent() {
                  <div>
                    <div className="flex items-center gap-2 mb-1">
                      <Coffee className="w-4 h-4" />
-                     <p className="text-purple-100 text-sm font-medium">Cà phê đã sơ chế</p>
-                   </div>
-                   <p className="text-xl font-bold">{processedCoffeeRequests.length} yêu cầu</p>
-                   <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
+                                        <p className="text-purple-100 text-sm font-medium">{t('warehouseInboundRequests.table.coffeeTypes.processed')}</p>
+                 </div>
+                 <p className="text-xl font-bold">{processedCoffeeRequests.length} {t('warehouseInboundRequests.stats.requests')}</p>
+                 <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
                  </div>
                </div>
              </div>
@@ -322,7 +324,7 @@ function InboundRequestListContent() {
         <Card className="border-blue-100 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold text-gray-800">
-              Chi tiết yêu cầu nhập kho
+              {t('warehouseInboundRequests.table.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -331,22 +333,22 @@ function InboundRequestListContent() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Package className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-500 font-medium">Không có yêu cầu nhập kho nào</p>
-                <p className="text-gray-400 text-sm">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+                                 <p className="text-gray-500 font-medium">{t('warehouseInboundRequests.empty.title')}</p>
+                 <p className="text-gray-400 text-sm">{t('warehouseInboundRequests.empty.description')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full table-auto border border-gray-200 rounded-lg text-sm">
                   <thead className="bg-gradient-to-r from-green-50 to-green-100 text-green-800 font-semibold">
                     <tr>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Mã yêu cầu</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Nông dân</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Loại cà phê</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Thông tin</th>
-                      <th className="px-4 py-3 text-right border-b border-green-200">Số lượng</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Ngày tạo</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Trạng thái</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Hành động</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseInboundRequests.table.headers.requestCode')}</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseInboundRequests.table.headers.farmer')}</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseInboundRequests.table.headers.coffeeType')}</th>
+                                             <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseInboundRequests.table.headers.information')}</th>
+                      <th className="px-4 py-3 text-right border-b border-green-200">{t('warehouseInboundRequests.table.headers.quantity')}</th>
+                                             <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseInboundRequests.table.headers.createdDate')}</th>
+                      <th className="px-4 py-3 text-center border-b border-green-200">{t('warehouseInboundRequests.table.headers.status')}</th>
+                      <th className="px-4 py-3 text-center border-b border-green-200">{t('warehouseInboundRequests.table.headers.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -360,7 +362,7 @@ function InboundRequestListContent() {
                       if (coffeeType === 'fresh') {
                         displayInfo = req.cropSeasonName || req.detailCode || 'N/A';
                       } else if (coffeeType === 'processed' && req.batchCode) {
-                        displayInfo = `${req.batchCode} - ${req.coffeeType || 'Đã sơ chế'}`;
+                        displayInfo = `${req.batchCode} - ${req.coffeeType || t('warehouseInboundRequests.table.coffeeTypes.processed')}`;
                       } else {
                         displayInfo = 'N/A';
                       }
@@ -407,7 +409,7 @@ function InboundRequestListContent() {
             {!loading && filtered.length > 0 && (
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
                 <span className="text-sm text-gray-600">
-                  Hiển thị {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} trong {filtered.length} yêu cầu
+                                     {t('warehouseInboundRequests.pagination.showing')} {(page - 1) * pageSize + 1} {t('warehouseInboundRequests.pagination.to')} {Math.min(page * pageSize, filtered.length)} {t('warehouseInboundRequests.pagination.of')} {filtered.length} {t('warehouseInboundRequests.pagination.requests')}
                 </span>
                 <div className="flex items-center gap-2">
                   <Button

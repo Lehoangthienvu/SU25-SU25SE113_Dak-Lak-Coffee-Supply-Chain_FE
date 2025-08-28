@@ -2111,4 +2111,200 @@
           "success": "Processing batch updated successfully!"
         }
       }
+    ,
+  "warehouseInboundRequests": {
+    "title": "Warehouse Inbound Requests",
+    "subtitle": "Manage and approve warehouse inbound requests from farmers",
+    "search": {
+      "placeholder": "Search request code, farmer, batch...",
+      "title": "Search Requests"
+    },
+    "filters": {
+      "status": "Status:",
+      "coffeeType": "Coffee Type:",
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Completed",
+      "selectStatus": "Select Status",
+      "selectCoffeeType": "Select Coffee Type"
+    },
+    "stats": {
+      "totalRequests": "Total Requests",
+      "pending": "Pending",
+      "approved": "Approved",
+      "totalQuantity": "Total Quantity",
+      "processedCoffee": "Processed Coffee",
+      "requests": "requests"
+    },
+    "table": {
+      "title": "Warehouse Inbound Request Details",
+      "headers": {
+        "requestCode": "Request Code",
+        "farmer": "Farmer",
+        "coffeeType": "Coffee Type",
+        "information": "Information",
+        "quantity": "Quantity",
+        "createdDate": "Created Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "coffeeTypes": {
+        "fresh": "Fresh Coffee",
+        "processed": "Processed Coffee",
+        "unknown": "Unknown"
+      },
+      "status": {
+        "pending": "Pending Approval",
+        "approved": "Approved",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "view": "View"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "requests": "requests"
+    },
+    "empty": {
+      "title": "No inbound requests found",
+      "description": "Try changing your search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading inbound requests...",
+      "description": "Please wait while we load the data"
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Failed to load inbound requests list"
     }
+  },
+  "warehouseOutboundRequests": {
+    "title": "Warehouse Outbound Requests",
+    "subtitle": "Manage and track warehouse outbound requests",
+    "search": {
+      "placeholder": "Search request code, customer, product...",
+      "title": "Search Requests"
+    },
+    "filters": {
+      "status": "Status:",
+      "productType": "Product Type:",
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Completed"
+    },
+    "stats": {
+      "totalRequests": "Total Requests",
+      "pending": "Pending",
+      "approved": "Approved",
+      "totalQuantity": "Total Quantity"
+    },
+    "table": {
+      "title": "Warehouse Outbound Request Details",
+      "headers": {
+        "requestCode": "Request Code",
+        "customer": "Customer",
+        "productType": "Product Type",
+        "information": "Information",
+        "quantity": "Quantity",
+        "createdDate": "Created Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending Approval",
+        "approved": "Approved",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "view": "View"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "requests": "requests"
+    },
+    "empty": {
+      "title": "No outbound requests found",
+      "description": "Try changing your search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading outbound requests...",
+      "description": "Please wait while we load the data"
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Failed to load outbound requests list"
+    }
+  },
+  "warehouseReceipts": {
+    "title": "Warehouse Receipts",
+    "subtitle": "Manage warehouse receipts and documentation",
+    "inboundReceipts": {
+      "title": "Inbound Receipts",
+      "subtitle": "Manage inbound receipts from suppliers"
+    },
+    "outboundReceipts": {
+      "title": "Outbound Receipts", 
+      "subtitle": "Manage outbound receipts to customers"
+    }
+  },
+  "deliveryRequests": {
+    "title": "Delivery Requests",
+    "subtitle": "Track and manage submitted requests",
+    "sendNewRequest": "Send new request",
+    "createNewRequest": "Create new request",
+    "search": {
+      "title": "Search request",
+      "placeholder": "Search request ID, coffee type"
+    },
+    "filters": {
+      "byType": {
+        "title": "Filter by type",
+        "all": "All",
+        "processedCoffee": "Processed coffee"
+      },
+      "byStatus": {
+        "title": "Filter by status",
+        "all": "All",
+        "approved": "Approved",
+        "completed": "Completed"
+      }
+    },
+    "stats": {
+      "totalRequests": "Total requests",
+      "pendingApproval": "Pending approval",
+      "approved": "Approved",
+      "totalQuantity": "Total quantity",
+      "processedRequests": "Processed requests"
+    },
+    "table": {
+      "title": "List of delivery requests",
+      "summary": "Displaying {{count}} requests - {{total}} total",
+      "headers": {
+        "requestId": "REQUEST ID",
+        "type": "TYPE",
+        "quantity": "QUANTITY",
+        "source": "SOURCE",
+        "status": "STATUS",
+        "action": "ACTION"
+      },
+      "actions": {
+        "view": "View"
+      }
+    },
+    "pagination": {
+      "page": "Page {{current}}/{{total}}"
+    }
+  }
+}
