@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getAllProcessingBatches, ProcessingBatch } from "@/lib/api/processingBatches";
 import { getAllProcessingBatchProgresses, ProcessingBatchProgress } from "@/lib/api/processingBatchProgress";
 import { Eye, Edit, TrendingUp, Package, Calendar, Search } from "lucide-react";
@@ -23,6 +24,7 @@ interface GroupedProgress {
 }
 
 export default function ManagerProcessingProgressesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
   const [progresses, setProgresses] = useState<ProcessingBatchProgress[]>([]);
@@ -64,7 +66,7 @@ export default function ManagerProcessingProgressesPage() {
       progresses: batchProgresses,
       totalProgresses: batchProgresses.length,
       lastUpdated: lastProgress?.progressDate || batch.createdAt,
-      currentStage: lastProgress?.stageName || "Chưa bắt đầu"
+      currentStage: lastProgress?.stageName || t('processing.pages.managerBatches.progresses.stage.notStarted')
     };
   }).sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
 
@@ -87,19 +89,19 @@ export default function ManagerProcessingProgressesPage() {
   const columns = [
     { 
       key: "batchCode", 
-      title: "Mã lô",
+      title: t('processing.pages.managerBatches.progresses.table.batchCode'),
       render: (value: string, item: GroupedProgress) => (
         <span className="font-medium">{value}</span>
       )
     },
     { 
       key: "currentStage", 
-      title: "Giai đoạn hiện tại",
+      title: t('processing.pages.managerBatches.progresses.table.currentStage'),
       render: (value: string, item: GroupedProgress) => {
         const getStageColor = (stage: string) => {
-          if (stage.includes("Hoàn thành")) return "bg-green-100 text-green-700";
-          if (stage.includes("Đang")) return "bg-blue-100 text-blue-700";
-          if (stage.includes("Chờ")) return "bg-yellow-100 text-yellow-700";
+          if (stage.includes(t('processing.pages.managerBatches.progresses.stage.completed'))) return "bg-green-100 text-green-700";
+          if (stage.includes(t('processing.pages.managerBatches.progresses.stage.inProgress'))) return "bg-blue-100 text-blue-700";
+          if (stage.includes(t('processing.pages.managerBatches.progresses.stage.waiting'))) return "bg-yellow-100 text-yellow-700";
           return "bg-gray-100 text-gray-700";
         };
         
@@ -112,7 +114,7 @@ export default function ManagerProcessingProgressesPage() {
     },
     { 
       key: "totalProgresses", 
-      title: "Số bước đã thực hiện",
+      title: t('processing.pages.managerBatches.progresses.table.totalProgresses'),
       render: (value: number, item: GroupedProgress) => {
         const currentProgress = item.progresses.length;
         const totalStages = item.batch.stageCount || 0;
@@ -133,7 +135,7 @@ export default function ManagerProcessingProgressesPage() {
     },
     { 
       key: "batchStatus", 
-      title: "Trạng thái lô",
+      title: t('processing.pages.managerBatches.progresses.table.batchStatus'),
       render: (value: any, item: GroupedProgress) => {
         const getStatusInfo = (status: number) => {
           // Debug: Log status để xem giá trị thực tế
@@ -163,23 +165,23 @@ export default function ManagerProcessingProgressesPage() {
           
           
           if (!isValidStatus) {
-            return { label: `Không xác định (${statusString})`, color: "bg-gray-100 text-gray-700" };
+            return { label: `${t('processing.pages.managerBatches.progresses.status.unknown')} (${statusString})`, color: "bg-gray-100 text-gray-700" };
           }
           
           // Sử dụng statusString để so sánh
           switch (statusString) {
             case ProcessingStatus.NotStarted:
-              return { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.notStarted'), color: "bg-yellow-100 text-yellow-700" };
             case ProcessingStatus.InProgress:
-              return { label: "Đang xử lý", color: "bg-blue-100 text-blue-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.inProgress'), color: "bg-blue-100 text-blue-700" };
             case ProcessingStatus.Completed:
-              return { label: "Hoàn thành", color: "bg-green-100 text-green-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.completed'), color: "bg-green-100 text-green-700" };
             case ProcessingStatus.AwaitingEvaluation:
-              return { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700" };
             case ProcessingStatus.Cancelled:
-              return { label: "Đã hủy", color: "bg-red-100 text-red-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.cancelled'), color: "bg-red-100 text-red-700" };
             default:
-              return { label: "Không xác định", color: "bg-gray-100 text-gray-700" };
+              return { label: t('processing.pages.managerBatches.progresses.status.unknown'), color: "bg-gray-100 text-gray-700" };
           }
         };
         
@@ -196,7 +198,7 @@ export default function ManagerProcessingProgressesPage() {
     },
     { 
       key: "lastUpdated", 
-      title: "Cập nhật cuối",
+      title: t('processing.pages.managerBatches.progresses.table.lastUpdated'),
       render: (value: string, item: GroupedProgress) => {
         if (!value) return "—";
         
@@ -207,11 +209,11 @@ export default function ManagerProcessingProgressesPage() {
         
         let timeAgo = "";
         if (diffDays === 1) {
-          timeAgo = "Hôm qua";
+          timeAgo = t('processing.pages.managerBatches.progresses.time.yesterday');
         } else if (diffDays === 0) {
-          timeAgo = "Hôm nay";
+          timeAgo = t('processing.pages.managerBatches.progresses.time.today');
         } else if (diffDays < 7) {
-          timeAgo = `${diffDays} ngày trước`;
+          timeAgo = `${diffDays} ${t('processing.pages.managerBatches.progresses.time.daysAgo')}`;
         } else {
           timeAgo = date.toLocaleDateString("vi-VN");
         }
@@ -230,7 +232,7 @@ export default function ManagerProcessingProgressesPage() {
   // Cấu hình actions cho table - MANAGER: Chỉ xem chi tiết, không tạo mới
   const actions = [
     {
-      label: "Xem chi tiết",
+      label: t('processing.pages.managerBatches.progresses.actions.viewDetail'),
       icon: <Eye className="w-3 h-3" />,
       onClick: (group: GroupedProgress) => router.push(`/dashboard/manager/processing/progresses/${group.batchId}`),
       className: "hover:bg-green-50 hover:border-green-300 text-green-700"
@@ -240,7 +242,7 @@ export default function ManagerProcessingProgressesPage() {
     //   label: "Thêm tiến trình",
     //   icon: <Plus className="w-3 h-3" />,
     //   onClick: (group: GroupedProgress) => router.push(`/dashboard/manager/processing/progresses/create?batchId=${group.batchId}`),
-    //   className: "hover:bg-blue-50 hover:border-blue-300 text-blue-700"
+    //   className: "hover:bg-blue-50 hover:border-green-300 text-blue-700"
     // }
   ];
 
@@ -249,8 +251,8 @@ export default function ManagerProcessingProgressesPage() {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <ProcessingHeader
-          title="Quản lý tiến trình sơ chế"
-          description={`Theo dõi và quản lý tiến trình xử lý cà phê • ${batches.length} lô • ${progresses.length} tiến trình`}
+          title={t('processing.pages.managerBatches.progresses.title')}
+          description={`${t('processing.pages.managerBatches.progresses.description')} • ${batches.length} lô • ${progresses.length} tiến trình`}
           // MANAGER: Không có quyền tạo tiến trình từ đây
           // createButtonText="Thêm tiến trình"
           // onCreateClick={() => router.push("/dashboard/manager/processing/progresses/create")}
@@ -261,7 +263,7 @@ export default function ManagerProcessingProgressesPage() {
           <div className="flex items-center justify-between">
             <div className="flex-1 max-w-md">
               <SearchBox
-                placeholder="Tìm kiếm mã lô..."
+                placeholder={t('processing.pages.managerBatches.progresses.search.placeholder')}
                 value={search}
                 onChange={setSearch}
               />
@@ -270,7 +272,7 @@ export default function ManagerProcessingProgressesPage() {
               {search && (
                 <span className="flex items-center gap-1">
                   <Search className="w-4 h-4" />
-                  <span>Tìm thấy {filtered.length} kết quả</span>
+                  <span>{t('processing.pages.managerBatches.progresses.search.results', { count: filtered.length })}</span>
                 </span>
               )}
             </div>
@@ -282,14 +284,14 @@ export default function ManagerProcessingProgressesPage() {
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Danh sách tiến trình theo lô</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('processing.pages.managerBatches.progresses.summary.title')}</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Hiển thị {filtered.length} lô • {progresses.length} tiến trình tổng cộng
+                  {t('processing.pages.managerBatches.progresses.summary.description', { batchCount: filtered.length, progressCount: progresses.length })}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-600">
-                  {totalPages > 1 ? `Trang ${currentPage} / ${totalPages}` : "Tất cả lô"}
+                  {totalPages > 1 ? t('processing.pages.managerBatches.progresses.summary.pageInfo', { current: currentPage, total: totalPages }) : t('processing.pages.managerBatches.progresses.summary.allBatches')}
                 </p>
               </div>
             </div>
@@ -300,8 +302,8 @@ export default function ManagerProcessingProgressesPage() {
               columns={columns}
               actions={actions}
               loading={loading}
-              emptyMessage="Không tìm thấy tiến trình nào"
-              emptyDescription="Thử thay đổi từ khóa tìm kiếm."
+              emptyMessage={t('processing.pages.managerBatches.progresses.empty.title')}
+              emptyDescription={t('processing.pages.managerBatches.progresses.empty.description')}
               renderPagination={filtered.length > ITEMS_PER_PAGE}
               pagination={{
                 currentPage,

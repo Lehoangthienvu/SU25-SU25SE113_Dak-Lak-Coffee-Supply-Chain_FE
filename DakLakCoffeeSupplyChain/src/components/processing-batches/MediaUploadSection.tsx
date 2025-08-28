@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X, Upload, Image, Video } from "lucide-react";
@@ -18,6 +19,7 @@ export default function MediaUploadSection({
   onPhotoFilesChange,
   onVideoFilesChange,
 }: MediaUploadSectionProps) {
+  const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -71,7 +73,7 @@ export default function MediaUploadSection({
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
           <Image className="inline w-4 h-4 mr-1" />
-          Ảnh minh hoạ (có thể chọn nhiều)
+          {t("media.photos")} ({t("media.multipleSelection")})
         </label>
         
         <div
@@ -85,7 +87,7 @@ export default function MediaUploadSection({
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
           <p className="text-sm text-gray-600 mb-2">
-            Kéo thả ảnh vào đây hoặc click để chọn
+            {t("media.dragDrop")}
           </p>
           <Input
             type="file"
@@ -101,14 +103,14 @@ export default function MediaUploadSection({
             size="sm"
             onClick={() => document.getElementById('photo-upload')?.click()}
           >
-            Chọn ảnh
+            {t("media.selectPhoto")}
           </Button>
         </div>
 
         {/* Photo Preview */}
         {photoFiles.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs text-gray-500 mb-2">Đã chọn {photoFiles.length} ảnh:</p>
+            <p className="text-xs text-gray-500 mb-2">{t("media.selectedPhotos", { count: photoFiles.length })}:</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {photoFiles.map((file, index) => (
                 <div key={index} className="relative group">
@@ -137,7 +139,7 @@ export default function MediaUploadSection({
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
           <Video className="inline w-4 h-4 mr-1" />
-          Video minh hoạ (có thể chọn nhiều)
+          {t("media.videos")} ({t("media.multipleSelection")})
         </label>
         
         <div
@@ -151,7 +153,7 @@ export default function MediaUploadSection({
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
           <p className="text-sm text-gray-600 mb-2">
-            Kéo thả video vào đây hoặc click để chọn
+            {t("media.dragDrop")}
           </p>
           <Input
             type="file"
@@ -167,14 +169,14 @@ export default function MediaUploadSection({
             size="sm"
             onClick={() => document.getElementById('video-upload')?.click()}
           >
-            Chọn video
+            {t("media.selectVideo")}
           </Button>
         </div>
 
         {/* Video Preview */}
         {videoFiles.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs text-gray-500 mb-2">Đã chọn {videoFiles.length} video:</p>
+            <p className="text-xs text-gray-500 mb-2">{t("media.selectedVideos", { count: videoFiles.length })}:</p>
             <div className="space-y-2">
               {videoFiles.map((file, index) => (
                 <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
@@ -202,8 +204,8 @@ export default function MediaUploadSection({
       {/* File Limits Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-xs text-blue-700">
-          <strong>Giới hạn:</strong> Tối đa 10 files, tổng kích thước 50MB. 
-          Ảnh sẽ được nén tự động để giảm kích thước.
+          <strong>{t("media.limits.title")}:</strong> {t("media.limits.maxFiles")} 10 {t("media.files")}, {t("media.limits.maxSize")} 50MB. 
+          {t("media.limits.autoCompress")}
         </p>
       </div>
     </div>

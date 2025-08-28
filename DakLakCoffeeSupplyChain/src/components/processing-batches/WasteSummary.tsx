@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Trash2, Calendar, Scale, FileText } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export interface WasteSummaryData {
   wasteId: string;
@@ -21,6 +22,8 @@ interface WasteSummaryProps {
 }
 
 export default function WasteSummary({ wastes, className = "" }: WasteSummaryProps) {
+  const { t } = useTranslation();
+  
   if (!wastes || wastes.length === 0) {
     return null;
   }
@@ -32,12 +35,12 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
           <Trash2 className="w-5 h-5 text-green-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Waste đã tạo</h3>
-          <p className="text-sm text-gray-600">Danh sách các loại waste đã được ghi nhận</p>
+          <h3 className="text-lg font-semibold text-gray-900">{t('waste.summary.title')}</h3>
+          <p className="text-sm text-gray-600">{t('waste.summary.description')}</p>
         </div>
         <div className="ml-auto">
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-            {wastes.length} waste
+            {wastes.length} {t('waste.summary.count')}
           </span>
         </div>
       </div>
@@ -52,7 +55,7 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">{waste.wasteType}</h4>
-                  <p className="text-xs text-gray-500">Code: {waste.wasteCode}</p>
+                  <p className="text-xs text-gray-500">{t('waste.summary.code')}: {waste.wasteCode}</p>
                 </div>
               </div>
               <div className="text-right">
@@ -62,7 +65,7 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
                   </span>
                   {waste.isDisposed && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      Đã xử lý
+                      {t('waste.summary.disposed')}
                     </span>
                   )}
                 </div>
@@ -73,19 +76,19 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
               {waste.recordedAt && (
                 <div className="flex items-center gap-2 text-gray-600">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  <span>Ghi nhận: {new Date(waste.recordedAt).toLocaleDateString("vi-VN")}</span>
+                  <span>{t('waste.summary.recordedAt')}: {new Date(waste.recordedAt).toLocaleDateString("vi-VN")}</span>
                 </div>
               )}
               
               <div className="flex items-center gap-2 text-gray-600">
                 <Scale className="w-4 h-4 text-gray-400" />
-                <span>Khối lượng: {waste.quantity} {waste.unit}</span>
+                <span>{t('waste.summary.quantity')}: {waste.quantity} {waste.unit}</span>
               </div>
 
               {waste.note && (
                 <div className="flex items-center gap-2 text-gray-600">
                   <FileText className="w-4 h-4 text-gray-400" />
-                  <span>Ghi chú: {waste.note}</span>
+                  <span>{t('waste.summary.note')}: {waste.note}</span>
                 </div>
               )}
             </div>
@@ -94,7 +97,7 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <Calendar className="w-3 h-3" />
-                  <span>Xử lý lúc: {new Date(waste.disposedAt).toLocaleDateString("vi-VN")}</span>
+                  <span>{t('waste.summary.disposedAt')}: {new Date(waste.disposedAt).toLocaleDateString("vi-VN")}</span>
                 </div>
               </div>
             )}
@@ -105,13 +108,13 @@ export default function WasteSummary({ wastes, className = "" }: WasteSummaryPro
       {/* Summary stats */}
       <div className="mt-4 p-3 bg-green-100 rounded-lg">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-green-800">Tổng khối lượng waste:</span>
+          <span className="font-medium text-green-800">{t('waste.summary.totalQuantity')}:</span>
           <span className="font-bold text-green-900">
             {wastes.reduce((sum, waste) => sum + waste.quantity, 0).toFixed(2)} kg
           </span>
         </div>
         <div className="flex items-center justify-between text-sm mt-1">
-          <span className="font-medium text-green-800">Số loại waste:</span>
+          <span className="font-medium text-green-800">{t('waste.summary.totalTypes')}:</span>
           <span className="font-bold text-green-900">{wastes.length}</span>
         </div>
       </div>

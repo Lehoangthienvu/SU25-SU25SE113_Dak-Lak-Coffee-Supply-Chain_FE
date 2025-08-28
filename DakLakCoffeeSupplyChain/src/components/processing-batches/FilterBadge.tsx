@@ -1,49 +1,34 @@
-import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FilterBadgeProps {
-  icon: LucideIcon;
   label: string;
-  count: number;
-  color: string;
-  active?: boolean;
-  unitLabel?: string;
-  onClick?: () => void;
+  value: string;
+  onRemove: () => void;
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
 }
 
-export default function FilterBadge({
-  icon: Icon,
-  label,
-  count,
-  color,
-  active = false,
-  unitLabel = "",
-  onClick,
+export default function FilterBadge({ 
+  label, 
+  value, 
+  onRemove, 
+  variant = 'secondary' 
 }: FilterBadgeProps) {
+  const { t } = useTranslation();
+
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between px-3 py-2 rounded-lg border cursor-pointer",
-        active
-          ? "border-[#FD7622] bg-orange-50"
-          : "border-gray-200 bg-white hover:bg-gray-50"
-      )}
-      onClick={onClick}
-    >
-      <div className="flex items-center gap-2">
-        <span
-          className={cn(
-            "w-6 h-6 rounded-full flex items-center justify-center text-xs",
-            `bg-${color}-100 text-${color}-800`
-          )}
-        >
-          <Icon className="w-4 h-4" />
-        </span>
-        <span className="text-xs font-medium">{label}</span>
-      </div>
-      <span className="text-sm text-gray-500">
-        {count} {unitLabel}
-      </span>
-    </div>
+    <Badge variant={variant} className="flex items-center gap-1 px-2 py-1 text-xs">
+      <span className="font-medium">{label}:</span>
+      <span>{value}</span>
+      <button
+        onClick={onRemove}
+        className="ml-1 hover:bg-black/10 rounded-full p-0.5 transition-colors"
+        aria-label={t('filterBadge.removeFilter')}
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </Badge>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   getProcessingBatchById,
   ProcessingBatch,
@@ -32,6 +33,7 @@ import {
 import { AppToast } from "@/components/ui/AppToast";
 
 export default function ViewProcessingBatchManager() {
+  const { t } = useTranslation();
   // Lấy ID từ URL params
   const { id } = useParams();
   const router = useRouter();
@@ -108,7 +110,7 @@ export default function ViewProcessingBatchManager() {
 
   const handleDeleteBatch = () => {
     
-    if (confirm("Bạn có chắc chắn muốn xóa lô sơ chế này?")) {
+    if (confirm(t('processing.pages.managerBatches.batchDetail.deleteConfirm'))) {
       // TODO: Implement delete batch functionality
       AppToast.info("Chức năng xóa lô đang được phát triển");
     }
@@ -123,8 +125,8 @@ export default function ViewProcessingBatchManager() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
-            <p className="text-sm text-gray-500">Đang tải thông tin lô sơ chế</p>
+            <p className="text-lg text-gray-600 font-medium">{t('processing.pages.managerBatches.batchDetail.loading.title')}</p>
+            <p className="text-sm text-gray-500">{t('processing.pages.managerBatches.batchDetail.loading.description')}</p>
           </div>
         </div>
       </div>
@@ -138,11 +140,11 @@ export default function ViewProcessingBatchManager() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center py-12">
             <AlertTriangle className="w-16 h-16 text-orange-600 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Không tìm thấy lô sơ chế</h1>
-            <p className="text-gray-600 mb-6">Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('processing.pages.managerBatches.batchDetail.notFound.title')}</h1>
+            <p className="text-gray-600 mb-6">{t('processing.pages.managerBatches.batchDetail.notFound.description')}</p>
             <Button onClick={() => router.push("/dashboard/manager/processing/batches")}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Quay lại danh sách
+              {t('processing.pages.managerBatches.batchDetail.notFound.backToList')}
             </Button>
           </div>
         </div>
@@ -165,11 +167,11 @@ export default function ViewProcessingBatchManager() {
                 className="bg-white/80 hover:bg-white border-orange-200 hover:border-orange-300"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Quay lại
+                {t('processing.pages.managerBatches.batchDetail.backToList')}
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">Chi tiết lô sơ chế</h1>
-                <p className="text-gray-600 mt-1">Thông tin chi tiết về lô sơ chế cà phê</p>
+                <h1 className="text-3xl font-bold text-gray-800">{t('processing.pages.managerBatches.batchDetail.title')}</h1>
+                <p className="text-gray-600 mt-1">{t('processing.pages.managerBatches.batchDetail.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -179,7 +181,7 @@ export default function ViewProcessingBatchManager() {
                 className="bg-white/80 hover:bg-white border-orange-200 hover:border-orange-300"
               >
                 <Eye className="w-4 h-4 mr-2" />
-                Xem tiến độ
+                {t('processing.pages.managerBatches.batchDetail.viewProgress')}
               </Button>
               <Button 
                 variant="outline" 
@@ -187,7 +189,7 @@ export default function ViewProcessingBatchManager() {
                 className="bg-white/80 hover:bg-white border-orange-200 hover:border-orange-300"
               >
                 <FileText className="w-4 h-4 mr-2" />
-                Báo cáo
+                {t('processing.pages.managerBatches.batchDetail.report')}
               </Button>
             </div>
           </div>
@@ -201,7 +203,7 @@ export default function ViewProcessingBatchManager() {
                 <Package className="w-8 h-8 text-orange-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Mã lô</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.batchDetail.stats.batchCode')}</p>
                 <p className="text-xl font-bold text-gray-900">{batch.batchCode}</p>
               </div>
             </div>
@@ -213,7 +215,7 @@ export default function ViewProcessingBatchManager() {
                 <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Giai đoạn</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.batchDetail.stats.stage')}</p>
                 <p className="text-xl font-bold text-gray-900">{stats.totalProgress}</p>
               </div>
             </div>
@@ -225,7 +227,7 @@ export default function ViewProcessingBatchManager() {
                 <Scale className="w-8 h-8 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Sản lượng</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.batchDetail.stats.output')}</p>
                 <p className="text-xl font-bold text-gray-900">{stats.totalOutput} kg</p>
               </div>
             </div>
@@ -237,7 +239,7 @@ export default function ViewProcessingBatchManager() {
                 <BarChart3 className="w-8 h-8 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Hiệu suất</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.batchDetail.stats.efficiency')}</p>
                 <p className="text-xl font-bold text-gray-900">{stats.efficiency.toFixed(1)}%</p>
               </div>
             </div>
@@ -250,50 +252,50 @@ export default function ViewProcessingBatchManager() {
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Information */}
             <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                Thông tin cơ bản
+                {t('processing.pages.managerBatches.batchDetail.basicInfo.title')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Package className="w-4 h-4 text-orange-600" />
-                    <span className="font-medium text-gray-700">Mã lô</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.batchCode')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.batchCode}</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Package className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-gray-700">Mã hệ thống</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.systemCode')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.systemBatchCode}</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-green-600" />
-                    <span className="font-medium text-gray-700">Mùa vụ</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.cropSeason')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.cropSeasonName}</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <User className="w-4 h-4 text-purple-600" />
-                    <span className="font-medium text-gray-700">Nông dân</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.farmer')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.farmerName}</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Settings className="w-4 h-4 text-indigo-600" />
-                    <span className="font-medium text-gray-700">Phương pháp</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.method')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.methodName}</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <statusInfo.icon className="w-4 h-4" />
-                    <span className="font-medium text-gray-700">Trạng thái</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.status')}</span>
                   </div>
                   <Badge className={statusInfo.color}>
                     <span className="flex items-center gap-1">
@@ -305,21 +307,21 @@ export default function ViewProcessingBatchManager() {
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Scale className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-gray-700">Khối lượng vào</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.inputQuantity')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.totalInputQuantity} kg</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Scale className="w-4 h-4 text-green-600" />
-                    <span className="font-medium text-gray-700">Khối lượng ra</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.outputQuantity')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{batch.totalOutputQuantity} kg</span>
                 </div>
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200 md:col-span-2">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-gray-600" />
-                    <span className="font-medium text-gray-700">Ngày tạo</span>
+                    <span className="font-medium text-gray-700">{t('processing.pages.managerBatches.batchDetail.basicInfo.createdAt')}</span>
                   </div>
                   <span className="text-gray-800 font-semibold text-lg">{new Date(batch.createdAt).toLocaleString("vi-VN")}</span>
                 </div>
@@ -330,7 +332,7 @@ export default function ViewProcessingBatchManager() {
             <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200 p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
-                Tiến độ chế biến
+                {t('processing.pages.managerBatches.batchDetail.progress.title')}
               </h2>
               {batch.progresses && batch.progresses.length > 0 ? (
                 <div className="space-y-4">
@@ -419,7 +421,7 @@ export default function ViewProcessingBatchManager() {
           <div className="space-y-6">
             {/* Quick Actions Section - Các thao tác nhanh cho manager */}
             <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Thao tác nhanh</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('processing.pages.managerBatches.batchDetail.quickActions.title')}</h3>
               <div className="space-y-3">
                 {/* Nút xem tiến độ chi tiết */}
                 <Button 
@@ -427,7 +429,7 @@ export default function ViewProcessingBatchManager() {
                   onClick={handleViewProgress}
                 >
                   <Eye className="w-4 h-4 mr-2" />
-                  Xem tiến độ chi tiết
+                  {t('processing.pages.managerBatches.batchDetail.quickActions.viewProgressDetail')}
                 </Button>
                 {/* Nút xem đánh giá của chuyên gia */}
                 <Button 
@@ -436,7 +438,7 @@ export default function ViewProcessingBatchManager() {
                   onClick={handleViewExpertEvaluation}
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Xem đánh giá của chuyên gia
+                  {t('processing.pages.managerBatches.batchDetail.quickActions.viewExpertEvaluation')}
                 </Button>
                 {/* Nút chỉnh sửa thông tin lô */}
                 <Button 
@@ -445,7 +447,7 @@ export default function ViewProcessingBatchManager() {
                   onClick={handleEditBatch}
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Chỉnh sửa thông tin
+                  {t('processing.pages.managerBatches.batchDetail.quickActions.editInfo')}
                 </Button>
                 {/* Nút xóa lô sơ chế */}
                 <Button 
@@ -454,18 +456,18 @@ export default function ViewProcessingBatchManager() {
                   onClick={handleDeleteBatch}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Xóa
+                  {t('processing.pages.managerBatches.batchDetail.quickActions.delete')}
                 </Button>
               </div>
             </div>
 
             {/* Batch Summary Section - Tóm tắt thông tin lô */}
             <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Tóm tắt lô</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('processing.pages.managerBatches.batchDetail.summary.title')}</h3>
               <div className="space-y-4">
                 {/* Hiển thị trạng thái hiện tại của lô */}
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Trạng thái hiện tại:</span>
+                  <span className="text-gray-600">{t('processing.pages.managerBatches.batchDetail.summary.currentStatus')}</span>
                   <Badge className={statusInfo.color}>
                     <span className="flex items-center gap-1">
                       <statusInfo.icon className="w-3 h-3" />
@@ -475,17 +477,17 @@ export default function ViewProcessingBatchManager() {
                 </div>
                 {/* Hiển thị số giai đoạn đã hoàn thành */}
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Số giai đoạn:</span>
+                  <span className="text-gray-600">{t('processing.pages.managerBatches.batchDetail.summary.stagesCount')}</span>
                   <span className="font-semibold text-gray-800">{stats.totalProgress}</span>
                 </div>
                 {/* Hiển thị hiệu suất chế biến */}
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Hiệu suất:</span>
+                  <span className="text-gray-600">{t('processing.pages.managerBatches.batchDetail.summary.efficiency')}</span>
                   <span className="font-semibold text-gray-800">{stats.efficiency.toFixed(1)}%</span>
                 </div>
                 {/* Hiển thị ngày tạo lô */}
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Ngày tạo:</span>
+                  <span className="text-gray-600">{t('processing.pages.managerBatches.batchDetail.summary.createdAt')}</span>
                   <span className="font-semibold text-gray-800">{new Date(batch.createdAt).toLocaleDateString("vi-VN")}</span>
                 </div>
               </div>
@@ -493,14 +495,14 @@ export default function ViewProcessingBatchManager() {
 
             {/* Contact Information Section - Thông tin liên hệ */}
             <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Thông tin liên hệ</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('processing.pages.managerBatches.batchDetail.contact.title')}</h3>
               <div className="space-y-3">
                 {/* Thông tin nông dân */}
                 <div className="flex items-center gap-3">
                   <User className="w-5 h-5 text-gray-500" />
                   <div>
                     <p className="font-medium text-gray-800">{batch.farmerName}</p>
-                    <p className="text-sm text-gray-600">Nông dân</p>
+                    <p className="text-sm text-gray-600">{t('processing.pages.managerBatches.batchDetail.contact.farmer')}</p>
                   </div>
                 </div>
                 {/* Thông tin mùa vụ */}
@@ -508,7 +510,7 @@ export default function ViewProcessingBatchManager() {
                   <Calendar className="w-5 h-5 text-gray-500" />
                   <div>
                     <p className="font-medium text-gray-800">{batch.cropSeasonName}</p>
-                    <p className="text-sm text-gray-600">Mùa vụ</p>
+                    <p className="text-sm text-gray-600">{t('processing.pages.managerBatches.batchDetail.contact.cropSeason')}</p>
                   </div>
                 </div>
               </div>

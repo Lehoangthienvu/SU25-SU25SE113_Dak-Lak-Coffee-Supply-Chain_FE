@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getAllProcessingParameters, ProcessingParameter } from "@/lib/api/processingParameters";
 import { Eye, Edit, Trash2, Plus, Settings, Gauge, AlertCircle, Search } from "lucide-react";
 
@@ -11,6 +12,7 @@ import SearchBox from "@/components/processing/SearchBox";
 import ProcessingTable from "@/components/processing/ProcessingTable";
 
 export default function ManagerProcessingParametersPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [parameters, setParameters] = useState<ProcessingParameter[]>([]);
   const [search, setSearch] = useState("");
@@ -53,7 +55,7 @@ export default function ManagerProcessingParametersPage() {
 
   const handleDelete = (id: string) => {
     // MANAGER: Có quyền xóa mềm tham số
-    if (confirm("Bạn có chắc chắn muốn xóa mềm tham số này? Tham số sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.")) {
+    if (confirm(t('processing.pages.managerBatches.parameters.deleteConfirm'))) {
       // TODO: Implement soft delete API call
       
     }
@@ -63,30 +65,30 @@ export default function ManagerProcessingParametersPage() {
   const columns = [
     { 
       key: "parameterCode", 
-      title: "Mã tham số",
+      title: t('processing.pages.managerBatches.parameters.table.parameterCode'),
       render: (value: string) => (
         <span className="font-medium text-blue-600">{value}</span>
       )
     },
     { 
       key: "parameterName", 
-      title: "Tên tham số",
+      title: t('processing.pages.managerBatches.parameters.table.parameterName'),
       render: (value: string) => (
         <span className="font-medium">{value}</span>
       )
     },
     { 
       key: "description", 
-      title: "Mô tả",
+      title: t('processing.pages.managerBatches.parameters.table.description'),
       render: (value: string) => (
         <span className="text-sm text-gray-600 line-clamp-2">
-          {value || "Không có mô tả"}
+          {value || t('processing.pages.managerBatches.parameters.table.noDescription')}
         </span>
       )
     },
     { 
       key: "unit", 
-      title: "Đơn vị",
+      title: t('processing.pages.managerBatches.parameters.table.unit'),
       render: (value: string) => (
         <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm font-medium">
           {value || "—"}
@@ -95,7 +97,7 @@ export default function ManagerProcessingParametersPage() {
     },
     { 
       key: "minValue", 
-      title: "Giá trị min",
+      title: t('processing.pages.managerBatches.parameters.table.minValue'),
       render: (value: number) => (
         <span className="text-sm font-medium text-red-600">
           {value !== null && value !== undefined ? value : "—"}
@@ -104,7 +106,7 @@ export default function ManagerProcessingParametersPage() {
     },
     { 
       key: "maxValue", 
-      title: "Giá trị max",
+      title: t('processing.pages.managerBatches.parameters.table.maxValue'),
       render: (value: number) => (
         <span className="text-sm font-medium text-green-600">
           {value !== null && value !== undefined ? value : "—"}
@@ -113,7 +115,7 @@ export default function ManagerProcessingParametersPage() {
     },
     { 
       key: "targetValue", 
-      title: "Giá trị mục tiêu",
+      title: t('processing.pages.managerBatches.parameters.table.targetValue'),
       render: (value: number) => (
         <div className="flex items-center gap-2">
           <Gauge className="w-4 h-4 text-blue-400" />
@@ -125,19 +127,19 @@ export default function ManagerProcessingParametersPage() {
     },
     { 
       key: "isRequired", 
-      title: "Bắt buộc",
+      title: t('processing.pages.managerBatches.parameters.table.required'),
       render: (value: boolean) => {
         return (
           <div className="flex items-center justify-center">
             {value ? (
               <span className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
                 <AlertCircle className="w-3 h-3" />
-                Bắt buộc
+                {t('processing.pages.managerBatches.parameters.table.required')}
               </span>
             ) : (
               <span className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
                 <Settings className="w-3 h-3" />
-                Tùy chọn
+                {t('processing.pages.managerBatches.parameters.table.optional')}
               </span>
             )}
           </div>
@@ -147,17 +149,17 @@ export default function ManagerProcessingParametersPage() {
     },
     { 
       key: "isActive", 
-      title: "Trạng thái",
+      title: t('processing.pages.managerBatches.parameters.table.status'),
       render: (value: boolean) => {
         return (
           <div className="flex items-center justify-center">
             {value ? (
               <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                Hoạt động
+                {t('processing.pages.managerBatches.parameters.table.active')}
               </span>
             ) : (
               <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                Không hoạt động
+                {t('processing.pages.managerBatches.parameters.table.inactive')}
               </span>
             )}
           </div>
@@ -170,19 +172,19 @@ export default function ManagerProcessingParametersPage() {
   // Cấu hình actions cho table - MANAGER: Xem, sửa, và xóa mềm
   const actions = [
     {
-      label: "Xem",
+      label: t('common.view'),
       icon: <Eye className="w-3 h-3" />,
       onClick: (parameter: ProcessingParameter) => router.push(`/dashboard/manager/processing/parameters/${parameter.parameterId}`),
       className: "hover:bg-green-50 hover:border-green-300"
     },
     {
-      label: "Sửa",
+      label: t('common.edit'),
       icon: <Edit className="w-3 h-3" />,
       onClick: (parameter: ProcessingParameter) => router.push(`/dashboard/manager/processing/parameters/${parameter.parameterId}/edit`),
       className: "hover:bg-blue-50 hover:border-blue-300"
     },
     {
-      label: "Xóa mềm",
+      label: t('processing.pages.managerBatches.parameters.actions.softDelete'),
       icon: <Trash2 className="w-3 h-3" />,
       onClick: (parameter: ProcessingParameter) => handleDelete(parameter.parameterId),
       className: "hover:bg-red-50 hover:border-red-300"
@@ -200,9 +202,9 @@ export default function ManagerProcessingParametersPage() {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <ProcessingHeader
-          title="Quản lý tham số sơ chế"
-          description={`Quản lý các tham số kỹ thuật trong quy trình sơ chế cà phê • ${totalParameters} tham số • ${activeParameters} đang hoạt động`}
-          createButtonText="Thêm tham số"
+          title={t('processing.pages.managerBatches.parameters.title')}
+          description={t('processing.pages.managerBatches.parameters.description')}
+          createButtonText={t('processing.pages.managerBatches.parameters.actions.addNew')}
           onCreateClick={() => router.push("/dashboard/manager/processing/parameters/create")}
         />
 
@@ -214,7 +216,7 @@ export default function ManagerProcessingParametersPage() {
                 <Settings className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tổng tham số</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.parameters.stats.total')}</p>
                 <p className="text-2xl font-bold text-gray-900">{totalParameters}</p>
               </div>
             </div>
@@ -226,7 +228,7 @@ export default function ManagerProcessingParametersPage() {
                 <Settings className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.parameters.stats.active')}</p>
                 <p className="text-2xl font-bold text-gray-900">{activeParameters}</p>
               </div>
             </div>
@@ -238,7 +240,7 @@ export default function ManagerProcessingParametersPage() {
                 <AlertCircle className="w-6 h-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Bắt buộc</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.parameters.stats.required')}</p>
                 <p className="text-2xl font-bold text-gray-900">{requiredParameters}</p>
               </div>
             </div>
@@ -250,7 +252,7 @@ export default function ManagerProcessingParametersPage() {
                 <Settings className="w-6 h-6 text-gray-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tùy chọn</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.parameters.stats.optional')}</p>
                 <p className="text-2xl font-bold text-gray-900">{optionalParameters}</p>
               </div>
             </div>
@@ -262,7 +264,7 @@ export default function ManagerProcessingParametersPage() {
           <div className="flex items-center justify-between">
             <div className="flex-1 max-w-md">
               <SearchBox
-                placeholder="Tìm kiếm tên tham số, mã tham số hoặc mô tả..."
+                                  placeholder={t('processing.pages.managerBatches.parameters.search.placeholder')}
                 value={search}
                 onChange={setSearch}
               />
@@ -271,7 +273,7 @@ export default function ManagerProcessingParametersPage() {
               {search && (
                 <span className="flex items-center gap-1">
                   <Search className="w-4 h-4" />
-                  <span>Tìm thấy {filtered.length} kết quả</span>
+                  <span>{t('processing.pages.managerBatches.parameters.search.results', { count: filtered.length })}</span>
                 </span>
               )}
             </div>
@@ -283,14 +285,14 @@ export default function ManagerProcessingParametersPage() {
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Danh sách tham số</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('processing.pages.managerBatches.parameters.table.title')}</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Hiển thị {filtered.length} tham số • {activeParameters} đang hoạt động
+                  {t('processing.pages.managerBatches.parameters.table.summary', { total: filtered.length, active: activeParameters })}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-600">
-                  {totalPages > 1 ? `Trang ${currentPage} / ${totalPages}` : "Tất cả tham số"}
+                  {totalPages > 1 ? t('processing.pages.managerBatches.parameters.table.pageInfo', { current: currentPage, total: totalPages }) : t('processing.pages.managerBatches.parameters.table.allParameters')}
                 </p>
               </div>
             </div>
@@ -301,8 +303,8 @@ export default function ManagerProcessingParametersPage() {
               columns={columns}
               actions={actions}
               loading={loading}
-              emptyMessage="Không tìm thấy tham số nào"
-              emptyDescription="Thử thay đổi từ khóa tìm kiếm hoặc thêm tham số mới."
+              emptyMessage={t('processing.pages.managerBatches.parameters.table.noData')}
+              emptyDescription={t('processing.pages.managerBatches.parameters.table.noDataDescription')}
               renderPagination={filtered.length > ITEMS_PER_PAGE}
               pagination={{
                 currentPage,

@@ -3,6 +3,7 @@
 import React from 'react';
 import { AlertTriangle, Info, CheckCircle, RefreshCw } from 'lucide-react';
 import { getStageFailureDisplayInfo, debugStageFailure } from '@/lib/helpers/evaluationHelpers';
+import { useTranslation } from 'react-i18next';
 
 interface EvaluationFailureInfoProps {
   evaluation: {
@@ -30,6 +31,7 @@ interface EvaluationFailureInfoProps {
 }
 
 export default function EvaluationFailureInfo({ evaluation, batch, className = '' }: EvaluationFailureInfoProps) {
+  const { t } = useTranslation();
   const failureInfo = evaluation.comments ? getStageFailureDisplayInfo(evaluation.comments) : null;
   
   // 🔧 CẢI THIỆN: Kiểm tra xem farmer đã cập nhật lại stage bị fail chưa
@@ -106,29 +108,29 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
       <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
         <div className="flex items-center gap-2 mb-3">
           <Info className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-blue-800">Thông tin đánh giá</h3>
+          <h3 className="font-semibold text-blue-800">{t('evaluationFailureInfo.evaluationInfo')}</h3>
         </div>
         
         <div className="space-y-2">
           <p className="text-blue-700">
-            <strong>Kết quả:</strong> {evaluation.evaluationResult}
+            <strong>{t('evaluationFailureInfo.result')}:</strong> {evaluation.evaluationResult}
           </p>
           
           {evaluation.comments && (
             <p className="text-blue-700">
-              <strong>Nhận xét:</strong> {evaluation.comments}
+              <strong>{t('evaluationFailureInfo.comments')}:</strong> {evaluation.comments}
             </p>
           )}
           
           {evaluation.detailedFeedback && (
             <p className="text-blue-700">
-              <strong>Phản hồi chi tiết:</strong> {evaluation.detailedFeedback}
+              <strong>{t('evaluationFailureInfo.detailedFeedback')}:</strong> {evaluation.detailedFeedback}
             </p>
           )}
           
           {evaluation.recommendations && (
             <p className="text-blue-700">
-              <strong>Khuyến nghị:</strong> {evaluation.recommendations}
+              <strong>{t('evaluationFailureInfo.recommendations')}:</strong> {evaluation.recommendations}
             </p>
           )}
         </div>
@@ -145,9 +147,9 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
           <AlertTriangle className="w-5 h-5 text-red-600" />
         </div>
         <div>
-          <h3 className="font-semibold text-red-900">Đánh giá không đạt</h3>
+          <h3 className="font-semibold text-red-900">{t('evaluationFailureInfo.failedEvaluation')}</h3>
           <p className="text-sm text-red-700">
-            Công đoạn: {failureInfo.stageName} (Bước {failureInfo.orderIndex})
+            {t('evaluationFailureInfo.stage')}: {failureInfo.stageName} ({t('evaluationFailureInfo.step')} {failureInfo.orderIndex})
           </p>
         </div>
       </div>
@@ -158,14 +160,14 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
            <div className="flex items-center gap-2 text-green-700 bg-green-100 px-3 py-2 rounded-lg">
              <CheckCircle className="w-4 h-4" />
              <span className="text-sm font-medium">
-               ✅ {batch?.farmerName || 'Nông dân'} đã cập nhật lại công đoạn này
+               ✅ {batch?.farmerName || t('evaluationFailureInfo.farmer')} {t('evaluationFailureInfo.hasUpdatedStage')}
              </span>
            </div>
          ) : (
            <div className="flex items-center gap-2 text-red-700 bg-red-100 px-3 py-2 rounded-lg">
              <RefreshCw className="w-4 h-4" />
              <span className="text-sm font-medium">
-               Cần thực hiện lại công đoạn này
+               {t('evaluationFailureInfo.needToRetryStage')}
              </span>
            </div>
          )}
@@ -179,7 +181,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="text-sm font-medium text-red-900 mb-1">
-                  Chi tiết vấn đề:
+                  {t('evaluationFailureInfo.problemDetails')}:
                 </h4>
                 <p className="text-sm text-red-800">
                   {failureInfo.details}
@@ -195,7 +197,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="text-sm font-medium text-green-900 mb-1">
-                  Khuyến nghị cải thiện:
+                  {t('evaluationFailureInfo.improvementRecommendations')}:
                 </h4>
                 <p className="text-sm text-green-800">
                   {failureInfo.recommendations}
@@ -211,7 +213,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="text-sm font-medium text-blue-900 mb-1">
-                  Phản hồi chi tiết:
+                  {t('evaluationFailureInfo.detailedFeedback')}:
                 </h4>
                 <p className="text-sm text-blue-800">
                   {evaluation.detailedFeedback}
@@ -228,7 +230,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
                 <h4 className="text-sm font-medium text-red-900 mb-2">
-                  Tiêu chí không đạt:
+                  {t('evaluationFailureInfo.failedCriteria')}:
                 </h4>
                 <div className="space-y-2">
                   {failureInfo.failedCriteria.map((criteria, idx) => (
@@ -243,17 +245,17 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs text-red-800">
                         <div>
-                          <span className="font-medium">Giá trị thực tế:</span>
+                          <span className="font-medium">{t('evaluationFailureInfo.actualValue')}:</span>
                           <span className="ml-1">{criteria.actualValue} {criteria.unit}</span>
                         </div>
                         <div>
-                          <span className="font-medium">Giá trị chuẩn:</span>
+                          <span className="font-medium">{t('evaluationFailureInfo.expectedValue')}:</span>
                           <span className="ml-1">{criteria.expectedValue}</span>
                         </div>
                       </div>
                       {criteria.failureReason && (
                         <div className="mt-1 text-xs text-red-700">
-                          <span className="font-medium">Lý do:</span>
+                          <span className="font-medium">{t('evaluationFailureInfo.reason')}:</span>
                           <span className="ml-1">{criteria.failureReason}</span>
                         </div>
                       )}
@@ -272,7 +274,7 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
               <AlertTriangle className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="text-sm font-medium text-orange-900 mb-1">
-                  Lý do không đạt được chọn:
+                  {t('evaluationFailureInfo.selectedFailureReasons')}:
                 </h4>
                 <div className="space-y-1">
                   {failureInfo.selectedFailureReasons.map((reason, idx) => (
@@ -294,11 +296,11 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
              <div>
                <h4 className="text-sm font-medium text-green-900 mb-1">
-                 Thông tin cập nhật lại:
+                 {t('evaluationFailureInfo.retryInfo')}:
                </h4>
                <div className="space-y-1 text-sm text-green-800">
-                 <p><strong>Ngày cập nhật:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
-                 <p><strong>Cập nhật bởi:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || 'Nông dân'}</p>
+                 <p><strong>{t('evaluationFailureInfo.updateDate')}:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
+                 <p><strong>{t('evaluationFailureInfo.updatedBy')}:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || t('evaluationFailureInfo.farmer')}</p>
                  
                </div>
              </div>
@@ -312,12 +314,12 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
           <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
           <div>
                          <h4 className="text-sm font-medium text-blue-900 mb-1">
-               Hướng dẫn tiếp theo:
+               {t('evaluationFailureInfo.nextSteps')}:
              </h4>
              <p className="text-sm text-blue-800">
                {hasFarmerRetried 
-                 ? `Nông dân đã cập nhật lại công đoạn <strong>${failureInfo.stageName}</strong>. Bạn có thể đánh giá lại để kiểm tra chất lượng cải thiện.`
-                 : `Hãy cập nhật tiến trình cho công đoạn <strong>${failureInfo.stageName}</strong> với những cải thiện theo khuyến nghị của chuyên gia.`
+                 ? t('evaluationFailureInfo.farmerHasUpdated', { stageName: failureInfo.stageName })
+                 : t('evaluationFailureInfo.updateProgressWithImprovements', { stageName: failureInfo.stageName })
                }
              </p>
           </div>
@@ -326,8 +328,8 @@ export default function EvaluationFailureInfo({ evaluation, batch, className = '
 
       {/* Debug info */}
       <div className="mt-3 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
-        <strong>Debug:</strong> OrderIndex: {failureInfo.orderIndex}, StageId: {failureInfo.stageId || 'N/A'}, 
-        Raw Comments: {evaluation.comments?.substring(0, 100)}...
+        <strong>Debug:</strong> {t('evaluationFailureInfo.debug.orderIndex')}: {failureInfo.orderIndex}, {t('evaluationFailureInfo.debug.stageId')}: {failureInfo.stageId || 'N/A'}, 
+        {t('evaluationFailureInfo.debug.rawComments')}: {evaluation.comments?.substring(0, 100)}...
       </div>
     </div>
   );

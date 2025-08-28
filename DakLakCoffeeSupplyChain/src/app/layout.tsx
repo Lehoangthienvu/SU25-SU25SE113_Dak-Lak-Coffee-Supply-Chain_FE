@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import Script from "next/script";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { I18nProvider } from "@/components/providers/I18nProvider";
 import ClientLayout from "@/components/layout/ClientLayout";
 
 export default function RootLayout({
@@ -19,12 +20,14 @@ export default function RootLayout({
         <Script src="https://cdn.lordicon.com/lordicon.js" strategy="afterInteractive" />
       </head>
       <body className="bg-white text-black">
-        <AuthProvider>
-          <ClientLayout>
-            {children}
-            <Toaster richColors />
-          </ClientLayout>
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <ClientLayout>
+              {children}
+              <Toaster richColors />
+            </ClientLayout>
+          </AuthProvider>
+        </I18nProvider>
       </body>
     </html>
   );

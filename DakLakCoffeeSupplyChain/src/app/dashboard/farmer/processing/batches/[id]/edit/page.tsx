@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AppToast } from "@/components/ui/AppToast";
@@ -27,6 +28,7 @@ import { ArrowLeft, Package, Coffee, Calendar, Info, Loader2, CheckCircle, Save,
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
 
 export default function EditProcessingBatchPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const batchId = params.id as string;
@@ -59,12 +61,12 @@ export default function EditProcessingBatchPage() {
             batchCode: batchData.batchCode,
           });
         } else {
-          AppToast.error("Không tìm thấy lô sơ chế");
+          AppToast.error(t('processing.pages.farmerBatches.batchDetail.edit.error.notFound'));
           router.push("/dashboard/farmer/processing/batches");
         }
       } catch (err) {
         console.error("Lỗi tải dữ liệu lô:", err);
-        AppToast.error("Không thể tải dữ liệu lô sơ chế");
+        AppToast.error(t('processing.pages.farmerBatches.batchDetail.edit.error.loadFailed'));
         router.push("/dashboard/farmer/processing/batches");
       } finally {
         setLoading(false);
@@ -100,12 +102,12 @@ export default function EditProcessingBatchPage() {
     const { coffeeTypeId, cropSeasonId, batchCode } = form;
 
     const missingFields: string[] = [];
-    if (!coffeeTypeId) missingFields.push("Loại cà phê");
-    if (!cropSeasonId) missingFields.push("Mùa vụ");
-    if (!batchCode.trim()) missingFields.push("Mã lô");
+    if (!coffeeTypeId) missingFields.push(t('processing.pages.farmerBatches.batchDetail.edit.form.coffeeType.label'));
+    if (!cropSeasonId) missingFields.push(t('processing.pages.farmerBatches.batchDetail.edit.form.cropSeason.label'));
+    if (!batchCode.trim()) missingFields.push(t('processing.pages.farmerBatches.batchDetail.edit.form.batchCode.label'));
 
     if (missingFields.length > 0) {
-      AppToast.error("Vui lòng nhập: " + missingFields.join(", "));
+      AppToast.error(t('processing.pages.farmerBatches.batchDetail.edit.form.validation.missingFields', { fields: missingFields.join(", ") }));
       setIsSubmitting(false);
       return;
     }
@@ -118,25 +120,25 @@ export default function EditProcessingBatchPage() {
         methodId: batch?.methodId || 1,
       });
 
-      AppToast.success("Cập nhật lô sơ chế thành công!");
+      AppToast.success(t('processing.pages.farmerBatches.batchDetail.edit.success'));
       router.push(`/dashboard/farmer/processing/batches/${batchId}`);
     } catch (err: any) {
       console.error("Lỗi cập nhật batch:", err);
 
-      let errorMessage = "Cập nhật lô sơ chế thất bại!";
+      let errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.updateFailed');
 
       if (err?.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (err?.message) {
         errorMessage = err.message;
       } else if (err?.response?.status === 400) {
-        errorMessage = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin.";
+        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.invalidData');
       } else if (err?.response?.status === 404) {
-        errorMessage = "Không tìm thấy lô sơ chế. Vui lòng thử lại.";
+        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.notFound');
       } else if (err?.response?.status === 409) {
-        errorMessage = "Lô sơ chế đã tồn tại hoặc thông tin bị trùng lặp.";
+        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.duplicate');
       } else if (err?.response?.status >= 500) {
-        errorMessage = "Lỗi hệ thống. Vui lòng thử lại sau.";
+        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.systemError');
       }
 
       AppToast.error(errorMessage);
@@ -176,8 +178,8 @@ export default function EditProcessingBatchPage() {
           {/* Loading Indicator */}
           <div className="text-center space-y-4 mt-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
-            <p className="text-sm text-gray-500">Đang tải thông tin lô sơ chế</p>
+            <p className="text-lg text-gray-600 font-medium">{t('processing.pages.farmerBatches.batchDetail.edit.loading.title')}</p>
+            <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.edit.loading.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -190,10 +192,10 @@ export default function EditProcessingBatchPage() {
         <div className="p-6 max-w-4xl mx-auto">
           <div className="text-center space-y-4">
             <AlertTriangle className="w-16 h-16 text-red-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Không tìm thấy lô sơ chế</h1>
-            <p className="text-gray-600">Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('processing.pages.farmerBatches.batchDetail.edit.error.notFoundTitle')}</h1>
+            <p className="text-gray-600">{t('processing.pages.farmerBatches.batchDetail.edit.error.notFoundMessage')}</p>
             <Button onClick={() => router.push("/dashboard/farmer/processing/batches")}>
-              Quay lại danh sách
+              {t('processing.pages.farmerBatches.batchDetail.edit.error.backToList')}
             </Button>
           </div>
         </div>
@@ -206,8 +208,8 @@ export default function EditProcessingBatchPage() {
       <div className="p-6 max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <ProcessingHeader
-          title="Chỉnh sửa lô sơ chế"
-          description="Cập nhật thông tin lô sơ chế"
+          title={t('processing.pages.farmerBatches.batchDetail.edit.title')}
+          description={t('processing.pages.farmerBatches.batchDetail.edit.description')}
           showCreateButton={false}
         />
 
@@ -218,7 +220,7 @@ export default function EditProcessingBatchPage() {
             className="flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
           >
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('processing.pages.farmerBatches.batchDetail.edit.back')}
           </Button>
         </div>
 
@@ -229,10 +231,9 @@ export default function EditProcessingBatchPage() {
               <Info className="w-5 h-5 text-blue-600" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-blue-900">Hướng dẫn chỉnh sửa</h3>
+              <h3 className="font-semibold text-blue-900">{t('processing.pages.farmerBatches.batchDetail.edit.guidance.title')}</h3>
               <p className="text-sm text-blue-700">
-                Chỉnh sửa thông tin cơ bản của lô sơ chế.
-                Một số thông tin có thể không được phép thay đổi sau khi đã tạo.
+                {t('processing.pages.farmerBatches.batchDetail.edit.guidance.description')}
               </p>
             </div>
           </div>
@@ -243,7 +244,7 @@ export default function EditProcessingBatchPage() {
           <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 text-white">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Package className="w-5 h-5" />
-              Thông tin lô sơ chế
+              {t('processing.pages.farmerBatches.batchDetail.edit.form.title')}
             </h2>
           </div>
 
@@ -252,28 +253,28 @@ export default function EditProcessingBatchPage() {
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Package className="w-4 h-4 text-purple-600" />
-                Mã lô (Không thể thay đổi)
+                {t('processing.pages.farmerBatches.batchDetail.edit.form.batchCode.label')}
               </label>
               <Input
                 value={batch.batchCode}
                 disabled
                 className="h-12 border-gray-200 bg-gray-50 text-gray-500"
               />
-              <p className="text-sm text-gray-500">Mã lô không thể thay đổi sau khi đã tạo</p>
+              <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.edit.form.batchCode.help')}</p>
             </div>
 
             {/* Mùa vụ */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-green-600" />
-                Mùa vụ *
+                {t('processing.pages.farmerBatches.batchDetail.edit.form.cropSeason.label')}
               </label>
               <Select
                 value={form.cropSeasonId}
                 onValueChange={(v) => handleChange("cropSeasonId", v)}
               >
                 <SelectTrigger className="w-full h-12 border-gray-200 hover:border-green-300 focus:border-green-500 transition-colors">
-                  <SelectValue placeholder="Chọn mùa vụ" />
+                  <SelectValue placeholder={t('processing.pages.farmerBatches.batchDetail.edit.form.cropSeason.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {cropSeasons.map((cs) => (
@@ -287,16 +288,16 @@ export default function EditProcessingBatchPage() {
 
             {/* Loại cà phê */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Coffee className="w-4 h-4 text-orange-600" />
-                Loại cà phê *
-              </label>
-              <Input
-                value={batch.typeName || "Không xác định"}
-                disabled
-                className="h-12 border-gray-200 bg-gray-50 text-gray-500"
-              />
-              <p className="text-sm text-gray-500">Loại cà phê không thể thay đổi sau khi đã tạo</p>
+                             <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
+                                 <Coffee className="w-4 h-4 text-orange-600" />
+                 {t('processing.pages.farmerBatches.batchDetail.edit.form.coffeeType.label')}
+               </label>
+               <Input
+                 value={batch.typeName || t('processing.pages.farmerBatches.batchDetail.edit.form.coffeeType.unknown')}
+                 disabled
+                 className="h-12 border-gray-200 bg-gray-50 text-gray-500"
+               />
+               <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.edit.form.coffeeType.help')}</p>
             </div>
 
             {/* Submit Button */}
@@ -306,17 +307,17 @@ export default function EditProcessingBatchPage() {
                 disabled={isSubmitting}
                 className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Đang cập nhật...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-5 h-5" />
-                    Cập nhật lô sơ chế
-                  </>
-                )}
+                                 {isSubmitting ? (
+                   <>
+                     <Loader2 className="w-5 h-5 animate-spin" />
+                     {t('processing.pages.farmerBatches.batchDetail.edit.form.submit.updating')}
+                   </>
+                 ) : (
+                   <>
+                     <Save className="w-5 h-5" />
+                     {t('processing.pages.farmerBatches.batchDetail.edit.form.submit.update')}
+                   </>
+                 )}
               </Button>
             </div>
           </div>

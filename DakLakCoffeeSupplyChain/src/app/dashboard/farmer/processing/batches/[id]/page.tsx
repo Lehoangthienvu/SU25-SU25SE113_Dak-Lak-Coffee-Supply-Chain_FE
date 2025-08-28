@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   getProcessingBatchById,
   ProcessingBatch,
@@ -52,9 +53,9 @@ import ProgressGuidanceCard from "@/components/processing-batches/ProgressGuidan
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { StageFailureParser, StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 import { getProcessingStagesByMethodId } from "@/lib/api/processingStages";
-import BatchOverallEvaluation from "@/components/processing-batches/BatchOverallEvaluation";
 
 export default function ViewProcessingBatch() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
@@ -94,13 +95,6 @@ export default function ViewProcessingBatch() {
   }, []);
 
   // Tối ưu: Cache tính toán totalOutputQuantity từ API response
-  const totalOutputQuantity = useMemo(() => {
-    if (!batch?.progresses) return 0;
-    return batch.progresses.reduce((sum, progress) => {
-      const quantity = Number(progress.outputQuantity?.toString().replace(/[^\d.]/g, ""));
-      return sum + (isNaN(quantity) ? 0 : quantity);
-    }, 0);
-  }, [batch?.progresses]);
 
   // Tối ưu: Cache tính toán wastes từ progresses
   const allWastes = useMemo(() => {
@@ -202,12 +196,12 @@ export default function ViewProcessingBatch() {
 
           // Tối ưu: Chỉ cần fetch 1 API call thay vì 3
           const data = await getProcessingBatchById(id);
-          
+
           setBatch(data);
 
         } catch (err: unknown) {
           console.error('Error fetching batch:', err);
-          const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải dữ liệu';
+          const errorMessage = err instanceof Error ? err.message : t('processing.pages.farmerBatches.batchDetail.error.title');
           setError(errorMessage);
         } finally {
           setLoading(false);
@@ -243,7 +237,7 @@ export default function ViewProcessingBatch() {
           }
         } catch (err: unknown) {
           console.error('Error fetching evaluations:', err);
-          const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải đánh giá';
+          const errorMessage = err instanceof Error ? err.message : t('processing.pages.farmerBatches.batchDetail.error.title');
           setError(errorMessage);
         }
       }
@@ -266,28 +260,28 @@ export default function ViewProcessingBatch() {
     const latestEvaluation = evaluations[0];
     const comments = latestEvaluation.comments || '';
 
-    
+
 
     // Sử dụng StageFailureParser để parse thông tin
     const failureInfo = StageFailureParser.parseFailureFromComments(comments);
-    
+
 
     if (failureInfo) {
       return {
         stageId: failureInfo.failedOrderIndex, // Sử dụng failedOrderIndex thay vì failedStageId
-        stageName: failureInfo.failedStageName || 'Unknown',
-        failureDetails: failureInfo.failureDetails || 'Không đạt tiêu chuẩn', // Sử dụng failureDetails
+        stageName: failureInfo.failedStageName || t('processing.pages.farmerBatches.batchDetail.status.unknown'),
+        failureDetails: failureInfo.failureDetails || t('processing.pages.farmerBatches.batchDetail.status.canContinue'), // Sử dụng failureDetails
         evaluationId: latestEvaluation.evaluationId
       };
     }
 
     // Fallback: Parse stage info từ comments nếu không có format chuẩn
-    
+
 
     // Pattern 1: "Tiến trình có vấn đề: Bước 1: Thu hoach"
     const stepMatch = comments.match(/Bước\s*(\d+):\s*([^,\n]+)/);
     if (stepMatch) {
-      
+
       return {
         stageId: parseInt(stepMatch[1]),
         stageName: stepMatch[2].trim(),
@@ -302,11 +296,11 @@ export default function ViewProcessingBatch() {
     const detailsMatch = comments.match(/FailureDetails:\s*([^,\n]+)/);
 
     if (stageIdMatch) {
-      
+
       return {
         stageId: parseInt(stageIdMatch[1]),
-        stageName: stageNameMatch ? stageNameMatch[1].trim() : 'Unknown',
-        failureDetails: detailsMatch ? detailsMatch[1].trim() : 'Không đạt tiêu chuẩn',
+        stageName: stageNameMatch ? stageNameMatch[1].trim() : t('processing.pages.farmerBatches.batchDetail.status.unknown'),
+        failureDetails: detailsMatch ? detailsMatch[1].trim() : t('processing.pages.farmerBatches.batchDetail.status.canContinue'),
         evaluationId: latestEvaluation.evaluationId
       };
     }
@@ -322,7 +316,7 @@ export default function ViewProcessingBatch() {
     const fetchMaxOrderIndex = async () => {
       if (batch?.methodId) {
         try {
-  
+
           const stages = await getProcessingStagesByMethodId(batch.methodId);
 
           if (stages && stages.length > 0) {
@@ -352,19 +346,19 @@ export default function ViewProcessingBatch() {
     const latestProgress = batch.progresses[batch.progresses.length - 1];
     if (!latestProgress) return false;
 
-    
+
 
     // Nếu maxOrderIndex = 0 (API lỗi), sử dụng logic fallback
     if (maxOrderIndex === 0) {
       // Sử dụng stageCount từ batch
       const expectedMaxStage = batch.stageCount || 0;
       const isLast = expectedMaxStage > 0 && latestProgress.stepIndex >= expectedMaxStage;
-      
+
       return isLast;
     }
 
     const isLast = latestProgress.stepIndex >= maxOrderIndex;
-    
+
     return isLast;
   }, [batch?.progresses, maxOrderIndex, batch?.stageCount]);
 
@@ -401,8 +395,8 @@ export default function ViewProcessingBatch() {
           {/* Loading Indicator */}
           <div className="text-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
-            <p className="text-sm text-gray-500">Có thể mất vài giây để tải hoàn tất</p>
+                            <p className="text-lg text-gray-600 font-medium">{t('processing.pages.farmerBatches.batchDetail.loading.title')}</p>
+                <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.loading.description')}</p>
           </div>
         </div>
       </div>
@@ -417,7 +411,7 @@ export default function ViewProcessingBatch() {
             <AlertCircle className="w-8 h-8 text-orange-600" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-gray-900">Không thể tải dữ liệu</h2>
+                                            <h2 className="text-xl font-semibold text-gray-900">{t('processing.pages.farmerBatches.batchDetail.error.title')}</h2>
             <p className="text-gray-600">{error}</p>
           </div>
           <Button
@@ -426,7 +420,7 @@ export default function ViewProcessingBatch() {
             className="flex items-center gap-2 mx-auto"
           >
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('processing.pages.farmerBatches.batchDetail.error.back')}
           </Button>
         </div>
       </div>
@@ -440,15 +434,15 @@ export default function ViewProcessingBatch() {
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
             <AlertCircle className="w-8 h-8 text-gray-400" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900">Không tìm thấy dữ liệu</h2>
-          <p className="text-gray-600">Lô sơ chế này không tồn tại hoặc đã bị xóa</p>
+                                <h2 className="text-xl font-semibold text-gray-900">{t('processing.pages.farmerBatches.batchDetail.notFound.title')}</h2>
+            <p className="text-gray-600">{t('processing.pages.farmerBatches.batchDetail.notFound.description')}</p>
           <Button
             variant="outline"
             onClick={() => router.back()}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('processing.pages.farmerBatches.batchDetail.notFound.back')}
           </Button>
         </div>
       </div>
@@ -462,25 +456,25 @@ export default function ViewProcessingBatch() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-              Chi tiết lô sơ chế
+              {t('processing.pages.farmerBatches.batchDetail.title')} - {batch.batchCode}
             </h1>
-            <p className="text-gray-600">Thông tin chi tiết về lô sơ chế và tiến trình xử lý</p>
+            <p className="text-gray-600">{t('processing.pages.farmerBatches.batchDetail.subtitle')}</p>
 
             {/* Thông báo trạng thái */}
             {batch.status === ProcessingStatus.Completed && (
               <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4" />
-                  Đã hoàn thành tất cả các bước
-                </span>
+                                  <span className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4" />
+                    {t('processing.pages.farmerBatches.batchDetail.status.completed')}
+                  </span>
               </div>
             )}
 
             {batch.status === ProcessingStatus.AwaitingEvaluation && (
               <div className="flex items-center gap-2 text-orange-600 bg-orange-50 px-3 py-1 rounded-full text-sm">
                 <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span> Đang chờ đánh giá</span>
+                <span>{t('processing.pages.farmerBatches.batchDetail.status.awaitingEvaluation')}</span>
               </div>
             )}
 
@@ -490,7 +484,7 @@ export default function ViewProcessingBatch() {
               !isAtLastStage && (
                 <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-sm">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span> Có thể cập nhật bước tiếp theo</span>
+                  <span>{t('processing.pages.farmerBatches.batchDetail.status.canContinue')}</span>
                 </div>
               )}
 
@@ -507,7 +501,7 @@ export default function ViewProcessingBatch() {
                   className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white transition-all duration-200"
                 >
                   <PlusCircle className="w-4 h-4" />
-                  Cập nhật tiến trình
+                  {t('processing.pages.farmerBatches.batchDetail.quickActions.advanceProgress')}
                 </Button>
               )}
 
@@ -515,13 +509,13 @@ export default function ViewProcessingBatch() {
             {(!batch.progresses || batch.progresses.length === 0) && (
               <Button
                 onClick={() => {
-          
+
                   setOpenCreateModal(true);
                 }}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200"
               >
                 <PlusCircle className="w-4 h-4" />
-                Tạo tiến trình đầu tiên
+                {t('processing.pages.farmerBatches.batchDetail.quickActions.createProgress')}
               </Button>
             )}
 
@@ -535,7 +529,7 @@ export default function ViewProcessingBatch() {
               className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
             >
               <Edit className="w-4 h-4" />
-              Chỉnh sửa
+              {t('processing.pages.farmerBatches.batchDetail.quickActions.editInfo')}
             </Button>
             <Button
               variant="outline"
@@ -543,7 +537,7 @@ export default function ViewProcessingBatch() {
               className="flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
             >
               <ArrowLeft className="w-4 h-4" />
-              Quay lại
+              {t('farmerBatchDetail.batchDetail.error.back')}
             </Button>
           </div>
         </div>
@@ -564,11 +558,11 @@ export default function ViewProcessingBatch() {
               </div>
               <div className="ml-3 flex-1">
                 <h3 className="text-lg font-semibold text-red-800 mb-2">
-                  Lô sơ chế cần cải thiện
+                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
                 </h3>
                 <p className="text-red-700 mb-4">
-                  Lô sơ chế của bạn đã được đánh giá không đạt ở công đoạn <strong>{failedStageInfo.stageName}</strong>.
-                  Vui lòng xem chi tiết đánh giá và cải thiện theo hướng dẫn.
+                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')} <strong>{failedStageInfo.stageName}</strong>.
+                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
                 </p>
                 <div className="flex space-x-3">
                   <button
@@ -578,17 +572,17 @@ export default function ViewProcessingBatch() {
                     }}
                     className="px-4 py-2 border border-red-300 text-red-700 bg-white rounded-md hover:bg-red-50 transition-colors"
                   >
-                    Xem chi tiết đánh giá
+                    {t('processing.pages.farmerBatches.batchDetail.quickActions.evaluateStage')}
                   </button>
-                  <Button
+                  {/* <Button
                     onClick={() => {
                       // Mở form cập nhật progress cho stage bị fail
                       setOpenUpdateAfterEvaluationModal(true);
                     }}
                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                   >
-                    Cập nhật tiến trình
-                  </Button>
+                    {t('processing.pages.farmerBatches.batchDetail.quickActions.advanceProgress')}
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -600,7 +594,7 @@ export default function ViewProcessingBatch() {
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 font-medium">Khối lượng vào</p>
+                <p className="text-sm text-gray-500 font-medium">{t('processing.pages.farmerBatches.batchDetail.basicInfo.inputQuantity')}</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {formatNumber(batch.totalInputQuantity)}
                 </p>
@@ -614,13 +608,10 @@ export default function ViewProcessingBatch() {
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 font-medium">Khối lượng ra</p>
-                <p className="text-2xl font-bold text-amber-600">
-                  {batch.progresses && batch.progresses.length > 0 
-                    ? `${batch.progresses[batch.progresses.length - 1].outputQuantity} ${batch.progresses[batch.progresses.length - 1].outputUnit || 'kg'}`
-                    : '0 kg'
-                  }
-                </p>
+                <p className="text-sm text-gray-500 font-medium">{t('processing.pages.farmerBatches.batchDetail.stats.output')}</p>
+                        <p className="text-2xl font-bold text-amber-600">
+          {latestProgress?.outputQuantity || batch.totalOutputQuantity || 0}kg
+        </p>
               </div>
               <div className="p-3 bg-amber-100 rounded-xl">
                 <Package className="w-6 h-6 text-amber-600" />
@@ -631,7 +622,7 @@ export default function ViewProcessingBatch() {
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 font-medium">Số bước hoàn thành</p>
+                <p className="text-sm text-gray-500 font-medium">{t('processing.pages.farmerBatches.batchDetail.stats.stage')}</p>
                 <p className="text-2xl font-bold text-orange-600">
                   {batch.progresses?.length || 0}
                 </p>
@@ -645,7 +636,7 @@ export default function ViewProcessingBatch() {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 font-medium">Trạng thái</p>
+                <p className="text-sm text-gray-500 font-medium">{t('processing.pages.farmerBatches.batchDetail.basicInfo.status')}</p>
                 <div className="mt-1">
                   <StatusBadge status={batch.status} />
                 </div>
@@ -664,7 +655,7 @@ export default function ViewProcessingBatch() {
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Package className="w-5 h-5" />
-              Thông tin lô sơ chế
+              {t('processing.pages.farmerBatches.batchDetail.basicInfo.title')}
             </h2>
           </div>
 
@@ -676,7 +667,7 @@ export default function ViewProcessingBatch() {
                     <Package className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mã lô</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.batchCode')}</p>
                     <p className="font-semibold text-gray-900">{batch.batchCode}</p>
                   </div>
                 </div>
@@ -686,7 +677,7 @@ export default function ViewProcessingBatch() {
                     <Package className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mã hệ thống</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.systemCode')}</p>
                     <p className="font-semibold text-gray-900">{batch.systemBatchCode}</p>
                   </div>
                 </div>
@@ -696,7 +687,7 @@ export default function ViewProcessingBatch() {
                     <Calendar className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mùa vụ</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.cropSeason')}</p>
                     <p className="font-semibold text-gray-900">{batch.cropSeasonName}</p>
                   </div>
                 </div>
@@ -706,7 +697,7 @@ export default function ViewProcessingBatch() {
                     <User className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Nông dân</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.farmer')}</p>
                     <p className="font-semibold text-gray-900">{batch.farmerName}</p>
                   </div>
                 </div>
@@ -718,7 +709,7 @@ export default function ViewProcessingBatch() {
                     <Settings className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Phương pháp sơ chế</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.method')}</p>
                     <p className="font-semibold text-gray-900">{batch.methodName}</p>
                   </div>
                 </div>
@@ -728,9 +719,9 @@ export default function ViewProcessingBatch() {
                     <Coffee className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Loại cà phê</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.type')}</p>
                     <p className="font-semibold text-gray-900">
-                      {batch.typeName || "Chưa xác định"}
+                      {batch.typeName || t('processing.pages.farmerBatches.batchDetail.fallback.unknownType')}
                     </p>
                   </div>
                 </div>
@@ -740,7 +731,7 @@ export default function ViewProcessingBatch() {
                     <Scale className="w-5 h-5 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Khối lượng vào</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.inputQuantity')}</p>
                     <p className="font-semibold text-gray-900">
                       {formatNumber(batch.totalInputQuantity)}
                     </p>
@@ -752,7 +743,7 @@ export default function ViewProcessingBatch() {
                     <Calendar className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Ngày tạo</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.basicInfo.createdAt')}</p>
                     <p className="font-semibold text-gray-900">
                       {new Date(batch.createdAt).toLocaleString("vi-VN")}
                     </p>
@@ -769,44 +760,18 @@ export default function ViewProcessingBatch() {
             <div className="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5" />
-                Thông tin đánh giá
+                {t('processing.pages.farmerBatches.batchDetail.evaluation.title')}
               </h2>
             </div>
             <div className="p-6">
               <FailureInfoCard
                 failureInfo={failureInfo}
-                currentStageId={latestProgress?.stageId}
-                currentStageName={latestProgress?.stageName}
-                isRetryMode={batch.status === ProcessingStatus.InProgress}
               />
             </div>
           </div>
         )}
 
-        {/* 🔧 CẢI THIỆN: Thêm Overall Evaluation Summary vào cột trái - DI CHUYỂN LÊN TRÊN */}
-        {evaluations.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Target className="w-5 h-5" />
-                Tổng quan đánh giá lô
-              </h2>
-              <p className="text-green-100 mt-1">Kết quả tổng hợp từ tất cả các giai đoạn</p>
-            </div>
-            <div className="p-6">
-              <BatchOverallEvaluation
-                batchId={batch.batchId}
-                evaluations={evaluations.map(evaluation => ({
-                  stageCode: parseInt(evaluation.evaluationId) || 0, // Convert string to number
-                  evaluationResult: evaluation.evaluationResult,
-                  score: 0, // Cần tính từ criteria
-                  evaluatedAt: evaluation.evaluatedAt
-                }))}
-                stages={[]} // Cần truyền stages từ batch
-              />
-            </div>
-          </div>
-        )}
+
 
         {/* Progress Section */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -814,7 +779,7 @@ export default function ViewProcessingBatch() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
-                Tiến độ sơ chế
+                {t('processing.pages.farmerBatches.batchDetail.progress.title')}
               </h2>
 
               {/* Nút tạo tiến trình đầu tiên đã được di chuyển lên header */}
@@ -825,7 +790,7 @@ export default function ViewProcessingBatch() {
               {batch.status === ProcessingStatus.Completed && (
                 <div className="flex items-center gap-2 text-white/80">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span className="text-sm">Đã hoàn thành tất cả các bước</span>
+                  <span className="text-sm">{t('processing.pages.farmerBatches.batchDetail.status.completed')}</span>
                 </div>
               )}
 
@@ -833,7 +798,7 @@ export default function ViewProcessingBatch() {
               {batch.status === ProcessingStatus.AwaitingEvaluation && (
                 <div className="flex items-center gap-2 text-white/80">
                   <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-sm">Đang chờ đánh giá</span>
+                  <span className="text-sm">{t('processing.pages.farmerBatches.batchDetail.status.awaitingEvaluation')}</span>
                 </div>
               )}
             </div>
@@ -858,28 +823,26 @@ export default function ViewProcessingBatch() {
                     const isRetryStep = progress.stepIndex > 1 && idx > 0;
                     const previousProgress = idx > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
                     const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
-                    
+
                     return (
                       <div
                         key={idx}
-                        className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6 ${
-                          isRetry 
-                            ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50' 
+                        className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg p-6 ${isRetry
+                            ? 'border-orange-300 hover:border-orange-400 bg-gradient-to-br from-orange-50 to-amber-50'
                             : 'border-gray-200 hover:border-purple-300'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                isRetry 
-                                  ? 'bg-orange-100 text-orange-700' 
+                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${isRetry
+                                  ? 'bg-orange-100 text-orange-700'
                                   : 'bg-purple-100 text-purple-700'
-                              }`}>
-                                Bước {progress.stepIndex}
+                                }`}>
+                                {t('processing.pages.farmerBatches.batchDetail.progress.step')} {progress.stepIndex}
                                 {isRetry && (
                                   <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
-                                    Làm lại
+                                    {t('processing.pages.farmerBatches.batchDetail.progress.retry')}
                                   </span>
                                 )}
                               </span>
@@ -887,41 +850,41 @@ export default function ViewProcessingBatch() {
                                 {progress.stageName}
                                 {isRetry && (
                                   <span className="ml-2 text-sm text-orange-600 font-medium">
-                                    (Làm lại)
+                                    ({t('processing.pages.farmerBatches.batchDetail.progress.retry')})
                                   </span>
                                 )}
                               </h3>
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Scale className="w-4 h-4 text-green-600" />
-                            <span className="font-medium">Sản lượng:</span>
+                            <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.progress.outputQuantity')}:</span>
                             <span>{progress.outputQuantity} {progress.outputUnit || 'kg'}</span>
                           </div>
 
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <TrendingDown className="w-4 h-4 text-red-600" />
-                            <span className="font-medium">Hao hụt:</span>
+                            <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.progress.waste')}:</span>
                             <span className="text-red-600">
                               {progress.wastes && progress.wastes.length > 0
                                 ? progress.wastes.reduce((total, waste) => total + Number(waste.quantity), 0).toFixed(1) + ' ' + (progress.wastes[0]?.unit || 'kg')
-                                : '0 kg'
+                                : t('processing.pages.farmerBatches.batchDetail.fallback.zeroQuantity')
                               }
                             </span>
                           </div>
 
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <User className="w-4 h-4 text-blue-600" />
-                            <span className="font-medium">Cập nhật bởi:</span>
-                            <span>{progress.updatedByName ?? "-"}</span>
+                            <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.progress.updatedBy')}:</span>
+                            <span>{progress.updatedByName ?? t('processing.pages.farmerBatches.batchDetail.fallback.noDate')}</span>
                           </div>
 
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Calendar className="w-4 h-4 text-purple-600" />
-                            <span className="font-medium">Ngày:</span>
+                            <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.progress.executionDate')}:</span>
                             <span>{new Date(progress.progressDate).toLocaleDateString('vi-VN')}</span>
                           </div>
                         </div>
@@ -929,7 +892,7 @@ export default function ViewProcessingBatch() {
                         {/* Media Section */}
                         {progress.mediaFiles && progress.mediaFiles.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-gray-100">
-                            <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.progress.media.title')}</h4>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                               {progress.mediaFiles.map((media, mediaIdx) => (
                                 <div key={mediaIdx} className="relative group">
@@ -937,7 +900,7 @@ export default function ViewProcessingBatch() {
                                     <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
                                       <img
                                         src={media.mediaUrl}
-                                        alt={media.caption || `Ảnh ${mediaIdx + 1} của ${progress.stageName}`}
+                                        alt={media.caption || `${t('processing.pages.farmerBatches.batchDetail.progress.media.image')} ${mediaIdx + 1} của ${progress.stageName}`}
                                         className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                                         loading="lazy"
                                         onClick={() => openMediaViewer({
@@ -947,7 +910,7 @@ export default function ViewProcessingBatch() {
                                         })}
                                       />
                                       <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                        Ảnh
+                                        {t('processing.pages.farmerBatches.batchDetail.progress.media.image')}
                                       </div>
                                     </div>
                                   ) : (
@@ -964,7 +927,7 @@ export default function ViewProcessingBatch() {
                                         <source src={media.mediaUrl} type="video/mp4" />
                                       </video>
                                       <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                        Video
+                                        {t('processing.pages.farmerBatches.batchDetail.progress.media.video')}
                                       </div>
                                       {/* Play button overlay */}
                                       <div className="absolute inset-0 flex items-center justify-center">
@@ -990,7 +953,7 @@ export default function ViewProcessingBatch() {
                         {/* Legacy Media Support (for backward compatibility) */}
                         {(!progress.mediaFiles || progress.mediaFiles.length === 0) && (progress.photoUrl || progress.videoUrl) && (
                           <div className="mt-4 pt-4 border-t border-gray-100">
-                            <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm (Cũ)</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.progress.media.legacy')}</h4>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                               {progress.photoUrl && (
                                 <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
@@ -1001,7 +964,7 @@ export default function ViewProcessingBatch() {
                                     onClick={() => progress.photoUrl && window.open(progress.photoUrl, '_blank')}
                                   />
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                    Ảnh
+                                    {t('processing.pages.farmerBatches.batchDetail.progress.media.image')}
                                   </div>
                                 </div>
                               )}
@@ -1016,7 +979,7 @@ export default function ViewProcessingBatch() {
                                     <source src={progress.videoUrl} />
                                   </video>
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                    Video
+                                    {t('processing.pages.farmerBatches.batchDetail.progress.media.video')}
                                   </div>
                                   {/* Play button overlay */}
                                   <div className="absolute inset-0 flex items-center justify-center">
@@ -1035,7 +998,7 @@ export default function ViewProcessingBatch() {
                         {/* Parameters Section */}
                         {progress.parameters && progress.parameters.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-gray-100">
-                            <h4 className="text-sm font-medium text-gray-700 mb-3">Thông số kỹ thuật</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.progress.parameters.title')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               {progress.parameters.map((parameter, paramIdx: number) => (
                                 <div key={paramIdx} className="flex items-center gap-2 text-sm text-gray-600">
@@ -1051,7 +1014,7 @@ export default function ViewProcessingBatch() {
                         {/* Wastes Section */}
                         {progress.wastes && progress.wastes.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-gray-100">
-                            <h4 className="text-sm font-medium text-gray-700 mb-3">Chất thải</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.progress.wastes.title')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               {progress.wastes.map((waste: ProcessingWaste, wasteIdx: number) => (
                                 <div key={wasteIdx} className="flex items-center gap-2 text-sm text-gray-600">
@@ -1072,8 +1035,8 @@ export default function ViewProcessingBatch() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <TrendingUp className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Chưa có tiến độ nào</h3>
-                <p className="text-gray-500">Bắt đầu tạo tiến trình đầu tiên để theo dõi quá trình sơ chế.</p>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('processing.pages.farmerBatches.batchDetail.progress.noProgress.title')}</h3>
+                <p className="text-gray-500">{t('processing.pages.farmerBatches.batchDetail.progress.noProgress.description')}</p>
               </div>
             )}
           </div>
@@ -1087,7 +1050,7 @@ export default function ViewProcessingBatch() {
             <div className="bg-gradient-to-r from-red-500 to-pink-500 p-6 text-white">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Package className="w-5 h-5" />
-                Tổng hợp chất thải
+                {t('processing.pages.farmerBatches.batchDetail.wastes.title')}
               </h2>
             </div>
 
@@ -1104,19 +1067,19 @@ export default function ViewProcessingBatch() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">{waste.wasteType}</h3>
-                        <p className="text-sm text-gray-500">Mã: {waste.wasteCode}</p>
+                        <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.wastes.code')}: {waste.wasteCode}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Scale className="w-4 h-4 text-red-600" />
-                      <span className="font-medium">Khối lượng:</span>
+                      <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.wastes.quantity')}:</span>
                       <span>{waste.quantity} {waste.unit}</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">Ngày tạo:</span>
+                      <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.wastes.createdAt')}:</span>
                       <span>{new Date(waste.createdAt).toLocaleDateString('vi-VN')}</span>
                     </div>
                   </div>
@@ -1135,9 +1098,9 @@ export default function ViewProcessingBatch() {
               <div>
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <ClipboardCheck className="w-5 h-5" />
-                  Đánh giá lô sơ chế
+                  {t('processing.pages.farmerBatches.batchDetail.evaluations.title')}
                 </h2>
-                <p className="text-blue-100 mt-1">Kết quả đánh giá từ chuyên gia nông nghiệp</p>
+                <p className="text-blue-100 mt-1">{t('processing.pages.farmerBatches.batchDetail.evaluations.subtitle')}</p>
               </div>
               {evaluations.length > 0 && (
                 <button
@@ -1145,7 +1108,7 @@ export default function ViewProcessingBatch() {
                   className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
                 >
                   <ClipboardCheck className="w-4 h-4" />
-                  Xem chi tiết
+                  {t('processing.pages.farmerBatches.batchDetail.evaluations.viewDetails')}
                 </button>
               )}
             </div>
@@ -1161,9 +1124,9 @@ export default function ViewProcessingBatch() {
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-5 h-5 text-red-600" />
                         <div>
-                          <h4 className="text-sm font-medium text-red-900">Có đánh giá cần xử lý</h4>
+                          <h4 className="text-sm font-medium text-red-900">{t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.title')}</h4>
                           <p className="text-sm text-red-700">
-                            Lô sơ chế này có đánh giá không đạt. Vui lòng xem chi tiết và cập nhật tiến trình theo hướng dẫn.
+                            {t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.description')}
                           </p>
                         </div>
                       </div>
@@ -1172,7 +1135,7 @@ export default function ViewProcessingBatch() {
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
                       >
                         <Edit className="w-4 h-4" />
-                        Cập nhật tiến trình
+                        {t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.updateProgress')}
                       </Button>
                     </div>
                   </div>
@@ -1190,8 +1153,8 @@ export default function ViewProcessingBatch() {
                           <ClipboardCheck className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-900">Đánh giá #{evaluation.evaluationCode}</h3>
-                          <p className="text-sm text-gray-500">Mã đánh giá: {evaluation.evaluationCode}</p>
+                          <h3 className="font-semibold text-gray-900">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.title')} #{evaluation.evaluationCode}</h3>
+                          <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.code')}: {evaluation.evaluationCode}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1205,13 +1168,13 @@ export default function ViewProcessingBatch() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium">Ngày đánh giá:</span>
-                        <span>{evaluation.evaluatedAt ? new Date(evaluation.evaluatedAt).toLocaleDateString('vi-VN') : 'Chưa có ngày'}</span>
+                        <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.date')}:</span>
+                        <span>{evaluation.evaluatedAt ? new Date(evaluation.evaluatedAt).toLocaleDateString('vi-VN') : t('processing.pages.farmerBatches.batchDetail.fallback.noDate')}</span>
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <User className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium">Đánh giá bởi:</span>
+                        <span className="font-medium">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.expert')}:</span>
                         <span>{evaluation.expertName || 'Chuyên gia'}</span>
                       </div>
                     </div>
@@ -1225,9 +1188,9 @@ export default function ViewProcessingBatch() {
                               <AlertTriangle className="w-5 h-5 text-red-600" />
                             </div>
                             <div>
-                              <h4 className="font-semibold text-red-900">Thông tin cần cải thiện</h4>
+                              <h4 className="font-semibold text-red-900">{t('processing.pages.farmerBatches.batchDetail.evaluations.failure.title')}</h4>
                               <p className="text-sm text-red-700">
-                                Công đoạn: {failureInfo.failedStageName}
+                                {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.stage')}: {failureInfo.failedStageName}
                               </p>
                             </div>
                           </div>
@@ -1240,7 +1203,7 @@ export default function ViewProcessingBatch() {
                                   <ClipboardCheck className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
                                   <div>
                                     <h5 className="text-sm font-medium text-red-900 mb-1">
-                                      Chi tiết vấn đề:
+                                      {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.details.title')}:
                                     </h5>
                                     <p className="text-sm text-red-800">
                                       {failureInfo.failureDetails}
@@ -1256,7 +1219,7 @@ export default function ViewProcessingBatch() {
                                   <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                                   <div>
                                     <h5 className="text-sm font-medium text-green-900 mb-1">
-                                      Khuyến nghị cải thiện:
+                                      {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.recommendations.title')}:
                                     </h5>
                                     <p className="text-sm text-green-800">
                                       {failureInfo.recommendations}
@@ -1274,22 +1237,22 @@ export default function ViewProcessingBatch() {
                                 <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                                 <div>
                                   <h5 className="text-sm font-medium text-blue-900 mb-1">
-                                    Hướng dẫn tiếp theo:
+                                    {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.title')}:
                                   </h5>
                                   <p className="text-sm text-blue-800">
-                                    Hãy cập nhật tiến trình cho công đoạn {failureInfo.failedStageName} với những cải thiện theo khuyến nghị trên.
+                                    {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.description', { stageName: failureInfo.failedStageName })}
                                   </p>
                                 </div>
                               </div>
                               <Button
                                 onClick={() => {
-                                          setOpenUpdateAfterEvaluationModal(true);
+                                  setOpenUpdateAfterEvaluationModal(true);
                                 }}
                                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ml-4 cursor-pointer z-10 relative"
                                 style={{ pointerEvents: 'auto' }}
                               >
                                 <Edit className="w-4 h-4" />
-                                Cập nhật
+                                {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.update')}
                               </Button>
                             </div>
                           </div>
@@ -1300,7 +1263,7 @@ export default function ViewProcessingBatch() {
                     {/* Nhận xét chính - chỉ hiển thị khi không phải failure comment */}
                     {evaluation.comments && !StageFailureParser.isFailureComment(evaluation.comments) && (
                       <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Nhận xét:</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.comments')}:</h4>
                         <div className="bg-gray-50 rounded-lg p-3">
                           <p className="text-sm text-gray-800 whitespace-pre-wrap">{evaluation.comments}</p>
                         </div>
@@ -1310,7 +1273,7 @@ export default function ViewProcessingBatch() {
                     {/* Phản hồi chi tiết */}
                     {evaluation.detailedFeedback && (
                       <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Phản hồi chi tiết:</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('evaluationFailureInfo.detailedFeedback')}:</h4>
                         <div className="bg-blue-50 rounded-lg p-3">
                           <p className="text-sm text-gray-800">{evaluation.detailedFeedback}</p>
                         </div>
@@ -1320,7 +1283,7 @@ export default function ViewProcessingBatch() {
                     {/* Khuyến nghị */}
                     {evaluation.recommendations && (
                       <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Khuyến nghị cải thiện:</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('evaluationFailureInfo.recommendations')}:</h4>
                         <div className="bg-green-50 rounded-lg p-3">
                           <p className="text-sm text-gray-800">{evaluation.recommendations}</p>
                         </div>
@@ -1330,7 +1293,7 @@ export default function ViewProcessingBatch() {
                     {/* Tiến trình có vấn đề */}
                     {evaluation.problematicSteps && evaluation.problematicSteps.length > 0 && (
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Tiến trình cần cải thiện:</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('evaluationFailureInfo.problemDetails')}:</h4>
                         <div className="bg-yellow-50 rounded-lg p-3">
                           <ul className="text-sm text-gray-800 space-y-1">
                             {evaluation.problematicSteps.map((step, stepIdx) => (
@@ -1349,8 +1312,8 @@ export default function ViewProcessingBatch() {
             ) : (
               <div className="text-center py-8">
                 <ClipboardCheck className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg font-medium mb-2">Chưa có đánh giá</p>
-                <p className="text-gray-400 text-sm">Lô sơ chế này chưa được đánh giá bởi chuyên gia</p>
+                <p className="text-gray-500 text-lg font-medium mb-2">{t('processing.pages.farmerBatches.batchDetail.evaluations.noEvaluations.title')}</p>
+                <p className="text-gray-400 text-sm">{t('processing.pages.farmerBatches.batchDetail.evaluations.noEvaluations.description')}</p>
               </div>
             )}
           </div>
@@ -1360,7 +1323,7 @@ export default function ViewProcessingBatch() {
         <Dialog open={openCreateModal} onOpenChange={setOpenCreateModal}>
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">Tạo tiến trình đầu tiên</DialogTitle>
+              <DialogTitle className="text-lg font-semibold">{t('processing.pages.farmerBatches.batchDetail.modals.createProgress')}</DialogTitle>
             </DialogHeader>
             <div className="mt-4">
               <CreateProcessingProgressForm
@@ -1386,7 +1349,7 @@ export default function ViewProcessingBatch() {
                 onSuccess={() => {
                   setOpenAdvanceModal(false);
                   // Force refresh data immediately
-          
+
                   window.location.reload();
                 }}
               />
@@ -1460,7 +1423,7 @@ export default function ViewProcessingBatch() {
                 <div className="flex flex-col items-center justify-center w-full h-full">
                   <img
                     src={selectedMedia.url}
-                    alt={selectedMedia.caption || 'Hình ảnh'}
+                    alt={selectedMedia.caption || t('processing.pages.farmerBatches.batchDetail.mediaViewer.image')}
                     className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
                   />
                   {selectedMedia.caption && (
@@ -1479,7 +1442,7 @@ export default function ViewProcessingBatch() {
                     className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
                   >
                     <source src={selectedMedia.url} />
-                    Trình duyệt của bạn không hỗ trợ video.
+                    {t('processing.pages.farmerBatches.batchDetail.mediaViewer.videoNotSupported')}
                   </video>
                   {selectedMedia.caption && (
                     <div className="mt-4">
@@ -1496,8 +1459,8 @@ export default function ViewProcessingBatch() {
             {/* Keyboard Instructions */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
               <div className="flex items-center gap-4">
-                <span>← → Chuyển ảnh</span>
-                <span>ESC Đóng</span>
+                <span>{t('processing.pages.farmerBatches.batchDetail.mediaViewer.prevNext')}</span>
+                <span>{t('processing.pages.farmerBatches.batchDetail.mediaViewer.escClose')}</span>
               </div>
             </div>
           </DialogContent>

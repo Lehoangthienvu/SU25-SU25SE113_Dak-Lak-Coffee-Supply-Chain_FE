@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ProcessingStatusMap,
   ProcessingStatus,
@@ -10,6 +11,7 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  const { t } = useTranslation();
   
   // Xử lý status có thể là string hoặc number
   let statusString: string;
@@ -37,7 +39,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   if (!isValidStatus) {
     return (
       <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-700">
-        Không xác định ({statusString})
+        {t('processing.status.unknown')} ({statusString})
       </span>
     );
   }

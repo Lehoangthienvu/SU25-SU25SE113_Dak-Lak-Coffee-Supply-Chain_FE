@@ -1,6 +1,7 @@
 import React from 'react';
 import { getStageFailureDisplayInfo, debugStageFailure } from '@/lib/helpers/evaluationHelpers';
 import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface StageFailureDisplayProps {
   comments: string;
@@ -15,6 +16,7 @@ interface StageFailureDisplayProps {
 }
 
 export default function StageFailureDisplay({ comments, className = '', batch }: StageFailureDisplayProps) {
+  const { t } = useTranslation();
   // Debug log để kiểm tra comments
   React.useEffect(() => {
     if (comments) {
@@ -48,9 +50,9 @@ export default function StageFailureDisplay({ comments, className = '', batch }:
       <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
         <div className="flex items-center gap-2">
           <Info className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-blue-800">Thông tin đánh giá</h3>
+          <h3 className="font-semibold text-blue-800">{t('stageFailureDisplay.evaluationInfo')}</h3>
         </div>
-        <p className="text-blue-700 mt-2">{comments || 'Không có thông tin chi tiết'}</p>
+        <p className="text-blue-700 mt-2">{comments || t('stageFailureDisplay.noDetailedInfo')}</p>
       </div>
     );
   }
@@ -59,26 +61,26 @@ export default function StageFailureDisplay({ comments, className = '', batch }:
     <div className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         <AlertTriangle className="w-5 h-5 text-red-600" />
-        <h3 className="font-semibold text-red-800">🔧 Công đoạn cần cải thiện</h3>
+        <h3 className="font-semibold text-red-800">{t('stageFailureDisplay.improvementNeeded')}</h3>
       </div>
       
       <div className="space-y-3">
         <div className="flex items-start gap-2">
-          <span className="text-red-600 font-medium min-w-[80px]">Công đoạn:</span>
+          <span className="text-red-600 font-medium min-w-[80px]">{t('stageFailureDisplay.stage')}:</span>
           <div>
             <span className="text-red-800 font-semibold">{failureInfo.stageName}</span>
-            <span className="text-red-600 text-sm ml-2">(Bước {failureInfo.orderIndex})</span>
+            <span className="text-red-600 text-sm ml-2">({t('stageFailureDisplay.step')} {failureInfo.orderIndex})</span>
           </div>
         </div>
         
         <div className="flex items-start gap-2">
-          <span className="text-red-600 font-medium min-w-[80px]">Vấn đề:</span>
+          <span className="text-red-600 font-medium min-w-[80px]">{t('stageFailureDisplay.issue')}:</span>
           <span className="text-red-700">{failureInfo.details}</span>
         </div>
         
         {failureInfo.recommendations && (
           <div className="flex items-start gap-2">
-            <span className="text-red-600 font-medium min-w-[80px]">Khuyến nghị:</span>
+            <span className="text-red-600 font-medium min-w-[80px]">{t('stageFailureDisplay.recommendations')}:</span>
             <span className="text-red-700">{failureInfo.recommendations}</span>
           </div>
         )}
@@ -92,7 +94,7 @@ export default function StageFailureDisplay({ comments, className = '', batch }:
         <div className="flex items-center gap-2">
           <CheckCircle className="w-4 h-4 text-yellow-600" />
           <p className="text-sm text-yellow-800">
-            <strong>Hướng dẫn:</strong> Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia và cập nhật lại tiến trình.
+            <strong>{t('stageFailureDisplay.guidance')}:</strong> {t('stageFailureDisplay.improvementGuidance')}
           </p>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   getAllProcessingBatchProgresses,
   ProcessingBatchProgress,
@@ -41,12 +42,14 @@ interface GroupedProgress {
 }
 
 export default function ProcessingProgressesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [progresses, setProgresses] = useState<ProcessingBatchProgress[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   useEffect(() => {
   const fetchData = async () => {
@@ -76,15 +79,15 @@ export default function ProcessingProgressesPage() {
     const lastProgress = sortedProgresses[0];
     
     // Xác định giai đoạn hiện tại
-    let currentStage = "Chưa bắt đầu";
+    let currentStage = t('processing.pages.farmerProgresses.overview.table.stages.notStarted');
     if (lastProgress) {
-      currentStage = lastProgress.stageName || "Đang xử lý";
+      currentStage = lastProgress.stageName || t('processing.pages.farmerProgresses.overview.table.stages.inProgress');
     } else if (batch.status === ProcessingStatus.Completed) {
-      currentStage = "Hoàn thành";
+      currentStage = t('processing.pages.farmerProgresses.overview.table.stages.completed');
     } else if (batch.status === ProcessingStatus.InProgress) {
-      currentStage = "Đang xử lý";
+      currentStage = t('processing.pages.farmerProgresses.overview.table.stages.inProgress');
     } else if (batch.status === ProcessingStatus.NotStarted) {
-      currentStage = "Chờ xử lý";
+      currentStage = t('processing.pages.farmerProgresses.overview.table.stages.waiting');
     }
     
     return {
@@ -98,9 +101,14 @@ export default function ProcessingProgressesPage() {
     };
   });
 
-  const filtered = groupedProgresses.filter((group) =>
-    (group.batchCode?.toLowerCase() || '').includes(search.toLowerCase())
-  );
+  const filtered = groupedProgresses.filter((group) => {
+    const matchesSearch = (group.batchCode?.toLowerCase() || '').includes(search.toLowerCase());
+    
+    // Copy logic từ batches/page.tsx - sử dụng String comparison đơn giản
+    const matchesStatus = !selectedStatus || String(group.batch.status) === String(selectedStatus);
+    
+    return matchesSearch && matchesStatus;
+  });
 
   // Tính toán phân trang
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -111,13 +119,13 @@ export default function ProcessingProgressesPage() {
   // Reset về trang 1 khi thay đổi filter
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, selectedStatus]);
 
   // Cấu hình cột cho table
   const columns = [
     { 
       key: "batchCode", 
-      title: "Mã lô",
+      title: t('processing.pages.farmerProgresses.overview.table.columns.batchCode'),
       render: (value: string, item: GroupedProgress) => (
         <div className="flex flex-col">
           <span className="font-medium text-gray-900">{value}</span>
@@ -127,13 +135,13 @@ export default function ProcessingProgressesPage() {
     },
     { 
       key: "currentStage", 
-      title: "Giai đoạn hiện tại",
+      title: t('processing.pages.farmerProgresses.overview.table.columns.currentStage'),
       render: (value: string, item: GroupedProgress) => {
         const getStageColor = (stage: string) => {
-          if (stage === "Hoàn thành") return "text-green-700 bg-green-100";
-          if (stage === "Đang xử lý") return "text-blue-700 bg-blue-100";
-          if (stage === "Chờ xử lý") return "text-yellow-700 bg-yellow-100";
-          if (stage === "Chưa bắt đầu") return "text-gray-700 bg-gray-100";
+          if (stage === t('processing.pages.farmerProgresses.overview.table.stages.completed')) return "text-green-700 bg-green-100";
+          if (stage === t('processing.pages.farmerProgresses.overview.table.stages.inProgress')) return "text-blue-700 bg-blue-100";
+          if (stage === t('processing.pages.farmerProgresses.overview.table.stages.waiting')) return "text-yellow-700 bg-yellow-100";
+          if (stage === t('processing.pages.farmerProgresses.overview.table.stages.notStarted')) return "text-gray-700 bg-gray-100";
           return "text-purple-700 bg-purple-100";
         };
         
@@ -146,7 +154,7 @@ export default function ProcessingProgressesPage() {
     },
     { 
       key: "totalProgresses", 
-      title: "Số bước đã thực hiện",
+      title: t('processing.pages.farmerProgresses.overview.table.columns.progressCount'),
       render: (value: number, item: GroupedProgress) => {
         const totalStages = item.batch.stageCount || 0;
         const progressPercentage = totalStages > 0 ? Math.round((value / totalStages) * 100) : 0;
@@ -157,6 +165,7 @@ export default function ProcessingProgressesPage() {
               <span className="text-sm font-medium">{value}</span>
               <span className="text-xs text-gray-500">/ {totalStages || "?"}</span>
             </div>
+            <div className="text-xs text-gray-500">{t('processing.pages.farmerProgresses.overview.steps.step')}</div>
             {totalStages > 0 && (
               <div className="w-16 bg-gray-200 rounded-full h-1.5">
                 <div 
@@ -172,23 +181,23 @@ export default function ProcessingProgressesPage() {
     },
     { 
       key: "batchStatus", 
-      title: "Trạng thái lô",
+      title: t('processing.pages.farmerProgresses.overview.table.columns.status'),
       render: (value: any, item: GroupedProgress) => {
         const getStatusInfo = (status: any) => {
           const statusStr = String(status || '').toLowerCase();
           
           if (statusStr === 'notstarted' || statusStr === 'pending' || statusStr === 'chờ xử lý' || statusStr === '0') {
-            return { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.waiting'), color: "bg-yellow-100 text-yellow-700" };
           } else if (statusStr === 'inprogress' || statusStr === 'processing' || statusStr === 'đang xử lý' || statusStr === '1') {
-            return { label: "Đang xử lý", color: "bg-blue-100 text-blue-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.inProgress'), color: "bg-blue-100 text-blue-700" };
           } else if (statusStr === 'completed' || statusStr === 'hoàn thành' || statusStr === '2') {
-            return { label: "Hoàn thành", color: "bg-green-100 text-green-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.completed'), color: "bg-green-100 text-green-700" };
           } else if (statusStr === 'awaitingevaluation' || statusStr === 'chờ đánh giá' || statusStr === '3') {
-            return { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.waiting'), color: "bg-orange-100 text-orange-700" };
           } else if (statusStr === 'cancelled' || statusStr === 'đã hủy' || statusStr === '4') {
-            return { label: "Đã hủy", color: "bg-red-100 text-red-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.cancelled'), color: "bg-red-100 text-red-700" };
           } else {
-            return { label: "Không xác định", color: "bg-gray-100 text-gray-700" };
+            return { label: t('processing.pages.farmerProgresses.overview.table.stages.unknown'), color: "bg-gray-100 text-gray-700" };
           }
         };
         
@@ -205,7 +214,7 @@ export default function ProcessingProgressesPage() {
     },
     { 
       key: "lastUpdated", 
-      title: "Cập nhật cuối",
+      title: t('processing.pages.farmerProgresses.overview.table.columns.lastUpdated'),
       render: (value: string, item: GroupedProgress) => {
         if (!value) return "—";
         
@@ -216,11 +225,11 @@ export default function ProcessingProgressesPage() {
         
         let timeAgo = "";
         if (diffDays === 1) {
-          timeAgo = "Hôm qua";
+          timeAgo = t('processing.pages.farmerProgresses.overview.table.time.yesterday');
         } else if (diffDays === 0) {
-          timeAgo = "Hôm nay";
+          timeAgo = t('processing.pages.farmerProgresses.overview.table.time.today');
         } else if (diffDays < 7) {
-          timeAgo = `${diffDays} ngày trước`;
+          timeAgo = t('processing.pages.farmerProgresses.overview.table.time.daysAgo', { days: diffDays });
         } else {
           timeAgo = date.toLocaleDateString("vi-VN");
         }
@@ -239,13 +248,13 @@ export default function ProcessingProgressesPage() {
   // Cấu hình actions cho table - FARMER: Có thể xem chi tiết và thêm tiến trình
   const actions = [
     {
-      label: "Xem chi tiết",
+      label: t('processing.pages.farmerProgresses.overview.table.actions.viewDetails'),
       icon: <Eye className="w-3 h-3" />,
       onClick: (group: GroupedProgress) => router.push(`/dashboard/farmer/processing/progresses/${group.batchId}`),
       className: "hover:bg-green-50 hover:border-green-300 text-green-700"
     },
     {
-      label: "Thêm tiến trình",
+      label: t('processing.pages.farmerProgresses.overview.table.actions.addProgress'),
       icon: <Plus className="w-3 h-3" />,
       onClick: (group: GroupedProgress) => router.push(`/dashboard/farmer/processing/progresses/create?batchId=${group.batchId}`),
       className: "hover:bg-blue-50 hover:border-blue-300 text-blue-700"
@@ -262,17 +271,17 @@ export default function ProcessingProgressesPage() {
     const statusStr = String(status || '').toLowerCase();
     
     if (statusStr === 'notstarted' || statusStr === 'pending' || statusStr === 'chờ xử lý' || statusStr === '0') {
-      return { label: "Chờ xử lý", color: "bg-amber-100 text-amber-700 border-amber-200", icon: Clock };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.waiting'), color: "bg-amber-100 text-amber-700 border-amber-200", icon: Clock };
     } else if (statusStr === 'inprogress' || statusStr === 'processing' || statusStr === 'đang xử lý' || statusStr === '1') {
-      return { label: "Đang xử lý", color: "bg-orange-100 text-orange-700 border-orange-200", icon: TrendingUp };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.inProgress'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: TrendingUp };
     } else if (statusStr === 'completed' || statusStr === 'hoàn thành' || statusStr === '2') {
-      return { label: "Hoàn thành", color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.completed'), color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle };
     } else if (statusStr === 'awaitingevaluation' || statusStr === 'chờ đánh giá' || statusStr === '3') {
-      return { label: "Chờ đánh giá", color: "bg-blue-100 text-blue-700 border-blue-200", icon: Clock };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.waiting'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: Clock };
     } else if (statusStr === 'cancelled' || statusStr === 'đã hủy' || statusStr === '4') {
-      return { label: "Đã hủy", color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.cancelled'), color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle };
     } else {
-      return { label: "Không xác định", color: "bg-gray-100 text-gray-700 border-gray-200", icon: Package };
+      return { label: t('processing.pages.farmerProgresses.overview.table.stages.unknown'), color: "bg-gray-100 text-gray-700 border-gray-200", icon: Package };
     }
   };
 
@@ -310,7 +319,7 @@ export default function ProcessingProgressesPage() {
             <div className="flex-1 bg-white rounded-xl shadow-sm p-6">
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
-                <p className="text-sm text-muted-foreground mt-2">Đang tải dữ liệu...</p>
+                <p className="text-sm text-muted-foreground mt-2">{t('processing.pages.farmerProgresses.overview.loading')}</p>
               </div>
             </div>
           </div>
@@ -325,8 +334,8 @@ export default function ProcessingProgressesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Quản lý tiến trình sơ chế</h1>
-            <p className="text-gray-600">Theo dõi và cập nhật tiến trình xử lý cà phê của bạn</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('processing.pages.farmerProgresses.overview.title')}</h1>
+            <p className="text-gray-600">{t('processing.pages.farmerProgresses.overview.subtitle')}</p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -334,7 +343,7 @@ export default function ProcessingProgressesPage() {
               className="bg-orange-600 hover:bg-orange-700 text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Thêm tiến trình
+              {t('processing.pages.farmerProgresses.overview.addProgress')}
             </Button>
           </div>
         </div>
@@ -347,7 +356,7 @@ export default function ProcessingProgressesPage() {
                 <Package className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Tổng lô</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerProgresses.overview.stats.totalBatches')}</p>
                 <p className="text-2xl font-bold text-gray-900">{totalBatches}</p>
               </div>
             </div>
@@ -359,7 +368,7 @@ export default function ProcessingProgressesPage() {
                 <TrendingUp className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerProgresses.overview.stats.activeBatches')}</p>
                 <p className="text-2xl font-bold text-gray-900">{activeBatches}</p>
               </div>
             </div>
@@ -371,7 +380,7 @@ export default function ProcessingProgressesPage() {
                 <Clock className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-medium text-white/80">Tổng tiến trình</p>
+                <p className="text-sm font-medium text-white/80">{t('processing.pages.farmerProgresses.overview.stats.totalProgresses')}</p>
                 <p className="text-2xl font-bold">{totalProgresses}</p>
               </div>
             </div>
@@ -385,10 +394,10 @@ export default function ProcessingProgressesPage() {
             <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
               {/* Search */}
               <div>
-                <h2 className="text-sm font-medium text-gray-700 mb-3">Tìm kiếm tiến trình</h2>
+                <h2 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerProgresses.overview.search.title')}</h2>
                 <div className="relative">
                   <Input
-                    placeholder="Tìm kiếm mã lô..."
+                    placeholder={t('processing.pages.farmerProgresses.overview.search.placeholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pr-10"
@@ -396,26 +405,114 @@ export default function ProcessingProgressesPage() {
                   <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
               </div>
+
+              {/* Filters */}
+              <div>
+                <h2 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerProgresses.overview.filters.title')}</h2>
+                <div className="space-y-3">
+                   {/* Status Filter */}
+                   <div>
+                     <label className="text-xs text-gray-600 mb-3 block font-medium">{t('processing.pages.farmerProgresses.overview.filters.status')}</label>
+                     <div className="space-y-2">
+                       {/* All Statuses Button */}
+                       <button
+                         onClick={() => setSelectedStatus("")}
+                         className={cn(
+                           "w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-left flex items-center gap-3",
+                           !selectedStatus
+                             ? "bg-orange-100 text-orange-700 border-2 border-orange-300 shadow-sm"
+                             : "text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border hover:border-orange-200"
+                         )}
+                       >
+                         <Package className="h-4 w-4" />
+                         <span className="flex-1">{t('processing.pages.farmerProgresses.overview.filters.statusPlaceholder')}</span>
+                         <Badge variant="secondary" className="ml-auto text-xs bg-orange-200 text-orange-700">
+                           {groupedProgresses.length}
+                         </Badge>
+                       </button>
+                       
+                       {/* Dynamic Status Buttons */}
+                       {Array.from(new Set(batches.map(b => b.status))).map((status, index) => {
+                         const statusInfo = getStatusInfo(status);
+                         const count = batches.filter(b => b.status === status).length;
+                         const IconComponent = statusInfo.icon;
+                         
+                         return (
+                           <button
+                             key={index}
+                             onClick={() => setSelectedStatus(status)}
+                             className={cn(
+                               "w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-left flex items-center gap-3",
+                               selectedStatus === status
+                                 ? "bg-orange-100 text-orange-700 border-2 border-orange-300 shadow-sm"
+                                 : "text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border hover:border-orange-200"
+                             )}
+                           >
+                             <IconComponent className="h-4 w-4" />
+                             <span className="flex-1">{statusInfo.label}</span>
+                             <Badge variant="secondary" className="ml-auto text-xs bg-orange-200 text-orange-700">
+                               {count}
+                             </Badge>
+                           </button>
+                         );
+                       })}
+                     </div>
+                   </div>
+
+                                     {/* Filter Actions */}
+                   <div className="flex gap-2">
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => setSelectedStatus("")}
+                       className="flex-1 text-xs"
+                     >
+                       {t('processing.pages.farmerProgresses.overview.filters.clearFilters')}
+                     </Button>
+                   </div>
+                </div>
+              </div>
+
+              {/* Steps Overview */}
+              <div>
+                <h2 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerProgresses.overview.steps.title')}</h2>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">{t('processing.pages.farmerProgresses.overview.steps.totalSteps')}:</span>
+                    <span className="font-medium">{batches.reduce((total, batch) => total + (batch.stageCount || 0), 0)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">{t('processing.pages.farmerProgresses.overview.steps.completedSteps')}:</span>
+                    <span className="font-medium text-green-600">{progresses.length}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">{t('processing.pages.farmerProgresses.overview.steps.remainingSteps')}:</span>
+                    <span className="font-medium text-orange-600">
+                      {Math.max(0, batches.reduce((total, batch) => total + (batch.stageCount || 0), 0) - progresses.length)}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </aside>
 
-          {/* Main Content Area */}
-          <main className="flex-1">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Danh sách tiến trình theo lô ({filtered.length})
+                     {/* Main Content Area */}
+           <main className="flex-1">
+             <div className="bg-white rounded-xl shadow-sm p-6">
+               <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                {t('processing.pages.farmerProgresses.overview.table.title')} ({filtered.length})
               </h2>
               
               {paginatedData.length === 0 ? (
                 <div className="text-center py-12">
                   <TrendingUp className="w-16 h-16 text-orange-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {search ? "Không tìm thấy tiến trình nào" : "Chưa có tiến trình nào"}
+                    {search ? t('processing.pages.farmerProgresses.overview.empty.noSearchResults') : t('processing.pages.farmerProgresses.overview.empty.noProgresses')}
                   </h3>
                   <p className="text-gray-500">
                     {search 
-                      ? "Thử thay đổi từ khóa tìm kiếm"
-                      : "Bắt đầu thêm tiến trình đầu tiên"
+                      ? t('processing.pages.farmerProgresses.overview.empty.searchHint')
+                      : t('processing.pages.farmerProgresses.overview.empty.createHint')
                     }
                   </p>
                 </div>
@@ -423,20 +520,24 @@ export default function ProcessingProgressesPage() {
                 <table className="w-full text-sm table-auto">
                   <thead className="bg-gray-100 text-gray-700 font-medium">
                     <tr>
-                      <th className="px-4 py-3 text-left">Mã lô</th>
-                      <th className="px-4 py-3 text-left">Nông dân</th>
-                      <th className="px-4 py-3 text-left">Giai đoạn hiện tại</th>
-                      <th className="px-4 py-3 text-left">Trạng thái</th>
-                      <th className="px-4 py-3 text-left">Số tiến trình</th>
-                      <th className="px-4 py-3 text-left">Cập nhật cuối</th>
-                      <th className="px-4 py-3 text-left">Hành động</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.batchCode')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.farmer')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.currentStage')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.status')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.progressCount')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.lastUpdated')}</th>
+                      <th className="px-4 py-3 text-left">{t('processing.pages.farmerProgresses.overview.table.columns.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedData.map((group) => {
                       const statusInfo = getStatusInfo(group.batch.status);
                       return (
-                        <tr key={group.batchId} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr 
+                          key={group.batchId} 
+                          className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                          onClick={() => router.push(`/dashboard/farmer/processing/progresses/${group.batchId}`)}
+                        >
                           <td className="px-4 py-3">
                             <span className="font-medium text-gray-800">{group.batchCode}</span>
                           </td>

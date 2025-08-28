@@ -10,12 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Search, User, Coffee, Calendar, Package } from "lucide-react";
 import { ProcessingBatch } from "@/lib/api/processingBatches";
 import { getProcessingBatchesByFarmerForBusinessManager, getFarmersWithBatchesForBusinessManager } from "@/lib/api/processingBatches";
+import { useTranslation } from 'react-i18next';
 
 interface FarmerBatchSelectorProps {
   onBatchSelect?: (batch: ProcessingBatch) => void;
 }
 
 export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelectorProps) {
+  const { t } = useTranslation();
   const [farmers, setFarmers] = useState<{ farmerId: string; farmerName: string; batchCount: number }[]>([]);
   const [selectedFarmerId, setSelectedFarmerId] = useState<string>("");
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
@@ -32,12 +34,12 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
         setFarmers(data);
       } catch (err) {
         console.error("❌ Lỗi khi lấy danh sách farmers:", err);
-        setError("Không thể tải danh sách nông dân");
+        setError(t('farmerBatchSelector.error.loadingFarmers'));
       }
     };
 
     fetchFarmers();
-  }, []);
+  }, [t]);
 
   // Lấy batch của farmer được chọn
   const fetchFarmerBatches = async (farmerId: string) => {
@@ -56,7 +58,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
       setBatches(data);
     } catch (err) {
       console.error("❌ Lỗi khi lấy batch của farmer:", err);
-      setError("Không thể tải danh sách lô sơ chế của nông dân này");
+      setError(t('farmerBatchSelector.error.loadingBatches'));
       setBatches([]);
     } finally {
       setLoading(false);
@@ -93,15 +95,15 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
   const getStatusText = (status: string) => {
     switch (status) {
       case "NotStarted":
-        return "Chưa bắt đầu";
+        return t('processing.status.notStarted');
       case "InProgress":
-        return "Đang xử lý";
+        return t('processing.status.inProgress');
       case "AwaitingEvaluation":
-        return "Chờ đánh giá";
+        return t('processing.status.awaitingEvaluation');
       case "Completed":
-        return "Hoàn thành";
+        return t('processing.status.completed');
       case "Failed":
-        return "Thất bại";
+        return t('processing.status.failed');
       default:
         return status;
     }
@@ -118,17 +120,17 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
             <div className="p-2 bg-orange-100 rounded-lg">
               <User className="h-6 w-6 text-orange-600" />
             </div>
-            Chọn Nông Dân để Xem Lô Sơ Chế
+            {t('farmerBatchSelector.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
             <Label htmlFor="farmer-select" className="text-sm font-medium text-gray-700">
-              Chọn Nông Dân
+              {t('farmerBatchSelector.selectFarmer')}
             </Label>
             <Select value={selectedFarmerId} onValueChange={handleFarmerChange}>
               <SelectTrigger className="h-12 border-2 border-orange-200 focus:border-orange-400 focus:ring-orange-400">
-                <SelectValue placeholder="Chọn nông dân..." />
+                <SelectValue placeholder={t('farmerBatchSelector.selectFarmerPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {farmers.map((farmer) => (
@@ -136,7 +138,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
                     <div className="flex items-center justify-between w-full">
                       <span className="font-medium">{farmer.farmerName}</span>
                       <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-700">
-                        {farmer.batchCount} lô
+                        {farmer.batchCount} {t('farmerBatchSelector.batchCount')}
                       </Badge>
                     </div>
                   </SelectItem>
@@ -154,7 +156,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
           {loading && (
             <div className="flex items-center justify-center p-6">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-              <span className="ml-3 text-sm text-gray-600 font-medium">Đang tải...</span>
+              <span className="ml-3 text-sm text-gray-600 font-medium">{t('common.loading')}</span>
             </div>
           )}
         </CardContent>
@@ -167,7 +169,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Coffee className="h-6 w-6 text-blue-600" />
               </div>
-              Danh Sách Lô Sơ Chế
+              {t('farmerBatchSelector.batchListTitle')}
               <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-700">
                 {batches.length}
               </Badge>
@@ -188,7 +190,7 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
                       </div>
                       <div>
                         <h3 className="font-bold text-lg text-gray-900">{batch.batchCode}</h3>
-                        <p className="text-sm text-gray-500">Mã hệ thống: {batch.systemBatchCode}</p>
+                        <p className="text-sm text-gray-500">{t('farmerBatchSelector.systemCode')}: {batch.systemBatchCode}</p>
                       </div>
                     </div>
                     <Badge className={getStatusColor(batch.status)}>
@@ -200,34 +202,34 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Coffee className="h-4 w-4" />
-                        <span className="font-medium">Loại cà phê:</span>
+                        <span className="font-medium">{t('farmerBatchSelector.coffeeType')}:</span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-900">{batch.typeName || "N/A"}</p>
+                      <p className="text-sm font-semibold text-gray-900">{batch.typeName || t('common.notAvailable')}</p>
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="h-4 w-4" />
-                        <span className="font-medium">Mùa vụ:</span>
+                        <span className="font-medium">{t('farmerBatchSelector.cropSeason')}:</span>
                       </div>
                       <p className="text-sm font-semibold text-gray-900">{batch.cropSeasonName}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="text-sm text-gray-600 font-medium">Đầu vào:</div>
+                      <div className="text-sm text-gray-600 font-medium">{t('farmerBatchSelector.input')}:</div>
                       <p className="text-lg font-bold text-blue-600">{batch.totalInputQuantity} kg</p>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="text-sm text-gray-600 font-medium">Đầu ra:</div>
+                      <div className="text-sm text-gray-600 font-medium">{t('farmerBatchSelector.output')}:</div>
                       <p className="text-lg font-bold text-green-600">{batch.totalOutputQuantity} kg</p>
                     </div>
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>Tạo lúc: {new Date(batch.createdAt).toLocaleDateString('vi-VN')}</span>
-                      <span className="font-medium">Phương pháp: {batch.methodName}</span>
+                      <span>{t('farmerBatchSelector.createdAt')}: {new Date(batch.createdAt).toLocaleDateString('vi-VN')}</span>
+                      <span className="font-medium">{t('farmerBatchSelector.method')}: {batch.methodName}</span>
                     </div>
                   </div>
                 </div>
@@ -244,10 +246,10 @@ export default function FarmerBatchSelector({ onBatchSelect }: FarmerBatchSelect
               <Coffee className="h-8 w-8 text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Không có lô sơ chế nào
+              {t('farmerBatchSelector.noBatches.title')}
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Nông dân này chưa có lô sơ chế nào trong các mùa vụ đã cam kết.
+              {t('farmerBatchSelector.noBatches.description')}
             </p>
           </CardContent>
         </Card>

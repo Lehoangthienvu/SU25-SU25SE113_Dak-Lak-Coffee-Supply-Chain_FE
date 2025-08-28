@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { AlertTriangle, Info, CheckCircle, RefreshCw, ArrowRight } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getStageFailureDisplayInfo } from '@/lib/helpers/evaluationHelpers';
 
 interface RetryGuidanceInfoProps {
@@ -26,6 +27,7 @@ interface RetryGuidanceInfoProps {
 }
 
 export default function RetryGuidanceInfo({ evaluation, batch }: RetryGuidanceInfoProps) {
+  const { t } = useTranslation();
   const failureInfo = evaluation.comments ? getStageFailureDisplayInfo(evaluation.comments) : null;
   
   // Kiểm tra xem có phải FAIL không
@@ -67,109 +69,55 @@ export default function RetryGuidanceInfo({ evaluation, batch }: RetryGuidanceIn
     
     return failedStageProgress;
   }, [batch, failureInfo]);
+
+  if (!evaluation.comments) return null;
+
+  const hasFailure = evaluation.comments.includes('STAGE') && evaluation.comments.includes('không đạt');
+  const hasFarmerRetried = evaluation.comments.includes('đã cập nhật lại');
+
+  if (!hasFailure) return null;
   
   return (
-    <div className="mt-4">
-      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle className="w-5 h-5 text-orange-600" />
-          <h3 className="font-semibold text-orange-800">Hướng dẫn cập nhật lại</h3>
+    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className="flex items-center gap-2 mb-3">
+        <AlertTriangle className="h-5 w-5 text-yellow-600" />
+        <h3 className="font-semibold text-yellow-800">{t('retryGuidanceInfo.title')}</h3>
+      </div>
+      
+      <div className="space-y-3">
+        <div className="flex items-start gap-2">
+          <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-yellow-700">
+            <p className="font-medium">{t('retryGuidanceInfo.currentStatus')}</p>
+            <p>{t('retryGuidanceInfo.evaluationFailed')}</p>
+          </div>
         </div>
-        
-        <div className="space-y-3">
-          {/* Thông tin về stage bị fail */}
-          <div className="bg-white/50 rounded-lg p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <RefreshCw className="w-4 h-4 text-orange-600" />
-              <span className="text-sm font-medium text-orange-800">
-                Công đoạn cần cập nhật lại: {failureInfo.stageName} (Bước {failureInfo.orderIndex})
-              </span>
-            </div>
-            
-            {failedStageInfo && (
-              <div className="text-sm text-orange-700 space-y-1">
-                <p><strong>Lần cập nhật cuối:</strong> {failedStageInfo.progressDate ? new Date(failedStageInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
-                <p><strong>Cập nhật bởi:</strong> {failedStageInfo.updatedByName || batch?.farmerName || 'Nông dân'}</p>
-              </div>
-            )}
-          </div>
-          
-          {/* Hướng dẫn về các stage đằng sau */}
-          {hasCompletedStagesAfterFailure ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-                <span className="text-sm font-medium text-red-800">
-                  ⚠️ Cần cập nhật lại các công đoạn đã hoàn thành sau
-                </span>
-              </div>
-              
-              <div className="text-sm text-red-700 space-y-2">
-                <p>
-                  Vì công đoạn <strong>{failureInfo.stageName}</strong> bị đánh giá không đạt, 
-                  các công đoạn sau đây cũng cần được cập nhật lại để đảm bảo chất lượng:
-                </p>
-                
-                <div className="space-y-1">
-                  {stagesAfterFailure.map((progress, index) => (
-                    <div key={progress.progressId} className="flex items-center gap-2">
-                      <ArrowRight className="w-3 h-3 text-red-600" />
-                      <span className="text-sm">
-                        <strong>{progress.stageName}</strong> 
-                        {progress.progressDate && (
-                          <span className="text-gray-600 ml-2">
-                            (cập nhật: {new Date(progress.progressDate).toLocaleDateString('vi-VN')})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                  <p className="text-xs text-yellow-800">
-                    <strong>Lưu ý:</strong> Khi cập nhật lại công đoạn {failureInfo.stageName}, 
-                    hệ thống sẽ tự động cho phép bạn cập nhật lại các công đoạn tiếp theo để đảm bảo tính nhất quán.
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-medium text-green-800">
-                  ✅ Chỉ cần cập nhật lại công đoạn {failureInfo.stageName}
-                </span>
-              </div>
-              
-              <div className="text-sm text-green-700">
-                <p>
-                  Đây là công đoạn cuối cùng hoặc chưa có công đoạn nào được hoàn thành sau. 
-                  Bạn chỉ cần cập nhật lại công đoạn <strong>{failureInfo.stageName}</strong> 
-                  theo khuyến nghị của chuyên gia.
-                </p>
-              </div>
-            </div>
-          )}
-          
-          {/* Hướng dẫn hành động */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Info className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-800">
-                Hướng dẫn thực hiện
-              </span>
-            </div>
-            
-            <div className="text-sm text-blue-700 space-y-1">
-              <p><strong>Bước 1:</strong> Cập nhật lại công đoạn {failureInfo.stageName} theo khuyến nghị</p>
-              {hasCompletedStagesAfterFailure && (
-                <p><strong>Bước 2:</strong> Cập nhật lại các công đoạn tiếp theo để đảm bảo chất lượng</p>
-              )}
-              <p><strong>Bước 3:</strong> Chờ chuyên gia đánh giá lại</p>
+
+        {hasFarmerRetried ? (
+          <div className="flex items-start gap-2">
+            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-green-700">
+              <p className="font-medium">{t('retryGuidanceInfo.farmerUpdated')}</p>
+              <p>{t('retryGuidanceInfo.waitingForReEvaluation')}</p>
             </div>
           </div>
+        ) : (
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-orange-700">
+              <p className="font-medium">{t('retryGuidanceInfo.actionRequired')}</p>
+              <p>{t('retryGuidanceInfo.improveAndRetry')}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-4 p-3 bg-white rounded border border-yellow-200">
+          <h4 className="font-medium text-yellow-800 mb-2">{t('retryGuidanceInfo.nextSteps')}</h4>
+          <ul className="text-sm text-yellow-700 space-y-1">
+            <li>• {t('retryGuidanceInfo.step1')}</li>
+            <li>• {t('retryGuidanceInfo.step2')}</li>
+            <li>• {t('retryGuidanceInfo.step3')}</li>
+          </ul>
         </div>
       </div>
     </div>

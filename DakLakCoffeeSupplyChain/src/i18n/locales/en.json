@@ -1,0 +1,2114 @@
+{
+  "processing": {
+    "title": "Coffee Processing Management",
+    "batch": {
+      "title": "Processing Batch",
+      "create": "Create New Batch",
+      "createDescription": "Create processing batch for coffee from completed harvests (only those requiring processing)",
+      "createError": "Failed to create processing batch!",
+      "createSuccess": "Processing batch created successfully!",
+      "edit": "Edit Batch",
+      "delete": "Delete Batch",
+      "status": "Status",
+      "method": "Processing Method",
+      "inputQuantity": "Input Quantity",
+      "outputQuantity": "Output Quantity",
+      "progress": "Progress",
+      "stages": "Processing Stages",
+      "cropSeason": "Crop Season",
+      "coffeeType": "Coffee Type",
+      "batchCode": "Batch Code",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createBatch": "Create Processing Batch",
+      "selectCropSeason": "-- Select Crop Season --",
+      "selectCoffeeType": "-- Select Coffee Type --",
+      "selectCropSeasonFirst": "-- Please select crop season first --",
+      "selectCropSeasonToViewCoffeeTypes": "Select crop season to view available coffee types",
+      "loadingCoffeeTypes": "Loading coffee types list...",
+      "planInformation": "Plan Information",
+      "processingMethod": "Processing Method",
+      "methodAppliedAutomatically": "This method will be applied automatically when creating the processing batch",
+      "note": "Note",
+      "onlyCoffeeTypesWithPlanRequirements": "Only coffee types with processing requirements from the plan are displayed here.",
+      "batchCodePlaceholder": "E.g: BATCH-2024-001",
+      "batchCodeDescription": "Enter batch code for easy management and tracking",
+      "validation": {
+        "selectCropSeason": "Please select a crop season",
+        "selectCoffeeType": "Please select a coffee type",
+        "noPlanProcessingMethod": "This coffee type does not have processing requirements from the plan",
+        "enterBatchCode": "Please enter batch code"
+      }
+    },
+    "createProgress": {
+      "headerTitle": "Create First Progress",
+      "headerDescription": "Start coffee processing workflow",
+      "batchSelectionTitle": "Select Processing Batch",
+      "batchSelectionDescription": "Choose coffee batch to start processing",
+      "noAvailableBatches": "No available processing batches",
+      "showBatchesStatus": "Only showing batches with status: Not Started, In Progress, or Awaiting Evaluation",
+      "selectBatchLabel": "Select processing batch",
+      "selectBatchPlaceholder": "-- Select processing batch --",
+      "stageInformationTitle": "Processing Stage Information",
+      "stageInformationDescription": "First step in the workflow",
+      "loadingStages": "Loading stage information...",
+      "firstStep": "First Step",
+      "processing": "Processing",
+      "noStageInfo": "No stage information found",
+      "progressInformationTitle": "Progress Information",
+      "progressInformationDescription": "Execution date and output quantity",
+      "progressDateLabel": "Execution Date",
+      "outputQuantityLabel": "Output Quantity",
+      "technicalParametersTitle": "Technical Parameters",
+      "technicalParametersDescription": "Measurement parameters during processing",
+      "addParameter": "Add Parameter",
+      "parameterNameLabel": "Parameter Name",
+      "parameterNamePlaceholder": "E.g: Temperature, Humidity...",
+      "parameterValueLabel": "Value",
+      "parameterValuePlaceholder": "E.g: 25, 80%...",
+      "parameterUnitLabel": "Unit",
+      "parameterUnitPlaceholder": "E.g: °C, %, kg...",
+      "cancelButton": "Cancel",
+      "saving": "Saving...",
+      "createProgress": "Create Progress",
+      "stageOrder": "Step {{order}}",
+      "methodInfo": "of method {{methodName}}",
+      "stepOrder": "Step {{order}}"
+    },
+    "progress": {
+      "title": "Processing Progress",
+      "create": "Create New Progress",
+      "advance": "Update Progress",
+      "update": "Update Progress",
+      "delete": "Delete Progress",
+      "stage": "Processing Stage",
+      "stageDescription": "Stage Description",
+      "progressDate": "Progress Date",
+      "outputQuantity": "Output Quantity *",
+      "outputUnit": "Unit",
+      "notes": "Notes",
+      "submit": "Save Progress",
+      "cancel": "Cancel",
+      "loading": "Processing...",
+      "success": "Progress updated successfully! 🎉",
+      "error": {
+        "default": "Cannot update progress."
+      },
+      "placeholder": {
+        "outputQuantity": "Enter quantity",
+        "stageDescription": "Detailed description of processing stage...",
+        "notes": "Additional notes..."
+      }
+    },
+    "waste": {
+      "title": "Waste",
+      "description": "Record waste types generated during processing",
+      "add": "Add Waste",
+      "edit": "Edit Waste",
+      "delete": "Delete Waste",
+      "wasteType": "Waste Type *",
+      "quantity": "Quantity *",
+      "unit": "Unit *",
+      "note": "Note",
+      "recordedAt": "Recorded At",
+      "itemNumber": "Waste #{{number}}",
+      "selectUnit": "Select unit...",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Ton",
+        "quintal": "Quintal",
+        "yen": "Yen",
+        "lang": "Lang",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      },
+      "placeholder": {
+        "wasteType": "Example: Bax, Husk, Coffee grounds...",
+        "quantity": "0.00",
+        "note": "Note about waste (optional)..."
+      },
+      "emptyState": {
+        "noWaste": "No waste added yet",
+        "addWasteHint": "Click \"Add Waste\" to start"
+      },
+      "validation": {
+        "wasteTypeRequired": "Please enter waste type",
+        "quantityRange": "Quantity must be from 0.01 to 100,000",
+        "unitRequired": "Please select unit",
+        "summary": "Please check and fix errors above"
+      },
+      "summary": {
+        "title": "Created Waste",
+        "description": "List of waste types that have been recorded",
+        "count": "waste",
+        "code": "Code",
+        "disposed": "Disposed",
+        "recordedAt": "Recorded at",
+        "quantity": "Quantity",
+        "note": "Note",
+        "disposedAt": "Disposed at",
+        "totalQuantity": "Total waste quantity",
+        "totalTypes": "Total waste types"
+      }
+    },
+    "media": {
+      "title": "Media Files",
+      "photos": "Photos",
+      "videos": "Videos",
+      "upload": "Upload",
+      "remove": "Remove",
+      "maxFiles": "Maximum 10 files",
+      "maxSize": "50MB",
+      "autoCompress": "Images auto-compressed",
+      "dragDrop": "Drag and drop files here or click to select",
+      "multipleSelection": "multiple selection",
+      "selectPhoto": "Select Photo",
+      "selectVideo": "Select Video",
+      "selectedPhotos": "Selected {{count}} photos",
+      "selectedVideos": "Selected {{count}} videos",
+      "files": "files",
+      "limits": {
+        "title": "Limits",
+        "maxFiles": "Maximum",
+        "maxSize": "total size",
+        "autoCompress": "Images will be automatically compressed to reduce size."
+      }
+    },
+    "parameters": {
+      "title": "Technical Parameters",
+      "add": "Add Parameter",
+      "edit": "Edit Parameter",
+      "delete": "Delete Parameter",
+      "parameterName": "Parameter Name",
+      "parameterValue": "Value",
+      "unit": "Unit",
+      "recordedAt": "Recorded At"
+    },
+    "stages": {
+      "title": "Processing Stages",
+      "orderIndex": "Order",
+      "stageName": "Stage Name",
+      "description": "Description",
+      "isDeleted": "Deleted",
+      "selectStage": "Select Processing Stage"
+    },
+    "stageInfo": {
+      "currentStage": "Current step information:",
+      "errorStage": "Error step information:",
+      "noProgress": "No progress yet",
+      "stepNumber": "Step",
+      "previousDate": "Previous date:",
+      "failureReason": "Failure reason:",
+      "improvementStage": "Stage that needs improvement",
+      "nextStep": "Next step:",
+      "firstProgress": "Create first progress"
+    },
+    "pages": {
+      "managerBatches": {
+        "title": "Processing Batches Management (Manager)",
+        "subtitle": "Track and manage all coffee processing batches in the system",
+        "totalBatches": "Total Batches",
+        "active": "Active",
+        "totalOutput": "Total Output",
+        "searchTitle": "Search Processing Batches",
+        "searchPlaceholder": "Enter batch code, crop season or method...",
+        "filterTitle": "Filter by Status",
+        "allStatuses": "All Statuses",
+        "processing": "Processing",
+        "completed": "Completed",
+        "table": {
+          "batchCode": "Batch Code",
+          "cropSeason": "Crop Season",
+          "method": "Method",
+          "status": "Status",
+          "creationDate": "Creation Date",
+          "action": "Action"
+        },
+        "status": {
+          "notStarted": "Not Started",
+          "inProgress": "In Progress",
+          "completed": "Completed",
+          "awaitingEvaluation": "Awaiting Evaluation",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        },
+        "loading": {
+          "title": "Loading data...",
+          "description": "Loading processing batches list"
+        },
+        "error": {
+          "title": "Cannot load data",
+          "retry": "Retry"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "to": "to",
+          "of": "of",
+          "batches": "batches",
+          "page": "Page",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "farmer": {
+          "unknown": "Unknown"
+        },
+        "batchDetail": {
+          "title": "Processing Batch Details (Manager)",
+          "subtitle": "Detailed information about coffee processing batch",
+          "backToList": "Back",
+          "viewProgress": "View Progress",
+          "report": "Report",
+          "loading": {
+            "title": "Loading data...",
+            "description": "Loading processing batch information"
+          },
+          "notFound": {
+            "title": "Processing batch not found",
+            "description": "The processing batch you are looking for does not exist or has been deleted.",
+            "backToList": "Back to list"
+          },
+          "stats": {
+            "batchCode": "Batch Code",
+            "stage": "Stage",
+            "output": "Output",
+            "efficiency": "Efficiency"
+          },
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Batch Code",
+            "systemCode": "System Code",
+            "cropSeason": "Crop Season",
+            "farmer": "Farmer",
+            "method": "Method",
+            "status": "Status",
+            "inputQuantity": "Input Quantity",
+            "outputQuantity": "Output Quantity",
+            "createdAt": "Created At"
+          },
+          "progress": {
+            "title": "Processing Progress",
+            "step": "Step",
+            "retry": "Retry",
+            "retryLabel": "(Retry)",
+            "executionDate": "Execution Date",
+            "outputQuantity": "Output Quantity",
+            "noProgress": {
+              "title": "No progress yet",
+              "description": "Processing batch has not been started"
+            }
+          },
+          "quickActions": {
+            "title": "Quick Actions (Manager)",
+            "viewProgressDetail": "View detailed progress",
+            "viewExpertEvaluation": "View expert evaluation",
+            "editInfo": "Edit information",
+            "delete": "Delete"
+          },
+          "summary": {
+            "title": "Batch Summary",
+            "currentStatus": "Current Status:",
+            "stagesCount": "Number of stages:",
+            "efficiency": "Efficiency:",
+            "createdAt": "Created at:"
+          },
+          "contact": {
+            "title": "Contact Information",
+            "farmer": "Farmer",
+            "cropSeason": "Crop Season"
+          },
+          "deleteConfirm": "Are you sure you want to delete this processing batch?"
+        },
+        "edit": {
+          "title": "Edit Processing Batch",
+          "subtitle": "Update coffee processing batch information",
+          "backToDetail": "Back",
+          "batchId": "ID",
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Processing Batch Code",
+            "batchCodePlaceholder": "Enter processing batch code",
+            "cropSeason": "Crop Season",
+            "notes": "Notes",
+            "notesPlaceholder": "Enter notes about processing batch..."
+          },
+          "currentInfo": {
+            "title": "Current Information",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At",
+            "totalOutput": "Total Output",
+            "currentStatus": "Current Status"
+          },
+          "actions": {
+            "cancel": "Cancel",
+            "saving": "Saving...",
+            "saveChanges": "Save Changes"
+          },
+          "loading": {
+            "title": "Loading data...",
+            "description": "Loading processing batch information"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "description": "Processing batch does not exist",
+            "backToList": "Back to list"
+          }
+        },
+        "progresses": {
+          "title": "Processing Progress Management",
+          "description": "Track and manage coffee processing progress",
+          "table": {
+            "batchCode": "Batch Code",
+            "currentStage": "Current Stage",
+            "totalProgresses": "Steps Completed",
+            "batchStatus": "Batch Status",
+            "lastUpdated": "Last Updated"
+          },
+          "status": {
+            "notStarted": "Pending",
+            "inProgress": "In Progress",
+            "completed": "Completed",
+            "awaitingEvaluation": "Awaiting Evaluation",
+            "cancelled": "Cancelled",
+            "unknown": "Unknown"
+          },
+          "stage": {
+            "notStarted": "Not Started",
+            "completed": "Completed",
+            "inProgress": "In Progress",
+            "waiting": "Waiting"
+          },
+          "time": {
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "daysAgo": "days ago"
+          },
+          "actions": {
+            "viewDetail": "View Details"
+          },
+          "search": {
+            "placeholder": "Search batch code...",
+            "results": "Found {{count}} results"
+          },
+          "summary": {
+            "title": "Progress List by Batch",
+            "description": "Showing {{batchCount}} batches • {{progressCount}} progress total",
+            "pageInfo": "Page {{current}} / {{total}}",
+            "allBatches": "All batches"
+          },
+          "empty": {
+            "title": "No progress found",
+            "description": "Try changing your search keywords."
+          }
+        },
+        "stages": {
+          "title": "Processing Stages Management",
+          "description": "Manage stages in the coffee processing workflow",
+          "createButtonText": "Add Stage",
+          "stats": {
+            "totalStages": "Total Stages",
+            "activeStages": "Active",
+            "inactiveStages": "Inactive",
+            "methods": "Methods"
+          },
+          "table": {
+            "stageId": "ID",
+            "stageName": "Stage Name",
+            "orderIndex": "Order",
+            "methodId": "Method",
+            "isRequired": "Required",
+            "isDeleted": "Status"
+          },
+          "status": {
+            "required": "Required",
+            "optional": "Optional",
+            "active": "Active",
+            "deleted": "Deleted"
+          },
+          "actions": {
+            "view": "View",
+            "edit": "Edit",
+            "softDelete": "Soft Delete"
+          },
+          "search": {
+            "placeholder": "Search stage name, stage code or description...",
+            "results": "Found {{count}} results"
+          },
+          "summary": {
+            "title": "Stages List",
+            "description": "Showing {{totalStages}} stages • {{activeStages}} active",
+            "pageInfo": "Page {{current}} / {{total}}",
+            "allStages": "All stages"
+          },
+          "empty": {
+            "title": "No stages found",
+            "description": "Try changing your search keywords or add a new stage."
+          },
+          "deleteConfirm": "Are you sure you want to soft delete this stage? The stage will be hidden from the list but not completely deleted."
+        },
+        "methods": {
+          "title": "Processing Methods Management",
+          "description": "Manage coffee processing methods in the system",
+          "stats": {
+            "totalMethods": "Total Methods",
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "table": {
+            "methodName": "Method Name",
+            "description": "Description",
+            "status": "Status",
+            "createdAt": "Created At",
+            "actions": "Actions"
+          },
+          "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "search": {
+            "placeholder": "Search method name or description..."
+          },
+          "actions": {
+            "addNew": "Add New"
+          },
+          "noData": "No methods found"
+        },
+        "parameters": {
+          "title": "Processing Parameters Management",
+          "description": "Manage technical parameters in the coffee processing workflow",
+          "deleteConfirm": "Are you sure you want to soft delete this parameter?",
+          "stats": {
+            "total": "Total Parameters",
+            "active": "Active",
+            "required": "Required",
+            "optional": "Optional"
+          },
+          "table": {
+            "title": "Parameters List",
+            "parameterCode": "Parameter Code",
+            "parameterName": "Parameter Name",
+            "description": "Description",
+            "noDescription": "No description",
+            "unit": "Unit",
+            "minValue": "Min Value",
+            "maxValue": "Max Value",
+            "targetValue": "Target Value",
+            "required": "Required",
+            "optional": "Optional",
+            "status": "Status",
+            "active": "Active",
+            "inactive": "Inactive",
+            "summary": "Showing {{total}} parameters • {{active}} active",
+            "pageInfo": "Page {{current}} / {{total}}",
+            "allParameters": "All parameters",
+            "noData": "No parameters found",
+            "noDataDescription": "Try changing your search keywords or add a new parameter."
+          },
+          "search": {
+            "placeholder": "Search parameter name, code or description...",
+            "results": "Found {{count}} results"
+          },
+          "actions": {
+            "addNew": "Add New Parameter",
+            "softDelete": "Soft Delete"
+          }
+        },
+        "wastes": {
+          "title": "Processing Wastes Management",
+          "description": "Track and manage wastes from the coffee processing process",
+          "deleteConfirm": "Are you sure you want to soft delete this waste? The waste will be hidden from the list but not completely deleted.",
+          "stats": {
+            "totalWastes": "Total Wastes",
+            "totalQuantity": "Total Quantity",
+            "recycled": "Recycled",
+            "hazardous": "Hazardous Waste"
+          },
+          "table": {
+            "title": "Wastes List",
+            "wasteCode": "Waste Code",
+            "batchCode": "Batch Code",
+            "wasteType": "Waste Type",
+            "quantity": "Quantity",
+            "disposalMethod": "Disposal Method",
+            "createdAt": "Created At",
+            "summary": "Showing {{total}} wastes • Total quantity: {{quantity}} kg",
+            "pageInfo": "Page {{current}} / {{total}}",
+            "allWastes": "All wastes",
+            "noData": "No wastes found",
+            "noDataDescription": "Try changing your search keywords or add a new waste."
+          },
+          "search": {
+            "placeholder": "Search waste code, batch code or waste type...",
+            "results": "Found {{count}} results"
+          },
+          "actions": {
+            "addNew": "Add Waste",
+            "view": "View",
+            "edit": "Edit",
+            "softDelete": "Soft Delete"
+          },
+          "time": {
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "daysAgo": "days ago"
+          },
+          "unknown": "Unknown"
+        },
+        "wasteDisposals": {
+          "title": "Waste Disposal Management",
+          "subtitle": "Processing waste disposal management page. (Manager)",
+          "description": "Manage waste disposal methods from the coffee processing process"
+        }
+      },
+
+      "expertBatches": {
+        "title": "Processing Batches Management (Expert)",
+        "subtitle": "Evaluate and control quality of coffee processing batches",
+        "batchDetail": {
+          "title": "Processing Batch Details (Expert)",
+          "subtitle": "Detailed information for quality evaluation",
+          "backToList": "Back",
+          "loading": {
+            "title": "Loading data...",
+            "description": "Loading processing batch information"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "back": "Back"
+          },
+          "notFound": {
+            "title": "Processing batch not found",
+            "description": "The processing batch you are looking for does not exist or has been deleted",
+            "back": "Back to list"
+          },
+          "stats": {
+            "batchCode": "Batch Code",
+            "stage": "Stage",
+            "output": "Output",
+            "efficiency": "Efficiency"
+          },
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Batch Code",
+            "systemCode": "System Code",
+            "cropSeason": "Crop Season",
+            "farmer": "Farmer",
+            "method": "Method",
+            "status": "Status",
+            "inputQuantity": "Input Quantity",
+            "outputQuantity": "Output Quantity",
+            "createdAt": "Created At"
+          },
+          "quickActions": {
+            "title": "Quick Actions (Expert)",
+            "evaluateStage": "Evaluate Stage",
+            "viewProgress": "View Progress",
+            "generateReport": "Generate Report"
+          },
+          "summary": {
+            "title": "Batch Summary",
+            "currentStatus": "Current Status:",
+            "stagesCount": "Number of stages:",
+            "efficiency": "Efficiency:",
+            "createdAt": "Created at:"
+          }
+        }
+      },
+      "batchDetail": {
+        "title": "Processing Batch Details",
+        "subtitle": "Detailed information about coffee processing batch",
+        "backToList": "Back",
+        "viewProgress": "View Progress",
+        "report": "Report",
+        "loading": {
+          "title": "Loading data...",
+          "description": "Loading processing batch information"
+        },
+        "notFound": {
+          "title": "Processing batch not found",
+          "description": "The processing batch you are looking for does not exist or has been deleted.",
+          "backToList": "Back to list"
+        },
+        "stats": {
+          "batchCode": "Batch Code",
+          "stage": "Stage",
+          "output": "Output",
+          "efficiency": "Efficiency"
+        },
+        "basicInfo": {
+          "title": "Basic Information",
+          "systemCode": "System Code",
+          "cropSeason": "Crop Season",
+          "farmer": "Farmer",
+          "method": "Method",
+          "status": "Status",
+          "inputQuantity": "Input Quantity",
+          "outputQuantity": "Output Quantity",
+          "createdAt": "Created At"
+        },
+        "progress": {
+          "title": "Processing Progress",
+          "step": "Step",
+          "retry": "Retry",
+          "retryLabel": "(Retry)",
+          "executionDate": "Execution Date",
+          "outputQuantity": "Output Quantity",
+          "noProgress": {
+            "title": "No progress yet",
+            "description": "Processing batch has not started yet"
+          }
+        },
+        "quickActions": {
+          "title": "Quick Actions",
+          "viewProgressDetail": "View Progress Detail",
+          "viewExpertEvaluation": "View Expert Evaluation",
+          "editInfo": "Edit Information",
+          "delete": "Delete"
+        },
+        "summary": {
+          "title": "Batch Summary",
+          "currentStatus": "Current Status:",
+          "stagesCount": "Stages Count:",
+          "efficiency": "Efficiency:",
+          "createdAt": "Created At:"
+        },
+        "contact": {
+          "title": "Contact Information",
+          "farmer": "Farmer",
+          "cropSeason": "Crop Season"
+        },
+        "deleteConfirm": "Are you sure you want to delete this processing batch?"
+      },
+      "edit": {
+        "title": "Edit Processing Batch",
+        "subtitle": "Update coffee processing batch information",
+        "backToDetail": "Back",
+        "batchId": "ID",
+        "basicInfo": {
+          "title": "Basic Information",
+          "batchCode": "Processing Batch Code",
+          "batchCodePlaceholder": "Enter processing batch code",
+          "cropSeason": "Crop Season",
+          "notes": "Notes",
+          "notesPlaceholder": "Enter notes about processing batch..."
+        },
+        "currentInfo": {
+          "title": "Current Information",
+          "createdAt": "Created At",
+          "updatedAt": "Updated At",
+          "totalOutput": "Total Output",
+          "currentStatus": "Current Status"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "saving": "Saving...",
+          "saveChanges": "Save Changes"
+        },
+        "loading": {
+          "title": "Loading data...",
+          "description": "Loading processing batch information"
+        },
+        "error": {
+          "title": "Cannot load data",
+          "description": "Processing batch does not exist",
+          "backToList": "Back to list"
+        }
+      },
+      "progresses": {
+        "title": "Processing Progress",
+        "subtitle": "Track processing progress of coffee batches",
+        "createProgress": "Create New Progress",
+        "advanceProgress": "Update Progress"
+      },
+      "wastes": {
+        "title": "Processing Waste",
+        "subtitle": "Manage and track waste from processing",
+        "addWaste": "Add New Waste",
+        "editWaste": "Edit Waste"
+      },
+      "farmerBatches": {
+        "title": "Processing Batches Management (Farmer)",
+        "subtitle": "Track and manage your coffee processing batches",
+        "totalBatches": "Total Batches",
+        "active": "Active",
+        "totalOutput": "Total Output",
+        "searchTitle": "Search Processing Batches",
+        "searchPlaceholder": "Search by batch code, crop season...",
+        "filterTitle": "Filter by Status",
+        "allStatuses": "All Statuses",
+        "table": {
+          "batchCode": "Batch Code",
+          "coffeeType": "Coffee Type",
+          "cropSeason": "Crop Season",
+          "method": "Method",
+          "status": "Status",
+          "currentStage": "Current Stage",
+          "creationDate": "Creation Date",
+          "createdAt": "Created At",
+          "action": "Action",
+          "actions": "Actions",
+          "fallback": {
+            "cropSeason": "ID: {id}",
+            "method": "ID: {id}"
+          }
+        },
+        "pagination": {
+          "showing": "Showing {start} to {end} of {total} batches",
+          "previous": "Previous",
+          "next": "Next",
+          "pageInfo": "Page {current} of {total}"
+        },
+        "status": {
+          "notStarted": "Not Started",
+          "inProgress": "In Progress",
+          "completed": "Completed",
+          "awaitingEvaluation": "Awaiting Evaluation",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        },
+        "batchDetail": {
+          "title": "Processing Batch Details (Farmer)",
+          "subtitle": "Detailed information about processing batch and progress",
+          "backToList": "Back",
+          "loading": {
+            "title": "Loading data...",
+            "description": "This may take a few seconds to complete"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "back": "Back"
+          },
+          "notFound": {
+            "title": "Data not found",
+            "description": "This processing batch does not exist or has been deleted",
+            "back": "Back"
+          },
+          "status": {
+            "completed": "All steps completed",
+            "awaitingEvaluation": "Awaiting evaluation",
+            "canContinue": "Can update next step"
+          },
+          "stats": {
+            "batchCode": "Batch Code",
+            "stage": "Stage",
+            "output": "Output",
+            "efficiency": "Efficiency"
+          },
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Batch Code",
+            "systemCode": "System Code",
+            "cropSeason": "Crop Season",
+            "farmer": "Farmer",
+            "method": "Method",
+            "type": "Coffee Type",
+            "status": "Status",
+            "inputQuantity": "Input Quantity",
+            "outputQuantity": "Output Quantity",
+            "createdAt": "Created At"
+          },
+          "progress": {
+            "title": "Processing Progress",
+            "step": "Step",
+            "retry": "Retry",
+            "retryLabel": "(Retry)",
+            "executionDate": "Execution Date",
+            "outputQuantity": "Output Quantity",
+            "waste": "Waste",
+            "updatedBy": "Updated By",
+            "noProgress": {
+              "title": "No progress yet",
+              "description": "Processing batch has not started yet"
+            },
+            "media": {
+              "title": "Attachments",
+              "image": "Image",
+              "video": "Video",
+              "legacy": "Legacy Media"
+            },
+            "parameters": {
+              "title": "Technical Parameters"
+            },
+                      "wastes": {
+            "title": "Waste"
+          }
+               
+        },
+        "evaluations": {
+          "title": "Quality Evaluations",
+          "subtitle": "Evaluation results from experts",
+          "viewDetails": "View Details",
+          "failAlert": {
+            "title": "Evaluation Failed",
+            "description": "This stage needs improvement before continuing",
+            "updateProgress": "Update Progress"
+          },
+          "item": {
+            "title": "Evaluation",
+            "code": "Code",
+            "date": "Date",
+            "expert": "Expert",
+            "comments": "Comments"
+          },
+          "noEvaluations": {
+            "title": "No evaluations yet",
+            "description": "This processing batch has not been evaluated by experts yet"
+          },
+          "failure": {
+            "title": "Failure Information",
+            "stage": "Stage",
+            "details": {
+              "title": "Failure Details"
+            },
+            "recommendations": {
+              "title": "Improvement Recommendations"
+            },
+            "guidance": {
+              "title": "Guidance",
+              "description": "Please improve the {{stageName}} stage according to expert recommendations",
+              "update": "Update Progress"
+            }
+          }
+        },
+        "quickActions": {
+            "title": "Quick Actions (Farmer)",
+            "createProgress": "Create Progress",
+            "advanceProgress": "Update Progress",
+            "updateAfterEvaluation": "Update After Evaluation",
+            "evaluateStage": "Evaluate Stage",
+            "editInfo": "Edit Information"
+          },
+          "summary": {
+            "title": "Batch Summary",
+            "currentStatus": "Current Status:",
+            "stagesCount": "Number of Stages:",
+            "efficiency": "Efficiency:",
+            "createdAt": "Created At:"
+          },
+          "contact": {
+            "title": "Contact Information",
+            "farmer": "Farmer",
+            "cropSeason": "Crop Season"
+          },
+                     "edit": {
+             "title": "Edit Processing Batch",
+             "subtitle": "Update coffee processing batch information",
+             "description": "Update coffee processing batch information",
+             "backToDetail": "Back",
+             "batchId": "ID",
+             "basicInfo": {
+               "title": "Basic Information",
+               "batchCode": "Processing Batch Code",
+               "batchCodePlaceholder": "Enter processing batch code",
+               "coffeeType": {
+                 "label": "Coffee Type *",
+                 "unknown": "Unknown",
+                 "cannotChange": "Coffee type cannot be changed after creation"
+               },
+               "cropSeason": "Crop Season",
+               "notes": "Notes",
+               "notesPlaceholder": "Enter notes about processing batch..."
+             },
+             "currentInfo": {
+               "title": "Current Information",
+               "createdAt": "Created At",
+               "updatedAt": "Updated At",
+               "totalOutput": "Total Output",
+               "currentStatus": "Current Status"
+             },
+             "actions": {
+               "cancel": "Cancel",
+               "saving": "Saving...",
+               "saveChanges": "Save Changes"
+             },
+             "form": {
+               "title": "Processing Batch Information",
+               "coffeeType": "Coffee Type",
+               "cropSeason": "Crop Season",
+               "batchCode": "Batch Code",
+               "submit": {
+                 "update": "Update Processing Batch",
+                 "updating": "Updating..."
+               },
+               "validation": {
+                 "missingFields": "Please fill in all required fields: {{fields}}"
+               },
+               "coffeeType": {
+                 "label": "Coffee Type *",
+                 "unknown": "Unknown",
+                 "cannotChange": "Coffee type cannot be changed after creation",
+                 "help": "Coffee type cannot be changed after creation"
+               },
+               "cropSeason": {
+                 "label": "Crop Season *",
+                 "placeholder": "Select crop season"
+               },
+               "batchCode": {
+                 "label": "Processing Batch Code *",
+                 "help": "Processing batch code cannot be changed after creation"
+               }
+             },
+             "loading": {
+               "title": "Loading data...",
+               "subtitle": "Loading processing batch information"
+             },
+             "back": "Back",
+             "info": {
+               "title": "Edit Instructions",
+               "description": "Edit basic information of the processing batch. Some information may not be allowed to change after creation."
+             },
+             "error": {
+               "title": "Cannot load data",
+               "description": "Processing batch does not exist",
+               "backToList": "Back to list",
+               "notFound": "Processing batch not found",
+               "loadFailed": "Cannot load processing batch data",
+               "notFoundTitle": "Processing batch not found",
+               "notFoundDescription": "The processing batch you are looking for does not exist or has been deleted.",
+               "notFoundTitle": "Processing batch not found",
+               "notFoundMessage": "The processing batch you are looking for does not exist or has been deleted.",
+               "backToList": "Back to list",
+               "backToBatches": "Back to batches list",
+               "updateFailed": "Failed to update processing batch",
+               "invalidData": "Invalid data",
+               "duplicate": "Processing batch code already exists",
+               "systemError": "System error, please try again later"
+             },
+             "wastes": {
+               "title": "Waste",
+               "code": "Waste Code",
+               "quantity": "Quantity",
+               "createdAt": "Created At"
+             },
+             "evaluations": {
+               "title": "Quality Evaluations",
+               "subtitle": "Evaluation results from experts",
+               "viewDetails": "View Details",
+               "failAlert": {
+                 "title": "Evaluation Failed",
+                 "description": "This stage needs improvement before continuing",
+                 "updateProgress": "Update Progress"
+               },
+               "item": {
+                 "title": "Evaluation",
+                 "code": "Evaluation Code",
+                 "date": "Evaluation Date",
+                 "expert": "Expert"
+               }
+             },
+             "quickActions": {
+               "title": "Quick Actions (Farmer)",
+               "createProgress": "Create Progress",
+               "advanceProgress": "Update Progress",
+               "updateAfterEvaluation": "Update After Evaluation",
+               "evaluateStage": "Evaluate Stage",
+               "editInfo": "Edit Information"
+             },
+             "summary": {
+               "title": "Batch Summary",
+               "currentStatus": "Current Status:",
+               "stagesCount": "Stages Count:",
+               "efficiency": "Efficiency:",
+               "createdAt": "Created At:"
+             },
+             "success": "Update Processing Batch Successfully!",
+             "guidance": {
+               "title": "Edit Instructions",
+               "description": "Edit basic information of the processing batch. Some information may not be allowed to change after creation."
+             }
+           },
+          "create": {
+            "title": "Create New Processing Batch",
+            "subtitle": "Create new coffee processing batch",
+            "description": "Create processing batch for coffee from completed harvests (only those requiring processing)",
+            "backToList": "Back",
+            "basicInfo": {
+              "title": "Basic Information",
+              "batchCode": "Processing Batch Code",
+              "batchCodePlaceholder": "Enter processing batch code",
+              "coffeeType": {
+                "label": "Coffee Type *",
+                "unknown": "Unknown",
+                "cannotChange": "Coffee type cannot be changed after creation"
+              },
+              "cropSeason": "Crop Season",
+              "notes": "Notes",
+              "notesPlaceholder": "Enter notes about processing batch..."
+            },
+            "actions": {
+              "cancel": "Cancel",
+              "creating": "Creating...",
+              "create": "Create Processing Batch"
+            },
+            "loading": {
+              "title": "Loading data...",
+              "description": "Loading required information"
+            },
+            "error": {
+              "title": "Cannot load data",
+              "description": "An error occurred while loading data",
+              "backToList": "Back to list"
+            }
+          },
+          "UpdateAdvanprogress": {
+            "title": "Update Advanced Progress",
+            "subtitle": "Update detailed information about coffee processing progress",
+            "form": {
+              "title": "Progress Information",
+              "progressDate": {
+                "label": "Execution Date",
+                "placeholder": "Select execution date"
+              },
+              "outputQuantity": {
+                "label": "Output Quantity",
+                "placeholder": "Enter output quantity"
+              },
+              "stageDescription": {
+                "label": "Stage Description",
+                "placeholder": "Describe the processing stage in detail..."
+              },
+              "unit": {
+                "label": "Unit",
+                "placeholder": "Select unit"
+              },
+              "technicalParameters": {
+                "title": "Technical Parameters",
+                "description": "Measurement parameters during processing",
+                "addParameter": "Add Parameter",
+                "parameterName": {
+                  "label": "Parameter Name",
+                  "placeholder": "E.g.: Temperature, Humidity..."
+                },
+                "parameterValue": {
+                  "label": "Value",
+                  "placeholder": "E.g.: 25, 80%..."
+                },
+                "parameterUnit": {
+                  "label": "Parameter Unit",
+                  "placeholder": "E.g.: °C, %, kg..."
+                }
+              },
+              "illustrativeDocuments": {
+                "title": "Illustrative Documents",
+                "image": {
+                  "label": "Illustrative Image",
+                  "placeholder": "Select image",
+                  "help": "Images are automatically compressed"
+                },
+                "video": {
+                  "label": "Illustrative Video",
+                  "placeholder": "Select video"
+                }
+              },
+              "wasteInformation": {
+                "title": "Waste Information",
+                "wasteType": {
+                  "label": "Waste Type",
+                  "placeholder": "Select waste type"
+                },
+                "quantity": {
+                  "label": "Quantity",
+                  "placeholder": "Enter waste quantity"
+                },
+                "notes": {
+                  "label": "Notes",
+                  "placeholder": "Notes about waste..."
+                },
+                "recordDate": {
+                  "label": "Record Date",
+                  "placeholder": "Select record date"
+                }
+              },
+              "fileUpload": {
+                "previewTitle": "Preview documents:",
+                "maxFiles": "Maximum 10 files, 50MB",
+                "imageCompression": "Images are automatically compressed"
+              },
+              "actions": {
+                "cancel": "Cancel",
+                "saving": "Saving...",
+                "submit": "Update Progress"
+              }
+            },
+            "validation": {
+              "progressDateRequired": "Execution date is required",
+              "outputQuantityRequired": "Output quantity is required",
+              "outputUnitRequired": "Output unit is required",
+              "stageDescriptionRequired": "Stage description is required"
+            },
+            "loading": {
+              "title": "Updating progress...",
+              "description": "Please wait while we process your request"
+            },
+            "success": "Progress updated successfully!",
+            "error": {
+              "title": "Progress update error",
+              "description": "Cannot update progress. Please try again later."
+            },
+            "stageInfo": {
+              "currentStage": "Current step information:",
+              "errorStage": "Error step information:",
+              "noProgress": "No progress yet",
+              "stepNumber": "Step",
+              "previousDate": "Previous date:",
+              "failureReason": "Failure reason:",
+              "improvementStage": "Stage that needs improvement",
+              "nextStep": "Next step:",
+              "firstProgress": "Create first progress"
+            }
+          }
+        }
+      },
+      "farmerProgresses": {
+        "title": "Processing Progress Management (Farmer)",
+        "subtitle": "Track and manage your coffee processing progress",
+        "overview": {
+          "title": "Processing Progress Management",
+          "subtitle": "Track and update your coffee processing progress",
+          "addProgress": "Add Progress",
+          "stats": {
+            "totalBatches": "Total Batches",
+            "activeBatches": "Active",
+            "totalProgresses": "Total Progress"
+          },
+          "search": {
+            "title": "Search Progress",
+            "placeholder": "Search by batch code..."
+          },
+          "filters": {
+            "title": "Filters",
+            "stage": "Stage",
+            "stagePlaceholder": "All stages",
+            "status": "Batch Status",
+            "statusPlaceholder": "All statuses",
+            "clearFilters": "Clear Filters",
+            "applyFilters": "Apply Filters"
+          },
+          "steps": {
+            "title": "Processing Steps",
+            "step": "Step",
+            "totalSteps": "Total Steps",
+            "completedSteps": "Completed Steps",
+            "remainingSteps": "Remaining Steps"
+          },
+          "table": {
+            "title": "Progress List by Batch",
+            "columns": {
+              "batchCode": "Batch Code",
+              "farmer": "Farmer",
+              "currentStage": "Current Stage",
+              "status": "Status",
+              "progressCount": "Progress Count",
+              "lastUpdated": "Last Updated",
+              "actions": "Actions"
+            },
+            "stages": {
+              "notStarted": "Not Started",
+              "inProgress": "In Progress",
+              "waiting": "Waiting",
+              "completed": "Completed",
+              "cancelled": "Cancelled",
+              "unknown": "Unknown"
+            },
+            "actions": {
+              "viewDetails": "View Details",
+              "addProgress": "Add Progress"
+            },
+            "time": {
+              "today": "Today",
+              "yesterday": "Yesterday",
+              "daysAgo": "{{days}} days ago"
+            }
+          },
+          "empty": {
+            "noSearchResults": "No progress found",
+            "noProgresses": "No progress yet",
+            "searchHint": "Try changing search keywords",
+            "createHint": "Start adding the first progress"
+          },
+          "loading": "Loading data..."
+        },
+        "create": {
+          "title": "Create New Progress",
+          "subtitle": "Create new coffee processing progress",
+          "backToList": "Back to List",
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Processing Batch Code",
+            "batchCodePlaceholder": "Select processing batch",
+            "stage": "Stage",
+            "stagePlaceholder": "Select stage",
+            "progressDate": "Execution Date",
+            "outputQuantity": "Output Quantity",
+            "outputUnit": "Unit",
+            "notes": "Notes",
+            "notesPlaceholder": "Describe the execution process in detail..."
+          },
+          "actions": {
+            "cancel": "Cancel",
+            "creating": "Creating...",
+            "create": "Create Progress"
+          },
+          "loading": {
+            "title": "Loading...",
+            "description": "Loading required information"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "description": "An error occurred while loading data",
+            "backToList": "Back to List"
+          }
+        },
+        "progressDetail": {
+          "title": "Processing Progress Detail",
+          "subtitle": "Detailed information about processing progress",
+          "back": "Back",
+          "retry": "Retry",
+          "loading": "Loading data...",
+          "error": {
+            "title": "An error occurred",
+            "missingBatchId": "Missing batchId information",
+            "noData": "No processing batch data found",
+            "batchNotFound": "Processing batch with this ID not found",
+            "timeout": "Request took too long. Please try again later.",
+            "default": "An error occurred while loading data",
+            "notFound": "Data not found",
+            "notFoundDescription": "This processing batch does not exist or has been deleted."
+          },
+          "noData": {
+            "title": "Data not found",
+            "description": "This processing batch does not exist or has been deleted."
+          },
+          "batchInfo": {
+            "title": "Processing Batch Information",
+            "batchCode": "Batch Code",
+            "cropSeason": "Crop Season",
+            "farmer": "Farmer",
+            "method": "Processing Method",
+            "inputQuantity": "Input Quantity",
+            "createdDate": "Created Date"
+          },
+          "header": {
+            "batchInfo": "Batch: {{batchCode}} - {{progressCount}} steps completed",
+            "allStepsCompleted": "All steps completed",
+            "updateProgress": "Update Progress"
+          },
+          "progressSteps": {
+            "title": "Processing Progress Steps ({{count}} steps)",
+            "step": "Step {{number}}",
+            "retry": "Retry",
+            "retryLabel": "(Retry)",
+            "completed": "Completed",
+            "outputQuantity": "Output:",
+            "updatedBy": "Updated by:",
+            "date": "Date:",
+            "status": "Status:"
+          },
+          "progresses": {
+            "title": "Processing Progress Steps",
+            "noProgress": "No progress yet",
+            "noProgressDescription": "This processing batch has no progress steps yet.",
+            "addFirstProgress": "Add First Progress",
+            "step": "Step",
+            "retry": "Retry",
+            "retryLabel": "(Retry)",
+            "completed": "Completed",
+            "outputQuantity": "Output",
+            "updatedBy": "Updated by",
+            "date": "Date",
+            "status": "Status",
+            "allStepsCompleted": "All steps completed"
+          },
+          "media": {
+            "title": "Attachments",
+            "legacyTitle": "Attachments (Legacy)",
+            "image": "Image",
+            "video": "Video",
+            "imageAlt": "Image {{index}} of {{stageName}}",
+            "videoNotSupported": "Your browser does not support video.",
+            "mediaCounter": "{{current}} / {{total}}"
+          },
+          "actions": {
+            "updateProgress": "Update Progress",
+            "updateProgressTitle": "Update Processing Progress",
+            "updateProgressDescription": "Form to update processing progress information"
+          }
+        }
+      },
+      "farmerWastes": {
+        "title": "Processing Waste Management (Farmer)",
+        "subtitle": "Track and manage wastes from your processing",
+        "create": {
+          "title": "Create New Waste",
+          "subtitle": "Record waste from processing",
+          "backToList": "Back to List",
+          "basicInfo": {
+            "title": "Basic Information",
+            "batchCode": "Processing Batch Code",
+            "batchCodePlaceholder": "Select processing batch",
+            "wasteType": "Waste Type",
+            "wasteTypePlaceholder": "Select waste type",
+            "quantity": "Quantity",
+            "quantityPlaceholder": "Enter quantity",
+            "disposalMethod": "Disposal Method",
+            "disposalMethodPlaceholder": "Select disposal method",
+            "notes": "Notes",
+            "notesPlaceholder": "Describe the waste in detail..."
+          },
+          "actions": {
+            "cancel": "Cancel",
+            "creating": "Creating...",
+            "create": "Create Waste"
+          },
+          "loading": {
+            "title": "Loading...",
+            "description": "Loading required information"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "description": "An error occurred while loading data",
+            "backToList": "Back to List"
+          }
+        },
+        "detail": {
+          "title": "Processing Waste Detail",
+          "subtitle": "Detailed information about waste",
+          "backToList": "Back to List",
+          "basicInfo": {
+            "title": "Basic Information",
+            "wasteCode": "Waste Code",
+            "batchCode": "Processing Batch Code",
+            "wasteType": "Waste Type",
+            "quantity": "Quantity",
+            "disposalMethod": "Disposal Method",
+            "createdAt": "Created At",
+            "notes": "Notes"
+          },
+          "loading": {
+            "title": "Loading...",
+            "description": "Loading waste information"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "description": "Waste does not exist",
+            "backToList": "Back to List"
+          }
+        }
+      }
+    },
+    "validation": {
+      "required": "This field is required",
+      "positiveNumber": "Must be a positive number",
+      "maxQuantity": "Quantity cannot exceed {{max}}",
+      "minQuantity": "Quantity must be greater than {{min}}",
+      "invalidUnit": "Invalid unit",
+      "wasteRequired": "Must enter at least one waste type",
+      "stageRequired": "Must select a processing stage"
+    },
+    "units": {
+      "kg": "Kilogram (kg)",
+      "g": "Gram (g)",
+      "tấn": "Ton",
+      "bao": "Bag",
+      "thùng": "Box"
+    },
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "evaluating": "Evaluating",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "duplicate": "Duplicate",
+      "export": "Export",
+      "print": "Print",
+      "share": "Share"
+    },
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "method": "Method",
+      "dateRange": "Date Range",
+      "quantity": "Quantity",
+      "clear": "Clear Filters",
+      "apply": "Apply"
+    },
+    "search": {
+      "placeholder": "Search processing batches, methods...",
+      "noResults": "No results found",
+      "searching": "Searching..."
+    },
+         "pagination": {
+       "showing": "Showing",
+       "to": "to",
+       "of": "of",
+       "entries": "entries",
+       "previous": "Previous",
+       "next": "Next",
+       "first": "First",
+       "last": "Last"
+     },
+     "methods": {
+       "title": "Processing Methods Management",
+       "description": "Manage coffee processing methods",
+       "stats": {
+         "totalMethods": "Total Methods",
+         "active": "Active",
+         "inactive": "Inactive"
+       },
+       "status": {
+         "active": "Active",
+         "inactive": "Inactive"
+       },
+       "search": {
+         "placeholder": "Search methods..."
+       },
+       "actions": {
+         "addNew": "Add New Method"
+       },
+       "table": {
+         "methodName": "Method Name",
+         "description": "Description",
+         "status": "Status",
+         "createdAt": "Created At",
+         "actions": "Actions"
+       },
+       "noData": "No processing methods found",
+       "error": {
+         "loading": "Cannot load processing methods list"
+       }
+            }
+     },
+  "evaluation": {
+    "title": "Evaluation Criteria",
+    "selectStage": "Select Stage",
+    "stageSelection": {
+      "title": "Select Evaluation Stage",
+      "label": "Stage",
+      "placeholder": "Select stage to evaluate",
+      "option": "Step {{order}}: {{name}}",
+      "loading": "Loading criteria...",
+      "loadCriteria": "Load evaluation criteria"
+    },
+    "criteria": {
+      "title": "Criteria List",
+      "loading": "Loading evaluation criteria...",
+      "range": "Range: {{min}} - {{max}} {{unit}}",
+      "actualValue": "Actual Value"
+    },
+    "failureReasons": {
+      "title": "Failure Reasons"
+    },
+    "results": {
+      "title": "Evaluation Results",
+      "passedCriteria": "Passed Criteria",
+      "overallScore": "Overall Score",
+      "additionalComments": "Additional Comments",
+      "commentsPlaceholder": "Enter additional comments (if any)..."
+    },
+    "actions": {
+      "submitting": "Submitting...",
+      "evaluateStage": "Evaluate Stage",
+      "passBatch": "Pass Batch"
+    },
+    "warning": {
+      "noStageSelected": "Please select a stage to evaluate",
+      "noCriteria": "No evaluation criteria for stage \"{{stageName}}\". Please contact admin to configure."
+    },
+    "error": {
+      "loadingStages": "Cannot load stage list from server",
+      "loadingCriteria": "Cannot load evaluation criteria",
+      "noCriteriaForStage": "No evaluation criteria for stage \"{{stageName}}\". Please contact admin to configure.",
+      "noStageSelected": "Please select a stage to evaluate",
+      "noCriteria": "Please enter values for all evaluation criteria",
+      "incompleteCriteria": "Please enter values for all evaluation criteria",
+      "submitFailed": "Failed to create evaluation",
+      "noMethodId": "Missing processing method information. Please check again.",
+      "batchPassFailed": "Failed to create batch pass evaluation"
+    },
+    "failure": {
+      "details": "Evaluation failed: {{failedCount}}/{{totalCount}} criteria",
+      "recommendations": "Need to improve failed criteria to ensure quality",
+      "stageComment": "STAGE evaluation \"{{stageName}}\" failed: {{failedCount}}/{{totalCount}} criteria. {{failureDetails}}. {{recommendations}}",
+      "failedCriteria": "Failed Criteria",
+      "reasons": "Failure Reasons"
+    },
+    "success": {
+      "stageComment": "STAGE evaluation \"{{stageName}}\" successful: {{passedCount}}/{{totalCount}} criteria met standards. Details: {{criteriaDetails}}. Overall score: {{score}}/100",
+      "submitted": "Evaluation submitted successfully!",
+      "failureSubmitted": "Evaluation has been submitted. Please check the results.",
+      "batchComment": "BATCH evaluation successful: All stages met standards. Overall score: 100/100",
+      "batchPassed": "Batch evaluation passed and status updated!"
+    },
+    "comments": "Comments"
+  },
+  "errors": {
+    "WasteQuantityExceeded": {
+      "title": "Waste quantity exceeds allowed limit",
+      "details": [
+        "Total waste quantity: {{TotalWaste}} {{CurrentUnit}}",
+        "Maximum allowed limit: {{MaxAllowed}} kg",
+        "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
+        "Current step: {{CurrentOutput}} {{CurrentUnit}}",
+        "Waste exceeded: {{WasteExceeded}} kg"
+      ],
+      "action": "Check waste quantity or output quantity again"
+    },
+    "InvalidOutputQuantityLogic": {
+      "title": "Invalid output quantity logic",
+      "details": [
+        "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
+        "Current step: {{CurrentOutput}} {{CurrentUnit}}",
+        "Difference: {{Difference}} {{CurrentUnit}}",
+        "In coffee processing, output quantity usually decreases due to loss"
+      ],
+      "action": "Check current step output quantity again"
+    },
+    "MissingRequiredField": {
+      "title": "Missing required information",
+      "details": [
+        "Required field: {{FieldName}}",
+        "Field type: {{FieldType}}",
+        "Must enter information to calculate maximum allowed waste"
+      ],
+      "action": "Please enter required information"
+    },
+    "OutputQuantityMustBePositive": {
+      "title": "Invalid output quantity",
+      "details": [
+        "Current quantity: {{OutputQuantity}}",
+        "Minimum value: {{MinValue}}",
+        "Output quantity must be greater than 0"
+      ],
+      "action": "Please enter valid output quantity"
+    },
+    "OutputQuantityTooLarge": {
+      "title": "Output quantity too large",
+      "details": [
+        "Current quantity: {{OutputQuantity}}",
+        "Maximum value: {{MaxValue}}",
+        "Output quantity cannot exceed 100,000"
+      ],
+      "action": "Please check output quantity again"
+    },
+    "InvalidOutputUnit": {
+      "title": "Invalid unit",
+      "details": [
+        "Invalid unit: {{InvalidUnit}}",
+        "Valid units: {{ValidUnits}}"
+      ],
+      "action": "Please select valid unit"
+    },
+    "OutputQuantityIncreaseTooHigh": {
+      "title": "Output quantity increase too high",
+      "details": [
+        "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
+        "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
+        "Increase percentage: {{IncreasePercentage}}%",
+        "Allowed tolerance: {{Tolerance}}%"
+      ],
+      "action": "Please check again or explain reason for quantity increase"
+    },
+    "OutputQuantityDecreaseTooHigh": {
+      "title": "Output quantity decrease too high",
+      "details": [
+        "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
+        "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
+        "Decrease percentage: {{DecreasePercentage}}%"
+      ],
+      "action": "Please check again or explain reason for large loss"
+    },
+    "EntityNotFound": {
+      "title": "Data not found",
+      "details": [
+        "Data type: {{EntityName}}",
+        "ID: {{EntityId}}"
+      ],
+      "action": "Please check information again"
+    },
+    "PermissionDenied": {
+      "title": "Access denied",
+      "details": [
+        "Action: {{Action}}",
+        "Resource: {{Resource}}",
+        "User ID: {{UserId}}"
+      ],
+      "action": "Contact administrator for permission"
+    },
+    "InvalidStatus": {
+      "title": "Invalid status",
+      "details": [
+        "Current status: {{CurrentStatus}}",
+        "Expected status: {{ExpectedStatus}}",
+        "Entity: {{EntityName}}"
+      ],
+      "action": "Please check current status"
+    }
+  },
+  "common": {
+    "close": "Close",
+    "fixError": "Fix Error",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "success": "Success",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "create": "Create",
+    "details": "Details",
+    "search": "Search",
+    "filter": "Filter",
+    "refresh": "Refresh",
+    "export": "Export",
+    "import": "Import",
+    "download": "Download",
+    "upload": "Upload",
+    "loading": "Loading...",
+    "noData": "No data",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "networkError": "No response from server. Please check connection.",
+    "anonymous": "Anonymous",
+    "unknownRole": "Unknown Role",
+    "loadingBatches": "Cannot load processing batch list",
+    "loadingStages": "Cannot load stage information",
+    "noBatchSelected": "Please select a processing batch",
+    "noProgressDate": "Please select execution date",
+    "futureDate": "Execution date cannot be in the future",
+    "outputQuantity": "Output quantity must be greater than 0",
+    "outputQuantityLimit": "Output quantity cannot exceed 100,000",
+    "outputUnit": "Please enter unit",
+    "photoSizeLimit": "Photo cannot be larger than 10MB",
+    "videoSizeLimit": "Video cannot be larger than 100MB",
+    "totalSizeLimit": "Total file size ({{totalSizeMB}}MB) exceeds 50MB limit",
+    "totalFilesLimit": "Total files ({{totalFiles}}) exceeds 10 files limit",
+    "createProgressFailed": "Failed to create progress!",
+    "createProgressSuccess": "Progress created successfully!"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "farmer": "Farmer",
+    "processing": "Coffee Processing",
+    "batches": "Processing Batches",
+    "progress": "Progress",
+    "waste": "Waste",
+    "media": "Media",
+    "parameters": "Parameters",
+    "stages": "Stages",
+    "contracts": "Contracts",
+    "deliveries": "Deliveries",
+    "cropSeasons": "Crop Seasons",
+    "cultivations": "Cultivations",
+    "commitments": "Commitments",
+    "marketplace": "Marketplace",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "procurementPlans": "Procurement Plans",
+    "shipments": "Shipments",
+    "products": "Products",
+    "overview": "Overview",
+    "coffeeProcurementFloor": "Coffee Procurement Floor",
+    "consultation": "Consultation",
+    "sendDeliveryRequest": "Send Delivery Request",
+    "notifications": "Notifications",
+    "warehouseRequest": "Warehouse Request",
+    "outboundRequests": "Outbound Requests",
+    "inboundRequests": "Inbound Requests",
+    "outboundReceipts": "Outbound Receipts",
+    "inboundReceipts": "Inbound Receipts",
+    "evaluations": "Evaluations",
+    "processingMethods": "Processing Methods",
+    "wasteDisposals": "Waste Disposals",
+    "requestFeedback": "Request Feedback",
+    "articles": "Articles",
+    "businessBuyers": "Business Buyers",
+    "orders": "Orders",
+    "reports": "Reports",
+    "users": "User Management"
+  },
+  "farmerBatchSelector": {
+    "title": "Select Farmer to View Processing Batches",
+    "selectFarmer": "Select Farmer",
+    "selectFarmerPlaceholder": "Select farmer...",
+    "batchCount": "batches",
+    "batchListTitle": "Processing Batch List",
+    "systemCode": "System Code",
+    "coffeeType": "Coffee Type",
+    "cropSeason": "Crop Season",
+    "input": "Input",
+    "output": "Output",
+    "createdAt": "Created at",
+    "method": "Method",
+    "noBatches": {
+      "title": "No Processing Batches",
+      "description": "This farmer has no processing batches in committed crop seasons."
+    },
+    "error": {
+      "loadingFarmers": "Cannot load farmer list",
+      "loadingBatches": "Cannot load processing batch list for this farmer"
+    }
+  },
+  "evaluationFailureInfo": {
+    "evaluationInfo": "Evaluation Information",
+    "result": "Result",
+    "comments": "Comments",
+    "detailedFeedback": "Detailed Feedback",
+    "recommendations": "Recommendations",
+    "failedEvaluation": "Failed Evaluation",
+    "stage": "Stage",
+    "step": "Step",
+    "farmer": "Farmer",
+    "hasUpdatedStage": "has updated this stage",
+    "needToRetryStage": "Need to retry this stage",
+    "problemDetails": "Problem Details",
+    "improvementRecommendations": "Improvement Recommendations",
+    "failedCriteria": "Failed Criteria",
+    "actualValue": "Actual Value",
+    "expectedValue": "Expected Value",
+    "reason": "Reason",
+    "selectedFailureReasons": "Selected Failure Reasons",
+    "retryInfo": "Retry Information",
+    "updateDate": "Update Date",
+    "updatedBy": "Updated By",
+    "nextSteps": "Next Steps",
+    "farmerHasUpdated": "Farmer has updated stage {{stageName}}. You can re-evaluate to check improved quality.",
+    "updateProgressWithImprovements": "Please update progress for stage {{stageName}} with improvements according to expert recommendations.",
+    "debug": {
+      "orderIndex": "OrderIndex",
+      "stageId": "StageId",
+      "rawComments": "Raw Comments"
+    }
+  },
+  "farmerRetryStatus": {
+    "farmer": "Farmer",
+    "hasUpdatedStage": "has updated stage {{stageName}}",
+    "updateDate": "Update Date",
+    "updatedBy": "Updated By",
+    "waitingForEvaluation": "Farmer has updated and is waiting for your evaluation.",
+    "canReEvaluate": "You can re-evaluate to check improved quality.",
+    "waitingForFarmer": "Waiting for {{farmerName}} to update stage {{stageName}}"
+  },
+  "stageFailureDisplay": {
+    "evaluationInfo": "Evaluation Information",
+    "noDetailedInfo": "No detailed information",
+    "improvementNeeded": "🔧 Stage Needs Improvement",
+    "stage": "Stage",
+    "step": "Step",
+    "issue": "Issue",
+    "recommendations": "Recommendations",
+    "guidance": "Guidance",
+    "improvementGuidance": "Please improve this stage according to expert recommendations and update the progress."
+  },
+  "retryGuidanceInfo": {
+    "title": "Retry Guidance",
+    "currentStatus": "Current Status",
+    "evaluationFailed": "Evaluation failed - needs improvement",
+    "farmerUpdated": "Farmer has updated",
+    "waitingForReEvaluation": "Waiting for re-evaluation",
+    "actionRequired": "Action Required",
+    "improveAndRetry": "Improve stage and retry",
+    "nextSteps": "Next Steps",
+    "step1": "Improve stage according to expert recommendations",
+    "step2": "Update progress with improvements",
+    "step3": "Wait for expert re-evaluation"
+  },
+  "updateAfterEvaluation": {
+    "title": "Update Progress After Evaluation",
+    "instruction": "Instructions",
+    "description": "Please improve this stage according to expert recommendations and update the progress.",
+    "progressDate": "Update Date",
+    "outputQuantity": "Output Quantity",
+    "quantityPlaceholder": "0.00",
+    "outputUnit": "Unit",
+    "selectUnit": "Select unit...",
+    "units": {
+      "kg": "Kilogram (kg)",
+      "g": "Gram (g)",
+      "ton": "Ton",
+      "quintal": "Quintal",
+      "yen": "Yen",
+      "lang": "Lang"
+    },
+    "stageDescription": "Stage Description",
+    "descriptionPlaceholder": "Detailed description of the stage performed...",
+    "notes": "Notes",
+    "notesPlaceholder": "Additional notes...",
+    "improvementNote": "Please improve this stage according to expert recommendations",
+    "technicalParameters": "Technical Parameters (Optional)",
+    "addParameter": "+ Add Parameter",
+    "parameterName": "Parameter Name",
+    "parameterNamePlaceholder": "E.g: Temperature",
+    "parameterValue": "Value",
+    "parameterValuePlaceholder": "E.g: 25",
+    "unit": "Unit",
+    "unitPlaceholder": "E.g: °C",
+    "parameter": "Parameter {{index}}",
+    "images": "Images (Optional)",
+    "selectImages": "Select Images",
+    "videos": "Videos (Optional)",
+    "selectVideos": "Select Videos",
+    "cancel": "Cancel",
+    "updating": "Updating...",
+    "updateProgress": "Update Progress"
+  },
+  "progressGuidanceCard": {
+    "title": "Next Steps Guidance",
+    "needToRetry": "Need to retry",
+    "stageNotMet": "Stage {{stageName}} has not met standards.",
+    "updateWithImprovements": "Please update progress for this stage with improvements according to recommendations.",
+    "canContinue": "Can continue",
+    "stageImproved": "Stage {{stageName}} has been improved.",
+    "continueNextStep": "You can continue with the next step in the process.",
+    "needToHandle": "Need to handle",
+    "stageNeedsRetry": "Stage {{stageName}} needs to be retried.",
+    "updateProgressForStage": "Please update progress for this stage.",
+    "clickUpdateToRetry": "Click 'Update Progress' to retry this stage",
+    "clickUpdateToContinue": "Click 'Update Progress' to continue to the next step",
+    "clickUpdateToRetryFailed": "Click 'Update Progress' to retry the failed stage"
+  },
+  "failureInfoCard": {
+    "title": "Failure Information",
+    "stageInfo": "Stage Information",
+    "failed": "Failed",
+    "stage": "Stage",
+    "step": "Step",
+    "failureDetails": "Failure Details",
+    "recommendations": "Improvement Recommendations",
+    "actionRequired": "Action Required",
+    "improvementGuidance": "Please improve this stage according to recommendations and retry."
+  },
+  "filterBadge": {
+    "removeFilter": "Remove filter"
+  },
+  "farmerBatchDetail": {
+        "title": "Processing Batch Details",
+        "subtitle": "Detailed information about processing batch and progress",
+        "batchDetail": {
+          "title": "Processing Batch Details",
+          "subtitle": "Detailed information about processing batch and progress",
+          "loading": {
+            "title": "Loading data...",
+            "description": "It may take a few seconds to complete loading"
+          },
+          "error": {
+            "title": "Cannot load data",
+            "back": "Back"
+          },
+          "notFound": {
+            "title": "Data not found",
+            "description": "This processing batch does not exist or has been deleted",
+            "back": "Back"
+          },
+          "status": {
+            "completed": "All steps completed",
+            "awaitingEvaluation": "Awaiting evaluation",
+            "canContinue": "Can update next step",
+            "unknown": "Unknown"
+          },
+          "quickActions": {
+            "createProgress": "Create Progress",
+            "advanceProgress": "Update Progress",
+            "updateAfterEvaluation": "Update After Evaluation",
+            "evaluateStage": "Evaluate Stage"
+          }
+        },
+        "loading": {
+          "title": "Loading data...",
+          "description": "It may take a few seconds to complete loading"
+        },
+        "error": {
+          "title": "Cannot load data",
+          "back": "Back"
+        },
+        "notFound": {
+          "title": "Data not found",
+          "description": "This processing batch does not exist or has been deleted",
+          "back": "Back"
+        },
+        "status": {
+          "completed": "All steps completed",
+          "awaitingEvaluation": "Awaiting evaluation",
+          "canContinue": "Can update next step"
+        },
+        "stats": {
+          "batchCode": "Batch Code",
+          "stage": "Stage",
+          "output": "Output",
+          "efficiency": "Efficiency"
+        },
+        "basicInfo": {
+          "title": "Basic Information",
+          "batchCode": "Batch Code",
+          "systemCode": "System Code",
+          "cropSeason": "Crop Season",
+          "farmer": "Farmer",
+          "method": "Method",
+          "status": "Status",
+          "inputQuantity": "Input Quantity",
+          "outputQuantity": "Output Quantity",
+          "createdAt": "Created At",
+          "type": "Coffee Type"
+        },
+        "progress": {
+          "title": "Processing Progress",
+          "step": "Step",
+          "retry": "Retry",
+          "retryLabel": "(Retry)",
+          "executionDate": "Execution Date",
+          "outputQuantity": "Output Quantity",
+          "waste": "Waste",
+          "updatedBy": "Updated By",
+          "noProgress": {
+            "title": "No progress yet",
+            "description": "Processing batch has not started yet"
+          },
+          "media": {
+            "title": "Images and Videos",
+            "image": "Image",
+            "video": "Video",
+            "legacy": "Legacy Media"
+          },
+          "parameters": {
+            "title": "Technical Parameters"
+          },
+          "wastes": {
+            "title": "Waste"
+          }
+        },
+        "quickActions": {
+          "title": "Quick Actions",
+          "createProgress": "Create Progress",
+          "advanceProgress": "Update Progress",
+          "updateAfterEvaluation": "Update After Evaluation",
+          "evaluateStage": "Evaluate Stage"
+        },
+        "summary": {
+          "title": "Batch Summary",
+          "currentStatus": "Current Status:",
+          "stagesCount": "Stages Count:",
+          "efficiency": "Efficiency:",
+          "createdAt": "Created At:"
+        },
+        "contact": {
+          "title": "Contact Information",
+          "farmer": "Farmer",
+          "cropSeason": "Crop Season"
+        },
+        "wastes": {
+          "title": "Total Waste",
+          "code": "Code",
+          "quantity": "Quantity",
+          "createdAt": "Created At"
+        },
+        "evaluations": {
+          "title": "Quality Evaluations",
+          "subtitle": "Evaluation results from experts",
+          "viewDetails": "View Details",
+          "failAlert": {
+            "title": "Evaluation Failed",
+            "description": "Need to improve this stage according to expert recommendations",
+            "updateProgress": "Update Progress"
+          },
+          "item": {
+            "title": "Evaluation",
+            "code": "Code",
+            "date": "Date",
+            "expert": "Expert",
+            "comments": "Comments"
+          }
+        },
+        "evaluations.failure": {
+          "title": "Failure Information",
+          "stage": "Stage",
+          "details": {
+            "title": "Failure Details"
+          },
+          "recommendations": {
+            "title": "Improvement Recommendations"
+          },
+          "guidance": {
+            "title": "Guidance",
+            "description": "Please improve the stage {{stageName}} according to expert recommendations",
+            "update": "Update Progress"
+          }
+        },
+        "mediaViewer": {
+          "navigation": "Navigate Images",
+          "close": "Close",
+          "image": "Image",
+          "videoNotSupported": "Your browser does not support video.",
+          "prevNext": "← → Navigate",
+          "escClose": "ESC Close"
+        },
+        "modals": {
+          "createProgress": "Create First Progress"
+        },
+        "fallback": {
+          "unknownType": "Unknown",
+          "zeroQuantity": "0 kg",
+          "noDate": "No date",
+          "expert": "Expert"
+        },
+        "edit": {
+          "title": "Edit Processing Batch",
+          "description": "Update processing batch information",
+          "back": "Back",
+          "guidance": {
+            "title": "Edit Guidance",
+            "description": "You can change the crop season and coffee type. Batch code cannot be changed after creation."
+          },
+          "form": {
+            "title": "Edit Information",
+            "batchCode": {
+              "label": "Batch Code",
+              "help": "Batch code cannot be changed after creation"
+            },
+            "cropSeason": {
+              "label": "Crop Season",
+              "placeholder": "-- Select crop season --"
+            },
+            "coffeeType": {
+              "label": "Coffee Type",
+              "help": "Coffee type is determined from the selected crop season",
+              "unknown": "Unknown"
+            },
+            "submit": {
+              "update": "Update Batch",
+              "updating": "Updating..."
+            },
+            "validation": {
+              "missingFields": "Please fill in all required fields: {{fields}}"
+            }
+          },
+          "loading": {
+            "title": "Loading data...",
+            "subtitle": "Please wait while we load batch information"
+          },
+          "error": {
+            "notFound": "Processing batch not found",
+            "loadFailed": "Cannot load batch data",
+            "updateFailed": "Cannot update processing batch",
+            "invalidData": "Invalid data",
+            "duplicate": "Processing batch already exists",
+            "systemError": "System error, please try again later",
+            "notFoundTitle": "Batch not found",
+            "notFoundMessage": "This processing batch does not exist or has been deleted",
+            "backToList": "Back to list"
+          },
+          "success": "Processing batch updated successfully!"
+        }
+      }
+    }
