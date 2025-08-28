@@ -11,7 +11,7 @@ export type ExpertAdvice = {
   expertName: string;
   responseType: string;
   adviceSource: string;
-  adviceText?: string;
+  adviceText: string;
   attachedFileUrl?: string;
   createdAt: string;
 };
@@ -51,6 +51,17 @@ export async function getAllExpertAdvicesForManager(): Promise<ExpertAdviceViewF
     return res.data;
   } catch (error) {
     console.error("[getAllExpertAdvicesForManager] Error:", error);
+    throw error;
+  }
+}
+
+// ✅ Lấy expert advice theo reportId cho Farmer
+export async function getExpertAdvicesByReportId(reportId: string): Promise<ExpertAdvice[]> {
+  try {
+    const res = await api.get<ExpertAdvice[]>(`/ExpertAdvices/farmer/report/${reportId}`);
+    return res.data;
+  } catch (error) {
+    console.error("[getExpertAdvicesByReportId] Error:", error);
     throw error;
   }
 }
