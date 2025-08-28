@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
@@ -21,13 +22,14 @@ export default function CropSeasonDetailTable({
   details,
   onReload,
 }: Props) {
+  const { t } = useTranslation();
   const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
   const router = useRouter();
 
   const formatDate = (date?: string) => {
-    if (!date) return "Chưa cập nhật";
+    if (!date) return t('cropSeasons.details.notUpdated');
     const d = new Date(date);
-    return isNaN(d.getTime()) ? "Chưa cập nhật" : d.toLocaleDateString("vi-VN");
+    return isNaN(d.getTime()) ? t('cropSeasons.details.notUpdated') : d.toLocaleDateString("vi-VN");
   };
 
   const calculateYieldPercentage = (
@@ -48,7 +50,7 @@ export default function CropSeasonDetailTable({
     return (
       <div className="text-center py-8 text-gray-500">
         <Coffee className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-        <p>Chưa có vùng trồng nào được tạo.</p>
+        <p>{t('cropSeasons.detailTable.noPlantingAreas')}</p>
       </div>
     );
 
@@ -58,14 +60,14 @@ export default function CropSeasonDetailTable({
         <table className="w-full text-sm">
           <thead className="bg-gradient-to-r from-green-50 to-emerald-50 text-gray-700 font-semibold">
             <tr>
-              <th className="px-3 py-3 text-left">Loại cà phê</th>
-              <th className="px-3 py-3 text-center">Diện tích (ha)</th>
-              <th className="px-3 py-3 text-center">Sản lượng ước tính</th>
-              <th className="px-3 py-3 text-center">Sản lượng thu hoạch</th>
-              <th className="px-3 py-3 text-center">Tỷ lệ (%)</th>
-              <th className="px-3 py-3 text-center">Trạng thái</th>
-              <th className="px-3 py-3 text-center">Thu hoạch dự kiến</th>
-              <th className="px-3 py-3 text-center">Hành động</th>
+              <th className="px-3 py-3 text-left">{t('cropSeasons.detailTable.coffeeType')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.area')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.estimatedYield')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.actualYield')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.ratio')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.status')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.expectedHarvest')}</th>
+              <th className="px-3 py-3 text-center">{t('cropSeasons.detailTable.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-green-100">
@@ -80,7 +82,7 @@ export default function CropSeasonDetailTable({
                       <div className="font-medium text-gray-900">{detail.typeName}</div>
                       <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                         <MapPin className="w-3 h-3" />
-                        <span>Vùng trồng</span>
+                        <span>{t('cropSeasons.detailTable.plantingArea')}</span>
                       </div>
                     </div>
                   </div>
@@ -122,7 +124,7 @@ export default function CropSeasonDetailTable({
                       <div className="font-medium text-gray-700">
                         {formatDate(detail.expectedHarvestStart)}
                       </div>
-                      <div className="text-gray-500">đến {formatDate(detail.expectedHarvestEnd)}</div>
+                      <div className="text-gray-500">{t('cropSeasons.detailTable.to')} {formatDate(detail.expectedHarvestEnd)}</div>
                     </div>
                   </div>
                 </td>
@@ -139,7 +141,7 @@ export default function CropSeasonDetailTable({
                           <Edit className="w-3 h-3" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent title="Cập nhật chi tiết vùng trồng" className="max-w-lg">
+                      <DialogContent title={t('cropSeasons.detailTable.updateDetailTitle')} className="max-w-lg">
                         <UpdateCropSeasonDetailDialog
                           detailId={detail.detailId}
                           onClose={() => setEditingDetailId(null)}

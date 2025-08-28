@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import { CropSeasonStatusMap, CropSeasonStatusValue } from '@/lib/constants/crop
 export default function ManagerCropSeasonsPage() {
     useAuthGuard(['manager']);
     const router = useRouter();
+    const { t } = useTranslation();
 
     const [cropSeasons, setCropSeasons] = useState<CropSeasonListItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +45,7 @@ export default function ManagerCropSeasonsPage() {
                 setCropSeasons(data);
             } catch (err) {
                 console.error("Lỗi khi tải danh sách mùa vụ:", err);
-                toast.error("Không thể tải danh sách mùa vụ");
+                toast.error(t('cropSeasons.common.error'));
             } finally {
                 setIsLoading(false);
             }
@@ -76,7 +78,7 @@ export default function ManagerCropSeasonsPage() {
         const season = cropSeasons.find(s => s.farmerId === farmerId);
         return {
             farmerId,
-            farmerName: season?.farmerName || "Unknown"
+            farmerName: season?.farmerName || t('manager.cropSeasons.unknownFarmer')
         };
     });
 
@@ -132,10 +134,10 @@ export default function ManagerCropSeasonsPage() {
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                                Quản lý mùa vụ
+                                {t('manager.crop_seasons.title')}
                             </h1>
                             <p className="text-gray-600 text-sm">
-                                Theo dõi và quản lý các mùa vụ cà phê của nông dân
+                                {t('manager.crop_seasons.description')}
                             </p>
                         </div>
 
@@ -146,7 +148,7 @@ export default function ManagerCropSeasonsPage() {
                         <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-3 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-orange-100 text-xs">Tổng mùa vụ</p>
+                                    <p className="text-orange-100 text-xs">{t('manager.crop_seasons.total_seasons')}</p>
                                     <p className="text-xl font-bold">{totalSeasons}</p>
                                 </div>
                                 <Calendar className="w-6 h-6 text-orange-200" />
@@ -155,7 +157,7 @@ export default function ManagerCropSeasonsPage() {
                         <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-3 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-green-100 text-xs">Đang hoạt động</p>
+                                    <p className="text-green-100 text-xs">{t('manager.crop_seasons.active_seasons')}</p>
                                     <p className="text-xl font-bold">{activeSeasons}</p>
                                 </div>
                                 <TrendingUp className="w-6 h-6 text-green-200" />
@@ -164,7 +166,7 @@ export default function ManagerCropSeasonsPage() {
                         <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg p-3 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-blue-100 text-xs">Tổng diện tích</p>
+                                    <p className="text-blue-100 text-xs">{t('manager.crop_seasons.total_area')}</p>
                                     <p className="text-xl font-bold">{totalArea.toFixed(1)} ha</p>
                                 </div>
                                 <MapPin className="w-6 h-6 text-blue-200" />
@@ -173,7 +175,7 @@ export default function ManagerCropSeasonsPage() {
                         <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-3 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-purple-100 text-xs">Nông dân tham gia</p>
+                                    <p className="text-purple-100 text-xs">{t('manager.crop_seasons.participating_farmers')}</p>
                                     <p className="text-xl font-bold">{uniqueFarmersCount}</p>
                                 </div>
                                 <Users className="w-6 h-6 text-purple-200" />
@@ -189,11 +191,11 @@ export default function ManagerCropSeasonsPage() {
                         <div className="bg-white rounded-lg shadow-sm p-4 border border-orange-100">
                             <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                                 <Search className="w-4 h-4 text-orange-600" />
-                                Tìm kiếm mùa vụ
+                                {t('manager.crop_seasons.search_crop_season')}
                             </h2>
                             <div className="relative">
                                 <Input
-                                    placeholder="Tên mùa vụ hoặc nông dân..."
+                                    placeholder={t('manager.crop_seasons.season_name_or_farmer')}
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     className="pr-8 border-orange-200 focus:border-orange-500 focus:ring-orange-500"
@@ -207,7 +209,7 @@ export default function ManagerCropSeasonsPage() {
                             <div className="p-4 border-b border-orange-100">
                                 <h2 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                                     <Filter className="w-4 h-4 text-orange-600" />
-                                    Lọc theo trạng thái
+                                    {t('manager.crop_seasons.filter_by_status')}
                                 </h2>
                             </div>
                             <div className="p-4 space-y-2">
@@ -220,7 +222,7 @@ export default function ManagerCropSeasonsPage() {
                                             : "text-gray-600 hover:bg-orange-50"
                                     )}
                                 >
-                                    Tất cả ({totalSeasons})
+                                    {t('manager.crop_seasons.all_seasons', { total: totalSeasons })}
                                 </button>
                                 {Object.entries(statusCounts).map(([status, count]) => (
                                     <button
@@ -246,7 +248,7 @@ export default function ManagerCropSeasonsPage() {
                             {/* Table Header */}
                             <div className="px-6 py-4 border-b border-orange-100">
                                 <h3 className="text-lg font-semibold text-gray-800">
-                                    Danh sách mùa vụ ({filteredSeasons.length})
+                                    {t('manager.crop_seasons.crop_season_list', { total: filteredSeasons.length })}
                                 </h3>
                             </div>
 
@@ -256,19 +258,19 @@ export default function ManagerCropSeasonsPage() {
                                     <thead className="bg-orange-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-orange-600 uppercase tracking-wider">
-                                                Mùa vụ
+                                                {t('manager.crop_seasons.season_name')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-orange-600 uppercase tracking-wider">
-                                                Nông dân
+                                                {t('manager.crop_seasons.farmer')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-orange-600 uppercase tracking-wider">
-                                                Diện tích
+                                                {t('manager.crop_seasons.area')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-orange-600 uppercase tracking-wider">
-                                                Trạng thái
+                                                {t('manager.crop_seasons.status')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-orange-600 uppercase tracking-wider">
-                                                Hành động
+                                                {t('manager.crop_seasons.actions')}
                                             </th>
                                         </tr>
                                     </thead>
@@ -291,7 +293,7 @@ export default function ManagerCropSeasonsPage() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900">
-                                                        {season.farmerName || "Chưa xác định"}
+                                                        {season.farmerName || t('manager.crop_seasons.unknown_farmer')}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -317,7 +319,7 @@ export default function ManagerCropSeasonsPage() {
                                                         }}
                                                     >
                                                         <Eye className="w-4 h-4 mr-2" />
-                                                        Xem chi tiết
+                                                        {t('manager.crop_seasons.view_details')}
                                                     </Button>
                                                 </td>
                                             </tr>
@@ -330,7 +332,11 @@ export default function ManagerCropSeasonsPage() {
                             {totalPages > 1 && (
                                 <div className="px-6 py-4 border-t border-orange-100 flex items-center justify-between">
                                     <div className="text-sm text-gray-700">
-                                        Hiển thị {((currentPage - 1) * pageSize) + 1} đến {Math.min(currentPage * pageSize, filteredSeasons.length)} trong tổng số {filteredSeasons.length} mùa vụ
+                                        {t('manager.crop_seasons.showing_page', {
+                                            start: ((currentPage - 1) * pageSize) + 1,
+                                            end: Math.min(currentPage * pageSize, filteredSeasons.length),
+                                            total: filteredSeasons.length
+                                        })}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Button
@@ -342,7 +348,7 @@ export default function ManagerCropSeasonsPage() {
                                             <ChevronLeft className="w-4 h-4" />
                                         </Button>
                                         <span className="text-sm text-gray-700">
-                                            Trang {currentPage} / {totalPages}
+                                            {t('manager.crop_seasons.page', { current: currentPage, total: totalPages })}
                                         </span>
                                         <Button
                                             variant="outline"

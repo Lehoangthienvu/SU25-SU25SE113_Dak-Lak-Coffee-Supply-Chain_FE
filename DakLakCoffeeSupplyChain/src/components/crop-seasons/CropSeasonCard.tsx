@@ -3,6 +3,7 @@
 import { CropSeasonListItem as CropSeason } from '@/lib/api/cropSeasons';
 import { FaUser, FaEdit, FaEye, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import StatusBadge from './StatusBadge';
 import { CropSeasonStatusMap } from '@/lib/constants/cropSeasonStatus';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ interface Props {
 
 export default function CropSeasonCard({ season }: Props) {
     const router = useRouter();
+    const { t } = useTranslation();
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('vi-VN');
@@ -31,7 +33,7 @@ export default function CropSeasonCard({ season }: Props) {
                         </div>
                         <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                             <FaUser className="w-3 h-3" />
-                            <span>Nông dân</span>
+                            <span>{t('cropSeasons.card.farmer')}</span>
                         </div>
                     </div>
                 </div>
@@ -55,7 +57,7 @@ export default function CropSeasonCard({ season }: Props) {
                         <div className="font-medium text-gray-700">
                             {formatDate(season.startDate)}
                         </div>
-                        <div className="text-gray-500">đến {formatDate(season.endDate)}</div>
+                        <div className="text-gray-500">{t('cropSeasons.card.to')} {formatDate(season.endDate)}</div>
                     </div>
                 </div>
             </td>
@@ -69,7 +71,7 @@ export default function CropSeasonCard({ season }: Props) {
                             router.push(`/dashboard/farmer/crop-seasons/${season.cropSeasonId}`)
                         }
                         className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md"
-                        title="Xem chi tiết"
+                        title={t('cropSeasons.card.viewDetails')}
                     >
                         <FaEye className="w-3 h-3" />
                     </Button>
@@ -83,7 +85,7 @@ export default function CropSeasonCard({ season }: Props) {
                             )
                         }
                         className="text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-md"
-                        title="Sửa"
+                        title={t('cropSeasons.card.edit')}
                     >
                         <FaEdit className="w-3 h-3" />
                     </Button>

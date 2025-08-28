@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getCropSeasonsForCurrentUser,
   CropSeasonListItem,
@@ -20,6 +21,7 @@ import CropStagesDialog from "../crop-stages/page";
 
 export default function FarmerCropSeasonsPage() {
   useAuthGuard(["farmer"]);
+  const { t } = useTranslation();
   const [cropSeasons, setCropSeasons] = useState<CropSeasonListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +47,7 @@ export default function FarmerCropSeasonsPage() {
         setCropSeasons(data);
       } catch (err) {
         console.error("Lỗi khi tải danh sách mùa vụ:", err);
-        toast.error("Không thể tải danh sách mùa vụ");
+        toast.error(t('cropSeasons.common.error'));
       } finally {
         setIsLoading(false);
       }
@@ -98,10 +100,10 @@ export default function FarmerCropSeasonsPage() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                Quản lý mùa vụ
+                {t('cropSeasons.title')}
               </h1>
               <p className="text-gray-600 text-sm">
-                Theo dõi và quản lý các mùa vụ cà phê của bạn
+                {t('cropSeasons.description')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -113,7 +115,7 @@ export default function FarmerCropSeasonsPage() {
                 size="sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Tạo mùa vụ mới
+                {t('cropSeasons.create.title')}
               </Button>
             </div>
           </div>
@@ -123,7 +125,7 @@ export default function FarmerCropSeasonsPage() {
             <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-3 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-xs">Tổng mùa vụ</p>
+                  <p className="text-orange-100 text-xs">{t('cropSeasons.statistics.totalSeasons')}</p>
                   <p className="text-xl font-bold">{totalSeasons}</p>
                 </div>
                 <Calendar className="w-6 h-6 text-orange-200" />
@@ -132,7 +134,7 @@ export default function FarmerCropSeasonsPage() {
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-3 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-xs">Đang hoạt động</p>
+                  <p className="text-green-100 text-xs">{t('cropSeasons.statistics.activeSeasons')}</p>
                   <p className="text-xl font-bold">{activeSeasons}</p>
                 </div>
                 <Users className="w-6 h-6 text-green-200" />
@@ -141,7 +143,7 @@ export default function FarmerCropSeasonsPage() {
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg p-3 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-xs">Tổng diện tích</p>
+                  <p className="text-blue-100 text-xs">{t('cropSeasons.statistics.totalArea')}</p>
                   <p className="text-xl font-bold">{totalArea.toFixed(1)} ha</p>
                 </div>
                 <MapPin className="w-6 h-6 text-blue-200" />
@@ -157,11 +159,11 @@ export default function FarmerCropSeasonsPage() {
             <div className="bg-white rounded-lg shadow-sm p-4 border border-orange-100">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <Search className="w-4 h-4 text-orange-600" />
-                Tìm kiếm mùa vụ
+                {t('cropSeasons.list.search.title')}
               </h2>
               <div className="relative">
                 <Input
-                  placeholder="Nhập tên mùa vụ..."
+                  placeholder={t('cropSeasons.list.search.placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pr-8 border-orange-200 focus:border-orange-500 focus:ring-orange-500"
@@ -176,7 +178,7 @@ export default function FarmerCropSeasonsPage() {
               <div className="p-4 border-b border-orange-100">
                 <h2 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                   <Filter className="w-4 h-4 text-orange-600" />
-                  Lọc theo trạng thái
+                  {t('cropSeasons.list.filter.title')}
                 </h2>
               </div>
               <div className="p-4">
@@ -194,7 +196,7 @@ export default function FarmerCropSeasonsPage() {
             <div className="bg-white rounded-lg shadow-sm border border-orange-100 overflow-hidden">
               <div className="p-4 border-b border-orange-100">
                 <h2 className="text-lg font-semibold text-gray-800">
-                  Danh sách mùa vụ ({filteredSeasons.length})
+                  {t('cropSeasons.list.title')} ({filteredSeasons.length})
                 </h2>
               </div>
 
@@ -209,12 +211,12 @@ export default function FarmerCropSeasonsPage() {
                       <Calendar className="w-6 h-6 text-orange-600" />
                     </div>
                     <p className="text-gray-500 text-sm font-medium mb-1">
-                      Không tìm thấy mùa vụ nào
+                      {t('cropSeasons.list.empty.title')}
                     </p>
                     <p className="text-gray-400 text-xs">
                       {search || selectedStatus
-                        ? "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm"
-                        : "Bắt đầu tạo mùa vụ đầu tiên của bạn"
+                        ? t('cropSeasons.list.empty.description.withFilter')
+                        : t('cropSeasons.list.empty.description.noFilter')
                       }
                     </p>
                   </div>
@@ -223,11 +225,11 @@ export default function FarmerCropSeasonsPage() {
                     <table className="w-full text-sm">
                       <thead className="bg-gradient-to-r from-orange-50 to-amber-50 text-gray-700 font-semibold">
                         <tr>
-                          <th className="px-4 py-3 text-left">Tên mùa vụ</th>
-                          <th className="px-4 py-3 text-center">Diện tích (ha)</th>
-                          <th className="px-4 py-3 text-center">Trạng thái</th>
-                          <th className="px-4 py-3 text-center">Thời gian</th>
-                          <th className="px-4 py-3 text-center">Hành động</th>
+                          <th className="px-4 py-3 text-left">{t('cropSeasons.list.table.seasonName')}</th>
+                          <th className="px-4 py-3 text-center">{t('cropSeasons.list.table.area')}</th>
+                          <th className="px-4 py-3 text-center">{t('cropSeasons.list.table.status')}</th>
+                          <th className="px-4 py-3 text-center">{t('cropSeasons.list.table.time')}</th>
+                          <th className="px-4 py-3 text-center">{t('cropSeasons.list.table.actions')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-orange-100">
@@ -249,9 +251,11 @@ export default function FarmerCropSeasonsPage() {
               <div className="bg-white rounded-lg shadow-sm p-4 border border-orange-100 mt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-gray-600">
-                    Hiển thị {(currentPage - 1) * pageSize + 1}–
-                    {Math.min(currentPage * pageSize, filteredSeasons.length)} trong{" "}
-                    {filteredSeasons.length} mùa vụ
+                    {t('cropSeasons.list.pagination.showing', {
+                      start: (currentPage - 1) * pageSize + 1,
+                      end: Math.min(currentPage * pageSize, filteredSeasons.length),
+                      total: filteredSeasons.length
+                    })}
                   </span>
                   <div className="flex items-center gap-1">
                     <Button
