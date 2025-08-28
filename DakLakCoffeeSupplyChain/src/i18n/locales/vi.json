@@ -2333,5 +2333,202 @@
         "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
         "page": "Trang {{current}} / {{total}}"
       }
+  ,
+  "warehouseInboundRequests": {
+    "title": "Yêu cầu nhập kho",
+    "subtitle": "Quản lý và duyệt các yêu cầu nhập kho từ nông dân",
+    "search": {
+      "placeholder": "Tìm mã yêu cầu, nông dân, lô...",
+      "title": "Tìm kiếm yêu cầu"
+    },
+    "filters": {
+      "status": "Trạng thái:",
+      "coffeeType": "Loại cà phê:",
+      "all": "Tất cả",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Từ chối",
+      "completed": "Hoàn thành",
+      "selectStatus": "Chọn trạng thái",
+      "selectCoffeeType": "Chọn loại cà phê"
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng số lượng",
+      "processedCoffee": "Cà phê đã sơ chế",
+      "requests": "yêu cầu"
+    },
+    "table": {
+      "title": "Chi tiết yêu cầu nhập kho",
+      "headers": {
+        "requestCode": "Mã yêu cầu",
+        "farmer": "Nông dân",
+        "coffeeType": "Loại cà phê",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "createdDate": "Ngày tạo",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "coffeeTypes": {
+        "fresh": "Cà phê tươi",
+        "processed": "Cà phê đã sơ chế",
+        "unknown": "Không xác định"
+      },
+      "status": {
+        "pending": "Đang chờ duyệt",
+        "approved": "Đã duyệt",
+        "completed": "Hoàn thành",
+        "rejected": "Từ chối"
+      },
+      "actions": {
+        "view": "Xem"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "requests": "yêu cầu"
+    },
+    "empty": {
+      "title": "Không có yêu cầu nhập kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải yêu cầu nhập kho...",
+      "description": "Vui lòng chờ trong khi chúng tôi tải dữ liệu"
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Không thể tải danh sách yêu cầu nhập kho"
+    }
+  },
+  "warehouseOutboundRequests": {
+    "title": "Yêu cầu xuất kho",
+    "subtitle": "Quản lý và theo dõi yêu cầu xuất kho",
+    "search": {
+      "placeholder": "Tìm mã yêu cầu, khách hàng, sản phẩm...",
+      "title": "Tìm kiếm yêu cầu"
+    },
+    "filters": {
+      "status": "Trạng thái:",
+      "productType": "Loại sản phẩm:",
+      "all": "Tất cả",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Từ chối",
+      "completed": "Hoàn thành"
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "table": {
+      "title": "Chi tiết yêu cầu xuất kho",
+      "headers": {
+        "requestCode": "Mã yêu cầu",
+        "customer": "Khách hàng",
+        "productType": "Loại sản phẩm",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "createdDate": "Ngày tạo",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "status": {
+        "pending": "Đang chờ duyệt",
+        "approved": "Đã duyệt",
+        "completed": "Hoàn thành",
+        "rejected": "Từ chối"
+      },
+      "actions": {
+        "view": "Xem"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "requests": "yêu cầu"
+    },
+    "empty": {
+      "title": "Không có yêu cầu xuất kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải yêu cầu xuất kho...",
+      "description": "Vui lòng chờ trong khi chúng tôi tải dữ liệu"
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Không thể tải danh sách yêu cầu xuất kho"
+    }
+  },
+  "warehouseReceipts": {
+    "title": "Biên bản kho",
+    "subtitle": "Quản lý biên bản kho và tài liệu",
+    "inboundReceipts": {
+      "title": "Biên bản nhập kho",
+      "subtitle": "Quản lý biên bản nhập kho từ nhà cung cấp"
+    },
+    "outboundReceipts": {
+      "title": "Biên bản xuất kho",
+      "subtitle": "Quản lý biên bản xuất kho cho khách hàng"
+    }
+  },
+  "deliveryRequests": {
+    "title": "Yêu cầu giao hàng",
+    "subtitle": "Theo dõi và quản lý các yêu cầu đã gửi",
+    "sendNewRequest": "Gửi yêu cầu mới",
+    "createNewRequest": "Tạo yêu cầu mới",
+    "search": {
+      "title": "Tìm kiếm yêu cầu",
+      "placeholder": "Tìm mã yêu cầu, loại cà phê"
+    },
+    "filters": {
+      "byType": {
+        "title": "Lọc theo loại",
+        "all": "Tất cả",
+        "processedCoffee": "Cà phê đã sơ chế"
+      },
+      "byStatus": {
+        "title": "Lọc theo trạng thái",
+        "all": "Tất cả",
+        "approved": "Đã duyệt",
+        "completed": "Hoàn thành"
+      }
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingApproval": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng số lượng",
+      "processedRequests": "Yêu cầu đã sơ chế"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu giao hàng",
+      "summary": "Hiển thị {{count}} yêu cầu - {{total}} tổng cộng",
+      "headers": {
+        "requestId": "MÃ YÊU CẦU",
+        "type": "LOẠI",
+        "quantity": "SỐ LƯỢNG",
+        "source": "NGUỒN",
+        "status": "TRẠNG THÁI",
+        "action": "HÀNH ĐỘNG"
+      },
+      "actions": {
+        "view": "Xem"
+      }
+    },
+    "pagination": {
+      "page": "Trang {{current}}/{{total}}"
     }
   }
+
+  }
+}
