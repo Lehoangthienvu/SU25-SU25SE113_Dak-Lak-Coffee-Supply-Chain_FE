@@ -45,23 +45,34 @@ export async function createWarehouseInboundRequest(
 
 export async function getAllInboundRequests() {
   const token = localStorage.getItem("token");
+  console.log("🔍 DEBUG: getAllInboundRequests - Token:", token ? "Present" : "Missing");
+  console.log("🔍 DEBUG: getAllInboundRequests - ENDPOINT:", ENDPOINT);
+  
   const res = await fetch(ENDPOINT, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  console.log("🔍 DEBUG: getAllInboundRequests - Response status:", res.status);
+  console.log("🔍 DEBUG: getAllInboundRequests - Response ok:", res.ok);
+
   const ct = res.headers.get("content-type") || "";
+  console.log("🔍 DEBUG: getAllInboundRequests - Content-Type:", ct);
 
   // ⚠️ Nếu !ok thì đọc text để hiện lỗi, đừng parse JSON
   if (!res.ok) {
     const text = await res.text();
+    console.log("🔍 DEBUG: getAllInboundRequests - Error response:", text);
     throw new Error(text || `HTTP ${res.status}`);
   }
 
   // Chỉ parse JSON khi đúng content-type
   if (ct.includes("application/json")) {
-    return await res.json();
+    const jsonData = await res.json();
+    console.log("🔍 DEBUG: getAllInboundRequests - JSON response:", jsonData);
+    return jsonData;
   } else {
     const text = await res.text();
+    console.log("🔍 DEBUG: getAllInboundRequests - Text response:", text);
     return { status: 0, message: text };
   }
 }

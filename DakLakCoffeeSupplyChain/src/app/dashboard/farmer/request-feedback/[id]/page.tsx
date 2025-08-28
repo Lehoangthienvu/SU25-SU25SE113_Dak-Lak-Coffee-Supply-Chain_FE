@@ -6,11 +6,12 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Edit3, Calendar, User, AlertTriangle, Eye, ImageIcon, Video } from 'lucide-react';
+import { Loader2, ArrowLeft, Edit3, Calendar, User, AlertTriangle, Eye, ImageIcon, Video, MessageSquare, FileText } from 'lucide-react';
 import {
     GeneralFarmerReportViewDetailsDto,
     getFarmerReportById,
 } from '@/lib/api/generalFarmerReports';
+import { getExpertAdvicesByReportId, ExpertAdvice } from '@/lib/api/expertAdvice';
 import { SeverityLevelEnum, SeverityLevelLabel } from '@/lib/constants/SeverityLevelEnum';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -21,7 +22,9 @@ export default function ReportDetailsPage() {
     const { id } = useParams();
     const router = useRouter();
     const [report, setReport] = useState<GeneralFarmerReportViewDetailsDto | null>(null);
+    const [expertAdvices, setExpertAdvices] = useState<ExpertAdvice[]>([]);
     const [loading, setLoading] = useState(true);
+    const [advicesLoading, setAdvicesLoading] = useState(true);
     const [cropStages, setCropStages] = useState<CropStage[]>([]);
     const [stagesLoading, setStagesLoading] = useState(true);
 
@@ -52,13 +55,37 @@ export default function ReportDetailsPage() {
 
     useEffect(() => {
         if (typeof id !== 'string') return;
-        getFarmerReportById(id)
-            .then(setReport)
-            .catch(() => router.push('/dashboard/farmer/request-feedback'))
-            .finally(() => setLoading(false));
+
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                setAdvicesLoading(true);
+
+                // Fetch report details
+                const reportData = await getFarmerReportById(id);
+                setReport(reportData);
+
+                // Fetch expert advices
+                try {
+                    const advicesData = await getExpertAdvicesByReportId(id);
+                    setExpertAdvices(advicesData);
+                } catch (error) {
+                    console.error('Error fetching expert advices:', error);
+                    // Không throw error vì có thể chưa có expert advice
+                }
+            } catch (error) {
+                console.error('Error fetching report:', error);
+                router.push('/dashboard/farmer/request-feedback');
+            } finally {
+                setLoading(false);
+                setAdvicesLoading(false);
+            }
+        };
+
+        fetchData();
     }, [id, router]);
 
-    if (loading || stagesLoading) {
+    if (loading || stagesLoading || advicesLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex justify-center items-center">
                 <div className="text-center">
@@ -336,6 +363,87 @@ export default function ReportDetailsPage() {
                             </CardContent>
                         </Card>
                     </div>
+                </div>
+
+                {/* Expert Advice Section */}
+                <div className="mt-8">
+                    <Card className="border-orange-100 shadow-sm">
+                        <CardContent className="p-6">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                                    <MessageSquare className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-800">Phản hồi từ chuyên gia</h2>
+                                    <p className="text-gray-600 text-sm">Tư vấn và hướng dẫn từ các chuyên gia nông nghiệp</p>
+                                </div>
+                            </div>
+
+                            {advicesLoading ? (
+                                <div className="flex justify-center items-center py-8">
+                                    <Loader2 className="animate-spin w-6 h-6 text-orange-500" />
+                                    <span className="ml-2 text-gray-600">Đang tải phản hồi...</span>
+                                </div>
+                            ) : expertAdvices.length > 0 ? (
+                                <div className="space-y-4">
+                                    {expertAdvices.map((advice) => (
+                                        <div
+                                            key={advice.adviceId}
+                                            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                                                        <User className="w-4 h-4 text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-medium text-gray-900">{advice.expertName || 'Chuyên gia không xác định'}</h4>
+                                                        <p className="text-sm text-gray-500">Chuyên gia nông nghiệp</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <Badge className="bg-blue-100 text-blue-800 text-xs">
+                                                        {advice.responseType || 'Không xác định'}
+                                                    </Badge>
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                        {format(new Date(advice.createdAt), 'dd/MM/yyyy HH:mm', { locale: vi })}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {advice.adviceText && advice.adviceText.trim() !== '' && (
+                                                <div className="mb-3">
+                                                    <p className="text-gray-700 leading-relaxed">{advice.adviceText}</p>
+                                                </div>
+                                            )}
+
+                                            {advice.attachedFileUrl && advice.attachedFileUrl.trim() !== '' && (
+                                                <div className="flex items-center gap-2">
+                                                    <FileText className="w-4 h-4 text-gray-500" />
+                                                    <a
+                                                        href={advice.attachedFileUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:text-blue-800 text-sm"
+                                                    >
+                                                        Xem tệp đính kèm
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8">
+                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <MessageSquare className="w-8 h-8 text-gray-400" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Chưa có phản hồi</h3>
+                                    <p className="text-gray-600">Chuyên gia sẽ phản hồi báo cáo của bạn trong thời gian sớm nhất</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>
