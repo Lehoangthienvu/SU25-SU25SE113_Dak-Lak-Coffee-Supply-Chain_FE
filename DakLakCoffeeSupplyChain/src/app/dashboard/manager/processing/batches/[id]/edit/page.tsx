@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getProcessingBatchById, ProcessingBatch } from "@/lib/api/processingBatches";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
 import { AppToast } from "@/components/ui/AppToast";
 
 export default function EditProcessingBatchPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const batchId = params.id as string;
@@ -57,11 +59,11 @@ export default function EditProcessingBatchPage() {
             status: String(data.status || "")
           });
         } else {
-          setError("Không tìm thấy lô sơ chế");
+          setError(t('processing.pages.managerBatches.edit.error.description'));
         }
       } catch (err) {
         console.error("Error fetching batch:", err);
-        setError("Không thể tải thông tin lô sơ chế");
+        setError(t('processing.pages.managerBatches.edit.error.title'));
       } finally {
         setLoading(false);
       }
@@ -93,11 +95,11 @@ export default function EditProcessingBatchPage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      AppToast.success("Cập nhật lô sơ chế thành công!");
+      AppToast.success(t('processing.pages.managerBatches.edit.actions.saveChanges'));
       router.push(`/dashboard/manager/processing/batches/${batchId}`);
     } catch (err) {
       console.error("Error updating batch:", err);
-      AppToast.error("Không thể cập nhật lô sơ chế");
+      AppToast.error(t('processing.pages.managerBatches.edit.error.title'));
     } finally {
       setSaving(false);
     }
@@ -107,11 +109,11 @@ export default function EditProcessingBatchPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 p-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
-            <p className="text-sm text-gray-500">Đang tải thông tin lô sơ chế</p>
-          </div>
+                      <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+              <p className="text-lg text-gray-600 font-medium">{t('processing.pages.managerBatches.edit.loading.title')}</p>
+              <p className="text-sm text-gray-500">{t('processing.pages.managerBatches.edit.loading.description')}</p>
+            </div>
         </div>
       </div>
     );
@@ -127,8 +129,8 @@ export default function EditProcessingBatchPage() {
                 <AlertTriangle className="w-6 h-6 text-orange-600" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-lg font-semibold text-gray-900">Không thể tải dữ liệu</h2>
-                <p className="text-sm text-gray-600">{error || "Lô sơ chế không tồn tại"}</p>
+                <h2 className="text-lg font-semibold text-gray-900">{t('processing.pages.managerBatches.edit.error.title')}</h2>
+                <p className="text-sm text-gray-600">{error || t('processing.pages.managerBatches.edit.error.description')}</p>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Button
@@ -136,7 +138,7 @@ export default function EditProcessingBatchPage() {
                   className="bg-orange-600 hover:bg-orange-700 text-white"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Quay lại danh sách
+                  {t('processing.pages.managerBatches.edit.error.backToList')}
                 </Button>
               </div>
             </div>
@@ -159,11 +161,11 @@ export default function EditProcessingBatchPage() {
                 className="bg-white/80 hover:bg-white border-orange-200 hover:border-orange-300"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Quay lại
+                {t('processing.pages.managerBatches.edit.backToDetail')}
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">Chỉnh sửa lô sơ chế</h1>
-                <p className="text-gray-600 mt-1">Cập nhật thông tin lô sơ chế cà phê</p>
+                <h1 className="text-3xl font-bold text-gray-800">{t('processing.pages.managerBatches.edit.title')}</h1>
+                <p className="text-gray-600 mt-1">{t('processing.pages.managerBatches.edit.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -180,17 +182,17 @@ export default function EditProcessingBatchPage() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-orange-600" />
-                Thông tin cơ bản
+                {t('processing.pages.managerBatches.edit.basicInfo.title')}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="batchCode">Mã lô sơ chế</Label>
+                  <Label htmlFor="batchCode">{t('processing.pages.managerBatches.edit.basicInfo.batchCode')}</Label>
                   <Input
                     id="batchCode"
                     value={formData.batchCode}
                     onChange={(e) => handleInputChange("batchCode", e.target.value)}
-                    placeholder="Nhập mã lô sơ chế"
+                    placeholder={t('processing.pages.managerBatches.edit.basicInfo.batchCodePlaceholder')}
                     className="border-orange-200 focus:border-orange-400"
                   />
                 </div>
@@ -200,7 +202,7 @@ export default function EditProcessingBatchPage() {
 
                                                                                                                        <div className="grid grid-cols-1 gap-4">
                    <div className="space-y-2">
-                     <Label htmlFor="cropSeasonId">Mùa vụ</Label>
+                     <Label htmlFor="cropSeasonId">{t('processing.pages.managerBatches.edit.basicInfo.cropSeason')}</Label>
                      <Input
                        id="cropSeasonId"
                        value={batch.cropSeasonName || `ID: ${formData.cropSeasonId}`}
@@ -215,16 +217,16 @@ export default function EditProcessingBatchPage() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-orange-600" />
-                Ghi chú
+                {t('processing.pages.managerBatches.edit.basicInfo.notes')}
               </h3>
               
               <div className="space-y-2">
-                <Label htmlFor="notes">Ghi chú</Label>
+                <Label htmlFor="notes">{t('processing.pages.managerBatches.edit.basicInfo.notes')}</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
-                  placeholder="Nhập ghi chú về lô sơ chế..."
+                  placeholder={t('processing.pages.managerBatches.edit.basicInfo.notesPlaceholder')}
                   rows={4}
                   className="border-orange-200 focus:border-orange-400"
                 />
@@ -235,30 +237,30 @@ export default function EditProcessingBatchPage() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-orange-600" />
-                Thông tin hiện tại
+                {t('processing.pages.managerBatches.edit.currentInfo.title')}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Ngày tạo</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.edit.currentInfo.createdAt')}</p>
                   <p className="text-sm text-gray-800">
                     {batch.createdAt ? new Date(batch.createdAt).toLocaleDateString("vi-VN") : "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Ngày cập nhật</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.edit.currentInfo.updatedAt')}</p>
                   <p className="text-sm text-gray-800">
                     {(batch as any).updatedAt ? new Date((batch as any).updatedAt).toLocaleDateString("vi-VN") : "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Tổng sản lượng</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.edit.currentInfo.totalOutput')}</p>
                   <p className="text-sm text-gray-800">
                     {batch.totalOutputQuantity ? `${batch.totalOutputQuantity} kg` : "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Trạng thái hiện tại</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.edit.currentInfo.currentStatus')}</p>
                   <p className="text-sm text-gray-800">
                     {batch.status ? String(batch.status) : "—"}
                   </p>
@@ -274,7 +276,7 @@ export default function EditProcessingBatchPage() {
                 onClick={() => router.push(`/dashboard/manager/processing/batches/${batchId}`)}
                 className="border-orange-200 hover:bg-orange-50"
               >
-                Hủy
+                {t('processing.pages.managerBatches.edit.actions.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -284,12 +286,12 @@ export default function EditProcessingBatchPage() {
                 {saving ? (
                   <>
                     <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    Đang lưu...
+                    {t('processing.pages.managerBatches.edit.actions.saving')}
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4 mr-2" />
-                    Lưu thay đổi
+                    {t('processing.pages.managerBatches.edit.actions.saveChanges')}
                   </>
                 )}
               </Button>

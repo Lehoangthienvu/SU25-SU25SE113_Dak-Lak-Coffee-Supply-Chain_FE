@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { getAllProcessingBatches, ProcessingBatch } from '@/lib/api/processingBatches';
 import { getAllProcessingBatchProgresses, ProcessingBatchProgress } from '@/lib/api/processingBatchProgress';
 import { getProcessingStagesByMethodId, ProcessingStage } from '@/lib/api/processingStages';
@@ -12,6 +13,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import AdvanceProcessingProgressForm from '@/components/processing-batches/AdvanceProcessingProgressForm';
 
 export default function ProgressDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
@@ -32,12 +34,12 @@ export default function ProgressDetailPage() {
 
   useEffect(() => {
     if (!id) {
-      setError('Thiếu thông tin batchId');
+      setError(t('processing.pages.farmerProgresses.progressDetail.error.missingBatchId'));
       setLoading(false);
       return;
     }
     fetchBatchData();
-  }, [id, retryCount]);
+  }, [id, retryCount, t]);
 
   async function fetchBatchData() {
     try {
@@ -65,7 +67,7 @@ export default function ProgressDetailPage() {
       
       if (!allBatches) {
         
-        setError('Không tìm thấy dữ liệu lô sơ chế');
+        setError(t('processing.pages.farmerProgresses.progressDetail.error.noData'));
         return;
       }
       
@@ -75,7 +77,7 @@ export default function ProgressDetailPage() {
       
       if (!batchData) {
         
-        setError('Không tìm thấy lô sơ chế với ID này');
+        setError(t('processing.pages.farmerProgresses.progressDetail.error.batchNotFound'));
         return;
       }
       
@@ -195,7 +197,7 @@ export default function ProgressDetailPage() {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-12 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Đang tải dữ liệu...</p>
+              <p className="text-gray-600">{t('processing.pages.farmerProgresses.progressDetail.loading')}</p>
             </div>
           </div>
         </div>
@@ -209,15 +211,15 @@ export default function ProgressDetailPage() {
         <div className="p-6 max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <PageTitle
-              title="Chi tiết tiến trình sơ chế"
-              subtitle="Có lỗi xảy ra"
+              title={t('processing.pages.farmerProgresses.progressDetail.title')}
+              subtitle={t('processing.pages.farmerProgresses.progressDetail.error.title')}
             />
             <div className="flex gap-3">
               <Button 
                 onClick={handleRetry}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
               >
-                Thử lại
+                {t('processing.pages.farmerProgresses.progressDetail.retry')}
               </Button>
               <Button 
                 variant="outline" 
@@ -225,7 +227,7 @@ export default function ProgressDetailPage() {
                 className="flex items-center gap-2 hover:bg-green-50 hover:border-green-300 transition-all duration-200"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Quay lại
+                {t('processing.pages.farmerProgresses.progressDetail.back')}
               </Button>
             </div>
           </div>
@@ -235,13 +237,13 @@ export default function ProgressDetailPage() {
               <div className="flex justify-center mb-4">
                 <Info className="w-16 h-16 text-orange-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Có lỗi xảy ra</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('processing.pages.farmerProgresses.progressDetail.error.title')}</h3>
               <p className="text-gray-600 mb-6">{error}</p>
               <Button 
                 onClick={handleRetry}
                 className="bg-orange-600 hover:bg-orange-700"
               >
-                Thử lại
+                {t('processing.pages.farmerProgresses.progressDetail.retry')}
               </Button>
             </div>
           </div>
@@ -256,8 +258,8 @@ export default function ProgressDetailPage() {
         <div className="p-6 max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <PageTitle
-              title="Chi tiết tiến trình sơ chế"
-              subtitle="Thông tin chi tiết về tiến trình sơ chế"
+              title={t('processing.pages.farmerProgresses.progressDetail.title')}
+              subtitle={t('processing.pages.farmerProgresses.progressDetail.subtitle')}
             />
             <Button 
               variant="outline" 
@@ -265,7 +267,7 @@ export default function ProgressDetailPage() {
               className="flex items-center gap-2 hover:bg-green-50 hover:border-green-300 transition-all duration-200"
             >
               <ArrowLeft className="w-4 h-4" />
-              Quay lại
+              {t('processing.pages.farmerProgresses.progressDetail.back')}
             </Button>
           </div>
 
@@ -274,13 +276,13 @@ export default function ProgressDetailPage() {
               <div className="flex justify-center mb-4">
                 <Info className="w-16 h-16 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Không tìm thấy dữ liệu</h3>
-              <p className="text-gray-600 mb-6">Lô sơ chế này không tồn tại hoặc đã bị xóa.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('processing.pages.farmerProgresses.progressDetail.noData.title')}</h3>
+              <p className="text-gray-600 mb-6">{t('processing.pages.farmerProgresses.progressDetail.noData.description')}</p>
               <Button 
                 variant="outline" 
                 onClick={() => router.back()}
               >
-                Quay lại
+                {t('processing.pages.farmerProgresses.progressDetail.back')}
               </Button>
             </div>
           </div>
@@ -295,8 +297,11 @@ export default function ProgressDetailPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <PageTitle
-            title="Chi tiết tiến trình sơ chế"
-            subtitle={`Lô: ${batch.batchCode} - ${progresses.length} bước đã hoàn thành`}
+            title={t('processing.pages.farmerProgresses.progressDetail.title')}
+            subtitle={t('processing.pages.farmerProgresses.progressDetail.header.batchInfo', { 
+              batchCode: batch.batchCode, 
+              progressCount: progresses.length 
+            })}
           />
           <div className="flex gap-3">
             {/* Chỉ hiển thị nút "Cập nhật tiến trình" khi chưa hoàn thành tất cả các bước */}
@@ -307,13 +312,13 @@ export default function ProgressDetailPage() {
                     className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white"
                   >
                     <Plus className="w-4 h-4" />
-                    Cập nhật tiến trình
+                    {t('processing.pages.farmerProgresses.progressDetail.header.updateProgress')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
                   <DialogHeader className="sr-only">
-                    <DialogTitle>Cập nhật tiến trình sơ chế</DialogTitle>
-                    <DialogDescription>Form cập nhật thông tin tiến trình sơ chế</DialogDescription>
+                    <DialogTitle>{t('processing.pages.farmerProgresses.progressDetail.actions.updateProgressTitle')}</DialogTitle>
+                    <DialogDescription>{t('processing.pages.farmerProgresses.progressDetail.actions.updateProgressDescription')}</DialogDescription>
                   </DialogHeader>
                   {batch && (
                     <AdvanceProcessingProgressForm
@@ -337,7 +342,7 @@ export default function ProgressDetailPage() {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-sm font-medium">Đã hoàn thành tất cả các bước</span>
+                <span className="text-sm font-medium">{t('processing.pages.farmerProgresses.progressDetail.header.allStepsCompleted')}</span>
               </div>
             )}
             
@@ -347,7 +352,7 @@ export default function ProgressDetailPage() {
               className="flex items-center gap-2 hover:bg-green-50 hover:border-green-300 transition-all duration-200"
             >
               <ArrowLeft className="w-4 h-4" />
-              Quay lại
+              {t('processing.pages.farmerProgresses.progressDetail.back')}
             </Button>
           </div>
         </div>
@@ -357,7 +362,7 @@ export default function ProgressDetailPage() {
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Package className="w-5 h-5" />
-              Thông tin lô sơ chế
+              {t('processing.pages.farmerProgresses.progressDetail.batchInfo.title')}
             </h2>
           </div>
           
@@ -369,7 +374,7 @@ export default function ProgressDetailPage() {
                     <Package className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mã lô</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.batchCode')}</p>
                     <p className="font-semibold text-gray-900">{batch.batchCode}</p>
                   </div>
                 </div>
@@ -379,7 +384,7 @@ export default function ProgressDetailPage() {
                     <Calendar className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mùa vụ</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.cropSeason')}</p>
                     <p className="font-semibold text-gray-900">{batch.cropSeasonName}</p>
                   </div>
                 </div>
@@ -389,7 +394,7 @@ export default function ProgressDetailPage() {
                     <User className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Nông dân</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.farmer')}</p>
                     <p className="font-semibold text-gray-900">{batch.farmerName}</p>
                   </div>
                 </div>
@@ -401,7 +406,7 @@ export default function ProgressDetailPage() {
                     <TrendingUp className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Phương pháp sơ chế</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.method')}</p>
                     <p className="font-semibold text-gray-900">{batch.methodName}</p>
                   </div>
                 </div>
@@ -411,7 +416,7 @@ export default function ProgressDetailPage() {
                     <Scale className="w-5 h-5 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Khối lượng vào</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.inputQuantity')}</p>
                     <p className="font-semibold text-gray-900">
                       {new Intl.NumberFormat("vi-VN").format(Number(batch.totalInputQuantity))} kg
                     </p>
@@ -423,7 +428,7 @@ export default function ProgressDetailPage() {
                     <Calendar className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Ngày tạo</p>
+                    <p className="text-sm text-gray-500">{t('processing.pages.farmerProgresses.progressDetail.batchInfo.createdDate')}</p>
                     <p className="font-semibold text-gray-900">
                       {new Date(batch.createdAt).toLocaleString("vi-VN")}
                     </p>
@@ -439,7 +444,7 @@ export default function ProgressDetailPage() {
           <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <TrendingUp className="w-5 h-5" />
-              Các bước tiến trình sơ chế ({progresses.length} bước)
+              {t('processing.pages.farmerProgresses.progressDetail.progressSteps.title', { count: progresses.length })}
             </h2>
           </div>
 
@@ -471,10 +476,10 @@ export default function ProgressDetailPage() {
                                   ? 'bg-orange-100 text-orange-700' 
                                   : 'bg-purple-100 text-purple-700'
                               }`}>
-                                Bước {progress.stepIndex}
+                                {t('processing.pages.farmerProgresses.progressDetail.progressSteps.step', { number: progress.stepIndex })}
                                 {isRetry && (
                                   <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
-                                    Làm lại
+                                    {t('processing.pages.farmerProgresses.progressDetail.progressSteps.retry')}
                                   </span>
                                 )}
                               </span>
@@ -482,7 +487,7 @@ export default function ProgressDetailPage() {
                                 {progress.stageName}
                                 {isRetry && (
                                   <span className="ml-2 text-sm text-orange-600 font-medium">
-                                    (Làm lại)
+                                    {t('processing.pages.farmerProgresses.progressDetail.progressSteps.retryLabel')}
                                   </span>
                                 )}
                               </h3>
@@ -494,27 +499,27 @@ export default function ProgressDetailPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Scale className="w-4 h-4 text-green-600" />
-                        <span className="font-medium">Sản lượng:</span>
+                        <span className="font-medium">{t('processing.pages.farmerProgresses.progressDetail.progressSteps.outputQuantity')}</span>
                         <span>{progress.outputQuantity ? `${new Intl.NumberFormat("vi-VN").format(Number(progress.outputQuantity))} ${progress.outputUnit || 'kg'}` : '0 kg'}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <User className="w-4 h-4 text-blue-600" />
-                        <span className="font-medium">Cập nhật bởi:</span>
+                        <span className="font-medium">{t('processing.pages.farmerProgresses.progressDetail.progressSteps.updatedBy')}</span>
                         <span>{progress.updatedByName ?? "-"}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4 text-purple-600" />
-                        <span className="font-medium">Ngày:</span>
+                        <span className="font-medium">{t('processing.pages.farmerProgresses.progressDetail.progressSteps.date')}</span>
                         <span>{new Date(progress.progressDate).toLocaleDateString('vi-VN')}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <TrendingUp className="w-4 h-4 text-orange-600" />
-                        <span className="font-medium">Trạng thái:</span>
+                        <span className="font-medium">{t('processing.pages.farmerProgresses.progressDetail.progressSteps.status')}</span>
                         <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                          Hoàn thành
+                          {t('processing.pages.farmerProgresses.progressDetail.progressSteps.completed')}
                         </span>
                       </div>
                     </div>
@@ -522,7 +527,7 @@ export default function ProgressDetailPage() {
                     {/* Media Section */}
                     {(progress.mediaFiles && progress.mediaFiles.length > 0) && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerProgresses.progressDetail.media.title')}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {progress.mediaFiles.map((media, mediaIndex) => (
                             <div key={media.mediaId} className="relative group">
@@ -539,7 +544,7 @@ export default function ProgressDetailPage() {
                                     })}
                                   />
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                    Ảnh
+                                    {t('processing.pages.farmerProgresses.progressDetail.media.image')}
                                   </div>
                                 </div>
                               ) : (
@@ -556,7 +561,7 @@ export default function ProgressDetailPage() {
                                     <source src={media.mediaUrl} type="video/mp4" />
                                   </video>
                                   <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                    Video
+                                    {t('processing.pages.farmerProgresses.progressDetail.media.video')}
                                   </div>
                                   {/* Play button overlay */}
                                   <div className="absolute inset-0 flex items-center justify-center">
@@ -582,7 +587,7 @@ export default function ProgressDetailPage() {
                     {/* Legacy Media Support (for backward compatibility) */}
                     {(!progress.mediaFiles || progress.mediaFiles.length === 0) && (progress.photoUrl || progress.videoUrl) && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Tài liệu đính kèm (Cũ)</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerProgresses.progressDetail.media.legacyTitle')}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {progress.photoUrl && (
                             <div className="relative aspect-square overflow-hidden rounded-lg shadow-md">
@@ -592,9 +597,9 @@ export default function ProgressDetailPage() {
                                 className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={() => progress.photoUrl && window.open(progress.photoUrl, '_blank')}
                               />
-                              <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
-                                Ảnh
-                              </div>
+                                                                <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md font-medium">
+                                    {t('processing.pages.farmerProgresses.progressDetail.media.image')}
+                                  </div>
                             </div>
                           )}
                           

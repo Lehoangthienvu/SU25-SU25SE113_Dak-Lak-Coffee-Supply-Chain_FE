@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getAllProcessingWastes, ProcessingWaste } from "@/lib/api/processingBatchWastes";
 import { getAllProcessingBatches, ProcessingBatch } from "@/lib/api/processingBatches";
 import { Eye, Edit, Trash2, Recycle, Scale, Calendar, AlertTriangle, Search } from "lucide-react";
@@ -16,6 +17,7 @@ interface WasteWithBatch extends ProcessingWaste {
 }
 
 export default function ManagerProcessingWastesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [wastes, setWastes] = useState<ProcessingWaste[]>([]);
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
@@ -72,7 +74,7 @@ export default function ManagerProcessingWastesPage() {
 
   const handleDelete = (id: string) => {
     // MANAGER: Có quyền xóa mềm chất thải
-    if (confirm("Bạn có chắc chắn muốn xóa mềm chất thải này? Chất thải sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.")) {
+    if (confirm(t('processing.pages.managerBatches.wastes.deleteConfirm'))) {
       // TODO: Implement soft delete API call
       
     }
@@ -82,23 +84,23 @@ export default function ManagerProcessingWastesPage() {
   const columns = [
     { 
       key: "wasteCode", 
-      title: "Mã chất thải",
+      title: t('processing.pages.managerBatches.wastes.table.wasteCode'),
       render: (value: string) => (
         <span className="font-medium">{value}</span>
       )
     },
     { 
       key: "batchCode", 
-      title: "Mã lô",
+      title: t('processing.pages.managerBatches.wastes.table.batchCode'),
       render: (value: string, item: WasteWithBatch) => (
         <span className="text-blue-600 font-medium">
-          {item.batch?.batchCode || "Không xác định"}
+          {item.batch?.batchCode || t('processing.pages.managerBatches.wastes.unknown')}
         </span>
       )
     },
     { 
       key: "wasteType", 
-      title: "Loại chất thải",
+      title: t('processing.pages.managerBatches.wastes.table.wasteType'),
       render: (value: string) => {
         const getWasteTypeColor = (type: string) => {
           if (type.includes("Vỏ")) return "bg-orange-100 text-orange-700";
@@ -116,7 +118,7 @@ export default function ManagerProcessingWastesPage() {
     },
     { 
       key: "quantity", 
-      title: "Số lượng",
+      title: t('processing.pages.managerBatches.wastes.table.quantity'),
       render: (value: number, item: ProcessingWaste) => (
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-gray-400" />
@@ -127,7 +129,7 @@ export default function ManagerProcessingWastesPage() {
     },
     { 
       key: "disposalMethod", 
-      title: "Phương pháp xử lý",
+      title: t('processing.pages.managerBatches.wastes.table.disposalMethod'),
       render: (value: string) => {
         const getDisposalColor = (method: string) => {
           if (method.includes("Tái chế")) return "text-green-600";
@@ -138,14 +140,14 @@ export default function ManagerProcessingWastesPage() {
         
         return (
           <span className={`text-sm font-medium ${getDisposalColor(value)}`}>
-            {value || "Chưa xác định"}
+            {value || t('processing.pages.managerBatches.wastes.unknown')}
           </span>
         );
       }
     },
     { 
       key: "createdAt", 
-      title: "Ngày tạo",
+      title: t('processing.pages.managerBatches.wastes.table.createdAt'),
       render: (value: string) => {
         if (!value) return "—";
         
@@ -156,11 +158,11 @@ export default function ManagerProcessingWastesPage() {
         
         let timeAgo = "";
         if (diffDays === 1) {
-          timeAgo = "Hôm qua";
+          timeAgo = t('processing.pages.managerBatches.wastes.time.yesterday');
         } else if (diffDays === 0) {
-          timeAgo = "Hôm nay";
+          timeAgo = t('processing.pages.managerBatches.wastes.time.today');
         } else if (diffDays < 7) {
-          timeAgo = `${diffDays} ngày trước`;
+          timeAgo = t('processing.pages.managerBatches.wastes.time.daysAgo', { days: diffDays });
         } else {
           timeAgo = date.toLocaleDateString("vi-VN");
         }
@@ -178,19 +180,19 @@ export default function ManagerProcessingWastesPage() {
   // Cấu hình actions cho table - MANAGER: Xem, sửa, và xóa mềm
   const actions = [
     {
-      label: "Xem",
+      label: t('processing.pages.managerBatches.wastes.actions.view'),
       icon: <Eye className="w-3 h-3" />,
       onClick: (waste: WasteWithBatch) => router.push(`/dashboard/manager/processing/wastes/${waste.wasteId}`),
       className: "hover:bg-green-50 hover:border-green-300"
     },
     {
-      label: "Sửa",
+      label: t('processing.pages.managerBatches.wastes.actions.edit'),
       icon: <Edit className="w-3 h-3" />,
       onClick: (waste: WasteWithBatch) => router.push(`/dashboard/manager/processing/wastes/${waste.wasteId}/edit`),
       className: "hover:bg-blue-50 hover:border-blue-300"
     },
     {
-      label: "Xóa mềm",
+      label: t('processing.pages.managerBatches.wastes.actions.softDelete'),
       icon: <Trash2 className="w-3 h-3" />,
       onClick: (waste: WasteWithBatch) => handleDelete(waste.wasteId),
       className: "hover:bg-red-50 hover:border-red-300"
@@ -208,9 +210,9 @@ export default function ManagerProcessingWastesPage() {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <ProcessingHeader
-          title="Quản lý chất thải sơ chế"
-          description={`Theo dõi và quản lý chất thải từ quá trình sơ chế cà phê • ${totalWastes} loại chất thải • ${totalQuantity.toFixed(1)} kg tổng cộng`}
-          createButtonText="Thêm chất thải"
+          title={t('processing.pages.managerBatches.wastes.title')}
+          description={`${t('processing.pages.managerBatches.wastes.description')} • ${totalWastes} ${t('processing.pages.managerBatches.wastes.stats.totalWastes').toLowerCase()} • ${totalQuantity.toFixed(1)} kg ${t('processing.pages.managerBatches.wastes.stats.totalQuantity').toLowerCase()}`}
+          createButtonText={t('processing.pages.managerBatches.wastes.actions.addNew')}
           onCreateClick={() => router.push("/dashboard/manager/processing/wastes/create")}
         />
 
@@ -222,7 +224,7 @@ export default function ManagerProcessingWastesPage() {
                 <Recycle className="w-6 h-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tổng chất thải</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.wastes.stats.totalWastes')}</p>
                 <p className="text-2xl font-bold text-gray-900">{totalWastes}</p>
               </div>
             </div>
@@ -234,7 +236,7 @@ export default function ManagerProcessingWastesPage() {
                 <Scale className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tổng khối lượng</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.wastes.stats.totalQuantity')}</p>
                 <p className="text-2xl font-bold text-gray-900">{totalQuantity.toFixed(1)} kg</p>
               </div>
             </div>
@@ -246,7 +248,7 @@ export default function ManagerProcessingWastesPage() {
                 <Recycle className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tái chế</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.wastes.stats.recycled')}</p>
                 <p className="text-2xl font-bold text-gray-900">{recycledWastes}</p>
               </div>
             </div>
@@ -258,7 +260,7 @@ export default function ManagerProcessingWastesPage() {
                 <AlertTriangle className="w-6 h-6 text-orange-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Chất thải độc hại</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.wastes.stats.hazardous')}</p>
                 <p className="text-2xl font-bold text-gray-900">{hazardousWastes}</p>
               </div>
             </div>
@@ -270,7 +272,7 @@ export default function ManagerProcessingWastesPage() {
           <div className="flex items-center justify-between">
             <div className="flex-1 max-w-md">
               <SearchBox
-                placeholder="Tìm kiếm mã chất thải, mã lô hoặc loại chất thải..."
+                                  placeholder={t('processing.pages.managerBatches.wastes.search.placeholder')}
                 value={search}
                 onChange={setSearch}
               />
@@ -279,7 +281,7 @@ export default function ManagerProcessingWastesPage() {
               {search && (
                 <span className="flex items-center gap-1">
                   <Search className="w-4 h-4" />
-                  <span>Tìm thấy {filtered.length} kết quả</span>
+                  <span>{t('processing.pages.managerBatches.wastes.search.results', { count: filtered.length })}</span>
                 </span>
               )}
             </div>
@@ -291,14 +293,14 @@ export default function ManagerProcessingWastesPage() {
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Danh sách chất thải</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('processing.pages.managerBatches.wastes.table.title')}</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Hiển thị {filtered.length} chất thải • Tổng khối lượng: {totalQuantity.toFixed(1)} kg
+                  {t('processing.pages.managerBatches.wastes.table.summary', { total: filtered.length, quantity: totalQuantity.toFixed(1) })}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-600">
-                  {totalPages > 1 ? `Trang ${currentPage} / ${totalPages}` : "Tất cả chất thải"}
+                  {totalPages > 1 ? t('processing.pages.managerBatches.wastes.table.pageInfo', { current: currentPage, total: totalPages }) : t('processing.pages.managerBatches.wastes.table.allWastes')}
                 </p>
               </div>
             </div>
@@ -309,8 +311,8 @@ export default function ManagerProcessingWastesPage() {
               columns={columns}
               actions={actions}
               loading={loading}
-              emptyMessage="Không tìm thấy chất thải nào"
-              emptyDescription="Thử thay đổi từ khóa tìm kiếm hoặc thêm chất thải mới."
+              emptyMessage={t('processing.pages.managerBatches.wastes.table.noData')}
+              emptyDescription={t('processing.pages.managerBatches.wastes.table.noDataDescription')}
               renderPagination={filtered.length > ITEMS_PER_PAGE}
               pagination={{
                 currentPage,

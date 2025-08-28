@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function ProcessingBatchForm({ onSuccess }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -108,13 +110,13 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
 
     // Validation
     if (!form.cropSeasonId) {
-      setError("Vui lòng chọn vụ mùa");
+      setError(t('processing.batch.validation.selectCropSeason'));
       setLoading(false);
       return;
     }
 
     if (!form.coffeeTypeId) {
-      setError("Vui lòng chọn loại cà phê");
+      setError(t('processing.batch.validation.selectCoffeeType'));
       setLoading(false);
       return;
     }
@@ -122,13 +124,13 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
     // Kiểm tra xem plan có định nghĩa phương pháp sơ chế không
     const info = processingInfo.find(p => p.coffeeTypeId === form.coffeeTypeId);
     if (!info || !info.hasPlanProcessingMethod || !info.planProcessingMethodId) {
-      setError("Loại cà phê này không có yêu cầu sơ chế từ kế hoạch");
+      setError(t('processing.batch.validation.noPlanProcessingMethod'));
       setLoading(false);
       return;
     }
 
     if (!form.batchCode.trim()) {
-      setError("Vui lòng nhập mã lô sơ chế");
+      setError(t('processing.batch.validation.enterBatchCode'));
       setLoading(false);
       return;
     }
@@ -144,12 +146,12 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
         inputUnit: "kg", // Đơn vị mặc định
       });
 
-      setSuccess("Tạo lô sơ chế thành công!");
+      setSuccess(t('processing.batch.createSuccess'));
       onSuccess?.();
       setTimeout(() => router.push("/dashboard/farmer/processing/batches"), 1200);
     } catch (err: any) {
       console.error("❌ Create batch error:", err);
-      const errorMessage = err?.response?.data?.message || err?.message || "Tạo lô sơ chế thất bại!";
+      const errorMessage = err?.response?.data?.message || err?.message || t('processing.batch.createError');
       setError(errorMessage);
     }
     setLoading(false);
@@ -166,12 +168,12 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Tạo lô sơ chế mới</h2>
-        <p className="text-gray-600">Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('processing.batch.create')}</h2>
+        <p className="text-gray-600">{t('processing.batch.createDescription')}</p>
       </div>
 
       <div>
-        <label className="block font-medium mb-2">Vụ mùa *</label>
+        <label className="block font-medium mb-2">{t('processing.batch.cropSeason')} *</label>
         <select
           name="cropSeasonId"
           value={form.cropSeasonId}
@@ -179,7 +181,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           required
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">-- Chọn vụ mùa --</option>
+          <option value="">{t('processing.batch.selectCropSeason')}</option>
           {cropSeasons.map((season) => (
             <option key={season.cropSeasonId} value={season.cropSeasonId}>
               {season.seasonName} ({new Date(season.startDate).getFullYear()})
@@ -189,7 +191,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
       </div>
 
       <div>
-        <label className="block font-medium mb-2">Loại cà phê *</label>
+        <label className="block font-medium mb-2">{t('processing.batch.coffeeType')} *</label>
         <select
           name="coffeeTypeId"
           value={form.coffeeTypeId}
@@ -199,7 +201,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
         >
           <option value="">
-            {!form.cropSeasonId ? "-- Vui lòng chọn vụ mùa trước --" : "-- Chọn loại cà phê --"}
+            {!form.cropSeasonId ? t('processing.batch.selectCropSeasonFirst') : t('processing.batch.selectCoffeeType')}
           </option>
           {coffeeTypes.map((type) => (
             <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
@@ -208,20 +210,20 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           ))}
         </select>
         {!form.cropSeasonId && (
-          <p className="text-sm text-gray-500 mt-1">Chọn vụ mùa để xem các loại cà phê có sẵn</p>
+          <p className="text-sm text-gray-500 mt-1">{t('processing.batch.selectCropSeasonToViewCoffeeTypes')}</p>
         )}
         {loading && (
-          <p className="text-sm text-blue-500 mt-1">Đang tải danh sách loại cà phê...</p>
+          <p className="text-sm text-blue-500 mt-1">{t('processing.batch.loadingCoffeeTypes')}</p>
         )}
       </div>
 
       {/* Hiển thị thông tin phương pháp sơ chế từ plan */}
       {selectedCoffeeTypeInfo && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Thông tin từ kế hoạch:</h4>
+          <h4 className="font-medium text-blue-900 mb-2">{t('processing.batch.planInformation')}:</h4>
           <div className="text-sm text-blue-800">
-            <p>✅ <strong>Phương pháp sơ chế:</strong> {selectedCoffeeTypeInfo.planProcessingMethodName} ({selectedCoffeeTypeInfo.planProcessingMethodCode})</p>
-            <p className="text-xs text-blue-600 mt-1">Phương pháp này sẽ được áp dụng tự động khi tạo lô sơ chế</p>
+            <p>✅ <strong>{t('processing.batch.processingMethod')}:</strong> {selectedCoffeeTypeInfo.planProcessingMethodName} ({selectedCoffeeTypeInfo.planProcessingMethodCode})</p>
+            <p className="text-xs text-blue-600 mt-1">{t('processing.batch.methodAppliedAutomatically')}</p>
           </div>
         </div>
       )}
@@ -229,22 +231,22 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
       {/* Không hiển thị dropdown chọn phương pháp vì đã có từ plan */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
         <p className="text-sm text-gray-700">
-          <strong>Lưu ý:</strong> Chỉ những loại cà phê có yêu cầu sơ chế từ kế hoạch mới được hiển thị ở đây.
+          <strong>{t('processing.batch.note')}:</strong> {t('processing.batch.onlyCoffeeTypesWithPlanRequirements')}
         </p>
       </div>
 
       <div>
-        <label className="block font-medium mb-2">Mã lô sơ chế *</label>
+        <label className="block font-medium mb-2">{t('processing.batch.batchCode')} *</label>
         <Input
           type="text"
           name="batchCode"
           value={form.batchCode}
           onChange={handleChange}
-          placeholder="VD: BATCH-2024-001"
+          placeholder={t('processing.batch.batchCodePlaceholder')}
           required
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <p className="text-sm text-gray-500 mt-1">Nhập mã lô để dễ dàng quản lý và theo dõi</p>
+        <p className="text-sm text-gray-500 mt-1">{t('processing.batch.batchCodeDescription')}</p>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -257,14 +259,14 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           onClick={() => router.back()}
           disabled={loading}
         >
-          Huỷ
+          {t('processing.batch.cancel')}
         </Button>
         <Button
           type="submit"
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
-          {loading ? "Đang tạo..." : "Tạo lô sơ chế"}
+          {loading ? t('processing.batch.creating') : t('processing.batch.createBatch')}
         </Button>
       </div>
     </form>

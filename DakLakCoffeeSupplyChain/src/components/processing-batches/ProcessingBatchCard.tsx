@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ProcessingBatch } from "@/lib/api/processingBatches";
 import StatusBadge from "./StatusBadge";
 
@@ -9,6 +10,8 @@ export default function ProcessingBatchCard({
   batch: ProcessingBatch;
   onViewDetail?: (id: string) => void;
 }) {
+  const { t } = useTranslation();
+  
   return (
     <tr className="border-t hover:bg-gray-50 transition">
       <td className="px-4 py-3 font-medium text-gray-900">{batch.batchCode}</td>
@@ -25,7 +28,7 @@ export default function ProcessingBatchCard({
           onClick={() => onViewDetail?.(batch.batchId)}
           className="text-[#FD7622] hover:underline text-sm"
         >
-          Xem chi tiết
+          {t('processing.actions.view')}
         </button>
       </td>
     </tr>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import { AppToast } from "@/components/ui/AppToast";
 import { getAllProcessingMethods, ProcessingMethod } from "@/lib/api/processingMethods";
 
 export default function ProcessingMethodsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [methods, setMethods] = useState<ProcessingMethod[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,17 +34,17 @@ export default function ProcessingMethodsPage() {
         setMethods(data);
       } catch (error) {
         console.error('Error fetching methods:', error);
-        AppToast.error("Không thể tải danh sách phương pháp sơ chế");
+        AppToast.error(t('common.error.loading'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchMethods();
-  }, []);
+  }, [t]);
 
   const getStatusLabel = (isDeleted: boolean) => {
-    return isDeleted ? "Không hoạt động" : "Hoạt động";
+    return isDeleted ? t('processing.pages.managerBatches.methods.status.inactive') : t('processing.pages.managerBatches.methods.status.active');
   };
 
   const getStatusColor = (isDeleted: boolean) => {
@@ -60,7 +62,7 @@ export default function ProcessingMethodsPage() {
         <div className="p-6 max-w-7xl mx-auto">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
+            <p className="text-lg text-gray-600 font-medium">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -78,10 +80,10 @@ export default function ProcessingMethodsPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-                Quản lý phương pháp sơ chế
+                {t('processing.pages.managerBatches.methods.title')}
               </h1>
               <p className="text-gray-600 text-lg">
-                Quản lý các phương pháp sơ chế cà phê
+                {t('processing.pages.managerBatches.methods.description')}
               </p>
             </div>
           </div>
@@ -92,7 +94,7 @@ export default function ProcessingMethodsPage() {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Tổng phương pháp</p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.methods.stats.totalMethods')}</p>
                 <p className="text-3xl font-bold text-gray-900">{methods.length}</p>
               </div>
               <div className="p-3 bg-orange-100 rounded-lg">
@@ -104,10 +106,10 @@ export default function ProcessingMethodsPage() {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
-                                 <p className="text-3xl font-bold text-green-600">
-                   {methods.filter(m => !m.isDeleted).length}
-                 </p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.methods.stats.active')}</p>
+                <p className="text-3xl font-bold text-green-600">
+                  {methods.filter(m => !m.isDeleted).length}
+                </p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
                 <Coffee className="w-6 h-6 text-green-600" />
@@ -118,10 +120,10 @@ export default function ProcessingMethodsPage() {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Không hoạt động</p>
-                                 <p className="text-3xl font-bold text-gray-600">
-                   {methods.filter(m => m.isDeleted).length}
-                 </p>
+                <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.methods.stats.inactive')}</p>
+                <p className="text-3xl font-bold text-gray-600">
+                  {methods.filter(m => m.isDeleted).length}
+                </p>
               </div>
               <div className="p-3 bg-gray-100 rounded-lg">
                 <Settings className="w-6 h-6 text-gray-600" />
@@ -137,7 +139,7 @@ export default function ProcessingMethodsPage() {
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Tìm kiếm phương pháp..."
+                  placeholder={t('processing.pages.managerBatches.methods.search.placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 border-orange-200 focus:border-orange-400"
@@ -145,12 +147,12 @@ export default function ProcessingMethodsPage() {
               </div>
               <Button variant="outline" className="border-orange-200 hover:bg-orange-50">
                 <Filter className="w-4 h-4 mr-2" />
-                Lọc
+                {t('common.filter')}
               </Button>
             </div>
             <Button className="bg-orange-600 hover:bg-orange-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
-              Thêm phương pháp mới
+              {t('processing.pages.managerBatches.methods.actions.addNew')}
             </Button>
           </div>
         </div>
@@ -161,62 +163,62 @@ export default function ProcessingMethodsPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-orange-50 to-amber-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tên phương pháp</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Mô tả</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Trạng thái</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Ngày tạo</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">Thao tác</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.methodName')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.description')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.status')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.createdAt')}</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                                 {filteredMethods.map((method) => (
-                   <tr key={method.methodId} className="hover:bg-orange-50 transition-colors">
-                     <td className="px-6 py-4">
-                       <div className="font-medium text-gray-900">{method.name}</div>
-                       <div className="text-sm text-gray-500">ID: {method.methodId}</div>
-                     </td>
-                     <td className="px-6 py-4">
-                       <p className="text-sm text-gray-700 max-w-xs truncate">
-                         {method.description}
-                       </p>
-                     </td>
-                     <td className="px-6 py-4">
-                       <Badge className={getStatusColor(method.isDeleted)}>
-                         {getStatusLabel(method.isDeleted)}
-                       </Badge>
-                     </td>
-                     <td className="px-6 py-4 text-sm text-gray-600">
-                       {new Date(method.createdAt).toLocaleDateString("vi-VN")}
-                     </td>
-                     <td className="px-6 py-4">
-                       <div className="flex items-center justify-center gap-2">
-                         <Button
-                           variant="outline"
-                           size="sm"
-                           onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}`)}
-                           className="border-orange-200 hover:bg-orange-50"
-                         >
-                           Xem
-                         </Button>
-                         <Button
-                           variant="outline"
-                           size="sm"
-                           onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}/edit`)}
-                           className="border-blue-200 hover:bg-blue-50"
-                         >
-                           Sửa
-                         </Button>
-                         <Button
-                           variant="outline"
-                           size="sm"
-                           className="border-red-200 hover:bg-red-50"
-                         >
-                           Xóa
-                         </Button>
-                       </div>
-                     </td>
-                   </tr>
-                 ))}
+                {filteredMethods.map((method) => (
+                  <tr key={method.methodId} className="hover:bg-orange-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-gray-900">{method.name}</div>
+                      <div className="text-sm text-gray-500">ID: {method.methodId}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-sm text-gray-700 max-w-xs truncate">
+                        {method.description}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge className={getStatusColor(method.isDeleted)}>
+                        {getStatusLabel(method.isDeleted)}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {new Date(method.createdAt).toLocaleDateString("vi-VN")}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}`)}
+                          className="border-orange-200 hover:bg-orange-50"
+                        >
+                          {t('common.view')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}/edit`)}
+                          className="border-blue-200 hover:bg-blue-50"
+                        >
+                          {t('common.edit')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-red-200 hover:bg-red-50"
+                        >
+                          {t('common.delete')}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -224,7 +226,7 @@ export default function ProcessingMethodsPage() {
           {filteredMethods.length === 0 && (
             <div className="text-center py-12">
               <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Không tìm thấy phương pháp sơ chế nào</p>
+              <p className="text-gray-500">{t('processing.pages.managerBatches.methods.noData')}</p>
             </div>
           )}
         </div>

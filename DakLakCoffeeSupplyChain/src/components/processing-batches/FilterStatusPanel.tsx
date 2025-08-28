@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { PackageSearch } from "lucide-react";
 import FilterBadge from "./FilterBadge";
 import {
@@ -18,17 +19,16 @@ export default function FilterStatusPanel({
   setSelectedStatus,
   statusCounts,
 }: FilterStatusPanelProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
-      <h2 className="text-sm font-medium text-gray-700">Lọc theo trạng thái</h2>
+      <h2 className="text-sm font-medium text-gray-700">{t('processing.pages.batches.filterTitle')}</h2>
 
       <FilterBadge
-        icon={PackageSearch}
-        label="Tất cả trạng thái"
-        count={Object.values(statusCounts).reduce((sum, val) => sum + val, 0)}
-        color="orange"
-        active={selectedStatus === null}
-        onClick={() => setSelectedStatus(null)}
+        label={t('processing.pages.batches.allStatuses')}
+        value={Object.values(statusCounts).reduce((sum, val) => sum + val, 0).toString()}
+        onRemove={() => setSelectedStatus(null)}
       />
 
       {Object.entries(ProcessingStatusMap).map(([keyStr, info]) => {
@@ -36,14 +36,9 @@ export default function FilterStatusPanel({
         return (
           <FilterBadge
             key={key}
-            icon={info.icon}
             label={info.label}
-            color={info.bgClass.replace("bg-", "").replace("-100", "")}
-            count={statusCounts[key] || 0}
-            active={selectedStatus === key}
-            onClick={() =>
-              setSelectedStatus(selectedStatus === key ? null : key)
-            }
+            value={(statusCounts[key] || 0).toString()}
+            onRemove={() => setSelectedStatus(selectedStatus === key ? null : key)}
           />
         );
       })}

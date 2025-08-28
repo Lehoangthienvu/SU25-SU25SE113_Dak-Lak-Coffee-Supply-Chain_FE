@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Trash2, AlertCircle } from "lucide-react";
@@ -20,6 +21,7 @@ interface WasteInputProps {
 }
 
 export default function WasteInput({ wastes, onWastesChange, className = "" }: WasteInputProps) {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
   
   // Debug log để kiểm tra component có bị render 2 lần không
@@ -61,11 +63,11 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
     const newErrors = { ...errors };
     
     if (field === 'wasteType' && !value.toString().trim()) {
-      newErrors[index] = "Vui lòng nhập loại waste";
+      newErrors[index] = t("waste.validation.wasteTypeRequired");
     } else if (field === 'quantity' && (typeof value === 'number' && (value <= 0 || value > 100000))) {
-      newErrors[index] = "Khối lượng phải từ 0.01 đến 100,000";
+      newErrors[index] = t("waste.validation.quantityRange");
     } else if (field === 'unit' && !value.toString().trim()) {
-      newErrors[index] = "Vui lòng chọn đơn vị";
+      newErrors[index] = t("waste.validation.unitRequired");
     } else {
       // Xóa error nếu hợp lệ
       delete newErrors[index];
@@ -82,11 +84,11 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
     
     wastes.forEach((waste, index) => {
       if (!waste.wasteType.trim()) {
-        newErrors[index] = "Vui lòng nhập loại waste";
+        newErrors[index] = t("waste.validation.wasteTypeRequired");
       } else if (waste.quantity <= 0 || waste.quantity > 100000) {
-        newErrors[index] = "Khối lượng phải từ 0.01 đến 100,000";
+        newErrors[index] = t("waste.validation.quantityRange");
       } else if (!waste.unit.trim()) {
-        newErrors[index] = "Vui lòng chọn đơn vị";
+        newErrors[index] = t("waste.validation.unitRequired");
       }
     });
     
@@ -100,7 +102,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
     if (wastes.length > 0) {
       validateAllWastes();
     }
-  }, [wastes]);
+  }, [wastes, t]);
 
   return (
     <div className={`bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-6 ${className}`}>
@@ -110,8 +112,8 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
             <Trash2 className="w-5 h-5 text-red-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Thông tin Waste</h3>
-            <p className="text-sm text-gray-600">Ghi nhận các loại waste phát sinh trong quá trình chế biến</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t("waste.title")}</h3>
+            <p className="text-sm text-gray-600">{t("waste.description")}</p>
           </div>
         </div>
         <Button
@@ -122,7 +124,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
           className="flex items-center gap-1 text-xs bg-white hover:bg-red-50 border-red-300 text-red-700"
         >
           <Plus className="w-3 h-3" />
-          Thêm Waste
+          {t("waste.add")}
         </Button>
       </div>
 
@@ -130,7 +132,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
         {wastes.map((waste, index) => (
           <div key={`waste-${index}-${waste.recordedAt}`} className="bg-white rounded-lg p-4 border border-red-200 shadow-sm relative">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium text-gray-700">Waste #{index + 1}</h4>
+              <h4 className="text-sm font-medium text-gray-700">{t("waste.itemNumber", { number: index + 1 })}</h4>
               {wastes.length > 1 && (
                 <Button
                   type="button"
@@ -149,13 +151,13 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
               {/* Loại Waste */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Loại Waste *
+                  {t("waste.wasteType")} *
                 </label>
                 <Input
                   type="text"
                   value={waste.wasteType}
                   onChange={(e) => updateWaste(index, 'wasteType', e.target.value)}
-                  placeholder="VD: Vỏ cà phê, Bã..."
+                  placeholder={t("waste.placeholder.wasteType")}
                   className={`text-sm border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-red-300 transition-all duration-200 ${
                     errors[index] && !waste.wasteType.trim() ? 'border-red-300' : ''
                   }`}
@@ -165,7 +167,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
               {/* Khối lượng */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Khối lượng *
+                  {t("waste.quantity")} *
                 </label>
                 <Input
                   type="number"
@@ -184,7 +186,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
               {/* Đơn vị */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Đơn vị *
+                  {t("waste.unit")} *
                 </label>
                 <select
                   value={waste.unit}
@@ -193,22 +195,22 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
                     errors[index] && !waste.unit.trim() ? 'border-red-300' : ''
                   }`}
                 >
-                  <option value="">Chọn đơn vị...</option>
-                  <option value="kg">Kilogram (kg)</option>
-                  <option value="g">Gram (g)</option>
-                  <option value="tấn">Tấn</option>
-                  <option value="tạ">Tạ</option>
-                  <option value="yến">Yến</option>
-                  <option value="lạng">Lạng</option>
-                  <option value="lb">Pound (lb)</option>
-                  <option value="oz">Ounce (oz)</option>
+                  <option value="">{t("waste.selectUnit")}</option>
+                  <option value="kg">{t("waste.units.kg")}</option>
+                  <option value="g">{t("waste.units.g")}</option>
+                  <option value="tấn">{t("waste.units.ton")}</option>
+                  <option value="tạ">{t("waste.units.quintal")}</option>
+                  <option value="yến">{t("waste.units.yen")}</option>
+                  <option value="lạng">{t("waste.units.lang")}</option>
+                  <option value="lb">{t("waste.units.lb")}</option>
+                  <option value="oz">{t("waste.units.oz")}</option>
                 </select>
               </div>
 
               {/* Ngày ghi nhận */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Ngày ghi nhận
+                  {t("waste.recordedAt")}
                 </label>
                 <Input
                   type="date"
@@ -222,13 +224,13 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
             {/* Ghi chú */}
             <div className="mt-3">
               <label className="block text-xs font-medium text-gray-600 mb-1">
-                Ghi chú
+                {t("waste.note")}
               </label>
               <Input
                 type="text"
                 value={waste.note}
                 onChange={(e) => updateWaste(index, 'note', e.target.value)}
-                placeholder="Ghi chú về waste (tùy chọn)..."
+                placeholder={t("waste.placeholder.note")}
                 className="text-sm border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-red-300 transition-all duration-200"
               />
             </div>
@@ -247,8 +249,8 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
         {wastes.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <Trash2 className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-            <p className="text-sm">Chưa có waste nào được thêm</p>
-            <p className="text-xs text-gray-400 mt-1">Nhấn "Thêm Waste" để bắt đầu</p>
+            <p className="text-sm">{t("waste.emptyState.noWaste")}</p>
+            <p className="text-xs text-gray-400 mt-1">{t("waste.emptyState.addWasteHint")}</p>
           </div>
         )}
       </div>
@@ -258,7 +260,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center gap-2 text-red-700 text-sm">
             <AlertCircle className="w-4 h-4" />
-            <span className="font-medium">Vui lòng kiểm tra và sửa các lỗi bên trên</span>
+            <span className="font-medium">{t("waste.validation.summary")}</span>
           </div>
         </div>
       )}

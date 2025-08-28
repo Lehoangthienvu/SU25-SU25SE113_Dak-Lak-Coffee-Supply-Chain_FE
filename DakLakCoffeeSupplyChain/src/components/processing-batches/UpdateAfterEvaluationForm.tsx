@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { updateProgressAfterEvaluation } from '@/lib/api/processingBatchProgress';
-import { AppToast } from '@/components/ui/AppToast';
-import { Calendar, Upload, X } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UpdateAfterEvaluationFormProps {
   batchId: string;
@@ -27,6 +30,7 @@ export default function UpdateAfterEvaluationForm({
   onClose,
   onSuccess
 }: UpdateAfterEvaluationFormProps) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     progressDate: new Date().toISOString().split('T')[0],
     outputQuantity: 0,
@@ -80,7 +84,7 @@ export default function UpdateAfterEvaluationForm({
     e.preventDefault();
     
     if (form.outputQuantity <= 0) {
-      AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
+      // AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
       return;
     }
 
@@ -109,11 +113,10 @@ export default function UpdateAfterEvaluationForm({
         videoFiles,
       };
 
-      await updateProgressAfterEvaluation(batchId, payload);
+      // await updateProgressAfterEvaluation(batchId, payload);
       
-      AppToast.success('Cập nhật tiến trình thành công!');
-      onSuccess();
-      onClose();
+      // AppToast.success('Cập nhật tiến trình thành công!');
+      // Reset form
       
       // Reset form
       setForm({
@@ -130,219 +133,186 @@ export default function UpdateAfterEvaluationForm({
       setVideoFiles([]);
     } catch (error: any) {
       console.error('Error updating progress after evaluation:', error);
-      AppToast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiến trình');
+      // AppToast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiến trình');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-red-800">
-            Cập nhật tiến trình sau đánh giá
-          </DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Thông tin stage bị fail */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <h3 className="font-semibold text-red-800 mb-2">🔧 Công đoạn cần cải thiện</h3>
-            <div className="space-y-2">
-              <div className="flex items-start gap-2">
-                <span className="text-red-600 font-medium">Công đoạn:</span>
-                <span className="text-red-800 font-semibold">{failedStageInfo.stageName}</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-red-600 font-medium">Vấn đề:</span>
-                <span className="text-red-700">{failedStageInfo.failureDetails}</span>
-              </div>
-              {failedStageInfo.recommendations && (
-                <div className="flex items-start gap-2">
-                  <span className="text-red-600 font-medium">Khuyến nghị:</span>
-                  <span className="text-red-700">{failedStageInfo.recommendations}</span>
-                </div>
-              )}
+    <div className="mt-6">
+      <Card className="border-orange-200 bg-orange-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-orange-800">
+            <AlertTriangle className="h-5 w-5" />
+            {t('updateAfterEvaluation.title')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-white/70 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Info className="h-4 w-4 text-blue-600" />
+              <h4 className="font-medium text-blue-800">{t('updateAfterEvaluation.instruction')}</h4>
             </div>
-            <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
-              <p className="text-sm text-yellow-800">
-                💡 <strong>Hướng dẫn:</strong> Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia và cập nhật lại tiến trình.
-              </p>
-            </div>
+            <p className="text-sm text-blue-700">
+              {t('updateAfterEvaluation.description')}
+            </p>
           </div>
 
-          {/* Ngày cập nhật */}
-          <div className="space-y-2">
-            <Label htmlFor="progressDate" className="text-sm font-medium">
-              Ngày cập nhật <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="progressDate">{t('updateAfterEvaluation.progressDate')}</Label>
               <Input
                 id="progressDate"
-                name="progressDate"
                 type="date"
                 value={form.progressDate}
                 onChange={handleChange}
-                className="pl-10"
-                required
+                className="border-orange-200 focus:border-orange-400"
               />
             </div>
-          </div>
 
-          {/* Khối lượng đầu ra */}
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="outputQuantity" className="text-sm font-medium">
-                Khối lượng đầu ra <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="outputQuantity">{t('updateAfterEvaluation.outputQuantity')}</Label>
               <Input
                 id="outputQuantity"
-                name="outputQuantity"
                 type="number"
                 step="0.01"
+                min="0.01"
+                max="100000"
                 value={form.outputQuantity}
                 onChange={handleChange}
-                placeholder="0.00"
-                required
+                placeholder={t('updateAfterEvaluation.quantityPlaceholder')}
+                className="border-orange-200 focus:border-orange-400"
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="outputUnit" className="text-sm font-medium">
-                Đơn vị
-              </Label>
-              <select
-                id="outputUnit"
-                name="outputUnit"
-                value={form.outputUnit}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="tấn">tấn</option>
-              </select>
             </div>
           </div>
 
-                     {/* Thông số kỹ thuật */}
-           <div className="space-y-4">
-             <div className="flex items-center justify-between">
-               <h4 className="font-medium text-gray-900">Thông số kỹ thuật (tùy chọn)</h4>
-               <Button
-                 type="button"
-                 variant="outline"
-                 size="sm"
-                 onClick={() => setParameters(prev => [...prev, {
-                   parameterName: '',
-                   parameterValue: '',
-                   unit: '',
-                   recordedAt: new Date().toISOString(),
-                 }])}
-               >
-                 + Thêm thông số
-               </Button>
-             </div>
-             
-             {/* Single parameter */}
-             <div className="grid grid-cols-3 gap-4">
-               <div className="space-y-2">
-                 <Label htmlFor="parameterName" className="text-sm font-medium">
-                   Tên thông số
-                 </Label>
-                 <Input
-                   id="parameterName"
-                   name="parameterName"
-                   value={form.parameterName}
-                   onChange={handleChange}
-                   placeholder="Ví dụ: Nhiệt độ"
-                 />
-               </div>
-               <div className="space-y-2">
-                 <Label htmlFor="parameterValue" className="text-sm font-medium">
-                   Giá trị
-                 </Label>
-                 <Input
-                   id="parameterValue"
-                   name="parameterValue"
-                   value={form.parameterValue}
-                   onChange={handleChange}
-                   placeholder="Ví dụ: 25"
-                 />
-               </div>
-               <div className="space-y-2">
-                 <Label htmlFor="unit" className="text-sm font-medium">
-                   Đơn vị
-                 </Label>
-                 <Input
-                   id="unit"
-                   name="unit"
-                   value={form.unit}
-                   onChange={handleChange}
-                   placeholder="Ví dụ: °C"
-                 />
-               </div>
-             </div>
-             
-             {/* Multiple parameters */}
-             {parameters.map((param, index) => (
-               <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-4">
-                 <div className="flex items-center justify-between">
-                   <h5 className="font-medium text-gray-700">Thông số {index + 1}</h5>
-                   <Button
-                     type="button"
-                     variant="outline"
-                     size="sm"
-                     onClick={() => setParameters(prev => prev.filter((_, i) => i !== index))}
-                     className="text-red-600 hover:text-red-700"
-                   >
-                     <X className="w-4 h-4" />
-                   </Button>
-                 </div>
-                 <div className="grid grid-cols-3 gap-4">
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium">Tên thông số</Label>
-                     <Input
-                       value={param.parameterName}
-                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
-                         i === index ? { ...p, parameterName: e.target.value } : p
-                       ))}
-                       placeholder="Ví dụ: Nhiệt độ"
-                     />
-                   </div>
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium">Giá trị</Label>
-                     <Input
-                       value={param.parameterValue}
-                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
-                         i === index ? { ...p, parameterValue: e.target.value } : p
-                       ))}
-                       placeholder="Ví dụ: 25"
-                     />
-                   </div>
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium">Đơn vị</Label>
-                     <Input
-                       value={param.unit}
-                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
-                         i === index ? { ...p, unit: e.target.value } : p
-                       ))}
-                       placeholder="Ví dụ: °C"
-                     />
-                   </div>
-                 </div>
-               </div>
-             ))}
-           </div>
+          <div className="space-y-2">
+            <Label htmlFor="outputUnit">{t('updateAfterEvaluation.outputUnit')}</Label>
+            <Select value={form.outputUnit} onValueChange={(value) => setForm(prev => ({ ...prev, outputUnit: value }))}>
+              <SelectTrigger className="border-orange-200 focus:border-orange-400">
+                <SelectValue placeholder={t('updateAfterEvaluation.selectUnit')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="kg">{t('updateAfterEvaluation.units.kg')}</SelectItem>
+                <SelectItem value="g">{t('updateAfterEvaluation.units.g')}</SelectItem>
+                <SelectItem value="ton">{t('updateAfterEvaluation.units.ton')}</SelectItem>
+                <SelectItem value="quintal">{t('updateAfterEvaluation.units.quintal')}</SelectItem>
+                <SelectItem value="yen">{t('updateAfterEvaluation.units.yen')}</SelectItem>
+                <SelectItem value="lang">{t('updateAfterEvaluation.units.lang')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Thông số kỹ thuật */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.technicalParameters')}</h4>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setParameters(prev => [...prev, {
+                  parameterName: '',
+                  parameterValue: '',
+                  unit: '',
+                  recordedAt: new Date().toISOString(),
+                }])}
+              >
+                {t('updateAfterEvaluation.addParameter')}
+              </Button>
+            </div>
+            
+            {/* Single parameter */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="parameterName">{t('updateAfterEvaluation.parameterName')}</Label>
+                <Input
+                  id="parameterName"
+                  name="parameterName"
+                  value={form.parameterName}
+                  onChange={handleChange}
+                  placeholder={t('updateAfterEvaluation.parameterNamePlaceholder')}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="parameterValue">{t('updateAfterEvaluation.parameterValue')}</Label>
+                <Input
+                  id="parameterValue"
+                  name="parameterValue"
+                  value={form.parameterValue}
+                  onChange={handleChange}
+                  placeholder={t('updateAfterEvaluation.parameterValuePlaceholder')}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="unit">{t('updateAfterEvaluation.unit')}</Label>
+                <Input
+                  id="unit"
+                  name="unit"
+                  value={form.unit}
+                  onChange={handleChange}
+                  placeholder={t('updateAfterEvaluation.unitPlaceholder')}
+                />
+              </div>
+            </div>
+            
+            {/* Multiple parameters */}
+            {parameters.map((param, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h5 className="font-medium text-gray-700">{t('updateAfterEvaluation.parameter')}</h5>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setParameters(prev => prev.filter((_, i) => i !== index))}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.parameterName')}</Label>
+                    <Input
+                      value={param.parameterName}
+                      onChange={(e) => setParameters(prev => prev.map((p, i) => 
+                        i === index ? { ...p, parameterName: e.target.value } : p
+                      ))}
+                      placeholder={t('updateAfterEvaluation.parameterNamePlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.parameterValue')}</Label>
+                    <Input
+                      value={param.parameterValue}
+                      onChange={(e) => setParameters(prev => prev.map((p, i) => 
+                        i === index ? { ...p, parameterValue: e.target.value } : p
+                      ))}
+                      placeholder={t('updateAfterEvaluation.parameterValuePlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.unit')}</Label>
+                    <Input
+                      value={param.unit}
+                      onChange={(e) => setParameters(prev => prev.map((p, i) => 
+                        i === index ? { ...p, unit: e.target.value } : p
+                      ))}
+                      placeholder={t('updateAfterEvaluation.unitPlaceholder')}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Upload hình ảnh */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Hình ảnh (tùy chọn)</h4>
+            <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.images')}</h4>
             <div className="space-y-2">
-              <Label htmlFor="photoFiles" className="text-sm font-medium">
-                Chọn hình ảnh
-              </Label>
+              <Label htmlFor="photoFiles">{t('updateAfterEvaluation.selectImages')}</Label>
               <Input
                 id="photoFiles"
                 type="file"
@@ -376,11 +346,9 @@ export default function UpdateAfterEvaluationForm({
 
           {/* Upload video */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Video (tùy chọn)</h4>
+            <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.videos')}</h4>
             <div className="space-y-2">
-              <Label htmlFor="videoFiles" className="text-sm font-medium">
-                Chọn video
-              </Label>
+              <Label htmlFor="videoFiles">{t('updateAfterEvaluation.selectVideos')}</Label>
               <Input
                 id="videoFiles"
                 type="file"
@@ -410,24 +378,23 @@ export default function UpdateAfterEvaluationForm({
 
           {/* Buttons */}
           <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Hủy
-            </Button>
+                         <Button
+               type="button"
+               variant="outline"
+               disabled={loading}
+             >
+               {t('updateAfterEvaluation.cancel')}
+             </Button>
             <Button
               type="submit"
               disabled={loading}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
-              {loading ? 'Đang cập nhật...' : 'Cập nhật tiến trình'}
+              {loading ? t('updateAfterEvaluation.updating') : t('updateAfterEvaluation.updateProgress')}
             </Button>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

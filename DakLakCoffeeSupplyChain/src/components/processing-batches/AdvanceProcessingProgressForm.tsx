@@ -2,8 +2,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ValidationErrorHandler } from "@/utils/errorHandler";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { ProcessedError } from "@/types/processing";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 import imageCompression from "browser-image-compression";
 import { advanceToNextProcessingProgress } from "@/lib/api/processingBatchProgress";
@@ -33,6 +38,8 @@ export default function AdvanceProcessingProgressForm({
   failedStageInfo,
   onSuccess,
 }: Props) {
+  const { t } = useTranslation();
+  
   const [progressDate, setProgressDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -50,6 +57,7 @@ export default function AdvanceProcessingProgressForm({
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [processedError, setProcessedError] = useState<ProcessedError | null>(null);
   
   // State cho stage selection
   const [availableStages, setAvailableStages] = useState<ProcessingStage[]>([]);
@@ -60,13 +68,13 @@ export default function AdvanceProcessingProgressForm({
 
   // Tính toán button text dựa trên failedStageInfo
   const getButtonText = () => {
-    if (loading) return "Đang lưu...";
+    if (loading) return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.saving');
     
     if (failedStageInfo) {
-      return "Cập nhật lại bước không đạt";
+      return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.submit');
     }
     
-    return "Cập nhật tiến trình";
+    return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.submit');
   };
 
   // Load available stages khi component mount
@@ -143,23 +151,24 @@ export default function AdvanceProcessingProgressForm({
     console.log("🔍 AdvanceProcessingProgressForm handleSubmit started");
     setLoading(true);
     setError(null);
+    setProcessedError(null);
 
-         // Không cần validate selectedStageId vì đã tự động chọn
-    if (!progressDate) {
-      setError("Vui lòng chọn ngày thực hiện");
-      setLoading(false);
-      return;
-    }
-    if (outputQuantity <= 0) {
-      setError("Khối lượng đầu ra phải lớn hơn 0");
-      setLoading(false);
-      return;
-    }
-    if (!outputUnit.trim()) {
-      setError("Vui lòng nhập đơn vị");
-      setLoading(false);
-      return;
-    }
+              // Không cần validate selectedStageId vì đã tự động chọn
+           if (!progressDate) {
+        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.progressDateRequired'));
+        setLoading(false);
+        return;
+      }
+      if (outputQuantity <= 0) {
+        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.outputQuantityRequired'));
+        setLoading(false);
+        return;
+      }
+      if (!outputUnit.trim()) {
+        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.outputUnitRequired'));
+        setLoading(false);
+        return;
+      }
 
     try {
       let compressedPhotos: File[] = [];
@@ -228,15 +237,22 @@ export default function AdvanceProcessingProgressForm({
 
       onSuccess?.();
          } catch (err: any) {
-       // Xử lý lỗi chi tiết hơn
-       let errorMessage = "Không thể cập nhật tiến trình.";
+         
+       let errorMessage = t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.description');
        
        if (err?.response?.data?.message) {
-         errorMessage = err.response.data.message;
+         // Parse backend error và xử lý với i18n
+         const validationError = ValidationErrorHandler.parseBackendError(err.response.data.message);
+         if (validationError) {
+           const processedError = ValidationErrorHandler.processError(validationError, t);
+           setProcessedError(processedError);
+         } else {
+           errorMessage = err.response.data.message;
+         }
        } else if (err?.response?.data?.error) {
          errorMessage = err.response.data.error;
        } else if (err?.message === "Network Error") {
-         errorMessage = "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối.";
+         errorMessage = t('common.networkError');
        } else if (err?.message) {
          errorMessage = err.message;
        }
@@ -304,25 +320,28 @@ export default function AdvanceProcessingProgressForm({
             </svg>
           </div>
           <div>
-            <h2 className="text-white font-bold text-xl">
-              Cập nhật tiến trình sơ chế
-            </h2>
-                         <p className="text-orange-100 text-sm">
-               {failedStageInfo ? `Công đoạn cần cải thiện: ${failedStageInfo.stageName}` : latestProgress ? `Bước tiếp theo: ${latestProgress.stageName}` : 'Tạo tiến trình đầu tiên'}
-             </p>
+                         <h2 className="text-white font-bold text-xl">
+               {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.title')}
+             </h2>
+                          <p className="text-orange-100 text-sm">
+                {failedStageInfo ? `${t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.improvementStage')}: ${failedStageInfo.stageName}` : latestProgress ? `${t('processing.stageInfo.nextStep')}: ${latestProgress.stageName}` : t('processing.stageInfo.firstProgress')}
+              </p>
           </div>
         </div>
         
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={() => onSuccess?.()}
-          className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all duration-200"
-        >
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+                 {/* Language Switcher */}
+         <LanguageSwitcher />
+         
+         {/* Close button */}
+         <button
+           type="button"
+           onClick={() => onSuccess?.()}
+           className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all duration-200"
+         >
+           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+           </svg>
+         </button>
       </div>
 
       {/* Content - Horizontal layout */}
@@ -339,28 +358,28 @@ export default function AdvanceProcessingProgressForm({
             <div className={`w-3 h-3 rounded-full animate-pulse ${
               failedStageInfo ? 'bg-red-500' : 'bg-blue-500'
             }`}></div>
-            <span className="font-semibold">
-              {failedStageInfo ? 'Thông tin bước Lỗi:' : 'Thông tin bước hiện tại:'}
-            </span>
-                         <span className="font-bold text-lg">
-               {failedStageInfo ? failedStageInfo.stageName : latestProgress ? latestProgress.stageName : 'Chưa có tiến trình'}
+                         <span className="font-semibold">
+               {failedStageInfo ? t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.errorStage') : t('processing.stageInfo.currentStage')}
              </span>
-             {!failedStageInfo && latestProgress && (
-               <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                 Bước {latestProgress.stepIndex}
-               </span>
-             )}
-             {latestProgress && (
-               <span className="ml-auto text-xs opacity-75">
-                 Ngày trước: {new Date(latestProgress.progressDate).toLocaleDateString("vi-VN")}
-               </span>
-             )}
+                          <span className="font-bold text-lg">
+                {failedStageInfo ? failedStageInfo.stageName : latestProgress ? latestProgress.stageName : t('processing.stageInfo.noProgress')}
+              </span>
+              {!failedStageInfo && latestProgress && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.stepNumber')} {latestProgress.stepIndex}
+                </span>
+              )}
+              {latestProgress && (
+                <span className="ml-auto text-xs opacity-75">
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.previousDate')} {new Date(latestProgress.progressDate).toLocaleDateString("vi-VN")}
+                </span>
+              )}
           </div>
-          {failedStageInfo && (
-            <div className="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-              <strong>Lý do không đạt:</strong> {failedStageInfo.failureDetails}
-            </div>
-          )}
+                     {failedStageInfo && (
+             <div className="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+               <strong>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.failureReason')}</strong> {failedStageInfo.failureDetails}
+             </div>
+           )}
         </div>
 
                 {/* Main form - 3 columns horizontal layout */}
@@ -368,31 +387,31 @@ export default function AdvanceProcessingProgressForm({
           
           {/* Column 1 - Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
-              <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              Thông tin cơ bản
-            </h3>
+                         <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
+               <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
+                 <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                 </svg>
+               </div>
+               {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.basicInfo.title')}
+             </h3>
 
             <div className="space-y-4">
               {/* Hiển thị thông tin stage bị fail khi có failedStageInfo */}
-              {failedStageInfo && (
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Công đoạn cần cải thiện
-                  </label>
-                  <div className="w-full h-12 bg-red-50 border-2 border-red-200 rounded-lg px-4 flex items-center text-sm text-red-700 font-semibold">
-                    {failedStageInfo.stageName}
-                  </div>
-                </div>
-              )}
+                             {failedStageInfo && (
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">
+                     {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.improvementStage')}
+                   </label>
+                   <div className="w-full h-12 bg-red-50 border-2 border-red-200 rounded-lg px-4 flex items-center text-sm text-red-700 font-semibold">
+                     {failedStageInfo.stageName}
+                   </div>
+                 </div>
+               )}
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Ngày thực hiện
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.progressDate.label')}
                 </label>
                 <Input
                   type="date"
@@ -400,12 +419,13 @@ export default function AdvanceProcessingProgressForm({
                   onChange={(e) => setProgressDate(e.target.value)}
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.progressDate.placeholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Khối lượng đầu ra
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.outputQuantity.label')}
                 </label>
                 <Input
                   type="number"
@@ -415,25 +435,25 @@ export default function AdvanceProcessingProgressForm({
                   onChange={(e) => setOutputQuantity(parseFloat(e.target.value))}
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                  placeholder="Nhập khối lượng..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.outputQuantity.placeholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Mô tả công đoạn
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.stageDescription.label')}
                 </label>
                 <textarea
                   value={stageDescription}
                   onChange={(e) => setStageDescription(e.target.value)}
-                  placeholder="Mô tả chi tiết về công đoạn thực hiện..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.stageDescription.placeholder')}
                   className="w-full h-24 border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 resize-none"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Đơn vị
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.unit.label')}
                 </label>
                 <select
                   value={outputUnit}
@@ -441,7 +461,7 @@ export default function AdvanceProcessingProgressForm({
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
                 >
-                  <option value="">Chọn đơn vị...</option>
+                  <option value="">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.unit.placeholder')}</option>
                   <option value="kg">Kilogram (kg)</option>
                   <option value="g">Gram (g)</option>
                   <option value="tấn">Tấn</option>
@@ -463,45 +483,45 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              Thông số kỹ thuật
+              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.title')}
             </h3>
 
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Tên thông số
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterName.label')}
                 </label>
                 <Input
                   type="text"
                   value={parameterName}
                   onChange={(e) => setParameterName(e.target.value)}
-                  placeholder="VD: Nhiệt độ, Độ ẩm..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterName.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Giá trị
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterValue.label')}
                 </label>
                 <Input
                   type="text"
                   value={parameterValue}
                   onChange={(e) => setParameterValue(e.target.value)}
-                  placeholder="VD: 25, 80%..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterValue.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Đơn vị thông số
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterUnit.label')}
                 </label>
                 <Input
                   type="text"
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  placeholder="VD: °C, %, kg..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterUnit.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
@@ -516,14 +536,14 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              Tài liệu minh họa
+              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.title')}
             </h3>
 
             <div className="space-y-3">
               {/* Photo upload */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Ảnh minh hoạ
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.image.label')}
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-pink-400 transition-colors bg-gray-50">
                   <input
@@ -544,7 +564,7 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {photoFiles.length > 0 ? `${photoFiles.length} ảnh` : 'Chọn ảnh'}
+                    {photoFiles.length > 0 ? `${photoFiles.length} ảnh` : t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.image.placeholder')}
                   </label>
                 </div>
               </div>
@@ -552,7 +572,7 @@ export default function AdvanceProcessingProgressForm({
               {/* Video upload */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Video minh hoạ
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.video.label')}
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-teal-400 transition-colors bg-gray-50">
                   <input
@@ -573,7 +593,7 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {videoFiles.length > 0 ? `${photoFiles.length} video` : 'Chọn video'}
+                    {videoFiles.length > 0 ? `${photoFiles.length} video` : t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.video.placeholder')}
                   </label>
                 </div>
               </div>
@@ -590,13 +610,13 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
-              Thông tin phế phẩm
+              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.title')}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  Loại phế phẩm
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.wasteType.label')}
                 </label>
                 <Input
                   type="text"
@@ -606,14 +626,14 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], wasteType: e.target.value };
                     setWastes(newWastes);
                   }}
-                  placeholder="VD: Vỏ cà phê, Bã..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.wasteType.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  Khối lượng
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.quantity.label')}
                 </label>
                 <Input
                   type="number"
@@ -625,15 +645,15 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], quantity: parseFloat(e.target.value) || 0 };
                     setWastes(newWastes);
                   }}
-                  placeholder="Nhập khối lượng..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.quantity.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-red-700 mb-2">
-                  Đơn vị
-                </label>
+                                 <label className="block text-sm font-semibold text-red-700 mb-2">
+                   {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.unit.label')}
+                 </label>
                 <select
                   value={wastes[0]?.unit || "kg"}
                   onChange={(e) => {
@@ -652,7 +672,7 @@ export default function AdvanceProcessingProgressForm({
               
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  Ghi chú
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.notes.label')}
                 </label>
                 <textarea
                   value={wastes[0]?.note || ""}
@@ -661,14 +681,14 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], note: e.target.value };
                     setWastes(newWastes);
                   }}
-                  placeholder="Mô tả chi tiết về phế phẩm..."
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.notes.placeholder')}
                   className="w-full h-24 border-2 border-red-200 rounded-lg px-4 py-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200 resize-none"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  Ngày ghi nhận
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.recordDate.label')}
                 </label>
                 <Input
                   type="date"
@@ -678,6 +698,7 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], recordedAt: e.target.value };
                     setWastes(newWastes);
                   }}
+                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.recordDate.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
               </div>
@@ -688,7 +709,7 @@ export default function AdvanceProcessingProgressForm({
         {/* Media previews - Horizontal layout */}
         {(photoFiles.length > 0 || videoFiles.length > 0) && (
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Xem trước tài liệu:</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.previewTitle')}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {photoFiles.map((file, index) => (
                 <div key={`photo-${index}`} className="relative group">
@@ -733,13 +754,13 @@ export default function AdvanceProcessingProgressForm({
               <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Tối đa 10 files, 50MB</span>
+              <span>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.maxFiles')}</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Ảnh tự động nén</span>
+              <span>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.imageCompression')}</span>
             </div>
           </div>
 
@@ -750,7 +771,7 @@ export default function AdvanceProcessingProgressForm({
               variant="outline"
               className="px-6 py-3 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-lg transition-all duration-200"
             >
-              Huỷ
+              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -760,7 +781,7 @@ export default function AdvanceProcessingProgressForm({
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Đang lưu...
+                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.saving')}
                 </div>
               ) : (
                 getButtonText()
@@ -776,10 +797,10 @@ export default function AdvanceProcessingProgressForm({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div className="flex-1">
-                <div className="font-bold mb-3 text-red-800">Lỗi cập nhật tiến trình:</div>
-                <div className="whitespace-pre-line text-sm leading-relaxed bg-white p-4 rounded-lg border border-red-100">
-                  {error}
-                </div>
+                <div className="font-bold mb-3 text-red-800">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.title')}:</div>
+                                  <div className="whitespace-pre-line text-sm leading-relaxed bg-white p-4 rounded-lg border border-red-100">
+                    {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.description')}
+                  </div>
               </div>
             </div>
           </div>

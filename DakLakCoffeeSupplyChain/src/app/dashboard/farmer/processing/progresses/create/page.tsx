@@ -3,12 +3,14 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Package, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 // Import component form đã được sửa
 import CreateProcessingProgressForm from "@/components/processing-batches/CreateProcessingProgressForm";
 
 export default function CreateProcessingProgressPage() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
@@ -18,9 +20,9 @@ export default function CreateProcessingProgressPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Package className="w-6 h-6 text-orange-600" />
-              Thêm tiến độ sơ chế
+              {t('processing.pages.farmerProgresses.create.title')}
             </h1>
-            <p className="text-gray-600 mt-1">Cập nhật tiến độ cho lô sơ chế</p>
+            <p className="text-gray-600 mt-1">{t('processing.pages.farmerProgresses.create.subtitle')}</p>
           </div>
           <Button 
             variant="outline" 
@@ -28,7 +30,7 @@ export default function CreateProcessingProgressPage() {
             className="flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
           >
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('processing.pages.farmerProgresses.create.backToList')}
           </Button>
         </div>
 
@@ -39,9 +41,9 @@ export default function CreateProcessingProgressPage() {
               <Info className="w-5 h-5 text-blue-600" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-blue-900">Hướng dẫn thêm tiến độ</h3>
+              <h3 className="font-semibold text-blue-900">{t('processing.pages.farmerProgresses.create.basicInfo.title')}</h3>
               <p className="text-sm text-blue-700">
-                Chọn lô sơ chế và nhập khối lượng đầu ra. Hệ thống sẽ tự động lấy giai đoạn đầu tiên và tạo tiến độ.
+                {t('processing.pages.farmerProgresses.create.basicInfo.notesPlaceholder')}
               </p>
             </div>
           </div>
@@ -52,7 +54,7 @@ export default function CreateProcessingProgressPage() {
           <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 text-white">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Package className="w-5 h-5" />
-              Thông tin tiến độ
+              {t('processing.pages.farmerProgresses.create.basicInfo.title')}
             </h2>
           </div>
           

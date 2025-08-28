@@ -3,6 +3,7 @@
 import React from 'react';
 import { CheckCircle, RefreshCw } from 'lucide-react';
 import { getStageFailureDisplayInfo } from '@/lib/helpers/evaluationHelpers';
+import { useTranslation } from 'react-i18next';
 
 interface FarmerRetryStatusProps {
   evaluation: {
@@ -26,6 +27,7 @@ interface FarmerRetryStatusProps {
 }
 
 export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStatusProps) {
+  const { t } = useTranslation();
   const failureInfo = evaluation.comments ? getStageFailureDisplayInfo(evaluation.comments) : null;
   
   // Kiểm tra xem farmer đã retry chưa
@@ -127,22 +129,22 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="w-5 h-5 text-green-600" />
             <span className="text-sm font-medium text-green-800">
-              ✅ {batch?.farmerName || 'Nông dân'} đã cập nhật lại công đoạn {failureInfo.stageName}
+              ✅ {batch?.farmerName || t('farmerRetryStatus.farmer')} {t('farmerRetryStatus.hasUpdatedStage', { stageName: failureInfo.stageName })}
             </span>
           </div>
           
           {latestRetryInfo && (
             <div className="text-sm text-green-700 space-y-1">
-              <p><strong>Ngày cập nhật:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
-              <p><strong>Cập nhật bởi:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || 'Nông dân'}</p>
+              <p><strong>{t('farmerRetryStatus.updateDate')}:</strong> {latestRetryInfo.progressDate ? new Date(latestRetryInfo.progressDate).toLocaleDateString('vi-VN') : 'N/A'}</p>
+              <p><strong>{t('farmerRetryStatus.updatedBy')}:</strong> {latestRetryInfo.updatedByName || batch?.farmerName || t('farmerRetryStatus.farmer')}</p>
               
             </div>
           )}
           
           <div className="mt-2 text-sm text-green-600">
             {batch?.status === 'AwaitingEvaluation' 
-              ? 'Nông dân đã cập nhật lại và đang chờ bạn đánh giá.'
-              : 'Bạn có thể đánh giá lại để kiểm tra chất lượng cải thiện.'
+              ? t('farmerRetryStatus.waitingForEvaluation')
+              : t('farmerRetryStatus.canReEvaluate')
             }
           </div>
         </div>
@@ -151,7 +153,10 @@ export default function FarmerRetryStatus({ evaluation, batch }: FarmerRetryStat
           <div className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-yellow-600" />
             <span className="text-sm text-yellow-800">
-              ⏳ Đang chờ {batch?.farmerName || 'nông dân'} cập nhật lại công đoạn {failureInfo.stageName}
+              ⏳ {t('farmerRetryStatus.waitingForFarmer', { 
+                farmerName: batch?.farmerName || t('farmerRetryStatus.farmer'),
+                stageName: failureInfo.stageName 
+              })}
             </span>
           </div>
         </div>

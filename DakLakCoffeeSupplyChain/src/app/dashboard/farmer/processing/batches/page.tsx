@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getAllProcessingBatches, ProcessingBatch } from "@/lib/api/processingBatches";
 
 import StatusBadge from "@/components/processing-batches/StatusBadge";
@@ -34,6 +35,7 @@ import { cn } from "@/lib/utils";
 const ITEMS_PER_PAGE = 10;
 
 export default function ProcessingBatchesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
 
@@ -54,7 +56,7 @@ export default function ProcessingBatchesPage() {
         setBatches(batchesData || []);
       } catch (err: unknown) {
         console.error('Error fetching data:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải dữ liệu';
+        const errorMessage = err instanceof Error ? err.message : t('common.networkError');
         setError(errorMessage);
       } finally {
         setLoading(false);
@@ -102,35 +104,35 @@ export default function ProcessingBatchesPage() {
     // Mapping hoàn chỉnh cho tất cả các loại status
     const statusMap: Record<string | number, any> = {
       // Number mapping từ Backend
-      0: { label: "Chưa bắt đầu", color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
-      1: { label: "Đang xử lý", color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
-      2: { label: "Hoàn thành", color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
-      3: { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
-      4: { label: "Đã hủy", color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
+      0: { label: t('processing.pages.farmerBatches.status.notStarted'), color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
+      1: { label: t('processing.pages.farmerBatches.status.inProgress'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
+      2: { label: t('processing.pages.farmerBatches.status.completed'), color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
+      3: { label: t('processing.pages.farmerBatches.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
+      4: { label: t('processing.pages.farmerBatches.status.cancelled'), color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
       
              // String mapping từ enum (không phân biệt hoa thường)
-       "notstarted": { label: "Chưa bắt đầu", color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
-       "not_started": { label: "Chưa bắt đầu", color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
-       "inprogress": { label: "Đang xử lý", color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
-       "in_progress": { label: "Đang xử lý", color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
-       "completed": { label: "Hoàn thành", color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
-       "awaitingevaluation": { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
-       "awaiting_evaluation": { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
-       "cancelled": { label: "Đã hủy", color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
+       "notstarted": { label: t('processing.pages.farmerBatches.status.notStarted'), color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
+       "not_started": { label: t('processing.pages.farmerBatches.status.notStarted'), color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
+       "inprogress": { label: t('processing.pages.farmerBatches.status.inProgress'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
+       "in_progress": { label: t('processing.pages.farmerBatches.status.inProgress'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
+       "completed": { label: t('processing.pages.farmerBatches.status.completed'), color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
+       "awaitingevaluation": { label: t('processing.pages.farmerBatches.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
+       "awaiting_evaluation": { label: t('processing.pages.farmerBatches.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
+       "cancelled": { label: t('processing.pages.farmerBatches.status.cancelled'), color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
       
       // Vietnamese string mapping
-      "chưa bắt đầu": { label: "Chưa bắt đầu", color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
-      "đang xử lý": { label: "Đang xử lý", color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
-      "hoàn thành": { label: "Hoàn thành", color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
-      "chờ đánh giá": { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
-      "đã hủy": { label: "Đã hủy", color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
+      "chưa bắt đầu": { label: t('processing.pages.farmerBatches.status.notStarted'), color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
+      "đang xử lý": { label: t('processing.pages.farmerBatches.status.inProgress'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
+      "hoàn thành": { label: t('processing.pages.farmerBatches.status.completed'), color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
+      "chờ đánh giá": { label: t('processing.pages.farmerBatches.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
+      "đã hủy": { label: t('processing.pages.farmerBatches.status.cancelled'), color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
       
       // Enum mapping
-      [ProcessingStatus.NotStarted]: { label: "Chưa bắt đầu", color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
-      [ProcessingStatus.InProgress]: { label: "Đang xử lý", color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
-      [ProcessingStatus.Completed]: { label: "Hoàn thành", color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
-      [ProcessingStatus.AwaitingEvaluation]: { label: "Chờ đánh giá", color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
-      [ProcessingStatus.Cancelled]: { label: "Đã hủy", color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
+      [ProcessingStatus.NotStarted]: { label: t('processing.pages.farmerBatches.status.notStarted'), color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
+      [ProcessingStatus.InProgress]: { label: t('processing.pages.farmerBatches.status.inProgress'), color: "bg-blue-100 text-blue-700 border-blue-200", icon: TrendingUp },
+      [ProcessingStatus.Completed]: { label: t('processing.pages.farmerBatches.status.completed'), color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle },
+      [ProcessingStatus.AwaitingEvaluation]: { label: t('processing.pages.farmerBatches.status.awaitingEvaluation'), color: "bg-orange-100 text-orange-700 border-orange-200", icon: ClipboardCheck },
+      [ProcessingStatus.Cancelled]: { label: t('processing.pages.farmerBatches.status.cancelled'), color: "bg-red-100 text-red-700 border-red-200", icon: AlertTriangle },
     };
     
     // Thử tìm theo key gốc
@@ -151,7 +153,7 @@ export default function ProcessingBatchesPage() {
     }
     
     // Fallback cho các trường hợp khác
-    return { label: "Không xác định", color: "bg-gray-100 text-gray-700 border-gray-200", icon: Package };
+    return { label: t('processing.pages.farmerBatches.status.unknown'), color: "bg-gray-100 text-gray-700 border-gray-200", icon: Package };
   };
 
   if (loading) {
@@ -195,7 +197,7 @@ export default function ProcessingBatchesPage() {
             <div className="flex-1 bg-white rounded-xl shadow-sm p-6">
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
-                <p className="text-sm text-muted-foreground mt-2">Đang tải dữ liệu...</p>
+                <p className="text-sm text-muted-foreground mt-2">{t('farmerBatchDetail.loading.title')}</p>
               </div>
             </div>
           </div>
@@ -205,7 +207,7 @@ export default function ProcessingBatchesPage() {
   }
 
   if (error) {
-    return (
+    return (  
       <div className="min-h-screen bg-amber-50 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-xl shadow-sm p-6">
@@ -214,14 +216,14 @@ export default function ProcessingBatchesPage() {
                 <AlertTriangle className="w-6 h-6 text-orange-600" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-lg font-semibold text-gray-900">Không thể tải dữ liệu</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('common.error')}</h2>
                 <p className="text-sm text-gray-600">{error}</p>
               </div>
               <Button
                 onClick={() => window.location.reload()}
                 className="bg-orange-600 hover:bg-orange-700 text-white"
               >
-                Thử lại
+                {t('common.retry')}
               </Button>
             </div>
           </div>
@@ -238,8 +240,8 @@ export default function ProcessingBatchesPage() {
           <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Ghi nhận lô sơ chế</h2>
-                <p className="text-gray-600">Theo dõi và quản lý các lô sơ chế cà phê của bạn</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('processing.pages.farmerBatches.title')}</h2>
+                <p className="text-gray-600">{t('processing.pages.farmerBatches.subtitle')}</p>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -247,7 +249,7 @@ export default function ProcessingBatchesPage() {
                   className="bg-orange-600 hover:bg-orange-700 text-white"
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
-                  Tạo lô mới
+                  {t('processing.batch.create')}
                 </Button>
               </div>
             </div>
@@ -261,7 +263,7 @@ export default function ProcessingBatchesPage() {
                   <Package className="w-6 h-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Tổng lô</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.totalBatches')}</p>
                   <p className="text-2xl font-bold text-gray-900">{totalBatches}</p>
                 </div>
               </div>
@@ -273,7 +275,7 @@ export default function ProcessingBatchesPage() {
                   <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.active')}</p>
                   <p className="text-2xl font-bold text-gray-900">{batches.filter(b => b.status === ProcessingStatus.InProgress).length}</p>
                 </div>
               </div>
@@ -285,7 +287,7 @@ export default function ProcessingBatchesPage() {
                   <MapPin className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Tổng sản lượng</p>
+                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.totalOutput')}</p>
                   <p className="text-2xl font-bold text-gray-900">{batches.reduce((sum, batch) => sum + (batch.totalOutputQuantity || 0), 0).toFixed(1)} kg</p>
                 </div>
               </div>
@@ -299,10 +301,10 @@ export default function ProcessingBatchesPage() {
               <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
                 {/* Search */}
                 <div>
-                  <h2 className="text-sm font-medium text-gray-700 mb-3">Tìm kiếm lô sơ chế</h2>
+                  <h2 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.searchTitle')}</h2>
                   <div className="relative">
                     <Input
-                      placeholder="Nhập mã lô..."
+                      placeholder={t('processing.pages.farmerBatches.searchPlaceholder')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pr-10"
@@ -313,7 +315,7 @@ export default function ProcessingBatchesPage() {
 
                 {/* Status Filter */}
                 <div>
-                  <h2 className="text-sm font-medium text-gray-700 mb-3">Lọc theo trạng thái</h2>
+                  <h2 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.filterTitle')}</h2>
                   <div className="space-y-2">
                     <button
                       onClick={() => setFilterStatus("all")}
@@ -325,7 +327,7 @@ export default function ProcessingBatchesPage() {
                       )}
                     >
                       <Package className="h-4 w-4" />
-                      Tất cả trạng thái
+                      {t('processing.pages.farmerBatches.allStatuses')}
                       <Badge variant="secondary" className="ml-auto text-xs">
                         {totalBatches}
                       </Badge>
@@ -364,12 +366,12 @@ export default function ProcessingBatchesPage() {
                   <div className="text-center py-12">
                     <Package className="w-16 h-16 text-orange-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {searchTerm || filterStatus !== "all" ? "Không tìm thấy lô sơ chế nào" : "Không tìm thấy lô sơ chế nào"}
+                      {t('common.noData')}
                     </h3>
                     <p className="text-gray-500">
                       {searchTerm || filterStatus !== "all" 
-                        ? "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
-                        : "Bắt đầu tạo lô sơ chế đầu tiên của bạn"
+                        ? t('common.noData')
+                        : t('common.noData')
                       }
                     </p>
                   </div>
@@ -377,12 +379,12 @@ export default function ProcessingBatchesPage() {
                   <table className="w-full text-sm table-auto">
                     <thead className="bg-gray-100 text-gray-700 font-medium">
                       <tr>
-                        <th className="px-4 py-3 text-left">Mã lô</th>
-                        <th className="px-4 py-3 text-left">Mùa vụ</th>
-                        <th className="px-4 py-3 text-left">Phương pháp</th>
-                        <th className="px-4 py-3 text-left">Trạng thái</th>
-                        <th className="px-4 py-3 text-left">Ngày tạo</th>
-                        <th className="px-4 py-3 text-left">Hành động</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.batchCode')}</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.cropSeason')}</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.method')}</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.status')}</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.creationDate')}</th>
+                        <th className="px-4 py-3 text-left">{t('processing.pages.farmerBatches.table.action')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -404,7 +406,7 @@ export default function ProcessingBatchesPage() {
                                 onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
                                 className="text-gray-700 hover:text-orange-600 transition-colors cursor-pointer text-left"
                               >
-                                {batch.cropSeasonName || `ID: ${batch.cropSeasonId}`}
+                                {batch.cropSeasonName || t('processing.pages.farmerBatches.table.fallback.cropSeason', { id: batch.cropSeasonId })}
                               </button>
                             </td>
                             <td className="px-4 py-3">
@@ -412,7 +414,7 @@ export default function ProcessingBatchesPage() {
                                 onClick={() => router.push(`/dashboard/farmer/processing/batches/${batch.batchId}`)}
                                 className="text-gray-700 hover:text-orange-600 transition-colors cursor-pointer text-left"
                               >
-                                {batch.methodName || `ID: ${batch.methodId}`}
+                                {batch.methodName || t('processing.pages.farmerBatches.table.fallback.method', { id: batch.methodId })}
                               </button>
                             </td>
                             <td className="px-4 py-3">
@@ -451,7 +453,11 @@ export default function ProcessingBatchesPage() {
                 {totalPages > 1 && (
                   <div className="mt-6 flex items-center justify-between">
                     <div className="text-sm text-gray-700">
-                      Hiển thị {startIndex + 1} đến {Math.min(endIndex, filteredBatches.length)} trong tổng số {filteredBatches.length} lô
+                      {t('processing.pages.farmerBatches.pagination.showing', {
+                        start: startIndex + 1,
+                        end: Math.min(endIndex, filteredBatches.length),
+                        total: filteredBatches.length
+                      })}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -460,10 +466,13 @@ export default function ProcessingBatchesPage() {
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
                       >
-                        Trước
+                        {t('processing.pages.farmerBatches.pagination.previous')}
                       </Button>
                       <span className="text-sm text-gray-700">
-                        Trang {currentPage} / {totalPages}
+                        {t('processing.pages.farmerBatches.pagination.pageInfo', {
+                          current: currentPage,
+                          total: totalPages
+                        })}
                       </span>
                       <Button
                         variant="outline"
@@ -471,7 +480,7 @@ export default function ProcessingBatchesPage() {
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
                       >
-                        Sau
+                        {t('processing.pages.farmerBatches.pagination.next')}
                       </Button>
                     </div>
                   </div>

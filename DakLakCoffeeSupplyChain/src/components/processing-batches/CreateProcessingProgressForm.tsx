@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getAllProcessingBatches, ProcessingBatch } from "@/lib/api/processingBatches";
@@ -43,6 +44,7 @@ export default function CreateProcessingProgressForm({
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchBatches = async () => {
@@ -84,13 +86,13 @@ export default function CreateProcessingProgressForm({
             }
           }
         }
-      } catch (error) {
-        console.error("❌ Error fetching batches:", error);
-        setError("Không thể tải danh sách lô chế biến");
-      }
-    };
-    fetchBatches();
-  }, [defaultBatchId, defaultBatchData]);
+              } catch (error) {
+          console.error("❌ Error fetching batches:", error);
+          setError(t("common.loadingBatches"));
+        }
+      };
+      fetchBatches();
+    }, [defaultBatchId, defaultBatchData, t]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -120,11 +122,11 @@ export default function CreateProcessingProgressForm({
       setLoadingStages(true);
       const stagesData = await getProcessingStagesByMethodId(methodId);
       setStages(stagesData || []);
-    } catch (error) {
-      console.error("❌ Error fetching stages:", error);
-      setError("Không thể tải thông tin bước chế biến");
-      setStages([]);
-    } finally {
+          } catch (error) {
+        console.error("❌ Error fetching stages:", error);
+        setError(t("common.loadingStages"));
+        setStages([]);
+      } finally {
       setLoadingStages(false);
     }
   };
@@ -174,14 +176,14 @@ export default function CreateProcessingProgressForm({
     
     if (!form.batchId) {
       console.log("❌ Validation failed: No batchId");
-      setError("Vui lòng chọn lô chế biến");
+      setError(t("common.noBatchSelected"));
       setLoading(false);
       return;
     }
 
     if (!form.progressDate) {
       console.log("❌ Validation failed: No progressDate");
-      setError("Vui lòng chọn ngày thực hiện");
+      setError(t("common.noProgressDate"));
       setLoading(false);
       return;
     }
@@ -191,40 +193,40 @@ export default function CreateProcessingProgressForm({
     const today = new Date();
     today.setHours(23, 59, 59, 999); // Set to end of today
     if (selectedDate > today) {
-      setError("Ngày thực hiện không được trong tương lai");
+      setError(t("common.futureDate"));
       setLoading(false);
       return;
     }
 
     if (form.outputQuantity <= 0) {
       console.log("❌ Validation failed: outputQuantity <= 0");
-      setError("Khối lượng đầu ra phải lớn hơn 0");
+      setError(t("common.outputQuantity"));
       setLoading(false);
       return;
     }
 
     // Validate khối lượng không được quá lớn (ví dụ: 100,000 kg)
     if (form.outputQuantity > 100000) {
-      setError("Khối lượng đầu ra không được vượt quá 100,000");
+      setError(t("common.outputQuantityLimit"));
       setLoading(false);
       return;
     }
 
     if (!form.outputUnit.trim()) {
-      setError("Vui lòng nhập đơn vị");
+      setError(t("common.outputUnit"));
       setLoading(false);
       return;
     }
 
     // File validation
     if (form.photoFiles.some(file => file.size > 10 * 1024 * 1024)) { // 10MB
-      setError("Ảnh không được lớn hơn 10MB");
+      setError(t("common.photoSizeLimit"));
       setLoading(false);
       return;
     }
 
     if (form.videoFiles.some(file => file.size > 100 * 1024 * 1024)) { // 100MB
-      setError("Video không được lớn hơn 100MB");
+      setError(t("common.videoSizeLimit"));
       setLoading(false);
       return;
     }
@@ -237,7 +239,7 @@ export default function CreateProcessingProgressForm({
 
     // Giới hạn tổng kích thước (50MB)
     if (totalSizeMB > 50) {
-      setError(`Tổng kích thước files (${totalSizeMB.toFixed(2)}MB) vượt quá giới hạn 50MB`);
+      setError(t("common.totalSizeLimit", { totalSizeMB: totalSizeMB.toFixed(2) }));
       setLoading(false);
       return;
     }
@@ -245,7 +247,7 @@ export default function CreateProcessingProgressForm({
     // Giới hạn số lượng files (10 files)
     const totalFiles = form.photoFiles.length + form.videoFiles.length;
     if (totalFiles > 10) {
-      setError(`Số lượng files (${totalFiles}) vượt quá giới hạn 10 files`);
+      setError(t("common.totalFilesLimit", { totalFiles }));
       setLoading(false);
       return;
     }
@@ -311,7 +313,7 @@ export default function CreateProcessingProgressForm({
       
       await createProcessingBatchProgressWithMedia(form.batchId, apiPayload);
 
-      setSuccess("Tạo tiến trình thành công!");
+      setSuccess(t("common.createProgressSuccess"));
       onSuccess?.();
       setTimeout(() => router.push("/dashboard/farmer/processing/progresses"), 1200);
     } catch (err: unknown) {
@@ -324,9 +326,9 @@ export default function CreateProcessingProgressForm({
       console.error("❌ Error stack:", error?.stack);
 
       if (error.message === "Network Error" || (error.message && error.message.includes("Không nhận được phản hồi"))) {
-        setError("Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối hoặc thử lại sau.");
+        setError(t("common.networkError"));
       } else {
-        const errorMessage = error?.response?.data?.message || error?.message || "Tạo tiến trình thất bại!";
+        const errorMessage = error?.response?.data?.message || error?.message || t("common.createProgressFailed");
         setError(errorMessage);
       }
     }
@@ -338,33 +340,11 @@ export default function CreateProcessingProgressForm({
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Tạo tiến trình đầu tiên</h2>
-        <p className="text-sm text-gray-600">Bắt đầu quy trình chế biến cà phê</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("createProgress.headerTitle")}</h2>
+        <p className="text-sm text-gray-600">{t("createProgress.headerDescription")}</p>
       </div>
 
-                                                                                                               <form onSubmit={(e) => {
-           console.log("🔍 Form onSubmit triggered!");
-           console.log("🔍 Event:", e);
-           console.log("🔍 Form element:", e.currentTarget);
-           console.log("🔍 Form state at submit:", form);
-           console.log("🔍 Wastes at submit:", form.wastes);
-           console.log("🔍 Form validation check:");
-           console.log("  - batchId:", form.batchId);
-           console.log("  - progressDate:", form.progressDate);
-           console.log("  - outputQuantity:", form.outputQuantity);
-           console.log("  - outputUnit:", form.outputUnit);
-           console.log("  - Wastes count:", form.wastes.length);
-           form.wastes.forEach((waste, index) => {
-             console.log(`  - Waste ${index}:`, {
-               wasteType: waste.wasteType,
-               quantity: waste.quantity,
-               unit: waste.unit,
-               note: waste.note,
-               recordedAt: waste.recordedAt
-             });
-           });
-           handleSubmit(e);
-         }} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Batch Selection - Chỉ hiển thị khi không có defaultBatchId */}
         {!defaultBatchId && (
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
@@ -373,8 +353,8 @@ export default function CreateProcessingProgressForm({
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Chọn lô chế biến</h3>
-                <p className="text-sm text-gray-600">Lựa chọn lô cà phê để bắt đầu chế biến</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t("createProgress.batchSelectionTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("createProgress.batchSelectionDescription")}</p>
               </div>
             </div>
 
@@ -385,9 +365,9 @@ export default function CreateProcessingProgressForm({
                     <AlertCircle className="w-5 h-5 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-yellow-800">Không có lô chế biến khả dụng</p>
+                    <p className="text-sm font-medium text-yellow-800">{t("createProgress.noAvailableBatches")}</p>
                     <p className="text-xs text-yellow-700 mt-1">
-                      Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá
+                      {t("createProgress.showBatchesStatus")}
                     </p>
                   </div>
                 </div>
@@ -399,10 +379,10 @@ export default function CreateProcessingProgressForm({
                   value={form.batchId}
                   onChange={handleChange}
                   required
-                  aria-label="Chọn lô chế biến"
+                  aria-label={t("createProgress.selectBatchLabel")}
                   className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white hover:border-blue-300 transition-all duration-200 shadow-sm"
                 >
-                  <option value="">-- Chọn lô chế biến --</option>
+                  <option value="">{t("createProgress.selectBatchPlaceholder")}</option>
                   {batches.map((b) => (
                     <option key={b.batchId} value={b.batchId}>
                       {b.batchCode} - {b.status}
@@ -422,8 +402,8 @@ export default function CreateProcessingProgressForm({
                 <PlayCircle className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Thông tin bước chế biến</h3>
-                <p className="text-sm text-gray-600">Bước đầu tiên trong quy trình</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t("createProgress.stageInformationTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("createProgress.stageInformationDescription")}</p>
               </div>
             </div>
 
@@ -431,7 +411,7 @@ export default function CreateProcessingProgressForm({
               <div className="bg-white rounded-lg p-4 border border-green-200">
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-                  <span className="ml-2 text-gray-600">Đang tải thông tin bước chế biến...</span>
+                  <span className="ml-2 text-gray-600">{t("createProgress.loadingStages")}</span>
                 </div>
               </div>
             ) : stages.length > 0 ? (
@@ -439,15 +419,15 @@ export default function CreateProcessingProgressForm({
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium text-gray-900 text-lg">
-                      Bước {stages[0]?.orderIndex || 1}: {stages[0]?.stageName || "Bước đầu tiên"}
+                      {t("createProgress.stageOrder", { order: stages[0]?.orderIndex || 1 })}: {stages[0]?.stageName || t("createProgress.firstStep")}
                     </h4>
                     <p className="text-sm text-gray-600 mt-1">
-                      của phương pháp <span className="font-medium text-gray-800">{selectedBatch.methodName || "Chế biến"}</span>
+                      {t("createProgress.methodInfo", { methodName: selectedBatch.methodName || t("createProgress.processing") })}
                     </p>
                   </div>
                   <div className="text-right">
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                      Bước {stages[0]?.orderIndex || 1}
+                      {t("createProgress.stepOrder", { order: stages[0]?.orderIndex || 1 })}
                     </span>
                   </div>
                 </div>
@@ -455,7 +435,7 @@ export default function CreateProcessingProgressForm({
             ) : (
               <div className="bg-white rounded-lg p-4 border border-green-200">
                 <div className="text-center py-4">
-                  <p className="text-gray-600">Không tìm thấy thông tin bước chế biến</p>
+                  <p className="text-gray-600">{t("createProgress.noStageInfo")}</p>
                 </div>
               </div>
             )}
@@ -469,8 +449,8 @@ export default function CreateProcessingProgressForm({
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Thông tin tiến trình</h3>
-              <p className="text-sm text-gray-600">Ngày thực hiện và khối lượng đầu ra</p>
+              <h3 className="text-lg font-semibold text-gray-900">{t("createProgress.progressInformationTitle")}</h3>
+              <p className="text-sm text-gray-600">{t("createProgress.progressInformationDescription")}</p>
             </div>
           </div>
 
@@ -478,7 +458,7 @@ export default function CreateProcessingProgressForm({
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                 <Calendar className="w-4 h-4 text-green-600" />
-                Ngày thực hiện
+                {t("createProgress.progressDateLabel")}
               </label>
               <Input
                 type="date"
@@ -493,7 +473,7 @@ export default function CreateProcessingProgressForm({
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                 <Scale className="w-4 h-4 text-orange-600" />
-                Khối lượng đầu ra
+                {t("createProgress.outputQuantityLabel")}
               </label>
               <div className="relative">
                 <Input
@@ -523,8 +503,8 @@ export default function CreateProcessingProgressForm({
                 <Settings className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Thông số kỹ thuật</h3>
-                <p className="text-sm text-gray-600">Các thông số đo lường trong quá trình chế biến</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t("createProgress.technicalParametersTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("createProgress.technicalParametersDescription")}</p>
               </div>
             </div>
             <Button
@@ -535,7 +515,7 @@ export default function CreateProcessingProgressForm({
               className="flex items-center gap-1 text-xs bg-white hover:bg-amber-50 border-amber-300 text-amber-700"
             >
               <Plus className="w-3 h-3" />
-              Thêm thông số
+              {t("createProgress.addParameter")}
             </Button>
           </div>
 
@@ -544,35 +524,35 @@ export default function CreateProcessingProgressForm({
               <div key={index} className="bg-white rounded-lg p-4 border border-amber-200 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Tên thông số</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t("createProgress.parameterNameLabel")}</label>
                     <Input
                       type="text"
                       value={param.name}
                       onChange={(e) => handleParameterChange(index, 'name', e.target.value)}
-                      placeholder="VD: Nhiệt độ, Độ ẩm..."
+                      placeholder={t("createProgress.parameterNamePlaceholder")}
                       className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Giá trị</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t("createProgress.parameterValueLabel")}</label>
                     <Input
                       type="text"
                       value={param.value}
                       onChange={(e) => handleParameterChange(index, 'value', e.target.value)}
-                      placeholder="VD: 25, 80%..."
+                      placeholder={t("createProgress.parameterValuePlaceholder")}
                       className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
                     />
                   </div>
 
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Đơn vị</label>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">{t("createProgress.parameterUnitLabel")}</label>
                       <Input
                         type="text"
                         value={param.unit}
                         onChange={(e) => handleParameterChange(index, 'unit', e.target.value)}
-                        placeholder="VD: °C, %, kg..."
+                        placeholder={t("createProgress.parameterUnitPlaceholder")}
                         className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
                       />
                     </div>
@@ -598,27 +578,12 @@ export default function CreateProcessingProgressForm({
 
         {/* Waste Input Section - Full width */}
         <div className="mb-6">
-                                                                                       <WasteInput
-               wastes={form.wastes}
-               onWastesChange={(wastes) => {
-                 console.log("🔍 WasteInput onChange triggered!");
-                 console.log("🔍 New wastes:", wastes);
-                 console.log("🔍 Previous wastes:", form.wastes);
-                 console.log("🔍 Waste validation check:");
-                 wastes.forEach((waste, index) => {
-                   console.log(`  - Waste ${index}:`, {
-                     wasteType: waste.wasteType,
-                     quantity: waste.quantity,
-                     unit: waste.unit,
-                     note: waste.note,
-                     recordedAt: waste.recordedAt
-                   });
-                 });
-                 console.log("🔍 About to update form state...");
-                 setForm(prev => ({ ...prev, wastes }));
-                 console.log("🔍 Form state updated with new wastes");
-               }}
-             />
+          <WasteInput
+            wastes={form.wastes}
+            onWastesChange={(wastes) => {
+              setForm(prev => ({ ...prev, wastes }));
+            }}
+          />
         </div>
 
         {/* Media Upload Section */}
@@ -660,35 +625,16 @@ export default function CreateProcessingProgressForm({
             }}
             className="px-8 py-3 hover:bg-gray-50 border-gray-300 text-gray-700 font-medium transition-all duration-200"
           >
-            Huỷ
+            {t("createProgress.cancelButton")}
           </Button>
-                                                                                                                                                                               <Button
-                type="submit"
-                disabled={loading}
-                onClick={() => {
-                  console.log("🔍 Submit button clicked!");
-                  console.log("🔍 Current form state:", form);
-                  console.log("🔍 Current wastes:", form.wastes);
-                  console.log("🔍 Form validation check:");
-                  console.log("  - batchId:", form.batchId);
-                  console.log("  - progressDate:", form.progressDate);
-                  console.log("  - outputQuantity:", form.outputQuantity);
-                  console.log("  - outputUnit:", form.outputUnit);
-                  console.log("  - Wastes count:", form.wastes.length);
-                  form.wastes.forEach((waste, index) => {
-                    console.log(`  - Waste ${index}:`, {
-                      wasteType: waste.wasteType,
-                      quantity: waste.quantity,
-                      unit: waste.unit,
-                      note: waste.note,
-                      recordedAt: waste.recordedAt
-                    });
-                  });
-                }}
-                className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                {loading ? "Đang lưu..." : "Tạo tiến trình"}
-              </Button>
+          
+          <Button
+            type="submit"
+            disabled={loading}
+            className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            {loading ? t("createProgress.saving") : t("createProgress.createProgress")}
+          </Button>
         </div>
       </form>
     </div>

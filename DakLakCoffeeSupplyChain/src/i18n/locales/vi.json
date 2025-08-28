@@ -1,0 +1,2106 @@
+{
+  "processing": {
+    "title": "Quản lý xử lý cà phê",
+    "batch": {
+      "title": "Lô xử lý",
+      "create": "Tạo lô mới",
+      "createDescription": "Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
+      "createError": "Tạo lô sơ chế thất bại!",
+      "createSuccess": "Tạo lô sơ chế thành công!",
+      "edit": "Chỉnh sửa lô",
+      "delete": "Xóa lô",
+      "status": "Trạng thái",
+      "method": "Phương pháp xử lý",
+      "inputQuantity": "Khối lượng đầu vào",
+      "outputQuantity": "Khối lượng đầu ra",
+      "progress": "Tiến trình",
+      "stages": "Các bước xử lý",
+      "cropSeason": "Vụ mùa",
+      "coffeeType": "Loại cà phê",
+      "batchCode": "Mã lô sơ chế",
+      "cancel": "Huỷ",
+      "creating": "Đang tạo...",
+      "createBatch": "Tạo lô sơ chế",
+      "selectCropSeason": "-- Chọn vụ mùa --",
+      "selectCoffeeType": "-- Chọn loại cà phê --",
+      "selectCropSeasonFirst": "-- Vui lòng chọn vụ mùa trước --",
+      "selectCropSeasonToViewCoffeeTypes": "Chọn vụ mùa để xem các loại cà phê có sẵn",
+      "loadingCoffeeTypes": "Đang tải danh sách loại cà phê...",
+      "planInformation": "Thông tin từ kế hoạch",
+      "processingMethod": "Phương pháp sơ chế",
+      "methodAppliedAutomatically": "Phương pháp này sẽ được áp dụng tự động khi tạo lô sơ chế",
+      "note": "Lưu ý",
+      "onlyCoffeeTypesWithPlanRequirements": "Chỉ những loại cà phê có yêu cầu sơ chế từ kế hoạch mới được hiển thị ở đây.",
+      "batchCodePlaceholder": "VD: BATCH-2024-001",
+      "batchCodeDescription": "Nhập mã lô để dễ dàng quản lý và theo dõi",
+      "validation": {
+        "selectCropSeason": "Vui lòng chọn vụ mùa",
+        "selectCoffeeType": "Vui lòng chọn loại cà phê",
+        "noPlanProcessingMethod": "Loại cà phê này không có yêu cầu sơ chế từ kế hoạch",
+        "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
+      }
+    },
+    "createProgress": {
+      "headerTitle": "Tạo tiến trình đầu tiên",
+      "headerDescription": "Bắt đầu quy trình chế biến cà phê",
+      "batchSelectionTitle": "Chọn lô chế biến",
+      "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
+      "noAvailableBatches": "Không có lô chế biến khả dụng",
+      "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
+      "selectBatchLabel": "Chọn lô chế biến",
+      "selectBatchPlaceholder": "-- Chọn lô chế biến --",
+      "stageInformationTitle": "Thông tin bước chế biến",
+      "stageInformationDescription": "Bước đầu tiên trong quy trình",
+      "loadingStages": "Đang tải thông tin bước chế biến...",
+      "firstStep": "Bước đầu tiên",
+      "processing": "Chế biến",
+      "noStageInfo": "Không tìm thấy thông tin bước chế biến",
+      "progressInformationTitle": "Thông tin tiến trình",
+      "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
+      "progressDateLabel": "Ngày thực hiện",
+      "outputQuantityLabel": "Khối lượng đầu ra",
+      "technicalParametersTitle": "Thông số kỹ thuật",
+      "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
+      "addParameter": "Thêm thông số",
+      "parameterNameLabel": "Tên thông số",
+      "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
+      "parameterValueLabel": "Giá trị",
+      "parameterValuePlaceholder": "VD: 25, 80%...",
+      "parameterUnitLabel": "Đơn vị",
+      "parameterUnitPlaceholder": "VD: °C, %, kg...",
+      "cancelButton": "Huỷ",
+      "saving": "Đang lưu...",
+      "createProgress": "Tạo tiến trình",
+      "stageOrder": "Bước {{order}}",
+      "methodInfo": "của phương pháp {{methodName}}",
+      "stepOrder": "Bước {{order}}"
+    },
+    "progress": {
+      "title": "Tiến trình xử lý",
+      "create": "Tạo tiến trình mới",
+      "advance": "Cập nhật tiến trình",
+      "update": "Cập nhật tiến trình",
+      "delete": "Xóa tiến trình",
+      "stage": "Bước xử lý",
+      "stageDescription": "Mô tả bước",
+      "progressDate": "Ngày tiến trình",
+      "outputQuantity": "Khối lượng đầu ra *",
+      "outputUnit": "Đơn vị",
+      "notes": "Ghi chú",
+      "submit": "Lưu tiến trình",
+      "cancel": "Huỷ",
+      "loading": "Đang xử lý...",
+      "success": "Cập nhật tiến trình thành công! 🎉",
+      "error": {
+        "default": "Không thể cập nhật tiến trình."
+      },
+      "placeholder": {
+        "outputQuantity": "Nhập khối lượng",
+        "stageDescription": "Mô tả chi tiết về bước xử lý...",
+        "notes": "Ghi chú bổ sung..."
+      }
+    },
+    "waste": {
+      "title": "Phế phẩm",
+      "description": "Ghi nhận các loại waste phát sinh trong quá trình chế biến",
+      "add": "Thêm phế phẩm",
+      "edit": "Chỉnh sửa phế phẩm",
+      "delete": "Xóa phế phẩm",
+      "wasteType": "Loại phế phẩm *",
+      "quantity": "Khối lượng *",
+      "unit": "Đơn vị *",
+      "note": "Ghi chú",
+      "recordedAt": "Thời gian ghi nhận",
+      "itemNumber": "Waste #{{number}}",
+      "selectUnit": "Chọn đơn vị...",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Tấn",
+        "quintal": "Tạ",
+        "yen": "Yến",
+        "lang": "Lạng",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      },
+      "placeholder": {
+        "wasteType": "Ví dụ: Bax, Vỏ trấu, Bã cà phê...",
+        "quantity": "0.00",
+        "note": "Ghi chú về waste (tùy chọn)..."
+      },
+      "emptyState": {
+        "noWaste": "Chưa có waste nào được thêm",
+        "addWasteHint": "Nhấn \"Thêm Waste\" để bắt đầu"
+      },
+      "validation": {
+        "wasteTypeRequired": "Vui lòng nhập loại waste",
+        "quantityRange": "Khối lượng phải từ 0.01 đến 100,000",
+        "unitRequired": "Vui lòng chọn đơn vị",
+        "summary": "Vui lòng kiểm tra và sửa các lỗi bên trên"
+      },
+      "summary": {
+        "title": "Waste đã tạo",
+        "description": "Danh sách các loại waste đã được ghi nhận",
+        "count": "waste",
+        "code": "Code",
+        "disposed": "Đã xử lý",
+        "recordedAt": "Ghi nhận",
+        "quantity": "Khối lượng",
+        "note": "Ghi chú",
+        "disposedAt": "Xử lý lúc",
+        "totalQuantity": "Tổng khối lượng waste",
+        "totalTypes": "Số loại waste"
+      }
+    },
+    "media": {
+      "title": "Tài liệu đa phương tiện",
+      "photos": "Ảnh",
+      "videos": "Video",
+      "upload": "Tải lên",
+      "remove": "Xóa",
+      "maxFiles": "Tối đa 10 files",
+      "maxSize": "50MB",
+      "autoCompress": "Ảnh tự động nén",
+      "dragDrop": "Kéo thả file vào đây hoặc click để chọn",
+      "multipleSelection": "có thể chọn nhiều",
+      "selectPhoto": "Chọn ảnh",
+      "selectVideo": "Chọn video",
+      "selectedPhotos": "Đã chọn {{count}} ảnh",
+      "selectedVideos": "Đã chọn {{count}} video",
+      "files": "files",
+      "limits": {
+        "title": "Giới hạn",
+        "maxFiles": "Tối đa",
+        "maxSize": "tổng kích thước",
+        "autoCompress": "Ảnh sẽ được nén tự động để giảm kích thước."
+      }
+    },
+    "parameters": {
+      "title": "Thông số kỹ thuật",
+      "add": "Thêm thông số",
+      "edit": "Chỉnh sửa thông số",
+      "delete": "Xóa thông số",
+      "parameterName": "Tên thông số",
+      "parameterValue": "Giá trị",
+      "unit": "Đơn vị",
+      "recordedAt": "Thời gian ghi nhận"
+    },
+    "stages": {
+      "title": "Các bước xử lý",
+      "orderIndex": "Thứ tự",
+      "stageName": "Tên bước",
+      "description": "Mô tả",
+      "isDeleted": "Đã xóa",
+      "selectStage": "Chọn bước xử lý"
+    },
+    "pages": {
+      "managerBatches": {
+        "title": "Quản lý lô sơ chế (Manager)",
+        "subtitle": "Theo dõi và quản lý tất cả các lô sơ chế cà phê trong hệ thống",
+        "totalBatches": "Tổng lô",
+        "active": "Đang hoạt động",
+        "totalOutput": "Tổng sản lượng",
+        "searchTitle": "Tìm kiếm lô sơ chế",
+        "searchPlaceholder": "Nhập mã lô, mùa vụ hoặc phương pháp...",
+        "filterTitle": "Lọc theo trạng thái",
+        "allStatuses": "Tất cả trạng thái",
+        "processing": "Đang xử lý",
+        "completed": "Hoàn thành",
+        "table": {
+          "batchCode": "Mã lô",
+          "cropSeason": "Mùa vụ",
+          "method": "Phương pháp",
+          "status": "Trạng thái",
+          "creationDate": "Ngày tạo",
+          "action": "Hành động"
+        },
+        "status": {
+          "notStarted": "Chưa bắt đầu",
+          "inProgress": "Đang xử lý",
+          "completed": "Hoàn thành",
+          "awaitingEvaluation": "Chờ đánh giá",
+          "cancelled": "Đã hủy",
+          "unknown": "Không xác định"
+        },
+        "loading": {
+          "title": "Đang tải dữ liệu...",
+          "description": "Đang tải danh sách lô sơ chế"
+        },
+        "error": {
+          "title": "Không thể tải dữ liệu",
+          "retry": "Thử lại"
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "to": "đến",
+          "of": "trong tổng số",
+          "batches": "lô",
+          "page": "Trang",
+          "previous": "Trước",
+          "next": "Sau"
+        },
+        "farmer": {
+          "unknown": "Chưa xác định"
+        },
+        "batchDetail": {
+          "title": "Chi tiết lô sơ chế (Manager)",
+          "subtitle": "Thông tin chi tiết về lô sơ chế cà phê",
+          "backToList": "Quay lại",
+          "viewProgress": "Xem tiến độ",
+          "report": "Báo cáo",
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin lô sơ chế"
+          },
+          "notFound": {
+            "title": "Không tìm thấy lô sơ chế",
+            "description": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+            "backToList": "Quay lại danh sách"
+          },
+          "stats": {
+            "batchCode": "Mã lô",
+            "stage": "Giai đoạn",
+            "output": "Sản lượng",
+            "efficiency": "Hiệu suất"
+          },
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô",
+            "systemCode": "Mã hệ thống",
+            "cropSeason": "Mùa vụ",
+            "farmer": "Nông dân",
+            "method": "Phương pháp",
+            "status": "Trạng thái",
+            "inputQuantity": "Khối lượng vào",
+            "outputQuantity": "Khối lượng ra",
+            "createdAt": "Ngày tạo"
+          },
+          "progress": {
+            "title": "Tiến độ chế biến",
+            "step": "Bước",
+            "retry": "Làm lại",
+            "retryLabel": "(Làm lại)",
+            "executionDate": "Ngày thực hiện",
+            "outputQuantity": "Khối lượng đầu ra",
+            "noProgress": {
+              "title": "Chưa có tiến độ nào",
+              "description": "Lô sơ chế chưa được bắt đầu xử lý"
+            }
+          },
+          "quickActions": {
+            "title": "Thao tác nhanh (Manager)",
+            "viewProgressDetail": "Xem tiến độ chi tiết",
+            "viewExpertEvaluation": "Xem đánh giá của chuyên gia",
+            "editInfo": "Chỉnh sửa thông tin",
+            "delete": "Xóa"
+          },
+          "summary": {
+            "title": "Tóm tắt lô",
+            "currentStatus": "Trạng thái hiện tại:",
+            "stagesCount": "Số giai đoạn:",
+            "efficiency": "Hiệu suất:",
+            "createdAt": "Ngày tạo:"
+          },
+          "contact": {
+            "title": "Thông tin liên hệ",
+            "farmer": "Nông dân",
+            "cropSeason": "Mùa vụ"
+          },
+          "deleteConfirm": "Bạn có chắc chắn muốn xóa lô sơ chế này?"
+        },
+        "edit": {
+          "title": "Chỉnh sửa lô sơ chế",
+          "subtitle": "Cập nhật thông tin lô sơ chế cà phê",
+          "backToDetail": "Quay lại",
+          "batchId": "ID",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô sơ chế",
+            "batchCodePlaceholder": "Nhập mã lô sơ chế",
+            "cropSeason": "Mùa vụ",
+            "notes": "Ghi chú",
+            "notesPlaceholder": "Nhập ghi chú về lô sơ chế..."
+          },
+          "currentInfo": {
+            "title": "Thông tin hiện tại",
+            "createdAt": "Ngày tạo",
+            "updatedAt": "Ngày cập nhật",
+            "totalOutput": "Tổng sản lượng",
+            "currentStatus": "Trạng thái hiện tại"
+          },
+          "actions": {
+            "cancel": "Hủy",
+            "saving": "Đang lưu...",
+            "saveChanges": "Lưu thay đổi"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin lô sơ chế"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Lô sơ chế không tồn tại",
+            "backToList": "Quay lại danh sách"
+          }
+        },
+        "progresses": {
+          "title": "Quản lý tiến trình sơ chế",
+          "description": "Theo dõi và quản lý tiến trình xử lý cà phê",
+          "table": {
+            "batchCode": "Mã lô",
+            "currentStage": "Giai đoạn hiện tại",
+            "totalProgresses": "Số bước đã thực hiện",
+            "batchStatus": "Trạng thái lô",
+            "lastUpdated": "Cập nhật cuối"
+          },
+          "status": {
+            "notStarted": "Chờ xử lý",
+            "inProgress": "Đang xử lý",
+            "completed": "Hoàn thành",
+            "awaitingEvaluation": "Chờ đánh giá",
+            "cancelled": "Đã hủy",
+            "unknown": "Không xác định"
+          },
+          "stage": {
+            "notStarted": "Chưa bắt đầu",
+            "completed": "Hoàn thành",
+            "inProgress": "Đang xử lý",
+            "waiting": "Chờ"
+          },
+          "time": {
+            "today": "Hôm nay",
+            "yesterday": "Hôm qua",
+            "daysAgo": "ngày trước"
+          },
+          "actions": {
+            "viewDetail": "Xem chi tiết"
+          },
+          "search": {
+            "placeholder": "Tìm kiếm mã lô...",
+            "results": "Tìm thấy {{count}} kết quả"
+          },
+          "summary": {
+            "title": "Danh sách tiến trình theo lô",
+            "description": "Hiển thị {{batchCount}} lô • {{progressCount}} tiến trình tổng cộng",
+            "pageInfo": "Trang {{current}} / {{total}}",
+            "allBatches": "Tất cả lô"
+          },
+          "empty": {
+            "title": "Không tìm thấy tiến trình nào",
+            "description": "Thử thay đổi từ khóa tìm kiếm."
+          }
+        },
+        "stages": {
+          "title": "Quản lý giai đoạn sơ chế",
+          "description": "Quản lý các giai đoạn trong quy trình sơ chế cà phê",
+          "createButtonText": "Thêm giai đoạn",
+          "stats": {
+            "totalStages": "Tổng giai đoạn",
+            "activeStages": "Đang hoạt động",
+            "inactiveStages": "Không hoạt động",
+            "methods": "Phương pháp"
+          },
+          "table": {
+            "stageId": "ID",
+            "stageName": "Tên giai đoạn",
+            "orderIndex": "Thứ tự",
+            "methodId": "Phương pháp",
+            "isRequired": "Bắt buộc",
+            "isDeleted": "Trạng thái"
+          },
+          "status": {
+            "required": "Bắt buộc",
+            "optional": "Tùy chọn",
+            "active": "Hoạt động",
+            "deleted": "Đã xóa"
+          },
+          "actions": {
+            "view": "Xem",
+            "edit": "Sửa",
+            "softDelete": "Xóa mềm"
+          },
+          "search": {
+            "placeholder": "Tìm kiếm tên giai đoạn, mã giai đoạn hoặc mô tả...",
+            "results": "Tìm thấy {{count}} kết quả"
+          },
+          "summary": {
+            "title": "Danh sách giai đoạn",
+            "description": "Hiển thị {{totalStages}} giai đoạn • {{activeStages}} đang hoạt động",
+            "pageInfo": "Trang {{current}} / {{total}}",
+            "allStages": "Tất cả giai đoạn"
+          },
+          "empty": {
+            "title": "Không tìm thấy giai đoạn nào",
+            "description": "Thử thay đổi từ khóa tìm kiếm hoặc thêm giai đoạn mới."
+          },
+          "deleteConfirm": "Bạn có chắc chắn muốn xóa mềm giai đoạn này? Giai đoạn sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn."
+        },
+        "methods": {
+          "title": "Quản lý phương pháp sơ chế",
+          "description": "Quản lý các phương pháp sơ chế cà phê trong hệ thống",
+          "stats": {
+            "totalMethods": "Tổng phương pháp",
+            "active": "Đang hoạt động",
+            "inactive": "Không hoạt động"
+          },
+          "table": {
+            "methodName": "Tên phương pháp",
+            "description": "Mô tả",
+            "status": "Trạng thái",
+            "createdAt": "Ngày tạo",
+            "actions": "Hành động"
+          },
+          "status": {
+            "active": "Hoạt động",
+            "inactive": "Không hoạt động"
+          },
+          "search": {
+            "placeholder": "Tìm kiếm tên phương pháp hoặc mô tả..."
+          },
+          "actions": {
+            "addNew": "Thêm mới"
+          },
+          "noData": "Không tìm thấy phương pháp nào"
+        },
+        "parameters": {
+          "title": "Quản lý tham số sơ chế",
+          "description": "Quản lý các tham số kỹ thuật trong quy trình sơ chế cà phê",
+          "deleteConfirm": "Bạn có chắc chắn muốn xóa mềm tham số này?",
+          "stats": {
+            "total": "Tổng tham số",
+            "active": "Đang hoạt động",
+            "required": "Bắt buộc",
+            "optional": "Tùy chọn"
+          },
+          "table": {
+            "title": "Danh sách tham số",
+            "parameterCode": "Mã tham số",
+            "parameterName": "Tên tham số",
+            "description": "Mô tả",
+            "noDescription": "Không có mô tả",
+            "unit": "Đơn vị",
+            "minValue": "Giá trị min",
+            "maxValue": "Giá trị max",
+            "targetValue": "Giá trị mục tiêu",
+            "required": "Bắt buộc",
+            "optional": "Tùy chọn",
+            "status": "Trạng thái",
+            "active": "Hoạt động",
+            "inactive": "Không hoạt động",
+            "summary": "Hiển thị {{total}} tham số • {{active}} đang hoạt động",
+            "pageInfo": "Trang {{current}} / {{total}}",
+            "allParameters": "Tất cả tham số",
+            "noData": "Không tìm thấy tham số nào",
+            "noDataDescription": "Thử thay đổi từ khóa tìm kiếm hoặc thêm tham số mới."
+          },
+          "search": {
+            "placeholder": "Tìm kiếm tên tham số, mã tham số hoặc mô tả...",
+            "results": "Tìm thấy {{count}} kết quả"
+          },
+          "actions": {
+            "addNew": "Thêm tham số mới",
+            "softDelete": "Xóa mềm"
+          }
+        },
+        "wastes": {
+          "title": "Quản lý chất thải sơ chế",
+          "description": "Theo dõi và quản lý chất thải từ quá trình sơ chế cà phê",
+          "deleteConfirm": "Bạn có chắc chắn muốn xóa mềm chất thải này? Chất thải sẽ được ẩn khỏi danh sách nhưng không bị xóa hoàn toàn.",
+          "stats": {
+            "totalWastes": "Tổng chất thải",
+            "totalQuantity": "Tổng khối lượng",
+            "recycled": "Tái chế",
+            "hazardous": "Chất thải độc hại"
+          },
+          "table": {
+            "title": "Danh sách chất thải",
+            "wasteCode": "Mã chất thải",
+            "batchCode": "Mã lô",
+            "wasteType": "Loại chất thải",
+            "quantity": "Số lượng",
+            "disposalMethod": "Phương pháp xử lý",
+            "createdAt": "Ngày tạo",
+            "summary": "Hiển thị {{total}} chất thải • Tổng khối lượng: {{quantity}} kg",
+            "pageInfo": "Trang {{current}} / {{total}}",
+            "allWastes": "Tất cả chất thải",
+            "noData": "Không tìm thấy chất thải nào",
+            "noDataDescription": "Thử thay đổi từ khóa tìm kiếm hoặc thêm chất thải mới."
+          },
+          "search": {
+            "placeholder": "Tìm kiếm mã chất thải, mã lô hoặc loại chất thải...",
+            "results": "Tìm thấy {{count}} kết quả"
+          },
+          "actions": {
+            "addNew": "Thêm chất thải",
+            "view": "Xem",
+            "edit": "Sửa",
+            "softDelete": "Xóa mềm"
+          },
+          "time": {
+            "today": "Hôm nay",
+            "yesterday": "Hôm qua",
+            "daysAgo": "ngày trước"
+          },
+          "unknown": "Không xác định"
+        },
+        "wasteDisposals": {
+          "title": "Quản lý Xử lý Chất thải",
+          "subtitle": "Trang quản lý xử lý chất thải chế biến. (Manager)",
+          "description": "Quản lý các phương pháp xử lý chất thải từ quá trình sơ chế cà phê"
+        }
+      },
+      "farmerBatches": {
+        "title": "Quản lý lô sơ chế (Farmer)",
+        "subtitle": "Theo dõi và quản lý lô sơ chế cà phê của bạn",
+        "totalBatches": "Tổng lô",
+        "active": "Đang hoạt động",
+        "totalOutput": "Tổng sản lượng",
+        "searchTitle": "Tìm kiếm lô sơ chế",
+        "searchPlaceholder": "Tìm kiếm theo mã lô, mùa vụ...",
+        "filterTitle": "Lọc theo trạng thái",
+        "allStatuses": "Tất cả trạng thái",
+        "table": {
+          "batchCode": "Mã lô",
+          "coffeeType": "Loại cà phê",
+          "cropSeason": "Mùa vụ",
+          "method": "Phương pháp",
+          "status": "Trạng thái",
+          "currentStage": "Giai đoạn hiện tại",
+          "creationDate": "Ngày tạo",
+          "createdAt": "Ngày tạo",
+          "action": "Thao tác",
+          "actions": "Thao tác",
+          "fallback": {
+            "cropSeason": "ID: {id}",
+            "method": "ID: {id}",
+            "noDate": "—"
+          }
+        },
+        "pagination": {
+          "showing": "Hiển thị {start} đến {end} trong tổng số {total} lô",
+          "previous": "Trước",
+          "next": "Sau",
+          "pageInfo": "Trang {current} / {total}"
+        },
+        "status": {
+          "notStarted": "Chưa bắt đầu",
+          "inProgress": "Đang xử lý",
+          "completed": "Hoàn thành",
+          "awaitingEvaluation": "Chờ đánh giá",
+          "cancelled": "Đã hủy",
+          "unknown": "Không xác định"
+        },
+        "batchDetail": {
+          "title": "Chi tiết lô sơ chế (Farmer)",
+          "subtitle": "Thông tin chi tiết về lô sơ chế và tiến trình xử lý",
+          "backToList": "Quay lại",
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Có thể mất vài giây để tải hoàn tất"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "back": "Quay lại"
+          },
+          "notFound": {
+            "title": "Không tìm thấy dữ liệu",
+            "description": "Lô sơ chế này không tồn tại hoặc đã bị xóa",
+            "back": "Quay lại"
+          },
+          "status": {
+            "completed": "Đã hoàn thành tất cả các bước",
+            "awaitingEvaluation": "Đang chờ đánh giá",
+            "canContinue": "Có thể cập nhật bước tiếp theo",
+            "unknown": "Chưa xác định"
+          },
+          "stats": {
+            "batchCode": "Mã lô",
+            "stage": "Giai đoạn",
+            "output": "Sản lượng",
+            "efficiency": "Hiệu suất"
+          },
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô",
+            "systemCode": "Mã hệ thống",
+            "cropSeason": "Mùa vụ",
+            "farmer": "Nông dân",
+            "method": "Phương pháp",
+            "type": "Loại cà phê",
+            "status": "Trạng thái",
+            "inputQuantity": "Khối lượng vào",
+            "outputQuantity": "Khối lượng ra",
+            "createdAt": "Ngày tạo"
+          },
+          "progress": {
+            "title": "Tiến độ chế biến",
+            "step": "Bước",
+            "retry": "Làm lại",
+            "retryLabel": "(Làm lại)",
+            "executionDate": "Ngày thực hiện",
+            "outputQuantity": "Khối lượng đầu ra",
+            "waste": "Chất thải",
+            "updatedBy": "Cập nhật bởi",
+            "noProgress": {
+              "title": "Chưa có tiến độ nào",
+              "description": "Lô sơ chế chưa được bắt đầu xử lý"
+            },
+            "media": {
+              "title": "Tài liệu đính kèm",
+              "image": "Ảnh",
+              "video": "Video",
+              "legacy": "Tài liệu cũ"
+            },
+            "parameters": {
+              "title": "Thông số kỹ thuật"
+            },
+            "wastes": {
+              "title": "Chất thải"
+            }
+          },
+          "evaluations": {
+            "title": "Đánh giá",
+            "subtitle": "Kết quả đánh giá từ chuyên gia",
+            "viewDetails": "Xem chi tiết",
+            "failAlert": {
+              "title": "Đánh giá không đạt",
+              "description": "Cần cải thiện công đoạn này theo khuyến nghị của chuyên gia",
+              "updateProgress": "Cập nhật tiến trình"
+            },
+            "item": {
+              "title": "Đánh giá",
+              "code": "Mã",
+              "date": "Ngày",
+              "expert": "Chuyên gia",
+              "comments": "Nhận xét"
+            },
+            "noEvaluations": {
+              "title": "Chưa có đánh giá nào",
+              "description": "Lô sơ chế này chưa được đánh giá bởi chuyên gia"
+            },
+            "failure": {
+              "title": "Thông tin lỗi",
+              "stage": "Công đoạn",
+              "details": {
+                "title": "Chi tiết lỗi"
+              },
+              "recommendations": {
+                "title": "Khuyến nghị cải thiện"
+              },
+              "guidance": {
+                "title": "Hướng dẫn",
+                "description": "Vui lòng cải thiện công đoạn {{stageName}} theo khuyến nghị của chuyên gia",
+                "update": "Cập nhật tiến trình"
+              }
+            }
+          },
+                     "quickActions": {
+             "title": "Thao tác nhanh (Farmer)",
+             "createProgress": "Tạo tiến trình",
+             "advanceProgress": "Cập nhật tiến trình",
+             "updateAfterEvaluation": "Cập nhật sau đánh giá",
+             "evaluateStage": "Đánh giá giai đoạn",
+             "editInfo": "Chỉnh sửa thông tin"
+           },
+          "summary": {
+            "title": "Tóm tắt lô",
+            "currentStatus": "Trạng thái hiện tại:",
+            "stagesCount": "Số giai đoạn:",
+            "efficiency": "Hiệu suất:",
+            "createdAt": "Ngày tạo:"
+          },
+          "contact": {
+            "title": "Thông tin liên hệ",
+            "farmer": "Nông dân",
+            "cropSeason": "Mùa vụ"
+          },
+         
+          "wastes": {
+            "title": "Tổng hợp chất thải",
+            "code": "Mã",
+            "quantity": "Khối lượng",
+            "createdAt": "Ngày tạo"
+          },
+          "evaluation": {
+            "title": "Đánh giá chất lượng",
+            "evaluationCard": {
+              "evaluationTitle": "Đánh giá #{{code}}",
+              "code": "Mã: {{code}}",
+              "date": "Ngày: {{date}}",
+              "expert": "Chuyên gia: {{expertName}}",
+              "status": {
+                "passed": "Đạt",
+                "failed": "Không đạt"
+              }
+            }
+          },
+          "mediaViewer": {
+            "image": "Hình ảnh",
+            "videoNotSupported": "Trình duyệt của bạn không hỗ trợ video.",
+            "prevNext": "← → Chuyển ảnh",
+            "escClose": "ESC Đóng"
+          },
+          "fallback": {
+            "unknownType": "Chưa xác định",
+            "zeroQuantity": "0 kg",
+            "noDate": "Chưa có ngày",
+            "expert": "Chuyên gia"
+          },
+          "edit": {
+            "title": "Chỉnh sửa lô sơ chế",
+            "description": "Cập nhật thông tin lô sơ chế cà phê",
+            "back": "Quay lại",
+            "guidance": {
+              "title": "Hướng dẫn chỉnh sửa",
+              "description": "Bạn có thể thay đổi mùa vụ và loại cà phê. Mã lô không thể thay đổi sau khi tạo."
+            },
+            "form": {
+              "title": "Thông tin chỉnh sửa",
+              "batchCode": {
+                "label": "Mã lô",
+                "help": "Mã lô không thể thay đổi sau khi tạo"
+              },
+              "cropSeason": {
+                "label": "Mùa vụ",
+                "placeholder": "-- Chọn mùa vụ --"
+              },
+              "coffeeType": {
+                "label": "Loại cà phê",
+                "help": "Loại cà phê được xác định từ mùa vụ đã chọn",
+                "unknown": "Không xác định"
+              },
+              "submit": {
+                "update": "Cập nhật lô",
+                "updating": "Đang cập nhật..."
+              },
+              "validation": {
+                "missingFields": "Vui lòng điền đầy đủ các trường: {{fields}}"
+              }
+            },
+            "loading": {
+              "title": "Đang tải dữ liệu...",
+              "subtitle": "Vui lòng chờ trong khi chúng tôi tải thông tin lô"
+            },
+            "error": {
+              "notFound": "Không tìm thấy lô sơ chế",
+              "loadFailed": "Không thể tải dữ liệu lô",
+              "updateFailed": "Không thể cập nhật lô sơ chế",
+              "invalidData": "Dữ liệu không hợp lệ",
+              "duplicate": "Lô sơ chế đã tồn tại",
+              "systemError": "Lỗi hệ thống, vui lòng thử lại sau",
+              "notFoundTitle": "Không tìm thấy lô",
+              "notFoundMessage": "Lô sơ chế này không tồn tại hoặc đã bị xóa",
+              "backToList": "Quay lại danh sách"
+            },
+            "success": "Cập nhật lô sơ chế thành công!"
+          },
+          "mediaViewer": {
+            "navigation": "Chuyển ảnh",
+            "close": "Đóng",
+            "image": "Hình ảnh",
+            "videoNotSupported": "Trình duyệt của bạn không hỗ trợ video.",
+            "prevNext": "← → Chuyển ảnh",
+            "escClose": "ESC Đóng"
+          },
+          "modals": {
+            "createProgress": "Tạo tiến trình đầu tiên"
+          },
+                      "edit": {
+              "title": "Chỉnh sửa lô sơ chế",
+              "subtitle": "Cập nhật thông tin lô sơ chế cà phê",
+              "backToDetail": "Quay lại",
+              "batchId": "ID",
+              "basicInfo": {
+                "title": "Thông tin cơ bản",
+                "batchCode": "Mã lô sơ chế",
+                "batchCodePlaceholder": "Nhập mã lô sơ chế",
+                "coffeeType": {
+                  "label": "Loại cà phê *",
+                  "unknown": "Không xác định",
+                  "cannotChange": "Loại cà phê không thể thay đổi sau khi đã tạo"
+                },
+                "cropSeason": "Mùa vụ",
+                "notes": "Ghi chú",
+                "notesPlaceholder": "Nhập ghi chú về lô sơ chế..."
+              },
+              "currentInfo": {
+                "title": "Thông tin hiện tại",
+                "createdAt": "Ngày tạo",
+                "updatedAt": "Ngày cập nhật",
+                "totalOutput": "Tổng sản lượng",
+                "currentStatus": "Trạng thái hiện tại"
+              },
+              "actions": {
+                "cancel": "Hủy",
+                "saving": "Đang lưu...",
+                "saveChanges": "Lưu thay đổi"
+              },
+              "form": {
+                "title": "Thông tin lô sơ chế",
+                "coffeeType": "Loại cà phê",
+                "cropSeason": "Mùa vụ",
+                "batchCode": "Mã lô",
+                "submit": {
+                  "update": "Cập nhật lô sơ chế",
+                  "updating": "Đang cập nhật..."
+                },
+                "validation": {
+                  "missingFields": "Vui lòng nhập đầy đủ các trường: {{fields}}"
+                },
+                "coffeeType": {
+                  "label": "Loại cà phê *",
+                  "unknown": "Không xác định",
+                  "cannotChange": "Loại cà phê không thể thay đổi sau khi đã tạo",
+                  "help": "Loại cà phê không thể thay đổi sau khi đã tạo"
+                },
+                "cropSeason": {
+                  "label": "Mùa vụ *",
+                  "placeholder": "Chọn mùa vụ"
+                },
+                "batchCode": {
+                  "label": "Mã lô sơ chế *",
+                  "help": "Mã lô sơ chế không thể thay đổi sau khi đã tạo"
+                }
+              },
+              "loading": {
+                "title": "Đang tải dữ liệu...",
+                "subtitle": "Đang tải thông tin lô sơ chế"
+              },
+              "back": "Quay lại",
+              "info": {
+                "title": "Hướng dẫn chỉnh sửa",
+                "description": "Chỉnh sửa thông tin cơ bản của lô sơ chế. Một số thông tin có thể không được phép thay đổi sau khi đã tạo."
+              },
+              "guidance": {
+                "title": "Hướng dẫn chỉnh sửa",
+                "description": "Chỉnh sửa thông tin cơ bản của lô sơ chế. Một số thông tin có thể không được phép thay đổi sau khi đã tạo."
+              },
+              "error": {
+                "title": "Không thể tải dữ liệu",
+                "description": "Lô sơ chế không tồn tại",
+                "backToList": "Quay lại danh sách",
+                "notFound": "Không tìm thấy lô sơ chế",
+                "loadFailed": "Không thể tải dữ liệu lô sơ chế",
+                "notFoundTitle": "Không tìm thấy lô sơ chế",
+                "notFoundDescription": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+                "backToBatches": "Quay lại danh sách",
+                "updateFailed": "Cập nhật lô sơ chế thất bại",
+                "invalidData": "Dữ liệu không hợp lệ",
+                "duplicate": "Mã lô sơ chế đã tồn tại",
+                "systemError": "Lỗi hệ thống, vui lòng thử lại sau",
+                "notFoundMessage": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa."
+              },
+              "evaluations": {
+                "title": "Đánh giá chất lượng",
+                "subtitle": "Kết quả đánh giá từ chuyên gia",
+                "viewDetails": "Xem chi tiết",
+                "failAlert": {
+                  "title": "Đánh giá không đạt",
+                  "description": "Giai đoạn này cần được cải thiện trước khi tiếp tục",
+                  "updateProgress": "Cập nhật tiến trình"
+                },
+                "item": {
+                  "title": "Đánh giá",
+                  "code": "Mã đánh giá",
+                  "date": "Ngày đánh giá",
+                  "expert": "Chuyên gia"
+                }
+              },
+              "wastes": {
+                "title": "Chất thải",
+                "code": "Mã chất thải",
+                "quantity": "Khối lượng",
+                "createdAt": "Ngày tạo"
+              },
+              "success": "Cập nhật lô sơ chế thành công!",
+              "description": "Cập nhật thông tin lô sơ chế cà phê",
+              "guidance": {
+                "title": "Hướng dẫn chỉnh sửa",
+                "description": "Chỉnh sửa thông tin cơ bản của lô sơ chế. Một số thông tin có thể không được phép thay đổi sau khi đã tạo."
+              }
+            },
+          "create": {
+            "title": "Tạo lô sơ chế mới",
+            "subtitle": "Tạo lô sơ chế cà phê mới",
+            "description": "Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
+            "backToList": "Quay lại",
+            "basicInfo": {
+              "title": "Thông tin cơ bản",
+              "batchCode": "Mã lô sơ chế",
+              "batchCodePlaceholder": "Nhập mã lô sơ chế",
+              "coffeeType": {
+                "label": "Loại cà phê *",
+                "unknown": "Không xác định",
+                "cannotChange": "Loại cà phê không thể thay đổi sau khi đã tạo"
+              },
+              "cropSeason": "Mùa vụ",
+              "notes": "Ghi chú",
+              "notesPlaceholder": "Nhập ghi chú về lô sơ chế..."
+            },
+            "actions": {
+              "cancel": "Hủy",
+              "creating": "Đang tạo...",
+              "create": "Tạo lô sơ chế"
+            },
+            "loading": {
+              "title": "Đang tải dữ liệu...",
+              "description": "Đang tải thông tin cần thiết"
+            },
+            "error": {
+              "title": "Không thể tải dữ liệu",
+              "description": "Có lỗi xảy ra khi tải dữ liệu",
+              "backToList": "Quay lại danh sách"
+            }
+          },
+          "UpdateAdvanprogress": {
+            "title": "Cập nhật tiến trình nâng cao",
+            "subtitle": "Cập nhật thông tin chi tiết về tiến trình xử lý cà phê",
+            "basicInfo": {
+              "title": "Thông tin cơ bản",
+              "batchCode": "Mã lô",
+              "systemCode": "Mã hệ thống",
+              "cropSeason": "Mùa vụ",
+              "farmer": "Nông dân",
+              "method": "Phương pháp",
+              "status": "Trạng thái",
+              "inputQuantity": "Khối lượng vào",
+              "outputQuantity": "Khối lượng ra",
+              "createdAt": "Ngày tạo"
+            },
+            "stageInfo": {
+              "currentStage": "Thông tin bước hiện tại:",
+              "errorStage": "Thông tin bước Lỗi:",
+              "noProgress": "Chưa có tiến trình",
+              "stepNumber": "Bước",
+              "previousDate": "Ngày trước:",
+              "failureReason": "Lý do không đạt:",
+              "improvementStage": "Công đoạn cần cải thiện",
+              "nextStep": "Bước tiếp theo:",
+              "firstProgress": "Tạo tiến trình đầu tiên"
+            },
+            "form": {
+              "title": "Thông tin tiến trình",
+              "progressDate": {
+                "label": "Ngày thực hiện",
+                "placeholder": "Chọn ngày thực hiện"
+              },
+              "outputQuantity": {
+                "label": "Khối lượng đầu ra",
+                "placeholder": "Nhập khối lượng đầu ra"
+              },
+              "stageDescription": {
+                "label": "Mô tả công đoạn",
+                "placeholder": "Mô tả chi tiết về công đoạn xử lý..."
+              },
+              "unit": {
+                "label": "Đơn vị",
+                "placeholder": "Chọn đơn vị"
+              },
+              "technicalParameters": {
+                "title": "Thông số kỹ thuật",
+                "description": "Các thông số đo lường trong quá trình xử lý",
+                "addParameter": "Thêm thông số",
+                "parameterName": {
+                  "label": "Tên thông số",
+                  "placeholder": "VD: Nhiệt độ, Độ ẩm..."
+                },
+                "parameterValue": {
+                  "label": "Giá trị",
+                  "placeholder": "VD: 25, 80%..."
+                },
+                "parameterUnit": {
+                  "label": "Đơn vị thông số",
+                  "placeholder": "VD: °C, %, kg..."
+                }
+              },
+              "illustrativeDocuments": {
+                "title": "Tài liệu minh họa",
+                "image": {
+                  "label": "Ảnh minh hoạ",
+                  "placeholder": "Chọn ảnh",
+                  "help": "Ảnh tự động nén"
+                },
+                "video": {
+                  "label": "Video minh hoạ",
+                  "placeholder": "Chọn video"
+                }
+              },
+              "wasteInformation": {
+                "title": "Thông tin phế phẩm",
+                "wasteType": {
+                  "label": "Loại phế phẩm",
+                  "placeholder": "Chọn loại phế phẩm"
+                },
+                "unit": {
+                  "label": "Đơn vị",
+                  "placeholder": "Chọn đơn vị"
+                },
+                "quantity": {
+                  "label": "Khối lượng",
+                  "placeholder": "Nhập khối lượng phế phẩm"
+                },
+                "notes": {
+                  "label": "Ghi chú",
+                  "placeholder": "Ghi chú về phế phẩm..."
+                },
+                
+                "recordDate": {
+                  "label": "Ngày ghi nhận",
+                  "placeholder": "Chọn ngày ghi nhận"
+                }
+              },
+              "fileUpload": {
+                "previewTitle": "Xem trước tài liệu:",
+                "maxFiles": "Tối đa 10 files, 50MB",
+                "imageCompression": "Ảnh tự động nén"
+              },
+              "actions": {
+                "cancel": "Huỷ",
+                "saving": "Đang lưu...",
+                "submit": "Cập nhật tiến trình"
+              }
+            },
+            "validation": {
+              "progressDateRequired": "Ngày thực hiện là bắt buộc",
+              "outputQuantityRequired": "Khối lượng đầu ra là bắt buộc",
+              "stageDescriptionRequired": "Mô tả công đoạn là bắt buộc"
+            },
+            "loading": {
+              "title": "Đang cập nhật tiến trình...",
+              "description": "Vui lòng chờ trong khi chúng tôi xử lý yêu cầu"
+            },
+            "success": "Cập nhật tiến trình thành công!",
+            "error": {
+              "title": "Lỗi cập nhật tiến trình",
+              "description": "Không thể cập nhật tiến trình. Vui lòng thử lại sau."
+            }
+          }
+        }
+      },
+      "expertBatches": {
+        "title": "Quản lý lô sơ chế (Expert)",
+        "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
+        "batchDetail": {
+          "title": "Chi tiết lô sơ chế (Expert)",
+          "subtitle": "Thông tin chi tiết để đánh giá chất lượng",
+          "backToList": "Quay lại",
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin lô sơ chế"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "back": "Quay lại"
+          },
+          "notFound": {
+            "title": "Không tìm thấy lô sơ chế",
+            "description": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa",
+            "back": "Quay lại danh sách"
+          },
+          "stats": {
+            "batchCode": "Mã lô",
+            "stage": "Giai đoạn",
+            "output": "Sản lượng",
+            "efficiency": "Hiệu suất"
+          },
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô",
+            "systemCode": "Mã hệ thống",
+            "cropSeason": "Mùa vụ",
+            "farmer": "Nông dân",
+            "method": "Phương pháp",
+            "status": "Trạng thái",
+            "inputQuantity": "Khối lượng vào",
+            "outputQuantity": "Khối lượng ra",
+            "createdAt": "Ngày tạo"
+          },
+          "quickActions": {
+            "title": "Thao tác nhanh (Expert)",
+            "evaluateStage": "Đánh giá giai đoạn",
+            "viewProgress": "Xem tiến độ",
+            "generateReport": "Tạo báo cáo"
+          },
+          "summary": {
+            "title": "Tóm tắt lô",
+            "currentStatus": "Trạng thái hiện tại:",
+            "stagesCount": "Số giai đoạn:",
+            "efficiency": "Hiệu suất:",
+            "createdAt": "Ngày tạo:"
+          }
+        }
+      },
+      "farmerProgresses": {
+        "title": "Quản lý tiến trình sơ chế (Farmer)",
+        "subtitle": "Theo dõi và quản lý tiến trình xử lý cà phê của bạn",
+        "overview": {
+          "title": "Quản lý tiến trình sơ chế",
+          "subtitle": "Theo dõi và cập nhật tiến trình xử lý cà phê của bạn",
+          "addProgress": "Thêm tiến trình",
+          "stats": {
+            "totalBatches": "Tổng lô",
+            "activeBatches": "Đang hoạt động",
+            "totalProgresses": "Tổng tiến trình"
+          },
+          "search": {
+            "title": "Tìm kiếm tiến trình",
+            "placeholder": "Tìm kiếm mã lô..."
+          },
+          "filters": {
+            "title": "Bộ lọc",
+            "stage": "Giai đoạn",
+            "stagePlaceholder": "Tất cả giai đoạn",
+            "status": "Trạng thái batch",
+            "statusPlaceholder": "Tất cả trạng thái",
+            "clearFilters": "Xóa bộ lọc",
+            "applyFilters": "Áp dụng bộ lọc"
+          },
+          "steps": {
+            "title": "Các bước xử lý",
+            "step": "Bước",
+            "totalSteps": "Tổng số bước",
+            "completedSteps": "Bước đã hoàn thành",
+            "remainingSteps": "Bước còn lại"
+          },
+          "table": {
+            "title": "Danh sách tiến trình theo lô",
+            "columns": {
+              "batchCode": "Mã lô",
+              "farmer": "Nông dân",
+              "currentStage": "Giai đoạn hiện tại",
+              "status": "Trạng thái",
+              "progressCount": "Số tiến trình",
+              "lastUpdated": "Cập nhật cuối",
+              "actions": "Hành động"
+            },
+            "stages": {
+              "notStarted": "Chưa bắt đầu",
+              "inProgress": "Đang xử lý",
+              "waiting": "Chờ xử lý",
+              "completed": "Hoàn thành",
+              "cancelled": "Đã hủy",
+              "unknown": "Không xác định"
+            },
+            "actions": {
+              "viewDetails": "Xem chi tiết",
+              "addProgress": "Thêm tiến trình"
+            },
+            "time": {
+              "today": "Hôm nay",
+              "yesterday": "Hôm qua",
+              "daysAgo": "{{days}} ngày trước"
+            }
+          },
+          "empty": {
+            "noSearchResults": "Không tìm thấy tiến trình nào",
+            "noProgresses": "Chưa có tiến trình nào",
+            "searchHint": "Thử thay đổi từ khóa tìm kiếm",
+            "createHint": "Bắt đầu thêm tiến trình đầu tiên"
+          },
+          "loading": "Đang tải dữ liệu..."
+        },
+        "create": {
+          "title": "Tạo tiến trình mới",
+          "subtitle": "Tạo tiến trình sơ chế cà phê mới",
+          "backToList": "Quay lại",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô sơ chế",
+            "batchCodePlaceholder": "Chọn lô sơ chế",
+            "stage": "Giai đoạn",
+            "stagePlaceholder": "Chọn giai đoạn",
+            "progressDate": "Ngày thực hiện",
+            "outputQuantity": "Khối lượng đầu ra",
+            "outputUnit": "Đơn vị",
+            "notes": "Ghi chú",
+            "notesPlaceholder": "Mô tả chi tiết về công đoạn thực hiện..."
+          },
+          "actions": {
+            "cancel": "Hủy",
+            "creating": "Đang tạo...",
+            "create": "Tạo tiến trình"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin cần thiết"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Có lỗi xảy ra khi tải dữ liệu",
+            "backToList": "Quay lại danh sách"
+          }
+        },
+        "progressDetail": {
+          "title": "Chi tiết tiến trình sơ chế",
+          "subtitle": "Thông tin chi tiết về tiến trình sơ chế",
+          "back": "Quay lại",
+          "retry": "Thử lại",
+          "loading": "Đang tải dữ liệu...",
+          "error": {
+            "title": "Có lỗi xảy ra",
+            "missingBatchId": "Thiếu thông tin batchId",
+            "noData": "Không tìm thấy dữ liệu lô sơ chế",
+            "batchNotFound": "Không tìm thấy lô sơ chế với ID này",
+            "timeout": "Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại sau.",
+            "default": "Có lỗi xảy ra khi tải dữ liệu",
+            "notFound": "Không tìm thấy dữ liệu",
+            "notFoundDescription": "Lô sơ chế này không tồn tại hoặc đã bị xóa."
+          },
+          "noData": {
+            "title": "Không tìm thấy dữ liệu",
+            "description": "Lô sơ chế này không tồn tại hoặc đã bị xóa."
+          },
+          "batchInfo": {
+            "title": "Thông tin lô sơ chế",
+            "batchCode": "Mã lô",
+            "cropSeason": "Mùa vụ",
+            "farmer": "Nông dân",
+            "method": "Phương pháp sơ chế",
+            "inputQuantity": "Khối lượng vào",
+            "createdDate": "Ngày tạo"
+          },
+          "header": {
+            "batchInfo": "Lô: {{batchCode}} - {{progressCount}} bước đã hoàn thành",
+            "allStepsCompleted": "Đã hoàn thành tất cả các bước",
+            "updateProgress": "Cập nhật tiến trình"
+          },
+          "progressSteps": {
+            "title": "Các bước tiến trình sơ chế ({{count}} bước)",
+            "step": "Bước {{number}}",
+            "retry": "Làm lại",
+            "retryLabel": "(Làm lại)",
+            "completed": "Hoàn thành",
+            "outputQuantity": "Sản lượng:",
+            "updatedBy": "Cập nhật bởi:",
+            "date": "Ngày:",
+            "status": "Trạng thái:"
+          },
+          "media": {
+            "title": "Tài liệu đính kèm",
+            "legacyTitle": "Tài liệu đính kèm (Cũ)",
+            "image": "Ảnh",
+            "video": "Video",
+            "imageAlt": "Ảnh {{index}} của {{stageName}}",
+            "videoNotSupported": "Trình duyệt của bạn không hỗ trợ video.",
+            "mediaCounter": "{{current}} / {{total}}"
+          },
+          "actions": {
+            "updateProgress": "Cập nhật tiến trình",
+            "updateProgressTitle": "Cập nhật tiến trình sơ chế",
+            "updateProgressDescription": "Form cập nhật thông tin tiến trình sơ chế"
+          }
+        }
+      }
+    },
+
+    "wastes": {
+      "title": "Chất thải sơ chế",
+      "subtitle": "Quản lý và theo dõi chất thải từ quá trình sơ chế",
+      "addWaste": "Thêm chất thải mới",
+      "editWaste": "Chỉnh sửa chất thải"
+    },
+
+    "farmerWastes": {
+        "title": "Quản lý chất thải sơ chế (Farmer)",
+        "subtitle": "Theo dõi và quản lý chất thải từ quá trình sơ chế của bạn",
+        "create": {
+          "title": "Tạo chất thải mới",
+          "subtitle": "Ghi nhận chất thải từ quá trình sơ chế",
+          "backToList": "Quay lại",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô sơ chế",
+            "batchCodePlaceholder": "Chọn lô sơ chế",
+            "wasteType": "Loại chất thải",
+            "wasteTypePlaceholder": "Chọn loại chất thải",
+            "quantity": "Số lượng",
+            "quantityPlaceholder": "Nhập số lượng",
+            "disposalMethod": "Phương pháp xử lý",
+            "disposalMethodPlaceholder": "Chọn phương pháp xử lý",
+            "notes": "Ghi chú",
+            "notesPlaceholder": "Mô tả chi tiết về chất thải..."
+          },
+          "actions": {
+            "cancel": "Hủy",
+            "creating": "Đang tạo...",
+            "create": "Tạo chất thải"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin cần thiết"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Có lỗi xảy ra khi tải dữ liệu",
+            "backToList": "Quay lại danh sách"
+          }
+        },
+        "detail": {
+          "title": "Chi tiết chất thải sơ chế",
+          "subtitle": "Thông tin chi tiết về chất thải",
+          "backToList": "Quay lại",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "wasteCode": "Mã chất thải",
+            "batchCode": "Mã lô sơ chế",
+            "wasteType": "Loại chất thải",
+            "quantity": "Số lượng",
+            "disposalMethod": "Phương pháp xử lý",
+            "createdAt": "Ngày tạo",
+            "notes": "Ghi chú"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin chất thải"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Chất thải không tồn tại",
+            "backToList": "Quay lại danh sách"
+          }
+        }
+      }
+    }
+,
+  "validation": {
+    "required": "Trường này là bắt buộc",
+    "positiveNumber": "Phải là số dương",
+    "maxQuantity": "Khối lượng không được vượt quá {{max}}",
+    "minQuantity": "Khối lượng phải lớn hơn {{min}}",
+    "invalidUnit": "Đơn vị không hợp lệ",
+    "wasteRequired": "Phải nhập ít nhất một loại phế phẩm",
+    "stageRequired": "Phải chọn bước xử lý"
+  },
+  "units": {
+    "kg": "Kilogram (kg)",
+    "g": "Gram (g)",
+    "tấn": "Tấn",
+    "bao": "Bao",
+    "thùng": "Thùng"
+  },
+        "form": {
+          "title": "Cập nhật tiến trình sơ chế",
+          "basicInfo": "Thông tin cơ bản",
+          "technicalParams": "Thông số kỹ thuật",
+          "mediaUpload": "Tài liệu minh họa",
+          "wasteInfo": "Thông tin phế phẩm",
+          "fields": {
+            "progressDate": "Ngày thực hiện",
+            "outputQuantity": "Khối lượng đầu ra",
+            "outputUnit": "Đơn vị",
+            "stageDescription": "Mô tả công đoạn",
+            "parameterName": "Tên thông số",
+            "parameterValue": "Giá trị",
+            "parameterUnit": "Đơn vị thông số",
+            "wasteType": "Loại phế phẩm",
+            "wasteQuantity": "Khối lượng",
+            "wasteNote": "Ghi chú",
+            "wasteRecordedAt": "Ngày ghi nhận"
+          },
+          "placeholders": {
+            "enterQuantity": "Nhập khối lượng...",
+            "selectUnit": "Chọn đơn vị...",
+            "describeStage": "Mô tả chi tiết về công đoạn thực hiện...",
+            "parameterExample": "VD: Nhiệt độ, Độ ẩm...",
+            "valueExample": "VD: 25, 80%...",
+            "unitExample": "VD: °C, %, kg...",
+            "wasteExample": "VD: Vỏ cà phê, Bã...",
+            "wasteDescribe": "Mô tả chi tiết về phế phẩm..."
+          },
+          "media": {
+            "photoUpload": "Ảnh minh hoạ",
+            "videoUpload": "Video minh hoạ",
+            "selectPhoto": "Chọn ảnh",
+            "selectVideo": "Chọn video",
+            "photosCount": "ảnh",
+            "videosCount": "video",
+            "previewTitle": "Xem trước tài liệu:",
+            "fileInfo": "Tối đa 10 files, 50MB",
+            "autoCompress": "Ảnh tự động nén"
+          },
+          "buttons": {
+            "cancel": "Huỷ",
+            "save": "Lưu",
+            "saving": "Đang lưu..."
+          }
+        },
+        "stageInfo": {
+          "currentStage": "Thông tin bước hiện tại:",
+          "errorStage": "Thông tin bước Lỗi:",
+          "noProgress": "Chưa có tiến trình",
+          "stepNumber": "Bước",
+          "previousDate": "Ngày trước:",
+          "failureReason": "Lý do không đạt:",
+          "improvementStage": "Công đoạn cần cải thiện",
+          "nextStep": "Bước tiếp theo:",
+          "firstProgress": "Tạo tiến trình đầu tiên"
+        },
+        "status": {
+          "pending": "Chờ xử lý",
+          "inProgress": "Đang xử lý",
+          "completed": "Hoàn thành",
+          "failed": "Thất bại",
+          "evaluating": "Đang đánh giá",
+          "approved": "Đã duyệt",
+          "rejected": "Bị từ chối",
+          "unknown": "Không xác định"
+        },
+        "actions": {
+          "view": "Xem",
+          "delete": "Xóa",
+          "duplicate": "Nhân bản",
+          "export": "Xuất",
+          "print": "In",
+          "share": "Chia sẻ"
+        },
+        "filters": {
+          "title": "Bộ lọc",
+          "status": "Trạng thái",
+          "method": "Phương pháp",
+          "dateRange": "Khoảng thời gian",
+          "quantity": "Khối lượng",
+          "clear": "Xóa bộ lọc",
+          "apply": "Áp dụng"
+        },
+        "search": {
+          "placeholder": "Tìm kiếm lô xử lý, phương pháp...",
+          "noResults": "Không tìm thấy kết quả",
+          "searching": "Đang tìm kiếm..."
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "to": "đến",
+          "of": "trên tổng số",
+          "entries": "bản ghi",
+          "previous": "Trước",
+          "next": "Tiếp",
+          "first": "Đầu",
+          "last": "Cuối"
+        },
+        "methods": {
+          "title": "Quản lý phương pháp sơ chế",
+          "description": "Quản lý các phương pháp sơ chế cà phê",
+          "stats": {
+            "totalMethods": "Tổng phương pháp",
+            "active": "Đang hoạt động",
+            "inactive": "Không hoạt động"
+          },
+          "status": {
+            "active": "Hoạt động",
+            "inactive": "Không hoạt động"
+          },
+          "search": {
+            "placeholder": "Tìm kiếm phương pháp..."
+          },
+          "actions": {
+            "addNew": "Thêm phương pháp mới"
+          },
+          "table": {
+            "methodName": "Tên phương pháp",
+            "description": "Mô tả",
+            "status": "Trạng thái",
+            "createdAt": "Ngày tạo",
+            "actions": "Thao tác"
+          },
+          "noData": "Không tìm thấy phương pháp sơ chế nào",
+          "error": {
+            "loading": "Không thể tải danh sách phương pháp sơ chế"
+          }
+        },
+      "evaluation": {
+      "title": "Đánh giá tiêu chí",
+      "selectStage": "Chọn giai đoạn",
+      "stageSelection": {
+        "title": "Chọn giai đoạn đánh giá",
+        "label": "Giai đoạn",
+        "placeholder": "Chọn giai đoạn cần đánh giá",
+        "option": "Bước {{order}}: {{name}}",
+        "loading": "Đang tải tiêu chí...",
+        "loadCriteria": "Tải tiêu chí đánh giá"
+      },
+      "criteria": {
+        "title": "Danh sách tiêu chí",
+        "loading": "Đang tải tiêu chí đánh giá...",
+        "range": "Phạm vi: {{min}} - {{max}} {{unit}}",
+        "actualValue": "Giá trị thực tế"
+      },
+      "failureReasons": {
+        "title": "Lý do không đạt"
+      },
+      "results": {
+        "title": "Kết quả đánh giá",
+        "passedCriteria": "Tiêu chí đạt",
+        "overallScore": "Điểm tổng",
+        "additionalComments": "Ghi chú bổ sung",
+        "commentsPlaceholder": "Nhập ghi chú bổ sung (nếu có)..."
+      },
+      "actions": {
+        "submitting": "Đang gửi...",
+        "evaluateStage": "Đánh giá giai đoạn",
+        "passBatch": "Đạt cả Batch"
+      },
+      "warning": {
+        "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
+        "noCriteria": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình."
+      },
+      "error": {
+        "loadingStages": "Không thể tải danh sách giai đoạn từ máy chủ",
+        "loadingCriteria": "Không thể tải tiêu chí đánh giá",
+        "noCriteriaForStage": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình.",
+        "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
+        "noCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+        "incompleteCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+        "submitFailed": "Tạo đánh giá thất bại",
+        "noMethodId": "Thiếu thông tin phương pháp sơ chế. Vui lòng kiểm tra lại.",
+        "batchPassFailed": "Tạo đánh giá đạt thất bại"
+      },
+      "failure": {
+        "details": "Đánh giá không đạt: {{failedCount}}/{{totalCount}} tiêu chí",
+        "recommendations": "Cần cải thiện các tiêu chí không đạt để đảm bảo chất lượng",
+        "stageComment": "Đánh giá STAGE \"{{stageName}}\" không đạt: {{failedCount}}/{{totalCount}} tiêu chí. {{failureDetails}}. {{recommendations}}",
+        "failedCriteria": "Tiêu chí không đạt",
+        "reasons": "Lý do thất bại"
+      },
+      "success": {
+        "stageComment": "Đánh giá STAGE \"{{stageName}}\" thành công: {{passedCount}}/{{totalCount}} tiêu chí đạt chuẩn. Chi tiết: {{criteriaDetails}}. Điểm tổng: {{score}}/100",
+        "submitted": "Đánh giá thành công!",
+        "failureSubmitted": "Đánh giá đã được gửi. Vui lòng kiểm tra kết quả.",
+        "batchComment": "Đánh giá BATCH thành công: Tất cả giai đoạn đạt chuẩn. Điểm tổng: 100/100",
+        "batchPassed": "Đã đánh giá đạt BATCH và cập nhật trạng thái!"
+      },
+      "comments": "Ghi chú"
+    },
+    "errors": {
+      "WasteQuantityExceeded": {
+        "title": "Khối lượng waste vượt quá giới hạn cho phép",
+        "details": [
+          "Tổng khối lượng waste: {{TotalWaste}} {{CurrentUnit}}",
+          "Giới hạn tối đa cho phép: {{MaxAllowed}} kg",
+          "Bước trước: {{PreviousOutput}} {{PreviousUnit}}",
+          "Bước hiện tại: {{CurrentOutput}} {{CurrentUnit}}",
+          "Lượng waste vượt quá: {{WasteExceeded}} kg"
+        ],
+        "action": "Kiểm tra lại khối lượng waste hoặc khối lượng đầu ra"
+      },
+    "InvalidOutputQuantityLogic": {
+      "title": "Logic khối lượng đầu ra không hợp lệ",
+      "details": [
+        "Bước trước: {{PreviousOutput}} {{PreviousUnit}}",
+        "Bước hiện tại: {{CurrentOutput}} {{CurrentUnit}}",
+        "Chênh lệch: {{Difference}} {{CurrentUnit}}",
+        "Trong quy trình xử lý cà phê, khối lượng đầu ra thường giảm dần do hao hụt"
+      ],
+      "action": "Kiểm tra lại khối lượng đầu ra của bước hiện tại"
+    },
+    "MissingRequiredField": {
+      "title": "Thiếu thông tin bắt buộc",
+      "details": [
+        "Trường bắt buộc: {{FieldName}}",
+        "Loại trường: {{FieldType}}",
+        "Phải nhập thông tin để tính toán waste tối đa cho phép"
+      ],
+      "action": "Vui lòng nhập thông tin bắt buộc"
+    },
+    "OutputQuantityMustBePositive": {
+      "title": "Khối lượng đầu ra không hợp lệ",
+      "details": [
+        "Khối lượng hiện tại: {{OutputQuantity}}",
+        "Giá trị tối thiểu: {{MinValue}}",
+        "Khối lượng đầu ra phải lớn hơn 0"
+      ],
+      "action": "Vui lòng nhập khối lượng đầu ra hợp lệ"
+    },
+    "OutputQuantityTooLarge": {
+      "title": "Khối lượng đầu ra quá lớn",
+      "details": [
+        "Khối lượng hiện tại: {{OutputQuantity}}",
+        "Giá trị tối đa: {{MaxValue}}",
+        "Khối lượng đầu ra không được vượt quá 100,000"
+      ],
+      "action": "Vui lòng kiểm tra lại khối lượng đầu ra"
+    },
+    "InvalidOutputUnit": {
+      "title": "Đơn vị không hợp lệ",
+      "details": [
+        "Đơn vị không hợp lệ: {{InvalidUnit}}",
+        "Đơn vị hợp lệ: {{ValidUnits}}"
+      ],
+      "action": "Vui lòng chọn đơn vị hợp lệ"
+    },
+    "OutputQuantityIncreaseTooHigh": {
+      "title": "Khối lượng tăng quá cao",
+      "details": [
+        "Khối lượng hiện tại: {{CurrentQuantity}} {{CurrentUnit}}",
+        "Khối lượng trước: {{PreviousQuantity}} {{PreviousUnit}}",
+        "Tỷ lệ tăng: {{IncreasePercentage}}%",
+        "Tolerance cho phép: {{Tolerance}}%"
+      ],
+      "action": "Vui lòng kiểm tra lại hoặc giải thích lý do tăng khối lượng"
+    },
+    "OutputQuantityDecreaseTooHigh": {
+      "title": "Khối lượng giảm quá nhiều",
+      "details": [
+        "Khối lượng hiện tại: {{CurrentQuantity}} {{CurrentUnit}}",
+        "Khối lượng trước: {{PreviousQuantity}} {{PreviousUnit}}",
+        "Tỷ lệ giảm: {{DecreasePercentage}}%"
+      ],
+      "action": "Vui lòng kiểm tra lại hoặc giải thích lý do hao hụt lớn"
+    },
+    "EntityNotFound": {
+      "title": "Không tìm thấy dữ liệu",
+      "details": [
+        "Loại dữ liệu: {{EntityName}}",
+        "ID: {{EntityId}}"
+      ],
+      "action": "Vui lòng kiểm tra lại thông tin"
+    },
+    "PermissionDenied": {
+      "title": "Không có quyền truy cập",
+      "details": [
+        "Hành động: {{Action}}",
+        "Tài nguyên: {{Resource}}",
+        "User ID: {{UserId}}"
+      ],
+      "action": "Liên hệ quản trị viên để được cấp quyền"
+    },
+    "InvalidStatus": {
+      "title": "Trạng thái không hợp lệ",
+      "details": [
+        "Trạng thái hiện tại: {{CurrentStatus}}",
+        "Trạng thái mong đợi: {{ExpectedStatus}}",
+        "Entity: {{EntityName}}"
+      ],
+      "action": "Vui lòng kiểm tra trạng thái hiện tại"
+    }
+  },
+  "common": {
+    "close": "Đóng",
+    "fixError": "Sửa lỗi",
+    "error": "Lỗi",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "success": "Thành công",
+    "confirm": "Xác nhận",
+    "cancel": "Huỷ",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "add": "Thêm",
+    "create": "Tạo",
+    "details": "Chi tiết",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "refresh": "Làm mới",
+    "export": "Xuất",
+    "import": "Nhập",
+    "download": "Tải xuống",
+    "upload": "Tải lên",
+    "loading": "Đang tải...",
+    "noData": "Không có dữ liệu",
+    "retry": "Thử lại",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "networkError": "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối.",
+    "anonymous": "Ẩn danh",
+    "unknownRole": "Vai trò không xác định",
+    "loadingBatches": "Không thể tải danh sách lô chế biến",
+    "loadingStages": "Không thể tải thông tin bước chế biến",
+    "noBatchSelected": "Vui lòng chọn lô chế biến",
+    "noProgressDate": "Vui lòng chọn ngày thực hiện",
+    "futureDate": "Ngày thực hiện không được trong tương lai",
+    "outputQuantity": "Khối lượng đầu ra phải lớn hơn 0",
+    "outputQuantityLimit": "Khối lượng đầu ra không được vượt quá 100,000",
+    "outputUnit": "Vui lòng nhập đơn vị",
+    "photoSizeLimit": "Ảnh không được lớn hơn 10MB",
+    "videoSizeLimit": "Video không được lớn hơn 100MB",
+    "totalSizeLimit": "Tổng kích thước files ({{totalSizeMB}}MB) vượt quá giới hạn 50MB",
+    "totalFilesLimit": "Số lượng files ({{totalFiles}}) vượt quá giới hạn 10 files",
+    "createProgressFailed": "Tạo tiến trình thất bại!",
+    "createProgressSuccess": "Tạo tiến trình thành công!"
+  },
+  "sidebar": {
+    "dashboard": "Bảng điều khiển",
+    "farmer": "Nông dân",
+    "processing": "Xử lý cà phê",
+    "batches": "Lô xử lý",
+    "progress": "Tiến trình",
+    "waste": "Phế phẩm",
+    "media": "Tài liệu",
+    "parameters": "Thông số",
+    "stages": "Các bước",
+    "contracts": "Hợp đồng",
+    "deliveries": "Giao hàng",
+    "cropSeasons": "Vụ mùa",
+    "cultivations": "Canh tác",
+    "commitments": "Cam kết",
+    "marketplace": "Thị trường",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất",
+    "procurementPlans": "Kế hoạch thu mua",
+    "shipments": "Lô giao hàng",
+    "products": "Sản phẩm",
+    "overview": "Tổng quan",
+    "coffeeProcurementFloor": "Sàn thu mua cà phê",
+    "consultation": "Tư vấn",
+    "sendDeliveryRequest": "Gửi yêu cầu giao hàng",
+    "notifications": "Thông báo",
+    "warehouseRequest": "Yêu cầu kho",
+    "outboundRequests": "Yêu cầu xuất kho",
+    "inboundRequests": "Yêu cầu nhập kho",
+    "outboundReceipts": "Biên bản xuất kho",
+    "inboundReceipts": "Biên bản nhập kho",
+    "evaluations": "Phân tích bất thường",
+    "processingMethods": "Phương pháp sơ chế",
+    "wasteDisposals": "Xử lý chất thải",
+    "requestFeedback": "Tư vấn kỹ thuật",
+    "articles": "Bài viết",
+    "businessBuyers": "Khách hàng doanh nghiệp",
+    "orders": "Đơn hàng",
+    "reports": "Báo cáo",
+    "users": "Quản lý người dùng"
+  },
+  "farmerBatchSelector": {
+    "title": "Chọn Nông Dân để Xem Lô Sơ Chế",
+    "selectFarmer": "Chọn Nông Dân",
+    "selectFarmerPlaceholder": "Chọn nông dân...",
+    "batchCount": "lô",
+    "batchListTitle": "Danh Sách Lô Sơ Chế",
+    "systemCode": "Mã hệ thống",
+    "coffeeType": "Loại cà phê",
+    "cropSeason": "Mùa vụ",
+    "input": "Đầu vào",
+    "output": "Đầu ra",
+    "createdAt": "Tạo lúc",
+    "method": "Phương pháp",
+    "noBatches": {
+      "title": "Không có lô sơ chế nào",
+      "description": "Nông dân này chưa có lô sơ chế nào trong các mùa vụ đã cam kết."
+    },
+    "error": {
+      "loadingFarmers": "Không thể tải danh sách nông dân",
+      "loadingBatches": "Không thể tải danh sách lô sơ chế của nông dân này"
+    }
+  },
+     "evaluationFailureInfo": {
+     "evaluationInfo": "Thông tin đánh giá",
+     "result": "Kết quả",
+     "comments": "Nhận xét",
+     "detailedFeedback": "Phản hồi chi tiết",
+     "recommendations": "Khuyến nghị cải thiện",
+     "failedEvaluation": "Đánh giá không đạt",
+     "stage": "Công đoạn",
+     "step": "Bước",
+     "farmer": "Nông dân",
+     "hasUpdatedStage": "đã cập nhật lại công đoạn này",
+     "needToRetryStage": "Cần thực hiện lại công đoạn này",
+     "problemDetails": "Chi tiết vấn đề",
+     "improvementRecommendations": "Khuyến nghị cải thiện",
+     "failedCriteria": "Tiêu chí không đạt",
+     "actualValue": "Giá trị thực tế",
+     "expectedValue": "Giá trị chuẩn",
+     "reason": "Lý do",
+     "selectedFailureReasons": "Lý do không đạt được chọn",
+     "retryInfo": "Thông tin cập nhật lại",
+     "updateDate": "Ngày cập nhật",
+     "updatedBy": "Cập nhật bởi",
+     "nextSteps": "Hướng dẫn tiếp theo",
+     "farmerHasUpdated": "Nông dân đã cập nhật lại công đoạn {{stageName}}. Bạn có thể đánh giá lại để kiểm tra chất lượng cải thiện.",
+     "updateProgressWithImprovements": "Hãy cập nhật tiến trình cho công đoạn {{stageName}} với những cải thiện theo khuyến nghị của chuyên gia.",
+     "debug": {
+       "orderIndex": "OrderIndex",
+       "stageId": "StageId",
+       "rawComments": "Raw Comments"
+     }
+   },
+  "farmerRetryStatus": {
+    "farmer": "Nông dân",
+    "hasUpdatedStage": "đã cập nhật lại công đoạn {{stageName}}",
+    "updateDate": "Ngày cập nhật",
+    "updatedBy": "Cập nhật bởi",
+    "waitingForEvaluation": "Nông dân đã cập nhật lại và đang chờ bạn đánh giá.",
+    "canReEvaluate": "Bạn có thể đánh giá lại để kiểm tra chất lượng cải thiện.",
+    "waitingForFarmer": "Đang chờ {{farmerName}} cập nhật lại công đoạn {{stageName}}"
+  },
+  "stageFailureDisplay": {
+    "evaluationInfo": "Thông tin đánh giá",
+    "noDetailedInfo": "Không có thông tin chi tiết",
+    "improvementNeeded": "🔧 Công đoạn cần cải thiện",
+    "stage": "Công đoạn",
+    "step": "Bước",
+    "issue": "Vấn đề",
+    "recommendations": "Khuyến nghị",
+    "guidance": "Hướng dẫn",
+    "improvementGuidance": "Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia và cập nhật lại tiến trình."
+  },
+  "retryGuidanceInfo": {
+    "title": "Hướng dẫn cập nhật lại",
+    "currentStatus": "Trạng thái hiện tại",
+    "evaluationFailed": "Đánh giá không đạt - cần cải thiện",
+    "farmerUpdated": "Nông dân đã cập nhật",
+    "waitingForReEvaluation": "Đang chờ đánh giá lại",
+    "actionRequired": "Hành động cần thiết",
+    "improveAndRetry": "Cải thiện công đoạn và thử lại",
+    "nextSteps": "Các bước tiếp theo",
+    "step1": "Cải thiện công đoạn theo khuyến nghị của chuyên gia",
+    "step2": "Cập nhật lại tiến trình với những cải thiện",
+    "step3": "Chờ chuyên gia đánh giá lại"
+  },
+  "updateAfterEvaluation": {
+    "title": "Cập nhật tiến trình sau đánh giá",
+    "instruction": "Hướng dẫn",
+    "description": "Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia và cập nhật lại tiến trình.",
+    "progressDate": "Ngày cập nhật",
+    "outputQuantity": "Khối lượng đầu ra",
+    "quantityPlaceholder": "0.00",
+    "outputUnit": "Đơn vị",
+    "selectUnit": "Chọn đơn vị...",
+    "units": {
+      "kg": "Kilogram (kg)",
+      "g": "Gram (g)",
+      "ton": "Tấn",
+      "quintal": "Tạ",
+      "yen": "Yến",
+      "lang": "Lạng"
+    },
+    "stageDescription": "Mô tả công đoạn",
+    "descriptionPlaceholder": "Mô tả chi tiết về công đoạn thực hiện...",
+    "notes": "Ghi chú",
+    "notesPlaceholder": "Ghi chú bổ sung...",
+    "improvementNote": "Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia",
+    "technicalParameters": "Thông số kỹ thuật (tùy chọn)",
+    "addParameter": "+ Thêm thông số",
+    "parameterName": "Tên thông số",
+    "parameterNamePlaceholder": "Ví dụ: Nhiệt độ",
+    "parameterValue": "Giá trị",
+    "parameterValuePlaceholder": "Ví dụ: 25",
+    "unit": "Đơn vị",
+    "unitPlaceholder": "Ví dụ: °C",
+    "parameter": "Thông số {{index}}",
+    "images": "Hình ảnh (tùy chọn)",
+    "selectImages": "Chọn hình ảnh",
+    "videos": "Video (tùy chọn)",
+    "selectVideos": "Chọn video",
+    "cancel": "Hủy",
+    "updating": "Đang cập nhật...",
+    "updateProgress": "Cập nhật tiến trình"
+  },
+  "progressGuidanceCard": {
+    "title": "Hướng dẫn tiếp theo",
+    "needToRetry": "Cần thực hiện lại",
+    "stageNotMet": "Công đoạn {{stageName}} chưa đạt tiêu chuẩn.",
+    "updateWithImprovements": "Hãy cập nhật tiến trình cho công đoạn này với những cải thiện theo khuyến nghị.",
+    "canContinue": "Có thể tiếp tục",
+    "stageImproved": "Công đoạn {{stageName}} đã được cải thiện.",
+    "continueNextStep": "Bạn có thể tiếp tục với bước tiếp theo trong quy trình.",
+    "needToHandle": "Cần xử lý",
+    "stageNeedsRetry": "Công đoạn {{stageName}} cần được thực hiện lại.",
+    "updateProgressForStage": "Hãy cập nhật tiến trình cho công đoạn này.",
+    "clickUpdateToRetry": "Nhấn 'Cập nhật tiến trình' để thực hiện lại công đoạn này",
+    "clickUpdateToContinue": "Nhấn 'Cập nhật tiến trình' để tiếp tục bước tiếp theo",
+    "clickUpdateToRetryFailed": "Nhấn 'Cập nhật tiến trình' để thực hiện lại công đoạn bị lỗi"
+  },
+  "failureInfoCard": {
+    "title": "Thông tin lỗi",
+    "stageInfo": "Thông tin công đoạn",
+    "failed": "Không đạt",
+    "stage": "Công đoạn",
+    "step": "Bước",
+    "failureDetails": "Chi tiết lỗi",
+    "recommendations": "Khuyến nghị cải thiện",
+    "actionRequired": "Hành động cần thiết",
+    "improvementGuidance": "Vui lòng cải thiện công đoạn này theo khuyến nghị và thử lại."
+  },
+  "filterBadge": {
+    "removeFilter": "Xóa bộ lọc"
+  },
+  "farmerBatchDetail": {
+        "title": "Chi tiết lô sơ chế",
+        "subtitle": "Thông tin chi tiết về lô sơ chế và tiến trình xử lý",
+        "batchDetail": {
+          "title": "Chi tiết lô sơ chế",
+          "subtitle": "Thông tin chi tiết về lô sơ chế và tiến trình xử lý",
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Có thể mất vài giây để tải hoàn tất"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "back": "Quay lại"
+          },
+          "notFound": {
+            "title": "Không tìm thấy dữ liệu",
+            "description": "Lô sơ chế này không tồn tại hoặc đã bị xóa",
+            "back": "Quay lại"
+          },
+          "status": {
+            "completed": "Đã hoàn thành tất cả các bước",
+            "awaitingEvaluation": "Đang chờ đánh giá",
+            "canContinue": "Có thể cập nhật bước tiếp theo",
+            "unknown": "Chưa xác định"
+          },
+          "quickActions": {
+            "createProgress": "Tạo tiến trình",
+            "advanceProgress": "Cập nhật tiến trình",
+            "updateAfterEvaluation": "Cập nhật sau đánh giá",
+            "evaluateStage": "Đánh giá giai đoạn"
+          }
+        },
+        "loading": {
+          "title": "Đang tải dữ liệu...",
+          "description": "Có thể mất vài giây để tải hoàn tất"
+        },
+        "error": {
+          "title": "Không thể tải dữ liệu",
+          "back": "Quay lại"
+        },
+        "notFound": {
+          "title": "Không tìm thấy dữ liệu",
+          "description": "Lô sơ chế này không tồn tại hoặc đã bị xóa",
+          "back": "Quay lại"
+        },
+        "status": {
+          "completed": "Đã hoàn thành tất cả các bước",
+          "awaitingEvaluation": "Đang chờ đánh giá",
+          "canContinue": "Có thể cập nhật bước tiếp theo"
+        },
+        "stats": {
+          "batchCode": "Mã lô",
+          "stage": "Giai đoạn",
+          "output": "Sản lượng",
+          "efficiency": "Hiệu suất"
+        },
+        "basicInfo": {
+          "title": "Thông tin cơ bản",
+          "batchCode": "Mã lô",
+          "systemCode": "Mã hệ thống",
+          "cropSeason": "Mùa vụ",
+          "farmer": "Nông dân",
+          "method": "Phương pháp",
+          "status": "Trạng thái",
+          "inputQuantity": "Khối lượng vào",
+          "outputQuantity": "Khối lượng ra",
+          "createdAt": "Ngày tạo",
+          "type": "Loại cà phê"
+        },
+        "progress": {
+          "title": "Tiến độ chế biến",
+          "step": "Bước",
+          "retry": "Làm lại",
+          "retryLabel": "(Làm lại)",
+          "executionDate": "Ngày thực hiện",
+          "outputQuantity": "Khối lượng đầu ra",
+          "waste": "Chất thải",
+          "updatedBy": "Cập nhật bởi",
+          "noProgress": {
+            "title": "Chưa có tiến độ nào",
+            "description": "Lô sơ chế chưa được bắt đầu xử lý"
+          },
+          "media": {
+            "title": "Hình ảnh và video",
+            "image": "Ảnh",
+            "video": "Video",
+            "legacy": "Hình ảnh cũ"
+          },
+          "parameters": {
+            "title": "Thông số kỹ thuật"
+          },
+          "wastes": {
+            "title": "Chất thải"
+          }
+        },
+        "quickActions": {
+          "title": "Thao tác nhanh",
+          "createProgress": "Tạo tiến trình",
+          "advanceProgress": "Cập nhật tiến trình",
+          "updateAfterEvaluation": "Cập nhật sau đánh giá",
+          "evaluateStage": "Đánh giá giai đoạn"
+        },
+        "summary": {
+          "title": "Tóm tắt lô",
+          "currentStatus": "Trạng thái hiện tại:",
+          "stagesCount": "Số giai đoạn:",
+          "efficiency": "Hiệu suất:",
+          "createdAt": "Ngày tạo:"
+        },
+        "contact": {
+          "title": "Thông tin liên hệ",
+          "farmer": "Nông dân",
+          "cropSeason": "Mùa vụ"
+        },
+        "wastes": {
+          "title": "Tổng hợp chất thải",
+          "code": "Mã",
+          "quantity": "Khối lượng",
+          "createdAt": "Ngày tạo"
+        },
+        "evaluations": {
+          "title": "Đánh giá chất lượng",
+          "subtitle": "Kết quả đánh giá từ chuyên gia",
+          "viewDetails": "Xem chi tiết",
+          "failAlert": {
+            "title": "Đánh giá không đạt",
+            "description": "Cần cải thiện công đoạn này theo khuyến nghị của chuyên gia",
+            "updateProgress": "Cập nhật tiến trình"
+          },
+          "item": {
+            "title": "Đánh giá",
+            "code": "Mã",
+            "date": "Ngày",
+            "expert": "Chuyên gia",
+            "comments": "Nhận xét"
+          }
+        },
+        "evaluations.failure": {
+          "title": "Thông tin lỗi",
+          "stage": "Công đoạn",
+          "details": {
+            "title": "Chi tiết lỗi"
+          },
+          "recommendations": {
+            "title": "Khuyến nghị cải thiện"
+          },
+          "guidance": {
+            "title": "Hướng dẫn",
+            "description": "Vui lòng cải thiện công đoạn {{stageName}} theo khuyến nghị của chuyên gia",
+            "update": "Cập nhật tiến trình"
+          }
+        },
+        "mediaViewer": {
+          "navigation": "Chuyển ảnh",
+          "close": "Đóng",
+          "image": "Hình ảnh",
+          "videoNotSupported": "Trình duyệt của bạn không hỗ trợ video.",
+          "prevNext": "← → Chuyển ảnh",
+          "escClose": "ESC Đóng"
+        },
+        "modals": {
+          "createProgress": "Tạo tiến trình đầu tiên"
+        },
+        "fallback": {
+          "unknownType": "Chưa xác định",
+          "zeroQuantity": "0 kg",
+          "noDate": "Chưa có ngày",
+          "expert": "Chuyên gia"
+        },
+        "status": {
+          "pending": "Chờ xử lý",
+          "inProgress": "Đang xử lý",
+          "completed": "Hoàn thành",
+          "awaitingEvaluation": "Chờ đánh giá",
+          "cancelled": "Đã hủy",
+          "unknown": "Không xác định"
+        },
+        "time": {
+          "yesterday": "Hôm qua",
+          "today": "Hôm nay",
+          "daysAgo": "{{days}} ngày trước",
+          "active": "Đang hoạt động"
+        },
+        "loading": {
+          "data": "Đang tải dữ liệu...",
+          "startFirstProgress": "Bắt đầu thêm tiến trình đầu tiên"
+        }
+      }
+    }
+  
