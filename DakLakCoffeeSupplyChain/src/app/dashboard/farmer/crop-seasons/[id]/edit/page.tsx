@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import { CropSeason } from '@/lib/api/cropSeasons';
 
 export default function EditCropSeasonPage() {
     useAuthGuard(['farmer']);
+    const { t } = useTranslation();
     const router = useRouter();
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(true);
@@ -77,14 +79,14 @@ export default function EditCropSeasonPage() {
                     }
                 }
             } catch {
-                AppToast.error('Không thể tải dữ liệu mùa vụ.');
+                AppToast.error(t('cropSeasons.edit.loading'));
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchData();
-    }, [id]);
+    }, [id, t]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -103,30 +105,30 @@ export default function EditCropSeasonPage() {
 
         // Basic validation
         if (!form.seasonName.trim()) {
-            newErrors.seasonName = 'Tên mùa vụ không được để trống';
+            newErrors.seasonName = t('cropSeasons.edit.validation.seasonNameRequired');
         } else if (form.seasonName.trim().length < 3) {
-            newErrors.seasonName = 'Tên mùa vụ phải có ít nhất 3 ký tự';
+            newErrors.seasonName = t('cropSeasons.edit.validation.seasonNameMinLength');
         }
 
         if (!form.startDate) {
-            newErrors.startDate = 'Ngày bắt đầu không được để trống';
+            newErrors.startDate = t('cropSeasons.edit.validation.startDateRequired');
         }
 
         if (!form.endDate) {
-            newErrors.endDate = 'Ngày kết thúc không được để trống';
+            newErrors.endDate = t('cropSeasons.edit.validation.endDateRequired');
         } else if (form.startDate && form.endDate) {
             const startDate = new Date(form.startDate);
             const endDate = new Date(form.endDate);
 
             if (startDate >= endDate) {
-                newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu';
+                newErrors.endDate = t('cropSeasons.edit.validation.endDateAfterStartDate');
             } else if (commitment && commitment.approvedAt) {
                 // Check if crop season duration is within 11-12 months
                 const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
                     (endDate.getMonth() - startDate.getMonth());
 
                 if (monthsDiff < 11 || monthsDiff > 13) { // Allow 1 month tolerance
-                    newErrors.endDate = 'Thời gian mùa vụ phải trong khoảng 11-12 tháng';
+                    newErrors.endDate = t('cropSeasons.edit.validation.seasonDurationMonths');
                 }
             }
         }
@@ -136,7 +138,7 @@ export default function EditCropSeasonPage() {
             const comparison = compareDates(form.startDate, commitment.approvedAt);
 
             if (comparison < 0) {
-                newErrors.startDate = 'Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)';
+                newErrors.startDate = t('cropSeasons.edit.validation.startDateAfterApproved');
             }
         }
 
@@ -151,7 +153,7 @@ export default function EditCropSeasonPage() {
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            AppToast.error('Vui lòng kiểm tra và sửa các lỗi trong form');
+            AppToast.error(t('cropSeasons.edit.validation.checkFormErrors'));
             return;
         }
 
@@ -169,10 +171,10 @@ export default function EditCropSeasonPage() {
             const result = await updateCropSeason(id as string, payload);
 
             if (result.success) {
-                AppToast.success('Cập nhật mùa vụ thành công!');
+                AppToast.success(t('cropSeasons.edit.success'));
                 router.push('/dashboard/farmer/crop-seasons');
             } else {
-                AppToast.error(result.error || 'Cập nhật thất bại.');
+                AppToast.error(result.error || t('cropSeasons.edit.error'));
             }
         } catch (err) {
             AppToast.error(getErrorMessage(err));
@@ -181,19 +183,19 @@ export default function EditCropSeasonPage() {
         }
     };
 
-    if (isLoading) return <p className="text-center py-10">Đang tải dữ liệu mùa vụ...</p>;
+    if (isLoading) return <p className="text-center py-10">{t('cropSeasons.edit.loading')}</p>;
 
-    if (!season) return <p className="text-center py-10 text-red-500">Không tìm thấy mùa vụ.</p>;
+    if (!season) return <p className="text-center py-10 text-red-500">{t('cropSeasons.edit.notFound')}</p>;
 
     return (
         <div className="max-w-2xl mx-auto py-10 px-4">
             <Card>
                 <CardHeader>
-                    <CardTitle>Cập nhật mùa vụ</CardTitle>
+                    <CardTitle>{t('cropSeasons.edit.title')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
-                        <Label htmlFor="seasonName">Tên mùa vụ <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="seasonName">{t('cropSeasons.edit.form.seasonName.label')} <span className="text-red-500">{t('cropSeasons.common.requiredField')}</span></Label>
                         <Input
                             name="seasonName"
                             value={form.seasonName}
@@ -210,7 +212,7 @@ export default function EditCropSeasonPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="startDate">Ngày bắt đầu <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="startDate">{t('cropSeasons.edit.form.startDate.label')} <span className="text-red-500">{t('cropSeasons.common.requiredField')}</span></Label>
                             <Input
                                 type="date"
                                 name="startDate"
@@ -226,7 +228,7 @@ export default function EditCropSeasonPage() {
                             )}
                         </div>
                         <div>
-                            <Label htmlFor="endDate">Ngày kết thúc <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="endDate">{t('cropSeasons.edit.form.endDate.label')} <span className="text-red-500">{t('cropSeasons.common.requiredField')}</span></Label>
                             <Input
                                 type="date"
                                 name="endDate"
@@ -244,22 +246,22 @@ export default function EditCropSeasonPage() {
                     </div>
 
                     <div>
-                        <Label htmlFor="note">Ghi chú</Label>
+                        <Label htmlFor="note">{t('cropSeasons.edit.form.note.label')}</Label>
                         <Textarea name="note" value={form.note} onChange={handleChange} />
                     </div>
 
                     <div className="border-t pt-4">
-                        <p className="text-sm text-muted-foreground mb-1">Thông tin cam kết</p>
-                        <p><strong>Mã cam kết:</strong> {season.commitmentName}</p>
-                        <p><strong>Diện tích đã đăng ký:</strong> {season.area} ha</p>
+                        <p className="text-sm text-muted-foreground mb-1">{t('cropSeasons.edit.commitmentInfo')}</p>
+                        <p><strong>{t('cropSeasons.edit.commitmentCode')}:</strong> {season.commitmentName}</p>
+                        <p><strong>{t('cropSeasons.edit.registeredArea')}:</strong> {season.area} ha</p>
 
                         {commitment && commitment.approvedAt && (
                             <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                                 <p className="text-sm text-blue-700">
-                                    <strong>Ngày cam kết được duyệt:</strong> {new Date(commitment.approvedAt).toLocaleDateString('vi-VN')}
+                                    <strong>{t('cropSeasons.edit.approvedDate')}:</strong> {new Date(commitment.approvedAt).toLocaleDateString('vi-VN')}
                                 </p>
                                 <p className="text-xs text-blue-600 mt-1">
-                                    ⚠️ Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày này (có thể bắt đầu cùng ngày)
+                                    {t('cropSeasons.edit.approvedDateNote')}
                                 </p>
                             </div>
                         )}
@@ -267,7 +269,7 @@ export default function EditCropSeasonPage() {
 
                     <div className="flex justify-end pt-4">
                         <Button onClick={handleSubmit} disabled={isSubmitting}>
-                            {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
+                            {isSubmitting ? t('cropSeasons.edit.form.updating') : t('cropSeasons.edit.form.submit')}
                         </Button>
                     </div>
                 </CardContent>

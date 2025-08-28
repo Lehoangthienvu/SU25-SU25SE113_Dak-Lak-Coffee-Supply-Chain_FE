@@ -1686,6 +1686,7 @@
     "delete": "Xóa",
     "add": "Thêm",
     "create": "Tạo",
+    "edit": "Sửa",
     "details": "Chi tiết",
     "search": "Tìm kiếm",
     "filter": "Lọc",
@@ -2101,6 +2102,236 @@
           "data": "Đang tải dữ liệu...",
           "startFirstProgress": "Bắt đầu thêm tiến trình đầu tiên"
         }
+      },
+    "cropSeasons": {
+      "title": "Quản lý mùa vụ",
+      "description": "Theo dõi và quản lý các mùa vụ cà phê của bạn",
+      "create": {
+        "title": "Tạo mùa vụ mới",
+        "description": "Tạo mùa vụ cà phê mới cho nông dân",
+        "form": {
+          "seasonName": {
+            "label": "Tên mùa vụ",
+            "placeholder": "VD: Mùa vụ 2025, Mùa vụ Xuân-Hè 2025...",
+            "description": "Nhập tên mùa vụ để dễ dàng quản lý"
+          },
+          "startDate": {
+            "label": "Ngày bắt đầu",
+            "description": "Ngày bắt đầu mùa vụ"
+          },
+          "endDate": {
+            "label": "Ngày kết thúc",
+            "description": "Ngày kết thúc mùa vụ"
+          },
+          "commitment": {
+            "label": "Cam kết",
+            "placeholder": "-- Chọn cam kết --",
+            "description": "Chọn cam kết trồng trọt từ doanh nghiệp"
+          },
+          "note": {
+            "label": "Ghi chú",
+            "placeholder": "Mô tả thêm về mùa vụ, điều kiện đặc biệt...",
+            "description": "Thông tin bổ sung về mùa vụ"
+          },
+          "submit": "Tạo mùa vụ",
+          "cancel": "Hủy",
+          "creating": "Đang tạo..."
+        },
+        "validation": {
+          "seasonNameRequired": "Vui lòng nhập tên mùa vụ",
+          "seasonNameMinLength": "Tên mùa vụ phải có ít nhất 3 ký tự",
+          "startDateRequired": "Vui lòng chọn ngày bắt đầu",
+          "endDateRequired": "Vui lòng chọn ngày kết thúc",
+          "commitmentRequired": "Vui lòng chọn cam kết trồng trọt",
+          "commitmentApprovedOnly": "Chỉ có thể tạo mùa vụ từ cam kết đã được duyệt",
+          "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+          "dateRangeTooLong": "Thời gian mùa vụ không được quá 12 tháng",
+          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-12 tháng",
+          "seasonStartBeforeHarvest": "Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến",
+          "seasonDurationIncludesHarvest": "Thời gian mùa vụ phải bao gồm thời gian thu hoạch dự kiến",
+          "startDateAfterApproved": "Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong form",
+          "commitmentAlreadyHasSeason": "Cam kết này đã có mùa vụ. Mỗi cam kết chỉ được tạo một mùa vụ duy nhất.",
+          "seasonTimeOverlap": "Thời gian mùa vụ trùng với mùa vụ khác trong cùng cam kết."
+        },
+        "success": "Tạo mùa vụ thành công!",
+        "error": "Không thể tạo mùa vụ. Vui lòng thử lại."
+      },
+      "edit": {
+        "title": "Cập nhật mùa vụ",
+        "description": "Chỉnh sửa thông tin mùa vụ",
+        "form": {
+          "seasonName": {
+            "label": "Tên mùa vụ",
+            "placeholder": "VD: Mùa vụ 2025, Mùa vụ Xuân-Hè 2025..."
+          },
+          "startDate": {
+            "label": "Ngày bắt đầu",
+            "description": "Ngày bắt đầu mùa vụ"
+          },
+          "endDate": {
+            "label": "Ngày kết thúc",
+            "description": "Ngày kết thúc mùa vụ"
+          },
+          "note": {
+            "label": "Ghi chú",
+            "placeholder": "Mô tả thêm về mùa vụ, điều kiện đặc biệt..."
+          },
+          "submit": "Cập nhật",
+          "updating": "Đang cập nhật..."
+        },
+        "validation": {
+          "seasonNameRequired": "Tên mùa vụ không được để trống",
+          "seasonNameMinLength": "Tên mùa vụ phải có ít nhất 3 ký tự",
+          "startDateRequired": "Ngày bắt đầu không được để trống",
+          "endDateRequired": "Ngày kết thúc không được để trống",
+          "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-12 tháng",
+          "startDateAfterApproved": "Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong form"
+        },
+        "success": "Cập nhật mùa vụ thành công!",
+        "error": "Cập nhật thất bại.",
+        "loading": "Đang tải dữ liệu mùa vụ...",
+        "notFound": "Không tìm thấy mùa vụ.",
+        "commitmentInfo": "Thông tin cam kết",
+        "commitmentCode": "Mã cam kết",
+        "registeredArea": "Diện tích đã đăng ký",
+        "approvedDate": "Ngày cam kết được duyệt",
+        "approvedDateNote": "⚠️ Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày này (có thể bắt đầu cùng ngày)"
+      },
+      "details": {
+        "title": "Chi tiết mùa vụ cà phê",
+        "loading": "Đang tải dữ liệu mùa vụ...",
+        "error": "Lỗi tải mùa vụ",
+        "notFound": "Không tìm thấy mùa vụ",
+        "statistics": {
+          "totalAreas": "Tổng vùng trồng",
+          "completed": "Hoàn thành",
+          "inProgress": "Đang thực hiện",
+          "totalArea": "Tổng diện tích"
+        },
+        "seasonInfo": "Thông tin mùa vụ",
+        "season": "Mùa vụ",
+        "farmer": "Nông dân",
+        "time": "Thời gian",
+        "area": "Diện tích",
+        "registrationCode": "Mã đăng ký",
+        "note": "Ghi chú",
+        "notAvailable": "Chưa có",
+        "unknown": "Không rõ",
+        "notUpdated": "Chưa cập nhật",
+        "plantingAreas": "Chi tiết vùng trồng",
+        "addPlantingArea": "Thêm vùng trồng"
+      },
+      "detailTable": {
+        "noPlantingAreas": "Chưa có vùng trồng nào được tạo.",
+        "coffeeType": "Loại cà phê",
+        "area": "Diện tích (ha)",
+        "estimatedYield": "Sản lượng ước tính",
+        "actualYield": "Sản lượng thu hoạch",
+        "ratio": "Tỷ lệ (%)",
+        "status": "Trạng thái",
+        "expectedHarvest": "Thu hoạch dự kiến",
+        "actions": "Hành động",
+        "plantingArea": "Vùng trồng",
+        "to": "đến",
+        "updateDetailTitle": "Cập nhật chi tiết vùng trồng"
+      },
+      "list": {
+        "title": "Danh sách mùa vụ",
+        "search": {
+          "title": "Tìm kiếm mùa vụ",
+          "placeholder": "Nhập tên mùa vụ..."
+        },
+        "filter": {
+          "title": "Lọc theo trạng thái",
+          "allStatuses": "Tất cả trạng thái"
+        },
+        "table": {
+          "seasonName": "Tên mùa vụ",
+          "area": "Diện tích (ha)",
+          "status": "Trạng thái",
+          "time": "Thời gian",
+          "actions": "Hành động"
+        },
+        "pagination": {
+          "showing": "Hiển thị {{start}}-{{end}} trong {{total}} mùa vụ"
+        },
+        "empty": {
+          "title": "Không tìm thấy mùa vụ nào",
+          "description": {
+            "withFilter": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm",
+            "noFilter": "Bắt đầu tạo mùa vụ đầu tiên của bạn"
+          }
+        }
+      },
+      "statistics": {
+        "totalSeasons": "Tổng mùa vụ",
+        "activeSeasons": "Đang hoạt động",
+        "totalArea": "Tổng diện tích"
+      },
+      "card": {
+        "farmer": "Nông dân",
+        "to": "đến",
+        "viewDetails": "Xem chi tiết",
+        "edit": "Sửa"
+      },
+      "status": {
+        "active": "Đang hoạt động",
+        "paused": "Tạm dừng",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy"
+      },
+      "common": {
+        "loading": "Đang tải danh sách mùa vụ...",
+        "error": "Không thể tải danh sách mùa vụ",
+        "commitmentsError": "Không thể tải danh sách cam kết.",
+        "loadingCommitments": "Đang tải danh sách cam kết...",
+        "noCommitments": "Không có cam kết nào khả dụng",
+        "noCommitmentsDescription": "Bạn cần có cam kết sản xuất đã được duyệt để tạo mùa vụ mới.",
+        "basicInfo": "Thông tin cơ bản",
+        "requiredField": "*",
+        "commitmentInfo": "Thông tin cam kết đã chọn",
+        "commitmentCode": "Mã cam kết",
+        "commitmentName": "Tên cam kết",
+        "companyName": "Doanh nghiệp",
+        "totalValue": "Tổng giá trị",
+        "approvalDate": "Ngày duyệt",
+        "productDetails": "Chi tiết sản phẩm",
+        "unknown": "Không xác định",
+        "importantNote": "⚠️ Lưu ý quan trọng:",
+        "commitmentNotApproved": "Cam kết chưa được duyệt",
+        "commitmentNotApprovedDesc": "Chỉ có thể tạo mùa vụ từ cam kết đã được business manager duyệt.",
+        "commitmentDate": "Ngày tạo cam kết",
+        "status": "Trạng thái",
+        "noDate": "Không có",
+        "cannotAutoCalculate": "❌ Không thể tự động tính thời gian mùa vụ. Vui lòng chọn cam kết đã được duyệt.",
+        "creating": "Đang tạo..."
+      }
+    },
+    "manager": {
+      "cropSeasons": {
+        "title": "Quản lý mùa vụ",
+        "description": "Theo dõi và quản lý các mùa vụ cà phê của nông dân",
+        "totalSeasons": "Tổng mùa vụ",
+        "activeSeasons": "Đang hoạt động",
+        "totalArea": "Tổng diện tích",
+        "participatingFarmers": "Nông dân tham gia",
+        "searchCropSeason": "Tìm kiếm mùa vụ",
+        "seasonNameOrFarmer": "Tên mùa vụ hoặc nông dân...",
+        "filterByStatus": "Lọc theo trạng thái",
+        "allSeasons": "Tất cả ({{total}})",
+        "cropSeasonList": "Danh sách mùa vụ ({{total}})",
+        "seasonName": "Mùa vụ",
+        "farmer": "Nông dân",
+        "area": "Diện tích",
+        "status": "Trạng thái",
+        "actions": "Hành động",
+        "unknownFarmer": "Chưa xác định",
+        "viewDetails": "Xem chi tiết",
+        "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
+        "page": "Trang {{current}} / {{total}}"
       }
     }
-  
+  }

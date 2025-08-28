@@ -1665,6 +1665,7 @@
     "delete": "Delete",
     "add": "Add",
     "create": "Create",
+    "edit": "Edit",
     "details": "Details",
     "search": "Search",
     "filter": "Filter",
@@ -2110,5 +2111,236 @@
           },
           "success": "Processing batch updated successfully!"
         }
+      },
+    "cropSeasons": {
+      "title": "Crop Season Management",
+      "description": "Track and manage your coffee crop seasons",
+      "create": {
+        "title": "Create New Crop Season",
+        "description": "Create a new coffee crop season for farmers",
+        "form": {
+          "seasonName": {
+            "label": "Season Name",
+            "placeholder": "E.g., Season 2025, Spring-Summer 2025...",
+            "description": "Enter season name for easy management"
+          },
+          "startDate": {
+            "label": "Start Date",
+            "description": "Season start date"
+          },
+          "endDate": {
+            "label": "End Date",
+            "description": "Season end date"
+          },
+          "commitment": {
+            "label": "Commitment",
+            "placeholder": "-- Select commitment --",
+            "description": "Select farming commitment from business"
+          },
+          "note": {
+            "label": "Notes",
+            "placeholder": "Additional description about the season, special conditions...",
+            "description": "Additional information about the season"
+          },
+          "submit": "Create Season",
+          "cancel": "Cancel",
+          "creating": "Creating..."
+        },
+        "validation": {
+          "seasonNameRequired": "Please enter season name",
+          "seasonNameMinLength": "Season name must be at least 3 characters",
+          "startDateRequired": "Please select start date",
+          "endDateRequired": "Please select end date",
+          "commitmentRequired": "Please select farming commitment",
+          "commitmentApprovedOnly": "Only approved commitments can be used to create crop seasons",
+          "endDateAfterStartDate": "End date must be after start date",
+          "dateRangeTooLong": "Season duration cannot exceed 12 months",
+          "seasonDurationMonths": "Season duration must be between 11-12 months",
+          "seasonStartBeforeHarvest": "Season start date must be before expected harvest time",
+          "seasonDurationIncludesHarvest": "Season duration must include expected harvest time",
+          "startDateAfterApproved": "Season start date must be after or equal to commitment approval date (can start on the same day)",
+          "checkFormErrors": "Please check and fix errors in the form",
+          "commitmentAlreadyHasSeason": "This commitment already has a crop season. Each commitment can only have one unique crop season.",
+          "seasonTimeOverlap": "Season time overlaps with another season in the same commitment."
+        },
+        "success": "Crop season created successfully!",
+        "error": "Cannot create crop season. Please try again."
+      },
+      "edit": {
+        "title": "Update Crop Season",
+        "description": "Edit crop season information",
+        "form": {
+          "seasonName": {
+            "label": "Season Name",
+            "placeholder": "E.g., Season 2025, Spring-Summer 2025..."
+          },
+          "startDate": {
+            "label": "Start Date",
+            "description": "Season start date"
+          },
+          "endDate": {
+            "label": "End Date",
+            "description": "Season end date"
+          },
+          "note": {
+            "label": "Notes",
+            "placeholder": "Additional description about the season, special conditions..."
+          },
+          "submit": "Update",
+          "updating": "Updating..."
+        },
+        "validation": {
+          "seasonNameRequired": "Season name cannot be empty",
+          "seasonNameMinLength": "Season name must be at least 3 characters",
+          "startDateRequired": "Start date cannot be empty",
+          "endDateRequired": "End date cannot be empty",
+          "endDateAfterStartDate": "End date must be after start date",
+          "seasonDurationMonths": "Season duration must be between 11-12 months",
+          "startDateAfterApproved": "Season start date must be after or equal to commitment approval date (can start on the same day)",
+          "checkFormErrors": "Please check and fix errors in the form"
+        },
+        "success": "Crop season updated successfully!",
+        "error": "Update failed.",
+        "loading": "Loading crop season data...",
+        "notFound": "Crop season not found.",
+        "commitmentInfo": "Commitment Information",
+        "commitmentCode": "Commitment Code",
+        "registeredArea": "Registered Area",
+        "approvedDate": "Commitment Approval Date",
+        "approvedDateNote": "⚠️ Season start date must be after or equal to this date (can start on the same day)"
+      },
+      "details": {
+        "title": "Coffee Crop Season Details",
+        "loading": "Loading crop season data...",
+        "error": "Error loading crop season",
+        "notFound": "Crop season not found",
+        "statistics": {
+          "totalAreas": "Total Planting Areas",
+          "completed": "Completed",
+          "inProgress": "In Progress",
+          "totalArea": "Total Area"
+        },
+        "seasonInfo": "Season Information",
+        "season": "Season",
+        "farmer": "Farmer",
+        "time": "Time",
+        "area": "Area",
+        "registrationCode": "Registration Code",
+        "note": "Notes",
+        "notAvailable": "Not available",
+        "unknown": "Unknown",
+        "notUpdated": "Not updated",
+        "plantingAreas": "Planting Area Details",
+        "addPlantingArea": "Add Planting Area"
+      },
+      "detailTable": {
+        "noPlantingAreas": "No planting areas have been created yet.",
+        "coffeeType": "Coffee Type",
+        "area": "Area (ha)",
+        "estimatedYield": "Estimated Yield",
+        "actualYield": "Actual Yield",
+        "ratio": "Ratio (%)",
+        "status": "Status",
+        "expectedHarvest": "Expected Harvest",
+        "actions": "Actions",
+        "plantingArea": "Planting Area",
+        "to": "to",
+        "updateDetailTitle": "Update Planting Area Details"
+      },
+      "list": {
+        "title": "Crop Seasons List",
+        "search": {
+          "title": "Search Seasons",
+          "placeholder": "Enter season name..."
+        },
+        "filter": {
+          "title": "Filter by Status",
+          "allStatuses": "All Statuses"
+        },
+        "table": {
+          "seasonName": "Season Name",
+          "area": "Area (ha)",
+          "status": "Status",
+          "time": "Time",
+          "actions": "Actions"
+        },
+        "pagination": {
+          "showing": "Showing {{start}}-{{end}} of {{total}} seasons"
+        },
+        "empty": {
+          "title": "No seasons found",
+          "description": {
+            "withFilter": "Try changing filters or search keywords",
+            "noFilter": "Start creating your first crop season"
+          }
+        }
+      },
+      "statistics": {
+        "totalSeasons": "Total Seasons",
+        "activeSeasons": "Active",
+        "totalArea": "Total Area"
+      },
+      "card": {
+        "farmer": "Farmer",
+        "to": "to",
+        "viewDetails": "View Details",
+        "edit": "Edit"
+      },
+      "status": {
+        "active": "Active",
+        "paused": "Paused",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "common": {
+        "loading": "Loading crop seasons...",
+        "error": "Cannot load crop seasons list",
+        "commitmentsError": "Cannot load commitments list.",
+        "loadingCommitments": "Loading commitments list...",
+        "noCommitments": "No commitments available",
+        "noCommitmentsDescription": "You need an approved production commitment to create a new crop season.",
+        "basicInfo": "Basic Information",
+        "requiredField": "*",
+        "commitmentInfo": "Selected Commitment Information",
+        "commitmentCode": "Commitment Code",
+        "commitmentName": "Commitment Name",
+        "companyName": "Company",
+        "totalValue": "Total Value",
+        "approvalDate": "Approval Date",
+        "productDetails": "Product Details",
+        "unknown": "Unknown",
+        "importantNote": "⚠️ Important Note:",
+        "commitmentNotApproved": "Commitment Not Approved",
+        "commitmentNotApprovedDesc": "Only approved commitments from business manager can be used to create crop seasons.",
+        "commitmentDate": "Commitment Date",
+        "status": "Status",
+        "noDate": "No date",
+        "cannotAutoCalculate": "❌ Cannot automatically calculate season time. Please select an approved commitment.",
+        "creating": "Creating..."
+      }
+    },
+    "manager": {
+      "cropSeasons": {
+        "title": "Crop Season Management",
+        "description": "Track and manage coffee crop seasons from farmers",
+        "totalSeasons": "Total Seasons",
+        "activeSeasons": "Active",
+        "totalArea": "Total Area",
+        "participatingFarmers": "Participating Farmers",
+        "searchCropSeason": "Search Seasons",
+        "seasonNameOrFarmer": "Season name or farmer...",
+        "filterByStatus": "Filter by Status",
+        "allSeasons": "All ({{total}})",
+        "cropSeasonList": "Crop Seasons List ({{total}})",
+        "seasonName": "Season",
+        "farmer": "Farmer",
+        "area": "Area",
+        "status": "Status",
+        "actions": "Actions",
+        "unknownFarmer": "Unknown",
+        "viewDetails": "View Details",
+        "showingPage": "Showing {{start}} to {{end}} of {{total}} seasons",
+        "page": "Page {{current}} / {{total}}"
       }
     }
+  }

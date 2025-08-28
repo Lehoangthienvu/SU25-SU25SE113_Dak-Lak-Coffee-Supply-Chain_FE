@@ -1,4 +1,5 @@
 import { CropSeasonStatusMap, CropSeasonStatusValue } from '@/lib/constants/cropSeasonStatus';
+import { useTranslation } from 'react-i18next';
 import FilterBadge from './FilterBadge';
 
 interface FilterStatusPanelProps {
@@ -12,12 +13,14 @@ export default function FilterStatusPanel({
     setSelectedStatus,
     statusCounts,
 }: FilterStatusPanelProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-4">
             {/* FilterBadge cho tất cả */}
             <FilterBadge
                 icon="📊"
-                label="Tất cả trạng thái"
+                label={t('cropSeasons.list.filter.allStatuses')}
                 count={
                     Object.values(statusCounts).reduce((sum, val) => sum + val, 0)
                 }

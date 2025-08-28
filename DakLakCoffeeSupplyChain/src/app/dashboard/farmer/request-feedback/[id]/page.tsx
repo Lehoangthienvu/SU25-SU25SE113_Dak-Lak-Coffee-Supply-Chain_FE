@@ -135,6 +135,20 @@ export default function ReportDetailsPage() {
         return fallbackIcon;
     };
 
+    // Translate response type to Vietnamese
+    const translateResponseType = (type: string): string => {
+        switch (type?.toLowerCase()) {
+            case 'preventive':
+                return 'Phòng ngừa';
+            case 'corrective':
+                return 'Khắc phục';
+            case 'observation':
+                return 'Nhận xét';
+            default:
+                return 'Không xác định';
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4">
             <div className="max-w-5xl mx-auto py-8">
@@ -403,7 +417,7 @@ export default function ReportDetailsPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <Badge className="bg-blue-100 text-blue-800 text-xs">
-                                                        {advice.responseType || 'Không xác định'}
+                                                        {translateResponseType(advice.responseType)}
                                                     </Badge>
                                                     <p className="text-xs text-gray-500 mt-1">
                                                         {format(new Date(advice.createdAt), 'dd/MM/yyyy HH:mm', { locale: vi })}
