@@ -515,7 +515,9 @@ export default function ContractItemFormDialog({
 
           {/* Loại cà phê */}
           <div className="grid gap-1">
-            <Label htmlFor="coffeeTypeId">Loại cà phê</Label>
+            <Label htmlFor="coffeeTypeId">
+              Loại cà phê <span className="text-red-500">*</span>{" "}
+            </Label>
             <Select
               // Nếu state rỗng => truyền undefined để hiện placeholder
               value={formData.coffeeTypeId || undefined}
@@ -554,7 +556,9 @@ export default function ContractItemFormDialog({
 
           {/* Số lượng (kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="quantity">Số lượng (Kg)</Label>
+            <Label htmlFor="quantity">
+              Số lượng (Kg) <span className="text-red-500">*</span>
+            </Label>
             <InputWithSuffix
               id="quantity"
               name="quantity"
@@ -575,7 +579,9 @@ export default function ContractItemFormDialog({
 
           {/* Đơn giá (VND/Kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="unitPrice">Đơn giá (VNĐ/Kg)</Label>
+            <Label htmlFor="unitPrice">
+              Đơn giá (VNĐ/Kg) <span className="text-red-500">*</span>
+            </Label>
             <InputWithSuffix
               id="unitPrice"
               name="unitPrice"
