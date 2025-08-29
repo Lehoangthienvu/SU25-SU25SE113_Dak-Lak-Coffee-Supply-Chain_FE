@@ -1163,6 +1163,68 @@
           "methodInfo": "of method {{methodName}}",
           "stepOrder": "Step {{order}}"
         },
+        "wasteInput": {
+          "title": "Waste Information",
+          "description": "Record waste from your processing process",
+          "add": "Add Waste",
+          "edit": "Edit Waste",
+          "delete": "Delete Waste",
+          "wasteType": "Waste Type *",
+          "quantity": "Quantity *",
+          "unit": "Unit *",
+          "note": "Note",
+          "recordedAt": "Recorded At",
+          "itemNumber": "Waste #{{number}}",
+          "selectUnit": "Select unit...",
+          "units": {
+            "kg": "Kilogram (kg)",
+            "g": "Gram (g)",
+            "ton": "Ton",
+            "quintal": "Quintal",
+            "yen": "Yen",
+            "lang": "Lang",
+            "lb": "Pound (lb)",
+            "oz": "Ounce (oz)"
+          },
+          "placeholder": {
+            "wasteType": "Example: Bax, Husk, Coffee grounds...",
+            "quantity": "0.00",
+            "note": "Note about waste (optional)..."
+          },
+          "emptyState": {
+            "noWaste": "No waste added yet",
+            "addWasteHint": "Click \"Add Waste\" to start"
+          },
+          "validation": {
+            "wasteTypeRequired": "Please select waste type",
+            "quantityRequired": "Please enter quantity",
+            "quantityPositive": "Quantity must be greater than 0",
+            "unitRequired": "Please select unit",
+            "summary": "Please check and fix errors above"
+          }
+        },
+        "mediaUpload": {
+          "title": "Attachments",
+          "description": "Upload attachments for processing",
+          "add": "Add Attachment",
+          "edit": "Edit Attachment",
+          "delete": "Delete Attachment",
+          "photos": "Photos",
+          "videos": "Videos",
+          "dragDrop": "Drag and drop files here or click to select",
+          "multipleSelection": "multiple selection",
+          "selectPhoto": "Select Photo",
+          "selectVideo": "Select Video",
+          "selectedPhotos": "Selected {{count}} photos",
+          "selectedVideos": "Selected {{count}} videos",
+          "files": "files",
+          "limits": {
+            "title": "Limits",
+            "maxFiles": "Maximum",
+            "maxSize": "total size",
+            "autoCompress": "Images will be automatically compressed to reduce size."
+          }
+        },
         "overview": {
           "title": "Processing Progress Management",
           "subtitle": "Track and update your coffee processing progress",
