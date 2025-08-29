@@ -2731,5 +2731,209 @@
     "pagination": {
       "page": "Trang {{current}}/{{total}}"
     }
+  },
+  "warehouseOutboundRequests": {
+    "title": "Yêu cầu xuất kho",
+    "subtitle": "Quản lý và theo dõi các yêu cầu xuất kho",
+    "createNewRequest": "Tạo yêu cầu mới",
+    "search": {
+      "title": "Tìm kiếm yêu cầu",
+      "placeholder": "Tìm mã yêu cầu, kho"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Lọc theo trạng thái",
+        "all": "Tất cả",
+        "pending": "Chờ duyệt",
+        "accepted": "Đã duyệt",
+        "rejected": "Đã từ chối",
+        "cancelled": "Đã hủy"
+      }
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingRequests": "Yêu cầu chờ duyệt",
+      "acceptedRequests": "Yêu cầu đã duyệt",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu xuất kho",
+      "summary": "Hiển thị {{count}} yêu cầu - {{total}} tổng cộng",
+      "headers": {
+        "requestId": "MÃ YÊU CẦU",
+        "warehouse": "KHO",
+        "inventory": "TỒN KHO",
+        "quantity": "SỐ LƯỢNG",
+        "status": "TRẠNG THÁI",
+        "action": "HÀNH ĐỘNG"
+      },
+      "actions": {
+        "view": "Xem",
+        "accept": "Duyệt",
+        "reject": "Từ chối"
+      }
+    },
+    "pagination": {
+      "page": "Trang {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Chi tiết yêu cầu xuất kho",
+      "headers": {
+        "requestCode": "Mã yêu cầu",
+        "warehouse": "Kho",
+        "inventory": "Tồn kho",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "pending": "Chờ duyệt",
+        "accepted": "Đã duyệt",
+        "rejected": "Đã từ chối",
+        "cancelled": "Đã hủy"
+      },
+      "actions": {
+        "view": "Xem",
+        "accept": "Duyệt yêu cầu",
+        "reject": "Từ chối yêu cầu"
+      }
+    },
+    "empty": {
+      "title": "Không có yêu cầu xuất kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách yêu cầu xuất kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách yêu cầu xuất kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "confirmModal": {
+      "title": "Xác nhận duyệt yêu cầu",
+      "description": "Bạn chắc chắn muốn duyệt yêu cầu này?",
+      "acceptButton": "Duyệt",
+      "cancelButton": "Hủy"
+    },
+    "rejectModal": {
+      "title": "Từ chối yêu cầu",
+      "description": "Vui lòng cung cấp lý do từ chối:",
+      "reasonPlaceholder": "Nhập lý do từ chối...",
+      "rejectButton": "Từ chối",
+      "cancelButton": "Hủy"
+    },
+    "success": {
+      "acceptSuccess": "Duyệt yêu cầu thành công!",
+      "rejectSuccess": "Từ chối yêu cầu thành công!"
+    }
+  },
+  "warehouseOutboundReceipts": {
+    "title": "Phiếu xuất kho",
+    "subtitle": "Quản lý và theo dõi các phiếu xuất kho",
+    "createNewReceipt": "Tạo phiếu mới",
+    "search": {
+      "title": "Tìm kiếm phiếu",
+      "placeholder": "Tìm mã phiếu, kho"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Lọc theo trạng thái",
+        "all": "Tất cả",
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      }
+    },
+    "stats": {
+      "totalReceipts": "Tổng phiếu",
+      "confirmedReceipts": "Phiếu đã xác nhận",
+      "pendingReceipts": "Phiếu chưa xác nhận",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "table": {
+      "title": "Danh sách phiếu xuất kho",
+      "summary": "Hiển thị {{count}} phiếu - {{total}} tổng cộng",
+      "headers": {
+        "receiptId": "MÃ PHIẾU",
+        "warehouse": "KHO",
+        "batch": "LÔ HÀNG",
+        "quantity": "SỐ LƯỢNG",
+        "status": "TRẠNG THÁI",
+        "action": "HÀNH ĐỘNG"
+      },
+      "actions": {
+        "view": "Xem",
+        "confirm": "Xác nhận"
+      }
+    },
+    "pagination": {
+      "page": "Trang {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Chi tiết phiếu xuất kho",
+      "headers": {
+        "receiptCode": "Mã phiếu",
+        "warehouse": "Kho",
+        "batch": "Lô hàng",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      },
+      "actions": {
+        "view": "Xem",
+        "confirm": "Xác nhận phiếu"
+      }
+    },
+    "create": {
+      "title": "Tạo phiếu xuất kho",
+      "subtitle": "Tạo phiếu xuất kho mới",
+      "form": {
+        "selectRequest": "Chọn yêu cầu xuất kho *",
+        "selectRequestPlaceholder": "-- Chọn yêu cầu xuất kho đã duyệt --",
+        "exportedQuantity": "Số lượng xuất *",
+        "exportedQuantityPlaceholder": "Nhập số lượng xuất...",
+        "note": "Ghi chú",
+        "notePlaceholder": "Nhập ghi chú...",
+        "destination": "Điểm đến",
+        "destinationPlaceholder": "Nhập điểm đến..."
+      },
+      "validation": {
+        "selectRequest": "Vui lòng chọn yêu cầu xuất kho hợp lệ",
+        "exportedQuantity": "Số lượng xuất phải lớn hơn 0",
+        "exportedQuantityExceed": "Số lượng xuất không được vượt quá phần còn lại ({{remaining}} {{unit}})"
+      },
+      "stats": {
+        "warehouseCapacity": "Dung lượng kho",
+        "usedCapacity": "Dung lượng đã sử dụng",
+        "totalCapacity": "Tổng dung lượng",
+        "remainingQuantity": "Số lượng còn lại",
+        "inventoryAvailable": "Tồn kho khả dụng"
+      },
+      "actions": {
+        "create": "Tạo phiếu",
+        "cancel": "Hủy bỏ",
+        "creating": "Đang tạo..."
+      }
+    },
+    "empty": {
+      "title": "Không có phiếu xuất kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách phiếu xuất kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách phiếu xuất kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "success": {
+      "createSuccess": "Tạo phiếu xuất kho thành công!",
+      "confirmSuccess": "Xác nhận phiếu xuất kho thành công!"
+    }
   }
 }

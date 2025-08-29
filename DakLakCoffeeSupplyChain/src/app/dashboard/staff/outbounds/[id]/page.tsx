@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
   Package,
@@ -25,6 +26,7 @@ export default function ViewOutboundRequestDetailStaff() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { openDialog, ConfirmationDialog } = useConfirmationDialog();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!id || typeof id !== 'string') return;
@@ -42,15 +44,15 @@ export default function ViewOutboundRequestDetailStaff() {
     if (!data) return;
 
     openDialog({
-      title: "Xác nhận duyệt yêu cầu",
-      message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
-      confirmText: "Duyệt",
-      cancelText: "Hủy",
+      title: t('warehouseOutboundRequests.confirmModal.title'),
+      message: t('warehouseOutboundRequests.confirmModal.description'),
+      confirmText: t('warehouseOutboundRequests.confirmModal.acceptButton'),
+      cancelText: t('warehouseOutboundRequests.confirmModal.cancelButton'),
       type: "info",
       onConfirm: async () => {
         try {
           const result = await acceptOutboundRequest(data.outboundRequestId);
-          toast.success(result.message);
+          toast.success(t('warehouseOutboundRequests.success.acceptSuccess'));
           router.push('/dashboard/staff/outbounds');
         } catch (err: any) {
           toast.error(err.message);
@@ -62,13 +64,15 @@ export default function ViewOutboundRequestDetailStaff() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'Pending':
-        return <Badge className="bg-gray-200 text-gray-800">⏳ Đang chờ duyệt</Badge>;
+        return <Badge className="bg-gray-200 text-gray-800">⏳ {t('warehouseOutboundRequests.detail.status.pending')}</Badge>;
       case 'Accepted':
-        return <Badge className="bg-blue-100 text-blue-800">✅ Đã duyệt</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800">✅ {t('warehouseOutboundRequests.detail.status.accepted')}</Badge>;
       case 'Completed':
-        return <Badge className="bg-green-100 text-green-800">✔️ Đã hoàn tất</Badge>;
+        return <Badge className="bg-green-100 text-green-800">✔️ Hoàn tất</Badge>;
       case 'Cancelled':
-        return <Badge className="bg-red-100 text-red-800">❌ Đã huỷ</Badge>;
+        return <Badge className="bg-red-100 text-red-800">❌ {t('warehouseOutboundRequests.detail.status.cancelled')}</Badge>;
+      case 'Rejected':
+        return <Badge className="bg-red-100 text-red-800">❌ {t('warehouseOutboundRequests.detail.status.rejected')}</Badge>;
       default:
         return <Badge className="bg-muted text-muted-foreground">{status}</Badge>;
     }
