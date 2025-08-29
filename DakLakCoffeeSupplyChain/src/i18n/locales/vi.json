@@ -1396,7 +1396,126 @@
             "backToList": "Quay lại danh sách"
           }
         }
-      }
+      },
+      "farmerEvaluation": {
+        "title": "Danh sách đánh giá",
+        "subtitle": "Xem tất cả đánh giá cho các lô sơ chế của bạn",
+        "search": {
+          "placeholder": "Tìm kiếm theo mã lô hoặc mã đánh giá..."
+        },
+        "filter": {
+          "all": "Tất cả kết quả",
+          "pass": "Đạt",
+          "fail": "Không đạt",
+          "needsImprovement": "Cần cải thiện",
+          "temporary": "Tạm thời",
+          "pending": "Chờ xử lý"
+        },
+        "table": {
+          "evaluationCode": "Mã đánh giá",
+          "batchId": "Mã lô",
+          "result": "Kết quả",
+          "evaluatedAt": "Ngày đánh giá",
+          "actions": "Hành động",
+          "viewDetails": "Xem chi tiết"
+        },
+        "stats": {
+          "total": "Tổng đánh giá",
+          "pass": "Đạt",
+          "fail": "Không đạt",
+          "pending": "Chờ xử lý"
+        },
+        "emptyState": {
+          "noResults": "Không tìm thấy đánh giá",
+          "noResultsHint": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc",
+          "noEvaluations": "Chưa có đánh giá nào",
+          "noEvaluationsHint": "Các đánh giá sẽ xuất hiện ở đây khi chuyên gia đánh giá lô sơ chế của bạn"
+        },
+        "loading": "Đang tải dữ liệu...",
+        "error": "Có lỗi xảy ra khi tải dữ liệu",
+        "retry": "Thử lại"
+      },
+              "farmerEvaluationDetail": {
+          "title": "Chi tiết đánh giá lô sơ chế",
+          "subtitle": "Thông tin chi tiết về đánh giá tiêu chí",
+          "back": "Quay lại",
+          "retry": "Thử lại",
+          "loading": "Đang tải dữ liệu...",
+          "batchCode": "Mã lô",
+          "error": {
+            "batchNotFound": "Không tìm thấy lô sơ chế",
+            "fetchData": "Có lỗi xảy ra khi tải dữ liệu"
+          },
+          "status": {
+            "notStarted": "Chưa bắt đầu",
+            "inProgress": "Đang thực hiện",
+            "awaitingEvaluation": "Chờ đánh giá",
+            "completed": "Hoàn thành",
+            "cancelled": "Đã hủy",
+            "unknown": "Không xác định"
+          },
+          "batchInfo": {
+            "title": "Thông tin lô sơ chế",
+            "batchCode": "Mã lô",
+            "farmer": "Nông dân",
+            "cropSeason": "Mùa vụ",
+            "inputQuantity": "Khối lượng đầu vào",
+            "outputQuantity": "Khối lượng đầu ra",
+            "status": "Trạng thái"
+          },
+          "evaluationResults": {
+            "title": "Kết quả đánh giá",
+            "evaluatedAt": "Đánh giá lúc",
+            "pass": "Đạt",
+            "fail": "Không đạt",
+            "needsImprovement": "Cần cải thiện",
+            "temporary": "Tạm thời",
+            "pending": "Chờ đánh giá"
+          },
+          "failureInfo": {
+            "title": "Thông tin cần cải thiện",
+            "stage": "Công đoạn",
+            "details": {
+              "title": "Chi tiết vấn đề"
+            },
+            "recommendations": {
+              "title": "Khuyến nghị cải thiện"
+            },
+            "nextSteps": {
+              "title": "Hướng dẫn tiếp theo",
+              "description": "Hãy cập nhật tiến trình cho công đoạn {stageName} với những cải thiện theo khuyến nghị trên."
+            }
+          },
+          "comments": {
+            "title": "Nhận xét"
+          },
+          "progress": {
+            "title": "Tiến trình sơ chế",
+            "step": "Bước",
+            "retry": "Làm lại",
+            "output": "Sản lượng",
+            "updatedBy": "Cập nhật bởi",
+            "noProgress": "Chưa có tiến trình nào được ghi nhận"
+          },
+          "summary": {
+            "title": "Tóm tắt đánh giá",
+            "evaluationDate": "Ngày đánh giá",
+            "note": {
+              "title": "Lưu ý",
+              "description": "Nếu đánh giá không đạt, hãy cập nhật tiến trình theo hướng dẫn để cải thiện chất lượng."
+            },
+            "noEvaluation": "Chưa có đánh giá"
+          },
+          "actions": {
+            "title": "Hành động",
+            "viewBatchDetails": "Xem chi tiết lô",
+            "backToList": "Quay lại danh sách"
+          },
+          "history": {
+            "title": "Lịch sử đánh giá",
+            "noDate": "Chưa có ngày"
+          }
+        }
     }
   } , 
 

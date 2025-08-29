@@ -1447,7 +1447,126 @@
           "retry": "Retry",
           "loading": "Loading data..."
         }
-      }
+      },
+      "farmerEvaluation": {
+        "title": "Evaluation List",
+        "subtitle": "View all evaluations for your processing batches",
+        "search": {
+          "placeholder": "Search by batch ID or evaluation code..."
+        },
+        "filter": {
+          "all": "All Results",
+          "pass": "Pass",
+          "fail": "Fail",
+          "needsImprovement": "Needs Improvement",
+          "temporary": "Temporary",
+          "pending": "Pending"
+        },
+        "table": {
+          "evaluationCode": "Evaluation Code",
+          "batchId": "Batch ID",
+          "result": "Result",
+          "evaluatedAt": "Evaluation Date",
+          "actions": "Actions",
+          "viewDetails": "View Details"
+        },
+        "stats": {
+          "total": "Total Evaluations",
+          "pass": "Pass",
+          "fail": "Fail",
+          "pending": "Pending"
+        },
+        "emptyState": {
+          "noResults": "No evaluations found",
+          "noResultsHint": "Try changing search keywords or filters",
+          "noEvaluations": "No evaluations yet",
+          "noEvaluationsHint": "Evaluations will appear here when experts evaluate your processing batches"
+        },
+        "loading": "Loading data...",
+        "error": "An error occurred while loading data",
+        "retry": "Retry"
+      },
+              "farmerEvaluationDetail": {
+          "title": "Processing Batch Evaluation Details",
+          "subtitle": "Detailed information about evaluation criteria",
+          "back": "Back",
+          "retry": "Retry",
+          "loading": "Loading data...",
+          "batchCode": "Batch Code",
+          "error": {
+            "batchNotFound": "Processing batch not found",
+            "fetchData": "An error occurred while loading data"
+          },
+          "status": {
+            "notStarted": "Not Started",
+            "inProgress": "In Progress",
+            "awaitingEvaluation": "Awaiting Evaluation",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+            "unknown": "Unknown"
+          },
+          "batchInfo": {
+            "title": "Processing Batch Information",
+            "batchCode": "Batch Code",
+            "farmer": "Farmer",
+            "cropSeason": "Crop Season",
+            "inputQuantity": "Input Quantity",
+            "outputQuantity": "Output Quantity",
+            "status": "Status"
+          },
+          "evaluationResults": {
+            "title": "Evaluation Results",
+            "evaluatedAt": "Evaluated at",
+            "pass": "Pass",
+            "fail": "Fail",
+            "needsImprovement": "Needs Improvement",
+            "temporary": "Temporary",
+            "pending": "Pending"
+          },
+          "failureInfo": {
+            "title": "Improvement Information",
+            "stage": "Stage",
+            "details": {
+              "title": "Problem Details"
+            },
+            "recommendations": {
+              "title": "Improvement Recommendations"
+            },
+            "nextSteps": {
+              "title": "Next Steps",
+              "description": "Please update the progress for stage {stageName} with improvements according to the recommendations above."
+            }
+          },
+          "comments": {
+            "title": "Comments"
+          },
+          "progress": {
+            "title": "Processing Progress",
+            "step": "Step",
+            "retry": "Retry",
+            "output": "Output",
+            "updatedBy": "Updated by",
+            "noProgress": "No progress recorded yet"
+          },
+          "summary": {
+            "title": "Evaluation Summary",
+            "evaluationDate": "Evaluation Date",
+            "note": {
+              "title": "Note",
+              "description": "If the evaluation fails, please update the progress according to the guidelines to improve quality."
+            },
+            "noEvaluation": "No evaluation yet"
+          },
+          "actions": {
+            "title": "Actions",
+            "viewBatchDetails": "View Batch Details",
+            "backToList": "Back to List"
+          },
+          "history": {
+            "title": "Evaluation History",
+            "noDate": "No date"
+          }
+        }
     },
     "validation": {
       "required": "This field is required",
