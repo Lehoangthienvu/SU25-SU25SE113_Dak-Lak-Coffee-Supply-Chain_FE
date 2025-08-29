@@ -211,7 +211,7 @@ export default function OutboundReceiptListPage() {
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
                 <span className="text-sm text-gray-600">
                   {t('warehouseOutboundReceipts.table.summary', { 
-                    count: `${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, receipts.length)}`, 
+                    count: pagedReceipts.length, 
                     total: receipts.length 
                   })}
                 </span>

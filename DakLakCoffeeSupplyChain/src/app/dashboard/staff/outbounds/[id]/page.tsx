@@ -34,7 +34,7 @@ export default function ViewOutboundRequestDetailStaff() {
     getOutboundRequestById(id)
       .then((res) => {
         if (res?.data) setData(res.data);
-        else throw new Error(res?.message || 'Không lấy được dữ liệu');
+        else throw new Error(res?.message || t('outboundRequestDetail.error.loadFailed'));
       })
       .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
@@ -68,7 +68,7 @@ export default function ViewOutboundRequestDetailStaff() {
       case 'Accepted':
         return <Badge className="bg-blue-100 text-blue-800">✅ {t('warehouseOutboundRequests.detail.status.accepted')}</Badge>;
       case 'Completed':
-        return <Badge className="bg-green-100 text-green-800">✔️ Hoàn tất</Badge>;
+        return <Badge className="bg-green-100 text-green-800">✔️ {t('outboundRequestDetail.status.completed')}</Badge>;
       case 'Cancelled':
         return <Badge className="bg-red-100 text-red-800">❌ {t('warehouseOutboundRequests.detail.status.cancelled')}</Badge>;
       case 'Rejected':
@@ -80,7 +80,7 @@ export default function ViewOutboundRequestDetailStaff() {
 
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
-    return isNaN(d.getTime()) ? 'Không xác định' : d.toLocaleString('vi-VN');
+    return isNaN(d.getTime()) ? t('outboundRequestDetail.common.unknown') : d.toLocaleString('vi-VN');
   };
 
   if (loading) {
@@ -92,7 +92,7 @@ export default function ViewOutboundRequestDetailStaff() {
   }
 
   if (!data) {
-    return <div className="p-6 text-red-500">Không tìm thấy yêu cầu.</div>;
+    return <div className="p-6 text-red-500">{t('outboundRequestDetail.error.notFound')}</div>;
   }
 
   return (
@@ -102,37 +102,37 @@ export default function ViewOutboundRequestDetailStaff() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              📦 Chi tiết yêu cầu xuất kho
+              📦 {t('outboundRequestDetail.title')}
             </h1>
-            <p className="text-gray-600">Xem thông tin chi tiết về yêu cầu</p>
+            <p className="text-gray-600">{t('outboundRequestDetail.subtitle')}</p>
           </div>
           <Button variant="outline" onClick={() => router.back()} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('outboundRequestDetail.actions.back')}
           </Button>
         </div>
 
         {/* Detail card */}
         <div className="bg-white shadow rounded-2xl p-6 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
-            <DetailItem icon={<Package className="text-green-600" />} label="Mã yêu cầu" value={data.outboundRequestCode} />
-            <DetailItem icon={<Warehouse className="text-blue-600" />} label="Kho" value={data.warehouseName || "Không rõ"} />
+            <DetailItem icon={<Package className="text-green-600" />} label={t('outboundRequestDetail.fields.requestCode')} value={data.outboundRequestCode} />
+            <DetailItem icon={<Warehouse className="text-blue-600" />} label={t('outboundRequestDetail.fields.warehouse')} value={data.warehouseName || t('outboundRequestDetail.common.unknown')} />
 
-            <DetailItem icon={<ListOrdered className="text-purple-600" />} label="Hàng tồn kho" value={data.inventoryName || "Không rõ"} />
-            <DetailItem icon={<ClipboardCheck className="text-orange-600" />} label="Số lượng" value={`${data.requestedQuantity} ${data.unit}`} />
+            <DetailItem icon={<ListOrdered className="text-purple-600" />} label={t('outboundRequestDetail.fields.inventory')} value={data.inventoryName || t('outboundRequestDetail.common.unknown')} />
+            <DetailItem icon={<ClipboardCheck className="text-orange-600" />} label={t('outboundRequestDetail.fields.quantity')} value={`${data.requestedQuantity} ${data.unit}`} />
 
-            <DetailItem icon={<FileText className="text-rose-600" />} label="Mục đích xuất kho" value={data.purpose || "Không có"} />
-            <DetailItem icon={<StickyNote className="text-red-600" />} label="Lý do" value={data.reason || "Không có"} />
+            <DetailItem icon={<FileText className="text-rose-600" />} label={t('outboundRequestDetail.fields.purpose')} value={data.purpose || t('outboundRequestDetail.common.noData')} />
+            <DetailItem icon={<StickyNote className="text-red-600" />} label={t('outboundRequestDetail.fields.reason')} value={data.reason || t('outboundRequestDetail.common.noData')} />
 
-            <DetailItem icon={<User className="text-indigo-600" />} label="Người yêu cầu" value={data.requestedByName || "Không xác định"} />
-            <DetailItem icon={<CalendarClock className="text-gray-600" />} label="Ngày tạo" value={formatDate(data.createdAt)} />
+            <DetailItem icon={<User className="text-indigo-600" />} label={t('outboundRequestDetail.fields.requestedBy')} value={data.requestedByName || t('outboundRequestDetail.common.unknown')} />
+            <DetailItem icon={<CalendarClock className="text-gray-600" />} label={t('outboundRequestDetail.fields.createdAt')} value={formatDate(data.createdAt)} />
 
-            <DetailItem icon={<CalendarClock className="text-gray-600" />} label="Cập nhật lần cuối" value={formatDate(data.updatedAt)} />
-            <DetailItem icon={<Package className="text-green-600" />} label="Trạng thái" value={getStatusBadge(data.status)} />
+            <DetailItem icon={<CalendarClock className="text-gray-600" />} label={t('outboundRequestDetail.fields.updatedAt')} value={formatDate(data.updatedAt)} />
+            <DetailItem icon={<Package className="text-green-600" />} label={t('outboundRequestDetail.fields.status')} value={getStatusBadge(data.status)} />
 
             {data.orderItemId && (
               <div className="md:col-span-2">
-                <strong>Liên kết đơn hàng:</strong> {data.orderItemId}
+                <strong>{t('outboundRequestDetail.fields.orderLink')}:</strong> {data.orderItemId}
                 {data.orderItemProductName && (
                   <span className="ml-2 text-gray-600">
                     ({data.orderItemProductName} - {data.orderItemQuantity} {data.orderItemUnit})
@@ -143,7 +143,7 @@ export default function ViewOutboundRequestDetailStaff() {
 
             {data.note && (
               <div className="md:col-span-2">
-                <strong>Ghi chú:</strong> {data.note}
+                <strong>{t('outboundRequestDetail.fields.note')}:</strong> {data.note}
               </div>
             )}
           </div>
@@ -153,7 +153,7 @@ export default function ViewOutboundRequestDetailStaff() {
 
             {data.status === 'Pending' && (
               <Button className="bg-green-600 text-white" onClick={handleAccept}>
-                Duyệt yêu cầu
+                {t('outboundRequestDetail.actions.approve')}
               </Button>
             )}
           </div>
