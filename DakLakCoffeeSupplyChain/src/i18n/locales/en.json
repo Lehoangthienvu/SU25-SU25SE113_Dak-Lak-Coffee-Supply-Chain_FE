@@ -1701,6 +1701,13 @@
       "evaluateStage": "Evaluate Stage",
       "passBatch": "Pass Batch"
     },
+    "batchPassConfirm": {
+      "title": "Confirm Batch Pass",
+      "message": "Are you sure you want to pass this entire batch? This action will evaluate all criteria as \"Pass\" and cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Confirm Batch Pass",
+      "processing": "Processing..."
+    },
     "warning": {
       "noStageSelected": "Please select a stage to evaluate",
       "noCriteria": "No evaluation criteria for stage \"{{stageName}}\". Please contact admin to configure."
@@ -3005,6 +3012,72 @@
       "batchIdNotFound": "Error: Batch ID not found"
     },
     "retry": "Retry"
+  },
+  "expertEvaluationDetail": {
+    "title": "Processing Batch Evaluation",
+    "subtitle": "Batch Code: {{batchCode}} • Farmer: {{farmerName}}",
+    "backButton": "Back",
+        "updateEvaluationButton": "Update Evaluation",
+        "batchAlreadyPassed": "Batch already passed - Cannot evaluate again",
+        "batchNotReadyForEvaluation": "Batch not ready for evaluation",
+    "batchInformation": {
+      "title": "Batch Information",
+      "batchCode": "Batch Code",
+      "farmer": "Farmer",
+      "cropSeason": "Crop Season",
+      "inputQuantity": "Input Quantity",
+      "outputQuantity": "Output Quantity",
+      "status": "Status"
+    },
+    "processingProgress": {
+      "title": "Processing Progress",
+      "step": "Step {{stepIndex}}",
+      "retry": "Retry",
+      "outputQuantity": "Output:",
+      "updatedBy": "Updated by:",
+      "noProgress": "No progress recorded yet"
+    },
+    "overallEvaluation": {
+      "title": "Overall Batch Evaluation",
+      "subtitle": "Combined results from all stages",
+      "pass": "Pass",
+      "fail": "Fail",
+      "averageScore": "Average Score",
+      "passedStages": "Passed Stages",
+      "passRate": "Pass Rate",
+      "evaluationLogic": "Evaluation Logic: Pass ≥80 points OR ≥{{minStages}}/{{totalStages}} stages"
+    },
+    "evaluationStatus": {
+      "title": "Evaluation Status",
+      "noEvaluation": "No evaluation yet",
+      "comments": "Comments:",
+      "pass": "Pass",
+      "fail": "Fail",
+      "detailedFeedback": "Detailed Feedback:",
+      "recommendations": "Recommendations:",
+      "evaluationDate": "Evaluation Date",
+      "evaluatedBy": "Evaluated by"
+    },
+    "quickStats": {
+      "title": "Quick Statistics",
+      "evaluations": "Evaluations",
+      "passed": "Passed",
+      "needsImprovement": "Needs Improvement",
+      "failed": "Failed"
+    },
+    "status": {
+      "notStarted": "Not Started",
+      "inProgress": "In Progress",
+      "awaitingEvaluation": "Awaiting Evaluation",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown"
+    },
+    "loading": "Loading data...",
+    "error": {
+      "batchNotFound": "Batch not found",
+      "loadFailed": "Error loading data"
+    }
   },
   "inventoryLogs": {
     "title": "Inventory Logs",

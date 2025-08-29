@@ -1769,6 +1769,13 @@
         "evaluateStage": "Đánh giá giai đoạn",
         "passBatch": "Đạt cả Batch"
       },
+      "batchPassConfirm": {
+        "title": "Xác nhận đạt cả batch",
+        "message": "Bạn có chắc chắn muốn cho đạt cả batch này không? Hành động này sẽ đánh giá tất cả tiêu chí là \"Đạt\" và không thể hoàn tác.",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận đạt cả batch",
+        "processing": "Đang xử lý..."
+      },
       "warning": {
         "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
         "noCriteria": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình."
@@ -3043,6 +3050,70 @@
       "batchIdNotFound": "Lỗi: Không tìm thấy ID của lô"
     },
     "retry": "Thử lại"
+  },
+  "expertEvaluationDetail": {
+    "title": "Đánh giá lô sơ chế",
+    "subtitle": "Mã lô: {{batchCode}} • Nông dân: {{farmerName}}",
+    "backButton": "Quay lại",
+        "updateEvaluationButton": "Cập nhật đánh giá",
+        "batchAlreadyPassed": "Batch đã đạt - Không thể đánh giá lại",
+        "batchNotReadyForEvaluation": "Batch chưa sẵn sàng để đánh giá",
+    "batchInformation": {
+      "title": "Thông tin lô sơ chế",
+      "batchCode": "Mã lô",
+      "farmer": "Nông dân",
+      "cropSeason": "Mùa vụ",
+      "inputQuantity": "Khối lượng vào",
+      "outputQuantity": "Khối lượng ra",
+      "status": "Trạng thái"
+    },
+    "processingProgress": {
+      "title": "Tiến trình sơ chế",
+      "step": "Bước {{stepIndex}}",
+      "retry": "Làm lại",
+      "outputQuantity": "Sản lượng:",
+      "updatedBy": "Cập nhật bởi:",
+      "noProgress": "Chưa có tiến trình nào được ghi nhận"
+    },
+    "overallEvaluation": {
+      "title": "Tổng quan đánh giá lô",
+      "subtitle": "Kết quả tổng hợp từ tất cả các giai đoạn",
+      "pass": "Đạt chuẩn",
+      "fail": "Không đạt",
+      "averageScore": "Điểm trung bình",
+      "passedStages": "Giai đoạn đạt",
+      "passRate": "Tỷ lệ đạt",
+      "evaluationLogic": "Logic đánh giá: Đạt ≥80đ HOẶC ≥{{minStages}}/{{totalStages}} giai đoạn"
+    },
+    "evaluationStatus": {
+      "title": "Trạng thái đánh giá",
+      "noEvaluation": "Chưa có đánh giá",
+      "comments": "Nhận xét:",
+      "detailedFeedback": "Phản hồi chi tiết:",
+      "recommendations": "Khuyến nghị:",
+      "evaluationDate": "Ngày đánh giá",
+      "evaluatedBy": "Đánh giá bởi"
+    },
+    "quickStats": {
+      "title": "Thống kê nhanh",
+      "evaluations": "Lần đánh giá",
+      "passed": "Đạt chuẩn",
+      "needsImprovement": "Cần cải thiện",
+      "failed": "Không đạt"
+    },
+    "status": {
+      "notStarted": "Chưa bắt đầu",
+      "inProgress": "Đang thực hiện",
+      "awaitingEvaluation": "Chờ đánh giá",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "unknown": "Không xác định"
+    },
+    "loading": "Đang tải dữ liệu...",
+    "error": {
+      "batchNotFound": "Không tìm thấy lô sơ chế",
+      "loadFailed": "Có lỗi xảy ra khi tải dữ liệu"
+    }
   },
   "inventoryLogs": {
     "title": "Nhật ký tồn kho",

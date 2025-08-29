@@ -73,6 +73,7 @@ export default function EvaluationCriteriaForm({
   const [overallScore, setOverallScore] = useState<number>(0);
   const [evaluationResult, setEvaluationResult] = useState<string>(EVALUATION_RESULTS.PASS);
   const [comments, setComments] = useState<string>('');
+  const [showBatchPassConfirm, setShowBatchPassConfirm] = useState<boolean>(false);
 
   const urlStageCode = searchParams.get('stage');
   const [selectedStageCode, setSelectedStageCode] = useState<number>(0); // 🔧 CẢI THIỆN: Luôn bắt đầu với 0
@@ -359,7 +360,11 @@ export default function EvaluationCriteriaForm({
     }
   };
 
-  const handleBatchPass = async () => {
+  const handleBatchPass = () => {
+    setShowBatchPassConfirm(true);
+  };
+
+  const confirmBatchPass = async () => {
     if (!methodId) {
       AppToast.error(t('evaluation.error.noMethodId'));
       return;
@@ -392,13 +397,18 @@ export default function EvaluationCriteriaForm({
       AppToast.error(errorMessage);
     } finally {
       setLoading(false);
+      setShowBatchPassConfirm(false);
     }
+  };
+
+  const cancelBatchPass = () => {
+    setShowBatchPassConfirm(false);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-2xl font-semibold text-gray-900">{t('evaluation.title')} - {selectedStageName || t('evaluation.selectStage')}</h2>
@@ -606,6 +616,48 @@ export default function EvaluationCriteriaForm({
           </div>
         </div>
       </div>
+
+             {/* Batch Pass Confirmation Popup */}
+               {showBatchPassConfirm && (
+          <div className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+             <div className="flex items-center space-x-3 mb-4">
+               <CheckCircle className="h-8 w-8 text-green-600" />
+               <h3 className="text-lg font-semibold text-gray-900">
+                 {t('evaluation.batchPassConfirm.title')}
+               </h3>
+             </div>
+             
+             <p className="text-gray-600 mb-6">
+               {t('evaluation.batchPassConfirm.message')}
+             </p>
+             
+             <div className="flex justify-end space-x-3">
+               <Button 
+                 variant="outline" 
+                 onClick={cancelBatchPass}
+                 disabled={loading}
+               >
+                 {t('evaluation.batchPassConfirm.cancel')}
+               </Button>
+               <Button 
+                 onClick={confirmBatchPass}
+                 disabled={loading}
+                 className="bg-green-600 hover:bg-green-700"
+               >
+                 {loading ? (
+                   <>
+                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                     {t('evaluation.batchPassConfirm.processing')}
+                   </>
+                 ) : (
+                   t('evaluation.batchPassConfirm.confirm')
+                 )}
+               </Button>
+             </div>
+           </div>
+         </div>
+       )}
     </div>
   );
 }
