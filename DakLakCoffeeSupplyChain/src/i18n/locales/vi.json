@@ -1750,6 +1750,31 @@
     "inboundRequests": "Yêu cầu nhập kho",
     "outboundReceipts": "Biên bản xuất kho",
     "inboundReceipts": "Biên bản nhập kho",
+    "staffDashboard": {
+      "title": "Tổng quan nhân viên kho",
+      "subtitle": "Theo dõi và truy cập nhanh các chức năng quản lý kho",
+      "waitingInbound": "Yêu cầu nhập kho đang chờ",
+      "waitingOutbound": "Yêu cầu xuất kho đang chờ",
+      "monthlyStats": "Thống kê nhập/xuất kho theo tháng",
+      "quickAccess": "Truy cập nhanh",
+      "inventory": "Tồn kho",
+      "inventoryDesc": "Quản lý tồn kho",
+      "inboundRequests": "Yêu cầu nhập",
+      "inboundRequestsDesc": "Duyệt yêu cầu",
+      "outboundRequests": "Yêu cầu xuất",
+      "outboundRequestsDesc": "Duyệt yêu cầu",
+      "outboundReceipts": "Phiếu xuất",
+      "outboundReceiptsDesc": "Quản lý phiếu",
+      "warehouses": "Kho hàng",
+      "warehousesDesc": "Quản lý kho",
+      "receipts": "Phiếu nhập",
+      "receiptsDesc": "Quản lý phiếu",
+      "chartLabels": {
+        "inbound": "Nhập kho",
+        "outbound": "Xuất kho"
+      },
+      "months": ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"]
+    },
     "evaluations": "Phân tích bất thường",
     "processingMethods": "Phương pháp sơ chế",
     "wasteDisposals": "Xử lý chất thải",
@@ -2248,6 +2273,77 @@
     "outboundReceipts": {
       "title": "Biên bản xuất kho",
       "subtitle": "Quản lý biên bản xuất kho cho khách hàng"
+    },
+    "page": {
+      "title": "📥 Phiếu nhập kho",
+      "subtitle": "Quản lý và theo dõi các phiếu nhập kho đã được duyệt",
+      "searchPlaceholder": "Tìm mã phiếu, kho, lô...",
+      "createNew": "Tạo mới",
+      "filterByCoffeeType": "Lọc theo loại cà phê:",
+      "selectCoffeeType": "Chọn loại cà phê",
+      "allTypes": "Tất cả",
+      "freshCoffee": "Cà phê tươi",
+      "processedCoffee": "Cà phê đã sơ chế",
+      "unknownType": "Không xác định"
+    },
+    "stats": {
+      "totalReceipts": "Tổng phiếu",
+      "confirmed": "Đã xác nhận",
+      "pending": "Chưa xác nhận",
+      "totalQuantity": "Tổng lượng",
+      "freshCoffeeReceipts": "phiếu",
+      "processedCoffeeReceipts": "phiếu"
+    },
+    "table": {
+      "title": "Chi tiết phiếu nhập kho",
+      "headers": {
+        "receiptCode": "Mã phiếu",
+        "warehouse": "Kho",
+        "coffeeType": "Loại cà phê",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      },
+      "actions": {
+        "view": "Xem",
+        "cancel": "Hủy phiếu"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong",
+      "receipts": "phiếu"
+    },
+    "empty": {
+      "title": "Không có phiếu nhập kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách phiếu nhập kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách phiếu nhập kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "cancelModal": {
+      "title": "Xác nhận hủy phiếu",
+      "description": "Bạn có chắc chắn muốn hủy phiếu này?",
+      "receiptInfo": "Thông tin phiếu:",
+      "receiptCode": "Mã phiếu:",
+      "warehouse": "Kho:",
+      "type": "Loại:",
+      "cancelButton": "Hủy bỏ",
+      "confirmCancel": "Xác nhận hủy",
+      "cancelling": "Đang hủy..."
+    },
+    "success": {
+      "cancelSuccess": "Hủy phiếu nhập kho thành công!"
     }
   },
   "deliveryRequests": {
