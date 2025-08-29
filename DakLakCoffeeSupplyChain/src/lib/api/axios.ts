@@ -64,13 +64,26 @@ api.interceptors.response.use(
       
       // Xử lý lỗi xác thực (401 Unauthorized)
       if (status === 401) {
-        authService.forceLogout('Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.');
+        // Kiểm tra xem có đang ở trang login không để tránh hiển thị dialog trùng lặp
+        const isLoginPage = typeof window !== 'undefined' && 
+          (window.location.pathname === '/auth/login' || 
+           window.location.pathname.includes('/auth/login'));
+        
+        if (!isLoginPage) {
+          authService.forceLogout('Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.');
+        }
         return Promise.reject(new Error('Phiên đăng nhập đã hết hạn'));
       }
       
       // Xử lý lỗi quyền truy cập (403 Forbidden)
       if (status === 403) {
-        authService.forceLogout('Bạn không có quyền truy cập vào tài nguyên này.');
+        const isLoginPage = typeof window !== 'undefined' && 
+          (window.location.pathname === '/auth/login' || 
+           window.location.pathname.includes('/auth/login'));
+        
+        if (!isLoginPage) {
+          authService.forceLogout('Bạn không có quyền truy cập vào tài nguyên này.');
+        }
         return Promise.reject(new Error('Không có quyền truy cập'));
       }
       

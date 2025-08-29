@@ -75,6 +75,19 @@ export default function ReportDetailPage() {
         });
     };
 
+    const getResponseTypeText = (responseType: string) => {
+        switch (responseType.toLowerCase()) {
+            case "preventive":
+                return "Phòng ngừa";
+            case "corrective":
+                return "Khắc phục";
+            case "observation":
+                return "Nhận xét";
+            default:
+                return responseType;
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -256,7 +269,7 @@ export default function ReportDetailPage() {
                                         </div>
                                         <div className="text-right">
                                             <Badge className="bg-blue-100 text-blue-800 text-xs">
-                                                {advice.responseType}
+                                                {getResponseTypeText(advice.responseType)}
                                             </Badge>
                                             <p className="text-xs text-gray-500 mt-1">
                                                 {formatDate(advice.createdAt)}

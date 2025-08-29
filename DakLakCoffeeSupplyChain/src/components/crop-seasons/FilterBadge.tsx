@@ -19,6 +19,42 @@ export default function FilterBadge({
   unitLabel = '',
   onClick,
 }: FilterBadgeProps) {
+  const getActiveIconClasses = (color: string) => {
+    const colorMap: Record<string, string> = {
+      orange: 'bg-orange-500 text-white',
+      green: 'bg-green-500 text-white',
+      yellow: 'bg-yellow-500 text-white',
+      red: 'bg-red-500 text-white',
+      blue: 'bg-blue-500 text-white',
+      purple: 'bg-purple-500 text-white'
+    };
+    return colorMap[color] || colorMap.orange;
+  };
+
+  const getInactiveIconClasses = (color: string) => {
+    const colorMap: Record<string, string> = {
+      orange: 'bg-orange-100 text-orange-700',
+      green: 'bg-green-100 text-green-700',
+      yellow: 'bg-yellow-100 text-yellow-700',
+      red: 'bg-red-100 text-red-700',
+      blue: 'bg-blue-100 text-blue-700',
+      purple: 'bg-purple-100 text-purple-700'
+    };
+    return colorMap[color] || colorMap.orange;
+  };
+
+  const getActiveCountClasses = (color: string) => {
+    const colorMap: Record<string, string> = {
+      orange: 'bg-orange-200 text-orange-800',
+      green: 'bg-green-200 text-green-800',
+      yellow: 'bg-yellow-200 text-yellow-800',
+      red: 'bg-red-200 text-red-800',
+      blue: 'bg-blue-200 text-blue-800',
+      purple: 'bg-purple-200 text-purple-800'
+    };
+    return colorMap[color] || colorMap.orange;
+  };
+
   const getColorClasses = (color: string, active: boolean) => {
     const colorMap: Record<string, { bg: string; text: string; border: string; hover: string }> = {
       orange: {
@@ -81,8 +117,8 @@ export default function FilterBadge({
           className={cn(
             'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200',
             active
-              ? `bg-${color}-500 text-white`
-              : `bg-${color}-100 text-${color}-700`
+              ? getActiveIconClasses(color)
+              : getInactiveIconClasses(color)
           )}
         >
           {icon}
@@ -92,7 +128,7 @@ export default function FilterBadge({
       <span className={cn(
         'text-xs font-semibold px-2 py-1 rounded-full',
         active
-          ? `bg-${color}-200 text-${color}-800`
+          ? getActiveCountClasses(color)
           : 'bg-gray-100 text-gray-600'
       )}>
         {count} {unitLabel}

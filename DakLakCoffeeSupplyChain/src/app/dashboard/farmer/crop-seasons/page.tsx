@@ -22,7 +22,6 @@ import CropStagesDialog from "../crop-stages/page";
 export default function FarmerCropSeasonsPage() {
   useAuthGuard(["farmer"]);
   const { t } = useTranslation();
-  const [cropSeasons, setCropSeasons] = useState<CropSeasonListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -33,10 +32,39 @@ export default function FarmerCropSeasonsPage() {
     setCurrentPage(1);
   }, [search, selectedStatus]);
 
+  // Tách riêng việc lấy dữ liệu gốc và dữ liệu đã filter
+  const [allCropSeasons, setAllCropSeasons] = useState<CropSeasonListItem[]>([]);
+  const [filteredCropSeasons, setFilteredCropSeasons] = useState<CropSeasonListItem[]>([]);
+
+  // Lấy tất cả dữ liệu gốc (không filter) để tính statusCounts
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllData = async () => {
+      try {
+        const data = await getCropSeasonsForCurrentUser({
+          page: 1,
+          pageSize: 1000, // Lấy tất cả để tính statusCounts
+        });
+        setAllCropSeasons(data);
+      } catch (err) {
+        console.error("Lỗi khi tải tất cả mùa vụ:", err);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  // Lấy dữ liệu đã filter để hiển thị
+  useEffect(() => {
+    const fetchFilteredData = async () => {
       setIsLoading(true);
       try {
+        // Nếu không có filter, sử dụng dữ liệu gốc
+        if (!selectedStatus && !search) {
+          setFilteredCropSeasons(allCropSeasons);
+          setIsLoading(false);
+          return;
+        }
+
         const data = await getCropSeasonsForCurrentUser({
           search,
           status: selectedStatus ?? undefined,
@@ -44,7 +72,7 @@ export default function FarmerCropSeasonsPage() {
           pageSize,
         });
 
-        setCropSeasons(data);
+        setFilteredCropSeasons(data);
       } catch (err) {
         console.error("Lỗi khi tải danh sách mùa vụ:", err);
         toast.error(t('cropSeasons.common.error'));
@@ -53,15 +81,16 @@ export default function FarmerCropSeasonsPage() {
       }
     };
 
-    fetchData();
-  }, [search, selectedStatus, currentPage]);
+    // Chỉ gọi API khi có thay đổi thực sự
+    if (allCropSeasons.length > 0) {
+      fetchFilteredData();
+    }
+  }, [search, selectedStatus, currentPage, allCropSeasons.length]);
 
-  const filteredSeasons = cropSeasons.filter(
-    (season) =>
-      (!selectedStatus || season.status === selectedStatus) &&
-      (!search ||
-        season.seasonName.toLowerCase().includes(search.toLowerCase()))
-  );
+  // Sử dụng dữ liệu đã filter từ API hoặc filter client-side nếu cần
+  const filteredSeasons = selectedStatus
+    ? allCropSeasons.filter(season => season.status === selectedStatus)
+    : filteredCropSeasons;
 
   const totalPages = Math.ceil(filteredSeasons.length / pageSize);
   const pagedSeasons = filteredSeasons.slice(
@@ -69,12 +98,17 @@ export default function FarmerCropSeasonsPage() {
     currentPage * pageSize
   );
 
-  const statusCounts = cropSeasons.reduce<
+
+
+  // Tính statusCounts từ dữ liệu gốc (không filter)
+  const statusCounts = allCropSeasons.reduce<
     Record<CropSeasonStatusValue, number>
   >(
     (acc, season) => {
       const status = season.status as CropSeasonStatusValue;
-      acc[status] = (acc[status] || 0) + 1;
+      if (status && acc.hasOwnProperty(status)) {
+        acc[status] = (acc[status] || 0) + 1;
+      }
       return acc;
     },
     {
@@ -85,12 +119,14 @@ export default function FarmerCropSeasonsPage() {
     }
   );
 
+
+
   const router = useRouter();
 
-  // Tính toán thống kê
-  const totalSeasons = cropSeasons.length;
-  const activeSeasons = cropSeasons.filter(s => s.status === 'Active').length;
-  const totalArea = cropSeasons.reduce((sum, s) => sum + (s.area || 0), 0);
+  // Tính toán thống kê từ dữ liệu gốc
+  const totalSeasons = allCropSeasons.length;
+  const activeSeasons = allCropSeasons.filter(s => s.status === 'Active').length;
+  const totalArea = allCropSeasons.reduce((sum, s) => sum + (s.area || 0), 0);
 
   return (
     <div className="min-h-screen bg-orange-50 p-4">
@@ -117,6 +153,8 @@ export default function FarmerCropSeasonsPage() {
                 <Plus className="w-4 h-4 mr-2" />
                 {t('cropSeasons.create.title')}
               </Button>
+
+
             </div>
           </div>
 
@@ -201,7 +239,7 @@ export default function FarmerCropSeasonsPage() {
               </div>
 
               <div className="p-4">
-                {isLoading ? (
+                {isLoading || allCropSeasons.length === 0 ? (
                   <div className="flex justify-center items-center py-8">
                     <LoadingSpinner />
                   </div>

@@ -40,11 +40,13 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
         const typeMap: Record<string, string> = {
             'Corrective': 'Khắc phục',
             'Preventive': 'Phòng ngừa',
+            'Observation': 'Nhận xét',
             'Advisory': 'Tư vấn',
             'Emergency': 'Khẩn cấp',
             'Routine': 'Thường xuyên',
             'corrective': 'Khắc phục',
             'preventive': 'Phòng ngừa',
+            'observation': 'Nhận xét',
             'advisory': 'Tư vấn',
             'emergency': 'Khẩn cấp',
             'routine': 'Thường xuyên'

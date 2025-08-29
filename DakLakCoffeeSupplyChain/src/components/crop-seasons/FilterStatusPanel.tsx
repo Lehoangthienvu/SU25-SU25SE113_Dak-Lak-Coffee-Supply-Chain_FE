@@ -22,7 +22,7 @@ export default function FilterStatusPanel({
                 icon="📊"
                 label={t('cropSeasons.list.filter.allStatuses')}
                 count={
-                    Object.values(statusCounts).reduce((sum, val) => sum + val, 0)
+                    Object.values(statusCounts).reduce((sum, val) => sum + (val || 0), 0)
                 }
                 color="orange"
                 active={selectedStatus === null}
@@ -36,7 +36,7 @@ export default function FilterStatusPanel({
                     icon={icon}
                     label={label}
                     color={color}
-                    count={statusCounts[key as CropSeasonStatusValue]}
+                    count={statusCounts[key as CropSeasonStatusValue] || 0}
                     active={selectedStatus === key}
                     onClick={() => setSelectedStatus(key === selectedStatus ? null : key)}
                 />

@@ -170,39 +170,11 @@ class AuthService {
     cancelText: string,
     onConfirm: () => void
   ): void {
-    // Tạo element để render ConfirmDialog
-    const dialogContainer = document.createElement('div');
-    dialogContainer.id = 'auth-confirm-dialog';
-    document.body.appendChild(dialogContainer);
-
-    // Import và render ConfirmDialog
-    Promise.all([
-      import('@/components/ui/confirmDialog'),
-      import('react'),
-      import('react-dom/client')
-    ]).then(([{ ConfirmDialog }, React, ReactDOM]) => {
-      const root = ReactDOM.createRoot(dialogContainer);
-      root.render(
-        React.createElement(ConfirmDialog, {
-          open: true,
-          onOpenChange: (open: boolean) => {
-            if (!open) {
-              root.unmount();
-              document.body.removeChild(dialogContainer);
-            }
-          },
-          title,
-          description,
-          confirmText,
-          cancelText,
-          onConfirm: () => {
-            onConfirm();
-            root.unmount();
-            document.body.removeChild(dialogContainer);
-          }
-        })
-      );
-    });
+    // Sử dụng confirm dialog đơn giản thay vì dynamic import
+    const shouldProceed = window.confirm(`${title}\n\n${description}`);
+    if (shouldProceed) {
+      onConfirm();
+    }
   }
 
   // Đăng xuất thủ công

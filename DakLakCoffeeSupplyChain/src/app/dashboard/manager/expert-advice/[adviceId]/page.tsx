@@ -60,7 +60,7 @@ export default function ExpertAdviceDetailPage() {
             case "corrective":
                 return "Khắc phục";
             case "observation":
-                return "Quan sát";
+                return "Nhận xét";
             default:
                 return responseType;
         }
