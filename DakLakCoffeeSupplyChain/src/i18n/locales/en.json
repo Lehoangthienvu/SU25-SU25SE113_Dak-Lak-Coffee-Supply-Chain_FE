@@ -539,45 +539,56 @@
             "description": "Loading processing batch information"
           },
           "error": {
-            "title": "Cannot load data",
+            "title": "Unable to load data",
             "back": "Back"
-          },
-          "notFound": {
-            "title": "Processing batch not found",
-            "description": "The processing batch you are looking for does not exist or has been deleted",
-            "back": "Back to list"
-          },
-          "stats": {
-            "batchCode": "Batch Code",
-            "stage": "Stage",
-            "output": "Output",
-            "efficiency": "Efficiency"
-          },
-          "basicInfo": {
-            "title": "Basic Information",
-            "batchCode": "Batch Code",
-            "systemCode": "System Code",
-            "cropSeason": "Crop Season",
-            "farmer": "Farmer",
-            "method": "Method",
-            "status": "Status",
-            "inputQuantity": "Input Quantity",
-            "outputQuantity": "Output Quantity",
-            "createdAt": "Created At"
-          },
-          "quickActions": {
-            "title": "Quick Actions (Expert)",
-            "evaluateStage": "Evaluate Stage",
-            "viewProgress": "View Progress",
-            "generateReport": "Generate Report"
-          },
-          "summary": {
-            "title": "Batch Summary",
-            "currentStatus": "Current Status:",
-            "stagesCount": "Number of stages:",
-            "efficiency": "Efficiency:",
-            "createdAt": "Created at:"
           }
+        }
+      },
+      "expertDashboard": {
+        "header": {
+          "welcome": "Welcome, Expert!",
+          "subtitle": "Manage and support farmers in the coffee supply chain"
+        },
+        "stats": {
+          "pendingReports": "Pending Reports",
+          "responded": "Responded",
+          "articlesWritten": "Articles Written",
+          "farmersSupported": "Farmers Supported"
+        },
+        "mainActions": {
+          "technicalConsultation": {
+            "title": "Technical Consultation",
+            "subtitle": "Technical support for farmers",
+            "description": "Respond to technical consultation requests from farmers, help solve problems in the cultivation and coffee processing process.",
+            "pendingReports": "12 pending reports",
+            "viewReports": "View Reports"
+          },
+          "professionalArticles": {
+            "title": "Write Professional Articles",
+            "subtitle": "Share in-depth knowledge",
+            "description": "Write and share professional articles about cultivation techniques, coffee processing and practical experience.",
+            "articlesCount": "8 articles written",
+            "writeNewArticle": "Write New Article"
+          }
+        },
+        "additionalFeatures": {
+          "progressEvaluation": {
+            "title": "Progress Evaluation",
+            "description": "Evaluate the cultivation and processing process by season",
+            "viewDetails": "View Details"
+          },
+          "farmerManagement": {
+            "title": "Farmer Management",
+            "description": "Monitor and support farmers in the system",
+            "viewList": "View List"
+          }
+        },
+        "quickActions": {
+          "title": "Quick Actions",
+          "viewNewReports": "View New Reports",
+          "writeNewArticle": "Write New Article",
+          "createReport": "Create Report",
+          "contactFarmers": "Contact Farmers"
         }
       },
       "batchDetail": {
@@ -3010,5 +3021,53 @@
       "createSuccess": "Outbound receipt created successfully!",
       "confirmSuccess": "Outbound receipt confirmed successfully!"
     }
+  },
+  "expertEvaluations": {
+    "title": "Processing Batch Evaluations",
+    "subtitle": "Manage and evaluate the quality of coffee processing batches",
+    "stats": {
+      "totalBatches": "Total Batches",
+      "pendingEvaluation": "Pending Evaluation",
+      "evaluated": "Evaluated",
+      "completionRate": "Completion Rate"
+    },
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "evaluated": "Evaluated",
+      "refresh": "Refresh"
+    },
+    "table": {
+      "headers": {
+        "batchCode": "Batch Code",
+        "farmer": "Farmer",
+        "method": "Method",
+        "quantity": "Quantity",
+        "status": "Status",
+        "evaluationResult": "Evaluation Result",
+        "evaluationDate": "Evaluation Date",
+        "actions": "Actions"
+      },
+      "noData": {
+        "title": "No batches need evaluation",
+        "description": "Processing batches will appear here when they need evaluation"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "evaluated": "Evaluated",
+      "noEvaluation": "No Evaluation Needed"
+    },
+    "actions": {
+      "evaluate": "Evaluate",
+      "viewDetails": "View Details"
+    },
+    "loading": "Loading data...",
+    "error": {
+      "fetchData": "An error occurred while loading data",
+      "evaluationsList": "Unable to load evaluation list",
+      "batchIdNotFound": "Error: Batch ID not found"
+    },
+    "retry": "Retry"
   }
 }

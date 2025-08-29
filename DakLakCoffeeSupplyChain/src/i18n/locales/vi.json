@@ -1043,59 +1043,70 @@
           }
         }
       },
-      "expertBatches": {
-        "title": "Quản lý lô sơ chế (Expert)",
-        "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
-        "batchDetail": {
-          "title": "Chi tiết lô sơ chế (Expert)",
-          "subtitle": "Thông tin chi tiết để đánh giá chất lượng",
-          "backToList": "Quay lại",
-          "loading": {
-            "title": "Đang tải dữ liệu...",
-            "description": "Đang tải thông tin lô sơ chế"
-          },
-          "error": {
-            "title": "Không thể tải dữ liệu",
-            "back": "Quay lại"
-          },
-          "notFound": {
-            "title": "Không tìm thấy lô sơ chế",
-            "description": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa",
-            "back": "Quay lại danh sách"
+        "expertBatches": {
+          "title": "Quản lý lô sơ chế (Expert)",
+          "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
+          "batchDetail": {
+            "title": "Chi tiết lô sơ chế (Expert)",
+            "subtitle": "Thông tin chi tiết để đánh giá chất lượng",
+            "backToList": "Quay lại",
+            "loading": {
+              "title": "Đang tải dữ liệu...",
+              "description": "Đang tải thông tin lô sơ chế"
+            },
+            "error": {
+              "title": "Không thể tải dữ liệu",
+              "back": "Quay lại"
+            }
+          }
+        },
+        "expertDashboard": {
+          "header": {
+            "welcome": "Chào mừng, Chuyên gia!",
+            "subtitle": "Quản lý và hỗ trợ nông dân trong chuỗi cung ứng cà phê"
           },
           "stats": {
-            "batchCode": "Mã lô",
-            "stage": "Giai đoạn",
-            "output": "Sản lượng",
-            "efficiency": "Hiệu suất"
+            "pendingReports": "Báo cáo chờ xử lý",
+            "responded": "Đã phản hồi",
+            "articlesWritten": "Bài viết đã viết",
+            "farmersSupported": "Nông dân hỗ trợ"
           },
-          "basicInfo": {
-            "title": "Thông tin cơ bản",
-            "batchCode": "Mã lô",
-            "systemCode": "Mã hệ thống",
-            "cropSeason": "Mùa vụ",
-            "farmer": "Nông dân",
-            "method": "Phương pháp",
-            "status": "Trạng thái",
-            "inputQuantity": "Khối lượng vào",
-            "outputQuantity": "Khối lượng ra",
-            "createdAt": "Ngày tạo"
+          "mainActions": {
+            "technicalConsultation": {
+              "title": "Tư vấn kỹ thuật",
+              "subtitle": "Hỗ trợ kỹ thuật cho nông dân",
+              "description": "Phản hồi các yêu cầu tư vấn kỹ thuật từ nông dân, hỗ trợ giải quyết vấn đề trong quá trình canh tác và sơ chế cà phê.",
+              "pendingReports": "12 báo cáo chờ xử lý",
+              "viewReports": "Xem báo cáo"
+            },
+            "professionalArticles": {
+              "title": "Viết bài chuyên môn",
+              "subtitle": "Chia sẻ kiến thức chuyên sâu",
+              "description": "Viết và chia sẻ các bài viết chuyên môn về kỹ thuật canh tác, sơ chế cà phê và kinh nghiệm thực tế.",
+              "articlesCount": "8 bài viết đã viết",
+              "writeNewArticle": "Viết bài mới"
+            }
+          },
+          "additionalFeatures": {
+            "progressEvaluation": {
+              "title": "Đánh giá tiến độ",
+              "description": "Đánh giá quá trình canh tác và sơ chế theo từng mùa",
+              "viewDetails": "Xem chi tiết"
+            },
+            "farmerManagement": {
+              "title": "Quản lý nông dân",
+              "description": "Theo dõi và hỗ trợ nông dân trong hệ thống",
+              "viewList": "Xem danh sách"
+            }
           },
           "quickActions": {
-            "title": "Thao tác nhanh (Expert)",
-            "evaluateStage": "Đánh giá giai đoạn",
-            "viewProgress": "Xem tiến độ",
-            "generateReport": "Tạo báo cáo"
-          },
-          "summary": {
-            "title": "Tóm tắt lô",
-            "currentStatus": "Trạng thái hiện tại:",
-            "stagesCount": "Số giai đoạn:",
-            "efficiency": "Hiệu suất:",
-            "createdAt": "Ngày tạo:"
+            "title": "Hành động nhanh",
+            "viewNewReports": "Xem báo cáo mới",
+            "writeNewArticle": "Viết bài mới",
+            "createReport": "Tạo báo cáo",
+            "contactFarmers": "Liên hệ nông dân"
           }
-        }
-      },
+        },
       "farmerProgresses": {
         "title": "Quản lý tiến trình sơ chế (Farmer)",
         "subtitle": "Theo dõi và quản lý tiến trình xử lý cà phê của bạn",
@@ -1519,12 +1530,6 @@
     }
   } , 
 
-    "wastes": {
-      "title": "Chất thải sơ chế",
-      "subtitle": "Quản lý và theo dõi chất thải từ quá trình sơ chế",
-      "addWaste": "Thêm chất thải mới",
-      "editWaste": "Chỉnh sửa chất thải"
-    },
 
     "farmerWastes": {
         "title": "Quản lý chất thải sơ chế (Farmer)",
@@ -3054,5 +3059,53 @@
       "createSuccess": "Tạo phiếu xuất kho thành công!",
       "confirmSuccess": "Xác nhận phiếu xuất kho thành công!"
     }
+  },
+  "expertEvaluations": {
+    "title": "Đánh giá lô sơ chế",
+    "subtitle": "Quản lý và đánh giá chất lượng các lô sơ chế cà phê",
+    "stats": {
+      "totalBatches": "Tổng số lô",
+      "pendingEvaluation": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "completionRate": "Tỷ lệ hoàn thành"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "pending": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "refresh": "Làm mới"
+    },
+    "table": {
+      "headers": {
+        "batchCode": "Mã lô",
+        "farmer": "Nông dân",
+        "method": "Phương pháp",
+        "quantity": "Khối lượng",
+        "status": "Trạng thái",
+        "evaluationResult": "Kết quả đánh giá",
+        "evaluationDate": "Ngày đánh giá",
+        "actions": "Hành động"
+      },
+      "noData": {
+        "title": "Không có lô nào cần đánh giá",
+        "description": "Các lô sơ chế sẽ xuất hiện ở đây khi cần đánh giá"
+      }
+    },
+    "status": {
+      "pending": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "noEvaluation": "Không cần đánh giá"
+    },
+    "actions": {
+      "evaluate": "Đánh giá",
+      "viewDetails": "Xem chi tiết"
+    },
+    "loading": "Đang tải dữ liệu...",
+    "error": {
+      "fetchData": "Có lỗi xảy ra khi tải dữ liệu",
+      "evaluationsList": "Không thể tải danh sách đánh giá",
+      "batchIdNotFound": "Lỗi: Không tìm thấy ID của lô"
+    },
+    "retry": "Thử lại"
   }
 }
