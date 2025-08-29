@@ -9,7 +9,7 @@ import {
   CropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
-import { Edit, Eye, Coffee, MapPin, Calendar, Target } from "lucide-react";
+import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
 
@@ -46,6 +46,14 @@ export default function CropSeasonDetailTable({
     return "text-green-600";
   };
 
+  const handleRowClick = (detailId: string, event: React.MouseEvent) => {
+    // Prevent navigation if clicking on the edit button
+    if ((event.target as HTMLElement).closest('button')) {
+      return;
+    }
+    router.push(`/dashboard/farmer/crop-progress/${detailId}`);
+  };
+
   if (details.length === 0)
     return (
       <div className="text-center py-8 text-gray-500">
@@ -72,7 +80,11 @@ export default function CropSeasonDetailTable({
           </thead>
           <tbody className="divide-y divide-green-100">
             {details.map((detail) => (
-              <tr key={detail.detailId} className="hover:bg-green-50 transition-colors">
+              <tr
+                key={detail.detailId}
+                className="hover:bg-green-50 transition-colors cursor-pointer"
+                onClick={(e) => handleRowClick(detail.detailId, e)}
+              >
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
@@ -149,19 +161,6 @@ export default function CropSeasonDetailTable({
                         />
                       </DialogContent>
                     </Dialog>
-
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/farmer/crop-progress/${detail.detailId}`
-                        )
-                      }
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                    >
-                      <Eye className="w-3 h-3" />
-                    </Button>
                   </div>
                 </td>
               </tr>
