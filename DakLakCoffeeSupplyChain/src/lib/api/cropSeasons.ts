@@ -174,9 +174,13 @@ export async function getCropSeasonsForCurrentUser(params: {
   }
 
   if (status) {
+    // Sử dụng buildStatusFilter để chuyển đổi status thành format phù hợp
     const statusFilter = buildStatusFilter(status);
     if (statusFilter) {
       q["status"] = statusFilter;
+    } else {
+      // Fallback: gửi status trực tiếp
+      q["status"] = status;
     }
   }
 
@@ -202,7 +206,8 @@ export async function getCropSeasonsForCurrentUser(params: {
       if (res.data) {
         // Format mới từ backend với pagination
         if (typeof res.data === 'object' && 'data' in res.data && Array.isArray((res.data as PaginatedResponse<CropSeasonListItem>).data)) {
-          return (res.data as PaginatedResponse<CropSeasonListItem>).data;
+          const result = (res.data as PaginatedResponse<CropSeasonListItem>).data;
+          return result;
         }
         // Format cũ trực tiếp là array
         else if (Array.isArray(res.data)) {

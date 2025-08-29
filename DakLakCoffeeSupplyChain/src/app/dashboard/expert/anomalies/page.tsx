@@ -18,7 +18,6 @@ export default function ReportResponsePage() {
     const [allAdvices, setAllAdvices] = useState<ExpertAdvice[]>([]);
     const [filteredAdvices, setFilteredAdvices] = useState<ExpertAdvice[]>([]);
     const [showHistoryDialog, setShowHistoryDialog] = useState(false);
-    const [showFormDialog, setShowFormDialog] = useState(false);
     const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
     // State cho media viewer
@@ -239,32 +238,33 @@ export default function ReportResponsePage() {
                                         </Button>
 
                                         {/* Button xem lịch sử phản hồi */}
-                                        {allAdvices.some((a) => a.reportId === report.reportId) && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => {
-                                                    setSelectedReportId(report.reportId);
-                                                    setShowHistoryDialog(true);
-                                                    setShowFormDialog(false);
-                                                }}
-                                                className="text-orange-600 hover:text-orange-800 hover:bg-orange-50"
-                                            >
-                                                <History className="w-4 h-4 mr-2" />
-                                                Xem lịch sử phản hồi
-                                            </Button>
-                                        )}
+                                        {(() => {
+                                            const adviceCount = allAdvices.filter((a) => a.reportId === report.reportId).length;
+                                            return adviceCount > 0 ? (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setSelectedReportId(report.reportId);
+                                                        setShowHistoryDialog(true);
+                                                    }}
+                                                    className="text-orange-600 hover:text-orange-800 hover:bg-orange-50"
+                                                >
+                                                    <History className="w-4 h-4 mr-2" />
+                                                    Lịch sử phản hồi ({adviceCount})
+                                                </Button>
+                                            ) : null;
+                                        })()}
                                     </div>
                                     <Button
                                         onClick={() => {
-                                            setSelectedReportId(report.reportId);
-                                            setShowFormDialog(true);
-                                            setShowHistoryDialog(false);
+                                            // Chuyển thẳng đến trang create với reportId
+                                            window.location.href = `/dashboard/expert/anomalies/create?reportId=${report.reportId}`;
                                         }}
                                         className="bg-orange-600 hover:bg-orange-700 text-white"
                                     >
                                         <MessageSquare className="w-4 h-4 mr-2" />
-                                        Gửi phản hồi
+                                        Phản hồi
                                     </Button>
                                 </div>
                             </CardContent>
@@ -273,64 +273,7 @@ export default function ReportResponsePage() {
                 )}
             </div>
 
-            {showFormDialog && selectedReportId && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full relative">
-                        <button
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-                            onClick={() => {
-                                setShowFormDialog(false);
-                                setSelectedReportId(null);
-                                setFilteredAdvices([]);
-                            }}
-                            aria-label="Đóng form"
-                            title="Đóng form"
-                        >
-                            <XCircle className="w-5 h-5" />
-                        </button>
 
-                        <div className="space-y-4">
-                            <div className="text-center">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                    Gửi phản hồi cho báo cáo
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    Báo cáo ID: {selectedReportId}
-                                </p>
-                            </div>
-
-                            <div className="text-center space-y-3">
-                                <Button
-                                    onClick={() => {
-                                        setShowFormDialog(false);
-                                        setSelectedReportId(null);
-                                        setFilteredAdvices([]);
-
-                                        // Chuyển đến trang create với reportId
-                                        window.location.href = `/dashboard/expert/anomalies/create?reportId=${selectedReportId}`;
-                                    }}
-                                    className="bg-orange-600 hover:bg-orange-700 text-white w-full"
-                                >
-                                    <MessageSquare className="w-4 h-4 mr-2" />
-                                    Tạo phản hồi mới
-                                </Button>
-
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        setShowFormDialog(false);
-                                        setSelectedReportId(null);
-                                        setFilteredAdvices([]);
-                                    }}
-                                    className="w-full"
-                                >
-                                    Hủy
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {showHistoryDialog && selectedReportId && (
                 <AdviceHistoryDialog
@@ -431,7 +374,7 @@ export default function ReportResponsePage() {
                             )}
 
                             {/* Action buttons */}
-                            <div className="flex justify-end gap-3 pt-4 border-t">
+                            <div className="flex justify-end pt-4 border-t">
                                 <Button
                                     variant="outline"
                                     onClick={() => {
@@ -440,17 +383,6 @@ export default function ReportResponsePage() {
                                     }}
                                 >
                                     Đóng
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        setSelectedReportId(selectedReportDetail.reportId);
-                                        setShowFormDialog(true);
-                                        setShowMediaViewer(false);
-                                        setSelectedReportDetail(null);
-                                    }}
-                                    className="bg-orange-600 hover:bg-orange-700"
-                                >
-                                    Gửi phản hồi
                                 </Button>
                             </div>
                         </div>

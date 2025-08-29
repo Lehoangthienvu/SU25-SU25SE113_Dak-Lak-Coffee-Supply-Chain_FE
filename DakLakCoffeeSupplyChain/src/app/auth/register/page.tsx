@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mail, Lock, Eye, EyeOff, User, Phone, Building, FileText, Loader2, CheckCircle, RefreshCw } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, Phone, Building, FileText, Loader2, CheckCircle, RefreshCw, AlertCircle } from "lucide-react";
 import { resendVerificationEmail, signUp } from "@/lib/api/auth";
 import { getErrorMessage } from "@/lib/utils";
 import { AppToast } from "@/components/ui/AppToast";
@@ -33,6 +33,7 @@ export default function RegisterPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [generalError, setGeneralError] = useState("");
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -184,6 +185,14 @@ export default function RegisterPage() {
 
             <CardContent>
               <form className="space-y-5" onSubmit={handleSubmit}>
+                {/* General Error Message */}
+                {generalError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <span className="text-sm text-red-700">{generalError}</span>
+                  </div>
+                )}
+
                 {/* Role Selection */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Vai trò</Label>
@@ -370,9 +379,14 @@ export default function RegisterPage() {
                         onClick={async () => {
                           const email = localStorage.getItem("pending_email");
                           if (email) {
-                            await resendVerificationEmail(email);
+                            try {
+                              await resendVerificationEmail(email);
+                              setGeneralError("");
+                            } catch (err) {
+                              setGeneralError("Không thể gửi lại email xác thực. Vui lòng thử lại.");
+                            }
                           } else {
-                            alert("Không tìm thấy email đã đăng ký.");
+                            setGeneralError("Không tìm thấy email đã đăng ký.");
                           }
                         }}
                         className="text-green-700 font-semibold underline hover:text-green-900 inline-flex items-center gap-1"
