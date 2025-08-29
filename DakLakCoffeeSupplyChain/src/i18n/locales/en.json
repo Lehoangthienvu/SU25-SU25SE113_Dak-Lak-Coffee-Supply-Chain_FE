@@ -1,6 +1,6 @@
 {
   "processing": {
-    "title": "Coffee Processing Management",
+    "title": "Coffee Processing Recording",
     "batch": {
       "title": "Processing Batch",
       "create": "Create New Batch",
@@ -40,44 +40,10 @@
         "enterBatchCode": "Please enter batch code"
       }
     },
-    "createProgress": {
-      "headerTitle": "Create First Progress",
-      "headerDescription": "Start coffee processing workflow",
-      "batchSelectionTitle": "Select Processing Batch",
-      "batchSelectionDescription": "Choose coffee batch to start processing",
-      "noAvailableBatches": "No available processing batches",
-      "showBatchesStatus": "Only showing batches with status: Not Started, In Progress, or Awaiting Evaluation",
-      "selectBatchLabel": "Select processing batch",
-      "selectBatchPlaceholder": "-- Select processing batch --",
-      "stageInformationTitle": "Processing Stage Information",
-      "stageInformationDescription": "First step in the workflow",
-      "loadingStages": "Loading stage information...",
-      "firstStep": "First Step",
-      "processing": "Processing",
-      "noStageInfo": "No stage information found",
-      "progressInformationTitle": "Progress Information",
-      "progressInformationDescription": "Execution date and output quantity",
-      "progressDateLabel": "Execution Date",
-      "outputQuantityLabel": "Output Quantity",
-      "technicalParametersTitle": "Technical Parameters",
-      "technicalParametersDescription": "Measurement parameters during processing",
-      "addParameter": "Add Parameter",
-      "parameterNameLabel": "Parameter Name",
-      "parameterNamePlaceholder": "E.g: Temperature, Humidity...",
-      "parameterValueLabel": "Value",
-      "parameterValuePlaceholder": "E.g: 25, 80%...",
-      "parameterUnitLabel": "Unit",
-      "parameterUnitPlaceholder": "E.g: °C, %, kg...",
-      "cancelButton": "Cancel",
-      "saving": "Saving...",
-      "createProgress": "Create Progress",
-      "stageOrder": "Step {{order}}",
-      "methodInfo": "of method {{methodName}}",
-      "stepOrder": "Step {{order}}"
-    },
+
     "progress": {
       "title": "Processing Progress",
-      "create": "Create New Progress",
+      "create": "Create New Progress1212",
       "advance": "Update Progress",
       "update": "Update Progress",
       "delete": "Delete Progress",
@@ -1162,6 +1128,41 @@
       "farmerProgresses": {
         "title": "Processing Progress Management (Farmer)",
         "subtitle": "Track and manage your coffee processing progress",
+        "createProgress": {
+          "headerTitle": "Create First Progress",
+          "headerDescription": "Start coffee processing workflow",
+          "batchSelectionTitle": "Select Processing Batch",
+          "batchSelectionDescription": "Choose coffee batch to start processing",
+          "noAvailableBatches": "No available processing batches",
+          "showBatchesStatus": "Only showing batches with status: Not Started, In Progress, or Awaiting Evaluation",
+          "selectBatchLabel": "Select processing batch",
+          "selectBatchPlaceholder": "-- Select processing batch --",
+          "stageInformationTitle": "Processing Stage Information",
+          "stageInformationDescription": "First step in the workflow",
+          "loadingStages": "Loading stage information...",
+          "firstStep": "First Step",
+          "processing": "Processing",
+          "noStageInfo": "No stage information found",
+          "progressInformationTitle": "Progress Information",
+          "progressInformationDescription": "Execution date and output quantity",
+          "progressDateLabel": "Execution Date",
+          "outputQuantityLabel": "Output Quantity",
+          "technicalParametersTitle": "Technical Parameters",
+          "technicalParametersDescription": "Measurement parameters during processing",
+          "addParameter": "Add Parameter",
+          "parameterNameLabel": "Parameter Name",
+          "parameterNamePlaceholder": "E.g: Temperature, Humidity...",
+          "parameterValueLabel": "Value",
+          "parameterValuePlaceholder": "E.g: 25, 80%...",
+          "parameterUnitLabel": "Unit",
+          "parameterUnitPlaceholder": "E.g: °C, %, kg...",
+          "cancelButton": "Cancel",
+          "saving": "Saving...",
+          "createProgress": "Create Progress",
+          "stageOrder": "Step {{order}}",
+          "methodInfo": "of method {{methodName}}",
+          "stepOrder": "Step {{order}}"
+        },
         "overview": {
           "title": "Processing Progress Management",
           "subtitle": "Track and update your coffee processing progress",
@@ -2538,5 +2539,5 @@
       "page": "Page {{current}}/{{total}}"
     }
   }
-  }
+}
 }

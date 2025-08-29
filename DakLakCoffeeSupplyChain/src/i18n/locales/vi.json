@@ -1,6 +1,6 @@
 {
   "processing": {
-    "title": "Quản lý xử lý cà phê",
+    "title": "Ghi nhận xử lý cà phê",
     "batch": {
       "title": "Lô xử lý",
       "create": "Tạo lô mới",
@@ -40,41 +40,7 @@
         "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
       }
     },
-    "createProgress": {
-      "headerTitle": "Tạo tiến trình đầu tiên",
-      "headerDescription": "Bắt đầu quy trình chế biến cà phê",
-      "batchSelectionTitle": "Chọn lô chế biến",
-      "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
-      "noAvailableBatches": "Không có lô chế biến khả dụng",
-      "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
-      "selectBatchLabel": "Chọn lô chế biến",
-      "selectBatchPlaceholder": "-- Chọn lô chế biến --",
-      "stageInformationTitle": "Thông tin bước chế biến",
-      "stageInformationDescription": "Bước đầu tiên trong quy trình",
-      "loadingStages": "Đang tải thông tin bước chế biến...",
-      "firstStep": "Bước đầu tiên",
-      "processing": "Chế biến",
-      "noStageInfo": "Không tìm thấy thông tin bước chế biến",
-      "progressInformationTitle": "Thông tin tiến trình",
-      "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
-      "progressDateLabel": "Ngày thực hiện",
-      "outputQuantityLabel": "Khối lượng đầu ra",
-      "technicalParametersTitle": "Thông số kỹ thuật",
-      "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
-      "addParameter": "Thêm thông số",
-      "parameterNameLabel": "Tên thông số",
-      "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
-      "parameterValueLabel": "Giá trị",
-      "parameterValuePlaceholder": "VD: 25, 80%...",
-      "parameterUnitLabel": "Đơn vị",
-      "parameterUnitPlaceholder": "VD: °C, %, kg...",
-      "cancelButton": "Huỷ",
-      "saving": "Đang lưu...",
-      "createProgress": "Tạo tiến trình",
-      "stageOrder": "Bước {{order}}",
-      "methodInfo": "của phương pháp {{methodName}}",
-      "stepOrder": "Bước {{order}}"
-    },
+
     "progress": {
       "title": "Tiến trình xử lý",
       "create": "Tạo tiến trình mới",
@@ -1133,6 +1099,41 @@
       "farmerProgresses": {
         "title": "Quản lý tiến trình sơ chế (Farmer)",
         "subtitle": "Theo dõi và quản lý tiến trình xử lý cà phê của bạn",
+        "createProgress": {
+          "headerTitle": "Tạo tiến trình đầu tiên",
+          "headerDescription": "Bắt đầu quy trình chế biến cà phê",
+          "batchSelectionTitle": "Chọn lô chế biến",
+          "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
+          "noAvailableBatches": "Không có lô chế biến khả dụng",
+          "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
+          "selectBatchLabel": "Chọn lô chế biến",
+          "selectBatchPlaceholder": "-- Chọn lô chế biến --",
+          "stageInformationTitle": "Thông tin bước chế biến",
+          "stageInformationDescription": "Bước đầu tiên trong quy trình",
+          "loadingStages": "Đang tải thông tin bước chế biến...",
+          "firstStep": "Bước đầu tiên",
+          "processing": "Chế biến",
+          "noStageInfo": "Không tìm thấy thông tin bước chế biến",
+          "progressInformationTitle": "Thông tin tiến trình",
+          "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
+          "progressDateLabel": "Ngày thực hiện",
+          "outputQuantityLabel": "Khối lượng đầu ra",
+          "technicalParametersTitle": "Thông số kỹ thuật",
+          "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
+          "addParameter": "Thêm thông số",
+          "parameterNameLabel": "Tên thông số",
+          "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
+          "parameterValueLabel": "Giá trị",
+          "parameterValuePlaceholder": "VD: 25, 80%...",
+          "parameterUnitLabel": "Đơn vị",
+          "parameterUnitPlaceholder": "VD: °C, %, kg...",
+          "cancelButton": "Huỷ",
+          "saving": "Đang lưu...",
+          "createProgress": "Tạo tiến trình",
+          "stageOrder": "Bước {{order}}",
+          "methodInfo": "của phương pháp {{methodName}}",
+          "stepOrder": "Bước {{order}}"
+        },
         "overview": {
           "title": "Quản lý tiến trình sơ chế",
           "subtitle": "Theo dõi và cập nhật tiến trình xử lý cà phê của bạn",
@@ -2529,6 +2530,5 @@
       "page": "Trang {{current}}/{{total}}"
     }
   }
-
-  }
+}
 }
