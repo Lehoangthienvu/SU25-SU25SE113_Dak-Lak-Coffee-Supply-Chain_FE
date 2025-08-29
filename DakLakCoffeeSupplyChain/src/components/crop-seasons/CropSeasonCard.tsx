@@ -1,7 +1,7 @@
 'use client';
 
 import { CropSeasonListItem as CropSeason } from '@/lib/api/cropSeasons';
-import { FaUser, FaEdit, FaEye, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
+import { FaUser, FaEdit, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import StatusBadge from './StatusBadge';
@@ -20,8 +20,19 @@ export default function CropSeasonCard({ season }: Props) {
         return new Date(date).toLocaleDateString('vi-VN');
     };
 
+    const handleRowClick = (event: React.MouseEvent) => {
+        // Prevent navigation if clicking on the edit button
+        if ((event.target as HTMLElement).closest('button')) {
+            return;
+        }
+        router.push(`/dashboard/farmer/crop-seasons/${season.cropSeasonId}`);
+    };
+
     return (
-        <tr className="hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-all duration-200 group">
+        <tr
+            className="hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-all duration-200 group cursor-pointer"
+            onClick={handleRowClick}
+        >
             <td className="px-4 py-3 text-left align-middle">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
@@ -64,18 +75,6 @@ export default function CropSeasonCard({ season }: Props) {
 
             <td className="px-4 py-3 text-center align-middle">
                 <div className="flex justify-center gap-1">
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                            router.push(`/dashboard/farmer/crop-seasons/${season.cropSeasonId}`)
-                        }
-                        className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md"
-                        title={t('cropSeasons.card.viewDetails')}
-                    >
-                        <FaEye className="w-3 h-3" />
-                    </Button>
-
                     <Button
                         size="sm"
                         variant="ghost"
