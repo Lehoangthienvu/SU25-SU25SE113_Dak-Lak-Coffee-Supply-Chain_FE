@@ -12,7 +12,7 @@ import { Plus, Trash2, Package, Calendar, Search, Filter, Eye } from "lucide-rea
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
 import SearchBox from "@/components/processing/SearchBox";
 import ProcessingTable from "@/components/processing/ProcessingTable";
-import Pagination from "@/components/processing/Pagination";
+import { Pagination } from "@/components/processing/Pagination";
 
 export default function ProcessingWastesPage() {
   const router = useRouter();
