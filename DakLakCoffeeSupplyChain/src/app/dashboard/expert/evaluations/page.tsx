@@ -8,6 +8,7 @@ import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { FiEye, FiPlus, FiRefreshCw, FiAlertCircle, FiCheckCircle, FiClock, FiXCircle } from "react-icons/fi";
 import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
+import { Pagination } from "@/components/processing/Pagination";
 
 interface EvaluationBatch {
   batchId: string;
@@ -32,6 +33,10 @@ export default function ExpertEvaluationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "evaluated">("all");
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const fetchData = async () => {
     try {
@@ -103,6 +108,25 @@ export default function ExpertEvaluationsPage() {
     if (filter === "evaluated") return batch.evaluationStatus === "evaluated";
     return true;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredBatches.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedBatches = filteredBatches.slice(startIndex, endIndex);
+  
+
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   const getStatusIcon = (status: "pending" | "evaluated" | "none") => {
     switch (status) {
@@ -281,7 +305,7 @@ export default function ExpertEvaluationsPage() {
 
         {/* Batches List */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {filteredBatches.length === 0 ? (
+          {paginatedBatches.length === 0 ? (
             <div className="p-12 text-center">
               <FiAlertCircle className="text-gray-400 text-4xl mx-auto mb-4" />
               <p className="text-gray-600 mb-2">{t("expertEvaluations.table.noData.title")}</p>
@@ -292,48 +316,54 @@ export default function ExpertEvaluationsPage() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.batchCode")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.farmer")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.method")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.quantity")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.status")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.evaluationResult")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.evaluationDate")}
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("expertEvaluations.table.headers.actions")}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredBatches.map((batch) => (
-                    <tr key={batch.batchId} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{batch.batchCode}</div>
+                  {paginatedBatches.map((batch, index) => (
+                    <tr key={`${batch.batchId}-${index}`} className="hover:bg-gray-50">
+                                             <td className="px-4 py-4 whitespace-nowrap">
+                         <div className="text-sm font-medium text-gray-900">{batch.batchCode}</div>
+                       </td>
+                      <td className="px-4 py-4">
+                        <div className="text-sm text-gray-900 max-w-32 truncate" title={batch.farmerName}>
+                          {batch.farmerName}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{batch.farmerName}</div>
+                      <td className="px-4 py-4">
+                        <div className="text-sm text-gray-900 max-w-48">
+                          <div className="truncate" title={batch.methodName}>
+                            {batch.methodName}
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{batch.methodName}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{batch.totalInputQuantity} {batch.inputUnit}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           {getStatusIcon(batch.evaluationStatus)}
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(batch.evaluationStatus)}`}>
@@ -341,7 +371,7 @@ export default function ExpertEvaluationsPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         {batch.evaluationResult ? (
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getEvaluationResultColor(batch.evaluationResult)}`}>
                             {getEvaluationResultDisplayNameI18n(batch.evaluationResult, t)}
@@ -350,12 +380,12 @@ export default function ExpertEvaluationsPage() {
                           <span className="text-gray-400 text-sm">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           {batch.evaluationDate ? new Date(batch.evaluationDate).toLocaleDateString('vi-VN') : '-'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => {
@@ -370,7 +400,7 @@ export default function ExpertEvaluationsPage() {
                               
                               router.push(`/dashboard/expert/evaluations/${batch.batchId}`);
                             }}
-                            className="px-3 py-1 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-xs"
+                            className="px-3 py-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-xs font-medium"
                           >
                             {batch.evaluationStatus === "evaluated" ? t("expertEvaluations.actions.viewDetails") : t("expertEvaluations.actions.evaluate")}
                           </button>
@@ -382,6 +412,17 @@ export default function ExpertEvaluationsPage() {
               </table>
             </div>
           )}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-8 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            itemsPerPage={10}
+            totalItems={filteredBatches.length}
+          />
         </div>
       </div>
     </div>
