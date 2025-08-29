@@ -10,15 +10,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiEdit } from "react-icons/fi";
 import { Separator } from "@/components/ui/separator";
-import { Package } from "lucide-react";
+import { FileText, Package, ChevronDown, ChevronUp } from "lucide-react";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import { ProcurementPlanStatusMap } from "@/lib/constants/procurementPlanStatus";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
+
 import {
   CultivationRegistration,
   getCultivationRegistrationsByPlanId,
@@ -35,6 +30,7 @@ export default function ProcurementPlanDetailPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -99,9 +95,17 @@ export default function ProcurementPlanDetailPage() {
 
         {/* Card thông tin chính */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <div className='flex justify-between items-center'>
-              <CardTitle>Thông tin kế hoạch thu mua</CardTitle>
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Package className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-orange-800">Thông tin kế hoạch thu mua</CardTitle>
+                  <p className="text-sm text-orange-600 mt-1">Mã: {plan.planCode}</p>
+                </div>
+              </div>
               {plan.status === "Draft" && (
                 <div className='flex gap-2'>
                   <Button
@@ -128,154 +132,290 @@ export default function ProcurementPlanDetailPage() {
               )}
             </div>
           </CardHeader>
-          <CardContent className='grid grid-cols-2 gap-4 text-sm'>
-            <div>
-              <strong>Mã kế hoạch:</strong> {plan.planCode}
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Thông tin cơ bản */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">Thông tin cơ bản</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tiêu đề:</span>
+                    <span className="font-medium text-gray-800">{plan.title}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Trạng thái:</span>
+                    <StatusBadge
+                      status={plan.status}
+                      map={ProcurementPlanStatusMap}
+                    />
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Thời gian mở đơn:</span>
+                    <span className="font-medium text-gray-800">
+                      {formatDate(plan.startDate)} – {formatDate(plan.endDate)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thông tin sản lượng */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">Sản lượng</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tổng sản lượng:</span>
+                    <span className="font-medium text-gray-800">
+                      {plan.totalQuantity.toLocaleString()} kg
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tổng tiến độ đăng ký:</span>
+                    <span className="font-medium text-gray-800">
+                      {plan.progressPercentage}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Số chi tiết kế hoạch:</span>
+                    <span className="font-medium text-gray-800">
+                      {plan.procurementPlansDetails?.length || 0} chi tiết
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thông tin doanh nghiệp */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">Doanh nghiệp</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tên:</span>
+                    <span className="font-medium text-gray-800">{plan.createdBy?.companyName || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Địa chỉ:</span>
+                    <span className="font-medium text-gray-800 text-right max-w-[150px]">
+                      {plan.createdBy?.companyAddress || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Email:</span>
+                    <span className="font-medium text-gray-800">{plan.createdBy?.contactEmail || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <strong>Tổng sản lượng:</strong>{" "}
-              {plan.totalQuantity.toLocaleString()} kg
-            </div>
-            <div>
-              <strong>Tỷ lệ sản lượng đã được đăng ký và có cam kết:</strong> {plan.progressPercentage}%
-            </div>
-            <div>
-              <strong>Trạng thái:</strong>{" "}
-              <StatusBadge
-                status={plan.status}
-                map={ProcurementPlanStatusMap}
-              />
-            </div>
-            <div>
-              <strong>Thời gian mở đơn:</strong> {formatDate(plan.startDate)} –{" "}
-              {formatDate(plan.endDate)}
-            </div>
+
+            {/* Mô tả */}
             {plan.description && (
-              <div className='col-span-2'>
-                <strong>Mô tả:</strong> {plan.description}
+              <div className="mt-6 pt-4 border-t border-orange-200">
+                <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide mb-2">Mô tả</h4>
+                <p className="text-gray-700 leading-relaxed">{plan.description}</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Card chi tiết kế hoạch */}
-        <Card>
-          <CardHeader className='flex justify-between items-center'>
-            <CardTitle>Chi tiết kế hoạch</CardTitle>
-            {plan.status === "Draft" && (
-              <Button
-                size='sm'
-                variant='secondaryGradient'
-                onClick={() =>
-                  router.push(
-                    `/dashboard/manager/procurement-plans/${plan.planId}/edit`
-                  )
-                }
-              >
-                + Thêm chi tiết kế hoạch
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent>
-            {Array.isArray(plan.procurementPlansDetails) &&
-              plan.procurementPlansDetails.length > 0 ? (
-              <Accordion type='multiple' className='w-full'>
-                {plan.procurementPlansDetails.map((detail) => (
-                  <AccordionItem
-                    key={detail.planDetailsId}
-                    value={detail.planDetailsId ?? ""}
-                  >
-                    <AccordionTrigger className='text-left font-medium text-base'>
-                      {detail.coffeeType?.typeName}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className='grid grid-cols-2 gap-4 text-sm text-gray-700 py-2'>
-                        <div>
-                          <strong>Mã chi tiết:</strong> {detail.planDetailCode}
-                        </div>
-                        <div>
-                          <strong>Loại cà phê:</strong>{" "}
-                          {detail.coffeeType?.typeName}
-                        </div>
-                        <div>
-                          <strong>Phân loại:</strong>{" "}
-                          {detail.coffeeType?.specialtyLevel}
-                        </div>
-                        <div>
-                          <strong>Vùng đặc trưng:</strong>{" "}
-                          {detail.coffeeType?.typicalRegion}
-                        </div>
-                        {detail.processingMethodName && (
-                          <div>
-                            <strong>Phương pháp sơ chế:</strong>{" "}
-                            {detail.processingMethodName}
-                          </div>
-                        )}
-                        <div>
-                          <strong>Sản lượng mục tiêu:</strong>{" "}
-                          {detail.targetQuantity?.toLocaleString()} kg
-                        </div>
-                        <div>
-                          <strong>Đăng ký tối thiểu:</strong>{" "}
-                          {detail.minimumRegistrationQuantity?.toLocaleString()}{" "}
-                          kg
-                        </div>
-                        <div>
-                          <strong>Giá cả thương lượng:</strong>{" "}
-                          {detail.minPriceRange?.toLocaleString()} –{" "}
-                          {detail.maxPriceRange?.toLocaleString()} VNĐ/kg
-                        </div>
-                        <div>
-                          <strong>Trạng thái:</strong> {detail.status}
-                        </div>
-                        <div className='col-span-2'>
-                          <strong>Mô tả:</strong>{" "}
-                          {detail.coffeeType?.description}
-                        </div>
-                        {detail.note && (
-                          <div className='col-span-2'>
-                            <strong>Ghi chú:</strong> {detail.note}
-                          </div>
-                        )}
-                        {/* <div className='col-span-2 flex justify-end gap-2 pt-2'>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            className='bg-blue-100 text-blue-800 hover:bg-blue-200 cursor-pointer'
-                            onClick={() =>
-                              router.push(
-                                `/dashboard/manager/procurement-plans/${plan.planId}/details/${detail.planDetailsId}/edit`
-                              )
-                            }
-                          >
-                            Chỉnh sửa
-                          </Button>
-                          <Button
-                            size='sm'
-                            variant='destructive'
-                            className='bg-red-100 text-red-800 hover:bg-red-200 cursor-pointer'
-                            onClick={() => {
-                              const confirmDelete = window.confirm(
-                                "Bạn có chắc muốn xoá chi tiết này không?"
-                              );
-                              if (confirmDelete)
-                                alert(`Đã xoá ${detail.coffeeType?.typeName}`);
-                            }}
-                          >
-                            Xoá
-                          </Button>
-                        </div> */}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            ) : (
-              <p className='text-muted-foreground text-sm'>
-                Không có chi tiết kế hoạch nào.
-              </p>
-            )}
-          </CardContent>
+                 {/* Card chi tiết kế hoạch */}
+         <Card>
+           <CardHeader className='flex justify-between items-center pb-4'>
+             <div className="flex items-center gap-3">
+               <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                 <FileText className="h-5 w-5 text-blue-600" />
+               </div>
+               <div>
+                 <CardTitle className="text-xl text-blue-800">Chi tiết kế hoạch</CardTitle>
+                 <p className="text-sm text-blue-600 mt-1">
+                   {plan.procurementPlansDetails?.length || 0} chi tiết kế hoạch
+                 </p>
+               </div>
+             </div>
+             <div className="flex items-center gap-2">
+               <Button
+                 size='sm'
+                 variant='outline'
+                 onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+                 className="text-blue-600 border-blue-200 hover:bg-blue-50"
+               >
+                 {isDetailsExpanded ? (
+                   <>
+                     <ChevronUp className="h-4 w-4 mr-1" />
+                     Thu gọn
+                   </>
+                 ) : (
+                   <>
+                     <ChevronDown className="h-4 w-4 mr-1" />
+                     Mở rộng
+                   </>
+                 )}
+               </Button>
+               {plan.status === "Draft" && (
+                 <Button
+                   size='sm'
+                   variant='secondaryGradient'
+                   onClick={() =>
+                     router.push(
+                       `/dashboard/manager/procurement-plans/${plan.planId}/edit`
+                     )
+                   }
+                 >
+                   + Thêm chi tiết kế hoạch
+                 </Button>
+               )}
+             </div>
+           </CardHeader>
+                     <CardContent>
+             {Array.isArray(plan.procurementPlansDetails) &&
+               plan.procurementPlansDetails.length > 0 ? (
+               <>
+                 {/* Chế độ thu gọn - chỉ hiển thị danh sách tóm tắt */}
+                 {!isDetailsExpanded && (
+                   <div className="space-y-3">
+                     {plan.procurementPlansDetails.map((detail, index) => (
+                       <div
+                         key={detail.planDetailsId}
+                         className="bg-white rounded-lg border border-blue-200 p-3 shadow-sm hover:shadow-md transition-shadow"
+                       >
+                         <div className="flex items-center justify-between">
+                           <div className="flex items-center gap-3">
+                             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
+                               {index + 1}
+                             </div>
+                             <div>
+                               <h4 className="font-semibold text-blue-800">
+                                 {detail.planDetailCode}
+                               </h4>
+                               <p className="text-sm text-blue-600">
+                                 {detail.coffeeType?.typeName} - {detail.processingMethodName || 'Không có'}
+                               </p>
+                             </div>
+                           </div>
+                           <div className="text-right text-sm">
+                             <div className="text-gray-500">Tiến độ</div>
+                             <div className="font-medium text-blue-600">{detail.progressPercentage || 0}%</div>
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+
+                 {/* Chế độ mở rộng - hiển thị đầy đủ thông tin */}
+                 {isDetailsExpanded && (
+                   <div className="space-y-4">
+                     {plan.procurementPlansDetails.map((detail, index) => (
+                       <div
+                         key={detail.planDetailsId}
+                         className="bg-white rounded-lg border border-blue-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+                       >
+                         {/* Header của chi tiết */}
+                         <div className="flex items-center justify-between mb-4">
+                           <div className="flex items-center gap-3">
+                             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
+                               {index + 1}
+                             </div>
+                             <div>
+                               <h4 className="font-semibold text-blue-800 text-lg">
+                                 {detail.planDetailCode}
+                               </h4>
+                               <p className="text-sm text-blue-600">
+                                 {detail.coffeeType?.typeName} - {detail.processingMethodName || 'Không có'}
+                               </p>
+                             </div>
+                           </div>
+                           <div className="text-right">
+                             <div className="text-sm text-gray-500">Khu vực thu mua</div>
+                             <div className="font-medium text-gray-800">{detail.targetRegion || 'N/A'}</div>
+                           </div>
+                         </div>
+
+                         {/* Thông tin chi tiết */}
+                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                           {/* Thông tin sản lượng */}
+                           <div className="space-y-2">
+                             <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">Sản lượng</h5>
+                             <div className="space-y-1 text-sm">
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Mục tiêu:</span>
+                                 <span className="font-medium">{detail.targetQuantity?.toLocaleString()} kg</span>
+                               </div>
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Tối thiểu đăng ký:</span>
+                                 <span className="font-medium">{detail.minimumRegistrationQuantity?.toLocaleString()} kg</span>
+                               </div>
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Đã đăng ký:</span>
+                                 <span className="font-medium">{detail.registeredQuantity?.toLocaleString() || 0} kg</span>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Thông tin giá cả */}
+                           <div className="space-y-2">
+                             <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">Giá cả</h5>
+                             <div className="space-y-1 text-sm">
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Giá tối thiểu:</span>
+                                 <span className="font-medium">{detail.minPriceRange?.toLocaleString()} VNĐ/kg</span>
+                               </div>
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Giá tối đa:</span>
+                                 <span className="font-medium">{detail.maxPriceRange?.toLocaleString()} VNĐ/kg</span>
+                               </div>
+                               {/* <div className="flex justify-between">
+                                 <span className="text-gray-600">Năng suất dự kiến:</span>
+                                 <span className="font-medium">{detail.expectedYieldPerHectare?.toLocaleString() || 'N/A'} kg/ha</span>
+                               </div> */}
+                             </div>
+                           </div>
+
+                           {/* Thông tin tiến độ */}
+                           <div className="space-y-2">
+                             <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">Tiến độ</h5>
+                             <div className="space-y-1 text-sm">
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Trạng thái:</span>
+                                 <span className="font-medium">{detail.status || 'N/A'}</span>
+                               </div>
+                               <div className="flex justify-between">
+                                 <span className="text-gray-600">Tiến độ:</span>
+                                 <span className="font-medium">{detail.progressPercentage || 0}%</span>
+                               </div>
+                               <div className="w-full bg-gray-200 rounded-full h-2">
+                                 <div 
+                                   className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                                   style={{ width: `${Math.min(Math.max(detail.progressPercentage || 0, 0), 100)}%` }}
+                                 ></div>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+
+                         {/* Ghi chú */}
+                         {detail.note && (
+                           <div className="mt-4 pt-3 border-t border-blue-200">
+                             <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide mb-2">Ghi chú</h5>
+                             <p className="text-gray-700 text-sm">{detail.note}</p>
+                           </div>
+                         )}
+                       </div>
+                     ))}
+                   </div>
+                 )}
+               </>
+             ) : (
+               <div className="text-center py-8">
+                 <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                   <div className="h-8 w-8 text-blue-600">📋</div>
+                 </div>
+                 <p className='text-muted-foreground text-sm'>
+                   Không có chi tiết kế hoạch nào.
+                 </p>
+                 <p className='text-muted-foreground text-xs mt-1'>
+                   Hãy thêm chi tiết kế hoạch để bắt đầu thu mua cà phê.
+                 </p>
+               </div>
+             )}
+           </CardContent>
         </Card>
 
         {/* Card danh sách đăng ký của kế hoạch này */}
