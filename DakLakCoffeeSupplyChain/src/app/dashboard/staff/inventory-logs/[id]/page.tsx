@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Package, Warehouse, Activity, Calendar, User, FileText, TrendingUp, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from 'react-i18next';
 
 export default function StaffInventoryLogDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const logId = params.id as string;
@@ -28,11 +30,11 @@ export default function StaffInventoryLogDetailPage() {
         if (data) {
           setLog(data);
         } else {
-          setError("Không tìm thấy log tồn kho.");
+          setError(t('inventoryLogDetail.error.notFound'));
         }
       } catch (err: any) {
-        setError(err.message || "Lỗi khi tải chi tiết log.");
-        toast.error("❌ Không thể tải chi tiết log.");
+        setError(err.message || t('inventoryLogDetail.error.loadFailed'));
+        toast.error("❌ " + t('inventoryLogDetail.error.loadFailed'));
       } finally {
         setLoading(false);
       }
@@ -49,7 +51,7 @@ export default function StaffInventoryLogDetailPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Package className="w-8 h-8 text-green-600 animate-pulse" />
             </div>
-            <p className="text-green-600 font-medium">Đang tải chi tiết log...</p>
+            <p className="text-green-600 font-medium">{t('inventoryLogDetail.loading.title')}</p>
           </div>
         </div>
       </div>
@@ -64,13 +66,13 @@ export default function StaffInventoryLogDetailPage() {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Package className="w-8 h-8 text-red-600" />
             </div>
-            <p className="text-red-600 font-medium mb-4">{error || "Không tìm thấy log"}</p>
+            <p className="text-red-600 font-medium mb-4">{error || t('inventoryLogDetail.error.notFound')}</p>
             <Button 
               onClick={() => router.back()}
               className="bg-green-600 hover:bg-green-700"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Quay lại
+              {t('inventoryLogDetail.actions.back')}
             </Button>
           </div>
         </div>
@@ -101,7 +103,7 @@ export default function StaffInventoryLogDetailPage() {
                 : "bg-rose-100 text-rose-800 border-rose-200"
             }`}
           >
-            {isIncrease ? "📥 Nhập kho" : "📤 Xuất kho"}
+            {isIncrease ? t('inventoryLogDetail.status.inbound') : t('inventoryLogDetail.status.outbound')}
           </Badge>
         </div>
 
@@ -110,7 +112,7 @@ export default function StaffInventoryLogDetailPage() {
           <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
             <CardTitle className="text-xl font-semibold text-green-800 flex items-center gap-2">
               <Package className="w-5 h-5 text-green-600" />
-              Chi tiết nhật ký tồn kho
+              {t('inventoryLogDetail.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -123,7 +125,7 @@ export default function StaffInventoryLogDetailPage() {
                       <Package className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Mã tồn kho</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.inventoryCode')}</p>
                       <p className="text-lg font-semibold text-gray-900">{log.inventoryCode}</p>
                     </div>
                   </div>
@@ -133,7 +135,7 @@ export default function StaffInventoryLogDetailPage() {
                       <Warehouse className="w-5 h-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Kho hàng</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.warehouse')}</p>
                       <p className="text-lg font-semibold text-gray-900">{log.warehouseName}</p>
                     </div>
                   </div>
@@ -143,7 +145,7 @@ export default function StaffInventoryLogDetailPage() {
                       <Activity className="w-5 h-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Số lượng thay đổi</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.quantityChanged')}</p>
                       <p className={`text-lg font-bold ${
                         isIncrease ? "text-emerald-600" : "text-rose-600"
                       }`}>
@@ -159,7 +161,7 @@ export default function StaffInventoryLogDetailPage() {
                       <Calendar className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Thời gian</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.timestamp')}</p>
                       <p className="text-lg font-semibold text-gray-900">
                         {new Date(log.loggedAt).toLocaleString("vi-VN")}
                       </p>
@@ -171,9 +173,9 @@ export default function StaffInventoryLogDetailPage() {
                       <User className="w-5 h-5 text-purple-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Người cập nhật</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.updatedBy')}</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        {log.updatedByName || "Hệ thống"}
+                        {log.updatedByName || t('inventoryLogDetail.common.system')}
                       </p>
                     </div>
                   </div>
@@ -187,9 +189,9 @@ export default function StaffInventoryLogDetailPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Loại thao tác</p>
+                      <p className="text-sm text-gray-500 font-medium">{t('inventoryLogDetail.fields.actionType')}</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        {isIncrease ? "Tăng tồn kho" : "Giảm tồn kho"}
+                        {isIncrease ? t('inventoryLogDetail.actionTypes.increase') : t('inventoryLogDetail.actionTypes.decrease')}
                       </p>
                     </div>
                   </div>
@@ -201,22 +203,22 @@ export default function StaffInventoryLogDetailPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <Package className="w-4 h-4 text-gray-600" />
-                    Thông tin sản phẩm
+                    {t('inventoryLogDetail.sections.productInfo')}
                   </h3>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-500">Loại cà phê</p>
+                                              <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.coffeeType')}</p>
                       <p className="font-medium text-gray-900">{log.coffeeTypeName}</p>
                     </div>
                     {log.batchCode && (
                       <div>
-                        <p className="text-sm text-gray-500">Mã lô</p>
+                        <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.batchCode')}</p>
                         <p className="font-medium text-gray-900 font-mono">{log.batchCode}</p>
                       </div>
                     )}
                     {log.unit && (
                       <div>
-                        <p className="text-sm text-gray-500">Đơn vị</p>
+                        <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.unit')}</p>
                         <p className="font-medium text-gray-900">{log.unit}</p>
                       </div>
                     )}
@@ -226,22 +228,22 @@ export default function StaffInventoryLogDetailPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                     <Warehouse className="w-4 h-4 text-gray-600" />
-                    Thông tin kho
+                    {t('inventoryLogDetail.sections.warehouseInfo')}
                   </h3>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-500">Tên kho</p>
+                                              <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.warehouseName')}</p>
                       <p className="font-medium text-gray-900">{log.warehouseName}</p>
                     </div>
                     {log.warehouseAddress && (
                       <div>
-                        <p className="text-sm text-gray-500">Địa chỉ kho</p>
+                        <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.warehouseAddress')}</p>
                         <p className="font-medium text-gray-900">{log.warehouseAddress}</p>
                       </div>
                     )}
                     {log.warehouseCode && (
                       <div>
-                        <p className="text-sm text-gray-500">Mã kho</p>
+                        <p className="text-sm text-gray-500">{t('inventoryLogDetail.fields.warehouseCode')}</p>
                         <p className="font-medium text-gray-900 font-mono">{log.warehouseCode}</p>
                       </div>
                     )}
@@ -254,7 +256,7 @@ export default function StaffInventoryLogDetailPage() {
                 <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
                   <h3 className="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    Ghi chú
+                    {t('inventoryLogDetail.fields.note')}
                   </h3>
                   <p className="text-gray-700">{log.note}</p>
                 </div>
@@ -263,7 +265,7 @@ export default function StaffInventoryLogDetailPage() {
               {/* Thông tin bổ sung */}
               {log.reason && (
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <h3 className="font-semibold text-blue-800 mb-2">Lý do thay đổi</h3>
+                  <h3 className="font-semibold text-blue-800 mb-2">{t('inventoryLogDetail.fields.reason')}</h3>
                   <p className="text-gray-700">{log.reason}</p>
                 </div>
               )}
@@ -271,7 +273,7 @@ export default function StaffInventoryLogDetailPage() {
               {/* Thông tin liên quan */}
               {log.relatedDocument && (
                 <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h3 className="font-semibold text-amber-800 mb-2">Tài liệu liên quan</h3>
+                  <h3 className="font-semibold text-amber-800 mb-2">{t('inventoryLogDetail.fields.relatedDocument')}</h3>
                   <p className="text-gray-700">{log.relatedDocument}</p>
                 </div>
               )}
@@ -286,7 +288,7 @@ export default function StaffInventoryLogDetailPage() {
             className="bg-green-600 hover:bg-green-700 px-6"
           >
             <Package className="w-4 h-4 mr-2" />
-            Xem tất cả nhật ký
+            {t('inventoryLogDetail.actions.viewAllLogs')}
           </Button>
         </div>
       </div>

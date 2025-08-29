@@ -2832,6 +2832,7 @@
         "all": "All",
         "pending": "Pending",
         "accepted": "Accepted",
+        "completed": "Completed",
         "rejected": "Rejected",
         "cancelled": "Cancelled"
       }
@@ -2876,6 +2877,7 @@
       "status": {
         "pending": "Pending",
         "accepted": "Accepted",
+        "completed": "Completed",
         "rejected": "Rejected",
         "cancelled": "Cancelled"
       },
@@ -3069,5 +3071,808 @@
       "batchIdNotFound": "Error: Batch ID not found"
     },
     "retry": "Retry"
+  },
+  "inventoryLogs": {
+    "title": "Inventory Logs",
+    "subtitle": "Track all changes in the warehouse system",
+    "backToDashboard": "Back to Dashboard",
+    "search": {
+      "placeholder": "🔍 Search by warehouse code, coffee type, warehouse...",
+      "quickSearch": "🔍 Quick search..."
+    },
+    "filters": {
+      "all": "🔄 All",
+      "inbound": "📥 Inbound",
+      "outbound": "📤 Outbound"
+    },
+    "stats": {
+      "totalLogs": "Total logs",
+      "inboundToday": "Inbound today",
+      "inboundTurns": "Inbound turns",
+      "outboundTurns": "Outbound turns"
+    },
+    "table": {
+      "title": "Inventory History List",
+      "headers": {
+        "actionType": "Action Type",
+        "timestamp": "Timestamp",
+        "inventoryCode": "Inventory Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "quantity": "Quantity",
+        "updatedBy": "Updated By",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "actions": {
+        "inbound": "📥 Inbound",
+        "outbound": "📤 Outbound",
+        "details": "Details"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "logs": "logs",
+      "previous": "← Previous",
+      "next": "Next →"
+    },
+    "empty": {
+      "title": "No logs match the filter",
+      "description": "Try changing search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading logs list...",
+      "description": "Please wait while we load the data"
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Error loading inventory logs list",
+      "retry": "Retry"
+    },
+    "detail": {
+      "title": "Inventory Log Details",
+      "backToList": "← Back to list",
+      "information": {
+        "actionType": "Action Type",
+        "timestamp": "Timestamp",
+        "inventoryCode": "Inventory Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "quantity": "Quantity",
+        "updatedBy": "Updated By",
+        "note": "Note"
+      }
+    }
+  },
+  "inventories": {
+    "title": "Inventory Management",
+    "subtitle": "Track and manage inventory in warehouses",
+    "search": {
+      "placeholder": "Search by inventory code, warehouse, coffee type..."
+    },
+    "filters": {
+      "warehouse": "Warehouse:",
+      "coffeeType": "Coffee Type:",
+      "all": "All",
+      "selectWarehouse": "Select warehouse",
+      "selectCoffeeType": "Select coffee type"
+    },
+    "stats": {
+      "totalInventories": "Total inventories",
+      "totalQuantity": "Total quantity",
+      "warehouses": "Warehouses",
+      "coffeeTypes": "Coffee types"
+    },
+    "table": {
+      "title": "Inventory List",
+      "headers": {
+        "inventoryCode": "Inventory Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "batchCode": "Batch Code",
+        "quantity": "Quantity",
+        "lastUpdated": "Last Updated",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View",
+        "logs": "Logs",
+        "edit": "Edit"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "inventories": "inventories"
+    },
+    "empty": {
+      "title": "No inventories found",
+      "description": "Try changing search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading inventory list..."
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Error loading inventory list"
+    },
+    "detail": {
+      "title": "Inventory Details",
+      "backToList": "← Back to list",
+      "information": {
+        "inventoryCode": "Inventory Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "batchCode": "Batch Code",
+        "quantity": "Quantity",
+        "lastUpdated": "Last Updated",
+        "createdAt": "Created At"
+      },
+      "logs": {
+        "title": "Inventory Logs",
+        "subtitle": "Inventory change history"
+      }
+    },
+    "coffeeTypes": {
+      "fresh": "Fresh Coffee",
+      "processed": "Processed Coffee",
+      "unknown": "Unknown"
+    },
+    "infoLabels": {
+      "cropSeason": "Crop Season",
+      "batch": "Processing Batch",
+      "info": "Information"
+    },
+    "status": {
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock"
+    },
+    "stats": {
+      "totalInventory": "Total Inventory",
+      "inStockBatches": "In Stock Batches",
+      "warehouses": "Warehouses",
+      "productTypes": "Product Types",
+      "outOfStockBatches": "Out of Stock Batches",
+      "totalBatches": "Total Batches",
+      "needReplenishment": "Need Replenishment",
+      "allProducts": "All Products"
+    },
+    "filters": {
+      "coffeeType": "Coffee Type:",
+      "warehouse": "Warehouse:",
+      "all": "All",
+      "selectCoffeeType": "Select Type",
+      "selectWarehouse": "Select Warehouse",
+      "allWarehouses": "All Warehouses"
+    },
+    "table": {
+      "title": "Inventory Details",
+      "headers": {
+        "warehouse": "Warehouse Name",
+        "coffeeType": "Coffee Type",
+        "information": "Information",
+        "product": "Product",
+        "quantity": "Quantity (kg)",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "batches": "batches",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "loading": {
+      "title": "Loading data..."
+    },
+    "empty": {
+      "title": "No inventory found",
+      "description": "Try changing search keywords or filters"
+    },
+    "description": "📋 Inventory is automatically created from inbound receipts and processing batches"
+  },
+  "warehouses": {
+    "title": "Warehouse Management",
+    "subtitle": "Manage warehouse information and configuration",
+    "search": {
+      "placeholder": "Search by warehouse name, address..."
+    },
+    "stats": {
+      "totalWarehouses": "Total warehouses",
+      "totalCapacity": "Total capacity",
+      "usedCapacity": "Used capacity",
+      "availableCapacity": "Available capacity",
+      "criticalWarehouses": "Critical warehouses"
+    },
+    "table": {
+      "title": "Warehouse List",
+      "headers": {
+        "name": "Warehouse Name",
+        "address": "Address",
+        "capacity": "Capacity",
+        "usedCapacity": "Used",
+        "availableCapacity": "Available",
+        "manager": "Manager",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "warehouses": "warehouses"
+    },
+    "empty": {
+      "title": "No warehouses found",
+      "description": "Try changing search keywords"
+    },
+    "staffNote": "Staff can only view warehouse information",
+    "status": {
+      "label": "Status",
+      "critical": "Critical",
+      "warning": "Warning",
+      "normal": "Normal",
+      "overloaded": "Overloaded",
+      "attention": "Attention"
+    },
+    "chart": {
+      "used": "Used",
+      "available": "Available"
+    },
+    "capacity": {
+      "total": "Capacity",
+      "used": "Used"
+    },
+    "usage": {
+      "rate": "Usage Rate"
+    },
+    "actions": {
+      "viewDetails": "View Details"
+    },
+    "overview": {
+      "avgUsage": "Average Usage Rate",
+      "availableCapacity": "Available Capacity",
+      "healthyWarehouses": "Healthy Warehouses"
+    }
+  },
+  "inboundRequestDetail": {
+    "title": "Inbound Request Details",
+    "requestCode": "Request Code",
+    "error": {
+      "description": "Error"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "fields": {
+      "status": "Status",
+      "createdAt": "Created At",
+      "preferredDeliveryDate": "Preferred Delivery Date",
+      "actualDeliveryDate": "Actual Delivery Date",
+      "quantity": "Quantity",
+      "note": "Note",
+      "farmer": "Farmer",
+      "phone": "Phone",
+      "businessStaff": "Business Staff",
+      "batchCode": "Batch Code",
+      "detailCode": "Detail Code",
+      "coffeeType": "Coffee Type",
+      "cropSeason": "Crop Season"
+    },
+    "actions": {
+      "back": "Back",
+      "approve": "Approve Request",
+      "reject": "Reject Request",
+      "approveSuccess": "Request approved successfully",
+      "approveError": "Failed to approve request",
+      "rejectSuccess": "Request rejected successfully",
+      "rejectError": "Failed to reject request"
+    },
+    "common": {
+      "unknown": "Unknown",
+      "noNote": "No note"
+    }
+  },
+  "receiptDetail": {
+    "title": "Warehouse Receipt Details",
+    "receiptCode": "Receipt Code",
+    "coffeeType": "Coffee Type",
+    "error": {
+      "loadFailed": "Unable to load receipt details",
+      "notFound": "Warehouse receipt not found"
+    },
+    "coffeeTypes": {
+      "fresh": "Fresh Coffee",
+      "processed": "Processed Coffee",
+      "unknown": "Unknown",
+      "freshLabel": "Fresh",
+      "processedLabel": "Processed"
+    },
+    "infoLabels": {
+      "cropSeason": "Crop Season",
+      "batch": "Processing Batch",
+      "info": "Information"
+    },
+    "fields": {
+      "warehouse": "Warehouse",
+      "receivedQuantity": "Received Quantity",
+      "initialRequestedQuantity": "Initial Requested Quantity",
+      "remainingQuantityReference": "Remaining Quantity (Reference)",
+      "actualRemainingQuantity": "✅ Actual Remaining Quantity",
+      "totalConfirmedQuantity": "Total Confirmed Quantity",
+      "receivedAt": "Received At",
+      "note": "Note",
+      "staff": "Staff",
+      "status": "Status"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "actions": {
+      "back": "Back",
+      "cancel": "Cancel Receipt",
+      "confirm": "Confirm",
+      "cancelSuccess": "Warehouse receipt cancelled successfully!",
+      "cancelError": "Unable to cancel warehouse receipt",
+      "confirmSuccess": "✅ Receipt confirmed successfully",
+      "confirmError": "Confirmation failed"
+    },
+    "validation": {
+      "quantityRequired": "⚠️ Confirmed quantity must be greater than 0",
+      "noteRequired": "⚠️ Please provide a note if confirming less than the created quantity"
+    },
+    "common": {
+      "na": "N/A",
+      "noNote": "No note",
+      "unknown": "Unknown"
+    },
+    "freshCoffeeInfo": {
+      "title": "Fresh Coffee Information",
+      "cropSeason": "Crop Season",
+      "coffeeType": "Coffee Type",
+      "detailCode": "Detail Code"
+    },
+    "processedCoffeeInfo": {
+      "title": "Processed Coffee Information",
+      "batchCode": "Batch Code",
+      "coffeeType": "Coffee Type"
+    },
+    "confirmForm": {
+      "title": "Confirm Receipt",
+      "initialRequest": "Initial Request",
+      "remainingCanReceive": "Remaining Can Receive",
+      "calculating": "Calculating...",
+      "alreadyConfirmed": "Already Confirmed",
+      "accurateInfo": "Accurate Information",
+      "backendCalculation": "Remaining quantity is calculated from backend and includes all previously confirmed receipts",
+      "confirmedQuantity": "Confirmed Quantity",
+      "note": "Note",
+      "required": "required",
+      "notePlaceholderRequired": "Please provide reason for insufficient confirmation...",
+      "notePlaceholderOptional": "Additional note (if any)",
+      "confirm": "Confirm",
+      "confirming": "Confirming..."
+    },
+    "cancelModal": {
+      "title": "Confirm Cancel Receipt",
+      "description": "Are you sure you want to cancel this receipt?",
+      "receiptInfo": "Receipt Information",
+      "receiptCode": "Receipt Code",
+      "warehouse": "Warehouse",
+      "type": "Type",
+      "cancel": "Cancel",
+      "confirmCancel": "Confirm Cancel",
+      "cancelling": "Cancelling..."
+    }
+  },
+  "outboundRequestDetail": {
+    "title": "Outbound Request Details",
+    "subtitle": "View detailed information about the request",
+    "error": {
+      "loadFailed": "Unable to load data",
+      "notFound": "Request not found"
+    },
+    "status": {
+      "completed": "Completed"
+    },
+    "fields": {
+      "requestCode": "Request Code",
+      "warehouse": "Warehouse",
+      "inventory": "Inventory",
+      "quantity": "Quantity",
+      "purpose": "Outbound Purpose",
+      "reason": "Reason",
+      "requestedBy": "Requested By",
+      "createdAt": "Created At",
+      "updatedAt": "Last Updated",
+      "status": "Status",
+      "orderLink": "Order Link",
+      "note": "Note"
+    },
+    "actions": {
+      "back": "Back",
+      "approve": "Approve Request"
+    },
+    "common": {
+      "unknown": "Unknown",
+      "noData": "No data"
+    }
+  },
+  "inventoryDetail": {
+    "title": "Inventory Details",
+    "subtitle": "View detailed information of inventory batch",
+    "error": {
+      "notFound": "Inventory not found",
+      "loadFailed": "Error loading inventory data"
+    },
+    "loading": {
+      "title": "Loading inventory data..."
+    },
+    "fields": {
+      "inventoryCode": "Inventory Code",
+      "warehouse": "Warehouse",
+      "batchCode": "Production Batch",
+      "product": "Product",
+      "coffeeType": "Coffee Type",
+      "quantity": "Quantity",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "actions": {
+      "backToList": "Back to List",
+      "history": "History"
+    },
+    "common": {
+      "unknown": "Unknown",
+      "noData": "No data"
+    }
+  },
+  "inventoryLogDetail": {
+    "title": "Inventory Log Details",
+    "error": {
+      "notFound": "Inventory log not found",
+      "loadFailed": "Error loading log details"
+    },
+    "loading": {
+      "title": "Loading log details..."
+    },
+    "status": {
+      "inbound": "📥 Inbound",
+      "outbound": "📤 Outbound"
+    },
+    "fields": {
+      "inventoryCode": "Inventory Code",
+      "warehouse": "Warehouse",
+      "quantityChanged": "Quantity Changed",
+      "timestamp": "Timestamp",
+      "updatedBy": "Updated By",
+      "actionType": "Action Type",
+      "coffeeType": "Coffee Type",
+      "batchCode": "Batch Code",
+      "unit": "Unit",
+      "warehouseName": "Warehouse Name",
+      "warehouseAddress": "Warehouse Address",
+      "warehouseCode": "Warehouse Code",
+      "note": "Note",
+      "reason": "Change Reason",
+      "relatedDocument": "Related Document"
+    },
+    "actionTypes": {
+      "increase": "Increase Inventory",
+      "decrease": "Decrease Inventory"
+    },
+    "sections": {
+      "productInfo": "Product Information",
+      "warehouseInfo": "Warehouse Information"
+    },
+    "actions": {
+      "back": "Back",
+      "viewAllLogs": "View All Logs"
+    },
+    "common": {
+      "system": "System"
+    }
+  },
+  "inventoryHistory": {
+    "title": "Inventory Change History",
+    "subtitle": "Track changes in quantity and inventory status",
+    "error": {
+      "noLogs": "No inventory logs",
+      "loadFailed": "Error loading inventory logs"
+    },
+    "loading": {
+      "title": "Loading data..."
+    },
+    "stats": {
+      "totalLogs": "Total logs",
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "today": "Today"
+    },
+    "sections": {
+      "detailedHistory": "Detailed History"
+    },
+    "actionLabels": {
+      "change": "📦 Change"
+    },
+    "fields": {
+      "logId": "Log ID",
+      "quantityChanged": "Quantity Changed",
+      "updatedBy": "Updated By",
+      "note": "Note",
+      "timestamp": "Timestamp"
+    },
+    "actions": {
+      "backToList": "Back to List"
+    },
+    "common": {
+      "system": "System",
+      "noNote": "No note"
+    },
+    "empty": {
+      "title": "No inventory history",
+      "description": "This inventory has no recorded changes"
+    }
+  },
+  "createReceipt": {
+    "title": "Create Receipt",
+    "subtitle": "Confirm and create receipt from approved request",
+    "error": {
+      "loadWarehouses": "Cannot load warehouse list",
+      "loadWarehousesUnknown": "Unknown error loading warehouse list",
+      "loadInboundRequests": "Cannot load inbound request list",
+      "loadInboundRequestsUnknown": "Unknown error loading inbound request list",
+      "loadInventories": "Error loading warehouse inventories",
+      "createEmptyInventory": "Cannot create empty inventory",
+      "createReceiptFailed": "Receipt creation failed from server",
+      "createReceiptUnknown": "Receipt creation failed. Please try again"
+    },
+    "success": {
+      "createEmptyInventory": "Empty inventory created for warehouse + batch",
+      "createReceipt": "Receipt created successfully"
+    },
+    "validation": {
+      "selectAll": "Please select both Request and Warehouse",
+      "noProductInfo": "Product information (batchId or detailId) not found for this request"
+    },
+    "sections": {
+      "receiptInfo": "Receipt Information",
+      "requestDetails": "Request Details",
+      "inventoryStatus": "Inventory Status"
+    },
+    "fields": {
+      "inboundRequest": "Inbound Request",
+      "requestCode": "Request Code",
+      "status": "Status",
+      "requestedQuantity": "Requested Quantity",
+      "preferredDeliveryDate": "Preferred Delivery Date",
+      "coffeeType": "Coffee Type",
+      "information": "Information",
+      "note": "Note",
+      "warehouse": "Receiving Warehouse"
+    },
+    "placeholders": {
+      "selectRequest": "-- Select Request --",
+      "selectWarehouse": "-- Select Warehouse --",
+      "note": "Additional notes about the receipt (if any)..."
+    },
+    "coffeeTypes": {
+      "fresh": "Fresh Coffee",
+      "processed": "Processed Coffee"
+    },
+    "info": {
+      "check": "Check",
+      "requestedQuantity": "Requested quantity is",
+      "confirmNote": "When confirming the receipt, you will enter the actual quantity received",
+      "remember": "Remember",
+      "currentQuantity": "Current quantity =",
+      "default": "default",
+      "confirmStep": "You will enter the actual quantity in the confirmation step!"
+    },
+    "warning": {
+      "title": "IMPORTANT NOTE - DO NOT SKIP!",
+      "defaultQuantity": "Default Quantity",
+      "defaultQuantityDesc": "When creating receipt, system sets",
+      "requestedFromFarmer": "Quantity requested from farmer",
+      "nextStep": "Next Step",
+      "nextStepDesc": "When confirming receipt, you MUST enter the actual quantity received"
+    },
+    "process": {
+      "title": "2-step process to create receipt",
+      "step1": {
+        "title": "Step 1: Create Receipt (You are here)",
+        "autoQuantity": "System automatically sets quantity =",
+        "selectOnly": "Just select request and warehouse"
+      },
+      "step2": {
+        "title": "Step 2: Confirm Receipt (Important!)",
+        "enterActual": "Enter actual quantity received",
+        "compare": "Compare with request:"
+      }
+    },
+    "inventory": {
+      "selectAll": "Please select both Request and Warehouse to view inventory",
+      "loading": "Loading inventory...",
+      "noInventory": "No inventory for this batch at selected warehouse. System will auto-create inventory when you confirm receipt.",
+      "creating": "Creating...",
+      "createEmpty": "Create Empty Inventory (0 kg)",
+      "createEmptyButton": "Create Empty Inventory",
+      "hasInventory": "Inventory exists",
+      "totalExisting": "Total existing:",
+      "details": "Inventory Details",
+      "confirmNote": "When you confirm receipt, system will add quantity to existing inventory"
+    },
+    "stats": {
+      "title": "Quick Statistics",
+      "warehouses": "Warehouses",
+      "requests": "Requests",
+      "approved": "Approved",
+      "currentRequest": "Current Request",
+      "requestedQuantity": "Requested Quantity",
+      "receiptQuantity": "Receipt Quantity",
+      "difference": "Difference"
+    },
+    "actions": {
+      "createReceipt": "Create Receipt"
+    },
+    "common": {
+      "unknown": "Unknown",
+      "processedBatch": "Processed Batch",
+      "cropSeason": "Crop Season"
+    }
+  },
+  "sidebar": {
+    "loading": "Loading menu...",
+    "navigation": {
+      "overview": "Overview",
+      "batches": "Batches",
+      "notifications": "Notifications",
+      "warehouseOperations": "Warehouse Operations",
+      "warehouseManagement": "Warehouse Management",
+      "inboundRequests": "Inbound Requests",
+      "inboundReceipts": "Inbound Receipts",
+      "outboundRequests": "Outbound Requests",
+      "outboundReceipts": "Outbound Receipts",
+      "inventories": "Inventories",
+      "inventoryLogs": "Inventory Logs",
+      "warehouses": "Warehouses"
+    },
+            "user": {
+          "greeting": "Hello:",
+          "anonymous": "Anonymous",
+          "logout": "Logout",
+          "logoutTitle": "Logout and return to main page"
+        },
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+            "staffDashboard": {
+          "title": "Staff Dashboard",
+          "subtitle": "Manage warehouse operations and track activities",
+          "waitingInbound": "Pending Inbound Requests",
+          "waitingOutbound": "Pending Outbound Requests",
+          "monthlyStats": "Monthly Statistics",
+          "quickAccess": "Quick Access",
+          "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          "chartLabels": {
+            "inbound": "Inbound",
+            "outbound": "Outbound"
+          },
+          "inv": "Inventory",
+          "inventory": "Manage Inventory",
+          "inventoryDesc": "Manage Inventory",
+          "inb": "Inbound",
+          "inbound": "Inbound Requests",
+          "inboundRequests": "Inbound Requests",
+          "inboundRequestsDesc": "Inbound Requests",
+          "out": "Outbound",
+          "outbound": "Outbound Receipts",
+          "outboundRequests": "Outbound Requests",
+          "outboundRequestsDesc": "Outbound Requests",
+          "outboundReceipts": "Outbound Receipts",
+          "outboundReceiptsDesc": "Outbound Receipts",
+          "wa": "Warehouses",
+          "warehou": "Manage Warehouses",
+          "warehouses": "Warehouses",
+          "warehousesDesc": "Manage Warehouses",
+          "rec": "Receipts",
+          "receipts": "Inbound Receipts",
+          "receiptsDesc": "Inbound Receipts"
+        }
+  },
+  "warehouseDetail": {
+    "title": "Warehouse Details",
+    "subtitle": "View detailed information of warehouse",
+    "error": {
+      "notFound": "Warehouse not found",
+      "loadFailed": "Error loading warehouse details"
+    },
+    "loading": {
+      "title": "Loading warehouse list...",
+      "inventories": "Loading..."
+    },
+    "fields": {
+      "warehouseCode": "Warehouse Code",
+      "location": "Location",
+      "capacity": "Capacity",
+      "manager": "Manager",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "inventories": "Inventories in this warehouse"
+    },
+    "actions": {
+      "back": "Back"
+    },
+    "common": {
+      "noInventories": "No inventories",
+      "clickToViewInventories": "Click to view inventory list"
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Error loading warehouse list"
+    },
+    "detail": {
+      "title": "Warehouse Details",
+      "backToList": "← Back to list",
+      "information": {
+        "name": "Warehouse Name",
+        "address": "Address",
+        "capacity": "Capacity",
+        "manager": "Manager",
+        "status": "Status",
+        "createdAt": "Created At"
+      }
+    },
+    "create": {
+      "title": "Create New Warehouse",
+      "subtitle": "Add new warehouse to the system",
+      "form": {
+        "name": "Warehouse Name *",
+        "namePlaceholder": "Enter warehouse name...",
+        "address": "Address *",
+        "addressPlaceholder": "Enter warehouse address...",
+        "capacity": "Capacity (kg) *",
+        "capacityPlaceholder": "Enter warehouse capacity...",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter warehouse description..."
+      },
+      "validation": {
+        "nameRequired": "Warehouse name is required",
+        "addressRequired": "Warehouse address is required",
+        "capacityRequired": "Warehouse capacity is required",
+        "capacityPositive": "Capacity must be greater than 0"
+      },
+      "actions": {
+        "create": "Create Warehouse",
+        "cancel": "Cancel",
+        "creating": "Creating..."
+      }
+    },
+    "edit": {
+      "title": "Edit Warehouse",
+      "subtitle": "Update warehouse information",
+      "actions": {
+        "save": "Save Changes",
+        "cancel": "Cancel",
+        "saving": "Saving..."
+      }
+    }
   }
 }

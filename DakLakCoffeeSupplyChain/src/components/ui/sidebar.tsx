@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import React from "react";
 import { authService } from "@/lib/auth/authService";
+import { useTranslation } from 'react-i18next';
 import {
   FiPieChart,
   FiUsers,
@@ -114,6 +115,7 @@ export function SidebarContent({ children }: { children: ReactNode }) {
 
 // ===== Sidebar Group (navigation) =====
 export function SidebarGroup() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [role, setRole] = useState<string | null>(null);
   const [processingOpen, setProcessingOpen] = useState(false);
@@ -137,7 +139,7 @@ export function SidebarGroup() {
   > = {
     farmer: [
       {
-        title: "Tổng quan",
+        title: t('sidebar.navigation.overview'),
         href: "/dashboard/farmer",
         icon: iconMap.dashboard,
       },
@@ -167,13 +169,13 @@ export function SidebarGroup() {
         icon: <FiTruck />,
       },
       {
-        title: "Thông báo",
+        title: t('sidebar.navigation.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
     ],
     admin: [
-      { title: "Tổng quan", href: "/dashboard/admin", icon: iconMap.dashboard },
+      { title: t('sidebar.navigation.overview'), href: "/dashboard/admin", icon: iconMap.dashboard },
       {
         title: "Quản lý người dùng",
         href: "/dashboard/admin/users",
@@ -200,14 +202,14 @@ export function SidebarGroup() {
         icon: iconMap.settings,
       },
       {
-        title: "Thông báo",
+        title: t('sidebar.navigation.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
     ],
     expert: [
       {
-        title: "Tổng quan",
+        title: t('sidebar.navigation.overview'),
         href: "/dashboard/expert",
         icon: iconMap.dashboard,
       },
@@ -227,55 +229,24 @@ export function SidebarGroup() {
         icon: iconMap.articles,
       },
       {
-        title: "Thông báo",
+        title: t('sidebar.navigation.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
     ],
     staff: [
       {
-        title: "Tổng quan",
+        title: t('sidebar.navigation.overview'),
         href: "/dashboard/staff",
         icon: iconMap.dashboard,
       },
-      // {
-      //   title: "Yêu cầu nhập kho",
-      //   href: "/dashboard/staff/inbounds",
-      //   icon: <FiClipboard />,
-      // },
-      // {
-      //   title: "Phiếu nhập kho",
-      //   href: "/dashboard/staff/receipts",
-      //   icon: <FiFileText />,
-      // },
-      // {
-      //   title: "Tồn kho",
-      //   href: "/dashboard/staff/inventories",
-      //   icon: <FiPieChart />,
-      // },
       {
-        title: "Lô hàng",
+        title: t('sidebar.navigation.batches'),
         href: "/dashboard/staff/batches",
         icon: <FiBookOpen />,
       },
-      // {
-      //   title: "Kho hàng",
-      //   href: "/dashboard/staff/warehouses",
-      //   icon: <FiSettings />,
-      // },
-      // {
-      //   title: "Yêu cầu xuất kho",
-      //   href: "/dashboard/staff/outbounds",
-      //   icon: <FiClipboard />,
-      // },
-
-      // {
-      //   title: "Phiếu xuất kho",
-      //   href: "/dashboard/staff/outbound-receipts",
-      //   icon: <FiFileText />,
-      // },
       {
-        title: "Thông báo",
+        title: t('sidebar.navigation.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
@@ -310,7 +281,7 @@ export function SidebarGroup() {
   };
 
   if (!role || !navigationItems[role]) {
-    return <div className="px-4 text-gray-400 text-sm">Đang tải menu...</div>;
+    return <div className="px-4 text-gray-400 text-sm">{t('sidebar.loading')}</div>;
   }
 
   return (
@@ -808,7 +779,7 @@ export function SidebarGroup() {
                     <span className="shrink-0 w-5 text-center">
                       <FiSettings />
                     </span>
-                    <span className="truncate">Quản lý kho</span>
+                    <span className="truncate">{t('sidebar.navigation.warehouseManagement')}</span>
                   </div>
                   <FiChevronDown
                     className={cn("transition-transform duration-200", warehouseOpen && "rotate-180")}
@@ -845,25 +816,25 @@ export function SidebarGroup() {
           {(() => {
             const operationLinks = [
               {
-                label: "Yêu cầu nhập kho",
+                label: t('sidebar.navigation.inboundRequests'),
                 href: "/dashboard/staff/inbounds",
                 activeMatch: (path: string) =>
                   path === "/dashboard/staff/inbounds",
               },
               {
-                label: "Phiếu nhập kho",
+                label: t('sidebar.navigation.inboundReceipts'),
                 href: "/dashboard/staff/receipts",
                 activeMatch: (path: string) =>
                   path === "/dashboard/staff/receipts",
               },
               {
-                label: "Yêu cầu xuất kho",
+                label: t('sidebar.navigation.outboundRequests'),
                 href: "/dashboard/staff/outbounds",
                 activeMatch: (path: string) =>
                   path === "/dashboard/staff/outbounds",
               },
               {
-                label: "Phiếu xuất kho",
+                label: t('sidebar.navigation.outboundReceipts'),
                 href: "/dashboard/staff/outbound-receipts",
                 activeMatch: (path: string) =>
                   path === "/dashboard/staff/outbound-receipts",
@@ -889,7 +860,7 @@ export function SidebarGroup() {
                     <span className="shrink-0 w-5 text-center">
                       <FiClipboard />
                     </span>
-                    <span className="truncate">Vận hành kho</span>
+                    <span className="truncate">{t('sidebar.navigation.warehouseOperations')}</span>
                   </div>
                   <FiChevronDown
                     className={cn("transition-transform duration-200", processingOpen && "rotate-180")}
@@ -922,19 +893,19 @@ export function SidebarGroup() {
           {(() => {
             const warehouseLinks = [
               {
-                label: "Tồn kho",
+                label: t('sidebar.navigation.inventories'),
                 href: "/dashboard/staff/inventories",
                 activeMatch: (path: string) =>
                   path === "/dashboard/staff/inventories",
               },
               {
-                label: "Nhật ký tồn kho",
+                label: t('sidebar.navigation.inventoryLogs'),
                 href: "/dashboard/staff/inventory-logs",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/staff/inventory-logs"),
               },
               {
-                label: "Kho hàng",
+                label: t('sidebar.navigation.warehouses'),
                 href: "/dashboard/staff/warehouses",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/staff/warehouses"),
@@ -960,7 +931,7 @@ export function SidebarGroup() {
                     <span className="shrink-0 w-5 text-center">
                       <FiSettings />
                     </span>
-                    <span className="truncate">Quản lý kho</span>
+                                         <span className="truncate">{t('sidebar.navigation.warehouseManagement')}</span>
                   </div>
                   <FiChevronDown
                     className={cn("transition-transform duration-200", warehouseOpen && "rotate-180")}
@@ -1001,6 +972,7 @@ interface SidebarFooterProps {
 }
 
 export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
+  const { t } = useTranslation();
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -1015,9 +987,9 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   return (
     <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-gray-400">Xin chào:</span>
+        <span className="text-gray-400">{t('sidebar.user.greeting')}</span>
         <span className="font-medium text-orange-600">
-          {userName ?? "Ẩn danh"}
+          {userName ?? t('sidebar.user.anonymous')}
         </span>
       </div>
       <button
@@ -1025,9 +997,9 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
           authService.logout();
         }}
         className="text-red-600 text-sm hover:underline transition-all"
-        title="Đăng xuất và về trang chính"
+        title={t('sidebar.user.logoutTitle')}
       >
-        Đăng xuất
+        {t('sidebar.user.logout')}
       </button>
     </div>
   );

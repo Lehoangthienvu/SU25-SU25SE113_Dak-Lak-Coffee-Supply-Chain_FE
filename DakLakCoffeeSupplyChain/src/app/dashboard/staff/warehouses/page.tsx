@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, Search, Warehouse, MapPin, Package, TrendingUp, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -23,6 +24,7 @@ type Warehouse = {
 };
 
 export default function StaffWarehouseListPage() {
+  const { t } = useTranslation();
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [usedCapacities, setUsedCapacities] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function StaffWarehouseListPage() {
         }
         setUsedCapacities(usageMap);
       } catch (error) {
-        toast.error('Lỗi khi tải danh sách kho');
+        toast.error(t('warehouses.error.description'));
       } finally {
         setLoading(false);
       }
@@ -81,9 +83,9 @@ export default function StaffWarehouseListPage() {
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
           <Warehouse className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 Kho hàng</h1>
+          <h1 className="text-2xl font-bold">📦 {t('warehouses.title')}</h1>
         </div>
-        <p className="text-green-100 text-base">Xem thông tin hệ thống kho hàng của công ty</p>
+        <p className="text-green-100 text-base">{t('warehouses.subtitle')}</p>
       </div>
 
       {/* Thống kê tổng quan */}
@@ -95,7 +97,7 @@ export default function StaffWarehouseListPage() {
                 <Warehouse className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng số kho</p>
+                <p className="text-xs text-gray-600 font-medium">{t('warehouses.stats.totalWarehouses')}</p>
                 <p className="text-xl font-bold text-green-600">{totalWarehouses}</p>
               </div>
             </div>
@@ -109,7 +111,7 @@ export default function StaffWarehouseListPage() {
                 <Package className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng dung lượng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('warehouses.stats.totalCapacity')}</p>
                 <p className="text-xl font-bold text-emerald-600">{totalCapacity.toLocaleString()} kg</p>
               </div>
             </div>
@@ -123,7 +125,7 @@ export default function StaffWarehouseListPage() {
                 <TrendingUp className="w-5 h-5 text-teal-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Đã sử dụng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('warehouses.stats.usedCapacity')}</p>
                 <p className="text-xl font-bold text-teal-600">{totalUsed.toLocaleString()} kg</p>
               </div>
             </div>
@@ -137,7 +139,7 @@ export default function StaffWarehouseListPage() {
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Kho báo động</p>
+                <p className="text-xs text-gray-600 font-medium">{t('warehouses.stats.criticalWarehouses')}</p>
                 <p className="text-xl font-bold text-amber-600">{criticalWarehouses.length}</p>
               </div>
             </div>
@@ -152,7 +154,7 @@ export default function StaffWarehouseListPage() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Input
-                  placeholder="🔍 Tìm theo tên kho..."
+                  placeholder={t('warehouses.search.placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-72 pr-10 border-green-200 focus:border-green-400 focus:ring-green-400 text-sm"
@@ -166,7 +168,7 @@ export default function StaffWarehouseListPage() {
               )}
             </div>
             <div className="text-sm text-gray-500">
-              💡 Staff chỉ có quyền xem thông tin kho hàng
+              💡 {t('warehouses.staffNote')}
             </div>
           </div>
         </CardContent>
@@ -177,7 +179,7 @@ export default function StaffWarehouseListPage() {
         <Card className="bg-white shadow-md border-0">
           <CardContent className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 text-lg">Đang tải dữ liệu kho hàng...</p>
+            <p className="text-gray-600 text-lg">{t('warehouses.loading.title')}</p>
           </CardContent>
         </Card>
       ) : filtered.length === 0 ? (
@@ -186,8 +188,8 @@ export default function StaffWarehouseListPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Warehouse className="w-8 h-8 text-gray-400" />
             </div>
-            <p className="text-gray-500 text-lg mb-2">Không có kho hàng nào</p>
-            <p className="text-gray-400 text-sm">Thử thay đổi từ khóa tìm kiếm</p>
+            <p className="text-gray-500 text-lg mb-2">{t('warehouses.empty.title')}</p>
+            <p className="text-gray-400 text-sm">{t('warehouses.empty.description')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -215,16 +217,16 @@ export default function StaffWarehouseListPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {isCritical && (
-                        <Badge className="bg-red-100 text-red-800 border-red-200 text-xs">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Báo động
-                        </Badge>
+                                                   <Badge className="bg-red-100 text-red-800 border-red-200 text-xs">
+                             <AlertTriangle className="w-3 h-3 mr-1" />
+                             {t('warehouses.status.critical')}
+                           </Badge>
                       )}
                       {isWarning && !isCritical && (
-                        <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 text-xs">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Cảnh báo
-                        </Badge>
+                                                 <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 text-xs">
+                           <AlertTriangle className="w-3 h-3 mr-1" />
+                           {t('warehouses.status.warning')}
+                         </Badge>
                       )}
                     </div>
                   </div>
@@ -237,7 +239,7 @@ export default function StaffWarehouseListPage() {
                         <div className="w-24 h-24">
                           <Doughnut
                             data={{
-                              labels: ["Đã sử dụng", "Còn trống"],
+                                                             labels: [t('warehouses.chart.used'), t('warehouses.chart.available')],
                               datasets: [
                                 {
                                   data: [used, available],
@@ -258,13 +260,13 @@ export default function StaffWarehouseListPage() {
                         </div>
                         <div className="flex-1 space-y-2">
                           <div className="text-center p-2 bg-gray-50 rounded-lg">
-                            <p className="text-xs text-gray-500 font-medium">Dung lượng</p>
+                                                         <p className="text-xs text-gray-500 font-medium">{t('warehouses.capacity.total')}</p>
                             <p className="text-sm font-semibold text-gray-900">
                               {total.toLocaleString()} kg
                             </p>
                           </div>
                           <div className="text-center p-2 bg-gray-50 rounded-lg">
-                            <p className="text-xs text-gray-500 font-medium">Đã dùng</p>
+                                                         <p className="text-xs text-gray-500 font-medium">{t('warehouses.capacity.used')}</p>
                             <p className="text-sm font-semibold text-gray-900">
                               {used.toLocaleString()} kg
                             </p>
@@ -277,7 +279,7 @@ export default function StaffWarehouseListPage() {
                     {total > 0 && (
                       <div className="space-y-2">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">Tỷ lệ sử dụng</span>
+                                                     <span className="text-gray-500">{t('warehouses.usage.rate')}</span>
                           <span className={`font-medium ${
                             isCritical ? 'text-red-600' : 
                             isWarning ? 'text-yellow-600' : 'text-green-600'
@@ -300,13 +302,13 @@ export default function StaffWarehouseListPage() {
                     {/* Thông tin bổ sung */}
                     <div className="pt-2 border-t border-gray-100">
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>Trạng thái:</span>
+                                                 <span>{t('warehouses.status.label')}:</span>
                         <span className={`font-medium ${
                           isCritical ? 'text-red-600' : 
                           isWarning ? 'text-yellow-600' : 'text-green-600'
                         }`}>
-                          {isCritical ? 'Quá tải' : 
-                           isWarning ? 'Cần chú ý' : 'Bình thường'}
+                                                     {isCritical ? t('warehouses.status.overloaded') : 
+                            isWarning ? t('warehouses.status.attention') : t('warehouses.status.normal')}
                         </span>
                       </div>
                     </div>
@@ -319,7 +321,7 @@ export default function StaffWarehouseListPage() {
                           className="w-full border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300 transition-colors"
                         >
                           <Eye className="w-4 h-4 mr-2" />
-                          Xem chi tiết
+                                                     {t('warehouses.actions.viewDetails')}
                         </Button>
                       </Link>
                     </div>
@@ -337,19 +339,19 @@ export default function StaffWarehouseListPage() {
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
               <div className="p-3 bg-green-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Tỷ lệ sử dụng trung bình</p>
+                                 <p className="text-sm text-gray-600 mb-1">{t('warehouses.overview.avgUsage')}</p>
                 <p className="text-2xl font-bold text-green-600">
                   {avgUsagePercent.toFixed(1)}%
                 </p>
               </div>
               <div className="p-3 bg-emerald-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Dung lượng còn trống</p>
+                                 <p className="text-sm text-gray-600 mb-1">{t('warehouses.overview.availableCapacity')}</p>
                 <p className="text-2xl font-bold text-emerald-600">
                   {totalAvailable.toLocaleString()} kg
                 </p>
               </div>
               <div className="p-3 bg-teal-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Kho hoạt động tốt</p>
+                                 <p className="text-sm text-gray-600 mb-1">{t('warehouses.overview.healthyWarehouses')}</p>
                 <p className="text-2xl font-bold text-teal-600">
                   {filtered.length - criticalWarehouses.length}
                 </p>
