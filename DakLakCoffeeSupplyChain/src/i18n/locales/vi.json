@@ -1356,60 +1356,43 @@
       },
       "farmerWastes": {
         "title": "Quản lý chất thải sơ chế (Farmer)",
-        "subtitle": "Theo dõi và quản lý chất thải từ quá trình sơ chế của bạn",
-        "create": {
-          "title": "Tạo chất thải mới",
-          "subtitle": "Ghi nhận chất thải từ quá trình sơ chế",
-          "backToList": "Quay lại",
-          "basicInfo": {
-            "title": "Thông tin cơ bản",
-            "batchCode": "Mã lô sơ chế",
-            "batchCodePlaceholder": "Chọn lô sơ chế",
-            "wasteType": "Loại chất thải",
-            "wasteTypePlaceholder": "Chọn loại chất thải",
-            "quantity": "Số lượng",
-            "quantityPlaceholder": "Nhập số lượng",
-            "disposalMethod": "Phương pháp xử lý",
-            "disposalMethodPlaceholder": "Chọn phương pháp xử lý",
-            "notes": "Ghi chú",
-            "notesPlaceholder": "Mô tả chi tiết về chất thải..."
-          },
-          "actions": {
-            "cancel": "Hủy",
-            "creating": "Đang tạo...",
-            "create": "Tạo chất thải"
-          },
-          "loading": {
-            "title": "Đang tải dữ liệu...",
-            "description": "Đang tải thông tin cần thiết"
-          },
+        "description": "Theo dõi và quản lý chất thải từ quá trình sơ chế của bạn",
+        "searchPlaceholder": "Tìm kiếm theo mã chất thải, loại chất thải, ghi chú...",
+        "emptyMessage": "Không có chất thải nào được tìm thấy",
+        "loading": {
+          "title": "Đang tải dữ liệu...",
+          "description": "Đang tải danh sách chất thải"
+        },
+        "table": {
+          "wasteCode": "Mã chất thải",
+          "wasteType": "Loại chất thải",
+          "quantity": "Số lượng",
+          "disposalStatus": "Trạng thái xử lý",
+          "recordedAt": "Ngày ghi nhận",
+          "actions": "Thao tác",
+          "view": "Xem"
+        },
+        "status": {
+          "disposed": "Đã xử lý",
+          "notDisposed": "Chưa xử lý"
+        },
+        "stats": {
+          "totalWastes": "Tổng chất thải",
+          "processedBatches": "Lô đã xử lý",
+          "thisMonth": "Tháng này"
+        },
+        "error": {
+          "title": "Không thể tải dữ liệu"
+        },
+        "WasteDetail": {
+          "title": "Chi tiết chất thải",
+          "subtitle": "Thông tin chi tiết về chất thải",
+          "back": "Quay lại",
+          "retry": "Thử lại",
+          "loading": "Đang tải dữ liệu...",
           "error": {
             "title": "Không thể tải dữ liệu",
             "description": "Có lỗi xảy ra khi tải dữ liệu",
-            "backToList": "Quay lại danh sách"
-          }
-        },
-        "detail": {
-          "title": "Chi tiết chất thải sơ chế",
-          "subtitle": "Thông tin chi tiết về chất thải",
-          "backToList": "Quay lại",
-          "basicInfo": {
-            "title": "Thông tin cơ bản",
-            "wasteCode": "Mã chất thải",
-            "batchCode": "Mã lô sơ chế",
-            "wasteType": "Loại chất thải",
-            "quantity": "Số lượng",
-            "disposalMethod": "Phương pháp xử lý",
-            "createdAt": "Ngày tạo",
-            "notes": "Ghi chú"
-          },
-          "loading": {
-            "title": "Đang tải dữ liệu...",
-            "description": "Đang tải thông tin chất thải"
-          },
-          "error": {
-            "title": "Không thể tải dữ liệu",
-            "description": "Chất thải không tồn tại",
             "backToList": "Quay lại danh sách"
           }
         }

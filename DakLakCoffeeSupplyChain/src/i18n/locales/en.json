@@ -1223,7 +1223,19 @@
             "maxFiles": "Maximum",
             "maxSize": "total size",
             "autoCompress": "Images will be automatically compressed to reduce size."
-          }
+          },
+       
+          "maxFiles": "Maximum 10 files, 50MB",
+          "imageCompression": "Images are automatically compressed",
+          "imagePreview": "Preview image",
+          "videoPreview": "Preview video",
+          "imageAlt": "Image {{index}} of {{stageName}}",
+          "videoAlt": "Video {{index}} of {{stageName}}",
+          "mediaCounter": "{{current}} / {{total}}",
+          "mediaNotSupported": "Your browser does not support this file type.",
+          "uploading": "Uploading...",
+          "uploadError": "Upload error",
+          "uploadSuccess": "Upload successful"
         },
         "overview": {
           "title": "Processing Progress Management",
@@ -1400,62 +1412,40 @@
       },
       "farmerWastes": {
         "title": "Processing Waste Management (Farmer)",
-        "subtitle": "Track and manage wastes from your processing",
-        "create": {
-          "title": "Create New Waste",
-          "subtitle": "Record waste from processing",
-          "backToList": "Back to List",
-          "basicInfo": {
-            "title": "Basic Information",
-            "batchCode": "Processing Batch Code",
-            "batchCodePlaceholder": "Select processing batch",
-            "wasteType": "Waste Type",
-            "wasteTypePlaceholder": "Select waste type",
-            "quantity": "Quantity",
-            "quantityPlaceholder": "Enter quantity",
-            "disposalMethod": "Disposal Method",
-            "disposalMethodPlaceholder": "Select disposal method",
-            "notes": "Notes",
-            "notesPlaceholder": "Describe the waste in detail..."
-          },
-          "actions": {
-            "cancel": "Cancel",
-            "creating": "Creating...",
-            "create": "Create Waste"
-          },
-          "loading": {
-            "title": "Loading...",
-            "description": "Loading required information"
-          },
-          "error": {
-            "title": "Cannot load data",
-            "description": "An error occurred while loading data",
-            "backToList": "Back to List"
-          }
+        "description": "Track and manage wastes from your processing process",
+        "searchPlaceholder": "Search by waste code, waste type, notes...",
+        "emptyMessage": "No wastes found",
+        "loading": {
+          "title": "Loading data...",
+          "description": "Loading waste list"
         },
-        "detail": {
-          "title": "Processing Waste Detail",
+        "table": {
+          "wasteCode": "Waste Code",
+          "wasteType": "Waste Type",
+          "quantity": "Quantity",
+          "disposalStatus": "Disposal Status",
+          "recordedAt": "Record Date",
+          "actions": "Actions",
+          "view": "View"
+        },
+        "status": {
+          "disposed": "Disposed",
+          "notDisposed": "Not Disposed"
+        },
+        "stats": {
+          "totalWastes": "Total Wastes",
+          "processedBatches": "Processed Batches",
+          "thisMonth": "This Month"
+        },
+        "error": {
+          "title": "Cannot load data"
+        },
+        "WasteDetail": {
+          "title": "Waste Detail",
           "subtitle": "Detailed information about waste",
-          "backToList": "Back to List",
-          "basicInfo": {
-            "title": "Basic Information",
-            "wasteCode": "Waste Code",
-            "batchCode": "Processing Batch Code",
-            "wasteType": "Waste Type",
-            "quantity": "Quantity",
-            "disposalMethod": "Disposal Method",
-            "createdAt": "Created At",
-            "notes": "Notes"
-          },
-          "loading": {
-            "title": "Loading...",
-            "description": "Loading waste information"
-          },
-          "error": {
-            "title": "Cannot load data",
-            "description": "Waste does not exist",
-            "backToList": "Back to List"
-          }
+          "back": "Back",
+          "retry": "Retry",
+          "loading": "Loading data..."
         }
       }
     },
