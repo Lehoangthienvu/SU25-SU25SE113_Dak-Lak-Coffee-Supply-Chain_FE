@@ -2464,6 +2464,7 @@
         "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
         "page": "Trang {{current}} / {{total}}"
       }
+    }
   ,
   "warehouseInboundRequests": {
     "title": "Yêu cầu nhập kho",
@@ -2731,5 +2732,4 @@
       "page": "Trang {{current}}/{{total}}"
     }
   }
-}
 }

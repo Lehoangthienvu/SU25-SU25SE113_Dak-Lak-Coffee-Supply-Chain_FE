@@ -2420,7 +2420,8 @@
         "showingPage": "Showing {{start}} to {{end}} of {{total}} seasons",
         "page": "Page {{current}} / {{total}}"
       }
-    ,
+    }
+  ,
   "warehouseInboundRequests": {
     "title": "Warehouse Inbound Requests",
     "subtitle": "Manage and approve warehouse inbound requests from farmers",
@@ -2687,5 +2688,4 @@
       "page": "Page {{current}}/{{total}}"
     }
   }
-}
 }

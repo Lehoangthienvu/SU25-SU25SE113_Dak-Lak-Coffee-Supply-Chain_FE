@@ -46,16 +46,112 @@ export default function InboundRequestDetailPage() {
 
   const handleApprove = async () => {
     setLoading(true);
-    const res = await approveInboundRequest(id as string);
-    toast.success(res.message);
-    router.push("/dashboard/staff/inbounds");
+    try {
+      const res = await approveInboundRequest(id as string);
+      
+      // ✅ CẢI THIỆN: Kiểm tra response status và hiển thị lỗi chi tiết
+      if (res.status === 1 || res.status === 'Success' || res.status === 'success') {
+        toast.success(res.message || 'Duyệt yêu cầu thành công');
+        router.push("/dashboard/staff/inbounds");
+      } else {
+        // Hiển thị lỗi chi tiết từ backend
+        const errorMessage = res.message || 'Duyệt yêu cầu thất bại';
+        toast.error(`❌ Lỗi: ${errorMessage}`);
+        
+        // Log chi tiết để debug
+        console.error('❌ Approve request error details:', {
+          status: res.status,
+          message: res.message,
+          data: res.data,
+          fullResponse: res
+        });
+      }
+    } catch (error: any) {
+      // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+      let errorMessage = 'Duyệt yêu cầu thất bại';
+      
+      if (error.response?.data) {
+        // Lỗi từ backend có response data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.errors) {
+          // Validation errors
+          const validationErrors = Object.values(error.response.data.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(`❌ Lỗi: ${errorMessage}`);
+      
+      // Log chi tiết để debug
+      console.error('❌ Approve request error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        fullError: error
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReject = async () => {
     setLoading(true);
-    const res = await rejectInboundRequest(id as string);
-    toast.success(res.message);
-    router.push("/dashboard/staff/inbounds");
+    try {
+      const res = await rejectInboundRequest(id as string);
+      
+      // ✅ CẢI THIỆN: Kiểm tra response status và hiển thị lỗi chi tiết
+      if (res.status === 1 || res.status === 'Success' || res.status === 'success') {
+        toast.success(res.message || 'Từ chối yêu cầu thành công');
+        router.push("/dashboard/staff/inbounds");
+      } else {
+        // Hiển thị lỗi chi tiết từ backend
+        const errorMessage = res.message || 'Từ chối yêu cầu thất bại';
+        toast.error(`❌ Lỗi: ${errorMessage}`);
+        
+        // Log chi tiết để debug
+        console.error('❌ Reject request error details:', {
+          status: res.status,
+          message: res.message,
+          data: res.data,
+          fullResponse: res
+        });
+      }
+    } catch (error: any) {
+      // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+      let errorMessage = 'Từ chối yêu cầu thất bại';
+      
+      if (error.response?.data) {
+        // Lỗi từ backend có response data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.errors) {
+          // Validation errors
+          const validationErrors = Object.values(error.response.data.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(`❌ Lỗi: ${errorMessage}`);
+      
+      // Log chi tiết để debug
+      console.error('❌ Reject request error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        fullError: error
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatDate = (value: string | Date) => {

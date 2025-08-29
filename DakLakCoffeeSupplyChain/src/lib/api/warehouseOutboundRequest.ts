@@ -23,13 +23,49 @@ export async function createWarehouseOutboundRequest(
     const response = await api.post("/WarehouseOutboundRequests", input);
     const result = response.data;
 
+    // ✅ CẢI THIỆN: Kiểm tra response status và hiển thị lỗi chi tiết
     if (result.status !== 1) {
-      throw new Error(result.message || "Gửi yêu cầu thất bại");
+      const errorMessage = result.message || "Gửi yêu cầu thất bại";
+      console.error('❌ Create outbound request error:', {
+        status: result.status,
+        message: result.message,
+        data: result.data,
+        fullResponse: result
+      });
+      throw new Error(errorMessage);
     }
 
     return result.message || "Gửi yêu cầu thành công";
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Gửi yêu cầu thất bại");
+    // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+    let errorMessage = "Gửi yêu cầu thất bại";
+    
+    if (error.response?.data) {
+      // Lỗi từ backend có response data
+      if (error.response.data.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error.response.data === 'string') {
+        errorMessage = error.response.data;
+      } else if (error.response.data.errors) {
+        // Validation errors
+        const validationErrors = Object.values(error.response.data.errors).flat();
+        errorMessage = validationErrors.join(', ');
+      } else if (error.response.data.status !== undefined && error.response.data.status !== 1) {
+        // ServiceResult format từ backend
+        errorMessage = error.response.data.message || "Gửi yêu cầu thất bại";
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    console.error('❌ Create outbound request error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      fullError: error
+    });
+    
+    throw new Error(errorMessage);
   }
 }
 
