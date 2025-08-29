@@ -1783,6 +1783,31 @@
     "inboundRequests": "Inbound Requests",
     "outboundReceipts": "Outbound Receipts",
     "inboundReceipts": "Inbound Receipts",
+    "staffDashboard": {
+      "title": "Staff Warehouse Overview",
+      "subtitle": "Monitor and quick access to warehouse management functions",
+      "waitingInbound": "Inbound requests waiting",
+      "waitingOutbound": "Outbound requests waiting",
+      "monthlyStats": "Monthly inbound/outbound warehouse statistics",
+      "quickAccess": "Quick Access",
+      "inventory": "Inventory",
+      "inventoryDesc": "Manage inventory",
+      "inboundRequests": "Inbound Requests",
+      "inboundRequestsDesc": "Review requests",
+      "outboundRequests": "Outbound Requests",
+      "outboundRequestsDesc": "Review requests",
+      "outboundReceipts": "Outbound Receipts",
+      "outboundReceiptsDesc": "Manage receipts",
+      "warehouses": "Warehouses",
+      "warehousesDesc": "Manage warehouses",
+      "receipts": "Receipts",
+      "receiptsDesc": "Manage receipts",
+      "chartLabels": {
+        "inbound": "Inbound",
+        "outbound": "Outbound"
+      },
+      "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    },
     "evaluations": "Evaluations",
     "processingMethods": "Processing Methods",
     "wasteDisposals": "Waste Disposals",
@@ -2541,6 +2566,77 @@
     "outboundReceipts": {
       "title": "Outbound Receipts", 
       "subtitle": "Manage outbound receipts to customers"
+    },
+    "page": {
+      "title": "📥 Inbound Receipts",
+      "subtitle": "Manage and track approved inbound receipts",
+      "searchPlaceholder": "Search receipt code, warehouse, batch...",
+      "createNew": "Create New",
+      "filterByCoffeeType": "Filter by coffee type:",
+      "selectCoffeeType": "Select coffee type",
+      "allTypes": "All",
+      "freshCoffee": "Fresh Coffee",
+      "processedCoffee": "Processed Coffee",
+      "unknownType": "Unknown"
+    },
+    "stats": {
+      "totalReceipts": "Total Receipts",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "totalQuantity": "Total Quantity",
+      "freshCoffeeReceipts": "receipts",
+      "processedCoffeeReceipts": "receipts"
+    },
+    "table": {
+      "title": "Inbound Receipt Details",
+      "headers": {
+        "receiptCode": "Receipt Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "information": "Information",
+        "quantity": "Quantity",
+        "status": "Status",
+        "actions": "View"
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "actions": {
+        "view": "View",
+        "cancel": "Cancel Receipt"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "receipts": "receipts"
+    },
+    "empty": {
+      "title": "No inbound receipts found",
+      "description": "Try changing your search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading inbound receipts list..."
+    },
+    "error": {
+      "loadFailed": "Cannot load inbound receipts list",
+      "serverError": "Error loading data from server."
+    },
+    "cancelModal": {
+      "title": "Confirm Cancel Receipt",
+      "description": "Are you sure you want to cancel this receipt?",
+      "receiptInfo": "Receipt Information:",
+      "receiptCode": "Receipt Code:",
+      "warehouse": "Warehouse:",
+      "type": "Type:",
+      "cancelButton": "Cancel",
+      "confirmCancel": "Confirm Cancel",
+      "cancelling": "Cancelling..."
+    },
+    "success": {
+      "cancelSuccess": "Inbound receipt cancelled successfully!"
     }
   },
   "deliveryRequests": {

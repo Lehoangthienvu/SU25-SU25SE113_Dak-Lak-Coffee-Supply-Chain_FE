@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Eye, Search, ChevronLeft, ChevronRight, Package, TrendingUp, CheckCircle, Clock, Plus, Leaf, Coffee, X, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 export default function ReceiptListPage() {
   const [receipts, setReceipts] = useState<any[]>([]);
@@ -18,6 +19,7 @@ export default function ReceiptListPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const pageSize = 15;
+  const { t } = useTranslation();
   
   // State cho modal hủy phiếu
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -34,17 +36,17 @@ export default function ReceiptListPage() {
           // Debug logs removed for performance
           setReceipts(data);
         } else {
-          toast.error(res.message || 'Không thể tải danh sách phiếu nhập kho');
+          toast.error(res.message || t('warehouseReceipts.error.loadFailed'));
         }
       } catch {
-        toast.error('Lỗi khi tải dữ liệu từ server.');
+        toast.error(t('warehouseReceipts.error.serverError'));
       } finally {
         setLoading(false);
       }
     })();
 
     // Debug call - REMOVED for performance
-  }, []);
+  }, [t]);
 
   // Helper function to determine coffee type
   const getCoffeeType = (receipt: any) => {
@@ -58,9 +60,9 @@ export default function ReceiptListPage() {
   const getCoffeeTypeLabel = (receipt: any) => {
     const type = getCoffeeType(receipt);
     switch (type) {
-      case 'fresh': return 'Cà phê tươi';
-      case 'processed': return 'Cà phê đã sơ chế';
-      default: return 'Không xác định';
+      case 'fresh': return t('warehouseReceipts.page.freshCoffee');
+      case 'processed': return t('warehouseReceipts.page.processedCoffee');
+      default: return t('warehouseReceipts.page.unknownType');
     }
   };
 
@@ -83,16 +85,16 @@ export default function ReceiptListPage() {
       const res = await cancelWarehouseReceipt(receiptToCancel.receiptId);
       
       if (res.status === 1) {
-        toast.success('Hủy phiếu nhập kho thành công!');
+        toast.success(t('warehouseReceipts.success.cancelSuccess'));
         // Cập nhật danh sách - xóa phiếu đã hủy
         setReceipts(prev => prev.filter(r => r.receiptId !== receiptToCancel.receiptId));
         setShowCancelModal(false);
         setReceiptToCancel(null);
       } else {
-        toast.error(res.message || 'Không thể hủy phiếu nhập kho');
+        toast.error(res.message || t('warehouseReceipts.error.loadFailed'));
       }
     } catch (error) {
-      toast.error('Lỗi khi hủy phiếu nhập kho');
+      toast.error(t('warehouseReceipts.error.loadFailed'));
     } finally {
       setCancelling(false);
     }
@@ -108,7 +110,7 @@ export default function ReceiptListPage() {
       // Cà phê sơ chế
       return {
         type: 'processed',
-        label: 'Cà phê đã sơ chế',
+        label: t('warehouseReceipts.page.processedCoffee'),
         info: receipt.batchCode || 'N/A',
         icon: <Coffee className="w-4 h-4 text-purple-600" />
       };
@@ -116,14 +118,14 @@ export default function ReceiptListPage() {
       // Cà phê tươi
       return {
         type: 'fresh',
-        label: 'Cà phê tươi',
+        label: t('warehouseReceipts.page.freshCoffee'),
         info: receipt.cropSeasonName || receipt.detailCode || 'N/A',
         icon: <Leaf className="w-4 h-4 text-orange-600" />
       };
     } else {
       return {
         type: 'unknown',
-        label: 'Không xác định',
+        label: t('warehouseReceipts.page.unknownType'),
         info: 'N/A',
         icon: <Package className="w-4 h-4 text-gray-600" />
       };
@@ -163,7 +165,7 @@ export default function ReceiptListPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p className="text-gray-600">Đang tải danh sách phiếu nhập kho...</p>
+        <p className="text-gray-600">{t('warehouseReceipts.loading.title')}</p>
       </div>
     </div>
   );
@@ -180,16 +182,16 @@ export default function ReceiptListPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  📥 Phiếu nhập kho
+                  {t('warehouseReceipts.page.title')}
                 </h1>
                 <p className="text-gray-600 text-sm">
-                  Quản lý và theo dõi các phiếu nhập kho đã được duyệt
+                  {t('warehouseReceipts.page.subtitle')}
                 </p>
               </div>
             </div>
             <div className="flex gap-2 items-center relative">
               <Input
-                placeholder="Tìm mã phiếu, kho, lô..."
+                placeholder={t('warehouseReceipts.page.searchPlaceholder')}
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -201,7 +203,7 @@ export default function ReceiptListPage() {
               <Link href="/dashboard/staff/receipts/create">
                 <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-sm">
                   <Plus className="w-4 h-4 mr-2" />
-                  Tạo mới
+                  {t('warehouseReceipts.page.createNew')}
                 </Button>
               </Link>
             </div>
@@ -210,26 +212,26 @@ export default function ReceiptListPage() {
           {/* Filter Panel */}
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-gray-700">Lọc theo loại cà phê:</span>
+              <span className="text-sm font-medium text-gray-700">{t('warehouseReceipts.page.filterByCoffeeType')}</span>
               <Select value={coffeeTypeFilter} onValueChange={(value) => {
                 setCoffeeTypeFilter(value);
                 setPage(1);
               }}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Chọn loại cà phê" />
+                  <SelectValue placeholder={t('warehouseReceipts.page.selectCoffeeType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả ({filtered.length})</SelectItem>
+                  <SelectItem value="all">{t('warehouseReceipts.page.allTypes')} ({filtered.length})</SelectItem>
                   <SelectItem value="fresh">
                     <div className="flex items-center gap-2">
                       <Leaf className="w-4 h-4 text-orange-600" />
-                      Cà phê tươi ({freshCoffeeReceipts.length})
+                      {t('warehouseReceipts.page.freshCoffee')} ({freshCoffeeReceipts.length})
                     </div>
                   </SelectItem>
                   <SelectItem value="processed">
                     <div className="flex items-center gap-2">
                       <Coffee className="w-4 h-4 text-purple-600" />
-                      Cà phê đã sơ chế ({processedCoffeeReceipts.length})
+                      {t('warehouseReceipts.page.processedCoffee')} ({processedCoffeeReceipts.length})
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -242,7 +244,7 @@ export default function ReceiptListPage() {
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm font-medium">Tổng phiếu</p>
+                  <p className="text-green-100 text-sm font-medium">{t('warehouseReceipts.stats.totalReceipts')}</p>
                   <p className="text-2xl font-bold">{filtered.length}</p>
                 </div>
                 <Package className="w-8 h-8 text-green-200" />
@@ -251,7 +253,7 @@ export default function ReceiptListPage() {
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Đã xác nhận</p>
+                  <p className="text-blue-100 text-sm font-medium">{t('warehouseReceipts.stats.confirmed')}</p>
                   <p className="text-2xl font-bold">{confirmedReceipts.length}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-blue-200" />
@@ -260,7 +262,7 @@ export default function ReceiptListPage() {
             <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-sm font-medium">Chưa xác nhận</p>
+                  <p className="text-yellow-100 text-sm font-medium">{t('warehouseReceipts.stats.pending')}</p>
                   <p className="text-2xl font-bold">{pendingReceipts.length}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-200" />
@@ -269,7 +271,7 @@ export default function ReceiptListPage() {
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Tổng lượng</p>
+                  <p className="text-purple-100 text-sm font-medium">{t('warehouseReceipts.stats.totalQuantity')}</p>
                   <p className="text-2xl font-bold">{totalQuantity.toLocaleString()} kg</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-purple-200" />
@@ -284,9 +286,9 @@ export default function ReceiptListPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Leaf className="w-4 h-4" />
-                    <p className="text-orange-100 text-sm font-medium">Cà phê tươi</p>
+                    <p className="text-orange-100 text-sm font-medium">{t('warehouseReceipts.page.freshCoffee')}</p>
                   </div>
-                  <p className="text-xl font-bold">{freshCoffeeReceipts.length} phiếu</p>
+                  <p className="text-xl font-bold">{freshCoffeeReceipts.length} {t('warehouseReceipts.stats.freshCoffeeReceipts')}</p>
                   <p className="text-orange-200 text-sm">{freshCoffeeQuantity.toLocaleString()} kg</p>
                 </div>
               </div>
@@ -296,9 +298,9 @@ export default function ReceiptListPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Coffee className="w-4 h-4" />
-                    <p className="text-purple-100 text-sm font-medium">Cà phê đã sơ chế</p>
+                    <p className="text-purple-100 text-sm font-medium">{t('warehouseReceipts.page.processedCoffee')}</p>
                   </div>
-                  <p className="text-xl font-bold">{processedCoffeeReceipts.length} phiếu</p>
+                  <p className="text-xl font-bold">{processedCoffeeReceipts.length} {t('warehouseReceipts.stats.processedCoffeeReceipts')}</p>
                   <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
                 </div>
               </div>
@@ -310,7 +312,7 @@ export default function ReceiptListPage() {
         <Card className="border-blue-100 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold text-gray-800">
-              Chi tiết phiếu nhập kho
+              {t('warehouseReceipts.table.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -319,21 +321,21 @@ export default function ReceiptListPage() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Package className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-500 font-medium">Không có phiếu nhập kho nào</p>
-                <p className="text-gray-400 text-sm">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+                <p className="text-gray-500 font-medium">{t('warehouseReceipts.empty.title')}</p>
+                <p className="text-gray-400 text-sm">{t('warehouseReceipts.empty.description')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full table-auto border border-gray-200 rounded-lg text-sm bg-white">
                   <thead className="bg-gradient-to-r from-green-50 to-green-100 text-green-800 font-semibold">
                     <tr>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Mã phiếu</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Kho</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Loại cà phê</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Thông tin</th>
-                      <th className="px-4 py-3 text-right border-b border-green-200">Số lượng</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Trạng thái</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Xem</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseReceipts.table.headers.receiptCode')}</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseReceipts.table.headers.warehouse')}</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseReceipts.table.headers.coffeeType')}</th>
+                      <th className="px-4 py-3 text-left border-b border-green-200">{t('warehouseReceipts.table.headers.information')}</th>
+                      <th className="px-4 py-3 text-right border-b border-green-200">{t('warehouseReceipts.table.headers.quantity')}</th>
+                      <th className="px-4 py-3 text-center border-b border-green-200">{t('warehouseReceipts.table.headers.status')}</th>
+                      <th className="px-4 py-3 text-center border-b border-green-200">{t('warehouseReceipts.table.headers.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -375,12 +377,12 @@ export default function ReceiptListPage() {
                             {isConfirmed ? (
                               <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
                                 <CheckCircle className="w-3 h-3 mr-1" />
-                                Đã xác nhận
+                                {t('warehouseReceipts.table.status.confirmed')}
                               </Badge>
                             ) : (
                               <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
                                 <Clock className="w-3 h-3 mr-1" />
-                                Chưa xác nhận
+                                {t('warehouseReceipts.table.status.pending')}
                               </Badge>
                             )}
                           </td>
@@ -403,7 +405,7 @@ export default function ReceiptListPage() {
                                   variant="outline"
                                   onClick={() => openCancelModal(r)}
                                   className="text-red-600 hover:text-red-800 border-red-200 hover:bg-red-50"
-                                  title="Hủy phiếu"
+                                  title={t('warehouseReceipts.table.actions.cancel')}
                                 >
                                   <X className="w-4 h-4" />
                                 </Button>
@@ -422,7 +424,7 @@ export default function ReceiptListPage() {
             {filtered.length > 0 && (
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
                 <span className="text-sm text-gray-600">
-                  Hiển thị {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} trong {filtered.length} phiếu
+                  {t('warehouseReceipts.pagination.showing')} {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} {t('warehouseReceipts.pagination.of')} {filtered.length} {t('warehouseReceipts.pagination.receipts')}
                 </span>
                 <div className="flex items-center gap-2">
                   <Button
@@ -469,17 +471,17 @@ export default function ReceiptListPage() {
                 <AlertTriangle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Xác nhận hủy phiếu</h3>
-                <p className="text-sm text-gray-600">Bạn có chắc chắn muốn hủy phiếu này?</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('warehouseReceipts.cancelModal.title')}</h3>
+                <p className="text-sm text-gray-600">{t('warehouseReceipts.cancelModal.description')}</p>
               </div>
             </div>
             
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
               <div className="text-sm text-red-800">
-                <p className="font-medium mb-2">Thông tin phiếu:</p>
-                <p><span className="font-medium">Mã phiếu:</span> {receiptToCancel.receiptCode}</p>
-                <p><span className="font-medium">Kho:</span> {receiptToCancel.warehouseName}</p>
-                <p><span className="font-medium">Loại:</span> {getCoffeeTypeLabel(receiptToCancel)}</p>
+                <p className="font-medium mb-2">{t('warehouseReceipts.cancelModal.receiptInfo')}</p>
+                <p><span className="font-medium">{t('warehouseReceipts.cancelModal.receiptCode')}</span> {receiptToCancel.receiptCode}</p>
+                <p><span className="font-medium">{t('warehouseReceipts.cancelModal.warehouse')}</span> {receiptToCancel.warehouseName}</p>
+                <p><span className="font-medium">{t('warehouseReceipts.cancelModal.type')}</span> {getCoffeeTypeLabel(receiptToCancel)}</p>
               </div>
             </div>
             
@@ -493,14 +495,14 @@ export default function ReceiptListPage() {
                 className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
                 disabled={cancelling}
               >
-                Hủy bỏ
+                {t('warehouseReceipts.cancelModal.cancelButton')}
               </Button>
               <Button
                 onClick={handleCancelReceipt}
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                 disabled={cancelling}
               >
-                {cancelling ? 'Đang hủy...' : 'Xác nhận hủy'}
+                {cancelling ? t('warehouseReceipts.cancelModal.cancelling') : t('warehouseReceipts.cancelModal.confirmCancel')}
               </Button>
             </div>
           </div>
