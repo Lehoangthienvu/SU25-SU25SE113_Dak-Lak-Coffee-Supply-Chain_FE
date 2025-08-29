@@ -1,6 +1,6 @@
 {
   "processing": {
-    "title": "Quản lý xử lý cà phê",
+    "title": "Ghi nhận xử lý cà phê",
     "batch": {
       "title": "Lô xử lý",
       "create": "Tạo lô mới",
@@ -40,41 +40,7 @@
         "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
       }
     },
-    "createProgress": {
-      "headerTitle": "Tạo tiến trình đầu tiên",
-      "headerDescription": "Bắt đầu quy trình chế biến cà phê",
-      "batchSelectionTitle": "Chọn lô chế biến",
-      "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
-      "noAvailableBatches": "Không có lô chế biến khả dụng",
-      "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
-      "selectBatchLabel": "Chọn lô chế biến",
-      "selectBatchPlaceholder": "-- Chọn lô chế biến --",
-      "stageInformationTitle": "Thông tin bước chế biến",
-      "stageInformationDescription": "Bước đầu tiên trong quy trình",
-      "loadingStages": "Đang tải thông tin bước chế biến...",
-      "firstStep": "Bước đầu tiên",
-      "processing": "Chế biến",
-      "noStageInfo": "Không tìm thấy thông tin bước chế biến",
-      "progressInformationTitle": "Thông tin tiến trình",
-      "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
-      "progressDateLabel": "Ngày thực hiện",
-      "outputQuantityLabel": "Khối lượng đầu ra",
-      "technicalParametersTitle": "Thông số kỹ thuật",
-      "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
-      "addParameter": "Thêm thông số",
-      "parameterNameLabel": "Tên thông số",
-      "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
-      "parameterValueLabel": "Giá trị",
-      "parameterValuePlaceholder": "VD: 25, 80%...",
-      "parameterUnitLabel": "Đơn vị",
-      "parameterUnitPlaceholder": "VD: °C, %, kg...",
-      "cancelButton": "Huỷ",
-      "saving": "Đang lưu...",
-      "createProgress": "Tạo tiến trình",
-      "stageOrder": "Bước {{order}}",
-      "methodInfo": "của phương pháp {{methodName}}",
-      "stepOrder": "Bước {{order}}"
-    },
+
     "progress": {
       "title": "Tiến trình xử lý",
       "create": "Tạo tiến trình mới",
@@ -1133,6 +1099,103 @@
       "farmerProgresses": {
         "title": "Quản lý tiến trình sơ chế (Farmer)",
         "subtitle": "Theo dõi và quản lý tiến trình xử lý cà phê của bạn",
+        "createProgress": {
+          "headerTitle": "Tạo tiến trình đầu tiên",
+          "headerDescription": "Bắt đầu quy trình chế biến cà phê",
+          "batchSelectionTitle": "Chọn lô chế biến",
+          "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
+          "noAvailableBatches": "Không có lô chế biến khả dụng",
+          "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
+          "selectBatchLabel": "Chọn lô chế biến",
+          "selectBatchPlaceholder": "-- Chọn lô chế biến --",
+          "stageInformationTitle": "Thông tin bước chế biến",
+          "stageInformationDescription": "Bước đầu tiên trong quy trình",
+          "loadingStages": "Đang tải thông tin bước chế biến...",
+          "firstStep": "Bước đầu tiên",
+          "processing": "Chế biến",
+          "noStageInfo": "Không tìm thấy thông tin bước chế biến",
+          "progressInformationTitle": "Thông tin tiến trình",
+          "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
+          "progressDateLabel": "Ngày thực hiện",
+          "outputQuantityLabel": "Khối lượng đầu ra",
+          "technicalParametersTitle": "Thông số kỹ thuật",
+          "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
+          "addParameter": "Thêm thông số",
+          "parameterNameLabel": "Tên thông số",
+          "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
+          "parameterValueLabel": "Giá trị",
+          "parameterValuePlaceholder": "VD: 25, 80%...",
+          "parameterUnitLabel": "Đơn vị",
+          "parameterUnitPlaceholder": "VD: °C, %, kg...",
+          "cancelButton": "Huỷ",
+          "saving": "Đang lưu...",
+          "createProgress": "Tạo tiến trình",
+          "stageOrder": "Bước {{order}}",
+          "methodInfo": "của phương pháp {{methodName}}",
+          "stepOrder": "Bước {{order}}"       
+        },
+        "wasteInput": {
+          "title": "Thông tin phế phẩm",
+          "description": "Ghi nhận phế phẩm từ quá trình xử lý của bạn",
+          "add": "Thêm phế phẩm",
+          "edit": "Chỉnh sửa phế phẩm",
+          "delete": "Xóa phế phẩm",
+          "wasteType": "Loại phế phẩm *",
+          "quantity": "Khối lượng *",
+          "unit": "Đơn vị *",
+          "note": "Ghi chú",
+          "recordedAt": "Thời gian ghi nhận",
+          "itemNumber": "Phế phẩm #{{number}}",
+          "selectUnit": "Chọn đơn vị...",
+          "units": {
+            "kg": "Kilogram (kg)",
+            "g": "Gram (g)",
+            "ton": "Tấn",
+            "quintal": "Tạ",
+            "yen": "Yến",
+            "lang": "Lạng",
+            "lb": "Pound (lb)",
+            "oz": "Ounce (oz)"
+          },
+          "placeholder": {
+            "wasteType": "Ví dụ: Bax, Vỏ trấu, Bã cà phê...",
+            "quantity": "0.00",
+            "note": "Ghi chú về phế phẩm (tùy chọn)..."
+          },
+          "emptyState": {
+            "noWaste": "Chưa có phế phẩm nào được thêm",
+            "addWasteHint": "Nhấn \"Thêm phế phẩm\" để bắt đầu"
+          },
+          "validation": {
+            "wasteTypeRequired": "Vui lòng chọn loại phế phẩm",
+            "quantityRequired": "Vui lòng nhập khối lượng",
+            "quantityPositive": "Khối lượng phải lớn hơn 0",
+            "unitRequired": "Vui lòng chọn đơn vị",
+            "summary": "Lỗi xác thực"
+          }
+        },
+        "mediaUpload": {
+          "title": "Tài liệu đính kèm",
+          "description": "Tải lên tài liệu đính kèm cho quá trình xử lý",
+          "add": "Thêm tài liệu",
+          "edit": "Chỉnh sửa tài liệu",
+          "delete": "Xóa tài liệu",
+          "photos": "Hình ảnh",
+          "videos": "Video",
+          "dragDrop": "Kéo thả file vào đây hoặc click để chọn",
+          "multipleSelection": "chọn nhiều",
+          "selectPhoto": "Chọn ảnh",
+          "selectVideo": "Chọn video",
+          "selectedPhotos": "Đã chọn {{count}} ảnh",
+          "selectedVideos": "Đã chọn {{count}} video",
+          "files": "file",
+          "limits": {
+            "title": "Giới hạn",
+            "maxFiles": "Tối đa",
+            "maxSize": "tổng dung lượng",
+            "autoCompress": "Ảnh sẽ được tự động nén để giảm kích thước."
+          }
+        },
         "overview": {
           "title": "Quản lý tiến trình sơ chế",
           "subtitle": "Theo dõi và cập nhật tiến trình xử lý cà phê của bạn",
@@ -1290,8 +1353,69 @@
             "updateProgressDescription": "Form cập nhật thông tin tiến trình sơ chế"
           }
         }
+      },
+      "farmerWastes": {
+        "title": "Quản lý chất thải sơ chế (Farmer)",
+        "subtitle": "Theo dõi và quản lý chất thải từ quá trình sơ chế của bạn",
+        "create": {
+          "title": "Tạo chất thải mới",
+          "subtitle": "Ghi nhận chất thải từ quá trình sơ chế",
+          "backToList": "Quay lại",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "batchCode": "Mã lô sơ chế",
+            "batchCodePlaceholder": "Chọn lô sơ chế",
+            "wasteType": "Loại chất thải",
+            "wasteTypePlaceholder": "Chọn loại chất thải",
+            "quantity": "Số lượng",
+            "quantityPlaceholder": "Nhập số lượng",
+            "disposalMethod": "Phương pháp xử lý",
+            "disposalMethodPlaceholder": "Chọn phương pháp xử lý",
+            "notes": "Ghi chú",
+            "notesPlaceholder": "Mô tả chi tiết về chất thải..."
+          },
+          "actions": {
+            "cancel": "Hủy",
+            "creating": "Đang tạo...",
+            "create": "Tạo chất thải"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin cần thiết"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Có lỗi xảy ra khi tải dữ liệu",
+            "backToList": "Quay lại danh sách"
+          }
+        },
+        "detail": {
+          "title": "Chi tiết chất thải sơ chế",
+          "subtitle": "Thông tin chi tiết về chất thải",
+          "backToList": "Quay lại",
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "wasteCode": "Mã chất thải",
+            "batchCode": "Mã lô sơ chế",
+            "wasteType": "Loại chất thải",
+            "quantity": "Số lượng",
+            "disposalMethod": "Phương pháp xử lý",
+            "createdAt": "Ngày tạo",
+            "notes": "Ghi chú"
+          },
+          "loading": {
+            "title": "Đang tải dữ liệu...",
+            "description": "Đang tải thông tin chất thải"
+          },
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Chất thải không tồn tại",
+            "backToList": "Quay lại danh sách"
+          }
+        }
       }
-    },
+    }
+  } , 
 
     "wastes": {
       "title": "Chất thải sơ chế",
@@ -1360,8 +1484,7 @@
           }
         }
       }
-    }
-,
+    ,
   "validation": {
     "required": "Trường này là bắt buộc",
     "positiveNumber": "Phải là số dương",
@@ -2529,6 +2652,5 @@
       "page": "Trang {{current}}/{{total}}"
     }
   }
-
-  }
+}
 }
