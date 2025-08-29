@@ -2746,6 +2746,7 @@
         "all": "Tất cả",
         "pending": "Chờ duyệt",
         "accepted": "Đã duyệt",
+        "completed": "Hoàn tất",
         "rejected": "Đã từ chối",
         "cancelled": "Đã hủy"
       }
@@ -2790,6 +2791,7 @@
       "status": {
         "pending": "Chờ duyệt",
         "accepted": "Đã duyệt",
+        "completed": "Hoàn tất",
         "rejected": "Đã từ chối",
         "cancelled": "Đã hủy"
       },
@@ -2934,6 +2936,809 @@
     "success": {
       "createSuccess": "Tạo phiếu xuất kho thành công!",
       "confirmSuccess": "Xác nhận phiếu xuất kho thành công!"
+    }
+  },
+  "inventoryLogs": {
+    "title": "Nhật ký tồn kho",
+    "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",
+    "backToDashboard": "Quay lại Dashboard",
+    "search": {
+      "placeholder": "🔍 Tìm theo mã kho, loại cà phê, kho hàng...",
+      "quickSearch": "🔍 Tìm kiếm nhanh..."
+    },
+    "filters": {
+      "all": "🔄 Tất cả",
+      "inbound": "📥 Nhập kho",
+      "outbound": "📤 Xuất kho"
+    },
+    "stats": {
+      "totalLogs": "Tổng số log",
+      "inboundToday": "Nhập kho hôm nay",
+      "inboundTurns": "Lượt nhập kho",
+      "outboundTurns": "Lượt xuất kho"
+    },
+    "table": {
+      "title": "Danh sách lịch sử tồn kho",
+      "headers": {
+        "actionType": "Loại hành động",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Số lượng",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "inbound": "📥 Nhập kho",
+        "outbound": "📤 Xuất kho",
+        "details": "Chi tiết"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "logs": "log",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "empty": {
+      "title": "Không có log phù hợp với bộ lọc",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách log...",
+      "description": "Vui lòng chờ trong khi chúng tôi tải dữ liệu"
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Lỗi khi tải danh sách log tồn kho",
+      "retry": "Thử lại"
+    },
+    "detail": {
+      "title": "Chi tiết nhật ký tồn kho",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "actionType": "Loại hành động",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Số lượng",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú"
+      }
+    }
+  },
+  "inventories": {
+    "title": "Quản lý tồn kho",
+    "subtitle": "Theo dõi và quản lý tồn kho trong các kho hàng",
+    "search": {
+      "placeholder": "Tìm kiếm theo mã tồn kho, kho hàng, loại cà phê..."
+    },
+    "filters": {
+      "warehouse": "Kho hàng:",
+      "coffeeType": "Loại cà phê:",
+      "all": "Tất cả",
+      "selectWarehouse": "Chọn kho hàng",
+      "selectCoffeeType": "Chọn loại cà phê"
+    },
+    "stats": {
+      "totalInventories": "Tổng số tồn kho",
+      "totalQuantity": "Tổng số lượng",
+      "warehouses": "Số kho hàng",
+      "coffeeTypes": "Loại cà phê"
+    },
+    "table": {
+      "title": "Danh sách tồn kho",
+      "headers": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "batchCode": "Mã lô",
+        "quantity": "Số lượng",
+        "lastUpdated": "Cập nhật lần cuối",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem",
+        "logs": "Nhật ký",
+        "edit": "Chỉnh sửa"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "inventories": "tồn kho"
+    },
+    "empty": {
+      "title": "Không có tồn kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách tồn kho..."
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Lỗi khi tải danh sách tồn kho"
+    },
+    "detail": {
+      "title": "Chi tiết tồn kho",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "batchCode": "Mã lô",
+        "quantity": "Số lượng",
+        "lastUpdated": "Cập nhật lần cuối",
+        "createdAt": "Ngày tạo"
+      },
+      "logs": {
+        "title": "Nhật ký tồn kho",
+        "subtitle": "Lịch sử thay đổi tồn kho"
+      }
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định"
+    },
+    "infoLabels": {
+      "cropSeason": "Mùa vụ",
+      "batch": "Lô sơ chế",
+      "info": "Thông tin"
+    },
+    "status": {
+      "inStock": "Còn hàng",
+      "outOfStock": "Hết hàng"
+    },
+    "stats": {
+      "totalInventory": "Tổng tồn kho",
+      "inStockBatches": "Lô còn hàng",
+      "warehouses": "Kho hàng",
+      "productTypes": "Loại sản phẩm",
+      "outOfStockBatches": "Lô hết hàng",
+      "totalBatches": "Tổng lô",
+      "needReplenishment": "Cần bổ sung",
+      "allProducts": "Tất cả sản phẩm"
+    },
+    "filters": {
+      "coffeeType": "Loại cà phê:",
+      "warehouse": "Kho:",
+      "all": "Tất cả",
+      "selectCoffeeType": "Chọn loại",
+      "selectWarehouse": "Chọn kho",
+      "allWarehouses": "Tất cả kho"
+    },
+    "table": {
+      "title": "Chi tiết tồn kho",
+      "headers": {
+        "warehouse": "Tên kho",
+        "coffeeType": "Loại cà phê",
+        "information": "Thông tin",
+        "product": "Sản phẩm",
+        "quantity": "Số lượng (kg)",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "batches": "lô",
+      "previous": "Trước",
+      "next": "Sau"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu..."
+    },
+    "empty": {
+      "title": "Không có tồn kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "description": "📋 Tồn kho được tạo tự động từ phiếu nhập kho và lô sơ chế"
+  },
+  "warehouses": {
+    "title": "Quản lý kho hàng",
+    "subtitle": "Quản lý thông tin và cấu hình kho hàng",
+    "search": {
+      "placeholder": "Tìm kiếm theo tên kho, địa chỉ..."
+    },
+    "stats": {
+      "totalWarehouses": "Tổng số kho",
+      "totalCapacity": "Tổng dung lượng",
+      "usedCapacity": "Dung lượng đã sử dụng",
+      "availableCapacity": "Dung lượng khả dụng",
+      "criticalWarehouses": "Kho báo động"
+    },
+    "table": {
+      "title": "Danh sách kho hàng",
+      "headers": {
+        "name": "Tên kho",
+        "address": "Địa chỉ",
+        "capacity": "Dung lượng",
+        "usedCapacity": "Đã sử dụng",
+        "availableCapacity": "Khả dụng",
+        "manager": "Quản lý",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "warehouses": "kho hàng"
+    },
+    "empty": {
+      "title": "Không có kho hàng nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm"
+    },
+    "staffNote": "Staff chỉ có quyền xem thông tin kho hàng",
+    "status": {
+      "label": "Trạng thái",
+      "critical": "Báo động",
+      "warning": "Cảnh báo",
+      "normal": "Bình thường",
+      "overloaded": "Quá tải",
+      "attention": "Cần chú ý"
+    },
+    "chart": {
+      "used": "Đã sử dụng",
+      "available": "Còn trống"
+    },
+    "capacity": {
+      "total": "Dung lượng",
+      "used": "Đã dùng"
+    },
+    "usage": {
+      "rate": "Tỷ lệ sử dụng"
+    },
+    "actions": {
+      "viewDetails": "Xem chi tiết"
+    },
+    "overview": {
+      "avgUsage": "Tỷ lệ sử dụng trung bình",
+      "availableCapacity": "Dung lượng còn trống",
+      "healthyWarehouses": "Kho hoạt động tốt"
+    }
+  },
+  "inboundRequestDetail": {
+    "title": "Chi tiết yêu cầu nhập kho",
+    "requestCode": "Mã yêu cầu",
+    "error": {
+      "description": "Lỗi"
+    },
+    "status": {
+      "pending": "Đang chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Hoàn tất",
+      "rejected": "Đã từ chối",
+      "cancelled": "Đã huỷ"
+    },
+    "fields": {
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "preferredDeliveryDate": "Ngày giao dự kiến",
+      "actualDeliveryDate": "Ngày giao thực tế",
+      "quantity": "Số lượng",
+      "note": "Ghi chú",
+      "farmer": "Nông dân",
+      "phone": "SĐT",
+      "businessStaff": "Nhân viên phụ trách",
+      "batchCode": "Mã lô hàng",
+      "detailCode": "Mã chi tiết",
+      "coffeeType": "Loại cà phê",
+      "cropSeason": "Mùa vụ"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "approve": "Duyệt yêu cầu",
+      "reject": "Từ chối yêu cầu",
+      "approveSuccess": "Duyệt yêu cầu thành công",
+      "approveError": "Duyệt yêu cầu thất bại",
+      "rejectSuccess": "Từ chối yêu cầu thành công",
+      "rejectError": "Từ chối yêu cầu thất bại"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noNote": "Không có"
+    }
+  },
+  "receiptDetail": {
+    "title": "Chi tiết phiếu nhập kho",
+    "receiptCode": "Mã phiếu",
+    "coffeeType": "Loại cà phê",
+    "error": {
+      "loadFailed": "Không thể tải chi tiết phiếu",
+      "notFound": "Không tìm thấy phiếu nhập kho"
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định",
+      "freshLabel": "Tươi",
+      "processedLabel": "Đã sơ chế"
+    },
+    "infoLabels": {
+      "cropSeason": "Mùa vụ",
+      "batch": "Lô sơ chế",
+      "info": "Thông tin"
+    },
+    "fields": {
+      "warehouse": "Kho",
+      "receivedQuantity": "Số lượng nhận",
+      "initialRequestedQuantity": "Số lượng yêu cầu ban đầu",
+      "remainingQuantityReference": "Số lượng còn lại (tham khảo)",
+      "actualRemainingQuantity": "✅ Số lượng còn lại thực tế",
+      "totalConfirmedQuantity": "Tổng số lượng đã xác nhận",
+      "receivedAt": "Ngày nhận",
+      "note": "Ghi chú",
+      "staff": "Nhân viên",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "confirmed": "Đã xác nhận",
+      "pending": "Chưa xác nhận"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "cancel": "Hủy phiếu",
+      "confirm": "Xác nhận",
+      "cancelSuccess": "Hủy phiếu nhập kho thành công!",
+      "cancelError": "Không thể hủy phiếu nhập kho",
+      "confirmSuccess": "✅ Xác nhận phiếu nhập thành công",
+      "confirmError": "Xác nhận thất bại"
+    },
+    "validation": {
+      "quantityRequired": "⚠️ Số lượng xác nhận phải lớn hơn 0",
+      "noteRequired": "⚠️ Vui lòng ghi chú lý do nếu xác nhận ít hơn số lượng đã tạo"
+    },
+    "common": {
+      "na": "N/A",
+      "noNote": "Không có",
+      "unknown": "Không rõ"
+    },
+    "freshCoffeeInfo": {
+      "title": "Thông tin cà phê tươi",
+      "cropSeason": "Mùa vụ",
+      "coffeeType": "Loại cà phê",
+      "detailCode": "Mã chi tiết"
+    },
+    "processedCoffeeInfo": {
+      "title": "Thông tin cà phê đã sơ chế",
+      "batchCode": "Mã lô",
+      "coffeeType": "Loại cà phê"
+    },
+    "confirmForm": {
+      "title": "Xác nhận phiếu nhập",
+      "initialRequest": "Yêu cầu ban đầu",
+      "remainingCanReceive": "Còn lại có thể nhập",
+      "calculating": "Đang tính...",
+      "alreadyConfirmed": "Đã xác nhận",
+      "accurateInfo": "Thông tin chính xác",
+      "backendCalculation": "Số lượng còn lại được tính toán từ backend và bao gồm tất cả các phiếu đã xác nhận trước đó",
+      "confirmedQuantity": "Số lượng xác nhận",
+      "note": "Ghi chú",
+      "required": "bắt buộc",
+      "notePlaceholderRequired": "Vui lòng ghi lý do xác nhận thiếu...",
+      "notePlaceholderOptional": "Ghi chú thêm (nếu có)",
+      "confirm": "Xác nhận",
+      "confirming": "Đang xác nhận..."
+    },
+    "cancelModal": {
+      "title": "Xác nhận hủy phiếu",
+      "description": "Bạn có chắc chắn muốn hủy phiếu này?",
+      "receiptInfo": "Thông tin phiếu",
+      "receiptCode": "Mã phiếu",
+      "warehouse": "Kho",
+      "type": "Loại",
+      "cancel": "Hủy bỏ",
+      "confirmCancel": "Xác nhận hủy",
+      "cancelling": "Đang hủy..."
+    }
+  },
+  "outboundRequestDetail": {
+    "title": "Chi tiết yêu cầu xuất kho",
+    "subtitle": "Xem thông tin chi tiết về yêu cầu",
+    "error": {
+      "loadFailed": "Không lấy được dữ liệu",
+      "notFound": "Không tìm thấy yêu cầu"
+    },
+    "status": {
+      "completed": "Hoàn tất"
+    },
+    "fields": {
+      "requestCode": "Mã yêu cầu",
+      "warehouse": "Kho",
+      "inventory": "Hàng tồn kho",
+      "quantity": "Số lượng",
+      "purpose": "Mục đích xuất kho",
+      "reason": "Lý do",
+      "requestedBy": "Người yêu cầu",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật lần cuối",
+      "status": "Trạng thái",
+      "orderLink": "Liên kết đơn hàng",
+      "note": "Ghi chú"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "approve": "Duyệt yêu cầu"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noData": "Không có"
+    }
+  },
+  "inventoryDetail": {
+    "title": "Chi tiết tồn kho",
+    "subtitle": "Xem thông tin chi tiết của lô hàng tồn",
+    "error": {
+      "notFound": "Không tìm thấy tồn kho",
+      "loadFailed": "Lỗi khi tải dữ liệu tồn kho"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu tồn kho..."
+    },
+    "fields": {
+      "inventoryCode": "Mã tồn kho",
+      "warehouse": "Kho",
+      "batchCode": "Lô sản xuất",
+      "product": "Sản phẩm",
+      "coffeeType": "Loại cà phê",
+      "quantity": "Số lượng",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "actions": {
+      "backToList": "Quay lại danh sách",
+      "history": "Lịch sử"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noData": "Không có"
+    }
+  },
+  "inventoryLogDetail": {
+    "title": "Chi tiết nhật ký tồn kho",
+    "error": {
+      "notFound": "Không tìm thấy log tồn kho",
+      "loadFailed": "Lỗi khi tải chi tiết log"
+    },
+    "loading": {
+      "title": "Đang tải chi tiết log..."
+    },
+    "status": {
+      "inbound": "📥 Nhập kho",
+      "outbound": "📤 Xuất kho"
+    },
+    "fields": {
+      "inventoryCode": "Mã tồn kho",
+      "warehouse": "Kho hàng",
+      "quantityChanged": "Số lượng thay đổi",
+      "timestamp": "Thời gian",
+      "updatedBy": "Người cập nhật",
+      "actionType": "Loại thao tác",
+      "coffeeType": "Loại cà phê",
+      "batchCode": "Mã lô",
+      "unit": "Đơn vị",
+      "warehouseName": "Tên kho",
+      "warehouseAddress": "Địa chỉ kho",
+      "warehouseCode": "Mã kho",
+      "note": "Ghi chú",
+      "reason": "Lý do thay đổi",
+      "relatedDocument": "Tài liệu liên quan"
+    },
+    "actionTypes": {
+      "increase": "Tăng tồn kho",
+      "decrease": "Giảm tồn kho"
+    },
+    "sections": {
+      "productInfo": "Thông tin sản phẩm",
+      "warehouseInfo": "Thông tin kho"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "viewAllLogs": "Xem tất cả nhật ký"
+    },
+    "common": {
+      "system": "Hệ thống"
+    }
+  },
+  "inventoryHistory": {
+    "title": "Lịch sử thay đổi tồn kho",
+    "subtitle": "Theo dõi các thay đổi về số lượng và trạng thái tồn kho",
+    "error": {
+      "noLogs": "Không có log tồn kho",
+      "loadFailed": "Lỗi khi tải log tồn kho"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu..."
+    },
+    "stats": {
+      "totalLogs": "Tổng log",
+      "inbound": "Nhập kho",
+      "outbound": "Xuất kho",
+      "today": "Hôm nay"
+    },
+    "sections": {
+      "detailedHistory": "Chi tiết lịch sử"
+    },
+    "actionLabels": {
+      "change": "📦 Thay đổi"
+    },
+    "fields": {
+      "logId": "ID Log",
+      "quantityChanged": "Số lượng thay đổi",
+      "updatedBy": "Người cập nhật",
+      "note": "Ghi chú",
+      "timestamp": "Thời gian"
+    },
+    "actions": {
+      "backToList": "Quay lại danh sách"
+    },
+    "common": {
+      "system": "Hệ thống",
+      "noNote": "Không có ghi chú"
+    },
+    "empty": {
+      "title": "Không có lịch sử tồn kho",
+      "description": "Tồn kho này chưa có thay đổi nào được ghi nhận"
+    }
+  },
+  "createReceipt": {
+    "title": "Tạo phiếu nhập kho",
+    "subtitle": "Xác nhận và tạo phiếu nhập kho từ yêu cầu đã duyệt",
+    "error": {
+      "loadWarehouses": "Không thể tải danh sách kho",
+      "loadWarehousesUnknown": "Lỗi không xác định khi tải danh sách kho",
+      "loadInboundRequests": "Không thể tải phiếu yêu cầu nhập kho",
+      "loadInboundRequestsUnknown": "Lỗi không xác định khi tải phiếu yêu cầu nhập kho",
+      "loadInventories": "Lỗi khi tải tồn kho của kho",
+      "createEmptyInventory": "Không tạo được tồn kho trống",
+      "createReceiptFailed": "Tạo phiếu thất bại từ server",
+      "createReceiptUnknown": "Tạo phiếu thất bại. Vui lòng thử lại"
+    },
+    "success": {
+      "createEmptyInventory": "Đã tạo tồn kho trống cho kho + lô này",
+      "createReceipt": "Tạo phiếu nhập kho thành công"
+    },
+    "validation": {
+      "selectAll": "Vui lòng chọn đầy đủ Phiếu yêu cầu và Kho",
+      "noProductInfo": "Không tìm thấy thông tin sản phẩm (batchId hoặc detailId) tương ứng với phiếu yêu cầu"
+    },
+    "sections": {
+      "receiptInfo": "Thông tin phiếu nhập kho",
+      "requestDetails": "Chi tiết yêu cầu nhập kho",
+      "inventoryStatus": "Tình trạng tồn kho"
+    },
+    "fields": {
+      "inboundRequest": "Phiếu yêu cầu nhập kho",
+      "requestCode": "Mã yêu cầu",
+      "status": "Trạng thái",
+      "requestedQuantity": "Số lượng yêu cầu",
+      "preferredDeliveryDate": "Ngày giao dự kiến",
+      "coffeeType": "Loại cà phê",
+      "information": "Thông tin",
+      "note": "Ghi chú",
+      "warehouse": "Kho nhập hàng"
+    },
+    "placeholders": {
+      "selectRequest": "-- Chọn phiếu yêu cầu --",
+      "selectWarehouse": "-- Chọn kho --",
+      "note": "Ghi chú thêm về phiếu nhập kho (nếu có)..."
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê sơ chế"
+    },
+    "info": {
+      "check": "Kiểm tra",
+      "requestedQuantity": "Số lượng yêu cầu là",
+      "confirmNote": "Khi xác nhận phiếu, bạn sẽ nhập số lượng thực tế nhận được",
+      "remember": "Nhớ",
+      "currentQuantity": "Số lượng hiện tại =",
+      "default": "mặc định",
+      "confirmStep": "Bạn sẽ nhập số lượng thực tế ở bước xác nhận!"
+    },
+    "warning": {
+      "title": "LƯU Ý QUAN TRỌNG - KHÔNG BỎ QUA!",
+      "defaultQuantity": "Số lượng mặc định",
+      "defaultQuantityDesc": "Khi tạo phiếu, hệ thống đặt",
+      "requestedFromFarmer": "Số lượng yêu cầu từ farmer",
+      "nextStep": "Bước tiếp theo",
+      "nextStepDesc": "Khi xác nhận phiếu, bạn PHẢI nhập số lượng thực tế nhận được"
+    },
+    "process": {
+      "title": "Quy trình 2 bước tạo phiếu nhập kho",
+      "step1": {
+        "title": "Bước 1: Tạo phiếu (Bạn đang ở đây)",
+        "autoQuantity": "Hệ thống tự động đặt số lượng =",
+        "selectOnly": "Chỉ cần chọn yêu cầu và kho"
+      },
+      "step2": {
+        "title": "Bước 2: Xác nhận phiếu (Quan trọng!)",
+        "enterActual": "Nhập số lượng thực tế nhận được",
+        "compare": "So sánh với yêu cầu:"
+      }
+    },
+    "inventory": {
+      "selectAll": "Hãy chọn đầy đủ Phiếu và Kho để xem tồn kho",
+      "loading": "Đang tải tồn kho...",
+      "noInventory": "Chưa có tồn kho cho lô này tại kho đã chọn. Hệ thống sẽ tự tạo tồn kho khi bạn xác nhận phiếu.",
+      "creating": "Đang tạo...",
+      "createEmpty": "Tạo tồn kho trống (0 kg)",
+      "createEmptyButton": "Tạo tồn kho trống",
+      "hasInventory": "Đã có tồn kho",
+      "totalExisting": "Tổng hiện có:",
+      "details": "Chi tiết tồn kho",
+      "confirmNote": "Khi bạn xác nhận phiếu, hệ thống sẽ cộng dồn khối lượng vào tồn kho hiện có"
+    },
+    "stats": {
+      "title": "Thống kê nhanh",
+      "warehouses": "Kho",
+      "requests": "Yêu cầu",
+      "approved": "Đã duyệt",
+      "currentRequest": "Yêu cầu hiện tại",
+      "requestedQuantity": "Số lượng yêu cầu",
+      "receiptQuantity": "Số lượng phiếu",
+      "difference": "Chênh lệch"
+    },
+    "actions": {
+      "createReceipt": "Tạo phiếu nhập kho"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "processedBatch": "Lô sơ chế",
+      "cropSeason": "Mùa vụ"
+    }
+  },
+  "sidebar": {
+    "loading": "Đang tải menu...",
+    "navigation": {
+      "overview": "Tổng quan",
+      "batches": "Lô hàng",
+      "notifications": "Thông báo",
+      "warehouseOperations": "Vận hành kho",
+      "warehouseManagement": "Quản lý kho",
+      "inboundRequests": "Yêu cầu nhập kho",
+      "inboundReceipts": "Phiếu nhập kho",
+      "outboundRequests": "Yêu cầu xuất kho",
+      "outboundReceipts": "Phiếu xuất kho",
+      "inventories": "Tồn kho",
+      "inventoryLogs": "Nhật ký tồn kho",
+      "warehouses": "Kho hàng"
+    },
+            "user": {
+          "greeting": "Xin chào:",
+          "anonymous": "Ẩn danh",
+          "logout": "Đăng xuất",
+          "logoutTitle": "Đăng xuất và về trang chính"
+        },
+        "profile": "Hồ sơ cá nhân",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất",
+            "staffDashboard": {
+          "title": "Bảng điều khiển Nhân viên",
+          "subtitle": "Quản lý vận hành kho và theo dõi hoạt động",
+          "waitingInbound": "Yêu cầu nhập kho đang chờ",
+          "waitingOutbound": "Yêu cầu xuất kho đang chờ",
+          "monthlyStats": "Thống kê theo tháng",
+          "quickAccess": "Truy cập nhanh",
+          "months": ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"],
+          "chartLabels": {
+            "inbound": "Nhập kho",
+            "outbound": "Xuất kho"
+          },
+          "inv": "Tồn kho",
+          "inventory": "Quản lý tồn kho",
+          "inventoryDesc": "Quản lý tồn kho",
+          "inb": "Nhập kho",
+          "inbound": "Yêu cầu nhập kho",
+          "inboundRequests": "Yêu cầu nhập kho",
+          "inboundRequestsDesc": "Yêu cầu nhập kho",
+          "out": "Xuất kho",
+          "outbound": "Phiếu xuất kho",
+          "outboundRequests": "Yêu cầu xuất kho",
+          "outboundRequestsDesc": "Yêu cầu xuất kho",
+          "outboundReceipts": "Phiếu xuất kho",
+          "outboundReceiptsDesc": "Phiếu xuất kho",
+          "wa": "Kho hàng",
+          "warehou": "Quản lý kho hàng",
+          "warehouses": "Kho hàng",
+          "warehousesDesc": "Quản lý kho hàng",
+          "rec": "Phiếu nhập",
+          "receipts": "Phiếu nhập kho",
+          "receiptsDesc": "Phiếu nhập kho"
+        }
+  },
+  "warehouseDetail": {
+    "title": "Chi tiết kho hàng",
+    "subtitle": "Xem thông tin chi tiết của kho",
+    "error": {
+      "notFound": "Không tìm thấy kho",
+      "loadFailed": "Lỗi khi tải chi tiết kho"
+    },
+    "loading": {
+      "title": "Đang tải danh sách kho hàng...",
+      "inventories": "Đang tải..."
+    },
+          "fields": {
+        "warehouseCode": "Mã kho",
+        "location": "Vị trí",
+        "capacity": "Dung lượng",
+        "manager": "Người quản lý",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "inventories": "Tồn kho trong kho này"
+      },
+      "actions": {
+        "back": "Quay lại"
+      },
+      "common": {
+        "noInventories": "Không có tồn kho",
+        "clickToViewInventories": "Nhấn để xem danh sách tồn kho"
+      },
+      "error": {
+        "title": "Không thể tải dữ liệu",
+        "description": "Lỗi khi tải danh sách kho hàng"
+      },
+    "detail": {
+      "title": "Chi tiết kho hàng",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "name": "Tên kho",
+        "address": "Địa chỉ",
+        "capacity": "Dung lượng",
+        "manager": "Quản lý",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo"
+      }
+    },
+    "create": {
+      "title": "Tạo kho hàng mới",
+      "subtitle": "Thêm kho hàng mới vào hệ thống",
+      "form": {
+        "name": "Tên kho *",
+        "namePlaceholder": "Nhập tên kho...",
+        "address": "Địa chỉ *",
+        "addressPlaceholder": "Nhập địa chỉ kho...",
+        "capacity": "Dung lượng (kg) *",
+        "capacityPlaceholder": "Nhập dung lượng kho...",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Nhập mô tả kho..."
+      },
+      "validation": {
+        "nameRequired": "Tên kho là bắt buộc",
+        "addressRequired": "Địa chỉ kho là bắt buộc",
+        "capacityRequired": "Dung lượng kho là bắt buộc",
+        "capacityPositive": "Dung lượng phải lớn hơn 0"
+      },
+      "actions": {
+        "create": "Tạo kho",
+        "cancel": "Hủy bỏ",
+        "creating": "Đang tạo..."
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa kho hàng",
+      "subtitle": "Cập nhật thông tin kho hàng",
+      "actions": {
+        "save": "Lưu thay đổi",
+        "cancel": "Hủy bỏ",
+        "saving": "Đang lưu..."
+      }
     }
   }
 }

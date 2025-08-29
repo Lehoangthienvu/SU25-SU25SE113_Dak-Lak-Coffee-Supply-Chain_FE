@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getWarehouseById } from '@/lib/api/warehouses';
 import { getInventoriesByWarehouseIdForDetail } from '@/lib/api/inventory';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   ArrowLeft,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function WarehouseDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
 
@@ -37,10 +39,10 @@ export default function WarehouseDetailPage() {
         if (res.status === 1 && res.data) {
           setWarehouse(res.data);
         } else {
-          toast.error('Không thể lấy dữ liệu kho: ' + res.message);
+          toast.error(t('warehouseDetail.error.loadFailed') + ': ' + res.message);
         }
       } catch {
-        toast.error('Lỗi khi tải chi tiết kho');
+        toast.error(t('warehouseDetail.error.loadFailed'));
       } finally {
         setLoading(false);
       }
@@ -72,7 +74,7 @@ export default function WarehouseDetailPage() {
   }
 
   if (!warehouse) {
-    return <div className="p-6 text-red-600">❌ Không tìm thấy kho.</div>;
+    return <div className="p-6 text-red-600">❌ {t('warehouseDetail.error.notFound')}</div>;
   }
 
   return (
@@ -82,38 +84,38 @@ export default function WarehouseDetailPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-yellow-500 bg-clip-text text-transparent">
-              🏬 Chi tiết kho hàng
+              🏬 {t('warehouseDetail.title')}
             </h1>
-            <p className="text-gray-600">Xem thông tin chi tiết của kho</p>
+            <p className="text-gray-600">{t('warehouseDetail.subtitle')}</p>
           </div>
           <Button variant="outline" onClick={() => router.back()} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            {t('warehouseDetail.actions.back')}
           </Button>
         </div>
 
         {/* Chi tiết kho */}
         <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-100">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
-            <DetailItem icon={<Building2 className="text-orange-600" />} label="Mã kho" value={warehouse.warehouseCode} />
-            <DetailItem icon={<MapPin className="text-blue-600" />} label="Vị trí" value={warehouse.location} />
-            <DetailItem icon={<Boxes className="text-green-600" />} label="Dung lượng" value={`${warehouse.capacity?.toLocaleString()} kg`} />
-            <DetailItem icon={<User className="text-indigo-600" />} label="Người quản lý" value={warehouse.managerName} />
-            <DetailItem icon={<CalendarDays className="text-rose-600" />} label="Ngày tạo" value={new Date(warehouse.createdAt).toLocaleString('vi-VN')} />
-            <DetailItem icon={<RefreshCw className="text-gray-600" />} label="Ngày cập nhật" value={new Date(warehouse.updatedAt).toLocaleString('vi-VN')} />
+            <DetailItem icon={<Building2 className="text-orange-600" />} label={t('warehouseDetail.fields.warehouseCode')} value={warehouse.warehouseCode} />
+            <DetailItem icon={<MapPin className="text-blue-600" />} label={t('warehouseDetail.fields.location')} value={warehouse.location} />
+            <DetailItem icon={<Boxes className="text-green-600" />} label={t('warehouseDetail.fields.capacity')} value={`${warehouse.capacity?.toLocaleString()} kg`} />
+            <DetailItem icon={<User className="text-indigo-600" />} label={t('warehouseDetail.fields.manager')} value={warehouse.managerName} />
+            <DetailItem icon={<CalendarDays className="text-rose-600" />} label={t('warehouseDetail.fields.createdAt')} value={new Date(warehouse.createdAt).toLocaleString('vi-VN')} />
+            <DetailItem icon={<RefreshCw className="text-gray-600" />} label={t('warehouseDetail.fields.updatedAt')} value={new Date(warehouse.updatedAt).toLocaleString('vi-VN')} />
             <DetailItem
               icon={<PackageOpen className="text-orange-500" />}
               label={
                 <button onClick={() => setShowInventories((prev) => !prev)} className="flex items-center gap-2">
-                  Tồn kho trong kho này
+                  {t('warehouseDetail.fields.inventories')}
                   {showInventories ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
               }
               value={
                 loadingInventory ? (
-                  <p className="text-gray-500 text-sm">Đang tải...</p>
+                  <p className="text-gray-500 text-sm">{t('warehouseDetail.loading.inventories')}</p>
                 ) : inventories.length === 0 ? (
-                  <p className="italic text-gray-500 text-sm">Không có tồn kho</p>
+                  <p className="italic text-gray-500 text-sm">{t('warehouseDetail.common.noInventories')}</p>
                 ) : showInventories ? (
                   <ul className="space-y-1 mt-1">
                     {inventories.map((inv) => (
@@ -124,7 +126,7 @@ export default function WarehouseDetailPage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-gray-500 italic">Nhấn để xem danh sách tồn kho</p>
+                  <p className="text-sm text-gray-500 italic">{t('warehouseDetail.common.clickToViewInventories')}</p>
                 )
               }
             />

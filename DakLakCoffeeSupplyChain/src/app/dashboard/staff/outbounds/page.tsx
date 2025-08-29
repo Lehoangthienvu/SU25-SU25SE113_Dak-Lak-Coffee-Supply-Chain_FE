@@ -150,7 +150,7 @@ function StaffOutboundRequestListContent() {
       case 'Completed':
         return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Hoàn tất
+          {t('warehouseOutboundRequests.detail.status.completed')}
         </Badge>;
       case 'Cancelled':
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
@@ -228,7 +228,7 @@ function StaffOutboundRequestListContent() {
                 <SelectItem value="all">{t('warehouseOutboundRequests.filters.byStatus.all')}</SelectItem>
                 <SelectItem value="Pending">{t('warehouseOutboundRequests.filters.byStatus.pending')}</SelectItem>
                 <SelectItem value="Accepted">{t('warehouseOutboundRequests.filters.byStatus.accepted')}</SelectItem>
-                <SelectItem value="Completed">Hoàn tất</SelectItem>
+                <SelectItem value="Completed">{t('warehouseOutboundRequests.filters.byStatus.completed')}</SelectItem>
                 <SelectItem value="Cancelled">{t('warehouseOutboundRequests.filters.byStatus.cancelled')}</SelectItem>
                 <SelectItem value="Rejected">{t('warehouseOutboundRequests.filters.byStatus.rejected')}</SelectItem>
               </SelectContent>

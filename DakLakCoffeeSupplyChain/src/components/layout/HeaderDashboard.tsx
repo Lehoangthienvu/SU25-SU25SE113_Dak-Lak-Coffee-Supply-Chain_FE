@@ -117,17 +117,7 @@ export default function HeaderDashboard() {
         <h1 className="text-2xl font-bold text-gray-800">{currentTitle}</h1>
       </div>
 
-      {/* Search */}
-      <div className="relative w-full max-w-md mx-4">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            type="text"
-            placeholder={t('common.search')}
-            className="pl-10 pr-4 py-2 text-sm bg-gray-50 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-          />
-        </div>
-      </div>
+      {/* Search - Removed as per UI requirements */}
 
       {/* Icons + Avatar + Dropdown */}
       <div className="flex items-center gap-4">

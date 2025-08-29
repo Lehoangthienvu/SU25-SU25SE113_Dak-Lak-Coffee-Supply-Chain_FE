@@ -200,55 +200,7 @@ function InboundRequestListContent() {
             </div>
           </div>
 
-          {/* Filter Panel */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.status')}</span>
-                <Select value={statusFilter} onValueChange={(value) => {
-                  setStatusFilter(value);
-                  setPage(1);
-                }}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder={t('warehouseInboundRequests.filters.selectStatus')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('warehouseInboundRequests.filters.all')}</SelectItem>
-                    <SelectItem value="Pending">{t('warehouseInboundRequests.filters.pending')}</SelectItem>
-                    <SelectItem value="Accepted">{t('warehouseInboundRequests.filters.accepted')}</SelectItem>
-                    <SelectItem value="Rejected">{t('warehouseInboundRequests.filters.rejected')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.coffeeType')}</span>
-                <Select value={coffeeTypeFilter} onValueChange={(value) => {
-                  setCoffeeTypeFilter(value);
-                  setPage(1);
-                }}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder={t('warehouseInboundRequests.filters.selectCoffeeType')} />
-                  </SelectTrigger>
-                                     <SelectContent>
-                     <SelectItem value="all">{t('warehouseInboundRequests.filters.all')} ({requests.length})</SelectItem>
-                     {/* TẠM THỜI ẨN - Filter cà phê tươi */}
-                     {/* <SelectItem value="fresh">
-                       <div className="flex items-center gap-2">
-                         <Leaf className="w-4 h-4 text-orange-600" />
-                         Cà phê tươi ({freshCoffeeRequests.length})
-                       </div>
-                     </SelectItem> */}
-                     <SelectItem value="processed">
-                       <div className="flex items-center gap-2">
-                         <Coffee className="w-4 h-4 text-purple-600" />
-                         {t('warehouseInboundRequests.table.coffeeTypes.processed')} ({processedCoffeeRequests.length})
-                       </div>
-                     </SelectItem>
-                   </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -323,9 +275,52 @@ function InboundRequestListContent() {
         {/* Table */}
         <Card className="border-blue-100 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              {t('warehouseInboundRequests.table.title')}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold text-gray-800">
+                {t('warehouseInboundRequests.table.title')}
+              </CardTitle>
+              
+              {/* Filter Panel - Moved to table header for better UX */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.status')}</span>
+                  <Select value={statusFilter} onValueChange={(value) => {
+                    setStatusFilter(value);
+                    setPage(1);
+                  }}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder={t('warehouseInboundRequests.filters.selectStatus')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('warehouseInboundRequests.filters.all')}</SelectItem>
+                      <SelectItem value="Pending">{t('warehouseInboundRequests.filters.pending')}</SelectItem>
+                      <SelectItem value="Accepted">{t('warehouseInboundRequests.filters.approved')}</SelectItem>
+                      <SelectItem value="Rejected">{t('warehouseInboundRequests.filters.rejected')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">{t('warehouseInboundRequests.filters.coffeeType')}</span>
+                  <Select value={coffeeTypeFilter} onValueChange={(value) => {
+                    setCoffeeTypeFilter(value);
+                    setPage(1);
+                  }}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder={t('warehouseInboundRequests.filters.selectCoffeeType')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('warehouseInboundRequests.filters.all')} ({requests.length})</SelectItem>
+                      <SelectItem value="processed">
+                        <div className="flex items-center gap-2">
+                          <Coffee className="w-4 h-4 text-purple-600" />
+                          {t('warehouseInboundRequests.table.coffeeTypes.processed')} ({processedCoffeeRequests.length})
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {filtered.length === 0 ? (

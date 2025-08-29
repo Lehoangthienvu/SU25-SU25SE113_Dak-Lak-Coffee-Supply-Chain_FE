@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ChevronLeft, ChevronRight, Search, Eye, Package, TrendingUp, AlertTriangle, Warehouse, Coffee, Leaf } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 export default function StaffInventoryListPage() {
+  const { t } = useTranslation();
   const [inventories, setInventories] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [coffeeTypeFilter, setCoffeeTypeFilter] = useState<string>('all'); // 'all', 'processed', 'fresh'
@@ -29,10 +31,10 @@ export default function StaffInventoryListPage() {
         } else if (Array.isArray(res)) {
           setInventories(res);
         } else {
-          toast.error(res.message || 'Không thể tải tồn kho.');
+          toast.error(res.message || t('inventories.error.description'));
         }
       } catch (err: any) {
-        toast.error(`❌ Lỗi hệ thống: ${err.message}`);
+        toast.error(`❌ ${t('inventories.error.description')}: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -53,9 +55,9 @@ export default function StaffInventoryListPage() {
   const getCoffeeTypeLabel = (inventory: any) => {
     const type = getCoffeeType(inventory);
     switch (type) {
-      case 'fresh': return 'Cà phê tươi';
-      case 'processed': return 'Cà phê đã sơ chế';
-      default: return 'Không xác định';
+      case 'fresh': return t('inventories.coffeeTypes.fresh');
+      case 'processed': return t('inventories.coffeeTypes.processed');
+      default: return t('inventories.coffeeTypes.unknown');
     }
   };
 
@@ -73,19 +75,19 @@ export default function StaffInventoryListPage() {
     switch (type) {
       case 'fresh':
         return {
-          label: 'Mùa vụ',
+          label: t('inventories.infoLabels.cropSeason'),
           value: inventory?.cropSeasonName || inventory?.detailCode || 'N/A',
           color: 'text-orange-700'
         };
       case 'processed':
         return {
-          label: 'Lô sơ chế',
-          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || 'Đã sơ chế'}` : 'N/A',
+          label: t('inventories.infoLabels.batch'),
+          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || t('inventories.coffeeTypes.processed')}` : 'N/A',
           color: 'text-purple-700'
         };
       default:
         return {
-          label: 'Thông tin',
+          label: t('inventories.infoLabels.info'),
           value: 'N/A',
           color: 'text-gray-700'
         };
@@ -143,9 +145,9 @@ export default function StaffInventoryListPage() {
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
           <Package className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 Tồn kho</h1>
+          <h1 className="text-2xl font-bold">📦 {t('inventories.title')}</h1>
         </div>
-        <p className="text-green-100 text-base">Xem thông tin tồn kho trong hệ thống kho hàng</p>
+        <p className="text-green-100 text-base">{t('inventories.subtitle')}</p>
       </div>
 
       {/* Thống kê tổng quan */}
@@ -157,7 +159,7 @@ export default function StaffInventoryListPage() {
                 <Package className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng tồn kho</p>
+                <p className="text-xs text-gray-600 font-medium">{t('inventories.stats.totalInventory')}</p>
                 <p className="text-xl font-bold text-green-600">{totalQuantity.toLocaleString()} kg</p>
               </div>
             </div>
@@ -171,7 +173,7 @@ export default function StaffInventoryListPage() {
                 <TrendingUp className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Lô còn hàng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('inventories.stats.inStockBatches')}</p>
                 <p className="text-xl font-bold text-emerald-600">{inStockCount}</p>
               </div>
             </div>
@@ -185,7 +187,7 @@ export default function StaffInventoryListPage() {
                 <Warehouse className="w-5 h-5 text-teal-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Kho hàng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('inventories.stats.warehouses')}</p>
                 <p className="text-xl font-bold text-teal-600">{uniqueWarehouses}</p>
               </div>
             </div>
@@ -199,7 +201,7 @@ export default function StaffInventoryListPage() {
                 <Coffee className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Loại sản phẩm</p>
+                <p className="text-xs text-gray-600 font-medium">{t('inventories.stats.productTypes')}</p>
                 <p className="text-xl font-bold text-amber-600">{uniqueProducts}</p>
               </div>
             </div>
@@ -215,7 +217,7 @@ export default function StaffInventoryListPage() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Leaf className="w-5 h-5" />
-                  <p className="text-orange-100 text-sm font-medium">Cà phê tươi</p>
+                  <p className="text-orange-100 text-sm font-medium">{t('inventories.coffeeTypes.fresh')}</p>
                 </div>
                 <p className="text-2xl font-bold">{freshCoffeeInventories.length} lô</p>
                 <p className="text-orange-200 text-sm">{freshCoffeeQuantity.toLocaleString()} kg</p>
@@ -230,7 +232,7 @@ export default function StaffInventoryListPage() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Coffee className="w-5 h-5" />
-                  <p className="text-purple-100 text-sm font-medium">Cà phê đã sơ chế</p>
+                  <p className="text-purple-100 text-sm font-medium">{t('inventories.coffeeTypes.processed')}</p>
                 </div>
                 <p className="text-2xl font-bold">{processedCoffeeInventories.length} lô</p>
                 <p className="text-purple-200 text-sm">{processedCoffeeQuantity.toLocaleString()} kg</p>
@@ -247,7 +249,7 @@ export default function StaffInventoryListPage() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Input
-                  placeholder="🔍 Tìm theo mã kho, loại cà phê, kho hàng..."
+                  placeholder={t('inventories.search.placeholder')}
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -265,42 +267,42 @@ export default function StaffInventoryListPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Loại cà phê:</span>
+                <span className="text-sm font-medium text-gray-700">{t('inventories.filters.coffeeType')}</span>
                 <Select value={coffeeTypeFilter} onValueChange={(value) => {
                   setCoffeeTypeFilter(value);
                   setCurrentPage(1);
                 }}>
                   <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Chọn loại" />
+                    <SelectValue placeholder={t('inventories.filters.selectCoffeeType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tất cả ({inventories.length})</SelectItem>
+                    <SelectItem value="all">{t('inventories.filters.all')} ({inventories.length})</SelectItem>
                     <SelectItem value="fresh">
                       <div className="flex items-center gap-2">
                         <Leaf className="w-4 h-4 text-orange-600" />
-                        Cà phê tươi ({freshCoffeeInventories.length})
+                        {t('inventories.coffeeTypes.fresh')} ({freshCoffeeInventories.length})
                       </div>
                     </SelectItem>
                     <SelectItem value="processed">
                       <div className="flex items-center gap-2">
                         <Coffee className="w-4 h-4 text-purple-600" />
-                        Cà phê đã sơ chế ({processedCoffeeInventories.length})
+                        {t('inventories.coffeeTypes.processed')} ({processedCoffeeInventories.length})
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Kho:</span>
+                <span className="text-sm font-medium text-gray-700">{t('inventories.filters.warehouse')}</span>
                 <Select value={warehouseFilter} onValueChange={(value) => {
                   setWarehouseFilter(value);
                   setCurrentPage(1);
                 }}>
                   <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Chọn kho" />
+                    <SelectValue placeholder={t('inventories.filters.selectWarehouse')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tất cả kho</SelectItem>
+                    <SelectItem value="all">{t('inventories.filters.allWarehouses')}</SelectItem>
                     {warehouseList.map((warehouse) => (
                       <SelectItem key={warehouse} value={warehouse}>
                         {warehouse}
@@ -312,7 +314,7 @@ export default function StaffInventoryListPage() {
             </div>
           </div>
           <div className="mt-3 text-sm text-gray-500">
-            📋 Tồn kho được tạo tự động từ phiếu nhập kho và lô sơ chế
+            {t('inventories.description')}
           </div>
         </CardContent>
       </Card>
@@ -322,7 +324,7 @@ export default function StaffInventoryListPage() {
         <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
           <CardTitle className="text-lg font-semibold text-green-800 flex items-center gap-2">
             <Package className="w-5 h-5 text-green-600" />
-            Chi tiết tồn kho
+                         {t('inventories.table.title')}
             <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 text-xs">
               {filtered.length} lô
             </Badge>
@@ -332,15 +334,15 @@ export default function StaffInventoryListPage() {
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Đang tải dữ liệu...</p>
+                             <p className="text-gray-600 text-lg">{t('inventories.loading.title')}</p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Package className="w-8 h-8 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-lg mb-2">Không có tồn kho nào</p>
-              <p className="text-gray-400 text-sm">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+                             <p className="text-gray-500 text-lg mb-2">{t('inventories.empty.title')}</p>
+               <p className="text-gray-400 text-sm">{t('inventories.empty.description')}</p>
             </div>
           ) : (
             <>
@@ -348,13 +350,13 @@ export default function StaffInventoryListPage() {
                 <table className="w-full table-auto border border-gray-200 rounded-lg text-sm">
                   <thead className="bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 font-semibold">
                     <tr>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Tên kho</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Loại cà phê</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Thông tin</th>
-                      <th className="px-4 py-3 text-left border-b border-green-200">Sản phẩm</th>
-                      <th className="px-4 py-3 text-right border-b border-green-200">Số lượng (kg)</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Trạng thái</th>
-                      <th className="px-4 py-3 text-center border-b border-green-200">Hành động</th>
+                                             <th className="px-4 py-3 text-left border-b border-green-200">{t('inventories.table.headers.warehouse')}</th>
+                       <th className="px-4 py-3 text-left border-b border-green-200">{t('inventories.table.headers.coffeeType')}</th>
+                       <th className="px-4 py-3 text-left border-b border-green-200">{t('inventories.table.headers.information')}</th>
+                       <th className="px-4 py-3 text-left border-b border-green-200">{t('inventories.table.headers.product')}</th>
+                       <th className="px-4 py-3 text-right border-b border-green-200">{t('inventories.table.headers.quantity')}</th>
+                       <th className="px-4 py-3 text-center border-b border-green-200">{t('inventories.table.headers.status')}</th>
+                       <th className="px-4 py-3 text-center border-b border-green-200">{t('inventories.table.headers.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -399,7 +401,7 @@ export default function StaffInventoryListPage() {
                                   : 'bg-red-100 text-red-800 border-red-200'
                               }`}
                             >
-                              {inv.quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                                                             {inv.quantity > 0 ? t('inventories.status.inStock') : t('inventories.status.outOfStock')}
                             </Badge>
                           </td>
                           <td className="px-4 py-3 text-center">
@@ -424,9 +426,9 @@ export default function StaffInventoryListPage() {
               {totalPages > 1 && (
                 <div className="bg-green-50 px-4 py-3 border-t border-green-100">
                   <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <div className="text-sm text-gray-600">
-                      Hiển thị {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, filtered.length)} trong tổng số {filtered.length} lô
-                    </div>
+                                         <div className="text-sm text-gray-600">
+                       {t('inventories.pagination.showing')} {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, filtered.length)} {t('inventories.pagination.of')} {filtered.length} {t('inventories.pagination.batches')}
+                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Button
@@ -437,7 +439,7 @@ export default function StaffInventoryListPage() {
                         className="h-8 px-3 text-sm border-green-200 hover:border-green-300 hover:bg-green-50"
                       >
                         <ChevronLeft className="w-4 h-4 mr-1" />
-                        Trước
+                                                 {t('inventories.pagination.previous')}
                       </Button>
                       
                       <div className="flex items-center gap-1">
@@ -465,7 +467,7 @@ export default function StaffInventoryListPage() {
                         disabled={currentPage === totalPages}
                         className="h-8 px-3 text-sm border-green-200 hover:border-green-300 hover:bg-green-50"
                       >
-                        Sau
+                                                 {t('inventories.pagination.next')}
                         <ChevronRight className="w-4 h-4 ml-1" />
                       </Button>
                     </div>
@@ -486,9 +488,9 @@ export default function StaffInventoryListPage() {
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
-                <h3 className="font-semibold text-red-800 mb-2">Lô hết hàng</h3>
+                                 <h3 className="font-semibold text-red-800 mb-2">{t('inventories.stats.outOfStockBatches')}</h3>
                 <p className="text-2xl font-bold text-red-600">{outOfStockCount}</p>
-                <p className="text-sm text-gray-600">Cần bổ sung</p>
+                                 <p className="text-sm text-gray-600">{t('inventories.stats.needReplenishment')}</p>
               </div>
             </CardContent>
           </Card>
@@ -499,9 +501,9 @@ export default function StaffInventoryListPage() {
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-green-800 mb-2">Tổng lô</h3>
+                                 <h3 className="font-semibold text-green-800 mb-2">{t('inventories.stats.totalBatches')}</h3>
                 <p className="text-2xl font-bold text-green-600">{totalInventories}</p>
-                <p className="text-sm text-gray-600">Tất cả sản phẩm</p>
+                                 <p className="text-sm text-gray-600">{t('inventories.stats.allProducts')}</p>
               </div>
             </CardContent>
           </Card>

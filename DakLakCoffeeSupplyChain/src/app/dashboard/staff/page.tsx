@@ -46,8 +46,6 @@ export default function StaffDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log("🔍 DEBUG: Dashboard - Starting to fetch data...");
-        
         // ✅ SỬA: Gọi từng API riêng biệt để tránh Promise.all fail
         let inboundRes = null;
         let outboundRes = null;
@@ -55,21 +53,18 @@ export default function StaffDashboard() {
 
         try {
           inboundRes = await getAllInboundRequests();
-          console.log("🔍 DEBUG: Dashboard - Inbound response:", inboundRes);
         } catch (err) {
           console.error("❌ Lỗi khi tải inbound requests:", err);
         }
 
         try {
           outboundRes = await getAllOutboundRequests();
-          console.log("🔍 DEBUG: Dashboard - Outbound response:", outboundRes);
         } catch (err) {
           console.error("❌ Lỗi khi tải outbound requests:", err);
         }
 
         try {
           outboundReceipts = await getAllOutboundReceipts();
-          console.log("🔍 DEBUG: Dashboard - Outbound receipts response:", outboundReceipts);
         } catch (err) {
           console.error("❌ Lỗi khi tải outbound receipts:", err);
         }
@@ -80,9 +75,6 @@ export default function StaffDashboard() {
         const outboundWaitingList = outboundRes?.data?.filter((r: any) =>
           ["Pending", "Processing"].includes(r.status)
         );
-
-        console.log("🔍 DEBUG: Dashboard - Inbound waiting list:", inboundWaitingList);
-        console.log("🔍 DEBUG: Dashboard - Outbound waiting list:", outboundWaitingList);
 
         setInboundWaiting(inboundWaitingList?.length || 0);
         setOutboundWaiting(outboundWaitingList?.length || 0);
@@ -105,7 +97,6 @@ export default function StaffDashboard() {
         setOutboundPerMonth(outboundByMonth);
       } catch (err) {
         console.error("❌ Lỗi khi tải dữ liệu thống kê:", err);
-        console.log("🔍 DEBUG: Dashboard - Error details:", err);
       }
     }
 
