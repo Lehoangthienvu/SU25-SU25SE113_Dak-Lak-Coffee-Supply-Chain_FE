@@ -331,6 +331,23 @@ export function getEvaluationResultDisplayName(result: string): string {
   }
 }
 
+export function getEvaluationResultDisplayNameI18n(result: string, t: (key: string) => string): string {
+  switch (result) {
+    case EVALUATION_RESULTS.PASS:
+      return t("processing.pages.farmerEvaluationDetail.evaluationResults.pass");
+    case EVALUATION_RESULTS.FAIL:
+      return t("processing.pages.farmerEvaluationDetail.evaluationResults.fail");
+    case EVALUATION_RESULTS.NEEDS_IMPROVEMENT:
+      return t("processing.pages.farmerEvaluationDetail.evaluationResults.needsImprovement");
+    case EVALUATION_RESULTS.TEMPORARY:
+      return t("processing.pages.farmerEvaluationDetail.evaluationResults.temporary");
+    case EVALUATION_RESULTS.PENDING:
+      return t("processing.pages.farmerEvaluationDetail.evaluationResults.pending");
+    default:
+      return result;
+  }
+}
+
 export function getEvaluationResultColor(result: string): string {
   switch (result) {
     case EVALUATION_RESULTS.PASS:
