@@ -270,7 +270,8 @@ export default function RegistrationCard({
                       </Button>
                     </>
                   ) : isApproved && !isCommitmentCreated ? (
-                    <Button
+                    <div className='flex gap-2'>
+                      <Button
                       size='sm'
                       variant='secondaryGradient'
                       onClick={() => {
@@ -281,6 +282,24 @@ export default function RegistrationCard({
                     >
                       Tạo cam kết
                     </Button>
+                    <Button
+                        size='sm'
+                        variant='destructiveGradient'
+                        disabled={
+                          loadingApprovalId ===
+                          detail.cultivationRegistrationDetailId
+                        }
+                        onClick={() =>
+                          detail.cultivationRegistrationDetailId &&
+                          openRejectDialog(
+                            detail.cultivationRegistrationDetailId
+                          )
+                        }
+                        //className='bg-green-200 hover:bg-emerald-400 hover:text-white text-green-800 transition'
+                      >
+                        <FiXCircle className='mr-1' /> Từ chối
+                      </Button>
+                    </div>
                   ) : isRejected || isProcurementPlanCancelled || isCommitmentActive ? (
                     <></>
                   ) : (
