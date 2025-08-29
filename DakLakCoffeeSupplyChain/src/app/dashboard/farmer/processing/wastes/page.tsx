@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { AppToast } from "@/components/ui/AppToast";
 import { getAllProcessingWastes, ProcessingWaste } from "@/lib/api/processingWastes";
@@ -15,6 +16,7 @@ import Pagination from "@/components/processing/Pagination";
 
 export default function ProcessingWastesPage() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [wastes, setWastes] = useState<ProcessingWaste[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function ProcessingWastesPage() {
         }
       } catch (err) {
         console.error("Lỗi tải danh sách chất thải:", err);
-        AppToast.error("Không thể tải danh sách chất thải");
+        AppToast.error(t("processing.pages.farmerWastes.error.title"));
         setWastes([]);
         setTotalPages(1);
       } finally {
@@ -48,7 +50,7 @@ export default function ProcessingWastesPage() {
     }
 
     fetchWastes();
-  }, [itemsPerPage]);
+  }, [itemsPerPage, t]);
 
   // Filter và pagination
   const filteredWastes = wastes.filter((waste) => {
@@ -67,7 +69,7 @@ export default function ProcessingWastesPage() {
   const columns = [
     {
       key: "wasteCode",
-      title: "Mã chất thải",
+      title: t("processing.pages.farmerWastes.table.wasteCode"),
       render: (value: any, waste: ProcessingWaste) => {
         if (!waste) return <span className="text-gray-400">N/A</span>;
         return (
@@ -80,7 +82,7 @@ export default function ProcessingWastesPage() {
     },
     {
       key: "wasteType",
-      title: "Loại chất thải",
+      title: t("processing.pages.farmerWastes.table.wasteType"),
              render: (value: any, waste: ProcessingWaste) => {
          if (!waste) return <span className="text-gray-400">N/A</span>;
          return (
@@ -92,7 +94,7 @@ export default function ProcessingWastesPage() {
     },
     {
       key: "quantity",
-      title: "Số lượng",
+      title: t("processing.pages.farmerWastes.table.quantity"),
       render: (value: any, waste: ProcessingWaste) => {
         if (!waste) return <span className="text-gray-400">N/A</span>;
         return (
@@ -104,7 +106,7 @@ export default function ProcessingWastesPage() {
     },
     {
       key: "isDisposed",
-      title: "Trạng thái xử lý",
+      title: t("processing.pages.farmerWastes.table.disposalStatus"),
       render: (value: any, waste: ProcessingWaste) => {
         if (!waste) return <span className="text-gray-400">N/A</span>;
         return (
@@ -113,14 +115,14 @@ export default function ProcessingWastesPage() {
              ? 'bg-amber-100 text-amber-800' 
              : 'bg-orange-100 text-orange-800'
          }`}>
-           {waste.isDisposed ? 'Đã xử lý' : 'Chưa xử lý'}
+           {waste.isDisposed ? t("processing.pages.farmerWastes.status.disposed") : t("processing.pages.farmerWastes.status.notDisposed")}
          </span>
         );
       },
     },
     {
       key: "recordedAt",
-      title: "Ngày ghi nhận",
+      title: t("processing.pages.farmerWastes.table.recordedAt"),
       render: (value: any, waste: ProcessingWaste) => {
         if (!waste || !waste.recordedAt) return <span className="text-gray-400">N/A</span>;
         return (
@@ -133,7 +135,7 @@ export default function ProcessingWastesPage() {
     },
     {
       key: "actions",
-      title: "Thao tác",
+      title: t("processing.pages.farmerWastes.table.actions"),
       render: (value: any, waste: ProcessingWaste) => {
         if (!waste || !waste.wasteId) return <span className="text-gray-400">N/A</span>;
         return (
@@ -145,7 +147,7 @@ export default function ProcessingWastesPage() {
               className="flex items-center gap-1 hover:bg-blue-50 hover:border-blue-300"
             >
               <Eye className="w-4 h-4" />
-              Xem
+              {t("processing.pages.farmerWastes.table.view")}
             </Button>
           </div>
         );
@@ -186,8 +188,8 @@ export default function ProcessingWastesPage() {
           {/* Loading Indicator */}
           <div className="text-center space-y-4 mt-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-            <p className="text-lg text-gray-600 font-medium">Đang tải dữ liệu...</p>
-            <p className="text-sm text-gray-500">Đang tải danh sách chất thải</p>
+            <p className="text-lg text-gray-600 font-medium">{t("processing.pages.farmerWastes.loading.title")}</p>
+            <p className="text-sm text-gray-500">{t("processing.pages.farmerWastes.loading.description")}</p>
           </div>
         </div>
       </div>
@@ -199,8 +201,8 @@ export default function ProcessingWastesPage() {
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <ProcessingHeader
-          title="Quản lý chất thải sơ chế"
-          description="Theo dõi và quản lý chất thải từ quá trình sơ chế cà phê"
+          title={t("processing.pages.farmerWastes.title")}
+          description={t("processing.pages.farmerWastes.description")}
           showCreateButton={true}
           onCreateClick={() => router.push("/dashboard/farmer/processing/wastes/create")}
         />
@@ -210,7 +212,7 @@ export default function ProcessingWastesPage() {
                      <SearchBox
              value={searchTerm}
              onChange={setSearchTerm}
-             placeholder="Tìm kiếm theo mã chất thải, loại chất thải, ghi chú..."
+             placeholder={t("processing.pages.farmerWastes.searchPlaceholder")}
            />
         </div>
 
@@ -219,7 +221,7 @@ export default function ProcessingWastesPage() {
           <ProcessingTable
             data={paginatedWastes}
             columns={columns}
-            emptyMessage="Không có chất thải nào được tìm thấy"
+            emptyMessage={t("processing.pages.farmerWastes.emptyMessage")}
           />
         </div>
 
@@ -243,7 +245,7 @@ export default function ProcessingWastesPage() {
                  <Trash2 className="w-6 h-6 text-orange-600" />
                </div>
                <div>
-                 <p className="text-sm text-gray-600">Tổng chất thải</p>
+                 <p className="text-sm text-gray-600">{t("processing.pages.farmerWastes.stats.totalWastes")}</p>
                  <p className="text-2xl font-bold text-gray-900">{wastes.length}</p>
                </div>
              </div>
@@ -255,7 +257,7 @@ export default function ProcessingWastesPage() {
                  <Package className="w-6 h-6 text-amber-600" />
                </div>
                <div>
-                 <p className="text-sm text-gray-600">Lô đã xử lý</p>
+                 <p className="text-sm text-gray-600">{t("processing.pages.farmerWastes.stats.processedBatches")}</p>
                  <p className="text-2xl font-bold text-gray-900">
                    {wastes.filter(w => w && w.isDisposed).length}
                  </p>
@@ -269,7 +271,7 @@ export default function ProcessingWastesPage() {
                  <Calendar className="w-6 h-6 text-blue-600" />
                </div>
                <div>
-                 <p className="text-sm text-gray-600">Tháng này</p>
+                 <p className="text-sm text-gray-600">{t("processing.pages.farmerWastes.stats.thisMonth")}</p>
                                     <p className="text-2xl font-bold text-gray-900">
                      {wastes.filter(w => {
                        if (!w || !w.recordedAt) return false;
