@@ -96,6 +96,25 @@ export async function approveInboundRequest(id: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  
+  // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Approve request HTTP error:', {
+      status: res.status,
+      statusText: res.statusText,
+      errorText: errorText
+    });
+    
+    // Thử parse JSON nếu có thể
+    try {
+      const errorData = JSON.parse(errorText);
+      throw new Error(errorData.message || errorData.Message || errorText || `HTTP ${res.status}`);
+    } catch {
+      throw new Error(errorText || `HTTP ${res.status}`);
+    }
+  }
+  
   return await res.json();
 }
 
@@ -107,6 +126,25 @@ export async function rejectInboundRequest(id: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  
+  // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Reject request HTTP error:', {
+      status: res.status,
+      statusText: res.statusText,
+      errorText: errorText
+    });
+    
+    // Thử parse JSON nếu có thể
+    try {
+      const errorData = JSON.parse(errorText);
+      throw new Error(errorData.message || errorData.Message || errorText || `HTTP ${res.status}`);
+    } catch {
+      throw new Error(errorText || `HTTP ${res.status}`);
+    }
+  }
+  
   return await res.json();
 }
 export async function cancelInboundRequest(id: string) {

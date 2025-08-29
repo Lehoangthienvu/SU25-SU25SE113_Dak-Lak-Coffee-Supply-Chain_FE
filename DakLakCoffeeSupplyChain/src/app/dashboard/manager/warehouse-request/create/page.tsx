@@ -234,7 +234,36 @@ export default function CreateOutboundRequestPage() {
       toast.success(message || 'Tạo yêu cầu thành công');
       router.push('/dashboard/manager/warehouse-request');
     } catch (err: any) {
-      toast.error(err.message || 'Tạo yêu cầu thất bại');
+      // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+      let errorMessage = 'Tạo yêu cầu thất bại';
+      
+      if (err.response?.data) {
+        // Lỗi từ backend có response data
+        if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        } else if (err.response.data.errors) {
+          // Validation errors
+          const validationErrors = Object.values(err.response.data.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        } else if (err.response.data.status !== undefined && err.response.data.status !== 1) {
+          // ServiceResult format từ backend
+          errorMessage = err.response.data.message || 'Tạo yêu cầu thất bại';
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      toast.error(`❌ Lỗi: ${errorMessage}`);
+      
+      // Log chi tiết để debug
+      console.error('❌ Create outbound request error:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        fullError: err
+      });
     } finally {
       setLoading(false);
     }
