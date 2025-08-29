@@ -2687,5 +2687,209 @@
     "pagination": {
       "page": "Page {{current}}/{{total}}"
     }
+  },
+  "warehouseOutboundRequests": {
+    "title": "Outbound Requests",
+    "subtitle": "Manage and track outbound requests",
+    "createNewRequest": "Create new request",
+    "search": {
+      "title": "Search request",
+      "placeholder": "Search request ID, warehouse"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Filter by status",
+        "all": "All",
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      }
+    },
+    "stats": {
+      "totalRequests": "Total requests",
+      "pendingRequests": "Pending requests",
+      "acceptedRequests": "Accepted requests",
+      "totalQuantity": "Total quantity"
+    },
+    "table": {
+      "title": "List of outbound requests",
+      "summary": "Displaying {{count}} requests - {{total}} total",
+      "headers": {
+        "requestId": "REQUEST ID",
+        "warehouse": "WAREHOUSE",
+        "inventory": "INVENTORY",
+        "quantity": "QUANTITY",
+        "status": "STATUS",
+        "action": "ACTION"
+      },
+      "actions": {
+        "view": "View",
+        "accept": "Accept",
+        "reject": "Reject"
+      }
+    },
+    "pagination": {
+      "page": "Page {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Outbound Request Details",
+      "headers": {
+        "requestCode": "Request Code",
+        "warehouse": "Warehouse",
+        "inventory": "Inventory",
+        "information": "Information",
+        "quantity": "Quantity",
+        "status": "Status",
+        "actions": "View"
+      },
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "actions": {
+        "view": "View",
+        "accept": "Accept Request",
+        "reject": "Reject Request"
+      }
+    },
+    "empty": {
+      "title": "No outbound requests found",
+      "description": "Try changing your search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading outbound requests list..."
+    },
+    "error": {
+      "loadFailed": "Cannot load outbound requests list",
+      "serverError": "Error loading data from server."
+    },
+    "confirmModal": {
+      "title": "Confirm Accept Request",
+      "description": "Are you sure you want to accept this request?",
+      "acceptButton": "Accept",
+      "cancelButton": "Cancel"
+    },
+    "rejectModal": {
+      "title": "Reject Request",
+      "description": "Please provide a reason for rejection:",
+      "reasonPlaceholder": "Enter rejection reason...",
+      "rejectButton": "Reject",
+      "cancelButton": "Cancel"
+    },
+    "success": {
+      "acceptSuccess": "Request accepted successfully!",
+      "rejectSuccess": "Request rejected successfully!"
+    }
+  },
+  "warehouseOutboundReceipts": {
+    "title": "Outbound Receipts",
+    "subtitle": "Manage and track outbound receipts",
+    "createNewReceipt": "Create new receipt",
+    "search": {
+      "title": "Search receipt",
+      "placeholder": "Search receipt ID, warehouse"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Filter by status",
+        "all": "All",
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      }
+    },
+    "stats": {
+      "totalReceipts": "Total receipts",
+      "confirmedReceipts": "Confirmed receipts",
+      "pendingReceipts": "Pending receipts",
+      "totalQuantity": "Total quantity"
+    },
+    "table": {
+      "title": "List of outbound receipts",
+      "summary": "Displaying {{count}} receipts - {{total}} total",
+      "headers": {
+        "receiptId": "RECEIPT ID",
+        "warehouse": "WAREHOUSE",
+        "batch": "BATCH",
+        "quantity": "QUANTITY",
+        "status": "STATUS",
+        "action": "ACTION"
+      },
+      "actions": {
+        "view": "View",
+        "confirm": "Confirm"
+      }
+    },
+    "pagination": {
+      "page": "Page {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Outbound Receipt Details",
+      "headers": {
+        "receiptCode": "Receipt Code",
+        "warehouse": "Warehouse",
+        "batch": "Batch",
+        "information": "Information",
+        "quantity": "Quantity",
+        "status": "Status",
+        "actions": "View"
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "actions": {
+        "view": "View",
+        "confirm": "Confirm Receipt"
+      }
+    },
+    "create": {
+      "title": "Create Outbound Receipt",
+      "subtitle": "Create a new outbound receipt",
+      "form": {
+        "selectRequest": "Select outbound request *",
+        "selectRequestPlaceholder": "-- Select approved outbound request --",
+        "exportedQuantity": "Exported quantity *",
+        "exportedQuantityPlaceholder": "Enter exported quantity...",
+        "note": "Note",
+        "notePlaceholder": "Enter note...",
+        "destination": "Destination",
+        "destinationPlaceholder": "Enter destination..."
+      },
+      "validation": {
+        "selectRequest": "Please select a valid outbound request",
+        "exportedQuantity": "Exported quantity must be greater than 0",
+        "exportedQuantityExceed": "Exported quantity cannot exceed remaining quantity ({{remaining}} {{unit}})"
+      },
+      "stats": {
+        "warehouseCapacity": "Warehouse capacity",
+        "usedCapacity": "Used capacity",
+        "totalCapacity": "Total capacity",
+        "remainingQuantity": "Remaining quantity",
+        "inventoryAvailable": "Inventory available"
+      },
+      "actions": {
+        "create": "Create Receipt",
+        "cancel": "Cancel",
+        "creating": "Creating..."
+      }
+    },
+    "empty": {
+      "title": "No outbound receipts found",
+      "description": "Try changing your search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading outbound receipts list..."
+    },
+    "error": {
+      "loadFailed": "Cannot load outbound receipts list",
+      "serverError": "Error loading data from server."
+    },
+    "success": {
+      "createSuccess": "Outbound receipt created successfully!",
+      "confirmSuccess": "Outbound receipt confirmed successfully!"
+    }
   }
 }

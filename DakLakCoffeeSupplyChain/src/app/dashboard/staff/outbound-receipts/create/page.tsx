@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { getAllOutboundRequests } from '@/lib/api/warehouseOutboundRequest';
@@ -39,6 +40,7 @@ type Summary = {
 
 export default function CreateOutboundReceiptPage() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [requests, setRequests] = useState<OutboundRequest[]>([]);
   const [selectedRequestId, setSelectedRequestId] = useState('');
@@ -66,10 +68,10 @@ export default function CreateOutboundReceiptPage() {
           // Lấy tất cả yêu cầu để hiển thị thống kê
           setRequests(res.data);
         } else {
-          toast.error(res?.message || 'Không thể tải yêu cầu xuất kho.');
+          toast.error(res?.message || t('warehouseOutboundReceipts.error.loadFailed'));
         }
       } catch (err: any) {
-        toast.error('Lỗi khi tải yêu cầu: ' + err.message);
+        toast.error(t('warehouseOutboundReceipts.error.serverError') + err.message);
       }
     })();
   }, []);
@@ -88,7 +90,7 @@ export default function CreateOutboundReceiptPage() {
 
       // Chỉ xử lý nếu request đã được duyệt
       if (selectedRequest.status !== 'Accepted') {
-        toast.error('Chỉ có thể tạo phiếu xuất kho từ yêu cầu đã được duyệt.');
+        toast.error(t('warehouseOutboundReceipts.validation.selectRequest'));
         return;
       }
 
@@ -111,7 +113,7 @@ export default function CreateOutboundReceiptPage() {
       } catch (err: any) {
         setSummary(null);
         setRemainingQuantity(null);
-        toast.error(err?.message || 'Không thể tải dữ liệu kho/summary.');
+        toast.error(err?.message || t('warehouseOutboundReceipts.error.serverError'));
       }
     })();
   }, [selectedRequest]);
@@ -125,18 +127,18 @@ export default function CreateOutboundReceiptPage() {
 
   const handleSubmit = async () => {
     if (!selectedRequest) {
-      toast.error('Vui lòng chọn yêu cầu xuất kho hợp lệ.');
+      toast.error(t('warehouseOutboundReceipts.validation.selectRequest'));
       return;
     }
 
     const quantity = Number(exportedQuantity);
     if (!exportedQuantity || Number.isNaN(quantity) || quantity <= 0) {
-      toast.error('Số lượng xuất phải lớn hơn 0.');
+      toast.error(t('warehouseOutboundReceipts.validation.exportedQuantity'));
       return;
     }
 
     if (remainingQuantity !== null && quantity > remainingQuantity) {
-      toast.error(`Số lượng xuất không được vượt quá phần còn lại (${remainingQuantity} ${selectedRequest.unit}).`);
+      toast.error(t('warehouseOutboundReceipts.validation.exportedQuantityExceed', { remaining: remainingQuantity, unit: selectedRequest.unit }));
       return;
     }
 
@@ -149,10 +151,10 @@ export default function CreateOutboundReceiptPage() {
         note: note.trim() || undefined,
         destination: destination.trim() || undefined,
       });
-      toast.success('Tạo phiếu xuất kho thành công!');
+      toast.success(t('warehouseOutboundReceipts.success.createSuccess'));
       router.push('/dashboard/staff/outbound-receipts');
     } catch (err: any) {
-      toast.error('Tạo phiếu thất bại: ' + err.message);
+      toast.error(t('warehouseOutboundReceipts.error.serverError') + err.message);
     } finally {
       setSubmitting(false);
     }
@@ -170,8 +172,8 @@ export default function CreateOutboundReceiptPage() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl font-bold">📤 Tạo phiếu xuất kho</h1>
-              <p className="text-orange-100 text-lg">Xác nhận và tạo phiếu xuất kho từ yêu cầu đã duyệt</p>
+              <h1 className="text-3xl font-bold">📤 {t('warehouseOutboundReceipts.create.title')}</h1>
+              <p className="text-orange-100 text-lg">{t('warehouseOutboundReceipts.create.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -187,7 +189,7 @@ export default function CreateOutboundReceiptPage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Thông tin phiếu xuất kho
+                  {t('warehouseOutboundReceipts.create.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -198,11 +200,11 @@ export default function CreateOutboundReceiptPage() {
                       <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      Yêu cầu xuất kho *
+                      {t('warehouseOutboundReceipts.create.form.selectRequest')}
                     </label>
                     <Select value={selectedRequestId} onValueChange={setSelectedRequestId}>
                       <SelectTrigger className="h-12 border-2 border-orange-200 focus:border-orange-500 focus:ring-orange-500">
-                        <SelectValue placeholder="-- Chọn yêu cầu xuất kho đã duyệt --" />
+                        <SelectValue placeholder={t('warehouseOutboundReceipts.create.form.selectRequestPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {requests
@@ -211,7 +213,7 @@ export default function CreateOutboundReceiptPage() {
                             <SelectItem key={request.outboundRequestId} value={request.outboundRequestId}>
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">{request.outboundRequestCode}</span>
-                                <span className="text-xs text-green-600 font-semibold">✓ Đã duyệt</span>
+                                <span className="text-xs text-green-600 font-semibold">✓ {t('warehouseOutboundRequests.detail.status.accepted')}</span>
                               </div>
                             </SelectItem>
                           ))}
@@ -225,7 +227,7 @@ export default function CreateOutboundReceiptPage() {
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                           </svg>
-                          <span className="text-sm">Chưa có yêu cầu nào được duyệt. Vui lòng chờ quản lý duyệt yêu cầu.</span>
+                          <span className="text-sm">{t('warehouseOutboundReceipts.validation.selectRequest')}</span>
                         </div>
                       </div>
                     )}
@@ -241,7 +243,7 @@ export default function CreateOutboundReceiptPage() {
                               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                               </svg>
-                              <span className="font-medium text-blue-800">Kho:</span>
+                              <span className="font-medium text-blue-800">{t('warehouseOutboundReceipts.detail.headers.warehouse')}:</span>
                               <span className="text-gray-700">{selectedRequest.warehouseName}</span>
                             </div>
                             
@@ -249,7 +251,7 @@ export default function CreateOutboundReceiptPage() {
                               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m8-4v10l-8 4" />
                               </svg>
-                              <span className="font-medium text-green-800">Mẻ hàng:</span>
+                              <span className="font-medium text-green-800">{t('warehouseOutboundReceipts.detail.headers.batch')}:</span>
                               <span className="text-gray-700">{selectedRequest.batchCode}</span>
                             </div>
                           </div>
@@ -259,7 +261,7 @@ export default function CreateOutboundReceiptPage() {
                               <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                               </svg>
-                              <span className="font-medium text-purple-800">Tổng yêu cầu:</span>
+                              <span className="font-medium text-purple-800">{t('warehouseOutboundReceipts.detail.headers.quantity')}:</span>
                               <span className="text-gray-700 font-semibold">{selectedRequest.requestedQuantity} {selectedRequest.unit}</span>
                             </div>
                             
@@ -268,7 +270,7 @@ export default function CreateOutboundReceiptPage() {
                                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                                 </svg>
-                                <span className="font-medium text-orange-800">Dung lượng:</span>
+                                <span className="font-medium text-orange-800">{t('warehouseOutboundReceipts.create.stats.warehouseCapacity')}:</span>
                                 <span className="text-gray-700">
                                   {usedCapacity.toLocaleString()} / {totalCapacity.toLocaleString()} {selectedRequest.unit}
                                 </span>
@@ -283,28 +285,28 @@ export default function CreateOutboundReceiptPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div className="text-center p-3 bg-green-50 rounded-lg">
                                 <div className="text-2xl font-bold text-green-600">{summary.confirmedQuantity}</div>
-                                <div className="text-xs text-green-700">Đã xác nhận</div>
+                                <div className="text-xs text-green-700">{t('warehouseOutboundReceipts.detail.status.confirmed')}</div>
                               </div>
                               <div className="text-center p-3 bg-blue-50 rounded-lg">
                                 <div className="text-2xl font-bold text-blue-600">{summary.createdQuantity}</div>
-                                <div className="text-xs text-blue-700">Đã tạo</div>
+                                <div className="text-xs text-blue-700">{t('warehouseOutboundReceipts.detail.status.confirmed')}</div>
                               </div>
                               <div className="text-center p-3 bg-purple-50 rounded-lg">
                                 <div className="text-2xl font-bold text-purple-600">{summary.draftQuantity}</div>
-                                <div className="text-xs text-purple-700">Nháp</div>
+                                <div className="text-xs text-purple-700">{t('warehouseOutboundReceipts.detail.status.pending')}</div>
                               </div>
                             </div>
                             
                             <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
                               <div className="flex items-center justify-between">
-                                <span className="font-medium text-amber-800">📋 Còn lại có thể xuất:</span>
+                                <span className="font-medium text-amber-800">📋 {t('warehouseOutboundReceipts.create.stats.remainingQuantity')}:</span>
                                 <span className={`text-lg font-bold ${(remainingQuantity ?? 0) > 0 ? 'text-blue-600' : 'text-red-600'}`}>
                                   {remainingQuantity ?? 0} {selectedRequest.unit}
-                                  {remainingQuantity === 0 && ' (Đã xuất đủ)'}
+                                  {remainingQuantity === 0 && ` (${t('warehouseOutboundReceipts.detail.status.confirmed')})`}
                                 </span>
                               </div>
                               <p className="text-xs text-amber-700 mt-1">
-                                (min: phần còn lại theo yêu cầu, tồn kho khả dụng của mẻ)
+                                ({t('warehouseOutboundReceipts.create.stats.inventoryAvailable')})
                               </p>
                             </div>
                           </div>
@@ -320,7 +322,7 @@ export default function CreateOutboundReceiptPage() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
-                        Số lượng xuất *
+                        {t('warehouseOutboundReceipts.create.form.exportedQuantity')}
                       </label>
                       <Input
                         type="number"
@@ -329,11 +331,11 @@ export default function CreateOutboundReceiptPage() {
                         step="any"
                         value={exportedQuantity}
                         onChange={(e) => setExportedQuantity(e.target.value)}
-                        placeholder={`Nhập số lượng (tối đa ${remainingQuantity} ${selectedRequest.unit})`}
+                        placeholder={t('warehouseOutboundReceipts.create.form.exportedQuantityPlaceholder')}
                         className="h-12 border-2 border-red-200 focus:border-red-500 focus:ring-red-500 text-lg"
                       />
                       <p className="text-xs text-gray-600">
-                        💡 Có thể xuất ít hơn số lượng yêu cầu để tạo nhiều phiếu
+                        💡 {t('warehouseOutboundReceipts.create.form.exportedQuantityPlaceholder')}
                       </p>
                     </div>
                   )}
@@ -344,10 +346,10 @@ export default function CreateOutboundReceiptPage() {
                       <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
-                      Ghi chú
+                      {t('warehouseOutboundReceipts.create.form.note')}
                     </label>
                     <Textarea
-                      placeholder="Ghi chú về phiếu xuất kho (tuỳ chọn)..."
+                      placeholder={t('warehouseOutboundReceipts.create.form.notePlaceholder')}
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       className="min-h-[100px] border-2 border-purple-200 focus:border-purple-500 focus:ring-purple-500 resize-none"
@@ -361,10 +363,10 @@ export default function CreateOutboundReceiptPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      Địa điểm nhận hàng
+                      {t('warehouseOutboundReceipts.create.form.destination')}
                     </label>
                     <Input
-                      placeholder="Địa điểm nhận hàng (tuỳ chọn)..."
+                      placeholder={t('warehouseOutboundReceipts.create.form.destinationPlaceholder')}
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
                       className="h-12 border-2 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500"
@@ -379,8 +381,8 @@ export default function CreateOutboundReceiptPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                       </div>
-                      <h3 className="text-yellow-800 font-semibold text-lg mb-2">⚠️ Không thể tạo phiếu xuất</h3>
-                      <p className="text-yellow-700">Yêu cầu này đã được xuất đủ số lượng</p>
+                      <h3 className="text-yellow-800 font-semibold text-lg mb-2">⚠️ {t('warehouseOutboundReceipts.create.title')}</h3>
+                      <p className="text-yellow-700">{t('warehouseOutboundReceipts.create.stats.remainingQuantity')}</p>
                     </div>
                   ) : (
                     <Button
@@ -391,14 +393,14 @@ export default function CreateOutboundReceiptPage() {
                       {submitting ? (
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          ⏳ Đang tạo...
+                          ⏳ {t('warehouseOutboundReceipts.create.actions.creating')}
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                           </svg>
-                          Tạo phiếu xuất kho
+                          {t('warehouseOutboundReceipts.create.actions.create')}
                         </div>
                       )}
                     </Button>
@@ -419,26 +421,26 @@ export default function CreateOutboundReceiptPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
-                  <h3 className="font-semibold text-blue-800 mb-3">Thống kê nhanh</h3>
+                  <h3 className="font-semibold text-blue-800 mb-3">{t('warehouseOutboundReceipts.create.stats.warehouseCapacity')}</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
-                      <span className="text-gray-600">Tổng yêu cầu:</span>
+                      <span className="text-gray-600">{t('warehouseOutboundRequests.stats.totalRequests')}:</span>
                       <span className="font-medium text-blue-600">{requests.length}</span>
                     </div>
                     <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
-                      <span className="font-medium text-green-600">Đã duyệt:</span>
+                      <span className="font-medium text-green-600">{t('warehouseOutboundRequests.stats.acceptedRequests')}:</span>
                       <span className="font-bold text-green-700">{requests.filter(r => r.status === 'Accepted').length}</span>
                     </div>
                     <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
-                      <span className="text-gray-600">Đang chờ:</span>
+                      <span className="text-gray-600">{t('warehouseOutboundRequests.filters.byStatus.pending')}:</span>
                       <span className="font-medium text-orange-600">{requests.filter(r => r.status === 'Pending').length}</span>
                     </div>
                     <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
-                      <span className="text-gray-600">Đã từ chối:</span>
+                      <span className="text-gray-600">{t('warehouseOutboundRequests.detail.status.rejected')}:</span>
                       <span className="font-medium text-red-600">{requests.filter(r => r.status === 'Rejected').length}</span>
                     </div>
                     <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
-                      <span className="text-gray-600">Hoàn thành:</span>
+                      <span className="text-gray-600">{t('warehouseOutboundReceipts.detail.status.confirmed')}:</span>
                       <span className="font-medium text-purple-600">{requests.filter(r => r.status === 'Completed').length}</span>
                     </div>
                   </div>
@@ -446,7 +448,7 @@ export default function CreateOutboundReceiptPage() {
                   {/* Tỷ lệ duyệt */}
                   {requests.length > 0 && (
                     <div className="mt-4 p-3 bg-white/50 rounded-lg">
-                      <div className="text-xs text-gray-600 mb-2">Tỷ lệ duyệt</div>
+                      <div className="text-xs text-gray-600 mb-2">{t('warehouseOutboundRequests.stats.acceptedRequests')}</div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className="bg-green-600 h-2 rounded-full transition-all duration-300"
@@ -473,12 +475,12 @@ export default function CreateOutboundReceiptPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="font-semibold text-green-800 mb-2">💡 Hướng dẫn</h3>
+                  <h3 className="font-semibold text-green-800 mb-2">💡 {t('warehouseOutboundReceipts.create.title')}</h3>
                   <div className="text-sm text-green-700 space-y-2 text-left">
-                    <p>• Chọn yêu cầu xuất kho đã được duyệt</p>
-                    <p>• Nhập số lượng thực tế xuất</p>
-                    <p>• Có thể tạo nhiều phiếu cho cùng 1 yêu cầu</p>
-                    <p>• Hệ thống tự động kiểm tra tồn kho</p>
+                    <p>• {t('warehouseOutboundReceipts.create.form.selectRequest')}</p>
+                    <p>• {t('warehouseOutboundReceipts.create.form.exportedQuantity')}</p>
+                    <p>• {t('warehouseOutboundReceipts.create.form.note')}</p>
+                    <p>• {t('warehouseOutboundReceipts.create.stats.inventoryAvailable')}</p>
                   </div>
                 </div>
               </CardContent>
