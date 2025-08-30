@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ import {
   getAllContractDeliveryBatches,
 } from "@/lib/api/contractDeliveryBatches";
 import { getProductOptions, type ProductOption } from "@/lib/api/products";
-import { OrderStatus, OrderStatusLabel } from "@/lib/constants/orderStatus";
+import { OrderStatus } from "@/lib/constants/orderStatus";
 
 type Props = {
   initialData?: OrderUpdateDto; // nếu có -> Edit; nếu không -> Create
@@ -62,6 +63,7 @@ export default function OrderForm({
   deliveryBatchId,
   onSuccess,
 }: Props) {
+  const { t } = useTranslation();
   const isEdit = !!initialData;
   const router = useRouter();
 
@@ -165,7 +167,7 @@ export default function OrderForm({
         setProductOptions(products ?? []);
       } catch (e) {
         console.error(e);
-        toast.error("Không thể tải chi tiết đợt giao và danh sách sản phẩm.");
+        toast.error(t('managerOrders.form.errors.loadDeliveryBatch'));
       } finally {
         setLoadingOptions(false);
       }
@@ -187,7 +189,7 @@ export default function OrderForm({
         );
       } catch (e) {
         console.error(e);
-        toast.error("Không tải được danh sách đợt giao.");
+        toast.error(t('managerOrders.form.errors.loadDeliveryBatches'));
       }
     })();
   }, [form.deliveryBatchId]);
@@ -341,27 +343,27 @@ export default function OrderForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.deliveryBatchId) {
-      clientErrors.deliveryBatchId = "Vui lòng chọn đợt giao.";
+      clientErrors.deliveryBatchId = t('managerOrders.form.validation.selectDeliveryBatch');
     }
     if (!data.orderItems.length) {
-      clientErrors.orderItems = "Cần ít nhất 1 dòng sản phẩm.";
+      clientErrors.orderItems = t('managerOrders.form.validation.addAtLeastOneItem');
     } else {
       data.orderItems.forEach((item, index) => {
         if (!item.contractDeliveryItemId) {
           clientErrors[`orderItems.${index}.contractDeliveryItemId`] =
-            "Vui lòng chọn mặt hàng đợt giao.";
+            t('managerOrders.form.validation.selectDeliveryItem');
         }
         if (!item.productId) {
           clientErrors[`orderItems.${index}.productId`] =
-            "Vui lòng chọn sản phẩm.";
+            t('managerOrders.form.validation.selectProduct');
         }
         if (!(Number(item.quantity) > 0)) {
           clientErrors[`orderItems.${index}.quantity`] =
-            "Số lượng phải lớn hơn 0.";
+            t('managerOrders.form.validation.quantityRequired');
         }
         if (!(Number(item.unitPrice) > 0)) {
           clientErrors[`orderItems.${index}.unitPrice`] =
-            "Đơn giá phải lớn hơn 0.";
+            t('managerOrders.form.validation.unitPriceRequired');
         }
       });
     }
@@ -372,14 +374,14 @@ export default function OrderForm({
       const orderDate = new Date(data.orderDate);
       if (actualDate < orderDate) {
         clientErrors.actualDeliveryDate =
-          "Ngày giao thực tế không được trước ngày tạo đơn hàng.";
+          t('managerOrders.form.validation.actualDeliveryDateBeforeOrderDate');
       }
     }
 
     // If there are client-side errors, display them and stop
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
-      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      toast.error(t('managerOrders.form.validation.checkFormErrors'));
       return;
     }
 
@@ -429,9 +431,9 @@ export default function OrderForm({
         const req = updateOrder(payload.orderId, payload);
         // Hiển thị toast theo trạng thái promise
         toast.promise(req, {
-          loading: "Đang cập nhật đơn hàng...",
-          success: "Cập nhật đơn hàng thành công!",
-          error: "Cập nhật đơn hàng thất bại.",
+          loading: t('managerOrders.form.actions.updating'),
+          success: t('managerOrders.form.actions.updateSuccess'),
+          error: t('managerOrders.form.actions.updateError'),
         });
         // Quan trọng: chờ promise gốc -> nếu fail sẽ nhảy vào catch, KHÔNG gọi onSuccess
         await req;
@@ -467,9 +469,9 @@ export default function OrderForm({
 
         const req = createOrder(payload);
         toast.promise(req, {
-          loading: "Đang tạo đơn hàng...",
-          success: "Tạo đơn hàng thành công!",
-          error: "Cập nhật đơn hàng thất bại.",
+          loading: t('managerOrders.form.actions.creating'),
+          success: t('managerOrders.form.actions.createSuccess'),
+          error: t('managerOrders.form.actions.createError'),
         });
         await req;
       }
@@ -607,11 +609,11 @@ export default function OrderForm({
           Object.keys(newFieldErrors).length > 0 ||
           newBusinessErrors.length > 0
         ) {
-          toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+          toast.error(t('managerOrders.form.errors.checkFormErrors'));
         }
       } else {
         // Xử lý lỗi khác - kiểm tra message trực tiếp
-        let errorMessage = "Đã xảy ra lỗi khi lưu đơn hàng.";
+        let errorMessage = t('managerOrders.form.errors.saveOrderError');
 
         if (err && typeof err === "object" && "message" in err) {
           const message = String(err.message);
@@ -619,13 +621,13 @@ export default function OrderForm({
           // Kiểm tra các lỗi nghiệp vụ cụ thể
           if (message.includes("Lô giao hàng này đã có đơn hàng")) {
             setBusinessErrors([message]);
-            errorMessage = "Lỗi nghiệp vụ: " + message;
+            errorMessage = t('managerOrders.form.errors.businessError') + message;
           } else if (message.includes("Bạn không có quyền")) {
             setBusinessErrors([message]);
-            errorMessage = "Lỗi quyền truy cập: " + message;
+            errorMessage = t('managerOrders.form.errors.accessError') + message;
           } else if (message.includes("Không tìm thấy")) {
             setBusinessErrors([message]);
-            errorMessage = "Lỗi dữ liệu: " + message;
+            errorMessage = t('managerOrders.form.errors.dataError') + message;
           }
         }
 
@@ -639,7 +641,7 @@ export default function OrderForm({
   return (
     <form className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
       <h2 className="text-2xl font-semibold text-center">
-        {isEdit ? "Chỉnh sửa đơn hàng" : "Tạo đơn hàng mới"}
+        {isEdit ? t('managerOrders.edit.title') : t('managerOrders.create.title')}
       </h2>
 
       {/* Hiển thị lỗi nghiệp vụ */}
@@ -647,66 +649,66 @@ export default function OrderForm({
         <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-orange-800 font-medium">
-              Cần tuân thủ quy tắc nghiệp vụ:
+              {t('managerOrders.form.businessRules.title')}
             </h3>
             <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-              {businessErrors.length} quy tắc
+              {businessErrors.length} {t('managerOrders.form.businessRules.rules')}
             </span>
           </div>
 
           {/* Tóm tắt nhanh */}
           <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
-            <strong> Tóm tắt:</strong>
+            <strong> {t('managerOrders.form.businessRules.summary')}:</strong>
             {businessErrors.some((err) => err.includes("vượt quá")) &&
-              " Cần điều chỉnh thông tin đơn hàng"}
+              ` ${t('managerOrders.form.businessRules.adjustOrderInfo')}`}
             {businessErrors.some((err) => err.includes("cùng loại")) &&
-              " Cần loại bỏ sản phẩm trùng lặp"}
+              ` ${t('managerOrders.form.businessRules.removeDuplicateProducts')}`}
             {businessErrors.some((err) => err.includes("đã tồn tại")) &&
-              " Cần đổi thông tin đơn hàng"}
+              ` ${t('managerOrders.form.businessRules.changeOrderInfo')}`}
             {businessErrors.some((err) => err.includes("không có quyền")) &&
-              " Cần liên hệ admin"}
+              ` ${t('managerOrders.form.businessRules.contactAdmin')}`}
             {businessErrors.some((err) =>
               err.includes("Lô giao hàng này đã có đơn hàng")
-            ) && " Lô giao hàng đã được sử dụng"}
+            ) && ` ${t('managerOrders.form.businessRules.deliveryBatchUsed')}`}
             {businessErrors.some((err) => err.includes("Không tìm thấy")) &&
-              " Dữ liệu không tồn tại"}
+              ` ${t('managerOrders.form.businessRules.dataNotFound')}`}
           </div>
 
           {/* Hướng dẫn giải quyết */}
           <div className="mt-3 pt-3 border-t border-orange-200">
             <p className="text-orange-600 text-sm font-medium mb-2">
-              💡 Hướng dẫn:
+              💡 {t('managerOrders.form.businessRules.guidance')}:
             </p>
             <ul className="text-orange-600 text-xs space-y-1">
               {businessErrors.some((err) => err.includes("vượt quá")) && (
-                <li>• Kiểm tra lại thông tin đơn hàng</li>
+                <li>• {t('managerOrders.form.businessRules.checkOrderInfo')}</li>
               )}
               {businessErrors.some((err) => err.includes("cùng loại")) && (
-                <li>• Không được có 2 dòng đơn hàng cùng sản phẩm</li>
+                <li>• {t('managerOrders.form.businessRules.noDuplicateProducts')}</li>
               )}
               {businessErrors.some((err) => err.includes("đã tồn tại")) && (
-                <li>• Thông tin đơn hàng đã tồn tại, hãy đổi thông tin khác</li>
+                <li>• {t('managerOrders.form.businessRules.orderInfoExists')}</li>
               )}
               {businessErrors.some((err) => err.includes("không có quyền")) && (
-                <li>• Liên hệ admin để được cấp quyền phù hợp</li>
+                <li>• {t('managerOrders.form.businessRules.contactAdminForPermission')}</li>
               )}
               {businessErrors.some((err) =>
                 err.includes("Lô giao hàng này đã có đơn hàng")
-              ) && <li>• Mỗi lô giao hàng chỉ có thể tạo 1 đơn hàng</li>}
+              ) && <li>• {t('managerOrders.form.businessRules.oneOrderPerBatch')}</li>}
               {businessErrors.some((err) =>
                 err.includes("Ngày đặt hàng không được vượt quá")
-              ) && <li>• Ngày đặt hàng không được vượt quá ngày hiện tại</li>}
+              ) && <li>• {t('managerOrders.form.businessRules.orderDateNotExceedCurrent')}</li>}
               {businessErrors.some((err) =>
                 err.includes("Ngày giao thực tế không được")
-              ) && <li>• Ngày giao thực tế không được trước ngày đặt hàng</li>}
+              ) && <li>• {t('managerOrders.form.businessRules.deliveryDateNotBeforeOrder')}</li>}
               {businessErrors.some((err) =>
                 err.includes("Giảm giá không được vượt quá")
-              ) && <li>• Giảm giá không được vượt quá tổng thành tiền</li>}
+              ) && <li>• {t('managerOrders.form.businessRules.discountNotExceedTotal')}</li>}
               {businessErrors.some((err) =>
                 err.includes("Giảm giá không được âm")
-              ) && <li>• Giảm giá không được âm</li>}
+              ) && <li>• {t('managerOrders.form.businessRules.discountNotNegative')}</li>}
               {businessErrors.some((err) => err.includes("Không tìm thấy")) && (
-                <li>• Dữ liệu không tồn tại hoặc đã bị xóa</li>
+                <li>• {t('managerOrders.form.businessRules.dataNotExists')}</li>
               )}
             </ul>
           </div>
@@ -717,7 +719,7 @@ export default function OrderForm({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Đợt giao (create = select, edit = read-only) */}
         <div>
-          <label className="block mb-1 text-sm font-medium">Đợt giao</label>
+          <label className="block mb-1 text-sm font-medium">{t('managerOrders.form.fields.deliveryBatch')}</label>
 
           {!isEdit ? (
             // CREATE: cho phép chọn
@@ -736,7 +738,7 @@ export default function OrderForm({
                 // effect sau đó sẽ fetch viewDetails và đồng bộ lại mọi thứ
               }}
             >
-              <option value="">-- Chọn đợt giao --</option>
+              <option value="">-- {t('managerOrders.form.placeholders.selectDeliveryBatch')} --</option>
               {batchOptions.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.label}
@@ -760,7 +762,7 @@ export default function OrderForm({
 
         {/* Số đợt */}
         <div>
-          <label className="block mb-1 text-sm font-medium">Số đợt</label>
+          <label className="block mb-1 text-sm font-medium">{t('managerOrders.form.fields.deliveryRound')}</label>
           <Input
             type="number"
             value={form.deliveryRound ?? ""}
@@ -781,7 +783,7 @@ export default function OrderForm({
         {/* Ngày tạo đơn hàng */}
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Ngày tạo đơn hàng
+            {t('managerOrders.form.fields.orderDate')}
           </label>
           <DatePicker
             value={form.orderDate}
@@ -791,7 +793,7 @@ export default function OrderForm({
           />
           {isEdit && (
             <p className="text-xs text-gray-500 mt-1">
-              Ngày tạo đơn hàng không thể thay đổi
+              {t('managerOrders.form.fields.orderDateCannotChange')}
             </p>
           )}
         </div>
@@ -801,7 +803,7 @@ export default function OrderForm({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Ngày giao thực tế
+            {t('managerOrders.form.fields.actualDeliveryDate')}
           </label>
           <DatePicker
             value={form.actualDeliveryDate}
@@ -811,7 +813,7 @@ export default function OrderForm({
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">Trạng thái</label>
+          <label className="block mb-1 text-sm font-medium">{t('managerOrders.form.fields.status')}</label>
           <select
             className="w-full p-2 border rounded"
             value={form.status}
@@ -819,7 +821,7 @@ export default function OrderForm({
           >
             {Object.values(OrderStatus).map((s) => (
               <option key={s} value={s}>
-                {OrderStatusLabel[s]}
+                {t(`managerOrders.status.${s.toLowerCase()}`)}
               </option>
             ))}
           </select>
@@ -828,12 +830,12 @@ export default function OrderForm({
         {isEdit && (
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Lý do huỷ (tuỳ chọn)
+              {t('managerOrders.form.fields.cancelReason')} {t('managerOrders.form.common.optional')}
             </label>
             <Input
               value={form.cancelReason ?? ""}
               onChange={(e) => setField("cancelReason", e.target.value)}
-              placeholder="Cancel reason"
+              placeholder={t('managerOrders.form.placeholders.cancelReason')}
               disabled={form.status !== OrderStatus.Cancelled}
             />
           </div>
@@ -842,9 +844,9 @@ export default function OrderForm({
 
       {/* Note */}
       <div>
-        <label className="block mb-1 text-sm font-medium">Ghi chú</label>
+        <label className="block mb-1 text-sm font-medium">{t('managerOrders.form.fields.note')}</label>
         <Textarea
-          placeholder="Nhập ghi chú (tuỳ chọn)"
+          placeholder={t('managerOrders.form.placeholders.note')}
           value={form.note ?? ""}
           onChange={(e) => setField("note", e.target.value)}
         />
@@ -853,7 +855,7 @@ export default function OrderForm({
       {/* Order Items */}
       <div className="space-y-2">
         <label className="block mb-1 text-sm font-medium">
-          Danh sách mặt hàng
+          {t('managerOrders.detail.productList.title')}
         </label>
 
         {/* Hiển thị lỗi tổng quát cho order items */}
@@ -869,12 +871,12 @@ export default function OrderForm({
           <>
             {/* Header giống contract, thêm cột Sản phẩm => 7 cột */}
             <div className="hidden md:grid md:grid-cols-7 gap-2 mb-1 text-xs font-medium text-muted-foreground">
-              <span>Mặt hàng đợt giao</span>
-              <span>Sản phẩm</span>
-              <span>Số lượng (kg)</span>
-              <span>Đơn giá (VND/Kg)</span>
-              <span>Giảm trừ (%)</span>
-              <span>Ghi chú</span>
+              <span>{t('managerOrders.form.table.headers.deliveryItem')}</span>
+              <span>{t('managerOrders.form.table.headers.product')}</span>
+              <span>{t('managerOrders.form.table.headers.quantity')}</span>
+              <span>{t('managerOrders.form.table.headers.unitPrice')}</span>
+              <span>{t('managerOrders.form.table.headers.discount')}</span>
+              <span>{t('managerOrders.form.table.headers.note')}</span>
               <span></span>
             </div>
 
@@ -897,7 +899,7 @@ export default function OrderForm({
                   }`}
                   disabled={loadingOptions}
                 >
-                  <option value="">-- Chọn mặt hàng --</option>
+                  <option value="">-- {t('managerOrders.form.placeholders.selectDeliveryItem')} --</option>
                   {(deliveryItemOptions ?? []).map((it) => (
                     <option
                       key={it.contractDeliveryItemId}
@@ -922,7 +924,7 @@ export default function OrderForm({
                   }`}
                   disabled={loadingOptions}
                 >
-                  <option value="">-- Chọn sản phẩm --</option>
+                  <option value="">-- {t('managerOrders.form.placeholders.selectProduct')} --</option>
                   {(productOptions ?? []).map((p) => (
                     <option key={p.productId} value={p.productId}>
                       {p.name}
@@ -1012,7 +1014,7 @@ export default function OrderForm({
 
                 {/* Ghi chú */}
                 <Input
-                  placeholder="Ghi chú"
+                  placeholder={t('managerOrders.form.placeholders.note')}
                   value={row.note ?? ""}
                   onChange={(e) => updateRow(idx, "note", e.target.value)}
                 />
@@ -1022,7 +1024,7 @@ export default function OrderForm({
                   variant="destructive"
                   onClick={() => removeRow(idx)}
                 >
-                  Xoá
+                  {t('managerOrders.form.actions.removeItem')}
                 </Button>
               </div>
             ))}
@@ -1035,26 +1037,26 @@ export default function OrderForm({
           onClick={addRow}
           disabled={loadingOptions || !form.deliveryBatchId}
         >
-          + Thêm mặt hàng
+          {t('managerOrders.form.actions.addItem')}
         </Button>
 
         {/* Tổng */}
         <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
           <div>
-            Tổng SL: <strong>{totalQuantity.toLocaleString()} kg</strong>
+            {t('managerOrders.form.summary.totalQuantity')}: <strong>{totalQuantity.toLocaleString()} kg</strong>
           </div>
           <div>
-            Tổng tiền tạm tính: <strong>{fmtVnd(totalAmount)} VNĐ</strong>
+            {t('managerOrders.form.summary.totalAmount')}: <strong>{fmtVnd(totalAmount)} VNĐ</strong>
           </div>
         </div>
       </div>
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit} disabled={saving}>
-          {isEdit ? "Lưu thay đổi" : "Tạo đơn hàng"}
+          {isEdit ? t('managerOrders.form.actions.updateOrder') : t('managerOrders.form.actions.createOrder')}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Quay lại
+          {t('managerOrders.detail.actions.back')}
         </Button>
       </DialogFooter>
     </form>

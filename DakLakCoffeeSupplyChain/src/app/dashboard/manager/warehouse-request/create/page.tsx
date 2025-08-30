@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { createWarehouseOutboundRequest, getOrderItemsWithRemainingQuantity } from '@/lib/api/warehouseOutboundRequest';
 import { getAllWarehouses } from '@/lib/api/warehouses';
@@ -59,6 +60,7 @@ type Inventory = {
 };
 
 export default function CreateOutboundRequestPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -84,19 +86,19 @@ export default function CreateOutboundRequestPage() {
       try {
         const wres = await getAllWarehouses();
         if (wres.status === 1) setWarehouses(wres.data || []);
-        else toast.error(wres.message || 'Không thể tải danh sách kho');
+        else toast.error(wres.message || t('managerWarehouseRequest.create.errors.loadWarehouses'));
       } catch (e: any) {
-        toast.error(e.message || 'Lỗi khi tải kho');
+        toast.error(e.message || t('managerWarehouseRequest.create.errors.loadWarehouses'));
       }
 
       try {
         const ores = await getOrders();
         setOrders(ores || []);
       } catch (e: any) {
-        toast.error(e.message || 'Không thể tải danh sách đơn hàng');
+        toast.error(e.message || t('managerWarehouseRequest.create.errors.loadOrders'));
       }
     })();
-  }, []);
+  }, [t]);
 
   // Khi đổi kho → reset tồn kho đã chọn + nạp tồn kho của kho đó
   useEffect(() => {
@@ -117,10 +119,10 @@ export default function CreateOutboundRequestPage() {
           setForm((p) => ({ ...p, inventoryId: recommendedInventory.inventoryId }));
         }
       } catch (e: any) {
-        toast.error(e.message || 'Không thể tải tồn kho');
+        toast.error(e.message || t('managerWarehouseRequest.create.errors.loadInventories'));
       }
     })();
-  }, [form.warehouseId, form.requestedQuantity]);
+  }, [form.warehouseId, form.requestedQuantity, t]);
 
   // Khi thay đổi số lượng yêu cầu → cập nhật khuyến nghị FIFO
   useEffect(() => {
@@ -143,7 +145,7 @@ export default function CreateOutboundRequestPage() {
     }, 500); // Debounce 500ms
 
     return () => clearTimeout(timeoutId);
-  }, [form.requestedQuantity, form.warehouseId]);
+  }, [form.requestedQuantity, form.warehouseId, t]);
 
   // Khi chọn đơn hàng → reset orderItemId + nạp danh sách item theo đơn
   useEffect(() => {
@@ -157,10 +159,10 @@ export default function CreateOutboundRequestPage() {
         const detail = await getOrderItemsWithRemainingQuantity(form.orderId);
         setOrderItems(detail || []);
       } catch (e: any) {
-        toast.error(e.message || 'Không thể tải danh sách mục hàng');
+        toast.error(e.message || t('managerWarehouseRequest.create.errors.loadOrderItems'));
       }
     })();
-  }, [form.orderId]);
+  }, [form.orderId, t]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -200,18 +202,21 @@ export default function CreateOutboundRequestPage() {
     const qty = Number(form.requestedQuantity);
 
     if (!form.warehouseId || !form.inventoryId || !form.unit || !form.requestedQuantity) {
-      toast.error('Vui lòng nhập đầy đủ các trường bắt buộc');
+      toast.error(t('managerWarehouseRequest.create.errors.requiredFields'));
       return;
     }
     if (Number.isNaN(qty) || qty <= 0) {
-      toast.error('Số lượng yêu cầu phải lớn hơn 0');
+      toast.error(t('managerWarehouseRequest.create.errors.invalidQuantity'));
       return;
     }
 
     // ✅ Kiểm tra số lượng yêu cầu không vượt quá số lượng còn lại của order item
     if (form.orderItemId && selectedOrderItem) {
       if (qty > selectedOrderItem.remainingQuantity) {
-        toast.error(`Số lượng yêu cầu (${qty}) vượt quá số lượng còn lại của đơn hàng (${selectedOrderItem.remainingQuantity})`);
+        toast.error(t('managerWarehouseRequest.create.errors.exceedQuantity', {
+          quantity: qty,
+          remaining: selectedOrderItem.remainingQuantity
+        }));
         return;
       }
     }
@@ -231,11 +236,11 @@ export default function CreateOutboundRequestPage() {
       // Debug logs removed for performance
 
       const message = await createWarehouseOutboundRequest(payload);
-      toast.success(message || 'Tạo yêu cầu thành công');
+      toast.success(message || t('managerWarehouseRequest.success.createRequest'));
       router.push('/dashboard/manager/warehouse-request');
     } catch (err: any) {
       // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
-      let errorMessage = 'Tạo yêu cầu thất bại';
+      let errorMessage = t('managerWarehouseRequest.error.createRequest');
       
       if (err.response?.data) {
         // Lỗi từ backend có response data
@@ -249,7 +254,7 @@ export default function CreateOutboundRequestPage() {
           errorMessage = validationErrors.join(', ');
         } else if (err.response.data.status !== undefined && err.response.data.status !== 1) {
           // ServiceResult format từ backend
-          errorMessage = err.response.data.message || 'Tạo yêu cầu thất bại';
+          errorMessage = err.response.data.message || t('managerWarehouseRequest.error.createRequest');
         }
       } else if (err.message) {
         errorMessage = err.message;
@@ -285,8 +290,8 @@ export default function CreateOutboundRequestPage() {
                 <TrendingDown className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">📤 Tạo yêu cầu xuất kho</h1>
-                <p className="text-orange-100 text-sm">Tạo yêu cầu xuất kho mới cho hệ thống quản lý</p>
+                <h1 className="text-2xl font-bold">{t('managerWarehouseRequest.create.title')}</h1>
+                <p className="text-orange-100 text-sm">{t('managerWarehouseRequest.create.subtitle')}</p>
               </div>
             </div>
             <Button 
@@ -295,7 +300,7 @@ export default function CreateOutboundRequestPage() {
               className="border-white/20 text-white hover:bg-white/10"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Quay lại
+              {t('managerWarehouseRequest.create.back')}
             </Button>
           </div>
         </div>
@@ -311,7 +316,7 @@ export default function CreateOutboundRequestPage() {
                   <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
                     <TrendingDown className="w-3 h-3 text-orange-600" />
                   </div>
-                  Thông tin yêu cầu xuất kho
+                  {t('managerWarehouseRequest.create.form.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
@@ -321,7 +326,7 @@ export default function CreateOutboundRequestPage() {
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Warehouse className="w-4 h-4 text-orange-600" />
-                        Chọn kho hàng *
+                        {t('managerWarehouseRequest.create.form.warehouseLabel')}
                       </Label>
                       <select
                         name="warehouseId"
@@ -329,7 +334,7 @@ export default function CreateOutboundRequestPage() {
                         onChange={handleChange}
                         className="w-full h-10 border-2 border-orange-200 rounded-lg px-3 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 bg-white text-sm"
                       >
-                        <option value="">-- Chọn kho hàng --</option>
+                        <option value="">{t('managerWarehouseRequest.placeholders.selectWarehouse')}</option>
                         {warehouses.map((w) => (
                           <option key={w.warehouseId} value={w.warehouseId}>
                             {w.name} {w.location ? `– ${w.location}` : ''}
@@ -341,7 +346,7 @@ export default function CreateOutboundRequestPage() {
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Package className="w-4 h-4 text-blue-600" />
-                        Chọn tồn kho * (FIFO)
+                        {t('managerWarehouseRequest.create.form.inventoryLabel')}
                       </Label>
                       <select
                         name="inventoryId"
@@ -354,11 +359,11 @@ export default function CreateOutboundRequestPage() {
                             : 'border-blue-200 focus:border-blue-500 focus:ring-blue-200 bg-white'
                         }`}
                       >
-                        <option value="">-- Chọn tồn kho --</option>
+                        <option value="">{t('managerWarehouseRequest.placeholders.selectInventory')}</option>
                         {inventories.map((inv) => (
                           <option key={inv.inventoryId} value={inv.inventoryId}>
                             {inv.isRecommended ? '⭐ ' : ''}{inv.inventoryCode} – {inv.quantity} {inv.unit ?? ''} 
-                            {inv.isRecommended ? ' (Khuyến nghị)' : ''}
+                            {inv.isRecommended ? ` (${t('managerWarehouseRequest.create.info.recommended')})` : ''}
                           </option>
                         ))}
                       </select>
@@ -368,7 +373,7 @@ export default function CreateOutboundRequestPage() {
                         <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
                           <div className="flex items-center gap-2 text-green-700 text-sm">
                             <Star className="w-4 h-4 text-green-600" />
-                            <span className="font-medium">Khuyến nghị FIFO:</span>
+                            <span className="font-medium">{t('managerWarehouseRequest.create.info.fifoPriority')}:</span>
                           </div>
                           <p className="text-green-600 text-xs mt-1 ml-6">
                             {selectedInventory.fifoRecommendation}
@@ -383,7 +388,7 @@ export default function CreateOutboundRequestPage() {
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <TrendingDown className="w-4 h-4 text-red-600" />
-                        Số lượng yêu cầu *
+                        {t('managerWarehouseRequest.create.form.quantityLabel')}
                       </Label>
                       <Input
                         type="number"
@@ -392,7 +397,7 @@ export default function CreateOutboundRequestPage() {
                         step="any"
                         value={form.requestedQuantity}
                         onChange={handleChange}
-                        placeholder="Nhập số lượng..."
+                        placeholder={t('managerWarehouseRequest.placeholders.quantity')}
                         className="h-10 border-2 border-red-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm"
                       />
                     </div>
@@ -400,13 +405,13 @@ export default function CreateOutboundRequestPage() {
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <Hash className="w-4 h-4 text-purple-600" />
-                        Đơn vị *
+                        {t('managerWarehouseRequest.create.form.unitLabel')}
                       </Label>
                       <Input 
                         name="unit" 
                         value={form.unit} 
                         onChange={handleChange} 
-                        placeholder="kg, tấn, bao..."
+                        placeholder={t('managerWarehouseRequest.placeholders.unit')}
                         className="h-10 border-2 border-purple-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-sm"
                       />
                     </div>
@@ -416,23 +421,23 @@ export default function CreateOutboundRequestPage() {
                 {/* Mục đích và lý do - 1 hàng */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700">Mục đích xuất kho</Label>
+                    <Label className="text-sm font-semibold text-gray-700">{t('managerWarehouseRequest.create.form.purposeLabel')}</Label>
                     <Textarea
                       name="purpose"
                       value={form.purpose}
                       onChange={handleChange}
-                      placeholder="Ghi chú về mục đích xuất kho..."
+                                              placeholder={t('managerWarehouseRequest.placeholders.purpose')}
                       className="min-h-[80px] border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 resize-none text-sm"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700">Lý do xuất kho</Label>
+                    <Label className="text-sm font-semibold text-gray-700">{t('managerWarehouseRequest.create.form.reasonLabel')}</Label>
                     <Textarea
                       name="reason"
                       value={form.reason}
                       onChange={handleChange}
-                      placeholder="Lý do cần xuất kho..."
+                                              placeholder={t('managerWarehouseRequest.placeholders.reason')}
                       className="min-h-[80px] border-2 border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 resize-none text-sm"
                     />
                   </div>
@@ -441,17 +446,17 @@ export default function CreateOutboundRequestPage() {
                 {/* Đơn hàng - 1 hàng */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                      <ShoppingCart className="w-4 h-4 text-purple-600" />
-                      Chọn đơn hàng (tùy chọn)
-                    </Label>
+                                          <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <ShoppingCart className="w-4 h-4 text-purple-600" />
+                        {t('managerWarehouseRequest.create.form.orderLabel')}
+                      </Label>
                     <select
                       name="orderId"
                       value={form.orderId}
                       onChange={handleChange}
                       className="w-full h-10 border-2 border-purple-200 rounded-lg px-3 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 bg-white text-sm"
                     >
-                      <option value="">-- Không chọn đơn hàng --</option>
+                                              <option value="">{t('managerWarehouseRequest.placeholders.selectOrder')}</option>
                       {orders.map((order) => (
                         <option key={order.orderId} value={order.orderId}>
                           {order.orderCode} – {order.contractNumber || order.deliveryBatchCode || 'N/A'}
@@ -462,18 +467,18 @@ export default function CreateOutboundRequestPage() {
 
                   {form.orderId && (
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Chọn mục hàng từ đơn hàng</Label>
+                      <Label className="text-sm font-semibold text-gray-700">{t('managerWarehouseRequest.create.form.orderItemLabel')}</Label>
                       <select
                         name="orderItemId"
                         value={form.orderItemId}
                         onChange={handleChange}
                         className="w-full h-10 border-2 border-indigo-200 rounded-lg px-3 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 bg-white text-sm"
                       >
-                        <option value="">-- Chọn mục hàng --</option>
+                                                  <option value="">{t('managerWarehouseRequest.placeholders.selectOrderItem')}</option>
                         {orderItems.map((item) => (
                           <option key={item.orderItemId} value={item.orderItemId}>
-                            {item.productName} – Còn lại: {item.remainingQuantity} kg
-                            {item.remainingQuantity <= 0 ? ' (Hết hàng)' : ''}
+                            {item.productName} – {t('managerWarehouseRequest.fields.remaining')}: {item.remainingQuantity} {t('managerWarehouses.stats.kg')}
+                            {item.remainingQuantity <= 0 ? ` (${t('managerWarehouseRequest.create.info.outOfStock')})` : ''}
                           </option>
                         ))}
                       </select>
@@ -488,7 +493,7 @@ export default function CreateOutboundRequestPage() {
                     onClick={() => router.push('/dashboard/manager/warehouse-request')}
                     className="h-10 px-4 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
                   >
-                    Hủy bỏ
+                    {t('managerWarehouseRequest.create.cancel')}
                   </Button>
                   <Button 
                     onClick={handleSubmit} 
@@ -498,12 +503,12 @@ export default function CreateOutboundRequestPage() {
                     {loading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        ⏳ Đang tạo...
+                        {t('managerWarehouseRequest.create.submitting')}
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
-                        Tạo yêu cầu xuất kho
+                        {t('managerWarehouseRequest.create.submit')}
                       </div>
                     )}
                   </Button>
@@ -519,25 +524,25 @@ export default function CreateOutboundRequestPage() {
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 p-3">
                 <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-blue-600" />
-                  Thống kê
+                  {t('managerWarehouseRequest.create.info.stats')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-3">
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tổng kho:</span>
+                    <span className="text-gray-600">{t('managerWarehouseRequest.create.info.totalWarehouses')}:</span>
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
                       {warehouses.length}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tổng đơn hàng:</span>
+                    <span className="text-gray-600">{t('managerWarehouseRequest.create.info.totalOrders')}:</span>
                     <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
                       {orders.length}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tồn kho hiện tại:</span>
+                    <span className="text-gray-600">{t('managerWarehouseRequest.create.info.currentInventory')}:</span>
                     <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs">
                       {form.warehouseId ? inventories.length : 'N/A'}
                     </Badge>
@@ -550,10 +555,10 @@ export default function CreateOutboundRequestPage() {
             {selectedWarehouse && (
               <Card className="bg-white shadow-lg border-0">
                 <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 border-b border-orange-100 p-3">
-                  <CardTitle className="text-sm font-bold text-orange-800 flex items-center gap-2">
-                    <Warehouse className="w-4 h-4 text-orange-600" />
-                    Kho đã chọn
-                  </CardTitle>
+                                  <CardTitle className="text-sm font-bold text-orange-800 flex items-center gap-2">
+                  <Warehouse className="w-4 h-4 text-orange-600" />
+                  {t('managerWarehouseRequest.create.info.selectedWarehouse')}
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3">
                   <div className="space-y-2 text-xs">
@@ -573,10 +578,10 @@ export default function CreateOutboundRequestPage() {
             {selectedInventory && (
               <Card className="bg-white shadow-lg border-0">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 p-3">
-                  <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
-                    <Package className="w-4 h-4 text-blue-600" />
-                    Tồn kho đã chọn
-                  </CardTitle>
+                                  <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
+                  <Package className="w-4 h-4 text-blue-600" />
+                  {t('managerWarehouseRequest.create.info.selectedInventory')}
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3">
                   <div className="space-y-2 text-xs">
@@ -586,13 +591,13 @@ export default function CreateOutboundRequestPage() {
                     </div>
                     <div className="text-gray-600">{selectedInventory.productName}</div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Số lượng:</span>
+                      <span className="text-gray-600">{t('managerWarehouseRequest.fields.quantity')}:</span>
                       <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
                         {selectedInventory.quantity} {selectedInventory.unit}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Thứ tự FIFO:</span>
+                      <span className="text-gray-600">{t('managerWarehouseRequest.create.info.fifoPriority')}:</span>
                       <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
                         #{selectedInventory.fifoPriority}
                       </Badge>
@@ -600,7 +605,7 @@ export default function CreateOutboundRequestPage() {
                     {selectedInventory.isRecommended && (
                       <div className="flex items-center gap-2 mt-2 p-2 bg-green-50 border border-green-200 rounded">
                         <Star className="w-3 h-3 text-green-600" />
-                        <span className="text-green-700 text-xs font-medium">Được khuyến nghị</span>
+                        <span className="text-green-700 text-xs font-medium">{t('managerWarehouseRequest.create.info.recommended')}</span>
                       </div>
                     )}
                   </div>
@@ -612,10 +617,10 @@ export default function CreateOutboundRequestPage() {
             {selectedOrderItem && (
               <Card className="bg-white shadow-lg border-0">
                 <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-3">
-                  <CardTitle className="text-sm font-bold text-purple-800 flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-purple-600" />
-                    Mục hàng đã chọn
-                  </CardTitle>
+                                  <CardTitle className="text-sm font-bold text-purple-800 flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-purple-600" />
+                  {t('managerWarehouseRequest.create.info.selectedOrderItem')}
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3">
                   <div className="space-y-2 text-xs">
@@ -624,26 +629,26 @@ export default function CreateOutboundRequestPage() {
                       <span className="font-semibold text-gray-800">{selectedOrderItem.productName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Tổng số lượng:</span>
+                      <span className="text-gray-600">{t('managerWarehouseRequest.create.info.totalQuantity')}:</span>
                       <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
                         {selectedOrderItem.totalQuantity} kg
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Đã xuất:</span>
+                      <span className="text-gray-600">{t('managerWarehouseRequest.create.info.confirmedQuantity')}:</span>
                       <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
                         {selectedOrderItem.confirmedQuantity} kg
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Còn lại:</span>
+                      <span className="text-gray-600">{t('managerWarehouseRequest.create.info.remainingQuantity')}:</span>
                       <Badge variant="secondary" className={`text-xs ${
                         selectedOrderItem.remainingQuantity > 0 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {selectedOrderItem.remainingQuantity} kg
-                        {selectedOrderItem.remainingQuantity <= 0 ? ' (Hết hàng)' : ''}
+                        {selectedOrderItem.remainingQuantity <= 0 ? ` (${t('managerWarehouseRequest.create.info.outOfStock')})` : ''}
                       </Badge>
                     </div>
                   </div>
@@ -656,29 +661,29 @@ export default function CreateOutboundRequestPage() {
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 p-3">
                 <CardTitle className="text-sm font-bold text-green-800 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-green-600" />
-                  💡 Hướng dẫn
+                  {t('managerWarehouseRequest.create.guide.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-3">
                 <div className="text-xs text-green-700 space-y-1">
-                  <p>• Chọn kho và tồn kho cần xuất</p>
-                  <p>• Nhập số lượng và đơn vị chính xác</p>
-                  <p>• Ghi rõ mục đích và lý do xuất kho</p>
-                  <p>• Có thể liên kết với đơn hàng (tùy chọn)</p>
+                  <p>{t('managerWarehouseRequest.create.guide.step1')}</p>
+                  <p>{t('managerWarehouseRequest.create.guide.step2')}</p>
+                  <p>{t('managerWarehouseRequest.create.guide.step3')}</p>
+                  <p>{t('managerWarehouseRequest.create.guide.step4')}</p>
                 </div>
                 <div className="mt-3 pt-3 border-t border-green-100">
                   <div className="text-xs text-orange-700 space-y-1">
-                    <p className="font-medium">⭐ Hệ thống áp dụng FIFO (First In, First Out)</p>
-                    <p>• Tồn kho nhập trước sẽ được khuyến nghị xuất trước</p>
-                    <p>• Giúp tối ưu hóa quản lý tồn kho và chất lượng sản phẩm</p>
+                    <p className="font-medium">{t('managerWarehouseRequest.create.guide.fifoTitle')}</p>
+                    <p>{t('managerWarehouseRequest.create.guide.fifo1')}</p>
+                    <p>{t('managerWarehouseRequest.create.guide.fifo2')}</p>
                   </div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-green-100">
                   <div className="text-xs text-purple-700 space-y-1">
-                    <p className="font-medium">📊 Tính năng thông minh:</p>
-                    <p>• Tự động tính số lượng còn lại của đơn hàng</p>
-                    <p>• Tự động điền số lượng khi chọn mục hàng</p>
-                    <p>• Kiểm tra giới hạn số lượng trước khi tạo yêu cầu</p>
+                    <p className="font-medium">{t('managerWarehouseRequest.create.guide.featuresTitle')}</p>
+                    <p>{t('managerWarehouseRequest.create.guide.feature1')}</p>
+                    <p>{t('managerWarehouseRequest.create.guide.feature2')}</p>
+                    <p>{t('managerWarehouseRequest.create.guide.feature3')}</p>
                   </div>
                 </div>
               </CardContent>

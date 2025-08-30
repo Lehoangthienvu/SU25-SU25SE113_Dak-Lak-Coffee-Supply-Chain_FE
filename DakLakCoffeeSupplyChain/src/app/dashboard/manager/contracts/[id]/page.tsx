@@ -2,8 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   getContractDetails,
   ContractViewDetailsDto,
@@ -57,6 +57,7 @@ const contractStatusMap: Record<string, { className: string }> = {
 };
 
 export default function ContractDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const contractId = params.id as string;
@@ -79,8 +80,6 @@ export default function ContractDetailPage() {
   >(null);
 
   const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
-
-  const { t } = useTranslation();
 
   // Helper function to convert PascalCase status to camelCase for translation keys
   const getStatusTranslationKey = (status: string) => {
@@ -112,6 +111,7 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
+
         setError(err.message || t("contracts.page.detail.error"));
         setLoading(false);
       });
@@ -125,7 +125,9 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
+
         setError(err.message || t("contracts.page.detail.error"));
+
         setLoading(false);
       });
   }, [contractId]);
@@ -162,9 +164,11 @@ export default function ContractDetailPage() {
             <p className="text-red-500 mb-3">
               {error || t("contracts.page.detail.notFound")}
             </p>
+
             <Button onClick={() => router.back()}>
               {t("contracts.page.detail.back")}
             </Button>
+
           </CardContent>
         </Card>
       </div>
@@ -544,7 +548,7 @@ export default function ContractDetailPage() {
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.unitPrice?.toLocaleString()}{" "}
-                        <span className="text-gray-500 text-xs">VNĐ/kg</span>
+                        <span className="text-gray-500 text-xs">{t('common.currency')}/kg</span>
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.discountAmount !== undefined
@@ -554,7 +558,9 @@ export default function ContractDetailPage() {
                       <td className="px-4 py-2">{item.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
+
                           <Tooltip content={t("contracts.page.detail.edit")}>
+
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -566,7 +572,9 @@ export default function ContractDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
+
                           <Tooltip content={t("contracts.page.detail.delete")}>
+
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -591,7 +599,9 @@ export default function ContractDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
+
                 {t("contracts.page.detail.pagination.showing")}{" "}
+
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                 </span>{" "}
@@ -599,8 +609,10 @@ export default function ContractDetailPage() {
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
+
                 {t("contracts.page.detail.pagination.of")} {totalItems}{" "}
                 {t("contracts.page.detail.pagination.items")}
+
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -612,12 +624,14 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
+
                   {t("contracts.page.detail.pagination.previous")}
                 </Button>
                 <span className="flex items-center px-2">
                   {t("contracts.page.detail.pagination.page")}{" "}
                   <span className="mx-1 font-semibold">{currentPage}</span>{" "}
                   {t("contracts.page.detail.pagination.of")} {totalPages}
+
                 </span>
                 <Button
                   variant="outline"
@@ -628,7 +642,9 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
+
                   {t("contracts.page.detail.pagination.next")}
+
                 </Button>
               </div>
             </div>
@@ -637,7 +653,9 @@ export default function ContractDetailPage() {
         {/* Footer */}
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={() => router.back()}>
+
             {t("contracts.page.detail.back")}
+
           </Button>
         </div>
 
@@ -668,7 +686,9 @@ export default function ContractDetailPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
+
         title={t("contracts.page.detail.deleteItemTitle")}
+
         description={
           <span
             dangerouslySetInnerHTML={{
@@ -678,8 +698,10 @@ export default function ContractDetailPage() {
             }}
           />
         }
+
         confirmText={t("contracts.page.detail.deleteItemConfirm")}
         cancelText={t("contracts.page.detail.deleteItemCancel")}
+
         onConfirm={handleDelete}
       />
     </div>

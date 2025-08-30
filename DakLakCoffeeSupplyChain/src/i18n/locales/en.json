@@ -1888,7 +1888,9 @@
     "createProgressFailed": "Failed to create progress!",
     "createProgressSuccess": "Progress created successfully!",
     "filterByStatus": "Filter by Status",
-    "allStatuses": "All Statuses"
+    "allStatuses": "All Statuses",
+    "notAvailable": "N/A",
+    "currency": "VND"
   },
 
   "farmerBatchSelector": {
@@ -4441,6 +4443,983 @@
     },
     "error": {
       "loadPreview": "Cannot load image preview"
+    }
+  },
+  "managerWarehouses": {
+    "title": "🏭 Warehouse Management",
+    "subtitle": "Track and manage all warehouses",
+    "stats": {
+      "totalWarehouses": "Total warehouses",
+      "totalCapacity": "Total capacity",
+      "usedCapacity": "Used capacity",
+      "availableCapacity": "Available capacity",
+      "kg": "kg",
+      "criticalWarehouses": "Critical warehouses"
+    },
+    "search": {
+      "placeholder": "Search warehouses...",
+      "results": "results"
+    },
+    "loading": {
+      "title": "Loading warehouse list..."
+    },
+    "empty": {
+      "title": "No warehouses yet",
+      "description": "Try changing search keywords or filters"
+    },
+    "status": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "normal": "Normal"
+    },
+    "error": {
+      "loadData": "Cannot load warehouse information",
+      "deleteConfirm": "Delete warehouse?"
+    },
+    "success": {
+      "deleteSuccess": "Warehouse deleted successfully"
+    },
+    "actions": {
+      "createNew": "Create new warehouse",
+      "delete": "Delete"
+    },
+    "list": {
+      "title": "Warehouse List",
+      "searchPlaceholder": "Search warehouses...",
+      "noWarehouses": "No warehouses yet",
+      "createNew": "Create new warehouse",
+      "headers": {
+        "warehouseName": "Warehouse Name",
+        "location": "Location",
+        "capacity": "Capacity",
+        "usedCapacity": "Used",
+        "availableCapacity": "Available",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View Details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Delete warehouse?",
+        "deleteMessage": "Are you sure you want to delete warehouse {warehouseName}? This action cannot be undone.",
+        "deleteSuccess": "Warehouse deleted successfully",
+        "deleteError": "Failed to delete warehouse."
+      }
+    },
+    "create": {
+      "title": "Create New Warehouse",
+      "fields": {
+        "warehouseName": "Warehouse Name",
+        "location": "Location",
+        "capacity": "Capacity",
+        "description": "Description",
+        "name": "Warehouse Name"
+      },
+      "placeholders": {
+        "warehouseName": "Enter warehouse name",
+        "location": "Enter warehouse location",
+        "capacity": "Enter warehouse capacity",
+        "description": "Enter warehouse description",
+        "name": "Enter warehouse name"
+      },
+      "validation": {
+        "nameRequired": "Please enter warehouse name",
+        "locationRequired": "Please enter location",
+        "capacityRequired": "Please enter capacity",
+        "capacityPositive": "Capacity must be greater than 0",
+        "nameExists": "Warehouse name already exists",
+        "fillAllFields": "Please fill in all required information"
+      },
+      "actions": {
+        "create": "Create Warehouse",
+        "creating": "Creating...",
+        "createSuccess": "Warehouse created successfully"
+      }
+    },
+    "detail": {
+      "title": "Warehouse Details",
+      "subtitle": "Detailed information and status of warehouse",
+      "loading": "Loading data...",
+      "available": "Available",
+      "error": {
+        "loadData": "Cannot load warehouse information: ",
+        "notFound": "Warehouse not found."
+      },
+      "warehouseInfo": {
+        "title": "Warehouse Information",
+        "fields": {
+          "warehouseName": "Warehouse Name:",
+          "location": "Location:",
+          "capacity": "Capacity:",
+          "usedCapacity": "Used:",
+          "available": "Available:",
+          "description": "Description:",
+          "status": "Status:",
+          "createdAt": "Created At:",
+          "updatedAt": "Updated At:",
+          "name": "Warehouse Name:",
+          "manager": "Manager:"
+        }
+      },
+      "inventoryInfo": {
+        "title": "Inventory Information",
+        "fields": {
+          "itemTypes": "Item Types:",
+          "totalQuantity": "Total Quantity:",
+          "usageRate": "Usage Rate:"
+        }
+      },
+      "inventoryList": {
+        "title": "Inventory List",
+        "loading": "Loading inventory...",
+        "empty": "No inventory yet",
+        "headers": {
+          "inventoryCode": "Inventory Code",
+          "product": "Product",
+          "quantity": "Quantity",
+          "unit": "Unit"
+        }
+      },
+      "capacityChart": {
+        "title": "Capacity Chart",
+        "used": "Used",
+        "available": "Available"
+      },
+      "actions": {
+        "back": "← Back",
+        "edit": "✏️ Edit",
+        "delete": "🗑️ Delete",
+        "deleteConfirm": "Delete warehouse?",
+        "deleteMessage": "Are you sure you want to delete warehouse {warehouseName}? This action cannot be undone.",
+        "deleteSuccess": "Warehouse deleted successfully",
+        "deleteError": "Failed to delete warehouse.",
+        "hideInventory": "Hide Inventory",
+        "showInventory": "Show Inventory"
+      }
+    }
+  },
+  "managerOrders": {
+    "title": "📦 Order Management",
+    "subtitle": "Track and manage all orders",
+    "status": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "failed": "Failed"
+    },
+    "list": {
+      "title": "Order List",
+      "subtitle": "Manage and track all orders",
+      "search": {
+        "title": "Search Orders",
+        "placeholder": "Search..."
+      },
+      "filters": {
+        "fromDate": "From Date",
+        "toDate": "To Date",
+        "status": "Filter by status",
+        "allStatuses": "All statuses"
+      },
+      "actions": {
+        "createNew": "+ Create New Order"
+      },
+      "table": {
+        "headers": {
+          "orderCode": "Order Code",
+          "contractNumber": "Contract Number",
+          "deliveryBatchCode": "Delivery Batch Code",
+          "deliveryDate": "Delivery Date",
+          "totalAmount": "Total Amount (VND)",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "pending": "Pending",
+          "preparing": "Preparing",
+          "shipped": "Shipped",
+          "delivered": "Delivered",
+          "cancelled": "Cancelled",
+          "failed": "Failed"
+        },
+        "tooltips": {
+          "deliveryDate": "Actual delivery date if available, otherwise order date.",
+          "totalAmount": "Total monetary value of the order (after reconciliation).",
+          "viewDetails": "View Details",
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      },
+      "loading": {
+        "loadingData": "Loading data..."
+      },
+      "error": {
+        "loadOrders": "Cannot load order list"
+      },
+      "empty": {
+        "noOrders": "No orders yet",
+        "noResults": "No matching orders found."
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "/",
+        "orders": "orders",
+        "page": "Page",
+        "previous": "← Previous",
+        "next": "Next →"
+      },
+      "delete": {
+        "confirm": "Delete Order?",
+        "message": "Are you sure you want to delete order {orderCode}? This action will hide the order from the list and cannot be undone.",
+        "success": "Deleted successfully",
+        "error": "Error deleting order"
+      }
+    },
+    "create": {
+      "title": "Create New Order",
+      "fields": {
+        "deliveryBatch": "Delivery Batch",
+        "deliveryRound": "Delivery Round",
+        "orderDate": "Order Date",
+        "actualDeliveryDate": "Actual Delivery Date",
+        "note": "Note",
+        "status": "Status",
+        "cancelReason": "Cancel Reason"
+      },
+      "placeholders": {
+        "deliveryBatch": "Select delivery batch",
+        "deliveryRound": "E.g: 1",
+        "orderDate": "Select order date",
+        "actualDeliveryDate": "Select actual delivery date",
+        "note": "Enter order note",
+        "cancelReason": "Enter order cancellation reason"
+      },
+      "validation": {
+        "fillRequiredFields": "Please fill in all required information",
+        "selectDeliveryBatch": "Please select a delivery batch",
+        "addAtLeastOneItem": "Please add at least one item"
+      },
+      "actions": {
+        "create": "Create Order",
+        "creating": "Creating...",
+        "createSuccess": "Order created successfully"
+      },
+      "loading": "Loading...",
+      "form": {
+        "fields": {
+          "deliveryBatch": "Delivery Batch",
+          "deliveryRound": "Delivery Round",
+          "orderDate": "Order Date",
+          "actualDeliveryDate": "Actual Delivery Date",
+          "note": "Note",
+          "status": "Status",
+          "cancelReason": "Cancel Reason",
+          "productName": "Product Name",
+          "quantity": "Quantity",
+          "unitPrice": "Unit Price",
+          "discount": "Discount (%)",
+          "totalPrice": "Total Price"
+        },
+        "placeholders": {
+          "selectDeliveryBatch": "Select delivery batch",
+          "deliveryRound": "E.g: 1",
+          "orderDate": "Select order date",
+          "actualDeliveryDate": "Select actual delivery date",
+          "note": "Enter order note",
+          "cancelReason": "Enter order cancellation reason",
+          "selectProduct": "Select product",
+          "quantity": "Enter quantity",
+          "unitPrice": "Enter unit price",
+          "discount": "Enter discount %"
+        },
+        "validation": {
+          "selectDeliveryBatch": "Please select a delivery batch.",
+          "addAtLeastOneItem": "Please add at least one item.",
+          "selectDeliveryItem": "Please select a delivery item.",
+          "selectProduct": "Please select a product.",
+          "quantityRequired": "Quantity must be greater than 0.",
+          "unitPriceRequired": "Unit price must be greater than 0.",
+          "actualDeliveryDateBeforeOrderDate": "Actual delivery date cannot be before order date.",
+          "checkFormErrors": "Please check and fix errors in the form"
+        },
+        "actions": {
+          "addItem": "+ Add Item",
+          "removeItem": "Remove",
+          "updateOrder": "Update Order",
+          "updating": "Updating order...",
+          "updateSuccess": "Order updated successfully!",
+          "updateError": "Failed to update order.",
+          "createOrder": "Create Order",
+          "creating": "Creating order...",
+          "createSuccess": "Order created successfully!",
+          "createError": "Failed to create order."
+        },
+        "errors": {
+          "loadDeliveryBatch": "Cannot load delivery batch details and product list.",
+          "loadDeliveryBatches": "Cannot load delivery batch list.",
+          "loadData": "Cannot load data.",
+          "checkFormErrors": "Please check and fix errors in the form",
+          "saveOrderError": "An error occurred while saving the order.",
+          "businessError": "Business error: ",
+          "accessError": "Access error: ",
+          "dataError": "Data error: "
+        },
+        "businessRules": {
+          "title": "Business rules must be followed:",
+          "rules": "rules",
+          "summary": "Summary",
+          "adjustOrderInfo": "Need to adjust order information",
+          "removeDuplicateProducts": "Need to remove duplicate products",
+          "changeOrderInfo": "Need to change order information",
+          "contactAdmin": "Need to contact admin",
+          "deliveryBatchUsed": "Delivery batch has been used",
+          "dataNotFound": "Data does not exist",
+          "guidance": "Guidance",
+          "checkOrderInfo": "Check order information again",
+          "noDuplicateProducts": "Cannot have 2 order lines with the same product",
+          "orderInfoExists": "Order information already exists, please change to different information",
+          "contactAdminForPermission": "Contact admin to get appropriate permissions",
+          "oneOrderPerBatch": "Each delivery batch can only create 1 order",
+          "orderDateNotExceedCurrent": "Order date cannot exceed current date",
+          "deliveryDateNotBeforeOrder": "Actual delivery date cannot be before order date",
+          "discountNotExceedTotal": "Discount cannot exceed total amount",
+          "discountNotNegative": "Discount cannot be negative",
+          "dataNotExists": "Data does not exist or has been deleted"
+        },
+        "fields": {
+          "orderDateCannotChange": "Order creation date cannot be changed"
+        },
+        "table": {
+          "headers": {
+            "deliveryItem": "Delivery Item",
+            "product": "Product",
+            "quantity": "Quantity (kg)",
+            "unitPrice": "Unit Price (VND/Kg)",
+            "discount": "Discount (%)",
+            "note": "Note"
+          }
+        },
+        "placeholders": {
+          "selectDeliveryItem": "Select delivery item",
+          "selectProduct": "Select product",
+          "note": "Note"
+        },
+        "summary": {
+          "totalQuantity": "Total Qty",
+          "totalAmount": "Total estimated amount"
+        }
+      }
+    },
+    "edit": {
+      "title": "Edit Order",
+      "loading": "Loading order...",
+      "notFound": "Order not found.",
+      "error": {
+        "loadOrder": "Failed to load order details."
+      }
+    },
+    "detail": {
+      "title": "📦 Order Details",
+      "subtitle": "Detailed information and items in order",
+      "loading": "⏳ Loading data...",
+      "error": {
+        "loadData": "Cannot load order details: ",
+        "notFound": "❌ Order not found."
+      },
+      "orderInfo": {
+        "title": "Order Information",
+        "fields": {
+          "orderCode": "Order Code:",
+          "contractNumber": "Contract Number:",
+          "deliveryRound": "Delivery Round:",
+          "deliveryDate": "Delivery Date:",
+          "totalAmount": "Total Amount (VND):",
+          "status": "Status:",
+          "note": "Note:",
+          "cancelReason": "Cancel Reason:"
+        },
+        "tooltips": {
+          "deliveryDate": "Actual delivery date if available, otherwise order date.",
+          "totalAmount": "Total monetary value of the order."
+        }
+      },
+      "productList": {
+        "title": "Product List",
+        "headers": {
+          "productName": "Product Name",
+          "quantity": "Quantity",
+          "unitPrice": "Unit Price (VND)",
+          "discount": "Discount (%)",
+          "totalPrice": "Total Price (VND)",
+          "note": "Note",
+          "actions": "Actions"
+        },
+        "empty": "No items yet",
+        "addItem": "+ Add Item"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "/",
+        "items": "items",
+        "page": "Page",
+        "previous": "← Previous",
+        "next": "Next →"
+      },
+      "actions": {
+        "back": "← Back",
+        "edit": "✏️ Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Delete Item?",
+        "deleteMessage": "Are you sure you want to delete item {productName} from the order? This action will hide it from the list and cannot be undone.",
+        "deleteSuccess": "Item deleted successfully",
+        "deleteError": "Failed to delete item.",
+        "loading": "Deleting..."
+      }
+    },
+    "form": {
+      "fields": {
+        "deliveryBatch": "Delivery batch",
+        "deliveryRound": "Delivery round",
+        "orderDate": "Order date",
+        "actualDeliveryDate": "Actual delivery date",
+        "note": "Note",
+        "status": "Status",
+        "cancelReason": "Cancel reason",
+        "orderDateCannotChange": "Order creation date cannot be changed"
+      },
+      "common": {
+        "optional": "(optional)"
+      },
+      "placeholders": {
+        "selectDeliveryBatch": "Select delivery batch",
+        "deliveryRound": "E.g: 1",
+        "orderDate": "Select order date",
+        "actualDeliveryDate": "Select actual delivery date",
+        "note": "Enter order note",
+        "cancelReason": "Enter cancel reason",
+        "selectDeliveryItem": "Select item",
+        "selectProduct": "Select product"
+      },
+      "validation": {
+        "selectDeliveryBatch": "Please select delivery batch.",
+        "addAtLeastOneItem": "Need at least 1 product line.",
+        "selectDeliveryItem": "Please select delivery batch item.",
+        "selectProduct": "Please select product.",
+        "quantityRequired": "Quantity must be greater than 0.",
+        "unitPriceRequired": "Unit price must be greater than 0.",
+        "actualDeliveryDateBeforeOrderDate": "Actual delivery date cannot be before order creation date.",
+        "checkFormErrors": "Please check and fix errors in the form"
+      },
+      "actions": {
+        "addItem": "+ Add item",
+        "removeItem": "Remove",
+        "updateOrder": "Update order",
+        "updating": "Updating order...",
+        "updateSuccess": "Update order successful!",
+        "updateError": "Update order failed.",
+        "createOrder": "Create order",
+        "creating": "Creating order...",
+        "createSuccess": "Create order successful!",
+        "createError": "Create order failed."
+      },
+      "errors": {
+        "loadDeliveryBatch": "Cannot load delivery batch details and product list.",
+        "loadDeliveryBatches": "Cannot load delivery batch list.",
+        "loadData": "Cannot load data.",
+        "checkFormErrors": "Please check and fix errors in the form",
+        "saveOrderError": "An error occurred while saving the order.",
+        "businessError": "Business error: ",
+        "accessError": "Access error: ",
+        "dataError": "Data error: "
+      },
+      "businessRules": {
+        "title": "Must comply with business rules:",
+        "rules": "rules",
+        "summary": "Summary",
+        "adjustOrderInfo": "Need to adjust order information",
+        "removeDuplicateProducts": "Need to remove duplicate products",
+        "changeOrderInfo": "Need to change order information",
+        "contactAdmin": "Need to contact admin",
+        "deliveryBatchUsed": "Delivery batch already used",
+        "dataNotFound": "Data not found",
+        "guidance": "Guidance",
+        "checkOrderInfo": "Check order information again",
+        "noDuplicateProducts": "Cannot have 2 order lines with same product",
+        "orderInfoExists": "Order information already exists, please change to different information",
+        "contactAdminForPermission": "Contact admin for appropriate permissions",
+        "oneOrderPerBatch": "Each delivery batch can only create 1 order",
+        "orderDateNotExceedCurrent": "Order date cannot exceed current date",
+        "deliveryDateNotBeforeOrder": "Actual delivery date cannot be before order date",
+        "discountNotExceedTotal": "Discount cannot exceed total amount",
+        "discountNotNegative": "Discount cannot be negative",
+        "dataNotExists": "Data does not exist or has been deleted"
+      },
+      "table": {
+        "headers": {
+          "deliveryItem": "Delivery batch item",
+          "product": "Product",
+          "quantity": "Quantity (kg)",
+          "unitPrice": "Unit price (VND/Kg)",
+          "discount": "Discount (%)",
+          "note": "Note"
+        }
+      },
+      "summary": {
+        "totalQuantity": "Total Qty",
+        "totalAmount": "Total estimated amount"
+      }
+    }
+  },
+  "managerInventories": {
+    "title": "📦 Inventory Management",
+    "subtitle": "Track and manage inventory in warehouses",
+    "stats": {
+      "totalInventories": "Total inventories",
+      "totalQuantity": "Total quantity",
+      "inStock": "In stock",
+      "outOfStock": "Out of stock",
+      "warehouses": "Warehouses",
+      "coffeeTypes": "Coffee types",
+      "kg": "kg"
+    },
+    "search": {
+      "placeholder": "Search by inventory code, warehouse, coffee type...",
+      "results": "results"
+    },
+    "filters": {
+      "warehouse": "Warehouse:",
+      "coffeeType": "Coffee type:",
+      "all": "All",
+      "selectWarehouse": "Select warehouse",
+      "selectCoffeeType": "Select coffee type"
+    },
+    "table": {
+      "title": "Inventory List",
+      "headers": {
+        "inventoryCode": "Inventory Code",
+        "warehouseName": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "info": "Info",
+        "product": "Product",
+        "quantity": "Quantity",
+        "status": "Status",
+        "actions": "Actions",
+        "batchCode": "Batch Code",
+        "lastUpdated": "Last Updated"
+      },
+      "status": {
+        "inStock": "In stock",
+        "outOfStock": "Out of stock"
+      },
+      "actions": {
+        "view": "View",
+        "logs": "Logs",
+        "edit": "Edit"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "items": "items",
+      "inventories": "inventories"
+    },
+    "empty": {
+      "title": "No inventories found",
+      "description": "Try changing search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading inventory list..."
+    },
+    "error": {
+      "loadData": "Cannot load inventory list",
+      "systemError": "System error: ",
+      "deleteConfirm": "Delete this inventory?",
+      "deleteSuccess": "Inventory deleted successfully",
+      "deleteFailed": "Failed to delete inventory",
+      "notFound": "Inventory not found",
+      "loadInventoryData": "Cannot load inventory data",
+      "unknownError": "Unknown error",
+      "systemErrorCreate": "System error when creating inventory: "
+    },
+    "coffeeTypes": {
+      "fresh": "Fresh coffee",
+      "processed": "Processed coffee",
+      "unknown": "Unknown"
+    },
+    "coffeeInfo": {
+      "season": "Season",
+      "batch": "Processing batch",
+      "info": "Info"
+    },
+    "status": {
+      "inStock": "In stock",
+      "outOfStock": "Out of stock"
+    },
+    "actions": {
+      "createNew": "Create new inventory",
+      "viewDetails": "View details",
+      "viewHistory": "View history"
+    },
+    "create": {
+      "title": "Create New Inventory",
+      "fields": {
+        "warehouse": "Warehouse",
+        "batch": "Batch",
+        "quantity": "Quantity",
+        "unit": "Unit"
+      },
+      "placeholders": {
+        "selectWarehouse": "Select warehouse",
+        "selectBatch": "Select batch",
+        "quantity": "Enter quantity",
+        "unit": "Enter unit"
+      },
+      "validation": {
+        "selectWarehouse": "Please select warehouse",
+        "quantityRequired": "Please enter quantity",
+        "unitRequired": "Please enter unit"
+      },
+      "actions": {
+        "create": "Create Inventory"
+      }
+    },
+    "success": {
+      "createSuccess": "Create inventory successful!"
+    },
+    "detail": {
+      "title": "Inventory Detail",
+      "subtitle": "Detailed information about inventory",
+      "fields": {
+        "inventoryCode": "Inventory Code",
+        "warehouseName": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "product": "Product",
+        "quantity": "Quantity",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At"
+      },
+      "actions": {
+        "backToList": "Back to List"
+      },
+      "loading": "Loading..."
+    },
+    "logs": {
+      "title": "Inventory History",
+      "subtitle": "Track all changes of this inventory",
+      "backToDetail": "Back to Detail",
+      "stats": {
+        "totalLogs": "Total Logs",
+        "inbound": "Inbound",
+        "outbound": "Outbound",
+        "today": "Today"
+      },
+      "detail": {
+        "title": "History Detail",
+        "logs": "logs"
+      },
+      "loading": {
+        "title": "Loading history..."
+      },
+      "fields": {
+        "logId": "Log ID",
+        "quantityChanged": "Quantity Changed",
+        "updatedBy": "Updated By",
+        "note": "Note",
+        "time": "Time"
+      },
+      "actions": {
+        "inbound": "Inbound",
+        "outbound": "Outbound",
+        "change": "Change"
+      },
+      "empty": {
+        "title": "No History",
+        "description": "No activities recorded yet"
+      },
+      "common": {
+        "system": "System",
+        "noNote": "No note"
+      },
+      "error": {
+        "noLogs": "No logs found",
+        "loadLogs": "Cannot load history"
+      }
+    }
+  },
+  "managerInventoryLogs": {
+    "title": "📋 Inventory Logs",
+    "subtitle": "Track all changes in the warehouse system",
+    "stats": {
+      "totalLogs": "Total logs",
+      "inboundToday": "Inbound today",
+      "inboundTurns": "Inbound turns",
+      "outboundTurns": "Outbound turns"
+    },
+    "search": {
+      "placeholder": "🔍 Search by warehouse code, coffee type, warehouse..."
+    },
+    "filters": {
+      "all": "🔄 All",
+      "increase": "📥 Inbound",
+      "decrease": "📤 Outbound",
+      "inbound": "📥 Inbound",
+      "outbound": "📤 Outbound"
+    },
+    "table": {
+      "title": "Inventory History List",
+      "headers": {
+        "actionType": "Action Type",
+        "timestamp": "Timestamp",
+        "inventoryCode": "Inventory Code",
+        "warehouse": "Warehouse",
+        "coffeeType": "Coffee Type",
+        "quantity": "Quantity",
+        "updatedBy": "Updated By",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "actions": {
+        "inbound": "📥 Inbound",
+        "outbound": "📤 Outbound",
+        "details": "Details"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "logs": "logs",
+      "previous": "← Previous",
+      "next": "Next →"
+    },
+    "empty": {
+      "title": "No logs matching the filter",
+      "description": "Try changing search keywords or filters"
+    },
+    "loading": {
+      "title": "Loading log list...",
+      "description": "Please wait while we load the data"
+    },
+    "error": {
+      "title": "Cannot load data",
+      "description": "Error loading inventory log list",
+      "retry": "Retry",
+      "noLogs": "No inventory logs",
+      "loadFailed": "Error loading inventory logs",
+      "deleteFailed": "Failed to delete log"
+    },
+    "success": {
+      "deleteLog": "Log deleted successfully"
+    },
+    "confirmation": {
+      "deleteMessage": "Are you sure you want to delete this log?"
+    },
+    "common": {
+      "kg": "kg",
+      "system": "System",
+      "na": "N/A",
+      "noNote": "No note"
+    },
+    "detail": {
+      "title": "Inventory Log Detail",
+      "subtitle": "Detailed information about inventory activity",
+      "back": "Back",
+      "backToList": "Back to List",
+      "loading": {
+        "title": "Loading log details..."
+      },
+      "error": {
+        "loadData": "Cannot load log data",
+        "notFound": "Log not found"
+      },
+      "sections": {
+        "batchInfo": "Batch Information",
+        "changeDetails": "Change Details",
+        "quickStats": "Quick Stats",
+        "actions": "Actions"
+      },
+      "fields": {
+        "logId": "Log ID",
+        "timestamp": "Timestamp",
+        "inventoryCode": "Inventory Code",
+        "batchCode": "Batch Code",
+        "product": "Product",
+        "coffeeType": "Coffee Type",
+        "seasonCode": "Season Code",
+        "farmerName": "Farmer Name",
+        "warehouseName": "Warehouse Name",
+        "quantityChanged": "Quantity Changed",
+        "note": "Note",
+        "updatedBy": "Updated By",
+        "actionType": "Action Type"
+      },
+      "status": {
+        "completed": "Completed"
+      },
+      "actions": {
+        "printDetails": "Print Details",
+        "viewWarehouseLocation": "View Warehouse Location"
+      }
+    }
+  },
+  "managerWarehouseRequest": {
+    "title": "📤 Outbound Requests",
+    "subtitle": "Manage outbound requests from orders",
+    "stats": {
+      "totalRequests": "Total requests",
+      "pendingRequests": "Pending",
+      "approvedRequests": "Approved",
+      "completedRequests": "Completed",
+      "cancelledRequests": "Cancelled"
+    },
+    "search": {
+      "results": "results"
+    },
+    "placeholders": {
+      "search": "Search by request code...",
+      "selectWarehouse": "Select warehouse",
+      "selectInventory": "Select inventory",
+      "quantity": "Enter quantity",
+      "unit": "Enter unit (kg, ton...)",
+      "purpose": "Describe export purpose",
+      "reason": "Export reason",
+      "selectOrder": "Select order",
+      "selectOrderItem": "Select order item"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "requests": "requests"
+    },
+    "empty": {
+      "noRequests": "No outbound requests found",
+      "noRequestsYet": "No outbound requests yet"
+    },
+    "loading": {
+      "loadingData": "Loading data...",
+      "loadingDetail": "Loading request details..."
+    },
+    "error": {
+      "loadRequests": "Cannot load request list",
+      "invalidData": "Invalid data",
+      "cancelRequest": "Cannot cancel request",
+      "loadDetail": "Cannot load request details",
+      "loadData": "Cannot load data",
+      "createRequest": "Cannot create request"
+    },
+    "success": {
+      "cancelSuccess": "Request cancelled successfully",
+      "createRequest": "Request created successfully"
+    },
+    "confirmation": {
+      "cancelMessage": "Are you sure you want to cancel this request?"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "view": "View details",
+      "cancel": "Cancel request",
+      "create": "Create new request",
+      "createNew": "Create new request",
+      "cancelRequest": "Cancel Request"
+    },
+    "fields": {
+      "requestCode": "Request Code",
+      "warehouse": "Warehouse",
+      "inventory": "Inventory",
+      "quantity": "Quantity",
+      "purpose": "Purpose",
+      "reason": "Reason",
+      "requestedBy": "Requested By",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "status": "Status",
+      "actions": "Actions",
+      "order": "Order",
+      "requester": "Requester",
+      "rejectionReason": "Rejection Reason",
+      "remaining": "Remaining"
+    },
+    "common": {
+      "unknown": "Unknown",
+      "noData": "No data",
+      "notFound": "Not found",
+      "notAvailable": "Not available"
+    },
+    "sections": {
+      "requestList": "Request List"
+    },
+    "detail": {
+      "title": "Outbound Request Detail",
+      "backToList": "Back to List"
+    },
+    "create": {
+      "title": "Create New Outbound Request",
+      "subtitle": "Create outbound request from existing inventory",
+      "back": "Back",
+      "cancel": "Cancel",
+      "submit": "Create Request",
+      "submitting": "Creating...",
+      "form": {
+        "title": "Request Information",
+        "warehouseLabel": "Warehouse",
+        "inventoryLabel": "Inventory",
+        "quantityLabel": "Requested Quantity",
+        "unitLabel": "Unit",
+        "purposeLabel": "Purpose",
+        "reasonLabel": "Reason",
+        "orderLabel": "Order",
+        "orderItemLabel": "Order Item"
+      },
+      "info": {
+        "stats": "Quick Stats",
+        "totalWarehouses": "Total Warehouses",
+        "totalOrders": "Total Orders",
+        "currentInventory": "Current Inventory",
+        "selectedWarehouse": "Selected Warehouse",
+        "selectedInventory": "Selected Inventory",
+        "selectedOrderItem": "Selected Order Item",
+        "recommended": "Recommended",
+        "fifoPriority": "FIFO Priority",
+        "totalQuantity": "Total Quantity",
+        "confirmedQuantity": "Confirmed Quantity",
+        "remainingQuantity": "Remaining Quantity",
+        "outOfStock": "Out of Stock"
+      },
+      "guide": {
+        "title": "Usage Guide",
+        "step1": "1. Select warehouse to export from",
+        "step2": "2. Choose inventory and quantity",
+        "step3": "3. Fill in purpose and reason",
+        "step4": "4. Link to order (optional)",
+        "fifoTitle": "💡 FIFO Recommendation",
+        "fifo1": "• System automatically recommends",
+        "fifo2": "• Prioritize older inventory first",
+        "featuresTitle": "✨ Key Features",
+        "feature1": "• Auto-fill quantities",
+        "feature2": "• Real-time inventory check",
+        "feature3": "• Link to orders"
+      },
+      "errors": {
+        "loadWarehouses": "Cannot load warehouse list",
+        "loadInventories": "Cannot load inventory list",
+        "loadOrders": "Cannot load order list",
+        "loadOrderItems": "Cannot load order items list",
+        "requiredFields": "Please fill in all required fields",
+        "invalidQuantity": "Invalid quantity",
+        "exceedQuantity": "Requested quantity ({quantity}) exceeds remaining quantity ({remaining})"
+      }
     }
   }
 }
