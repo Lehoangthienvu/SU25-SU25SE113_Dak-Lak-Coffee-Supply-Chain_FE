@@ -2436,7 +2436,11 @@
         "actions": "Hành động",
         "plantingArea": "Vùng trồng",
         "to": "đến",
-        "updateDetailTitle": "Cập nhật chi tiết vùng trồng"
+        "updateDetailTitle": "Cập nhật chi tiết vùng trồng",
+        "delete": "Xóa",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa vùng trồng này không?",
+        "deleteSuccess": "Xóa vùng trồng thành công!",
+        "deleteError": "Xóa vùng trồng thất bại!"
       },
       "list": {
         "title": "Danh sách mùa vụ",
@@ -2475,7 +2479,11 @@
         "farmer": "Nông dân",
         "to": "đến",
         "viewDetails": "Xem chi tiết",
-        "edit": "Sửa"
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa mùa vụ này không?",
+        "deleteSuccess": "Xóa mùa vụ thành công!",
+        "deleteError": "Xóa mùa vụ thất bại!"
       },
       "status": {
         "active": "Đang hoạt động",

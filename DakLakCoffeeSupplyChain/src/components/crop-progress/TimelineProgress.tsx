@@ -19,12 +19,15 @@ import {
     FileText,
     User,
     Edit,
-    Plus
+    Plus,
+    Trash2,
+    AlertTriangle
 } from "lucide-react";
-import { CropProgressViewAllDto } from "@/lib/api/cropProgress";
+import { CropProgressViewAllDto, deleteCropProgress } from "@/lib/api/cropProgress";
 import { CropStage } from "@/lib/api/cropStage";
 import { CreateProgressDialog } from "@/app/dashboard/farmer/crop-progress/components/CreateProgressDialog";
 import { EditProgressDialog } from "@/app/dashboard/farmer/crop-progress/components/EditProgressDialog";
+import { AppToast } from "@/components/ui/AppToast";
 
 interface Props {
     progressList: CropProgressViewAllDto[];
@@ -79,6 +82,18 @@ export default function TimelineProgress({
         title: ''
     });
 
+    const [deleteDialog, setDeleteDialog] = useState<{
+        isOpen: boolean;
+        progressId: string | null;
+        progressName: string;
+    }>({
+        isOpen: false,
+        progressId: null,
+        progressName: ''
+    });
+
+    const [deleting, setDeleting] = useState(false);
+
     const getStageIcon = (stageCode: string) => {
         const normalizedCode = stageCode.toUpperCase();
         if (allStages.length > 0) {
@@ -114,8 +129,7 @@ export default function TimelineProgress({
             return sortedStages.find(stage => !completedStages.includes(stage.stageCode.toUpperCase()))?.stageCode;
         }
 
-        const hardcodedStages = ["PLANTING", "FLOWERING", "FRUITING", "RIPENING", "HARVESTING"];
-        return hardcodedStages.find(stage => !completedStages.includes(stage));
+        return null; // Return null if no stages available
     };
 
     const openMediaDialog = (type: 'image' | 'video', url: string, title: string) => {
@@ -137,6 +151,39 @@ export default function TimelineProgress({
             url: null,
             title: ''
         });
+    };
+
+    const openDeleteDialog = (progressId: string, progressName: string) => {
+        setDeleteDialog({
+            isOpen: true,
+            progressId,
+            progressName
+        });
+    };
+
+    const closeDeleteDialog = () => {
+        setDeleteDialog({
+            isOpen: false,
+            progressId: null,
+            progressName: ''
+        });
+    };
+
+    const handleDelete = async () => {
+        if (!deleteDialog.progressId) return;
+
+        try {
+            setDeleting(true);
+            await deleteCropProgress(deleteDialog.progressId);
+            AppToast.success("Đã xóa tiến độ thành công!");
+            closeDeleteDialog();
+            onReload();
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Lỗi khi xóa tiến độ!";
+            AppToast.error(errorMessage);
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const nextStage = getNextStage();
@@ -259,6 +306,16 @@ export default function TimelineProgress({
                                                 </Button>
                                             }
                                         />
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="text-red-600 hover:text-red-800 hover:bg-red-100"
+                                            onClick={() => openDeleteDialog(progress.progressId, progress.stageName)}
+                                            aria-label={`Xóa tiến độ ${progress.stageName}`}
+                                            onKeyDown={(e) => e.key === 'Enter' && openDeleteDialog(progress.progressId, progress.stageName)}
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -317,6 +374,10 @@ export default function TimelineProgress({
                                             <div
                                                 className="relative cursor-pointer group"
                                                 onClick={() => openMediaDialog('image', progress.photoUrl, `${progress.stageName} - Ảnh`)}
+                                                onKeyDown={(e) => e.key === 'Enter' && openMediaDialog('image', progress.photoUrl, `${progress.stageName} - Ảnh`)}
+                                                role="button"
+                                                tabIndex={0}
+                                                aria-label={`Xem ảnh ${progress.stageName}`}
                                             >
                                                 <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 hover:border-green-400 transition-all">
                                                     <img
@@ -339,6 +400,10 @@ export default function TimelineProgress({
                                             <div
                                                 className="relative cursor-pointer group"
                                                 onClick={() => openMediaDialog('video', progress.videoUrl, `${progress.stageName} - Video`)}
+                                                onKeyDown={(e) => e.key === 'Enter' && openMediaDialog('video', progress.videoUrl, `${progress.stageName} - Video`)}
+                                                role="button"
+                                                tabIndex={0}
+                                                aria-label={`Xem video ${progress.stageName}`}
                                             >
                                                 <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 hover:border-green-400 transition-all">
                                                     <video
@@ -410,6 +475,47 @@ export default function TimelineProgress({
                                 <p className="text-sm">URL không hợp lệ hoặc bị thiếu</p>
                             </div>
                         )}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteDialog.isOpen} onOpenChange={closeDeleteDialog}>
+                <DialogContent className="max-w-md">
+                    <DialogTitle className="flex items-center gap-2 text-red-600">
+                        <AlertTriangle className="w-5 h-5" />
+                        Xác nhận xóa tiến độ
+                    </DialogTitle>
+                    <div className="space-y-4">
+                        <p className="text-gray-700">
+                            Bạn có chắc chắn muốn xóa tiến độ <strong>"{deleteDialog.progressName}"</strong>?
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            Hành động này không thể hoàn tác. Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn.
+                        </p>
+                        <div className="flex justify-end gap-3 pt-4">
+                            <Button
+                                variant="outline"
+                                onClick={closeDeleteDialog}
+                                disabled={deleting}
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onClick={handleDelete}
+                                disabled={deleting}
+                            >
+                                {deleting ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        Đang xóa...
+                                    </div>
+                                ) : (
+                                    "Xóa tiến độ"
+                                )}
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>

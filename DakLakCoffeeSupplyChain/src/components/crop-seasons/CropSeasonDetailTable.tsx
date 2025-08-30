@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,11 @@ import {
   CropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
-import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
+import { Edit, Coffee, MapPin, Calendar, Target, Trash2 } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
+import { softDeleteCropSeasonDetail } from "@/lib/api/cropSeasonDetail";
+import { AppToast } from "@/components/ui/AppToast";
 
 interface Props {
   details: CropSeasonDetail[];
@@ -24,7 +26,61 @@ export default function CropSeasonDetailTable({
 }: Props) {
   const { t } = useTranslation();
   const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
+  const [deletingDetailId, setDeletingDetailId] = useState<string | null>(null);
+  const [isClosingDialog, setIsClosingDialog] = useState(false);
   const router = useRouter();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Prevent body scroll and handle dialog backdrop clicks
+  useEffect(() => {
+    if (editingDetailId) {
+      document.body.style.overflow = 'hidden';
+
+      // Add event listener to prevent clicks on backdrop from triggering row clicks
+      const handleDocumentClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        // Check if click is on dialog backdrop (outside dialog content)
+        if (target.closest('[data-radix-dialog-overlay]') && !target.closest('[data-radix-dialog-content]')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        }
+      };
+
+      const handleMouseDown = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        // Check if click is on dialog backdrop (outside dialog content)
+        if (target.closest('[data-radix-dialog-overlay]') && !target.closest('[data-radix-dialog-content]')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        }
+      };
+
+      const handlePointerDown = (e: PointerEvent) => {
+        const target = e.target as HTMLElement;
+        // Check if click is on dialog backdrop (outside dialog content)
+        if (target.closest('[data-radix-dialog-overlay]') && !target.closest('[data-radix-dialog-content]')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        }
+      };
+
+      document.addEventListener('click', handleDocumentClick, true);
+      document.addEventListener('mousedown', handleMouseDown, true);
+      document.addEventListener('pointerdown', handlePointerDown, true);
+
+      return () => {
+        document.body.style.overflow = 'unset';
+        document.removeEventListener('click', handleDocumentClick, true);
+        document.removeEventListener('mousedown', handleMouseDown, true);
+        document.removeEventListener('pointerdown', handlePointerDown, true);
+      };
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [editingDetailId, isClosingDialog]);
 
   const formatDate = (date?: string) => {
     if (!date) return t('cropSeasons.details.notUpdated');
@@ -47,11 +103,53 @@ export default function CropSeasonDetailTable({
   };
 
   const handleRowClick = (detailId: string, event: React.MouseEvent) => {
-    // Prevent navigation if clicking on the edit button
-    if ((event.target as HTMLElement).closest('button')) {
+    // Prevent navigation if dialog is open or closing
+    if (editingDetailId || isClosingDialog) {
+      event.preventDefault();
+      event.stopPropagation();
       return;
     }
+
+    // Prevent navigation if clicking on buttons or interactive elements
+    const target = event.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="button"]') || target.closest('[data-radix-collection-item]')) {
+      return;
+    }
+
+    // Prevent navigation if clicking on dialog backdrop
+    if (target.closest('[data-radix-dialog-overlay]') || target.closest('[data-radix-dialog-content]')) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    // Additional check for dialog backdrop
+    const dialogOverlay = document.querySelector('[data-radix-dialog-overlay]');
+    if (dialogOverlay && dialogOverlay.contains(target)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     router.push(`/dashboard/farmer/crop-progress/${detailId}`);
+  };
+
+  const handleDelete = async (detailId: string, event: React.MouseEvent) => {
+    if (!confirm(t('cropSeasons.detailTable.confirmDelete'))) {
+      return;
+    }
+
+    try {
+      setDeletingDetailId(detailId);
+      await softDeleteCropSeasonDetail(detailId);
+      AppToast.success(t('cropSeasons.detailTable.deleteSuccess'));
+      onReload();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : t('cropSeasons.detailTable.deleteError');
+      AppToast.error(errorMessage);
+    } finally {
+      setDeletingDetailId(null);
+    }
   };
 
   if (details.length === 0)
@@ -63,7 +161,15 @@ export default function CropSeasonDetailTable({
     );
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden relative">
+      {editingDetailId && (
+        <div
+          className="absolute inset-0 bg-transparent z-10"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        />
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gradient-to-r from-green-50 to-emerald-50 text-gray-700 font-semibold">
@@ -82,8 +188,8 @@ export default function CropSeasonDetailTable({
             {details.map((detail) => (
               <tr
                 key={detail.detailId}
-                className="hover:bg-green-50 transition-colors cursor-pointer"
-                onClick={(e) => handleRowClick(detail.detailId, e)}
+                className={`transition-colors ${(editingDetailId || isClosingDialog) ? 'cursor-default' : 'hover:bg-green-50 cursor-pointer'}`}
+                onClick={(e) => (editingDetailId || isClosingDialog) ? null : handleRowClick(detail.detailId, e)}
               >
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
@@ -144,16 +250,33 @@ export default function CropSeasonDetailTable({
                   <div className="flex items-center gap-1">
                     <Dialog
                       open={editingDetailId === detail.detailId}
-                      onOpenChange={(open) =>
-                        setEditingDetailId(open ? detail.detailId : null)
-                      }
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          setIsClosingDialog(true);
+                          setTimeout(() => {
+                            setEditingDetailId(null);
+                            setIsClosingDialog(false);
+                          }, 100);
+                        } else {
+                          setEditingDetailId(detail.detailId);
+                        }
+                      }}
+                      onOpenAutoFocus={(e) => e.preventDefault()}
                     >
                       <DialogTrigger asChild>
-                        <Button size="sm" variant="ghost" className="text-amber-600 hover:text-amber-800 hover:bg-amber-50">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <Edit className="w-3 h-3" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent title={t('cropSeasons.detailTable.updateDetailTitle')} className="max-w-lg">
+                      <DialogContent
+                        title={t('cropSeasons.detailTable.updateDetailTitle')}
+                        className="max-w-lg"
+                      >
                         <UpdateCropSeasonDetailDialog
                           detailId={detail.detailId}
                           onClose={() => setEditingDetailId(null)}
@@ -161,6 +284,19 @@ export default function CropSeasonDetailTable({
                         />
                       </DialogContent>
                     </Dialog>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(detail.detailId, e);
+                      }}
+                      disabled={deletingDetailId === detail.detailId}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                      title={t('cropSeasons.detailTable.delete')}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
                   </div>
                 </td>
               </tr>

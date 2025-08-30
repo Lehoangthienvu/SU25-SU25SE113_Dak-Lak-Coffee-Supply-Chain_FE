@@ -2398,7 +2398,11 @@
         "actions": "Actions",
         "plantingArea": "Planting Area",
         "to": "to",
-        "updateDetailTitle": "Update Planting Area Details"
+        "updateDetailTitle": "Update Planting Area Details",
+        "delete": "Delete",
+        "confirmDelete": "Are you sure you want to delete this planting area?",
+        "deleteSuccess": "Planting area deleted successfully!",
+        "deleteError": "Failed to delete planting area!"
       },
       "list": {
         "title": "Crop Seasons List",
@@ -2437,7 +2441,11 @@
         "farmer": "Farmer",
         "to": "to",
         "viewDetails": "View Details",
-        "edit": "Edit"
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Are you sure you want to delete this crop season?",
+        "deleteSuccess": "Crop season deleted successfully!",
+        "deleteError": "Failed to delete crop season!"
       },
       "status": {
         "active": "Active",

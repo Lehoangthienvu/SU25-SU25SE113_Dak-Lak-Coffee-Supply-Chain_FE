@@ -36,21 +36,22 @@ export default function FarmerCropSeasonsPage() {
   const [allCropSeasons, setAllCropSeasons] = useState<CropSeasonListItem[]>([]);
   const [filteredCropSeasons, setFilteredCropSeasons] = useState<CropSeasonListItem[]>([]);
 
+  // Function để reload data
+  const reloadData = async () => {
+    try {
+      const data = await getCropSeasonsForCurrentUser({
+        page: 1,
+        pageSize: 1000, // Lấy tất cả để tính statusCounts
+      });
+      setAllCropSeasons(data);
+    } catch (err) {
+      console.error("Lỗi khi tải tất cả mùa vụ:", err);
+    }
+  };
+
   // Lấy tất cả dữ liệu gốc (không filter) để tính statusCounts
   useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const data = await getCropSeasonsForCurrentUser({
-          page: 1,
-          pageSize: 1000, // Lấy tất cả để tính statusCounts
-        });
-        setAllCropSeasons(data);
-      } catch (err) {
-        console.error("Lỗi khi tải tất cả mùa vụ:", err);
-      }
-    };
-
-    fetchAllData();
+    reloadData();
   }, []);
 
   // Lấy dữ liệu đã filter để hiển thị
@@ -275,6 +276,7 @@ export default function FarmerCropSeasonsPage() {
                           <CropSeasonCard
                             key={season.cropSeasonId}
                             season={season}
+                            onReload={reloadData}
                           />
                         ))}
                       </tbody>
