@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "next/navigation";
 import { getLogsByInventoryId } from "@/lib/api/inventoryLogs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { ArrowLeft, History, TrendingUp, TrendingDown, Package, User, Clock, Fil
 import Link from "next/link";
 
 export default function InventoryLogsPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [logs, setLogs] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -24,17 +26,17 @@ export default function InventoryLogsPage() {
         if (Array.isArray(result) && result.length > 0) {
           setLogs(result);
         } else {
-          setError("Không có log tồn kho.");
+          setError(t('managerInventories.logs.error.noLogs'));
         }
       } catch (err: any) {
-        setError(err.message || "Lỗi khi tải log tồn kho.");
+        setError(err.message || t('managerInventories.logs.error.loadLogs'));
       } finally {
         setLoading(false);
       }
     }
 
     if (id) fetchLogs();
-  }, [id]);
+  }, [id, t]);
 
   // Tính toán thống kê
   const totalLogs = logs.length;
@@ -66,11 +68,11 @@ export default function InventoryLogsPage() {
 
   const getActionLabel = (actionType: string) => {
     if (actionType?.toLowerCase().includes('increase') || actionType?.toLowerCase().includes('nhập')) {
-      return '📥 Nhập kho';
+      return t('managerInventories.logs.actions.inbound');
     } else if (actionType?.toLowerCase().includes('decrease') || actionType?.toLowerCase().includes('xuất')) {
-      return '📤 Xuất kho';
+      return t('managerInventories.logs.actions.outbound');
     }
-    return '📦 Thay đổi';
+    return t('managerInventories.logs.actions.change');
   };
 
   return (
@@ -84,8 +86,8 @@ export default function InventoryLogsPage() {
                 <History className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold mb-2">📑 Lịch sử thay đổi tồn kho</h1>
-                <p className="text-blue-100 text-lg">Theo dõi các thay đổi về số lượng và trạng thái tồn kho</p>
+                <h1 className="text-3xl font-bold mb-2">{t('managerInventories.logs.title')}</h1>
+                <p className="text-blue-100 text-lg">{t('managerInventories.logs.subtitle')}</p>
               </div>
             </div>
             <Link href={`/dashboard/manager/inventories/${id}`}>
@@ -94,7 +96,7 @@ export default function InventoryLogsPage() {
                 className="border-white/20 text-white hover:bg-white/10"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Quay lại chi tiết
+                {t('managerInventories.logs.backToDetail')}
               </Button>
             </Link>
           </div>
@@ -104,28 +106,28 @@ export default function InventoryLogsPage() {
             <div className="bg-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <BarChart3 className="w-4 h-4 text-blue-200" />
-                <span className="text-blue-200 text-sm">Tổng log</span>
+                <span className="text-blue-200 text-sm">{t('managerInventories.logs.stats.totalLogs')}</span>
               </div>
               <p className="text-white font-bold text-xl">{totalLogs}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-4 h-4 text-emerald-200" />
-                <span className="text-emerald-200 text-sm">Nhập kho</span>
+                <span className="text-emerald-200 text-sm">{t('managerInventories.logs.stats.inbound')}</span>
               </div>
               <p className="text-emerald-200 font-bold text-xl">{increaseLogs}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingDown className="w-4 h-4 text-rose-200" />
-                <span className="text-rose-200 text-sm">Xuất kho</span>
+                <span className="text-rose-200 text-sm">{t('managerInventories.logs.stats.outbound')}</span>
               </div>
               <p className="text-rose-200 font-bold text-xl">{decreaseLogs}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Calendar className="w-4 h-4 text-blue-200" />
-                <span className="text-blue-200 text-sm">Hôm nay</span>
+                <span className="text-blue-200 text-sm">{t('managerInventories.logs.stats.today')}</span>
               </div>
               <p className="text-white font-bold text-xl">{todayLogs}</p>
             </div>
@@ -140,9 +142,9 @@ export default function InventoryLogsPage() {
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <FileText className="w-4 h-4 text-blue-600" />
             </div>
-            Chi tiết lịch sử
+            {t('managerInventories.logs.detail.title')}
             <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-800 text-xs">
-              {totalLogs} log
+              {totalLogs} {t('managerInventories.logs.detail.logs')}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -150,7 +152,7 @@ export default function InventoryLogsPage() {
           {loading && (
             <div className="p-12 text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Đang tải dữ liệu...</p>
+              <p className="text-gray-600 text-lg">{t('managerInventories.logs.loading.title')}</p>
             </div>
           )}
 
@@ -204,7 +206,7 @@ export default function InventoryLogsPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-500 font-medium">ID Log</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('managerInventories.logs.fields.logId')}</p>
                         <p className="text-xs font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded">
                           {log.logId}
                         </p>
@@ -219,7 +221,7 @@ export default function InventoryLogsPage() {
                             <Package className="w-4 h-4 text-gray-600" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 font-medium">Số lượng thay đổi</p>
+                            <p className="text-sm text-gray-500 font-medium">{t('managerInventories.logs.fields.quantityChanged')}</p>
                             <p className={`text-lg font-bold ${
                               log.actionType?.toLowerCase().includes('increase') || log.actionType?.toLowerCase().includes('nhập')
                                 ? 'text-emerald-600'
@@ -238,8 +240,8 @@ export default function InventoryLogsPage() {
                             <User className="w-4 h-4 text-gray-600" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 font-medium">Người cập nhật</p>
-                            <p className="text-sm font-semibold text-gray-900">{log.updatedByName || "Hệ thống"}</p>
+                            <p className="text-sm text-gray-500 font-medium">{t('managerInventories.logs.fields.updatedBy')}</p>
+                            <p className="text-sm font-semibold text-gray-900">{log.updatedByName || t('managerInventories.logs.common.system')}</p>
                           </div>
                         </div>
                       </div>
@@ -250,8 +252,8 @@ export default function InventoryLogsPage() {
                             <FileText className="w-4 h-4 text-gray-600" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 font-medium">Ghi chú</p>
-                            <p className="text-sm text-gray-900">{log.note || "Không có ghi chú"}</p>
+                            <p className="text-sm text-gray-500 font-medium">{t('managerInventories.logs.fields.note')}</p>
+                            <p className="text-sm text-gray-900">{log.note || t('managerInventories.logs.common.noNote')}</p>
                           </div>
                         </div>
 
@@ -260,7 +262,7 @@ export default function InventoryLogsPage() {
                             <Clock className="w-4 h-4 text-gray-600" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 font-medium">Thời gian</p>
+                            <p className="text-sm text-gray-500 font-medium">{t('managerInventories.logs.fields.time')}</p>
                             <p className="text-sm font-semibold text-gray-900">
                               {new Date(log.loggedAt).toLocaleDateString("vi-VN")}
                             </p>
@@ -279,8 +281,8 @@ export default function InventoryLogsPage() {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <History className="w-8 h-8 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-lg mb-2">Không có lịch sử tồn kho</p>
-              <p className="text-gray-400 text-sm">Tồn kho này chưa có thay đổi nào được ghi nhận</p>
+              <p className="text-gray-500 text-lg mb-2">{t('managerInventories.logs.empty.title')}</p>
+              <p className="text-gray-400 text-sm">{t('managerInventories.logs.empty.description')}</p>
             </div>
           )}
         </CardContent>

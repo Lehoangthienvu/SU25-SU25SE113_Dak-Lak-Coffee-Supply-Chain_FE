@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import OrderForm from "@/components/orders/OrderForm";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/lib/api/orders";
 
 export default function OrderEditPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id =
@@ -57,7 +59,7 @@ export default function OrderEditPage() {
         if (mounted) setInitialData(mapped);
       } catch (err) {
         console.error(err);
-        toast.error("Failed to load order details.");
+        toast.error(t('managerOrders.edit.error.loadOrder'));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -71,13 +73,13 @@ export default function OrderEditPage() {
   if (loading)
     return (
       <div className="max-w-6xl mx-auto py-10 text-center text-muted-foreground">
-        Loading order...
+        {t('managerOrders.edit.loading')}
       </div>
     );
   if (!initialData)
     return (
       <div className="max-w-6xl mx-auto py-10 text-center text-destructive">
-        Order not found.
+        {t('managerOrders.edit.notFound')}
       </div>
     );
 
