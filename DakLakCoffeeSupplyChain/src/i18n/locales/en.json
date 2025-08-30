@@ -1886,7 +1886,9 @@
     "totalSizeLimit": "Total file size ({{totalSizeMB}}MB) exceeds 50MB limit",
     "totalFilesLimit": "Total files ({{totalFiles}}) exceeds 10 files limit",
     "createProgressFailed": "Failed to create progress!",
-    "createProgressSuccess": "Progress created successfully!"
+    "createProgressSuccess": "Progress created successfully!",
+    "filterByStatus": "Filter by Status",
+    "allStatuses": "All Statuses"
   },
 
   "farmerBatchSelector": {
