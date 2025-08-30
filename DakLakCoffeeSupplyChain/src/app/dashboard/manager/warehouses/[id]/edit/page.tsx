@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { getWarehouseById, updateWarehouse } from '@/lib/api/warehouses';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function EditWarehousePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const warehouseId = params?.id as string;
@@ -35,7 +37,7 @@ export default function EditWarehousePage() {
           managerId: w.managerId ?? '',
         });
       } else {
-        toast.error('Không thể tải thông tin kho');
+        toast.error(t('common.errors.loadDataError'));
         router.push('/dashboard/manager/warehouses');
       }
     };
@@ -62,7 +64,7 @@ export default function EditWarehousePage() {
     setLoading(false);
 
     if (res.status === 1) {
-      toast.success('Cập nhật kho thành công');
+      toast.success(t('common.messages.updateSuccess'));
       router.push('/dashboard/manager/warehouses');
     } else {
       toast.error(res.message);
@@ -73,16 +75,16 @@ export default function EditWarehousePage() {
     <div className="min-h-screen bg-orange-50 p-6">
       <Card className="max-w-xl mx-auto">
         <CardHeader className="flex justify-between items-center">
-          <CardTitle>Cập nhật kho</CardTitle>
+          <CardTitle>{t('managerWarehouses.edit.title')}</CardTitle>
           <Link href="/dashboard/manager/warehouses">
-            <Button variant="outline">← Quay lại</Button>
+            <Button variant="outline">← {t('common.actions.back')}</Button>
           </Link>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             <div>
-              <label className="font-medium">Tên kho</label>
+              <label className="font-medium">{t('managerWarehouses.create.fields.name')}</label>
               <Input
                 name="name"
                 value={form.name}
@@ -91,7 +93,7 @@ export default function EditWarehousePage() {
               />
             </div>
             <div>
-              <label className="font-medium">Vị trí</label>
+              <label className="font-medium">{t('managerWarehouses.create.fields.location')}</label>
               <Input
                 name="location"
                 value={form.location}
@@ -100,7 +102,7 @@ export default function EditWarehousePage() {
               />
             </div>
             <div>
-              <label className="font-medium">Dung lượng (kg)</label>
+                              <label className="font-medium">{t('managerWarehouses.create.fields.capacity')} ({t('managerWarehouses.stats.kg')})</label>
               <Input
                 name="capacity"
                 type="number"
@@ -110,7 +112,7 @@ export default function EditWarehousePage() {
               />
             </div>
             <div>
-              <label className="font-medium">Manager ID</label>
+              <label className="font-medium">{t('managerWarehouses.create.fields.managerId')}</label>
               <Input
                 name="managerId"
                 value={form.managerId}
@@ -120,7 +122,7 @@ export default function EditWarehousePage() {
             </div>
 
             <Button type="submit" className="bg-amber-800 text-white" disabled={loading}>
-              {loading ? 'Đang cập nhật...' : 'Cập nhật'}
+              {loading ? t('common.actions.updating') : t('common.actions.update')}
             </Button>
           </form>
         </CardContent>

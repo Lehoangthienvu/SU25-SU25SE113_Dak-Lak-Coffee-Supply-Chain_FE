@@ -25,8 +25,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useTranslation } from 'react-i18next';
 
 export default function ManagerOutboundRequestList() {
+  const { t } = useTranslation();
   const [data, setData] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,15 +43,15 @@ export default function ManagerOutboundRequestList() {
           console.log('Outbound requests data:', res.data); // Debug log
           setData(res.data);
         } else {
-          toast.error(res.message || "⚠️ Dữ liệu không hợp lệ");
+          toast.error(res.message || t('managerWarehouseRequest.error.invalidData'));
         }
       })
-      .catch((err) => toast.error("❌ Lỗi tải danh sách: " + err.message))
+      .catch((err) => toast.error(t('managerWarehouseRequest.error.loadRequests') + ": " + err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   const handleCancel = async (id: string) => {
-    const confirm = window.confirm("Bạn chắc chắn muốn hủy yêu cầu này?");
+    const confirm = window.confirm(t('managerWarehouseRequest.confirmation.cancelMessage'));
     if (!confirm) return;
 
     try {
@@ -59,7 +61,7 @@ export default function ManagerOutboundRequestList() {
         setData((prev) => prev.filter((r) => r.outboundRequestId !== id));
       }
     } catch (err: any) {
-      toast.error("❌ " + err.message);
+      toast.error(t('managerWarehouseRequest.error.cancelRequest') + ": " + err.message);
     }
   };
 
@@ -100,16 +102,16 @@ export default function ManagerOutboundRequestList() {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "Pending":
-        return "⏳ Chờ Duyệt";
+        return t('managerWarehouseRequest.status.pending');
       case "Approved":
       case "Accepted":
-        return "✅ Đã Duyệt";
+        return t('managerWarehouseRequest.status.approved');
       case "Rejected":
-        return "❌ Từ Chối";
+        return t('managerWarehouseRequest.status.rejected');
       case "Cancelled":
-        return "🚫 Đã Hủy";
+        return t('managerWarehouseRequest.status.cancelled');
       case "Completed":
-        return "🎉 Hoàn Tất";
+        return t('managerWarehouseRequest.status.completed');
       default:
         return status;
     }
@@ -121,9 +123,9 @@ export default function ManagerOutboundRequestList() {
       <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
           <Package className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 Yêu cầu xuất kho</h1>
+          <h1 className="text-2xl font-bold">📦 {t('managerWarehouseRequest.title')}</h1>
         </div>
-        <p className="text-orange-100 text-base">Quản lý và theo dõi yêu cầu xuất kho của công ty</p>
+        <p className="text-orange-100 text-base">{t('managerWarehouseRequest.subtitle')}</p>
       </div>
 
       {/* Thống kê tổng quan */}
@@ -135,7 +137,7 @@ export default function ManagerOutboundRequestList() {
                 <Package className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng yêu cầu</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouseRequest.stats.totalRequests')}</p>
                 <p className="text-xl font-bold text-orange-600">{totalRequests}</p>
               </div>
             </div>
@@ -149,7 +151,7 @@ export default function ManagerOutboundRequestList() {
                 <Clock className="w-5 h-5 text-yellow-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Chờ duyệt</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouseRequest.stats.pendingRequests')}</p>
                 <p className="text-xl font-bold text-yellow-600">{pendingCount}</p>
               </div>
             </div>
@@ -163,7 +165,7 @@ export default function ManagerOutboundRequestList() {
                 <TrendingUp className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Đã duyệt</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouseRequest.stats.approvedRequests')}</p>
                 <p className="text-xl font-bold text-blue-600">{approvedCount}</p>
               </div>
             </div>
@@ -177,7 +179,7 @@ export default function ManagerOutboundRequestList() {
                 <CheckCircle className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Hoàn tất</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouseRequest.stats.completedRequests')}</p>
                 <p className="text-xl font-bold text-green-600">{completedCount}</p>
               </div>
             </div>
@@ -191,7 +193,7 @@ export default function ManagerOutboundRequestList() {
                 <AlertTriangle className="w-5 h-5 text-red-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Đã hủy</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouseRequest.stats.cancelledRequests')}</p>
                 <p className="text-xl font-bold text-red-600">{cancelledCount}</p>
               </div>
             </div>
@@ -206,7 +208,7 @@ export default function ManagerOutboundRequestList() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Input
-                  placeholder="🔍 Tìm theo mã yêu cầu..."
+                  placeholder={t('managerWarehouseRequest.placeholders.search')}
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -218,16 +220,16 @@ export default function ManagerOutboundRequestList() {
               </div>
               {search && (
                 <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
-                  {filtered.length} kết quả
+                  {filtered.length} {t('managerWarehouseRequest.search.results')}
                 </Badge>
               )}
             </div>
-            <Link href="/dashboard/manager/warehouse-request/create">
-              <Button className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-sm px-4 py-2">
-                <Plus className="w-4 h-4 mr-2" />
-                Tạo yêu cầu
-              </Button>
-            </Link>
+                          <Link href="/dashboard/manager/warehouse-request/create">
+                <Button className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-sm px-4 py-2">
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('managerWarehouseRequest.actions.createNew')}
+                </Button>
+              </Link>
           </div>
         </CardContent>
       </Card>
@@ -237,7 +239,7 @@ export default function ManagerOutboundRequestList() {
         <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
           <CardTitle className="text-lg font-bold text-orange-800 flex items-center gap-2">
             <Package className="w-4 h-4" />
-            Danh sách yêu cầu xuất kho
+            {t('managerWarehouseRequest.sections.requestList')}
           </CardTitle>
         </CardHeader>
 
@@ -245,24 +247,24 @@ export default function ManagerOutboundRequestList() {
           {loading ? (
             <div className="p-6 text-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600 mx-auto mb-3"></div>
-              <p className="text-gray-600 text-base">Đang tải dữ liệu yêu cầu xuất kho...</p>
+              <p className="text-gray-600 text-base">{t('managerWarehouseRequest.loading.loadingData')}</p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="p-6 text-center">
               <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 text-base">Không có yêu cầu xuất kho nào</p>
-              <p className="text-gray-400 text-sm">Tạo yêu cầu mới để bắt đầu</p>
+              <p className="text-gray-500 text-base">{t('managerWarehouseRequest.empty.noRequests')}</p>
+              <p className="text-gray-400 text-sm">{t('managerWarehouseRequest.empty.noRequestsYet')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-orange-50 to-amber-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">Mã yêu cầu</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">Kho</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">Số lượng</th>
-                    <th className="text-center px-4 py-3 text-sm font-semibold text-orange-800">Trạng thái</th>
-                    <th className="text-center px-4 py-3 text-sm font-semibold text-orange-800">Hành động</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">{t('managerWarehouseRequest.fields.requestCode')}</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">{t('managerWarehouseRequest.fields.warehouse')}</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-orange-800">{t('managerWarehouseRequest.fields.quantity')}</th>
+                    <th className="text-center px-4 py-3 text-sm font-semibold text-orange-800">{t('managerWarehouseRequest.fields.status')}</th>
+                    <th className="text-center px-4 py-3 text-sm font-semibold text-orange-800">{t('managerWarehouseRequest.fields.actions')}</th>
                   </tr>
                 </thead>
                                  <tbody className="divide-y divide-gray-100">
@@ -294,8 +296,8 @@ export default function ManagerOutboundRequestList() {
                            <div className="w-5 h-5 bg-orange-100 rounded-lg flex items-center justify-center">
                              <Package className="w-2.5 h-2.5 text-orange-600" />
                            </div>
-                           <span className="text-xs text-gray-700 max-w-[200px] truncate" title={item.warehouseName || item.warehouse?.name || item.warehouse?.warehouseName || 'N/A'}>
-                             {item.warehouseName || item.warehouse?.name || item.warehouse?.warehouseName || 'N/A'}
+                           <span className="text-xs text-gray-700 max-w-[200px] truncate" title={item.warehouseName || item.warehouse?.name || item.warehouse?.warehouseName || t('common.notAvailable')}>
+                             {item.warehouseName || item.warehouse?.name || item.warehouse?.warehouseName || t('common.notAvailable')}
                            </span>
                          </div>
                        </td>
@@ -355,7 +357,7 @@ export default function ManagerOutboundRequestList() {
           <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <span className="text-xs text-gray-600">
-                Hiển thị {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} trong {filtered.length} yêu cầu
+                {t('managerWarehouseRequest.pagination.showing')} {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} {t('managerWarehouseRequest.pagination.of')} {filtered.length} {t('managerWarehouseRequest.pagination.requests')}
               </span>
               <div className="flex items-center gap-2">
                 <Button

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getInventoryById } from "@/lib/api/inventory";
 import { useParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import Link from "next/link";
 import { Coffee, Package } from "lucide-react";
 
 export default function InventoryDetailManagerPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [inventory, setInventory] = useState<any>(null);
   const [error, setError] = useState("");
@@ -27,15 +29,15 @@ export default function InventoryDetailManagerPage() {
             setInventory(res);
             console.log('🔍 Inventory Direct:', res); // Debug log
           } else {
-            setError(res.message || "Không tìm thấy tồn kho.");
+            setError(res.message || t('managerInventories.error.notFound'));
           }
         } catch (err: any) {
-          setError(err.message || "Lỗi khi tải dữ liệu tồn kho.");
+          setError(err.message || t('managerInventories.error.loadInventoryData'));
         }
       }
       fetchInventory();
     }
-  }, [id]);
+  }, [id, t]);
 
   // Helper function to determine coffee type (giống như Staff và List)
   const getCoffeeType = (inventory: any) => {
@@ -59,9 +61,9 @@ export default function InventoryDetailManagerPage() {
   const getCoffeeTypeLabel = (inventory: any) => {
     const type = getCoffeeType(inventory);
     switch (type) {
-      case 'fresh': return 'Cà phê tươi';
-      case 'processed': return 'Cà phê đã sơ chế';
-      default: return 'Không xác định';
+      case 'fresh': return t('managerInventories.coffeeTypes.fresh');
+      case 'processed': return t('managerInventories.coffeeTypes.processed');
+      default: return t('managerInventories.coffeeTypes.unknown');
     }
   };
 
@@ -79,19 +81,19 @@ export default function InventoryDetailManagerPage() {
     switch (type) {
       case 'fresh':
         return {
-          label: 'Mùa vụ',
+          label: t('managerInventories.coffeeInfo.season'),
           value: inventory?.cropSeasonName || inventory?.detailCode || 'N/A',
           color: 'text-orange-700'
         };
       case 'processed':
         return {
-          label: 'Lô sơ chế',
-          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || 'Đã sơ chế'}` : 'N/A',
+          label: t('managerInventories.coffeeInfo.batch'),
+          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || t('managerInventories.coffeeTypes.processed')}` : 'N/A',
           color: 'text-purple-700'
         };
       default:
         return {
-          label: 'Thông tin',
+          label: t('managerInventories.coffeeInfo.info'),
           value: 'N/A',
           color: 'text-gray-700'
         };
@@ -99,7 +101,7 @@ export default function InventoryDetailManagerPage() {
   };
 
   if (error) return <div className="text-red-500 p-6">{error}</div>;
-  if (!inventory) return <div className="p-6">Đang tải dữ liệu tồn kho...</div>;
+  if (!inventory) return <div className="p-6">{t('managerInventories.detail.loading')}</div>;
 
   // Debug logs
   console.log('🔍 Inventory Object:', inventory);
@@ -114,44 +116,23 @@ export default function InventoryDetailManagerPage() {
   console.log('🔍 Coffee Type:', coffeeType);
   console.log('🔍 Coffee Info:', coffeeInfo);
 
-  return (
-    <div className="p-6 space-y-4 max-w-5xl mx-auto">
-      {/* Debug Info */}
-      <Card className="shadow-lg border rounded-xl bg-yellow-50 border-yellow-200">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-yellow-800">🔍 Debug Info</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <p><strong>BatchId:</strong> {inventory.batchId || 'NULL'}</p>
-              <p><strong>DetailId:</strong> {inventory.detailId || 'NULL'}</p>
-              <p><strong>Coffee Type:</strong> {coffeeType}</p>
-            </div>
-            <div>
-              <p><strong>BatchCode:</strong> {inventory.batchCode || 'NULL'}</p>
-              <p><strong>CropSeasonName:</strong> {inventory.cropSeasonName || 'NULL'}</p>
-              <p><strong>CoffeeTypeName:</strong> {inventory.coffeeTypeName || 'NULL'}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-lg border rounded-xl bg-white">
+           return (
+           <div className="p-6 space-y-4 max-w-5xl mx-auto">
+             <Card className="shadow-lg border rounded-xl bg-white">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-orange-600 flex items-center gap-2">
-            📦 Chi tiết tồn kho <span className="text-sm text-gray-500">(Quản lý)</span>
+            {t('managerInventories.detail.title')} <span className="text-sm text-gray-500">{t('managerInventories.detail.subtitle')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-[15px]">
             <div>
-              <p><strong>🔢 Mã tồn kho:</strong> {inventory.inventoryCode}</p>
-              <p><strong>🏢 Tên kho:</strong> {inventory.warehouseName}</p>
+              <p><strong>{t('managerInventories.detail.fields.inventoryCode')}</strong> {inventory.inventoryCode}</p>
+              <p><strong>{t('managerInventories.detail.fields.warehouseName')}</strong> {inventory.warehouseName}</p>
               <p><strong>📦 {coffeeInfo.label}:</strong> 
                 <span className={`ml-2 ${coffeeInfo.color}`}>{coffeeInfo.value}</span>
               </p>
-              <p><strong>☕ Loại cà phê:</strong> 
+              <p><strong>{t('managerInventories.detail.fields.coffeeType')}</strong> 
                 <span className="ml-2 flex items-center gap-2">
                   {coffeeTypeIcon}
                   <span className={`font-medium ${
@@ -165,22 +146,22 @@ export default function InventoryDetailManagerPage() {
             </div>
 
             <div>
-              <p><strong>🛒 Sản phẩm:</strong> 
+              <p><strong>{t('managerInventories.detail.fields.product')}</strong> 
                 {coffeeType === 'fresh' 
-                  ? (inventory.coffeeTypeNameDetail || inventory.coffeeTypeName || 'Cà phê tươi')
+                  ? (inventory.coffeeTypeNameDetail || inventory.coffeeTypeName || t('managerInventories.coffeeTypes.fresh'))
                   : (inventory.productName || 'N/A')
                 }
               </p>
-              <p><strong>⚖️ Số lượng:</strong> {inventory.quantity} {inventory.unit}</p>
-              <p><strong>🗓️ Ngày tạo:</strong> {new Date(inventory.createdAt).toLocaleString()}</p>
-              <p><strong>🛠️ Ngày cập nhật:</strong> {new Date(inventory.updatedAt).toLocaleString()}</p>
+              <p><strong>{t('managerInventories.detail.fields.quantity')}</strong> {inventory.quantity} {inventory.unit}</p>
+              <p><strong>{t('managerInventories.detail.fields.createdAt')}</strong> {new Date(inventory.createdAt).toLocaleString()}</p>
+              <p><strong>{t('managerInventories.detail.fields.updatedAt')}</strong> {new Date(inventory.updatedAt).toLocaleString()}</p>
             </div>
           </div>
 
           <div className="mt-8">
             <Link href="/dashboard/manager/inventories">
               <Button variant="outline" className="rounded-md">
-                ← Quay lại danh sách
+                {t('managerInventories.detail.actions.backToList')}
               </Button>
             </Link>
           </div>

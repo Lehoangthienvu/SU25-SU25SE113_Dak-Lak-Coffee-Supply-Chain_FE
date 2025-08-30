@@ -31,10 +31,12 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from 'react-i18next';
 
 const ITEMS_PER_PAGE = 5;
 
 export default function FarmerDeliveryRequestListPage() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -56,22 +58,22 @@ export default function FarmerDeliveryRequestListPage() {
         const res = await getAllInboundRequestsForFarmer();
         if (res.status === 1) {
           setRequests(res.data);
-        } else toast.error("Lỗi tải danh sách: " + res.message);
+        } else toast.error(t('farmerDeliveryRequest.error.loadRequests') + ": " + res.message);
       } catch {
-        toast.error("Không thể kết nối máy chủ.");
+        toast.error(t('farmerDeliveryRequest.error.loadRequestsUnknown'));
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [t]);
 
   const handleCancel = async (id: string) => {
     openDialog({
-      title: "Xác nhận hủy yêu cầu",
-      message: "Bạn có chắc chắn muốn hủy yêu cầu này không? Hành động này không thể hoàn tác.",
-      confirmText: "Hủy yêu cầu",
-      cancelText: "Không",
+      title: t('farmerDeliveryRequest.confirmation.cancelTitle'),
+      message: t('farmerDeliveryRequest.confirmation.cancelMessage'),
+      confirmText: t('farmerDeliveryRequest.confirmation.cancelConfirm'),
+      cancelText: t('farmerDeliveryRequest.confirmation.cancelCancel'),
       type: "danger",
       onConfirm: async () => {
         setLoadingId(id);
@@ -80,7 +82,7 @@ export default function FarmerDeliveryRequestListPage() {
           toast.success(res.message);
           setRequests((prev) => prev.filter((r) => r.inboundRequestId !== id));
         } catch (error: any) {
-          toast.error("Lỗi khi huỷ yêu cầu: " + error.message);
+          toast.error(t('farmerDeliveryRequest.error.cancelRequest') + ": " + error.message);
         } finally {
           setLoadingId(null);
         }
@@ -93,27 +95,27 @@ export default function FarmerDeliveryRequestListPage() {
       case "Pending":
         return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
           <Clock className="w-3 h-3 mr-1" />
-          Đang chờ duyệt
+          {t('farmerDeliveryRequest.status.pending')}
         </Badge>;
       case "Approved":
         return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Đã duyệt
+          {t('farmerDeliveryRequest.status.approved')}
         </Badge>;
       case "Completed":
         return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Hoàn tất
+          {t('farmerDeliveryRequest.status.completed')}
         </Badge>;
       case "Rejected":
         return <Badge className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full">
           <XCircle className="w-3 h-3 mr-1" />
-          Từ chối
+          {t('farmerDeliveryRequest.status.rejected')}
         </Badge>;
       case "Cancelled":
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
           <XCircle className="w-3 h-3 mr-1" />
-          Đã huỷ
+          {t('farmerDeliveryRequest.status.cancelled')}
         </Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
@@ -124,11 +126,11 @@ export default function FarmerDeliveryRequestListPage() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "Pending": return "Chờ duyệt";
-      case "Approved": return "Đã duyệt";
-      case "Rejected": return "Từ chối";
-      case "Cancelled": return "Đã huỷ";
-      case "Completed": return "Hoàn thành";
+      case "Pending": return t('farmerDeliveryRequest.status.waiting');
+      case "Approved": return t('farmerDeliveryRequest.status.approved');
+      case "Rejected": return t('farmerDeliveryRequest.status.rejected');
+      case "Cancelled": return t('farmerDeliveryRequest.status.cancelled');
+      case "Completed": return t('farmerDeliveryRequest.status.finished');
       default: return status;
     }
   };
@@ -144,9 +146,9 @@ export default function FarmerDeliveryRequestListPage() {
 
   const getCoffeeTypeLabel = (type: string) => {
     switch (type) {
-      case "processed": return "Cà phê đã sơ chế";
-      case "fresh": return "Cà phê tươi";
-      default: return "Không xác định";
+      case "processed": return t('farmerDeliveryRequest.coffeeTypes.processed');
+      case "fresh": return t('farmerDeliveryRequest.coffeeTypes.fresh');
+      default: return t('farmerDeliveryRequest.coffeeTypes.unknown');
     }
   };
 
@@ -226,10 +228,10 @@ export default function FarmerDeliveryRequestListPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                Yêu cầu giao hàng
+                {t('farmerDeliveryRequest.title')}
               </h1>
               <p className="text-gray-600 text-lg">
-                Theo dõi và quản lý các yêu cầu đã gửi
+                {t('farmerDeliveryRequest.subtitle')}
               </p>
             </div>
             <Button
@@ -237,7 +239,7 @@ export default function FarmerDeliveryRequestListPage() {
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl shadow-lg flex items-center gap-3 text-lg font-semibold transition-all duration-200 transform hover:scale-105"
             >
               <Truck className="w-6 h-6" />
-              Gửi yêu cầu mới
+              {t('farmerDeliveryRequest.actions.createNew')}
             </Button>
           </div>
 
@@ -246,7 +248,7 @@ export default function FarmerDeliveryRequestListPage() {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-xs font-medium">Tổng yêu cầu</p>
+                  <p className="text-blue-100 text-xs font-medium">{t('farmerDeliveryRequest.stats.totalRequests')}</p>
                   <p className="text-2xl font-bold">{totalRequests}</p>
                 </div>
                 <Package className="w-6 h-6 text-blue-200" />
@@ -255,7 +257,7 @@ export default function FarmerDeliveryRequestListPage() {
             <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-xs font-medium">Chờ duyệt</p>
+                  <p className="text-yellow-100 text-xs font-medium">{t('farmerDeliveryRequest.stats.pendingRequests')}</p>
                   <p className="text-2xl font-bold">{pendingRequests}</p>
                 </div>
                 <Clock className="w-6 h-6 text-yellow-200" />
@@ -264,7 +266,7 @@ export default function FarmerDeliveryRequestListPage() {
             <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-xs font-medium">Đã duyệt</p>
+                  <p className="text-green-100 text-xs font-medium">{t('farmerDeliveryRequest.stats.approvedRequests')}</p>
                   <p className="text-2xl font-bold">{approvedRequests}</p>
                 </div>
                 <TrendingUp className="w-6 h-6 text-green-200" />
@@ -273,8 +275,8 @@ export default function FarmerDeliveryRequestListPage() {
             <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-indigo-100 text-xs font-medium">Tổng số lượng</p>
-                  <p className="text-2xl font-bold">{totalQuantity.toFixed(1)} kg</p>
+                  <p className="text-indigo-100 text-xs font-medium">{t('farmerDeliveryRequest.stats.totalQuantity')}</p>
+                  <p className="text-2xl font-bold">{totalQuantity.toFixed(1)} {t('farmerDeliveryRequest.common.kg')}</p>
                 </div>
                 <Package className="w-6 h-6 text-indigo-200" />
               </div>
@@ -282,7 +284,7 @@ export default function FarmerDeliveryRequestListPage() {
             <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl p-4 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-100 text-xs font-medium">Yêu cầu đã sơ chế</p>
+                  <p className="text-amber-100 text-xs font-medium">{t('farmerDeliveryRequest.stats.processedRequests')}</p>
                   <p className="text-2xl font-bold">{processedRequests}</p>
                 </div>
                 <Coffee className="w-6 h-6 text-amber-200" />
@@ -313,7 +315,7 @@ export default function FarmerDeliveryRequestListPage() {
                 >
                   <div className="flex items-center gap-2">
                     <Search className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-gray-800">Tìm kiếm yêu cầu</span>
+                    <span className="text-sm font-semibold text-gray-800">{t('farmerDeliveryRequest.sections.search')}</span>
                   </div>
                   {expandedSections.search ? (
                     <ChevronUp className="w-4 h-4 text-gray-500" />
@@ -325,7 +327,7 @@ export default function FarmerDeliveryRequestListPage() {
                   <div className="px-4 pb-4">
                     <div className="relative">
                       <Input
-                        placeholder="Tìm mã yêu cầu, loại cà phê..."
+                        placeholder={t('farmerDeliveryRequest.placeholders.search')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pr-8 border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm"
@@ -344,7 +346,7 @@ export default function FarmerDeliveryRequestListPage() {
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-gray-800">Lọc theo loại</span>
+                    <span className="text-sm font-semibold text-gray-800">{t('farmerDeliveryRequest.sections.filterByType')}</span>
                   </div>
                   {expandedSections.type ? (
                     <ChevronUp className="w-4 h-4 text-gray-500" />
@@ -362,7 +364,7 @@ export default function FarmerDeliveryRequestListPage() {
                         }`}
                       >
                         <Filter className="w-4 h-4" />
-                        Tất cả ({requests.length})
+                        {t('farmerDeliveryRequest.filters.all')} ({requests.length})
                       </button>
                       {/* TẠM THỜI ẨN - Filter cà phê tươi */}
                       {Object.entries(typeCounts)
@@ -394,7 +396,7 @@ export default function FarmerDeliveryRequestListPage() {
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-gray-800">Lọc theo trạng thái</span>
+                    <span className="text-sm font-semibold text-gray-800">{t('farmerDeliveryRequest.sections.filterByStatus')}</span>
                   </div>
                   {expandedSections.status ? (
                     <ChevronUp className="w-4 h-4 text-gray-500" />
@@ -411,7 +413,7 @@ export default function FarmerDeliveryRequestListPage() {
                           selectedStatus === null ? "bg-blue-100 border-2 border-blue-300 text-blue-700 font-semibold" : "hover:bg-gray-50 border-2 border-transparent"
                         }`}
                       >
-                        Tất cả ({requests.length})
+                        {t('farmerDeliveryRequest.filters.all')} ({requests.length})
                       </button>
                       {Object.entries(statusCounts).map(([status, count]) => (
                         <button
@@ -439,15 +441,15 @@ export default function FarmerDeliveryRequestListPage() {
               <div className="p-4 border-b border-blue-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">Danh sách yêu cầu giao hàng</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{t('farmerDeliveryRequest.sections.requestList')}</h2>
                     <p className="text-gray-600 mt-1 text-sm">
-                      Hiển thị {filtered.length} yêu cầu • {totalRequests} tổng cộng
+                      {t('farmerDeliveryRequest.pagination.showing')} {filtered.length} {t('farmerDeliveryRequest.pagination.requests')} • {totalRequests} {t('farmerDeliveryRequest.pagination.of')} {t('farmerDeliveryRequest.pagination.allRequests')}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-gray-600 font-medium text-sm">
-                        {totalPages > 1 ? `Trang ${currentPage} / ${totalPages}` : "Tất cả yêu cầu"}
+                        {totalPages > 1 ? `${t('farmerDeliveryRequest.pagination.page')} ${currentPage} / ${totalPages}` : t('farmerDeliveryRequest.pagination.allRequests')}
                       </p>
                     </div>
                     <Button
@@ -457,7 +459,7 @@ export default function FarmerDeliveryRequestListPage() {
                       className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
                     >
                       <PackagePlus className="w-4 h-4 mr-2" />
-                      Tạo yêu cầu mới
+                      {t('farmerDeliveryRequest.actions.createRequest')}
                     </Button>
                   </div>
                 </div>
@@ -466,16 +468,16 @@ export default function FarmerDeliveryRequestListPage() {
               {loading ? (
                 <div className="text-center py-16">
                   <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                  <p className="text-gray-500 text-lg font-medium">Đang tải dữ liệu...</p>
+                  <p className="text-gray-500 text-lg font-medium">{t('farmerDeliveryRequest.loading.loadingData')}</p>
                 </div>
               ) : paginatedData.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <AlertCircle className="w-10 h-10 text-gray-400" />
                   </div>
-                  <p className="text-gray-500 text-xl font-medium mb-3">Không tìm thấy yêu cầu nào</p>
+                  <p className="text-gray-500 text-xl font-medium mb-3">{t('farmerDeliveryRequest.empty.noRequests')}</p>
                   <p className="text-gray-400 text-lg">
-                    {search || selectedStatus || selectedType ? 'Thử thay đổi bộ lọc tìm kiếm' : 'Bạn chưa có yêu cầu giao hàng nào'}
+                    {search || selectedStatus || selectedType ? t('farmerDeliveryRequest.empty.noRequestsFilter') : t('farmerDeliveryRequest.empty.noRequestsYet')}
                   </p>
                 </div>
               ) : (
@@ -484,22 +486,22 @@ export default function FarmerDeliveryRequestListPage() {
                      <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
                        <tr>
                          <th className="w-32 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           Mã yêu cầu
+                           {t('farmerDeliveryRequest.fields.requestCode')}
                          </th>
                          <th className="w-40 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           Loại
+                           {t('farmerDeliveryRequest.fields.type')}
                          </th>
                          <th className="w-24 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           Số lượng
+                           {t('farmerDeliveryRequest.fields.quantity')}
                          </th>
                          <th className="w-48 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           Nguồn
+                           {t('farmerDeliveryRequest.fields.source')}
                          </th>
                          <th className="w-32 px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           Trạng thái
+                           {t('farmerDeliveryRequest.fields.status')}
                          </th>
                                                    <th className="w-36 px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Hành động
+                            {t('farmerDeliveryRequest.fields.actions')}
                           </th>
                        </tr>
                      </thead>
@@ -511,7 +513,7 @@ export default function FarmerDeliveryRequestListPage() {
                             <td className="px-3 py-3">
                               <div className="flex flex-col">
                                 <span className="text-sm font-semibold text-gray-900 truncate">{req.requestCode}</span>
-                                <span className="text-xs text-gray-500">ID: {req.inboundRequestId.slice(-6)}</span>
+                                <span className="text-xs text-gray-500">{t('farmerDeliveryRequest.common.id')}: {req.inboundRequestId.slice(-6)}</span>
                               </div>
                             </td>
                             <td className="px-3 py-3">
@@ -524,17 +526,17 @@ export default function FarmerDeliveryRequestListPage() {
                             </td>
                             <td className="px-3 py-3">
                               <div className="text-sm font-semibold text-gray-900">
-                                {req.requestedQuantity} kg
+                                {req.requestedQuantity} {t('farmerDeliveryRequest.common.kg')}
                               </div>
                             </td>
                                                          <td className="px-3 py-3">
                                <div className="flex flex-col">
                                  <span className="text-sm font-medium text-gray-900 truncate">
                                    {coffeeType === 'fresh' 
-                                     ? (req.cropSeasonName || req.detailCode || "N/A")
+                                     ? (req.cropSeasonName || req.detailCode || t('farmerDeliveryRequest.common.na'))
                                      : coffeeType === 'processed' 
-                                       ? (req.batchCode || "N/A")
-                                       : "N/A"
+                                       ? (req.batchCode || t('farmerDeliveryRequest.common.na'))
+                                       : t('farmerDeliveryRequest.common.na')
                                    }
                                  </span>
                                  <span className={`text-xs ${
@@ -542,10 +544,10 @@ export default function FarmerDeliveryRequestListPage() {
                                    coffeeType === 'processed' ? 'text-purple-700' : 'text-gray-700'
                                  } truncate`}>
                                    {coffeeType === 'fresh'
-                                     ? (req.typeName || "Cà phê tươi")
+                                     ? (req.typeName || t('farmerDeliveryRequest.coffeeTypes.fresh'))
                                      : coffeeType === 'processed'
-                                       ? (req.coffeeType || "Cà phê đã sơ chế")
-                                       : "Không rõ"
+                                       ? (req.coffeeType || t('farmerDeliveryRequest.coffeeTypes.processed'))
+                                       : t('farmerDeliveryRequest.common.unknown')
                                    }
                                  </span>
                                  <span className="text-xs text-gray-500 mt-1">
@@ -566,7 +568,7 @@ export default function FarmerDeliveryRequestListPage() {
                                    className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-xs px-2 py-1"
                                  >
                                    <Eye className="w-3 h-3 mr-1" />
-                                   Xem
+                                   {t('farmerDeliveryRequest.actions.view')}
                                  </Button>
                                  {req.status === "Pending" && (
                                    <Button
@@ -577,7 +579,7 @@ export default function FarmerDeliveryRequestListPage() {
                                      className="transition-all duration-200 text-xs px-1 py-1"
                                    >
                                      <XCircle className="w-3 h-3 mr-1" />
-                                     Huỷ
+                                     {t('farmerDeliveryRequest.actions.cancel')}
                                    </Button>
                                  )}
                                </div>
@@ -595,7 +597,7 @@ export default function FarmerDeliveryRequestListPage() {
                 <div className="p-4 border-t border-blue-100">
                   <div className="flex justify-between items-center">
                     <div className="text-gray-600 font-medium text-sm">
-                      Hiển thị {startIndex + 1}–{endIndex} trong {filtered.length} yêu cầu
+                      {t('farmerDeliveryRequest.pagination.showing')} {startIndex + 1}–{endIndex} {t('farmerDeliveryRequest.pagination.of')} {filtered.length} {t('farmerDeliveryRequest.pagination.requests')}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button

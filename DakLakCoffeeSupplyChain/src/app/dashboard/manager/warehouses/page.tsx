@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAllWarehouses, deleteWarehouse } from '@/lib/api/warehouses';
 import { getInventoriesByWarehouseId } from '@/lib/api/inventory';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ type Warehouse = {
 };
 
 export default function WarehouseListPage() {
+  const { t } = useTranslation();
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [usedCapacities, setUsedCapacities] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -45,15 +47,15 @@ export default function WarehouseListPage() {
           usageMap[warehouse.warehouseId] = warehouse.usedCapacity || 0;
         }
         setUsedCapacities(usageMap);
-      } catch (error) {
-        toast.error('Lỗi khi tải danh sách kho');
-      } finally {
-        setLoading(false);
+              } catch (error) {
+          toast.error(t('managerWarehouses.error.loadData'));
+        } finally {
+          setLoading(false);
+        }
       }
-    }
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, [t]);
 
   const filtered = warehouses.filter((w) =>
     w.name.toLowerCase().includes(search.toLowerCase())
@@ -75,15 +77,15 @@ export default function WarehouseListPage() {
 
   const handleDelete = async (id: string) => {
     openDialog({
-      title: "Xác nhận xóa kho",
-      message: "Bạn có chắc chắn muốn xóa kho này không? Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.",
-      confirmText: "Xóa kho",
-      cancelText: "Hủy",
+      title: t('managerWarehouses.error.deleteConfirm'),
+      message: t('managerWarehouses.error.deleteConfirm'),
+      confirmText: t('managerWarehouses.actions.delete'),
+      cancelText: t('common.cancel'),
       type: "danger",
       onConfirm: async () => {
         const res = await deleteWarehouse(id);
         if (res.status === 1) {
-          toast.success('Đã xoá kho');
+          toast.success(t('managerWarehouses.success.deleteSuccess'));
           setWarehouses((prev) => prev.filter((w) => w.warehouseId !== id));
         } else {
           toast.error(res.message);
@@ -98,9 +100,9 @@ export default function WarehouseListPage() {
       <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
           <Warehouse className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 Quản lý Kho hàng</h1>
+          <h1 className="text-2xl font-bold">{t('managerWarehouses.title')}</h1>
         </div>
-        <p className="text-amber-100 text-base">Theo dõi và quản lý hệ thống kho hàng của công ty</p>
+        <p className="text-amber-100 text-base">{t('managerWarehouses.subtitle')}</p>
       </div>
 
       {/* Thống kê tổng quan */}
@@ -112,7 +114,7 @@ export default function WarehouseListPage() {
                 <Warehouse className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng số kho</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouses.stats.totalWarehouses')}</p>
                 <p className="text-xl font-bold text-blue-600">{totalWarehouses}</p>
               </div>
             </div>
@@ -126,8 +128,8 @@ export default function WarehouseListPage() {
                 <Package className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng dung lượng</p>
-                <p className="text-xl font-bold text-green-600">{totalCapacity.toLocaleString()} kg</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouses.stats.totalCapacity')}</p>
+                <p className="text-xl font-bold text-green-600">{totalCapacity.toLocaleString()} {t('managerWarehouses.stats.kg')}</p>
               </div>
             </div>
           </CardContent>
@@ -140,8 +142,8 @@ export default function WarehouseListPage() {
                 <TrendingUp className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Đã sử dụng</p>
-                <p className="text-xl font-bold text-orange-600">{totalUsed.toLocaleString()} kg</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouses.stats.usedCapacity')}</p>
+                <p className="text-xl font-bold text-orange-600">{totalUsed.toLocaleString()} {t('managerWarehouses.stats.kg')}</p>
               </div>
             </div>
           </CardContent>
@@ -154,7 +156,7 @@ export default function WarehouseListPage() {
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Kho báo động</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerWarehouses.stats.criticalWarehouses')}</p>
                 <p className="text-xl font-bold text-amber-600">{criticalWarehouses.length}</p>
               </div>
             </div>
@@ -169,7 +171,7 @@ export default function WarehouseListPage() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Input
-                  placeholder="🔍 Tìm theo tên kho..."
+                  placeholder={t('managerWarehouses.search.placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-72 pr-10 border-amber-200 focus:border-amber-400 focus:ring-amber-400 text-sm"
@@ -178,14 +180,14 @@ export default function WarehouseListPage() {
               </div>
               {search && (
                 <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs">
-                  {filtered.length} kết quả
+                  {filtered.length} {t('managerWarehouses.search.results')}
                 </Badge>
               )}
             </div>
             <Link href="/dashboard/manager/warehouses/create">
               <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-sm px-4 py-2">
                 <Plus className="w-4 h-4 mr-2" />
-                Tạo kho mới
+                {t('managerWarehouses.actions.createNew')}
               </Button>
             </Link>
           </div>
@@ -197,15 +199,15 @@ export default function WarehouseListPage() {
         <Card className="bg-white shadow-md border-0">
           <CardContent className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 text-lg">Đang tải dữ liệu kho hàng...</p>
+            <p className="text-gray-600 text-lg">{t('managerWarehouses.loading.title')}</p>
           </CardContent>
         </Card>
       ) : filtered.length === 0 ? (
         <Card className="bg-white shadow-md border-0">
           <CardContent className="p-8 text-center">
             <Warehouse className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg mb-2">Không tìm thấy kho phù hợp</p>
-            <p className="text-gray-400">Thử thay đổi từ khóa tìm kiếm hoặc tạo kho mới</p>
+            <p className="text-gray-500 text-lg mb-2">{t('managerWarehouses.empty.title')}</p>
+            <p className="text-gray-400">{t('managerWarehouses.empty.description')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -227,7 +229,7 @@ export default function WarehouseListPage() {
                         isCritical ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-green-500'
                       }`}></div>
                       <Badge variant="outline" className="text-xs">
-                        {isCritical ? 'Báo động' : isWarning ? 'Cảnh báo' : 'Bình thường'}
+                        {isCritical ? t('managerWarehouses.status.critical') : isWarning ? t('managerWarehouses.status.warning') : t('managerWarehouses.status.normal')}
                       </Badge>
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -256,7 +258,7 @@ export default function WarehouseListPage() {
                     <div className="w-16 h-16 relative">
                       <Doughnut
                         data={{
-                          labels: ['Đã sử dụng', 'Còn trống'],
+                          labels: [t('managerWarehouses.stats.usedCapacity'), t('managerWarehouses.detail.available')],
                           datasets: [
                             {
                               data: [used, available],
@@ -299,23 +301,23 @@ export default function WarehouseListPage() {
 
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Dung lượng:</span>
+                            <span className="text-gray-600">{t('managerWarehouses.stats.totalCapacity')}:</span>
                             <span className="font-semibold text-gray-800">
-                              {total.toLocaleString()} kg
+                              {total.toLocaleString()} {t('managerWarehouses.stats.kg')}
                             </span>
                           </div>
                           <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Đã sử dụng:</span>
+                            <span className="text-gray-600">{t('managerWarehouses.stats.usedCapacity')}:</span>
                             <span className={`font-semibold ${
                               isCritical ? 'text-red-600' : isWarning ? 'text-yellow-600' : 'text-green-600'
                             }`}>
-                              {used.toLocaleString()} kg
+                              {used.toLocaleString()} {t('managerWarehouses.stats.kg')}
                             </span>
                           </div>
                           <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Còn trống:</span>
+                            <span className="text-gray-600">{t('managerWarehouses.detail.available')}:</span>
                             <span className="font-semibold text-gray-800">
-                              {available.toLocaleString()} kg
+                              {available.toLocaleString()} {t('managerWarehouses.stats.kg')}
                             </span>
                           </div>
                         </div>

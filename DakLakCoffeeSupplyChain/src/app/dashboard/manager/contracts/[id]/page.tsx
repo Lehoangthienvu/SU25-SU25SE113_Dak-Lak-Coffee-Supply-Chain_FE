@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
   getContractDetails,
@@ -64,6 +65,7 @@ const contractStatusMap: Record<string, { label: string; className: string }> =
   };
 
 export default function ContractDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const contractId = params.id as string;
@@ -112,7 +114,7 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Không thể tải chi tiết hợp đồng");
+        setError(err.message || t('common.errors.loadDataError'));
         setLoading(false);
       });
   };
@@ -125,7 +127,7 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Không thể tải chi tiết hợp đồng");
+        setError(err.message || t('common.errors.loadDataError'));
         setLoading(false);
       });
   }, [contractId]);
@@ -162,7 +164,7 @@ export default function ContractDetailPage() {
             <p className="text-red-500 mb-3">
               {error || "Không tìm thấy hợp đồng"}
             </p>
-            <Button onClick={() => router.back()}>← Quay lại</Button>
+            <Button onClick={() => router.back()}>← {t('common.actions.back')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -517,7 +519,7 @@ export default function ContractDetailPage() {
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.unitPrice?.toLocaleString()}{" "}
-                        <span className="text-gray-500 text-xs">VNĐ/kg</span>
+                        <span className="text-gray-500 text-xs">{t('common.currency')}/kg</span>
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.discountAmount !== undefined
@@ -527,7 +529,7 @@ export default function ContractDetailPage() {
                       <td className="px-4 py-2">{item.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t('common.actions.edit')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -539,7 +541,7 @@ export default function ContractDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t('common.actions.delete')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -564,7 +566,7 @@ export default function ContractDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
-                Đang hiển thị{" "}
+                {t('common.pagination.showing')}{" "}
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                 </span>
@@ -572,7 +574,7 @@ export default function ContractDetailPage() {
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
-                / {totalItems} mặt hàng
+                / {totalItems} {t('common.items')}
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -584,10 +586,10 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
-                  ← Trước
+                  ← {t('common.pagination.previous')}
                 </Button>
                 <span className="flex items-center px-2">
-                  Trang{" "}
+                  {t('common.pagination.page')}{" "}
                   <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
                   {totalPages}
                 </span>
@@ -600,7 +602,7 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
-                  Sau →
+                  {t('common.pagination.next')} →
                 </Button>
               </div>
             </div>
@@ -609,7 +611,7 @@ export default function ContractDetailPage() {
         {/* Footer */}
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={() => router.back()}>
-            ← Quay lại
+            ← {t('common.actions.back')}
           </Button>
         </div>
 
@@ -640,7 +642,7 @@ export default function ContractDetailPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Xoá mặt hàng?"
+        title={t('common.actions.deleteConfirm')}
         description={
           <span>
             Bạn có chắc chắn muốn xoá mặt hàng{" "}
@@ -648,8 +650,8 @@ export default function ContractDetailPage() {
             Hành động này không thể hoàn tác.
           </span>
         }
-        confirmText="Xoá"
-        cancelText="Huỷ"
+        confirmText={t('common.actions.delete')}
+        cancelText={t('common.actions.cancel')}
         onConfirm={handleDelete}
       />
     </div>

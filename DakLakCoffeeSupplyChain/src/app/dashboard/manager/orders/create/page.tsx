@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useTranslation } from "react-i18next";
 import OrderForm from "@/components/orders/OrderForm";
 
 function OrderCreateContent() {
@@ -23,8 +24,9 @@ function OrderCreateContent() {
 }
 
 export default function OrderCreatePage() {
+  const { t } = useTranslation();
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>{t('managerOrders.create.loading')}</div>}>
       <OrderCreateContent />
     </Suspense>
   );

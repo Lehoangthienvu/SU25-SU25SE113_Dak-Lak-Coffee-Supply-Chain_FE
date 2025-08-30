@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getAllInventoryLogs, softDeleteInventoryLog } from "@/lib/api/inventoryLogs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 export default function ManagerInventoryLogsPage() {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -24,13 +26,13 @@ export default function ManagerInventoryLogsPage() {
       try {
         const data = await getAllInventoryLogs();
         if (Array.isArray(data)) setLogs(data);
-        else setError("Không có log tồn kho nào.");
+        else setError(t('managerInventoryLogs.error.noLogs'));
       } catch (err: any) {
-        setError(err.message || "Lỗi khi tải danh sách log.");
+        setError(err.message || t('managerInventoryLogs.error.loadFailed'));
       }
     }
     fetchLogs();
-  }, []);
+  }, [t]);
 
   const filteredLogs = logs.filter((log) => {
     const keyword = search.toLowerCase();
@@ -59,14 +61,14 @@ export default function ManagerInventoryLogsPage() {
   }).length;
 
   const handleDelete = async (logId: string) => {
-    const confirmed = confirm("Bạn có chắc chắn muốn xoá log này?");
+    const confirmed = confirm(t('managerInventoryLogs.confirmation.deleteMessage'));
     if (!confirmed) return;
     try {
       await softDeleteInventoryLog(logId);
       setLogs(prev => prev.filter(log => log.logId !== logId));
-      toast.success("✅ Xoá log thành công.");
+      toast.success(t('managerInventoryLogs.success.deleteLog'));
     } catch (err: any) {
-      toast.error(err.message || "❌ Không thể xoá log.");
+      toast.error(err.message || t('managerInventoryLogs.error.deleteFailed'));
     }
   };
 
@@ -75,8 +77,8 @@ export default function ManagerInventoryLogsPage() {
       {/* Header với gradient mới */}
       <div className="mb-6">
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-4 text-white shadow-lg">
-          <h1 className="text-2xl font-bold mb-1">📋 Lịch sử thay đổi tồn kho</h1>
-          <p className="text-blue-100 text-sm">Theo dõi mọi thay đổi trong hệ thống kho hàng</p>
+          <h1 className="text-2xl font-bold mb-1">{t('managerInventoryLogs.title')}</h1>
+          <p className="text-blue-100 text-sm">{t('managerInventoryLogs.subtitle')}</p>
         </div>
       </div>
 
@@ -86,7 +88,7 @@ export default function ManagerInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Tổng số log</p>
+                <p className="text-xs font-medium text-gray-600">{t('managerInventoryLogs.stats.totalLogs')}</p>
                 <p className="text-xl font-bold text-blue-600">{totalLogs}</p>
               </div>
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -100,7 +102,7 @@ export default function ManagerInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Nhập kho hôm nay</p>
+                <p className="text-xs font-medium text-gray-600">{t('managerInventoryLogs.stats.inboundToday')}</p>
                 <p className="text-xl font-bold text-green-600">{todayLogs}</p>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -114,7 +116,7 @@ export default function ManagerInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Lượt nhập kho</p>
+                <p className="text-xs font-medium text-gray-600">{t('managerInventoryLogs.stats.inboundTurns')}</p>
                 <p className="text-xl font-bold text-emerald-600">{increaseLogs}</p>
               </div>
               <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -128,7 +130,7 @@ export default function ManagerInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Lượt xuất kho</p>
+                <p className="text-xs font-medium text-gray-600">{t('managerInventoryLogs.stats.outboundTurns')}</p>
                 <p className="text-xl font-bold text-rose-600">{decreaseLogs}</p>
               </div>
               <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center">
@@ -146,7 +148,7 @@ export default function ManagerInventoryLogsPage() {
             <div className="relative w-full lg:w-72">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="🔍 Tìm theo mã kho, loại cà phê, kho hàng..."
+                placeholder={t('managerInventoryLogs.search.placeholder')}
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -173,10 +175,10 @@ export default function ManagerInventoryLogsPage() {
                   }`}
                 >
                   {action === "All"
-                    ? "🔄 Tất cả"
+                    ? t('managerInventoryLogs.filters.all')
                     : action === "increase"
-                    ? "📥 Nhập kho"
-                    : "📤 Xuất kho"}
+                    ? t('managerInventoryLogs.filters.increase')
+                    : t('managerInventoryLogs.filters.decrease')}
                 </Button>
               ))}
             </div>
@@ -189,9 +191,9 @@ export default function ManagerInventoryLogsPage() {
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
           <CardTitle className="text-base font-bold text-blue-800 flex items-center gap-2">
             <Package className="w-4 h-4 text-blue-600" />
-            Danh sách lịch sử tồn kho
+            {t('managerInventoryLogs.table.title')}
             <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-800 text-xs">
-              {filteredLogs.length} log
+              {filteredLogs.length} {t('managerInventoryLogs.pagination.logs')}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -205,8 +207,8 @@ export default function ManagerInventoryLogsPage() {
           {!error && filteredLogs.length === 0 && (
             <div className="p-6 text-center">
               <Package className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">Không có log phù hợp với bộ lọc</p>
-              <p className="text-gray-400 text-xs">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+              <p className="text-gray-500 text-sm">{t('managerInventoryLogs.empty.title')}</p>
+              <p className="text-gray-400 text-xs">{t('managerInventoryLogs.empty.description')}</p>
             </div>
           )}
 
@@ -227,7 +229,7 @@ export default function ManagerInventoryLogsPage() {
                               : "bg-rose-100 text-rose-800 border-rose-200"
                           }`}
                         >
-                          {log.actionType === "increase" ? "📥 Nhập kho" : "📤 Xuất kho"}
+                          {log.actionType === "increase" ? t('managerInventoryLogs.table.actions.inbound') : t('managerInventoryLogs.table.actions.outbound')}
                         </Badge>
                         <span className="text-xs text-gray-500">
                           {new Date(log.loggedAt).toLocaleString("vi-VN")}
@@ -240,7 +242,7 @@ export default function ManagerInventoryLogsPage() {
                             <Package className="w-3 h-3 text-blue-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Mã tồn kho</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('managerInventoryLogs.table.headers.inventoryCode')}</p>
                             <p className="text-sm font-semibold text-gray-900">{log.inventoryCode}</p>
                           </div>
                         </div>
@@ -250,7 +252,7 @@ export default function ManagerInventoryLogsPage() {
                             <Warehouse className="w-3 h-3 text-emerald-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Kho hàng</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('managerInventoryLogs.table.headers.warehouse')}</p>
                             <p className="text-sm font-semibold text-gray-900">{log.warehouseName}</p>
                           </div>
                         </div>
@@ -260,11 +262,11 @@ export default function ManagerInventoryLogsPage() {
                             <Activity className="w-3 h-3 text-amber-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Số lượng</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('managerInventoryLogs.table.headers.quantity')}</p>
                             <p className={`font-bold text-sm ${
                               log.actionType === "increase" ? "text-emerald-600" : "text-rose-600"
                             }`}>
-                              {log.actionType === "increase" ? "+" : "-"}{log.quantityChanged} kg
+                              {log.actionType === "increase" ? "+" : "-"}{log.quantityChanged} {t('managerInventoryLogs.common.kg')}
                             </p>
                           </div>
                         </div>
@@ -272,43 +274,43 @@ export default function ManagerInventoryLogsPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
-                          <p className="text-xs text-gray-500 font-medium mb-1">☕ Loại cà phê</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">☕ {t('managerInventoryLogs.table.headers.coffeeType')}</p>
                           <p className="text-sm font-medium text-gray-900">{log.coffeeTypeName}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-medium mb-1">👤 Người cập nhật</p>
-                          <p className="text-sm font-medium text-gray-900">{log.updatedByName || "Hệ thống"}</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">👤 {t('managerInventoryLogs.table.headers.updatedBy')}</p>
+                          <p className="text-sm font-medium text-gray-900">{log.updatedByName || t('managerInventoryLogs.common.system')}</p>
                         </div>
                       </div>
 
                       {log.note && (
                         <div className="bg-indigo-50 rounded-lg p-2 border border-indigo-200">
-                          <p className="text-xs text-gray-500 font-medium mb-1">📝 Ghi chú</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">📝 {t('managerInventoryLogs.table.headers.note')}</p>
                           <p className="text-gray-700 text-sm">{log.note}</p>
                         </div>
                       )}
                     </div>
 
                     <div className="flex gap-1 flex-shrink-0">
-                      <Link href={`/dashboard/manager/inventory-logs/${log.logId}`} title="Xem chi tiết">
+                      <Link href={`/dashboard/manager/inventory-logs/${log.logId}`} title={t('managerInventoryLogs.table.actions.details')}>
                         <Button 
                           variant="outline" 
                           size="sm"
                           className="h-7 px-2 text-xs border border-blue-200 hover:border-blue-300 hover:bg-blue-50"
                         >
                           <Eye className="w-3 h-3 mr-1" />
-                          Chi tiết
+                          {t('managerInventoryLogs.table.actions.details')}
                         </Button>
                       </Link>
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(log.logId)}
-                        title="Xoá log"
+                        title={t('managerInventoryLogs.table.actions.delete')}
                         className="h-7 px-2 text-xs"
                       >
                         <Trash2 className="w-3 h-3 mr-1" />
-                        Xoá
+                        {t('managerInventoryLogs.table.actions.delete')}
                       </Button>
                     </div>
                   </div>
@@ -322,7 +324,7 @@ export default function ManagerInventoryLogsPage() {
             <div className="bg-blue-50 px-3 py-2 border-t border-blue-100">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div className="text-xs text-gray-600">
-                  Hiển thị {((currentPage - 1) * logsPerPage) + 1} - {Math.min(currentPage * logsPerPage, filteredLogs.length)} trong tổng số {filteredLogs.length} log
+                  {t('managerInventoryLogs.pagination.showing')} {((currentPage - 1) * logsPerPage) + 1} - {Math.min(currentPage * logsPerPage, filteredLogs.length)} {t('managerInventoryLogs.pagination.of')} {filteredLogs.length} {t('managerInventoryLogs.pagination.logs')}
                 </div>
                 
                 <div className="flex items-center gap-1">
@@ -333,7 +335,7 @@ export default function ManagerInventoryLogsPage() {
                     disabled={currentPage === 1}
                     className="h-7 px-2 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50"
                   >
-                    ← Trước
+                    {t('managerInventoryLogs.pagination.previous')}
                   </Button>
                   
                   <div className="flex items-center gap-1">
@@ -361,7 +363,7 @@ export default function ManagerInventoryLogsPage() {
                     disabled={currentPage === totalPages}
                     className="h-7 px-2 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50"
                   >
-                    Sau →
+                    {t('managerInventoryLogs.pagination.next')}
                   </Button>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import {
   getInboundRequestDetailForFarmer
 } from '@/lib/api/warehouseInboundRequest';
@@ -29,6 +30,7 @@ import {
 import { toast } from 'sonner';
 
 export default function FarmerInboundRequestDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [data, setData] = useState<any>(null);
@@ -54,32 +56,32 @@ export default function FarmerInboundRequestDetailPage() {
           const progressOfBatch = progresses.filter(p => p.batchId === result.data.batchId);
           setBatchProgresses(progressOfBatch);
         } else {
-          throw new Error(result?.message || 'Không lấy được dữ liệu');
+          throw new Error(result?.message || t('farmerDeliveryRequest.error.loadData'));
         }
       } catch (err: any) {
         setError(err.message);
-        toast.error('Không thể tải thông tin yêu cầu: ' + err.message);
+        toast.error(t('farmerDeliveryRequest.error.loadDetail') + ': ' + err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDetail();
-  }, [id]);
+  }, [id, t]);
 
   const formatDate = (value: string | null | undefined) => {
-    if (!value) return 'Không có';
+    if (!value) return t('farmerDeliveryRequest.common.na');
     const d = new Date(value);
-    return isNaN(d.getTime()) ? 'Không xác định' : d.toLocaleDateString('vi-VN');
+    return isNaN(d.getTime()) ? t('farmerDeliveryRequest.common.unknown') : d.toLocaleDateString('vi-VN');
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'Pending': return 'Chờ duyệt';
-      case 'Approved': return 'Đã duyệt';
-      case 'Rejected': return 'Từ chối';
-      case 'Cancelled': return 'Đã huỷ';
-      case 'Completed': return 'Hoàn thành';
+      case 'Pending': return t('farmerDeliveryRequest.status.pending');
+      case 'Approved': return t('farmerDeliveryRequest.status.approved');
+      case 'Rejected': return t('farmerDeliveryRequest.status.rejected');
+      case 'Cancelled': return t('farmerDeliveryRequest.status.cancelled');
+      case 'Completed': return t('farmerDeliveryRequest.status.completed');
       default: return status;
     }
   };
@@ -110,7 +112,7 @@ export default function FarmerInboundRequestDetailPage() {
       <div className="min-h-screen bg-orange-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang tải dữ liệu...</p>
+          <p className="text-gray-600">{t('farmerDeliveryRequest.loading.loadingData')}</p>
         </div>
       </div>
     );
@@ -123,11 +125,11 @@ export default function FarmerInboundRequestDetailPage() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <ClipboardList className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Không thể tải dữ liệu</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t('farmerDeliveryRequest.detail.error.loadData')}</h2>
           <p className="text-red-600 mb-4">{error}</p>
           <Button onClick={() => router.back()} variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Quay lại
+            {t('farmerDeliveryRequest.detail.back')}
           </Button>
         </div>
       </div>
@@ -141,11 +143,11 @@ export default function FarmerInboundRequestDetailPage() {
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Package className="w-8 h-8 text-gray-600" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Không tìm thấy dữ liệu</h2>
-          <p className="text-gray-600 mb-4">Yêu cầu nhập kho không tồn tại hoặc đã bị xóa</p>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t('farmerDeliveryRequest.detail.error.notFound')}</h2>
+          <p className="text-gray-600 mb-4">{t('farmerDeliveryRequest.detail.error.notFoundMessage')}</p>
           <Button onClick={() => router.back()} variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Quay lại
+            {t('farmerDeliveryRequest.detail.back')}
           </Button>
         </div>
       </div>
@@ -165,14 +167,14 @@ export default function FarmerInboundRequestDetailPage() {
               className="text-gray-600 hover:text-gray-800"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Quay lại danh sách
+              {t('farmerDeliveryRequest.detail.backToList')}
             </Button>
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                Chi tiết yêu cầu nhập kho
+                {t('farmerDeliveryRequest.detail.title')}
               </h1>
               <p className="text-gray-600 text-sm">
-                Thông tin chi tiết về yêu cầu nhập kho của bạn
+                {t('farmerDeliveryRequest.detail.subtitle')}
               </p>
             </div>
           </div>
@@ -182,8 +184,8 @@ export default function FarmerInboundRequestDetailPage() {
             <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-xs">Số lượng yêu cầu</p>
-                  <p className="text-xl font-bold">{data.requestedQuantity} kg</p>
+                  <p className="text-orange-100 text-xs">{t('farmerDeliveryRequest.detail.stats.requestedQuantity')}</p>
+                  <p className="text-xl font-bold">{data.requestedQuantity} {t('farmerDeliveryRequest.common.kg')}</p>
                 </div>
                 <Package className="w-6 h-6 text-orange-200" />
               </div>
@@ -191,8 +193,8 @@ export default function FarmerInboundRequestDetailPage() {
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-xs">Đã sơ chế</p>
-                  <p className="text-xl font-bold">{totalProcessed} kg</p>
+                  <p className="text-green-100 text-xs">{t('farmerDeliveryRequest.detail.stats.processed')}</p>
+                  <p className="text-xl font-bold">{totalProcessed} {t('farmerDeliveryRequest.common.kg')}</p>
                 </div>
                 <TrendingUp className="w-6 h-6 text-green-200" />
               </div>
@@ -200,8 +202,8 @@ export default function FarmerInboundRequestDetailPage() {
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-xs">Còn lại</p>
-                  <p className="text-xl font-bold">{Math.max(0, remainingForThisRequest)} kg</p>
+                  <p className="text-blue-100 text-xs">{t('farmerDeliveryRequest.detail.stats.remaining')}</p>
+                  <p className="text-xl font-bold">{Math.max(0, remainingForThisRequest)} {t('farmerDeliveryRequest.common.kg')}</p>
                 </div>
                 <Repeat2 className="w-6 h-6 text-blue-200" />
               </div>
@@ -209,7 +211,7 @@ export default function FarmerInboundRequestDetailPage() {
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-xs">Trạng thái</p>
+                  <p className="text-purple-100 text-xs">{t('farmerDeliveryRequest.detail.stats.status')}</p>
                   <p className="text-lg font-bold">{getStatusLabel(data.status)}</p>
                 </div>
                 <Clock className="w-6 h-6 text-purple-200" />
@@ -226,21 +228,21 @@ export default function FarmerInboundRequestDetailPage() {
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                   <ClipboardList className="w-5 h-5 text-orange-600" />
-                  Thông tin yêu cầu
+                  {t('farmerDeliveryRequest.detail.sections.requestInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DetailItem icon={<ClipboardList />} label="Mã yêu cầu" value={data.requestCode} />
+                  <DetailItem icon={<ClipboardList />} label={t('farmerDeliveryRequest.detail.fields.requestCode')} value={data.requestCode} />
                   <DetailItem
                     icon={<PackageCheck />}
-                    label="Trạng thái"
+                    label={t('farmerDeliveryRequest.detail.fields.status')}
                     value={<Badge className={`capitalize ${getStatusStyle(data.status)}`}>{getStatusLabel(data.status)}</Badge>}
                   />
-                  <DetailItem icon={<Repeat2 />} label="Số lượng yêu cầu" value={`${data.requestedQuantity} kg`} />
-                  <DetailItem icon={<CalendarClock />} label="Ngày giao dự kiến" value={formatDate(data.preferredDeliveryDate)} />
-                  <DetailItem icon={<CalendarCheck />} label="Ngày giao thực tế" value={formatDate(data.actualDeliveryDate)} />
-                  <DetailItem icon={<FileText />} label="Ghi chú" value={data.note || 'Không có'} />
+                  <DetailItem icon={<Repeat2 />} label={t('farmerDeliveryRequest.detail.fields.requestedQuantity')} value={`${data.requestedQuantity} ${t('farmerDeliveryRequest.common.kg')}`} />
+                  <DetailItem icon={<CalendarClock />} label={t('farmerDeliveryRequest.detail.fields.preferredDeliveryDate')} value={formatDate(data.preferredDeliveryDate)} />
+                  <DetailItem icon={<CalendarCheck />} label={t('farmerDeliveryRequest.detail.fields.actualDeliveryDate')} value={formatDate(data.actualDeliveryDate)} />
+                  <DetailItem icon={<FileText />} label={t('farmerDeliveryRequest.detail.fields.note')} value={data.note || t('farmerDeliveryRequest.common.na')} />
                 </div>
               </CardContent>
             </Card>
@@ -250,16 +252,16 @@ export default function FarmerInboundRequestDetailPage() {
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                   <Package className="w-5 h-5 text-orange-600" />
-                  Thông tin lô chế biến
+                  {t('farmerDeliveryRequest.detail.sections.batchInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DetailItem icon={<ClipboardList />} label="Mã lô chế biến" value={data.batchCode} />
-                  <DetailItem icon={<Coffee />} label="Loại cà phê" value={data.coffeeType} />
-                  <DetailItem icon={<Leaf />} label="Mùa vụ" value={data.seasonCode} />
-                  <DetailItem icon={<PackageCheck />} label="Tổng lượng đã sơ chế" value={`${totalProcessed} kg`} />
-                  <DetailItem icon={<Repeat2 />} label="Còn lại có thể gửi" value={`${Math.max(0, remainingForBatch)} kg`} />
+                  <DetailItem icon={<ClipboardList />} label={t('farmerDeliveryRequest.detail.fields.batchCode')} value={data.batchCode} />
+                  <DetailItem icon={<Coffee />} label={t('farmerDeliveryRequest.detail.fields.coffeeType')} value={data.coffeeType} />
+                  <DetailItem icon={<Leaf />} label={t('farmerDeliveryRequest.detail.fields.seasonCode')} value={data.seasonCode} />
+                  <DetailItem icon={<PackageCheck />} label={t('farmerDeliveryRequest.detail.fields.totalProcessed')} value={`${totalProcessed} ${t('farmerDeliveryRequest.common.kg')}`} />
+                  <DetailItem icon={<Repeat2 />} label={t('farmerDeliveryRequest.detail.fields.remainingAvailable')} value={`${Math.max(0, remainingForBatch)} ${t('farmerDeliveryRequest.common.kg')}`} />
                 </div>
               </CardContent>
             </Card>
@@ -272,26 +274,26 @@ export default function FarmerInboundRequestDetailPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                   <Clock className="w-4 h-4 text-orange-600" />
-                  Tóm tắt trạng thái
+                  {t('farmerDeliveryRequest.detail.sections.statusSummary')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Yêu cầu:</span>
-                    <span className="font-medium">{data.requestedQuantity} kg</span>
+                    <span className="text-sm text-gray-600">{t('farmerDeliveryRequest.detail.fields.requestedQuantity')}:</span>
+                    <span className="font-medium">{data.requestedQuantity} {t('farmerDeliveryRequest.common.kg')}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Đã sơ chế:</span>
-                    <span className="font-medium text-green-600">{totalProcessed} kg</span>
+                    <span className="text-sm text-gray-600">{t('farmerDeliveryRequest.detail.stats.processed')}:</span>
+                    <span className="font-medium text-green-600">{totalProcessed} {t('farmerDeliveryRequest.common.kg')}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Còn lại:</span>
-                    <span className="font-medium text-blue-600">{Math.max(0, remainingForThisRequest)} kg</span>
+                    <span className="text-sm text-gray-600">{t('farmerDeliveryRequest.detail.stats.remaining')}:</span>
+                    <span className="font-medium text-blue-600">{Math.max(0, remainingForThisRequest)} {t('farmerDeliveryRequest.common.kg')}</span>
                   </div>
                   <div className="pt-2 border-t border-orange-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Trạng thái:</span>
+                      <span className="text-sm font-medium text-gray-700">{t('farmerDeliveryRequest.detail.fields.status')}:</span>
                       <Badge className={`capitalize ${getStatusStyle(data.status)}`}>
                         {getStatusLabel(data.status)}
                       </Badge>
@@ -305,7 +307,7 @@ export default function FarmerInboundRequestDetailPage() {
             <Card className="border-orange-100">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold text-gray-800">
-                  Hành động
+                  {t('farmerDeliveryRequest.detail.sections.actions')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
@@ -316,7 +318,7 @@ export default function FarmerInboundRequestDetailPage() {
                     onClick={() => router.push('/dashboard/farmer/warehouse-request')}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Xem tất cả yêu cầu
+                    {t('farmerDeliveryRequest.detail.actions.viewAllRequests')}
                   </Button>
                   {data.status === 'Pending' && (
                     <Button
@@ -325,7 +327,7 @@ export default function FarmerInboundRequestDetailPage() {
                       onClick={() => router.push('/dashboard/farmer/warehouse-request/create')}
                     >
                       <Package className="w-4 h-4 mr-2" />
-                      Tạo yêu cầu mới
+                      {t('farmerDeliveryRequest.detail.actions.createNewRequest')}
                     </Button>
                   )}
                 </div>
