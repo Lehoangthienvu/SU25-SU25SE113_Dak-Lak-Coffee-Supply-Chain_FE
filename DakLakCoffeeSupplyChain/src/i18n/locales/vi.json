@@ -3917,5 +3917,178 @@
         "saving": "Đang lưu..."
       }
     }
+  },
+
+  "shipments": {
+    "title": "Lô giao hàng",
+    "subtitle": "Xem và quản lý lô giao hàng",
+    "search": {
+      "title": "Tìm kiếm lô giao hàng",
+      "placeholder": "Tìm kiếm...",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày"
+    },
+    "actions": {
+      "createNew": "+ Tạo lô giao mới",
+      "view": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xoá",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "table": {
+      "headers": {
+        "shipmentCode": "Mã lô giao",
+        "orderCode": "Đơn hàng",
+        "deliveryStaff": "Nhân viên giao",
+        "status": "Trạng thái",
+        "timeRange": "Thời gian (Giao – Nhận)",
+        "actions": "Hành động"
+      },
+      "noData": "Không tìm thấy lô giao nào",
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "shipments": "lô giao",
+        "page": "Trang"
+      }
+    },
+    "deleteDialog": {
+      "title": "Xoá lô giao?",
+      "description": "Bạn có chắc chắn muốn xoá lô giao {{shipmentCode}}? Hành động này không thể hoàn tác.",
+      "confirm": "Xoá",
+      "cancel": "Huỷ"
+    },
+    "error": {
+      "notFound": "Không tìm thấy lô giao",
+      "loadFailed": "Lỗi khi tải chi tiết lô giao"
+    },
+    "status": {
+      "pending": "Đang chờ",
+      "inTransit": "Đang giao",
+      "delivered": "Đã giao",
+      "failed": "Thất bại",
+      "returned": "Hoàn trả",
+      "canceled": "Đã huỷ"
+    },
+    "detail": {
+      "title": "Lô giao: {{shipmentCode}}",
+      "editButton": "✏️ Chỉnh sửa",
+      "shipmentInfo": "Thông tin lô giao",
+      "shipmentCode": "Mã lô giao",
+      "order": "Đơn hàng",
+      "deliveryStaff": "Nhân viên giao",
+      "shippedQuantity": "Khối lượng giao",
+      "shippedAt": "Ngày giao",
+      "receivedAt": "Ngày nhận",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "createdBy": "Tạo bởi",
+      "productList": "Danh sách sản phẩm giao",
+      "addProduct": "+ Thêm sản phẩm giao",
+      "table": {
+        "product": "Sản phẩm",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị",
+        "note": "Ghi chú",
+        "actions": "Hành động"
+      },
+      "noProducts": "Không có sản phẩm nào.",
+      "editProduct": "Chỉnh sửa sản phẩm giao",
+      "deleteProduct": "Xoá khỏi lô giao",
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "products": "sản phẩm",
+        "page": "Trang"
+      },
+      "backButton": "← Quay lại",
+      "deleteDialog": {
+        "title": "Xoá sản phẩm khỏi lô giao?",
+        "description": "Bạn có chắc chắn muốn xoá {{productName}} khỏi lô giao? Hành động này không thể hoàn tác.",
+        "confirm": "Xoá",
+        "cancel": "Huỷ"
+      },
+      "error": {
+        "loadFailed": "Không thể xoá sản phẩm khỏi lô giao."
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Tạo lô giao mới",
+        "edit": "Chỉnh sửa lô giao"
+      },
+      "loading": "Đang khởi tạo biểu mẫu chuyến giao...",
+      "order": "Đơn hàng",
+      "selectOrder": "-- Chọn đơn hàng --",
+      "orderCodePlaceholder": "Hoặc nhập OrderCode",
+      "deliveryStaff": "Nhân viên giao",
+      "selectStaff": "-- Chọn nhân viên giao --",
+      "shippedQuantity": "Số lượng đã giao (kg)",
+      "status": "Trạng thái",
+      "shippedAt": "Ngày bắt đầu giao",
+      "receivedAt": "Ngày nhận (nếu có)",
+      "productList": "Danh sách sản phẩm giao",
+      "table": {
+        "orderItem": "Mặt hàng đơn hàng",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị",
+        "note": "Ghi chú"
+      },
+      "selectOrderItem": "-- Chọn order item --",
+      "notePlaceholder": "Ghi chú",
+      "delete": "Xoá",
+      "addRow": "+ Thêm dòng",
+      "totalQuantity": "Tổng khối lượng dòng:",
+      "kg": "kg",
+      "buttons": {
+        "save": "Lưu thay đổi",
+        "create": "Tạo lô giao",
+        "back": "Quay lại"
+      },
+      "validation": {
+        "formNotReady": "Biểu mẫu chưa sẵn sàng, vui lòng thử lại.",
+        "selectOrder": "Vui lòng chọn đơn hàng.",
+        "selectStaff": "Vui lòng chọn nhân viên giao.",
+        "loadOrderItemsFailed": "Không thể tải danh sách mặt hàng đơn hàng.",
+        "saveFailed": "Đã xảy ra lỗi khi lưu chuyến giao."
+      },
+      "success": {
+        "update": "Cập nhật lô giao thành công!",
+        "create": "Tạo lô giao thành công!"
+      }
+    },
+    "detailsForm": {
+      "title": {
+        "create": "Thêm sản phẩm giao",
+        "edit": "Cập nhật sản phẩm giao"
+      },
+      "orderCode": "Mã đơn hàng",
+      "orderItem": "Mặt hàng đơn hàng",
+      "selectOrderItem": "-- Chọn mặt hàng đơn hàng --",
+      "quantity": "Số lượng",
+      "quantityPlaceholder": "vd: 500",
+      "unit": "Đơn vị",
+      "selectUnit": "-- Chọn đơn vị --",
+      "note": "Ghi chú",
+      "notePlaceholder": "Nhập ghi chú (tuỳ chọn)",
+      "buttons": {
+        "cancel": "Huỷ",
+        "add": "Thêm",
+        "update": "Cập nhật",
+        "saving": "Đang lưu..."
+      },
+      "validation": {
+        "selectOrderItem": "Vui lòng chọn mặt hàng đơn hàng (OrderItem).",
+        "quantityRequired": "Số lượng phải lớn hơn 0.",
+        "unitRequired": "Vui lòng chọn đơn vị.",
+        "unknownError": "Đã xảy ra lỗi không xác định.",
+        "serverError": "Lỗi từ máy chủ: {{status}}"
+      },
+      "success": {
+        "add": "Đã thêm sản phẩm giao thành công!",
+        "create": "Cập nhật sản phẩm giao thành công!"
+      }
+    }
   }
 }

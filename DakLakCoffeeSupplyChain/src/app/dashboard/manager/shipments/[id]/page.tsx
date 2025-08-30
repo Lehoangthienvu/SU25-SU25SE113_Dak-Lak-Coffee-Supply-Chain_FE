@@ -16,14 +16,17 @@ import type {
   ShipmentViewDetailsDto,
 } from "@/lib/api/shipments";
 import { formatDate, formatQuantity } from "@/lib/utils";
-import { ShipmentDeliveryStatusMap } from "@/lib/constants/shipmentDeliveryStatus";
+import { useShipmentDeliveryStatusMap } from "@/lib/constants/shipmentDeliveryStatus";
 import ShipmentDetailsFormDialog from "@/components/shipments/ShipmentDetailsFormDialog";
 import { getOrderDetails } from "@/lib/api/orders";
+import { useTranslation } from "react-i18next";
 
 export default function ShipmentDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const shipmentId = params.id as string;
+  const statusMap = useShipmentDeliveryStatusMap();
 
   const [shipment, setShipment] = useState<ShipmentViewDetailsDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,11 +71,11 @@ export default function ShipmentDetailPage() {
       })
       .catch((err) => {
         setError(
-          typeof err === "string" ? err : "Không thể tải chi tiết lô giao"
+          typeof err === "string" ? err : t('shipments.error.loadFailed')
         );
         setLoading(false);
       });
-  }, [shipmentId]);
+  }, [shipmentId, t]);
 
   // Prepare data for table consistently across renders
   const details = shipment?.shipmentDetails ?? [];
@@ -100,20 +103,20 @@ export default function ShipmentDetailPage() {
       <div className="p-8">
         <Card>
           <CardHeader>
-            <CardTitle>Lỗi tải lô giao hàng</CardTitle>
+            <CardTitle>{t('shipments.error.notFound')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-red-500 mb-3">
-              {error || "Không tìm thấy lô giao"}
+              {error || t('shipments.error.notFound')}
             </p>
-            <Button onClick={() => router.back()}>← Quay lại</Button>
+            <Button onClick={() => router.back()}>{t('shipments.detail.backButton')}</Button>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const statusMeta = ShipmentDeliveryStatusMap[shipment.deliveryStatus];
+  const statusMeta = statusMap[shipment.deliveryStatus];
 
   return (
     <div className="w-full min-h-screen bg-orange-50 px-4 py-6 lg:px-20 flex justify-center">
@@ -121,7 +124,7 @@ export default function ShipmentDetailPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
             <FiTruck className="text-orange-600 w-6 h-6" />
-            <span>Lô giao: {shipment.shipmentCode}</span>
+            <span>{t('shipments.detail.title', { shipmentCode: shipment.shipmentCode })}</span>
           </div>
           <Button
             className="bg-[#f59e0b] hover:bg-[#d97706] text-white font-medium px-4 py-2 rounded-lg shadow-md flex items-center gap-2"
@@ -131,7 +134,7 @@ export default function ShipmentDetailPage() {
               )
             }
           >
-            ✏️ Chỉnh sửa
+            {t('shipments.detail.editButton')}
           </Button>
         </div>
 
@@ -139,36 +142,36 @@ export default function ShipmentDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Thông tin lô giao</CardTitle>
+            <CardTitle>{t('shipments.detail.shipmentInfo')}</CardTitle>
           </CardHeader>
 
           <CardContent className="grid grid-cols-2 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <strong>Mã lô giao:</strong> {shipment.shipmentCode}
+              <strong>{t('shipments.detail.shipmentCode')}:</strong> {shipment.shipmentCode}
             </div>
             <div>
-              <strong>Đơn hàng:</strong> {shipment.orderCode}
+              <strong>{t('shipments.detail.order')}:</strong> {shipment.orderCode}
             </div>
             <div>
-              <strong>Nhân viên giao:</strong> {shipment.deliveryStaffName}
+              <strong>{t('shipments.detail.deliveryStaff')}:</strong> {shipment.deliveryStaffName}
             </div>
             <div>
-              <strong>Khối lượng giao:</strong>{" "}
+              <strong>{t('shipments.detail.shippedQuantity')}:</strong>{" "}
               {shipment.shippedQuantity !== undefined &&
               shipment.shippedQuantity !== null
                 ? formatQuantity(shipment.shippedQuantity)
                 : "-"}
             </div>
             <div>
-              <strong>Ngày giao:</strong>{" "}
+              <strong>{t('shipments.detail.shippedAt')}:</strong>{" "}
               {formatDate(shipment.shippedAt as any)}
             </div>
             <div>
-              <strong>Ngày nhận:</strong>{" "}
+              <strong>{t('shipments.detail.receivedAt')}:</strong>{" "}
               {formatDate(shipment.receivedAt as any)}
             </div>
             <div className="col-span-2">
-              <strong>Trạng thái:</strong>
+              <strong>{t('shipments.detail.status')}:</strong>
               <span
                 className={`ml-2 px-2 py-1 rounded text-xs font-semibold bg-${statusMeta.color}-100 text-${statusMeta.color}-700`}
               >
@@ -176,10 +179,10 @@ export default function ShipmentDetailPage() {
               </span>
             </div>
             <div>
-              <strong>Ngày tạo:</strong> {formatDate(shipment.createdAt)}
+              <strong>{t('shipments.detail.createdAt')}:</strong> {formatDate(shipment.createdAt)}
             </div>
             <div>
-              <strong>Tạo bởi:</strong> {shipment.createdByName}
+              <strong>{t('shipments.detail.createdBy')}:</strong> {shipment.createdByName}
             </div>
           </CardContent>
         </Card>
@@ -187,7 +190,7 @@ export default function ShipmentDetailPage() {
         {/* Danh sách mặt hàng trong lô giao */}
         <div className="rounded-xl border bg-white p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-semibold">Danh sách sản phẩm giao</h2>
+            <h2 className="text-base font-semibold">{t('shipments.detail.productList')}</h2>
             <Button
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => {
@@ -195,7 +198,7 @@ export default function ShipmentDetailPage() {
                 setShowDetailsDialog(true);
               }}
             >
-              + Thêm sản phẩm giao
+              {t('shipments.detail.addProduct')}
             </Button>
           </div>
 
@@ -204,23 +207,23 @@ export default function ShipmentDetailPage() {
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    Sản phẩm
+                    {t('shipments.detail.table.product')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Số lượng
+                    {t('shipments.detail.table.quantity')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Đơn vị
+                    {t('shipments.detail.table.unit')}
                   </th>
-                  <th className="px-4 py-2 text-left">Ghi chú</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">{t('shipments.detail.table.note')}</th>
+                  <th className="px-4 py-2 text-center">{t('shipments.detail.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {(shipment.shipmentDetails ?? []).length === 0 ? (
                   <tr>
                     <td className="py-8 text-center text-gray-500" colSpan={5}>
-                      Không có sản phẩm nào.
+                      {t('shipments.detail.noProducts')}
                     </td>
                   </tr>
                 ) : (
@@ -241,7 +244,7 @@ export default function ShipmentDetailPage() {
                       <td className="px-4 py-2">{item.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content="Chỉnh sửa sản phẩm giao">
+                          <Tooltip content={t('shipments.detail.editProduct')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -253,7 +256,7 @@ export default function ShipmentDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá khỏi lô giao">
+                          <Tooltip content={t('shipments.detail.deleteProduct')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -277,7 +280,7 @@ export default function ShipmentDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
-                Đang hiển thị{" "}
+                {t('shipments.detail.pagination.showing')}{" "}
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                 </span>
@@ -285,7 +288,7 @@ export default function ShipmentDetailPage() {
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
-                / {totalItems} sản phẩm
+                {t('shipments.detail.pagination.of')} {totalItems} {t('shipments.detail.pagination.products')}
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -297,11 +300,11 @@ export default function ShipmentDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
-                  ← Trước
+                  {t('shipments.detail.pagination.previous')}
                 </Button>
                 <span className="flex items-center px-2">
-                  Trang{" "}
-                  <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
+                  {t('shipments.detail.pagination.page')}{" "}
+                  <span className="mx-1 font-semibold">{currentPage}</span> {t('shipments.detail.pagination.of')}{" "}
                   {totalPages}
                 </span>
                 <Button
@@ -313,7 +316,7 @@ export default function ShipmentDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
-                  Sau →
+                  {t('shipments.detail.pagination.next')}
                 </Button>
               </div>
             </div>
@@ -322,7 +325,7 @@ export default function ShipmentDetailPage() {
 
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={() => router.back()}>
-            ← Quay lại
+            {t('shipments.detail.backButton')}
           </Button>
         </div>
 
@@ -359,16 +362,16 @@ export default function ShipmentDetailPage() {
         <ConfirmDialog
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
-          title="Xoá sản phẩm khỏi lô giao?"
+          title={t('shipments.detail.deleteDialog.title')}
           description={
             <span>
-              Bạn có chắc chắn muốn xoá{" "}
-              <strong>{detailToDelete?.productName ?? "mặt hàng"}</strong> khỏi
-              lô giao? Hành động này không thể hoàn tác.
+              {t('shipments.detail.deleteDialog.description', { 
+                productName: detailToDelete?.productName ?? t('shipments.detail.table.product').toLowerCase()
+              })}
             </span>
           }
-          confirmText="Xoá"
-          cancelText="Huỷ"
+          confirmText={t('shipments.detail.deleteDialog.confirm')}
+          cancelText={t('shipments.detail.deleteDialog.cancel')}
           onConfirm={async () => {
             if (!detailToDelete) return;
             try {
@@ -388,7 +391,7 @@ export default function ShipmentDetailPage() {
               );
             } catch (err) {
               console.error(err);
-              alert("Không thể xoá sản phẩm khỏi lô giao.");
+              alert(t('shipments.detail.error.loadFailed'));
             } finally {
               setShowDeleteDialog(false);
               setDetailToDelete(null);

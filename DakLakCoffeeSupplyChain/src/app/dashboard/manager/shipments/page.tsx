@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Eye, Pencil, Trash2, Search } from "lucide-react";
 import {
-  ShipmentDeliveryStatusMap,
+  useShipmentDeliveryStatusMap,
   ShipmentDeliveryStatusValue,
 } from "@/lib/constants/shipmentDeliveryStatus";
 import FilterStatusPanel from "@/components/ui/filterStatusPanel";
@@ -18,8 +18,11 @@ import {
   softDeleteShipment,
 } from "@/lib/api/shipments";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
+import { useTranslation } from "react-i18next";
 
 export default function ShipmentsPage() {
+  const { t, i18n } = useTranslation();
+  const statusMap = useShipmentDeliveryStatusMap();
   const [shipments, setShipments] = useState<ShipmentViewAllDto[]>([]);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] =
@@ -96,7 +99,7 @@ export default function ShipmentsPage() {
   const formatDateTime = (iso?: string | null) => {
     if (!iso) return "";
     const date = new Date(iso);
-    return new Intl.DateTimeFormat("vi-VN", {
+    return new Intl.DateTimeFormat(i18n.language === 'en' ? "en-US" : "vi-VN", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -108,11 +111,11 @@ export default function ShipmentsPage() {
       <aside className="w-64 space-y-4">
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            Tìm kiếm lô giao hàng
+            {t('shipments.search.title')}
           </h2>
           <div className="relative">
             <Input
-              placeholder="Tìm kiếm..."
+              placeholder={t('shipments.search.placeholder')}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -128,7 +131,7 @@ export default function ShipmentsPage() {
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
           statusCounts={statusCounts}
-          statusMap={ShipmentDeliveryStatusMap}
+          statusMap={statusMap}
         />
       </aside>
 
@@ -138,7 +141,7 @@ export default function ShipmentsPage() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Từ ngày
+                  {t('shipments.search.fromDate')}
                 </label>
                 <Input
                   type="date"
@@ -153,7 +156,7 @@ export default function ShipmentsPage() {
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Đến ngày
+                  {t('shipments.search.toDate')}
                 </label>
                 <Input
                   type="date"
@@ -169,7 +172,7 @@ export default function ShipmentsPage() {
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => router.push("/dashboard/manager/shipments/create")}
             >
-              + Tạo lô giao mới
+              {t('shipments.actions.createNew')}
             </Button>
           </div>
 
@@ -177,14 +180,14 @@ export default function ShipmentsPage() {
             <table className="min-w-full table-auto">
               <thead className="bg-gray-100 text-sm text-gray-600">
                 <tr>
-                  <th className="px-4 py-2 text-left">Mã lô giao</th>
-                  <th className="px-4 py-2 text-left">Đơn hàng</th>
-                  <th className="px-4 py-2 text-left">Nhân viên giao</th>
-                  <th className="px-4 py-2 text-center">Trạng thái</th>
+                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.shipmentCode')}</th>
+                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.orderCode')}</th>
+                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.deliveryStaff')}</th>
+                  <th className="px-4 py-2 text-center">{t('shipments.table.headers.status')}</th>
                   <th className="px-4 py-2 text-center">
-                    Thời gian (Giao – Nhận)
+                    {t('shipments.table.headers.timeRange')}
                   </th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-center">{t('shipments.table.headers.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,7 +197,7 @@ export default function ShipmentsPage() {
                       colSpan={6}
                       className="text-center py-8 text-sm text-muted-foreground"
                     >
-                      Không tìm thấy lô giao nào
+                      {t('shipments.table.noData')}
                     </td>
                   </tr>
                 ) : (
@@ -215,7 +218,7 @@ export default function ShipmentsPage() {
                       <td className="px-4 py-2 whitespace-nowrap text-center">
                         {(() => {
                           const meta =
-                            ShipmentDeliveryStatusMap[s.deliveryStatus];
+                            statusMap[s.deliveryStatus];
                           return (
                             <span
                               className={cn(
@@ -243,7 +246,7 @@ export default function ShipmentsPage() {
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-[2px] justify-center">
-                          <Tooltip content="Xem chi tiết">
+                          <Tooltip content={t('shipments.actions.view')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -256,7 +259,7 @@ export default function ShipmentsPage() {
                               <Eye className="w-4 h-4 text-blue-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t('shipments.actions.edit')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -269,7 +272,7 @@ export default function ShipmentsPage() {
                               <Pencil className="w-4 h-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t('shipments.actions.delete')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -294,7 +297,7 @@ export default function ShipmentsPage() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
             <div className="text-sm text-gray-600">
-              Đang hiển thị{" "}
+              {t('shipments.table.pagination.showing')}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * pageSize + 1}
               </span>
@@ -302,7 +305,7 @@ export default function ShipmentsPage() {
               <span className="font-medium">
                 {Math.min(currentPage * pageSize, filtered.length)}
               </span>{" "}
-              / {filtered.length} lô giao
+              {t('shipments.table.pagination.of')} {filtered.length} {t('shipments.table.pagination.shipments')}
             </div>
             <div className="flex gap-2 justify-end mt-2 sm:mt-0">
               <Button
@@ -312,11 +315,11 @@ export default function ShipmentsPage() {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               >
-                ← Trước
+                {t('shipments.actions.previous')}
               </Button>
               <span className="flex items-center px-2">
-                Trang <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                / {totalPages}
+                {t('shipments.table.pagination.page')} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t('shipments.table.pagination.of')} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -327,7 +330,7 @@ export default function ShipmentsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
               >
-                Sau →
+                {t('shipments.actions.next')}
               </Button>
             </div>
           </div>
@@ -335,16 +338,16 @@ export default function ShipmentsPage() {
         <ConfirmDialog
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
-          title="Xoá lô giao?"
+          title={t('shipments.deleteDialog.title')}
           description={
             <span>
-              Bạn có chắc chắn muốn xoá lô giao{" "}
-              <strong>{shipmentToDelete?.shipmentCode}</strong>? Hành động này
-              không thể hoàn tác.
+              {t('shipments.deleteDialog.description', { 
+                shipmentCode: shipmentToDelete?.shipmentCode 
+              })}
             </span>
           }
-          confirmText="Xoá"
-          cancelText="Huỷ"
+          confirmText={t('shipments.deleteDialog.confirm')}
+          cancelText={t('shipments.deleteDialog.cancel')}
           onConfirm={async () => {
             if (!shipmentToDelete) return;
             try {
