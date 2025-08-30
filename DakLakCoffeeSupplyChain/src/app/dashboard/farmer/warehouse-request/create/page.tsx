@@ -222,7 +222,7 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('Lỗi: ' + err.message);
+      toast.error(t('farmerDeliveryRequest.create.fresh.errors.general', { message: err.message }));
     } finally {
       setLoading(false);
     }
@@ -285,7 +285,7 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('Lỗi: ' + err.message);
+      toast.error(t('farmerDeliveryRequest.create.processed.errors.general', { message: err.message }));
     } finally {
       setLoading(false);
     }

@@ -3763,7 +3763,8 @@
       "outboundReceipts": "Outbound Receipts",
       "inventories": "Inventories",
       "inventoryLogs": "Inventory Logs",
-      "warehouses": "Warehouses"
+      "warehouses": "Warehouses",
+      "warehouseRequest": "Delivery Requests"
     },
             "user": {
           "greeting": "Hello:",
@@ -5022,7 +5023,8 @@
       "actions": {
         "inbound": "📥 Inbound",
         "outbound": "📤 Outbound",
-        "details": "Details"
+        "details": "Details",
+        "delete": "Delete"
       }
     },
     "pagination": {
@@ -5257,6 +5259,204 @@
         "invalidQuantity": "Invalid quantity",
         "exceedQuantity": "Requested quantity ({quantity}) exceeds remaining quantity ({remaining})"
       }
+    }
+  },
+  "farmerDeliveryRequest": {
+    "title": "Delivery Requests",
+    "subtitle": "Manage and track your delivery requests",
+    "stats": {
+      "totalRequests": "Total Requests",
+      "pendingRequests": "Pending Requests",
+      "approvedRequests": "Approved Requests", 
+      "totalQuantity": "Total Quantity",
+      "processedRequests": "Processed Requests"
+    },
+    "actions": {
+      "createNew": "Create New Request",
+      "createRequest": "Create New Request",
+      "view": "View Details",
+      "cancel": "Cancel Request"
+    },
+    "sections": {
+      "search": "Search Requests",
+      "requestList": "Delivery Request List",
+      "filterByType": "Filter by Type",
+      "filterByStatus": "Filter by Status"
+    },
+    "filters": {
+      "all": "All",
+      "coffeeTypes": {
+        "fresh": "Fresh Coffee",
+        "processed": "Processed Coffee"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "completed": "Completed", 
+        "rejected": "Rejected",
+        "cancelled": "Cancelled",
+        "waiting": "Waiting",
+        "finished": "Finished"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "waiting": "Waiting",
+      "finished": "Finished"
+    },
+    "coffeeTypes": {
+      "fresh": "Fresh Coffee",
+      "processed": "Processed Coffee",
+      "unknown": "Unknown"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "requests": "requests",
+      "of": "of",
+      "allRequests": "all requests",
+      "page": "Page"
+    },
+    "common": {
+      "kg": "kg",
+      "na": "N/A",
+      "unknown": "Unknown",
+      "id": "ID"
+    },
+    "detail": {
+      "title": "Delivery Request Detail",
+      "subtitle": "Detailed information about the delivery request",
+      "backToList": "Back to List",
+      "back": "Back",
+      "stats": {
+        "requestedQuantity": "Requested Quantity",
+        "processed": "Processed",
+        "remaining": "Remaining",
+        "status": "Status"
+      },
+      "sections": {
+        "requestInfo": "Request Information",
+        "batchInfo": "Batch Information",
+        "statusSummary": "Status Summary",
+        "actions": "Actions"
+      },
+      "fields": {
+        "requestCode": "Request Code",
+        "status": "Status",
+        "requestedQuantity": "Requested Quantity",
+        "preferredDeliveryDate": "Preferred Delivery Date",
+        "actualDeliveryDate": "Actual Delivery Date",
+        "note": "Note",
+        "batchCode": "Batch Code",
+        "coffeeType": "Coffee Type",
+        "seasonCode": "Season Code",
+        "totalProcessed": "Total Processed",
+        "remainingAvailable": "Remaining Available"
+      },
+      "actions": {
+        "viewAllRequests": "View All Requests",
+        "createNewRequest": "Create New Request"
+      },
+      "error": {
+        "loadData": "Cannot load data",
+        "notFound": "Request not found",
+        "notFoundMessage": "The delivery request does not exist or has been deleted"
+      }
+    },
+    "error": {
+      "loadRequests": "Cannot load request list",
+      "loadRequestsUnknown": "Cannot load request list",
+      "loadData": "Cannot load data",
+      "loadDetail": "Cannot load request detail",
+      "cancelRequest": "Cannot cancel request"
+    },
+    "confirmation": {
+      "cancelTitle": "Confirm Cancel Request",
+      "cancelMessage": "Are you sure you want to cancel this delivery request?",
+      "cancelConfirm": "Cancel Request",
+      "cancelCancel": "Keep"
+    },
+    "placeholders": {
+      "search": "Search request code, coffee type..."
+    },
+    "create": {
+      "title": "Create New Delivery Request",
+      "subtitle": "Create delivery request from processed or fresh coffee",
+      "cancel": "Cancel",
+      "tabs": {
+        "processed": "Processed Coffee",
+        "fresh": "Fresh Coffee"
+      },
+      "guide": {
+        "title": "Guide",
+        "description": "Choose the type of coffee you want to deliver",
+        "security": "Security",
+        "securityDescription": "Only shows coffee owned by you"
+      },
+      "processed": {
+        "title": "Processed Coffee",
+        "subtitle": "Deliver from processed coffee batches",
+        "batchLabel": "Select Coffee Batch",
+        "batchDescription": "Available processed batches",
+        "batchPlaceholder": "-- Select Coffee Batch --",
+        "quantityLabel": "Requested Quantity",
+        "quantityPlaceholder": "Enter quantity (kg)",
+        "deliveryDateLabel": "Preferred Delivery Date",
+        "noteLabel": "Note",
+        "notePlaceholder": "Additional notes (optional)",
+        "submit": "Create Request",
+        "submitting": "Creating...",
+        "errors": {
+          "noBatchSelected": "Please select a coffee batch",
+          "invalidQuantity": "Invalid quantity",
+          "exceedQuantity": "Requested quantity ({quantity}) exceeds available quantity ({available})",
+          "invalidDate": "Delivery date must be after today",
+          "general": "Error: {message}"
+        }
+      },
+      "fresh": {
+        "title": "Fresh Coffee",
+        "subtitle": "Deliver from fresh coffee",
+        "detailLabel": "Select Season Detail",
+        "detailDescription": "Available fresh coffee details",
+        "detailPlaceholder": "-- Select Season Detail --",
+        "quantityLabel": "Requested Quantity",
+        "quantityPlaceholder": "Enter quantity (kg)",
+        "deliveryDateLabel": "Preferred Delivery Date",
+        "noteLabel": "Note",
+        "notePlaceholder": "Additional notes (optional)",
+        "submit": "Create Request",
+        "submitting": "Creating...",
+        "errors": {
+          "noDetailSelected": "Please select a season detail",
+          "invalidQuantity": "Invalid quantity",
+          "exceedQuantity": "Requested quantity ({quantity}) exceeds available quantity ({available})",
+          "invalidDate": "Delivery date must be after today",
+          "general": "Error: {message}"
+        }
+      },
+      "errors": {
+        "loadData": "Cannot load data"
+      }
+    },
+    "loading": {
+      "loadingData": "Loading data..."
+    },
+    "empty": {
+      "noRequests": "No requests found",
+      "noRequestsFilter": "No requests match the current filters",
+      "noRequestsYet": "No delivery requests yet"
+    },
+    "fields": {
+      "requestCode": "Request Code",
+      "type": "Type",
+      "quantity": "Quantity",
+      "source": "Source",
+      "status": "Status",
+      "actions": "Actions"
     }
   }
 }
