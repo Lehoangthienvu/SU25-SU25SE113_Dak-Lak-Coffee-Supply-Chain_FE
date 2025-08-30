@@ -4092,5 +4092,179 @@
         "create": "Cập nhật sản phẩm giao thành công!"
       }
     }
+  },
+  "contracts": {
+    "contract": {
+      "title": "Hợp đồng",
+      "description": "Quản lý hợp đồng cung cấp cà phê"
+    },
+    "page": {
+      "list": {
+        "title": "Danh sách hợp đồng",
+        "search": {
+          "title": "Tìm kiếm hợp đồng",
+          "placeholder": "Tìm kiếm...",
+          "description": "Tìm kiếm theo mã hợp đồng, tên hợp đồng, đối tác"
+        },
+        "filters": {
+          "title": "Lọc theo trạng thái",
+          "allStatuses": "Tất cả trạng thái",
+          "dateRange": {
+            "fromDate": "Từ ngày",
+            "toDate": "Đến ngày"
+          }
+        },
+        "table": {
+          "headers": {
+            "contractNumber": "Số hợp đồng",
+            "contractTitle": "Tên hợp đồng",
+            "partner": "Đối tác",
+            "status": "Trạng thái",
+            "time": "Thời gian",
+            "actions": "Hành động"
+          },
+          "empty": "Không tìm thấy hợp đồng nào",
+          "pagination": {
+            "showing": "Đang hiển thị",
+            "to": "đến",
+            "of": "/",
+            "contracts": "hợp đồng",
+            "page": "Trang",
+            "previous": "← Trước",
+            "next": "Sau →"
+          }
+        },
+        "actions": {
+          "createNew": "+ Tạo hợp đồng mới"
+        }
+      },
+      "create": {
+        "title": "Tạo hợp đồng mới",
+        "description": "Tạo hợp đồng cung cấp cà phê mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa hợp đồng",
+        "description": "Cập nhật thông tin hợp đồng",
+        "loading": "Đang tải dữ liệu hợp đồng...",
+        "notFound": "Không tìm thấy hợp đồng với ID: {{id}}"
+      },
+      "detail": {
+        "title": "Chi tiết hợp đồng",
+        "loading": "Đang tải dữ liệu hợp đồng...",
+        "error": "Lỗi tải hợp đồng",
+        "notFound": "Không tìm thấy hợp đồng",
+        "itemList": "Danh sách mặt hàng",
+        "noItems": "Không có mặt hàng nào.",
+        "displaying": "Đang hiển thị",
+        "items": "mặt hàng"
+      }
+    },
+    "status": {
+      "notStarted": "Chưa bắt đầu",
+      "preparingDelivery": "Chuẩn bị giao",
+      "inProgress": "Đang thực hiện",
+      "partialCompleted": "Hoàn thành một phần",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "expired": "Quá hạn"
+    },
+    "form": {
+      "status": "Trạng thái"
+    },
+    "managerContract": {
+      "status": {
+        "notStarted": "Chưa bắt đầu",
+        "preparingDelivery": "Chuẩn bị giao",
+        "inProgress": "Đang thực hiện",
+        "partialCompleted": "Hoàn thành một phần",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy",
+        "expired": "Quá hạn"
+      },
+      "actions": {
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa",
+        "delete": "Xoá",
+        "deleteConfirm": {
+          "title": "Xoá hợp đồng?",
+          "description": "Bạn có chắc chắn muốn xoá hợp đồng {{contractTitle}}? Hành động này không thể hoàn tác.",
+          "confirm": "Xóa",
+          "cancel": "Hủy"
+        },
+        "download": "Tải xuống hợp đồng",
+        "viewDirectly": "Xem trực tiếp",
+        "addItem": "Thêm mặt hàng",
+        "action": "Hành động"
+      }
+    },
+    "crud": {
+      "form": {
+        "status": "Trạng thái",
+        "basicInfo": "Thông tin cơ bản",
+        "contractNumber": "Số hợp đồng",
+        "contractTitle": "Tên hợp đồng",
+        "seller": "Người bán",
+        "buyer": "Người mua",
+        "deliveryRounds": "Số đợt giao hàng",
+        "totalQuantity": "Tổng khối lượng",
+        "totalValue": "Tổng giá trị",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "signedAt": "Ngày ký kết",
+        "cancelReason": "Lý do hủy",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "contractFile": "Tệp hợp đồng",
+        "previewFile": "Xem trước tệp",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Khối lượng",
+        "unitPrice": "Đơn giá",
+        "discount": "Giảm giá",
+        "note": "Ghi chú",
+        "vndPerKg": "VND/kg"
+      },
+      "validation": {
+        "contractNumberRequired": "Vui lòng nhập số hợp đồng",
+        "contractTitleRequired": "Vui lòng nhập tên hợp đồng",
+        "buyerRequired": "Vui lòng chọn đối tác mua",
+        "startDateRequired": "Vui lòng chọn ngày bắt đầu",
+        "endDateRequired": "Vui lòng chọn ngày kết thúc",
+        "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+        "quantityRequired": "Vui lòng nhập số lượng",
+        "quantityPositive": "Số lượng phải lớn hơn 0",
+        "unitPriceRequired": "Vui lòng nhập đơn giá",
+        "unitPricePositive": "Đơn giá phải lớn hơn 0"
+      },
+      "success": {
+        "create": "Tạo hợp đồng thành công!",
+        "update": "Cập nhật hợp đồng thành công!",
+        "delete": "Xóa hợp đồng thành công!"
+      },
+      "error": {
+        "create": "Tạo hợp đồng thất bại!",
+        "update": "Cập nhật hợp đồng thất bại!",
+        "delete": "Xóa hợp đồng thất bại!"
+      },
+      "dialog": {
+        "deleteItem": {
+          "title": "Xoá mặt hàng?",
+          "description": "Bạn có chắc chắn muốn xoá mặt hàng {{itemName}} khỏi hợp đồng không? Hành động này không thể hoàn tác.",
+          "confirm": "Xoá",
+          "cancel": "Huỷ"
+        }
+      }
+    },
+    "form": {
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "view": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xoá",
+      "download": "Tải xuống hợp đồng",
+      "viewDirectly": "Xem trực tiếp",
+      "addItem": "Thêm mặt hàng",
+      "action": "Hành động"
+    }
   }
 }
