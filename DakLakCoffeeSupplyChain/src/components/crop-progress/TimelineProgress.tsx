@@ -33,7 +33,7 @@ interface Props {
     progressList: CropProgressViewAllDto[];
     cropSeasonDetailId: string;
     onReload: () => void;
-    onSeasonDetailUpdate?: (newYield: number) => void;
+    onSeasonDetailUpdate?: (newYield: number | null) => void;
     totalStages?: number;
     allStages?: CropStage[];
 }
@@ -488,7 +488,7 @@ export default function TimelineProgress({
                     </DialogTitle>
                     <div className="space-y-4">
                         <p className="text-gray-700">
-                            Bạn có chắc chắn muốn xóa tiến độ <strong>"{deleteDialog.progressName}"</strong>?
+                            Bạn có chắc chắn muốn xóa tiến độ <strong>&quot;{deleteDialog.progressName}&quot;</strong>?
                         </p>
                         <p className="text-sm text-gray-500">
                             Hành động này không thể hoàn tác. Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn.
