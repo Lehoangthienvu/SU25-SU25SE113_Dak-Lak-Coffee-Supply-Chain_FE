@@ -26,12 +26,16 @@ i18n
     react: {
       useSuspense: false
     },
-    debug: true, // Bật debug mode để xem chi tiết
+    debug: process.env.NODE_ENV === 'development', // Chỉ bật debug trong development
     keySeparator: '.',
     nsSeparator: ':',
-    returnEmptyString: false,
-    returnNull: false,
-    returnObjects: true
+    returnEmptyString: true,
+    returnNull: true,
+    returnObjects: true,
+    missingKeyHandler: (lng, ns, key, res) => {
+      console.warn(`🌐 i18n: Missing key "${key}" for language "${lng}"`);
+      return key; // Trả về key gốc nếu không tìm thấy
+    }
   });
 
 // Log sau khi khởi tạo
@@ -44,9 +48,11 @@ console.log('🌐 i18n: Is initialized:', i18n.isInitialized);
 console.log('🌐 i18n: Testing Vietnamese translations...');
 console.log('🌐 i18n: vi.sidebar.staffDashboard.title:', i18n.t('sidebar.staffDashboard.title', { lng: 'vi' }));
 console.log('🌐 i18n: vi.sidebar.staffDashboard.subtitle:', i18n.t('sidebar.staffDashboard.subtitle', { lng: 'vi' }));
+console.log('🌐 i18n: vi.sidebar.cropSeasons:', i18n.t('sidebar.cropSeasons', { lng: 'vi' }));
 
 console.log('🌐 i18n: Testing English translations...');
 console.log('🌐 i18n: en.sidebar.staffDashboard.title:', i18n.t('sidebar.staffDashboard.title', { lng: 'en' }));
 console.log('🌐 i18n: en.sidebar.staffDashboard.subtitle:', i18n.t('sidebar.staffDashboard.subtitle', { lng: 'en' }));
+console.log('🌐 i18n: en.sidebar.cropSeasons:', i18n.t('sidebar.cropSeasons', { lng: 'en' }));
 
 export default i18n;
