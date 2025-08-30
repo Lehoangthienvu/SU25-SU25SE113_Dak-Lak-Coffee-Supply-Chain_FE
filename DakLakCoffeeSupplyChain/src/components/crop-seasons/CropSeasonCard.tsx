@@ -1,20 +1,25 @@
 'use client';
 
 import { CropSeasonListItem as CropSeason } from '@/lib/api/cropSeasons';
-import { FaUser, FaEdit, FaSeedling, FaCalendarAlt, FaMapMarkedAlt } from 'react-icons/fa';
+import { FaUser, FaEdit, FaSeedling, FaCalendarAlt, FaMapMarkedAlt, FaTrash } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import StatusBadge from './StatusBadge';
 import { CropSeasonStatusMap } from '@/lib/constants/cropSeasonStatus';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { deleteCropSeasonById } from '@/lib/api/cropSeasons';
+import { AppToast } from '@/components/ui/AppToast';
 
 interface Props {
     season: CropSeason;
+    onReload: () => void;
 }
 
-export default function CropSeasonCard({ season }: Props) {
+export default function CropSeasonCard({ season, onReload }: Props) {
     const router = useRouter();
     const { t } = useTranslation();
+    const [deleting, setDeleting] = useState(false);
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('vi-VN');
@@ -26,6 +31,31 @@ export default function CropSeasonCard({ season }: Props) {
             return;
         }
         router.push(`/dashboard/farmer/crop-seasons/${season.cropSeasonId}`);
+    };
+
+    const handleDelete = async (event: React.MouseEvent) => {
+        event.stopPropagation();
+
+        if (!confirm(t('cropSeasons.card.confirmDelete'))) {
+            return;
+        }
+
+        try {
+            setDeleting(true);
+            const result = await deleteCropSeasonById(season.cropSeasonId);
+
+            if (result.code === 200) {
+                AppToast.success(result.message || t('cropSeasons.card.deleteSuccess'));
+                onReload();
+            } else {
+                AppToast.error(result.message || t('cropSeasons.card.deleteError'));
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : t('cropSeasons.card.deleteError');
+            AppToast.error(errorMessage);
+        } finally {
+            setDeleting(false);
+        }
     };
 
     return (
@@ -87,6 +117,16 @@ export default function CropSeasonCard({ season }: Props) {
                         title={t('cropSeasons.card.edit')}
                     >
                         <FaEdit className="w-3 h-3" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md"
+                        title={t('cropSeasons.card.delete')}
+                    >
+                        <FaTrash className="w-3 h-3" />
                     </Button>
                 </div>
             </td>

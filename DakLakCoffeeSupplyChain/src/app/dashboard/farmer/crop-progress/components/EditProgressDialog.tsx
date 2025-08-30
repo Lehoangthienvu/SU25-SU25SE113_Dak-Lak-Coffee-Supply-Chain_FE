@@ -21,7 +21,7 @@ const HARVESTING_STAGE_CODE = "harvesting";
 type Props = {
     progress: CropProgressViewAllDto;
     onSuccess: () => void;
-    onSeasonDetailUpdate?: (newYield: number) => void;
+    onSeasonDetailUpdate?: (newYield: number | null) => void;
     triggerButton?: React.ReactNode;
 };
 
@@ -69,12 +69,11 @@ export function EditProgressDialog({
 
             // Cập nhật sản lượng nếu là giai đoạn thu hoạch và có thay đổi
             if (progress.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE &&
-                actualYield !== progress.actualYield &&
-                actualYield !== undefined) {
+                actualYield !== progress.actualYield) {
                 try {
                     const seasonDetail = await getCropSeasonDetailById(progress.cropSeasonDetailId);
-                    if (seasonDetail && onSeasonDetailUpdate) {
-                        onSeasonDetailUpdate(actualYield);
+                    if (onSeasonDetailUpdate) {
+                        onSeasonDetailUpdate(actualYield || null);
                     }
                 } catch (error) {
                     console.error("Error updating season detail:", error);

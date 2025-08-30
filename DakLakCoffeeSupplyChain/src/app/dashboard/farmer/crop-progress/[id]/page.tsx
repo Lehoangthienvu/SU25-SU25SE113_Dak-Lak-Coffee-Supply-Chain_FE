@@ -27,7 +27,7 @@ export default function CropProgressPage() {
     const [allStages, setAllStages] = useState<CropStage[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [currentHarvestYield, setCurrentHarvestYield] = useState<number>(0);
+
 
     const reloadData = useCallback(async () => {
         try {
@@ -51,7 +51,6 @@ export default function CropProgressPage() {
         try {
             const detail = await getCropSeasonDetailById(cropSeasonDetailId);
             setSeasonDetail(detail);
-            if (detail?.actualYield) setCurrentHarvestYield(detail.actualYield);
         } catch {
             AppToast.error("Không thể lấy thông tin vùng trồng.");
         }
@@ -67,9 +66,10 @@ export default function CropProgressPage() {
         loadSeasonDetail();
     }, [reloadData, loadSeasonDetail]);
 
-    const handleSeasonDetailUpdate = useCallback((newYield: number) => {
-        setCurrentHarvestYield(newYield);
-    }, []);
+    const handleSeasonDetailUpdate = useCallback((newYield: number | null) => {
+        // Reload season detail to get updated data
+        loadSeasonDetail();
+    }, [loadSeasonDetail]);
 
 
 
@@ -155,7 +155,16 @@ export default function CropProgressPage() {
                         <div className="flex items-center gap-4">
                             <div className="text-right">
                                 <p className="text-sm text-gray-500">Sản lượng thu hoạch</p>
-                                <p className="text-lg font-bold text-green-600">{currentHarvestYield} kg</p>
+                                {seasonDetail?.actualYield && seasonDetail.actualYield > 0 ? (
+                                    <p className="text-lg font-bold text-green-600">{seasonDetail.actualYield} kg</p>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <span className="text-yellow-600 text-xs">⚠️</span>
+                                        </div>
+                                        <p className="text-sm text-yellow-600 font-medium">Chưa cập nhật</p>
+                                    </div>
+                                )}
                             </div>
                             <Button
                                 onClick={() => router.push(`/dashboard/farmer/request-feedback/create?detailId=${cropSeasonDetailId}`)}
@@ -309,6 +318,7 @@ export default function CropProgressPage() {
                                                             detailId={cropSeasonDetailId}
                                                             existingProgress={progressList.map((p) => ({ stageCode: p.stageCode }))}
                                                             onSuccess={handleCreateSuccess}
+                                                            onSeasonDetailUpdate={handleSeasonDetailUpdate}
                                                             triggerButton={
                                                                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Ghi nhận</Button>
                                                             }
