@@ -16,10 +16,11 @@ import {
   updateShipment,
 } from "@/lib/api/shipments";
 import {
-  ShipmentDeliveryStatusMap,
+  useShipmentDeliveryStatusMap,
   ShipmentDeliveryStatusValue,
 } from "@/lib/constants/shipmentDeliveryStatus";
 import { fromDateOnly, toDateOnly } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   initialData?: ShipmentUpdateDto;
@@ -52,6 +53,7 @@ export default function ShipmentForm({
   deliveryStaffOptions = [],
   orderCodeDisplay,
 }: Props) {
+  const { t } = useTranslation();
   const isEdit = !!initialData?.shipmentId;
   const router = useRouter();
 
@@ -110,10 +112,10 @@ export default function ShipmentForm({
         setOrderItems(detail.orderItems || []);
       } catch (e) {
         console.error(e);
-        toast.error("Không thể tải danh sách mặt hàng đơn hàng.");
+        toast.error(t('shipments.form.validation.loadOrderItemsFailed'));
       }
     })();
-  }, [formData?.orderId]);
+  }, [formData?.orderId, t]);
 
   // load order list for dropdown when creating
   useEffect(() => {
@@ -136,7 +138,7 @@ export default function ShipmentForm({
   if (!formData) {
     return (
       <div className="text-gray-500 text-center py-10">
-        Đang khởi tạo biểu mẫu chuyến giao...
+        {t('shipments.form.loading')}
       </div>
     );
   }
@@ -197,13 +199,13 @@ export default function ShipmentForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formData) {
-      toast.error("Biểu mẫu chưa sẵn sàng, vui lòng thử lại.");
+      toast.error(t('shipments.form.validation.formNotReady'));
       return;
     }
     const data: FormState = formData;
-    if (!data.orderId) return toast.error("Vui lòng chọn đơn hàng.");
+    if (!data.orderId) return toast.error(t('shipments.form.validation.selectOrder'));
     if (!data.deliveryStaffId)
-      return toast.error("Vui lòng chọn nhân viên giao.");
+      return toast.error(t('shipments.form.validation.selectStaff'));
 
     const shippedAtStr = data.shippedAt
       ? toDateOnly(data.shippedAt)
@@ -233,7 +235,7 @@ export default function ShipmentForm({
         };
         console.log("[ShipmentForm] Update payload:", payload);
         await updateShipment(payload.shipmentId, payload);
-        toast.success("Cập nhật lô giao thành công!");
+        toast.success(t('shipments.form.success.update'));
         console.log("[ShipmentForm] Update success");
       } else {
         const payload: ShipmentCreateDto = {
@@ -252,7 +254,7 @@ export default function ShipmentForm({
         };
         console.log("[ShipmentForm] Create payload:", payload);
         const newId = await createShipment(payload);
-        toast.success("Tạo lô giao thành công!");
+        toast.success(t('shipments.form.success.create'));
         console.log("[ShipmentForm] Create success id=", newId);
       }
       onSuccess();
@@ -261,7 +263,7 @@ export default function ShipmentForm({
       if (err?.response) {
         console.error("[ShipmentForm] Error response:", err.response?.data);
       }
-      toast.error("Đã xảy ra lỗi khi lưu chuyến giao.");
+      toast.error(t('shipments.form.validation.saveFailed'));
     }
   }
 
@@ -274,13 +276,13 @@ export default function ShipmentForm({
       className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-8"
     >
       <h2 className="text-2xl font-semibold text-center mb-6">
-        {isEdit ? "Chỉnh sửa lô giao" : "Tạo lô giao mới"}
+        {isEdit ? t('shipments.form.title.edit') : t('shipments.form.title.create')}
       </h2>
 
       {/* Đơn hàng + Nhân viên giao */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Đơn hàng</label>
+          <label className="text-sm font-medium">{t('shipments.form.order')}</label>
           {isEdit ? (
             <Input
               value={orderCodeDisplay || formData.orderId}
@@ -294,7 +296,7 @@ export default function ShipmentForm({
                 value={formData.orderId}
                 onChange={(e) => handleChange("orderId", e.target.value)}
               >
-                <option value="">-- Chọn đơn hàng --</option>
+                <option value="">{t('shipments.form.selectOrder')}</option>
                 {orderOptions.map((o) => (
                   <option key={o.orderId} value={o.orderId}>
                     {o.orderCode}
@@ -302,7 +304,7 @@ export default function ShipmentForm({
                 ))}
               </select>
               <Input
-                placeholder="Hoặc nhập OrderCode"
+                placeholder={t('shipments.form.orderCodePlaceholder')}
                 className="h-10"
                 onChange={(e) => {
                   const code = e.target.value.trim().toLowerCase();
@@ -316,13 +318,13 @@ export default function ShipmentForm({
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Nhân viên giao</label>
+          <label className="text-sm font-medium">{t('shipments.form.deliveryStaff')}</label>
           <select
             className="w-full p-2 border rounded h-10"
             value={formData.deliveryStaffId}
             onChange={(e) => handleChange("deliveryStaffId", e.target.value)}
           >
-            <option value="">-- Chọn nhân viên giao --</option>
+            <option value="">{t('shipments.form.selectStaff')}</option>
             {deliveryStaffOptions.map((s) => (
               <option key={s.deliveryStaffId} value={s.deliveryStaffId}>
                 {s.name}
@@ -335,7 +337,7 @@ export default function ShipmentForm({
       {/* Thông tin giao hàng */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Số lượng đã giao (kg)</label>
+          <label className="text-sm font-medium">{t('shipments.form.shippedQuantity')}</label>
           <Input
             type="number"
             min={0}
@@ -348,7 +350,7 @@ export default function ShipmentForm({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Trạng thái</label>
+          <label className="text-sm font-medium">{t('shipments.form.status')}</label>
           <select
             className="w-full p-2 border rounded h-10"
             value={formData.deliveryStatus}
@@ -360,9 +362,9 @@ export default function ShipmentForm({
             }
           >
             {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
-            <option value="Pending">Đang chờ</option>
-            <option value="InTransit">Đang giao</option>
-            <option value="Delivered">Đã giao</option>
+            <option value="Pending">{t('shipments.status.pending')}</option>
+            <option value="InTransit">{t('shipments.status.inTransit')}</option>
+            <option value="Delivered">{t('shipments.status.delivered')}</option>
           </select>
         </div>
       </div>
@@ -370,7 +372,7 @@ export default function ShipmentForm({
       {/* Date pickers nhóm cuối bên trái */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Ngày bắt đầu giao</label>
+          <label className="text-sm font-medium">{t('shipments.form.shippedAt')}</label>
           <DatePicker
             className="h-10"
             value={shippedStr}
@@ -378,7 +380,7 @@ export default function ShipmentForm({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Ngày nhận (nếu có)</label>
+          <label className="text-sm font-medium">{t('shipments.form.receivedAt')}</label>
           <DatePicker
             className="h-10"
             value={receivedStr}
@@ -390,14 +392,14 @@ export default function ShipmentForm({
       {/* Danh sách sản phẩm giao */}
       <div>
         <label className="block mb-1 text-sm font-medium">
-          Danh sách sản phẩm giao
+          {t('shipments.form.productList')}
         </label>
         {(formData.shipmentDetails?.length ?? 0) > 0 && (
           <div className="hidden md:grid md:grid-cols-6 gap-3 mb-1 text-xs font-medium text-muted-foreground">
-            <span>Mặt hàng đơn hàng</span>
-            <span className="text-left">Số lượng</span>
-            <span>Đơn vị</span>
-            <span className="col-span-3">Ghi chú</span>
+            <span>{t('shipments.form.table.orderItem')}</span>
+            <span className="text-left">{t('shipments.form.table.quantity')}</span>
+            <span>{t('shipments.form.table.unit')}</span>
+            <span className="col-span-3">{t('shipments.form.table.note')}</span>
             <span></span>
           </div>
         )}
@@ -409,7 +411,7 @@ export default function ShipmentForm({
               onChange={(e) => updateRow(idx, "orderItemId", e.target.value)}
               className="p-2 border rounded h-10"
             >
-              <option value="">-- Chọn order item --</option>
+              <option value="">{t('shipments.form.selectOrderItem')}</option>
               {orderItems.map((opt) => (
                 <option key={opt.orderItemId} value={opt.orderItemId}>
                   {opt.productName}
@@ -437,7 +439,7 @@ export default function ShipmentForm({
             </select>
 
             <Input
-              placeholder="Ghi chú"
+              placeholder={t('shipments.form.notePlaceholder')}
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
               className="md:col-span-3 h-10"
@@ -448,7 +450,7 @@ export default function ShipmentForm({
               variant="destructive"
               onClick={() => removeRow(idx)}
             >
-              Xoá
+              {t('shipments.form.delete')}
             </Button>
           </div>
         ))}
@@ -460,21 +462,21 @@ export default function ShipmentForm({
             onClick={addRow}
             disabled={!formData.orderId}
           >
-            + Thêm dòng
+            {t('shipments.form.addRow')}
           </Button>
           <div className="text-sm text-gray-600">
-            Tổng khối lượng dòng:{" "}
-            <strong>{sumQuantity().toLocaleString()}</strong> kg
+            {t('shipments.form.totalQuantity')}{" "}
+            <strong>{sumQuantity().toLocaleString()}</strong> {t('shipments.form.kg')}
           </div>
         </div>
       </div>
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit">
-          <h2>{isEdit ? "Lưu thay đổi" : "Tạo lô giao"}</h2>
+          <h2>{isEdit ? t('shipments.form.buttons.save') : t('shipments.form.buttons.create')}</h2>
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Quay lại
+          {t('shipments.form.buttons.back')}
         </Button>
       </DialogFooter>
     </form>

@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
   getContractDetails,
@@ -31,39 +32,32 @@ import ContractItemFormDialog from "@/components/contracts/ContractItemFormDialo
 import { getCoffeeTypes, CoffeeType } from "@/lib/api/coffeeType";
 import { formatQuantity, formatDate, formatDiscount } from "@/lib/utils";
 
-const contractStatusMap: Record<string, { label: string; className: string }> =
-  {
-    NotStarted: {
-      label: "Chưa bắt đầu",
-      className: "bg-gray-100 text-gray-600",
-    },
-    PreparingDelivery: {
-      label: "Chuẩn bị giao",
-      className: "bg-purple-100 text-purple-700",
-    },
-    InProgress: {
-      label: "Đang thực hiện",
-      className: "bg-green-100 text-green-700",
-    },
-    PartialCompleted: {
-      label: "Hoàn thành một phần",
-      className: "bg-yellow-100 text-yellow-700",
-    },
-    Completed: {
-      label: "Hoàn thành",
-      className: "bg-blue-100 text-blue-700",
-    },
-    Cancelled: {
-      label: "Đã huỷ",
-      className: "bg-red-100 text-red-700",
-    },
-    Expired: {
-      label: "Quá hạn",
-      className: "bg-orange-100 text-orange-700",
-    },
-  };
+const contractStatusMap: Record<string, { className: string }> = {
+  NotStarted: {
+    className: "bg-gray-100 text-gray-600",
+  },
+  PreparingDelivery: {
+    className: "bg-purple-100 text-purple-700",
+  },
+  InProgress: {
+    className: "bg-green-100 text-green-700",
+  },
+  PartialCompleted: {
+    className: "bg-yellow-100 text-yellow-700",
+  },
+  Completed: {
+    className: "bg-blue-100 text-blue-700",
+  },
+  Cancelled: {
+    className: "bg-red-100 text-red-700",
+  },
+  Expired: {
+    className: "bg-orange-100 text-orange-700",
+  },
+};
 
 export default function ContractDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const contractId = params.id as string;
@@ -86,6 +80,11 @@ export default function ContractDetailPage() {
   >(null);
 
   const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
+
+  // Helper function to convert PascalCase status to camelCase for translation keys
+  const getStatusTranslationKey = (status: string) => {
+    return status.charAt(0).toLowerCase() + status.slice(1);
+  };
 
   useEffect(() => {
     getCoffeeTypes().then(setCoffeeTypes).catch(console.error);
@@ -112,7 +111,8 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Không thể tải chi tiết hợp đồng");
+
+        setError(err.message || t("contracts.page.detail.error"));
         setLoading(false);
       });
   };
@@ -125,7 +125,9 @@ export default function ContractDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Không thể tải chi tiết hợp đồng");
+
+        setError(err.message || t("contracts.page.detail.error"));
+
         setLoading(false);
       });
   }, [contractId]);
@@ -134,12 +136,12 @@ export default function ContractDetailPage() {
     if (!itemToDelete?.contractItemId) return;
     try {
       await softDeleteContractItem(itemToDelete.contractItemId);
-      toast.success("Xóa mặt hàng thành công!");
+      toast.success(t("contracts.page.detail.deleteItemSuccess"));
       setShowDeleteDialog(false);
       reloadContract();
     } catch (error) {
       console.error("Xoá thất bại:", error);
-      toast.error("Không thể xoá mặt hàng. Vui lòng thử lại.");
+      toast.error(t("contracts.page.detail.deleteItemError"));
     }
   };
 
@@ -156,13 +158,17 @@ export default function ContractDetailPage() {
       <div className="p-8">
         <Card>
           <CardHeader>
-            <CardTitle>Lỗi tải hợp đồng</CardTitle>
+            <CardTitle>{t("contracts.page.detail.error")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-red-500 mb-3">
-              {error || "Không tìm thấy hợp đồng"}
+              {error || t("contracts.page.detail.notFound")}
             </p>
-            <Button onClick={() => router.back()}>← Quay lại</Button>
+
+            <Button onClick={() => router.back()}>
+              {t("contracts.page.detail.back")}
+            </Button>
+
           </CardContent>
         </Card>
       </div>
@@ -183,7 +189,9 @@ export default function ContractDetailPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
             <FileText className="text-orange-600 w-6 h-6" />
-            <span>Hợp đồng: {contract.contractNumber}</span>
+            <span>
+              {t("contracts.contract.title")}: {contract.contractNumber}
+            </span>
           </div>
           <Button
             className="bg-[#f59e0b] hover:bg-[#d97706] text-white font-medium px-4 py-2 rounded-lg shadow-md flex items-center gap-2"
@@ -193,7 +201,7 @@ export default function ContractDetailPage() {
               )
             }
           >
-            ✏️ Chỉnh sửa
+            {t("contracts.page.detail.editContract")}
           </Button>
         </div>
 
@@ -201,68 +209,81 @@ export default function ContractDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Thông tin hợp đồng</CardTitle>
+            <CardTitle>{t("contracts.page.detail.contractInfo")}</CardTitle>
           </CardHeader>
 
           <CardContent className="grid grid-cols-2 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <strong>Tiêu đề:</strong> {contract.contractTitle}
+              <strong>{t("contracts.page.detail.contractTitle")}:</strong>{" "}
+              {contract.contractTitle}
             </div>
             <div>
-              <strong>Bên bán:</strong> {contract.sellerName}
+              <strong>{t("contracts.page.detail.seller")}:</strong>{" "}
+              {contract.sellerName}
             </div>
             <div>
-              <strong>Bên mua:</strong> {contract.buyerName}
+              <strong>{t("contracts.page.detail.buyer")}:</strong>{" "}
+              {contract.buyerName}
             </div>
             <div>
-              <strong>Số vòng giao:</strong> {contract.deliveryRounds ?? "-"}
+              <strong>{t("contracts.page.detail.deliveryRounds")}:</strong>{" "}
+              {contract.deliveryRounds ?? "-"}
             </div>
             <div>
-              <strong>Tổng khối lượng:</strong>{" "}
+              <strong>{t("contracts.page.detail.totalQuantity")}:</strong>{" "}
               {contract.totalQuantity !== undefined
                 ? formatQuantity(contract.totalQuantity)
                 : "-"}
             </div>
             <div>
-              <strong>Tổng giá trị:</strong>{" "}
+              <strong>{t("contracts.page.detail.totalValue")}:</strong>{" "}
               {contract.totalValue !== undefined
                 ? `${contract.totalValue.toLocaleString()} VNĐ`
                 : "-"}
             </div>
             <div>
-              <strong>Ngày bắt đầu:</strong> {formatDate(contract.startDate)}
+              <strong>{t("contracts.page.detail.startDate")}:</strong>{" "}
+              {formatDate(contract.startDate)}
             </div>
             <div>
-              <strong>Ngày kết thúc:</strong> {formatDate(contract.endDate)}
+              <strong>{t("contracts.page.detail.endDate")}:</strong>{" "}
+              {formatDate(contract.endDate)}
             </div>
             <div>
-              <strong>Ngày ký:</strong> {formatDate(contract.signedAt)}
+              <strong>{t("contracts.page.detail.signedAt")}:</strong>{" "}
+              {formatDate(contract.signedAt)}
             </div>
             <div>
-              <strong>Trạng thái:</strong>
+              <strong>{t("contracts.page.detail.status")}:</strong>
               <span
                 className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
                   contractStatusMap[contract.status]?.className
                 }`}
               >
-                {contractStatusMap[contract.status]?.label || contract.status}
+                {t(
+                  `contracts.status.${getStatusTranslationKey(contract.status)}`
+                ) || contract.status}
               </span>
             </div>
             {contract.cancelReason && contract.status === "Cancelled" && (
               <div className="col-span-2">
-                <strong className="text-red-600">Lý do huỷ:</strong>{" "}
+                <strong className="text-red-600">
+                  {t("contracts.page.detail.cancelReason")}:
+                </strong>{" "}
                 {contract.cancelReason}
               </div>
             )}
             <div>
-              <strong>Ngày tạo:</strong> {formatDate(contract.createdAt)}
+              <strong>{t("contracts.page.detail.createdAt")}:</strong>{" "}
+              {formatDate(contract.createdAt)}
             </div>
             <div>
-              <strong>Ngày cập nhật:</strong> {formatDate(contract.updatedAt)}
+              <strong>{t("contracts.page.detail.updatedAt")}:</strong>{" "}
+              {formatDate(contract.updatedAt)}
             </div>
             {contract.contractFileUrl && (
               <div className="col-span-2">
-                <strong>File hợp đồng:</strong>
+                <strong>{t("contracts.page.detail.contractFile")}:</strong>
                 <div className="mt-2 space-y-2">
                   {/* Preview ảnh nếu là file ảnh */}
                   {contract.contractFileUrl.match(
@@ -271,7 +292,7 @@ export default function ContractDetailPage() {
                     <div className="border rounded-lg p-3 bg-gray-50">
                       <img
                         src={contract.contractFileUrl}
-                        alt="Preview hợp đồng"
+                        alt={t("contracts.page.detail.previewContract")}
                         className="max-w-full h-32 object-contain rounded border cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => {
                           // Mở modal xem ảnh lớn
@@ -314,14 +335,14 @@ export default function ContractDetailPage() {
                             `);
                           }
                         }}
-                        title="Click để xem ảnh lớn"
+                        title={t("contracts.page.detail.clickToViewLarge")}
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        💡 Click vào ảnh để xem lớn hơn
+                        {t("contracts.page.detail.clickToViewLarge")}
                       </p>
                       <p className="text-xs text-blue-600 mt-1">
-                        📁 Tên file khi tải: {contract.contractNumber} -{" "}
-                        {contract.contractTitle}.
+                        {t("contracts.page.detail.fileNameWhenDownload")}:{" "}
+                        {contract.contractNumber} - {contract.contractTitle}.
                         {contract.contractFileUrl?.split(".").pop() || "pdf"}
                       </p>
                     </div>
@@ -408,11 +429,15 @@ export default function ContractDetailPage() {
                             setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 
                             // Hiển thị thông báo thành công
-                            toast.success(`Đã tải xuống: ${sanitizedFileName}`);
+                            toast.success(
+                              `${t(
+                                "contracts.page.detail.downloadSuccess"
+                              )}: ${sanitizedFileName}`
+                            );
                           } catch (error) {
                             console.error("Lỗi khi tải file:", error);
                             toast.error(
-                              "Không thể tải file. Vui lòng thử lại."
+                              t("contracts.page.detail.downloadError")
                             );
 
                             // Fallback: mở file trong tab mới
@@ -434,7 +459,7 @@ export default function ContractDetailPage() {
                       {!contract.contractFileUrl.match(
                         /\.(jpg|jpeg|png|gif|webp|pdf|doc|docx)$/i
                       ) && <span className="text-2xl">📎</span>}
-                      Tải xuống hợp đồng
+                      {t("contracts.page.detail.downloadContract")}
                     </a>
                     {/* Chỉ hiển thị "Xem trực tiếp" cho file ảnh */}
                     {contract.contractFileUrl.match(
@@ -448,7 +473,7 @@ export default function ContractDetailPage() {
                           rel="noopener noreferrer"
                           className="text-green-600 underline hover:text-green-800 text-sm"
                         >
-                          👁️ Xem trực tiếp
+                          {t("contracts.page.detail.viewDirectly")}
                         </a>
                       </>
                     )}
@@ -463,7 +488,9 @@ export default function ContractDetailPage() {
         <div className="rounded-xl border bg-white p-4">
           {/* Header */}
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-semibold">Danh sách mặt hàng</h2>
+            <h2 className="text-base font-semibold">
+              {t("contracts.page.detail.itemListTitle")}
+            </h2>
             <Button
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => {
@@ -471,7 +498,7 @@ export default function ContractDetailPage() {
                 setShowItemFormDialog(true);
               }}
             >
-              + Thêm mặt hàng
+              {t("contracts.page.detail.addItem")}
             </Button>
           </div>
 
@@ -481,26 +508,30 @@ export default function ContractDetailPage() {
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    Tên loại cà phê
+                    {t("contracts.page.detail.coffeeTypeName")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Số lượng
+                    {t("contracts.page.detail.quantity")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Đơn giá
+                    {t("contracts.page.detail.unitPrice")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Chiết khấu
+                    {t("contracts.page.detail.discount")}
                   </th>
-                  <th className="px-4 py-2 text-left">Ghi chú</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">
+                    {t("contracts.page.detail.note")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contracts.page.detail.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {contract.contractItems.length === 0 ? (
                   <tr>
                     <td className="py-8 text-center text-gray-500" colSpan={6}>
-                      Không có mặt hàng nào.
+                      {t("contracts.page.detail.noItems")}
                     </td>
                   </tr>
                 ) : (
@@ -517,7 +548,7 @@ export default function ContractDetailPage() {
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.unitPrice?.toLocaleString()}{" "}
-                        <span className="text-gray-500 text-xs">VNĐ/kg</span>
+                        <span className="text-gray-500 text-xs">{t('common.currency')}/kg</span>
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.discountAmount !== undefined
@@ -527,7 +558,9 @@ export default function ContractDetailPage() {
                       <td className="px-4 py-2">{item.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content="Chỉnh sửa">
+
+                          <Tooltip content={t("contracts.page.detail.edit")}>
+
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -539,7 +572,9 @@ export default function ContractDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+
+                          <Tooltip content={t("contracts.page.detail.delete")}>
+
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -564,15 +599,20 @@ export default function ContractDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
-                Đang hiển thị{" "}
+
+                {t("contracts.page.detail.pagination.showing")}{" "}
+
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
-                </span>
-                –
+                </span>{" "}
+                {t("contracts.page.detail.pagination.to")}{" "}
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
-                / {totalItems} mặt hàng
+
+                {t("contracts.page.detail.pagination.of")} {totalItems}{" "}
+                {t("contracts.page.detail.pagination.items")}
+
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -584,12 +624,14 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
-                  ← Trước
+
+                  {t("contracts.page.detail.pagination.previous")}
                 </Button>
                 <span className="flex items-center px-2">
-                  Trang{" "}
-                  <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
-                  {totalPages}
+                  {t("contracts.page.detail.pagination.page")}{" "}
+                  <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                  {t("contracts.page.detail.pagination.of")} {totalPages}
+
                 </span>
                 <Button
                   variant="outline"
@@ -600,7 +642,9 @@ export default function ContractDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
-                  Sau →
+
+                  {t("contracts.page.detail.pagination.next")}
+
                 </Button>
               </div>
             </div>
@@ -609,7 +653,9 @@ export default function ContractDetailPage() {
         {/* Footer */}
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={() => router.back()}>
-            ← Quay lại
+
+            {t("contracts.page.detail.back")}
+
           </Button>
         </div>
 
@@ -640,16 +686,22 @@ export default function ContractDetailPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Xoá mặt hàng?"
+
+        title={t("contracts.page.detail.deleteItemTitle")}
+
         description={
-          <span>
-            Bạn có chắc chắn muốn xoá mặt hàng{" "}
-            <strong>{itemToDelete?.coffeeTypeName}</strong> khỏi hợp đồng không?
-            Hành động này không thể hoàn tác.
-          </span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t("contracts.page.detail.deleteItemDescription", {
+                itemName: itemToDelete?.coffeeTypeName,
+              }),
+            }}
+          />
         }
-        confirmText="Xoá"
-        cancelText="Huỷ"
+
+        confirmText={t("contracts.page.detail.deleteItemConfirm")}
+        cancelText={t("contracts.page.detail.deleteItemCancel")}
+
         onConfirm={handleDelete}
       />
     </div>

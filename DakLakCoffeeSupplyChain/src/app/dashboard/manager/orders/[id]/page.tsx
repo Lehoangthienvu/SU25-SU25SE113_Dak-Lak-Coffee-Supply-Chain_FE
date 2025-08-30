@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
@@ -13,7 +14,7 @@ import {
   OrderItemUpdateDto,
   softDeleteOrderItem,
 } from "@/lib/api/orderItems";
-import { OrderStatus, OrderStatusLabel } from "@/lib/constants/orderStatus";
+import { OrderStatus } from "@/lib/constants/orderStatus";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -25,6 +26,7 @@ import {
 import { getProductOptions, type ProductOption } from "@/lib/api/products";
 
 export default function OrderDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -50,27 +52,27 @@ export default function OrderDetailPage() {
     { label: string; className: string }
   > = {
     Pending: {
-      label: OrderStatusLabel.Pending,
+      label: t('managerOrders.status.pending'),
       className: "bg-purple-100 text-purple-700",
     },
     Preparing: {
-      label: OrderStatusLabel.Preparing,
+      label: t('managerOrders.status.preparing'),
       className: "bg-blue-100 text-blue-700",
     },
     Shipped: {
-      label: OrderStatusLabel.Shipped,
+      label: t('managerOrders.status.shipped'),
       className: "bg-amber-100 text-amber-700",
     },
     Delivered: {
-      label: OrderStatusLabel.Delivered,
+      label: t('managerOrders.status.delivered'),
       className: "bg-green-100 text-green-700",
     },
     Cancelled: {
-      label: OrderStatusLabel.Cancelled,
+      label: t('managerOrders.status.cancelled'),
       className: "bg-red-100 text-red-700",
     },
     Failed: {
-      label: OrderStatusLabel.Failed,
+      label: t('managerOrders.status.failed'),
       className: "bg-gray-200 text-gray-600",
     },
   } as const;
@@ -93,8 +95,8 @@ export default function OrderDetailPage() {
       const data = await getOrderDetails(id);
       setOrder(data);
     } catch (e) {
-      console.error("Không thể tải chi tiết đơn hàng:", e);
-      toast.error("Không tải được chi tiết đơn hàng");
+      console.error(t('managerOrders.detail.error.loadData'), e);
+      toast.error(t('managerOrders.detail.error.loadData'));
     } finally {
       setLoading(false);
     }
@@ -102,7 +104,7 @@ export default function OrderDetailPage() {
 
   useEffect(() => {
     reload();
-  }, [id]);
+  }, [id, t]);
 
   // Lấy danh sách item từ order
   const items = order?.orderItems ?? [];
@@ -145,7 +147,7 @@ export default function OrderDetailPage() {
     if (!order) return;
     getProductOptions()
       .then(setProducts)
-      .catch(() => toast.error("Không tải được danh sách sản phẩm"));
+      .catch(() => toast.error(t('managerOrders.detail.error.loadData')));
   }, [order]);
 
   // Nạp dropdown ContractDeliveryItems từ chi tiết đợt giao
@@ -169,7 +171,7 @@ export default function OrderDetailPage() {
           }))
         );
       } catch {
-        toast.error("Không tải được danh sách mặt hàng đợt giao");
+        toast.error(t('managerOrders.detail.error.loadData'));
       }
     })();
   }, [order]);
@@ -210,7 +212,7 @@ export default function OrderDetailPage() {
           }))
         );
       } catch {
-        toast.error("Không tải được danh sách mặt hàng đợt giao");
+        toast.error(t('managerOrders.detail.error.loadData'));
         setContractDeliveryItems([]);
       }
     })();
@@ -267,8 +269,8 @@ export default function OrderDetailPage() {
           : prev
       );
 
-      toast.success("Xoá mặt hàng thành công", {
-        description: `Đã xoá "${itemToDelete.productName}".`,
+      toast.success(t('managerOrders.detail.actions.deleteSuccess'), {
+        description: `${t('managerOrders.detail.actions.deleteMessage', { productName: itemToDelete.productName })}`,
       });
 
       setShowDeleteDialog(false);
@@ -280,7 +282,7 @@ export default function OrderDetailPage() {
       );
     } catch (e: any) {
       const msg =
-        e?.response?.data?.message || e?.message || "Xoá mặt hàng thất bại.";
+        e?.response?.data?.message || e?.message || t('managerOrders.detail.actions.deleteError');
       toast.error("Lỗi", { description: msg });
     } finally {
       setDeleting(false);
@@ -290,7 +292,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="animate-pulse text-gray-500">Đang tải dữ liệu...</div>
+        <div className="animate-pulse text-gray-500">{t('managerOrders.detail.loading')}</div>
       </div>
     );
   }
@@ -299,10 +301,10 @@ export default function OrderDetailPage() {
     return (
       <div className="p-6">
         <div className="rounded-xl border bg-white p-8 text-center text-gray-600">
-          Không tìm thấy đơn hàng.
+          {t('managerOrders.detail.error.notFound')}
           <div className="mt-4">
             <Button variant="outline" onClick={() => router.back()}>
-              ← Quay lại
+              {t('managerOrders.detail.actions.back')}
             </Button>
           </div>
         </div>
@@ -318,10 +320,10 @@ export default function OrderDetailPage() {
           <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
             <Package className="text-orange-600 w-6 h-6" />
             <div className="flex flex-col">
-              <span>Đơn hàng: {order.orderCode}</span>
+              <span>{t('managerOrders.detail.title')}: {order.orderCode}</span>
               {order.deliveryBatchCode && (
                 <span className="text-sm font-normal text-gray-600">
-                  Mã đợt giao:{" "}
+                  {t('managerOrders.detail.orderInfo.fields.deliveryRound')}{" "}
                   <span className="font-medium">{order.deliveryBatchCode}</span>
                 </span>
               )}
@@ -334,7 +336,7 @@ export default function OrderDetailPage() {
               router.push(`/dashboard/manager/orders/${order.orderId}/edit`)
             }
           >
-            ✏️ Chỉnh sửa
+            {t('managerOrders.detail.actions.edit')}
           </Button>
         </div>
 
@@ -343,25 +345,25 @@ export default function OrderDetailPage() {
         {/* Order Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Thông tin đơn hàng</CardTitle>
+            <CardTitle>{t('managerOrders.detail.orderInfo.title')}</CardTitle>
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <strong>Mã đơn hàng:</strong> {order.orderCode}
+              <strong>{t('managerOrders.detail.orderInfo.fields.orderCode')}</strong> {order.orderCode}
             </div>
             <div>
-              <strong>Số hợp đồng:</strong> {order.contractNumber}
+              <strong>{t('managerOrders.detail.orderInfo.fields.contractNumber')}</strong> {order.contractNumber}
             </div>
 
             <div>
-              <strong>Đợt giao:</strong>{" "}
+              <strong>{t('managerOrders.detail.orderInfo.fields.deliveryRound')}</strong>{" "}
               {order.deliveryRound != null ? String(order.deliveryRound) : "—"}
             </div>
 
             <div className="flex items-center gap-1">
-              <strong>Ngày giao:</strong>
-              <Tooltip content="Ngày giao thực tế nếu có, không thì ngày đặt.">
+              <strong>{t('managerOrders.detail.orderInfo.fields.deliveryDate')}</strong>
+              <Tooltip content={t('managerOrders.detail.orderInfo.tooltips.deliveryDate')}>
                 <Info className="w-3 h-3 text-gray-400" />
               </Tooltip>
               <span className="ml-1">
@@ -374,8 +376,8 @@ export default function OrderDetailPage() {
             </div>
 
             <div className="flex items-center gap-1">
-              <strong>Tổng giá trị (VNĐ):</strong>
-              <Tooltip content="Tổng giá trị tiền của đơn hàng.">
+              <strong>{t('managerOrders.detail.orderInfo.fields.totalAmount')}</strong>
+              <Tooltip content={t('managerOrders.detail.orderInfo.tooltips.totalAmount')}>
                 <Info className="w-3 h-3 text-gray-400" />
               </Tooltip>
               <span className="ml-1">
@@ -386,7 +388,7 @@ export default function OrderDetailPage() {
             </div>
 
             <div>
-              <strong>Trạng thái:</strong>
+              <strong>{t('managerOrders.detail.orderInfo.fields.status')}</strong>
               <span
                 className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
                   orderStatusBadgeMap[order.status]?.className
@@ -397,12 +399,12 @@ export default function OrderDetailPage() {
             </div>
 
             <div className="md:col-span-2">
-              <strong>Ghi chú:</strong> {order.note?.trim() ? order.note : "—"}
+              <strong>{t('managerOrders.detail.orderInfo.fields.note')}</strong> {order.note?.trim() ? order.note : "—"}
             </div>
 
             {order.cancelReason?.trim() && (
               <div className="md:col-span-2">
-                <strong>Lý do huỷ:</strong> {order.cancelReason}
+                <strong>{t('managerOrders.detail.orderInfo.fields.cancelReason')}</strong> {order.cancelReason}
               </div>
             )}
           </CardContent>
@@ -411,12 +413,12 @@ export default function OrderDetailPage() {
         {/* Danh sách mặt hàng */}
         <div className="rounded-xl border bg-white p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-semibold">Danh sách sản phẩm</h2>
+            <h2 className="text-base font-semibold">{t('managerOrders.detail.productList.title')}</h2>
             <Button
               className="bg-black text-white hover:bg-gray-800"
               onClick={openCreateDialog}
             >
-              + Thêm mặt hàng
+              {t('managerOrders.detail.productList.addItem')}
             </Button>
           </div>
 
@@ -425,29 +427,29 @@ export default function OrderDetailPage() {
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    Tên sản phẩm
+                    {t('managerOrders.detail.productList.headers.productName')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Số lượng
+                    {t('managerOrders.detail.productList.headers.quantity')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Đơn giá (VNĐ)
+                    {t('managerOrders.detail.productList.headers.unitPrice')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Giảm giá (%)
+                    {t('managerOrders.detail.productList.headers.discount')}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Thành tiền (VNĐ)
+                    {t('managerOrders.detail.productList.headers.totalPrice')}
                   </th>
-                  <th className="px-4 py-2 text-left">Ghi chú</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">{t('managerOrders.detail.productList.headers.note')}</th>
+                  <th className="px-4 py-2 text-center">{t('managerOrders.detail.productList.headers.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {items.length === 0 ? (
                   <tr>
                     <td className="py-8 text-center text-gray-500" colSpan={7}>
-                      Chưa có mặt hàng nào
+                      {t('managerOrders.detail.productList.empty')}
                     </td>
                   </tr>
                 ) : (
@@ -480,7 +482,7 @@ export default function OrderDetailPage() {
                       <td className="px-4 py-2">{it.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t('managerOrders.detail.actions.edit')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -489,7 +491,7 @@ export default function OrderDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t('managerOrders.detail.actions.delete')}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -514,15 +516,15 @@ export default function OrderDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
-                Đang hiển thị{" "}
+                {t('managerOrders.detail.pagination.showing')}{" "}
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                 </span>
-                –
+                {t('managerOrders.detail.pagination.to')}
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
-                / {totalItems} mặt hàng
+                {t('managerOrders.detail.pagination.of')} {totalItems} {t('managerOrders.detail.pagination.items')}
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -534,11 +536,11 @@ export default function OrderDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
-                  ← Trước
+                  {t('managerOrders.detail.pagination.previous')}
                 </Button>
                 <span className="flex items-center px-2">
-                  Trang{" "}
-                  <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
+                  {t('managerOrders.detail.pagination.page')}{" "}
+                  <span className="mx-1 font-semibold">{currentPage}</span> {t('managerOrders.detail.pagination.of')}{" "}
                   {totalPages}
                 </span>
                 <Button
@@ -550,7 +552,7 @@ export default function OrderDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
-                  Sau →
+                  {t('managerOrders.detail.pagination.next')}
                 </Button>
               </div>
             </div>
@@ -563,7 +565,7 @@ export default function OrderDetailPage() {
             variant="outline"
             onClick={() => router.push("/dashboard/manager/orders")}
           >
-            ← Quay lại
+            {t('managerOrders.detail.actions.back')}
           </Button>
         </div>
 
@@ -583,15 +585,13 @@ export default function OrderDetailPage() {
         <ConfirmDialog
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
-          title="Xoá mặt hàng?"
+          title={t('managerOrders.detail.actions.deleteConfirm')}
           description={
             <span>
-              Bạn có chắc chắn muốn xoá mặt hàng{" "}
-              <strong>{itemToDelete?.productName}</strong> khỏi đơn hàng không?
-              Hành động này sẽ ẩn khỏi danh sách và không thể hoàn tác.
+              {t('managerOrders.detail.actions.deleteMessage', { productName: itemToDelete?.productName })}
             </span>
           }
-          confirmText={deleting ? "Đang xoá..." : "Xoá"}
+          confirmText={deleting ? t('managerOrders.detail.actions.loading') : t('managerOrders.detail.actions.delete')}
           cancelText="Huỷ"
           onConfirm={handleDeleteItem}
           loading={deleting}

@@ -1,6 +1,6 @@
 {
   "processing": {
-    "title": "Quản lý xử lý cà phê",
+    "title": "Ghi nhận xử lý cà phê",
     "batch": {
       "title": "Lô xử lý",
       "create": "Tạo lô mới",
@@ -40,41 +40,7 @@
         "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
       }
     },
-    "createProgress": {
-      "headerTitle": "Tạo tiến trình đầu tiên",
-      "headerDescription": "Bắt đầu quy trình chế biến cà phê",
-      "batchSelectionTitle": "Chọn lô chế biến",
-      "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
-      "noAvailableBatches": "Không có lô chế biến khả dụng",
-      "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
-      "selectBatchLabel": "Chọn lô chế biến",
-      "selectBatchPlaceholder": "-- Chọn lô chế biến --",
-      "stageInformationTitle": "Thông tin bước chế biến",
-      "stageInformationDescription": "Bước đầu tiên trong quy trình",
-      "loadingStages": "Đang tải thông tin bước chế biến...",
-      "firstStep": "Bước đầu tiên",
-      "processing": "Chế biến",
-      "noStageInfo": "Không tìm thấy thông tin bước chế biến",
-      "progressInformationTitle": "Thông tin tiến trình",
-      "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
-      "progressDateLabel": "Ngày thực hiện",
-      "outputQuantityLabel": "Khối lượng đầu ra",
-      "technicalParametersTitle": "Thông số kỹ thuật",
-      "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
-      "addParameter": "Thêm thông số",
-      "parameterNameLabel": "Tên thông số",
-      "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
-      "parameterValueLabel": "Giá trị",
-      "parameterValuePlaceholder": "VD: 25, 80%...",
-      "parameterUnitLabel": "Đơn vị",
-      "parameterUnitPlaceholder": "VD: °C, %, kg...",
-      "cancelButton": "Huỷ",
-      "saving": "Đang lưu...",
-      "createProgress": "Tạo tiến trình",
-      "stageOrder": "Bước {{order}}",
-      "methodInfo": "của phương pháp {{methodName}}",
-      "stepOrder": "Bước {{order}}"
-    },
+
     "progress": {
       "title": "Tiến trình xử lý",
       "create": "Tạo tiến trình mới",
@@ -1077,62 +1043,170 @@
           }
         }
       },
-      "expertBatches": {
-        "title": "Quản lý lô sơ chế (Expert)",
-        "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
-        "batchDetail": {
-          "title": "Chi tiết lô sơ chế (Expert)",
-          "subtitle": "Thông tin chi tiết để đánh giá chất lượng",
-          "backToList": "Quay lại",
-          "loading": {
-            "title": "Đang tải dữ liệu...",
-            "description": "Đang tải thông tin lô sơ chế"
-          },
-          "error": {
-            "title": "Không thể tải dữ liệu",
-            "back": "Quay lại"
-          },
-          "notFound": {
-            "title": "Không tìm thấy lô sơ chế",
-            "description": "Lô sơ chế bạn đang tìm kiếm không tồn tại hoặc đã bị xóa",
-            "back": "Quay lại danh sách"
+        "expertBatches": {
+          "title": "Quản lý lô sơ chế (Expert)",
+          "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
+          "batchDetail": {
+            "title": "Chi tiết lô sơ chế (Expert)",
+            "subtitle": "Thông tin chi tiết để đánh giá chất lượng",
+            "backToList": "Quay lại",
+            "loading": {
+              "title": "Đang tải dữ liệu...",
+              "description": "Đang tải thông tin lô sơ chế"
+            },
+            "error": {
+              "title": "Không thể tải dữ liệu",
+              "back": "Quay lại"
+            }
+          }
+        },
+        "expertDashboard": {
+          "header": {
+            "welcome": "Chào mừng, Chuyên gia!",
+            "subtitle": "Quản lý và hỗ trợ nông dân trong chuỗi cung ứng cà phê"
           },
           "stats": {
-            "batchCode": "Mã lô",
-            "stage": "Giai đoạn",
-            "output": "Sản lượng",
-            "efficiency": "Hiệu suất"
+            "pendingReports": "Báo cáo chờ xử lý",
+            "responded": "Đã phản hồi",
+            "articlesWritten": "Bài viết đã viết",
+            "farmersSupported": "Nông dân hỗ trợ"
           },
-          "basicInfo": {
-            "title": "Thông tin cơ bản",
-            "batchCode": "Mã lô",
-            "systemCode": "Mã hệ thống",
-            "cropSeason": "Mùa vụ",
-            "farmer": "Nông dân",
-            "method": "Phương pháp",
-            "status": "Trạng thái",
-            "inputQuantity": "Khối lượng vào",
-            "outputQuantity": "Khối lượng ra",
-            "createdAt": "Ngày tạo"
+          "mainActions": {
+            "technicalConsultation": {
+              "title": "Tư vấn kỹ thuật",
+              "subtitle": "Hỗ trợ kỹ thuật cho nông dân",
+              "description": "Phản hồi các yêu cầu tư vấn kỹ thuật từ nông dân, hỗ trợ giải quyết vấn đề trong quá trình canh tác và sơ chế cà phê.",
+              "pendingReports": "12 báo cáo chờ xử lý",
+              "viewReports": "Xem báo cáo"
+            },
+            "professionalArticles": {
+              "title": "Viết bài chuyên môn",
+              "subtitle": "Chia sẻ kiến thức chuyên sâu",
+              "description": "Viết và chia sẻ các bài viết chuyên môn về kỹ thuật canh tác, sơ chế cà phê và kinh nghiệm thực tế.",
+              "articlesCount": "8 bài viết đã viết",
+              "writeNewArticle": "Viết bài mới"
+            }
+          },
+          "additionalFeatures": {
+            "progressEvaluation": {
+              "title": "Đánh giá tiến độ",
+              "description": "Đánh giá quá trình canh tác và sơ chế theo từng mùa",
+              "viewDetails": "Xem chi tiết"
+            },
+            "farmerManagement": {
+              "title": "Quản lý nông dân",
+              "description": "Theo dõi và hỗ trợ nông dân trong hệ thống",
+              "viewList": "Xem danh sách"
+            }
           },
           "quickActions": {
-            "title": "Thao tác nhanh (Expert)",
-            "evaluateStage": "Đánh giá giai đoạn",
-            "viewProgress": "Xem tiến độ",
-            "generateReport": "Tạo báo cáo"
-          },
-          "summary": {
-            "title": "Tóm tắt lô",
-            "currentStatus": "Trạng thái hiện tại:",
-            "stagesCount": "Số giai đoạn:",
-            "efficiency": "Hiệu suất:",
-            "createdAt": "Ngày tạo:"
+            "title": "Hành động nhanh",
+            "viewNewReports": "Xem báo cáo mới",
+            "writeNewArticle": "Viết bài mới",
+            "createReport": "Tạo báo cáo",
+            "contactFarmers": "Liên hệ nông dân"
           }
-        }
-      },
+        },
       "farmerProgresses": {
         "title": "Quản lý tiến trình sơ chế (Farmer)",
         "subtitle": "Theo dõi và quản lý tiến trình xử lý cà phê của bạn",
+        "createProgress": {
+          "headerTitle": "Tạo tiến trình đầu tiên",
+          "headerDescription": "Bắt đầu quy trình chế biến cà phê",
+          "batchSelectionTitle": "Chọn lô chế biến",
+          "batchSelectionDescription": "Lựa chọn lô cà phê để bắt đầu chế biến",
+          "noAvailableBatches": "Không có lô chế biến khả dụng",
+          "showBatchesStatus": "Chỉ hiển thị lô có trạng thái: Chưa bắt đầu, Đang xử lý, hoặc Chờ đánh giá",
+          "selectBatchLabel": "Chọn lô chế biến",
+          "selectBatchPlaceholder": "-- Chọn lô chế biến --",
+          "stageInformationTitle": "Thông tin bước chế biến",
+          "stageInformationDescription": "Bước đầu tiên trong quy trình",
+          "loadingStages": "Đang tải thông tin bước chế biến...",
+          "firstStep": "Bước đầu tiên",
+          "processing": "Chế biến",
+          "noStageInfo": "Không tìm thấy thông tin bước chế biến",
+          "progressInformationTitle": "Thông tin tiến trình",
+          "progressInformationDescription": "Ngày thực hiện và khối lượng đầu ra",
+          "progressDateLabel": "Ngày thực hiện",
+          "outputQuantityLabel": "Khối lượng đầu ra",
+          "technicalParametersTitle": "Thông số kỹ thuật",
+          "technicalParametersDescription": "Các thông số đo lường trong quá trình chế biến",
+          "addParameter": "Thêm thông số",
+          "parameterNameLabel": "Tên thông số",
+          "parameterNamePlaceholder": "VD: Nhiệt độ, Độ ẩm...",
+          "parameterValueLabel": "Giá trị",
+          "parameterValuePlaceholder": "VD: 25, 80%...",
+          "parameterUnitLabel": "Đơn vị",
+          "parameterUnitPlaceholder": "VD: °C, %, kg...",
+          "cancelButton": "Huỷ",
+          "saving": "Đang lưu...",
+          "createProgress": "Tạo tiến trình",
+          "stageOrder": "Bước {{order}}",
+          "methodInfo": "của phương pháp {{methodName}}",
+          "stepOrder": "Bước {{order}}"       
+        },
+        "wasteInput": {
+          "title": "Thông tin phế phẩm",
+          "description": "Ghi nhận phế phẩm từ quá trình xử lý của bạn",
+          "add": "Thêm phế phẩm",
+          "edit": "Chỉnh sửa phế phẩm",
+          "delete": "Xóa phế phẩm",
+          "wasteType": "Loại phế phẩm *",
+          "quantity": "Khối lượng *",
+          "unit": "Đơn vị *",
+          "note": "Ghi chú",
+          "recordedAt": "Thời gian ghi nhận",
+          "itemNumber": "Phế phẩm #{{number}}",
+          "selectUnit": "Chọn đơn vị...",
+          "units": {
+            "kg": "Kilogram (kg)",
+            "g": "Gram (g)",
+            "ton": "Tấn",
+            "quintal": "Tạ",
+            "yen": "Yến",
+            "lang": "Lạng",
+            "lb": "Pound (lb)",
+            "oz": "Ounce (oz)"
+          },
+          "placeholder": {
+            "wasteType": "Ví dụ: Bax, Vỏ trấu, Bã cà phê...",
+            "quantity": "0.00",
+            "note": "Ghi chú về phế phẩm (tùy chọn)..."
+          },
+          "emptyState": {
+            "noWaste": "Chưa có phế phẩm nào được thêm",
+            "addWasteHint": "Nhấn \"Thêm phế phẩm\" để bắt đầu"
+          },
+          "validation": {
+            "wasteTypeRequired": "Vui lòng chọn loại phế phẩm",
+            "quantityRequired": "Vui lòng nhập khối lượng",
+            "quantityPositive": "Khối lượng phải lớn hơn 0",
+            "unitRequired": "Vui lòng chọn đơn vị",
+            "summary": "Lỗi xác thực"
+          }
+        },
+        "mediaUpload": {
+          "title": "Tài liệu đính kèm",
+          "description": "Tải lên tài liệu đính kèm cho quá trình xử lý",
+          "add": "Thêm tài liệu",
+          "edit": "Chỉnh sửa tài liệu",
+          "delete": "Xóa tài liệu",
+          "photos": "Hình ảnh",
+          "videos": "Video",
+          "dragDrop": "Kéo thả file vào đây hoặc click để chọn",
+          "multipleSelection": "chọn nhiều",
+          "selectPhoto": "Chọn ảnh",
+          "selectVideo": "Chọn video",
+          "selectedPhotos": "Đã chọn {{count}} ảnh",
+          "selectedVideos": "Đã chọn {{count}} video",
+          "files": "file",
+          "limits": {
+            "title": "Giới hạn",
+            "maxFiles": "Tối đa",
+            "maxSize": "tổng dung lượng",
+            "autoCompress": "Ảnh sẽ được tự động nén để giảm kích thước."
+          }
+        },
         "overview": {
           "title": "Quản lý tiến trình sơ chế",
           "subtitle": "Theo dõi và cập nhật tiến trình xử lý cà phê của bạn",
@@ -1290,15 +1364,172 @@
             "updateProgressDescription": "Form cập nhật thông tin tiến trình sơ chế"
           }
         }
-      }
-    },
+      },
+      "farmerWastes": {
+        "title": "Quản lý chất thải sơ chế (Farmer)",
+        "description": "Theo dõi và quản lý chất thải từ quá trình sơ chế của bạn",
+        "searchPlaceholder": "Tìm kiếm theo mã chất thải, loại chất thải, ghi chú...",
+        "emptyMessage": "Không có chất thải nào được tìm thấy",
+        "loading": {
+          "title": "Đang tải dữ liệu...",
+          "description": "Đang tải danh sách chất thải"
+        },
+        "table": {
+          "wasteCode": "Mã chất thải",
+          "wasteType": "Loại chất thải",
+          "quantity": "Số lượng",
+          "disposalStatus": "Trạng thái xử lý",
+          "recordedAt": "Ngày ghi nhận",
+          "actions": "Thao tác",
+          "view": "Xem"
+        },
+        "status": {
+          "disposed": "Đã xử lý",
+          "notDisposed": "Chưa xử lý"
+        },
+        "stats": {
+          "totalWastes": "Tổng chất thải",
+          "processedBatches": "Lô đã xử lý",
+          "thisMonth": "Tháng này"
+        },
+        "error": {
+          "title": "Không thể tải dữ liệu"
+        },
+        "WasteDetail": {
+          "title": "Chi tiết chất thải",
+          "subtitle": "Thông tin chi tiết về chất thải",
+          "back": "Quay lại",
+          "retry": "Thử lại",
+          "loading": "Đang tải dữ liệu...",
+          "error": {
+            "title": "Không thể tải dữ liệu",
+            "description": "Có lỗi xảy ra khi tải dữ liệu",
+            "backToList": "Quay lại danh sách"
+          }
+        }
+      },
+      "farmerEvaluation": {
+        "title": "Danh sách đánh giá",
+        "subtitle": "Xem tất cả đánh giá cho các lô sơ chế của bạn",
+        "search": {
+          "placeholder": "Tìm kiếm theo mã lô hoặc mã đánh giá..."
+        },
+        "filter": {
+          "all": "Tất cả kết quả",
+          "pass": "Đạt",
+          "fail": "Không đạt",
+          "needsImprovement": "Cần cải thiện",
+          "temporary": "Tạm thời",
+          "pending": "Chờ xử lý"
+        },
+        "table": {
+          "evaluationCode": "Mã đánh giá",
+          "batchId": "Mã lô",
+          "result": "Kết quả",
+          "evaluatedAt": "Ngày đánh giá",
+          "actions": "Hành động",
+          "viewDetails": "Xem chi tiết"
+        },
+        "stats": {
+          "total": "Tổng đánh giá",
+          "pass": "Đạt",
+          "fail": "Không đạt",
+          "pending": "Chờ xử lý"
+        },
+        "emptyState": {
+          "noResults": "Không tìm thấy đánh giá",
+          "noResultsHint": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc",
+          "noEvaluations": "Chưa có đánh giá nào",
+          "noEvaluationsHint": "Các đánh giá sẽ xuất hiện ở đây khi chuyên gia đánh giá lô sơ chế của bạn"
+        },
+        "loading": "Đang tải dữ liệu...",
+        "error": "Có lỗi xảy ra khi tải dữ liệu",
+        "retry": "Thử lại"
+      },
+              "farmerEvaluationDetail": {
+          "title": "Chi tiết đánh giá lô sơ chế",
+          "subtitle": "Thông tin chi tiết về đánh giá tiêu chí",
+          "back": "Quay lại",
+          "retry": "Thử lại",
+          "loading": "Đang tải dữ liệu...",
+          "batchCode": "Mã lô",
+          "error": {
+            "batchNotFound": "Không tìm thấy lô sơ chế",
+            "fetchData": "Có lỗi xảy ra khi tải dữ liệu"
+          },
+          "status": {
+            "notStarted": "Chưa bắt đầu",
+            "inProgress": "Đang thực hiện",
+            "awaitingEvaluation": "Chờ đánh giá",
+            "completed": "Hoàn thành",
+            "cancelled": "Đã hủy",
+            "unknown": "Không xác định"
+          },
+          "batchInfo": {
+            "title": "Thông tin lô sơ chế",
+            "batchCode": "Mã lô",
+            "farmer": "Nông dân",
+            "cropSeason": "Mùa vụ",
+            "inputQuantity": "Khối lượng đầu vào",
+            "outputQuantity": "Khối lượng đầu ra",
+            "status": "Trạng thái"
+          },
+          "evaluationResults": {
+            "title": "Kết quả đánh giá",
+            "evaluatedAt": "Đánh giá lúc",
+            "pass": "Đạt",
+            "fail": "Không đạt",
+            "needsImprovement": "Cần cải thiện",
+            "temporary": "Tạm thời",
+            "pending": "Chờ đánh giá"
+          },
+          "failureInfo": {
+            "title": "Thông tin cần cải thiện",
+            "stage": "Công đoạn",
+            "details": {
+              "title": "Chi tiết vấn đề"
+            },
+            "recommendations": {
+              "title": "Khuyến nghị cải thiện"
+            },
+            "nextSteps": {
+              "title": "Hướng dẫn tiếp theo",
+              "description": "Hãy cập nhật tiến trình cho công đoạn {stageName} với những cải thiện theo khuyến nghị trên."
+            }
+          },
+          "comments": {
+            "title": "Nhận xét"
+          },
+          "progress": {
+            "title": "Tiến trình sơ chế",
+            "step": "Bước",
+            "retry": "Làm lại",
+            "output": "Sản lượng",
+            "updatedBy": "Cập nhật bởi",
+            "noProgress": "Chưa có tiến trình nào được ghi nhận"
+          },
+          "summary": {
+            "title": "Tóm tắt đánh giá",
+            "evaluationDate": "Ngày đánh giá",
+            "note": {
+              "title": "Lưu ý",
+              "description": "Nếu đánh giá không đạt, hãy cập nhật tiến trình theo hướng dẫn để cải thiện chất lượng."
+            },
+            "noEvaluation": "Chưa có đánh giá"
+          },
+          "actions": {
+            "title": "Hành động",
+            "viewBatchDetails": "Xem chi tiết lô",
+            "backToList": "Quay lại danh sách"
+          },
+          "history": {
+            "title": "Lịch sử đánh giá",
+            "noDate": "Chưa có ngày"
+          }
+        }
+    }
+  } , 
 
-    "wastes": {
-      "title": "Chất thải sơ chế",
-      "subtitle": "Quản lý và theo dõi chất thải từ quá trình sơ chế",
-      "addWaste": "Thêm chất thải mới",
-      "editWaste": "Chỉnh sửa chất thải"
-    },
 
     "farmerWastes": {
         "title": "Quản lý chất thải sơ chế (Farmer)",
@@ -1360,8 +1591,7 @@
           }
         }
       }
-    }
-,
+    ,
   "validation": {
     "required": "Trường này là bắt buộc",
     "positiveNumber": "Phải là số dương",
@@ -1538,6 +1768,13 @@
         "submitting": "Đang gửi...",
         "evaluateStage": "Đánh giá giai đoạn",
         "passBatch": "Đạt cả Batch"
+      },
+      "batchPassConfirm": {
+        "title": "Xác nhận đạt cả batch",
+        "message": "Bạn có chắc chắn muốn cho đạt cả batch này không? Hành động này sẽ đánh giá tất cả tiêu chí là \"Đạt\" và không thể hoàn tác.",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận đạt cả batch",
+        "processing": "Đang xử lý..."
       },
       "warning": {
         "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
@@ -1717,50 +1954,13 @@
     "totalSizeLimit": "Tổng kích thước files ({{totalSizeMB}}MB) vượt quá giới hạn 50MB",
     "totalFilesLimit": "Số lượng files ({{totalFiles}}) vượt quá giới hạn 10 files",
     "createProgressFailed": "Tạo tiến trình thất bại!",
-    "createProgressSuccess": "Tạo tiến trình thành công!"
+    "createProgressSuccess": "Tạo tiến trình thành công!",
+    "filterByStatus": "Lọc theo trạng thái",
+    "allStatuses": "Tất cả trạng thái",
+    "notAvailable": "N/A",
+    "currency": "VNĐ"
   },
-  "sidebar": {
-    "dashboard": "Bảng điều khiển",
-    "farmer": "Nông dân",
-    "processing": "Xử lý cà phê",
-    "batches": "Lô xử lý",
-    "progress": "Tiến trình",
-    "waste": "Phế phẩm",
-    "media": "Tài liệu",
-    "parameters": "Thông số",
-    "stages": "Các bước",
-    "contracts": "Hợp đồng",
-    "deliveries": "Giao hàng",
-    "cropSeasons": "Vụ mùa",
-    "cultivations": "Canh tác",
-    "commitments": "Cam kết",
-    "marketplace": "Thị trường",
-    "profile": "Hồ sơ",
-    "settings": "Cài đặt",
-    "logout": "Đăng xuất",
-    "procurementPlans": "Kế hoạch thu mua",
-    "shipments": "Lô giao hàng",
-    "products": "Sản phẩm",
-    "overview": "Tổng quan",
-    "coffeeProcurementFloor": "Sàn thu mua cà phê",
-    "consultation": "Tư vấn",
-    "sendDeliveryRequest": "Gửi yêu cầu giao hàng",
-    "notifications": "Thông báo",
-    "warehouseRequest": "Yêu cầu kho",
-    "outboundRequests": "Yêu cầu xuất kho",
-    "inboundRequests": "Yêu cầu nhập kho",
-    "outboundReceipts": "Biên bản xuất kho",
-    "inboundReceipts": "Biên bản nhập kho",
-    "evaluations": "Phân tích bất thường",
-    "processingMethods": "Phương pháp sơ chế",
-    "wasteDisposals": "Xử lý chất thải",
-    "requestFeedback": "Tư vấn kỹ thuật",
-    "articles": "Bài viết",
-    "businessBuyers": "Khách hàng doanh nghiệp",
-    "orders": "Đơn hàng",
-    "reports": "Báo cáo",
-    "users": "Quản lý người dùng"
-  },
+
   "farmerBatchSelector": {
     "title": "Chọn Nông Dân để Xem Lô Sơ Chế",
     "selectFarmer": "Chọn Nông Dân",
@@ -2341,6 +2541,7 @@
         "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
         "page": "Trang {{current}} / {{total}}"
       }
+    }
   ,
   "warehouseInboundRequests": {
     "title": "Yêu cầu nhập kho",
@@ -2487,6 +2688,77 @@
     "outboundReceipts": {
       "title": "Biên bản xuất kho",
       "subtitle": "Quản lý biên bản xuất kho cho khách hàng"
+    },
+    "page": {
+      "title": "📥 Phiếu nhập kho",
+      "subtitle": "Quản lý và theo dõi các phiếu nhập kho đã được duyệt",
+      "searchPlaceholder": "Tìm mã phiếu, kho, lô...",
+      "createNew": "Tạo mới",
+      "filterByCoffeeType": "Lọc theo loại cà phê:",
+      "selectCoffeeType": "Chọn loại cà phê",
+      "allTypes": "Tất cả",
+      "freshCoffee": "Cà phê tươi",
+      "processedCoffee": "Cà phê đã sơ chế",
+      "unknownType": "Không xác định"
+    },
+    "stats": {
+      "totalReceipts": "Tổng phiếu",
+      "confirmed": "Đã xác nhận",
+      "pending": "Chưa xác nhận",
+      "totalQuantity": "Tổng lượng",
+      "freshCoffeeReceipts": "phiếu",
+      "processedCoffeeReceipts": "phiếu"
+    },
+    "table": {
+      "title": "Chi tiết phiếu nhập kho",
+      "headers": {
+        "receiptCode": "Mã phiếu",
+        "warehouse": "Kho",
+        "coffeeType": "Loại cà phê",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      },
+      "actions": {
+        "view": "Xem",
+        "cancel": "Hủy phiếu"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong",
+      "receipts": "phiếu"
+    },
+    "empty": {
+      "title": "Không có phiếu nhập kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách phiếu nhập kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách phiếu nhập kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "cancelModal": {
+      "title": "Xác nhận hủy phiếu",
+      "description": "Bạn có chắc chắn muốn hủy phiếu này?",
+      "receiptInfo": "Thông tin phiếu:",
+      "receiptCode": "Mã phiếu:",
+      "warehouse": "Kho:",
+      "type": "Loại:",
+      "cancelButton": "Hủy bỏ",
+      "confirmCancel": "Xác nhận hủy",
+      "cancelling": "Đang hủy..."
+    },
+    "success": {
+      "cancelSuccess": "Hủy phiếu nhập kho thành công!"
     }
   },
   "deliveryRequests": {
@@ -2536,7 +2808,2769 @@
     "pagination": {
       "page": "Trang {{current}}/{{total}}"
     }
-  }
+  },
+  "warehouseOutboundRequests": {
+    "title": "Yêu cầu xuất kho",
+    "subtitle": "Quản lý và theo dõi các yêu cầu xuất kho",
+    "createNewRequest": "Tạo yêu cầu mới",
+    "search": {
+      "title": "Tìm kiếm yêu cầu",
+      "placeholder": "Tìm mã yêu cầu, kho"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Lọc theo trạng thái",
+        "all": "Tất cả",
+        "pending": "Chờ duyệt",
+        "accepted": "Đã duyệt",
+        "completed": "Hoàn tất",
+        "rejected": "Đã từ chối",
+        "cancelled": "Đã hủy"
+      }
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingRequests": "Yêu cầu chờ duyệt",
+      "acceptedRequests": "Yêu cầu đã duyệt",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu xuất kho",
+      "summary": "Hiển thị {{count}} yêu cầu - {{total}} tổng cộng",
+      "headers": {
+        "requestId": "MÃ YÊU CẦU",
+        "warehouse": "KHO",
+        "inventory": "TỒN KHO",
+        "quantity": "SỐ LƯỢNG",
+        "status": "TRẠNG THÁI",
+        "action": "HÀNH ĐỘNG"
+      },
+      "actions": {
+        "view": "Xem",
+        "accept": "Duyệt",
+        "reject": "Từ chối"
+      }
+    },
+    "pagination": {
+      "page": "Trang {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Chi tiết yêu cầu xuất kho",
+      "headers": {
+        "requestCode": "Mã yêu cầu",
+        "warehouse": "Kho",
+        "inventory": "Tồn kho",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "pending": "Chờ duyệt",
+        "accepted": "Đã duyệt",
+        "completed": "Hoàn tất",
+        "rejected": "Đã từ chối",
+        "cancelled": "Đã hủy"
+      },
+      "actions": {
+        "view": "Xem",
+        "accept": "Duyệt yêu cầu",
+        "reject": "Từ chối yêu cầu"
+      }
+    },
+    "empty": {
+      "title": "Không có yêu cầu xuất kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách yêu cầu xuất kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách yêu cầu xuất kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "confirmModal": {
+      "title": "Xác nhận duyệt yêu cầu",
+      "description": "Bạn chắc chắn muốn duyệt yêu cầu này?",
+      "acceptButton": "Duyệt",
+      "cancelButton": "Hủy"
+    },
+    "rejectModal": {
+      "title": "Từ chối yêu cầu",
+      "description": "Vui lòng cung cấp lý do từ chối:",
+      "reasonPlaceholder": "Nhập lý do từ chối...",
+      "rejectButton": "Từ chối",
+      "cancelButton": "Hủy"
+    },
+    "success": {
+      "acceptSuccess": "Duyệt yêu cầu thành công!",
+      "rejectSuccess": "Từ chối yêu cầu thành công!"
+    }
+  },
+  "warehouseOutboundReceipts": {
+    "title": "Phiếu xuất kho",
+    "subtitle": "Quản lý và theo dõi các phiếu xuất kho",
+    "createNewReceipt": "Tạo phiếu mới",
+    "search": {
+      "title": "Tìm kiếm phiếu",
+      "placeholder": "Tìm mã phiếu, kho"
+    },
+    "filters": {
+      "byStatus": {
+        "title": "Lọc theo trạng thái",
+        "all": "Tất cả",
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      }
+    },
+    "stats": {
+      "totalReceipts": "Tổng phiếu",
+      "confirmedReceipts": "Phiếu đã xác nhận",
+      "pendingReceipts": "Phiếu chưa xác nhận",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "table": {
+      "title": "Danh sách phiếu xuất kho",
+      "summary": "Hiển thị {{count}} phiếu - {{total}} tổng cộng",
+      "headers": {
+        "receiptId": "MÃ PHIẾU",
+        "warehouse": "KHO",
+        "batch": "LÔ HÀNG",
+        "quantity": "SỐ LƯỢNG",
+        "status": "TRẠNG THÁI",
+        "action": "HÀNH ĐỘNG"
+      },
+      "actions": {
+        "view": "Xem",
+        "confirm": "Xác nhận"
+      }
+    },
+    "pagination": {
+      "page": "Trang {{current}}/{{total}}"
+    },
+    "detail": {
+      "title": "Chi tiết phiếu xuất kho",
+      "headers": {
+        "receiptCode": "Mã phiếu",
+        "warehouse": "Kho",
+        "batch": "Lô hàng",
+        "information": "Thông tin",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Xem"
+      },
+      "status": {
+        "confirmed": "Đã xác nhận",
+        "pending": "Chưa xác nhận"
+      },
+      "actions": {
+        "view": "Xem",
+        "confirm": "Xác nhận phiếu"
+      }
+    },
+    "create": {
+      "title": "Tạo phiếu xuất kho",
+      "subtitle": "Tạo phiếu xuất kho mới",
+      "form": {
+        "selectRequest": "Chọn yêu cầu xuất kho *",
+        "selectRequestPlaceholder": "-- Chọn yêu cầu xuất kho đã duyệt --",
+        "exportedQuantity": "Số lượng xuất *",
+        "exportedQuantityPlaceholder": "Nhập số lượng xuất...",
+        "note": "Ghi chú",
+        "notePlaceholder": "Nhập ghi chú...",
+        "destination": "Điểm đến",
+        "destinationPlaceholder": "Nhập điểm đến..."
+      },
+      "validation": {
+        "selectRequest": "Vui lòng chọn yêu cầu xuất kho hợp lệ",
+        "exportedQuantity": "Số lượng xuất phải lớn hơn 0",
+        "exportedQuantityExceed": "Số lượng xuất không được vượt quá phần còn lại ({{remaining}} {{unit}})"
+      },
+      "stats": {
+        "warehouseCapacity": "Dung lượng kho",
+        "usedCapacity": "Dung lượng đã sử dụng",
+        "totalCapacity": "Tổng dung lượng",
+        "remainingQuantity": "Số lượng còn lại",
+        "inventoryAvailable": "Tồn kho khả dụng"
+      },
+      "actions": {
+        "create": "Tạo phiếu",
+        "cancel": "Hủy bỏ",
+        "creating": "Đang tạo..."
+      }
+    },
+    "empty": {
+      "title": "Không có phiếu xuất kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách phiếu xuất kho..."
+    },
+    "error": {
+      "loadFailed": "Không thể tải danh sách phiếu xuất kho",
+      "serverError": "Lỗi khi tải dữ liệu từ server."
+    },
+    "success": {
+      "createSuccess": "Tạo phiếu xuất kho thành công!",
+      "confirmSuccess": "Xác nhận phiếu xuất kho thành công!"
+    }
+  },
+  "expertEvaluations": {
+    "title": "Đánh giá lô sơ chế",
+    "subtitle": "Quản lý và đánh giá chất lượng các lô sơ chế cà phê",
+    "stats": {
+      "totalBatches": "Tổng số lô",
+      "pendingEvaluation": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "completionRate": "Tỷ lệ hoàn thành"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "pending": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "refresh": "Làm mới"
+    },
+    "table": {
+      "headers": {
+        "batchCode": "Mã lô",
+        "farmer": "Nông dân",
+        "method": "Phương pháp",
+        "quantity": "Khối lượng",
+        "status": "Trạng thái",
+        "evaluationResult": "Kết quả đánh giá",
+        "evaluationDate": "Ngày đánh giá",
+        "actions": "Hành động"
+      },
+      "noData": {
+        "title": "Không có lô nào cần đánh giá",
+        "description": "Các lô sơ chế sẽ xuất hiện ở đây khi cần đánh giá"
+      }
+    },
+    "status": {
+      "pending": "Chờ đánh giá",
+      "evaluated": "Đã đánh giá",
+      "noEvaluation": "Không cần đánh giá"
+    },
+    "actions": {
+      "evaluate": "Đánh giá",
+      "viewDetails": "Xem chi tiết"
+    },
+    "loading": "Đang tải dữ liệu...",
+    "error": {
+      "fetchData": "Có lỗi xảy ra khi tải dữ liệu",
+      "evaluationsList": "Không thể tải danh sách đánh giá",
+      "batchIdNotFound": "Lỗi: Không tìm thấy ID của lô"
+    },
+    "retry": "Thử lại"
+  },
+  "expertEvaluationDetail": {
+    "title": "Đánh giá lô sơ chế",
+    "subtitle": "Mã lô: {{batchCode}} • Nông dân: {{farmerName}}",
+    "backButton": "Quay lại",
+        "updateEvaluationButton": "Cập nhật đánh giá",
+        "batchAlreadyPassed": "Batch đã đạt - Không thể đánh giá lại",
+        "batchNotReadyForEvaluation": "Batch chưa sẵn sàng để đánh giá",
+    "batchInformation": {
+      "title": "Thông tin lô sơ chế",
+      "batchCode": "Mã lô",
+      "farmer": "Nông dân",
+      "cropSeason": "Mùa vụ",
+      "inputQuantity": "Khối lượng vào",
+      "outputQuantity": "Khối lượng ra",
+      "status": "Trạng thái"
+    },
+    "processingProgress": {
+      "title": "Tiến trình sơ chế",
+      "step": "Bước {{stepIndex}}",
+      "retry": "Làm lại",
+      "outputQuantity": "Sản lượng:",
+      "updatedBy": "Cập nhật bởi:",
+      "noProgress": "Chưa có tiến trình nào được ghi nhận"
+    },
+    "overallEvaluation": {
+      "title": "Tổng quan đánh giá lô",
+      "subtitle": "Kết quả tổng hợp từ tất cả các giai đoạn",
+      "pass": "Đạt chuẩn",
+      "fail": "Không đạt",
+      "averageScore": "Điểm trung bình",
+      "passedStages": "Giai đoạn đạt",
+      "passRate": "Tỷ lệ đạt",
+      "evaluationLogic": "Logic đánh giá: Đạt ≥80đ HOẶC ≥{{minStages}}/{{totalStages}} giai đoạn"
+    },
+    "evaluationStatus": {
+      "title": "Trạng thái đánh giá",
+      "noEvaluation": "Chưa có đánh giá",
+      "comments": "Nhận xét:",
+      "detailedFeedback": "Phản hồi chi tiết:",
+      "recommendations": "Khuyến nghị:",
+      "evaluationDate": "Ngày đánh giá",
+      "evaluatedBy": "Đánh giá bởi"
+    },
+    "quickStats": {
+      "title": "Thống kê nhanh",
+      "evaluations": "Lần đánh giá",
+      "passed": "Đạt chuẩn",
+      "needsImprovement": "Cần cải thiện",
+      "failed": "Không đạt"
+    },
+    "status": {
+      "notStarted": "Chưa bắt đầu",
+      "inProgress": "Đang thực hiện",
+      "awaitingEvaluation": "Chờ đánh giá",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "unknown": "Không xác định"
+    },
+    "loading": "Đang tải dữ liệu...",
+    "error": {
+      "batchNotFound": "Không tìm thấy lô sơ chế",
+      "loadFailed": "Có lỗi xảy ra khi tải dữ liệu"
+    }
+  },
+  "inventoryLogs": {
+    "title": "Nhật ký tồn kho",
+    "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",
+    "backToDashboard": "Quay lại Dashboard",
+    "search": {
+      "placeholder": "🔍 Tìm theo mã kho, loại cà phê, kho hàng...",
+      "quickSearch": "🔍 Tìm kiếm nhanh..."
+    },
+    "filters": {
+      "all": "🔄 Tất cả",
+      "inbound": "📥 Nhập kho",
+      "outbound": "📤 Xuất kho"
+    },
+    "stats": {
+      "totalLogs": "Tổng số log",
+      "inboundToday": "Nhập kho hôm nay",
+      "inboundTurns": "Lượt nhập kho",
+      "outboundTurns": "Lượt xuất kho"
+    },
+    "table": {
+      "title": "Danh sách lịch sử tồn kho",
+      "headers": {
+        "actionType": "Loại hành động",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Số lượng",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "inbound": "📥 Nhập kho",
+        "outbound": "📤 Xuất kho",
+        "details": "Chi tiết"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "logs": "log",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "empty": {
+      "title": "Không có log phù hợp với bộ lọc",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách log...",
+      "description": "Vui lòng chờ trong khi chúng tôi tải dữ liệu"
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Lỗi khi tải danh sách log tồn kho",
+      "retry": "Thử lại"
+    },
+    "detail": {
+      "title": "Chi tiết nhật ký tồn kho",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "actionType": "Loại hành động",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Số lượng",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú"
+      }
+    }
+  },
+  "inventories": {
+    "title": "Quản lý tồn kho",
+    "subtitle": "Theo dõi và quản lý tồn kho trong các kho hàng",
+    "search": {
+      "placeholder": "Tìm kiếm theo mã tồn kho, kho hàng, loại cà phê..."
+    },
+    "filters": {
+      "warehouse": "Kho hàng:",
+      "coffeeType": "Loại cà phê:",
+      "all": "Tất cả",
+      "selectWarehouse": "Chọn kho hàng",
+      "selectCoffeeType": "Chọn loại cà phê"
+    },
+    "stats": {
+      "totalInventories": "Tổng số tồn kho",
+      "totalQuantity": "Tổng số lượng",
+      "warehouses": "Số kho hàng",
+      "coffeeTypes": "Loại cà phê"
+    },
+    "table": {
+      "title": "Danh sách tồn kho",
+      "headers": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "batchCode": "Mã lô",
+        "quantity": "Số lượng",
+        "lastUpdated": "Cập nhật lần cuối",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem",
+        "logs": "Nhật ký",
+        "edit": "Chỉnh sửa"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "inventories": "tồn kho"
+    },
+    "empty": {
+      "title": "Không có tồn kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách tồn kho..."
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Lỗi khi tải danh sách tồn kho"
+    },
+    "detail": {
+      "title": "Chi tiết tồn kho",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "batchCode": "Mã lô",
+        "quantity": "Số lượng",
+        "lastUpdated": "Cập nhật lần cuối",
+        "createdAt": "Ngày tạo"
+      },
+      "logs": {
+        "title": "Nhật ký tồn kho",
+        "subtitle": "Lịch sử thay đổi tồn kho"
+      }
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định"
+    },
+    "infoLabels": {
+      "cropSeason": "Mùa vụ",
+      "batch": "Lô sơ chế",
+      "info": "Thông tin"
+    },
+    "status": {
+      "inStock": "Còn hàng",
+      "outOfStock": "Hết hàng"
+    },
+    "stats": {
+      "totalInventory": "Tổng tồn kho",
+      "inStockBatches": "Lô còn hàng",
+      "warehouses": "Kho hàng",
+      "productTypes": "Loại sản phẩm",
+      "outOfStockBatches": "Lô hết hàng",
+      "totalBatches": "Tổng lô",
+      "needReplenishment": "Cần bổ sung",
+      "allProducts": "Tất cả sản phẩm"
+    },
+    "filters": {
+      "coffeeType": "Loại cà phê:",
+      "warehouse": "Kho:",
+      "all": "Tất cả",
+      "selectCoffeeType": "Chọn loại",
+      "selectWarehouse": "Chọn kho",
+      "allWarehouses": "Tất cả kho"
+    },
+    "table": {
+      "title": "Chi tiết tồn kho",
+      "headers": {
+        "warehouse": "Tên kho",
+        "coffeeType": "Loại cà phê",
+        "information": "Thông tin",
+        "product": "Sản phẩm",
+        "quantity": "Số lượng (kg)",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "batches": "lô",
+      "previous": "Trước",
+      "next": "Sau"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu..."
+    },
+    "empty": {
+      "title": "Không có tồn kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "description": "📋 Tồn kho được tạo tự động từ phiếu nhập kho và lô sơ chế"
+  },
+  "warehouses": {
+    "title": "Quản lý kho hàng",
+    "subtitle": "Quản lý thông tin và cấu hình kho hàng",
+    "search": {
+      "placeholder": "Tìm kiếm theo tên kho, địa chỉ..."
+    },
+    "stats": {
+      "totalWarehouses": "Tổng số kho",
+      "totalCapacity": "Tổng dung lượng",
+      "usedCapacity": "Dung lượng đã sử dụng",
+      "availableCapacity": "Dung lượng khả dụng",
+      "criticalWarehouses": "Kho báo động"
+    },
+    "table": {
+      "title": "Danh sách kho hàng",
+      "headers": {
+        "name": "Tên kho",
+        "address": "Địa chỉ",
+        "capacity": "Dung lượng",
+        "usedCapacity": "Đã sử dụng",
+        "availableCapacity": "Khả dụng",
+        "manager": "Quản lý",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "warehouses": "kho hàng"
+    },
+    "empty": {
+      "title": "Không có kho hàng nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm"
+    },
+    "staffNote": "Staff chỉ có quyền xem thông tin kho hàng",
+    "status": {
+      "label": "Trạng thái",
+      "critical": "Báo động",
+      "warning": "Cảnh báo",
+      "normal": "Bình thường",
+      "overloaded": "Quá tải",
+      "attention": "Cần chú ý"
+    },
+    "chart": {
+      "used": "Đã sử dụng",
+      "available": "Còn trống"
+    },
+    "capacity": {
+      "total": "Dung lượng",
+      "used": "Đã dùng"
+    },
+    "usage": {
+      "rate": "Tỷ lệ sử dụng"
+    },
+    "actions": {
+      "viewDetails": "Xem chi tiết"
+    },
+    "overview": {
+      "avgUsage": "Tỷ lệ sử dụng trung bình",
+      "availableCapacity": "Dung lượng còn trống",
+      "healthyWarehouses": "Kho hoạt động tốt"
+    }
+  },
+  "inboundRequestDetail": {
+    "title": "Chi tiết yêu cầu nhập kho",
+    "requestCode": "Mã yêu cầu",
+    "error": {
+      "description": "Lỗi"
+    },
+    "status": {
+      "pending": "Đang chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Hoàn tất",
+      "rejected": "Đã từ chối",
+      "cancelled": "Đã huỷ"
+    },
+    "fields": {
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "preferredDeliveryDate": "Ngày giao dự kiến",
+      "actualDeliveryDate": "Ngày giao thực tế",
+      "quantity": "Số lượng",
+      "note": "Ghi chú",
+      "farmer": "Nông dân",
+      "phone": "SĐT",
+      "businessStaff": "Nhân viên phụ trách",
+      "batchCode": "Mã lô hàng",
+      "detailCode": "Mã chi tiết",
+      "coffeeType": "Loại cà phê",
+      "cropSeason": "Mùa vụ"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "approve": "Duyệt yêu cầu",
+      "reject": "Từ chối yêu cầu",
+      "approveSuccess": "Duyệt yêu cầu thành công",
+      "approveError": "Duyệt yêu cầu thất bại",
+      "rejectSuccess": "Từ chối yêu cầu thành công",
+      "rejectError": "Từ chối yêu cầu thất bại"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noNote": "Không có"
+    }
+  },
+  "receiptDetail": {
+    "title": "Chi tiết phiếu nhập kho",
+    "receiptCode": "Mã phiếu",
+    "coffeeType": "Loại cà phê",
+    "error": {
+      "loadFailed": "Không thể tải chi tiết phiếu",
+      "notFound": "Không tìm thấy phiếu nhập kho"
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định",
+      "freshLabel": "Tươi",
+      "processedLabel": "Đã sơ chế"
+    },
+    "infoLabels": {
+      "cropSeason": "Mùa vụ",
+      "batch": "Lô sơ chế",
+      "info": "Thông tin"
+    },
+    "fields": {
+      "warehouse": "Kho",
+      "receivedQuantity": "Số lượng nhận",
+      "initialRequestedQuantity": "Số lượng yêu cầu ban đầu",
+      "remainingQuantityReference": "Số lượng còn lại (tham khảo)",
+      "actualRemainingQuantity": "✅ Số lượng còn lại thực tế",
+      "totalConfirmedQuantity": "Tổng số lượng đã xác nhận",
+      "receivedAt": "Ngày nhận",
+      "note": "Ghi chú",
+      "staff": "Nhân viên",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "confirmed": "Đã xác nhận",
+      "pending": "Chưa xác nhận"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "cancel": "Hủy phiếu",
+      "confirm": "Xác nhận",
+      "cancelSuccess": "Hủy phiếu nhập kho thành công!",
+      "cancelError": "Không thể hủy phiếu nhập kho",
+      "confirmSuccess": "✅ Xác nhận phiếu nhập thành công",
+      "confirmError": "Xác nhận thất bại"
+    },
+    "validation": {
+      "quantityRequired": "⚠️ Số lượng xác nhận phải lớn hơn 0",
+      "noteRequired": "⚠️ Vui lòng ghi chú lý do nếu xác nhận ít hơn số lượng đã tạo"
+    },
+    "common": {
+      "na": "N/A",
+      "noNote": "Không có",
+      "unknown": "Không rõ"
+    },
+    "freshCoffeeInfo": {
+      "title": "Thông tin cà phê tươi",
+      "cropSeason": "Mùa vụ",
+      "coffeeType": "Loại cà phê",
+      "detailCode": "Mã chi tiết"
+    },
+    "processedCoffeeInfo": {
+      "title": "Thông tin cà phê đã sơ chế",
+      "batchCode": "Mã lô",
+      "coffeeType": "Loại cà phê"
+    },
+    "confirmForm": {
+      "title": "Xác nhận phiếu nhập",
+      "initialRequest": "Yêu cầu ban đầu",
+      "remainingCanReceive": "Còn lại có thể nhập",
+      "calculating": "Đang tính...",
+      "alreadyConfirmed": "Đã xác nhận",
+      "accurateInfo": "Thông tin chính xác",
+      "backendCalculation": "Số lượng còn lại được tính toán từ backend và bao gồm tất cả các phiếu đã xác nhận trước đó",
+      "confirmedQuantity": "Số lượng xác nhận",
+      "note": "Ghi chú",
+      "required": "bắt buộc",
+      "notePlaceholderRequired": "Vui lòng ghi lý do xác nhận thiếu...",
+      "notePlaceholderOptional": "Ghi chú thêm (nếu có)",
+      "confirm": "Xác nhận",
+      "confirming": "Đang xác nhận..."
+    },
+    "cancelModal": {
+      "title": "Xác nhận hủy phiếu",
+      "description": "Bạn có chắc chắn muốn hủy phiếu này?",
+      "receiptInfo": "Thông tin phiếu",
+      "receiptCode": "Mã phiếu",
+      "warehouse": "Kho",
+      "type": "Loại",
+      "cancel": "Hủy bỏ",
+      "confirmCancel": "Xác nhận hủy",
+      "cancelling": "Đang hủy..."
+    }
+  },
+  "outboundRequestDetail": {
+    "title": "Chi tiết yêu cầu xuất kho",
+    "subtitle": "Xem thông tin chi tiết về yêu cầu",
+    "error": {
+      "loadFailed": "Không lấy được dữ liệu",
+      "notFound": "Không tìm thấy yêu cầu"
+    },
+    "status": {
+      "completed": "Hoàn tất"
+    },
+    "fields": {
+      "requestCode": "Mã yêu cầu",
+      "warehouse": "Kho",
+      "inventory": "Hàng tồn kho",
+      "quantity": "Số lượng",
+      "purpose": "Mục đích xuất kho",
+      "reason": "Lý do",
+      "requestedBy": "Người yêu cầu",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật lần cuối",
+      "status": "Trạng thái",
+      "orderLink": "Liên kết đơn hàng",
+      "note": "Ghi chú"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "approve": "Duyệt yêu cầu"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noData": "Không có"
+    }
+  },
+  "inventoryDetail": {
+    "title": "Chi tiết tồn kho",
+    "subtitle": "Xem thông tin chi tiết của lô hàng tồn",
+    "error": {
+      "notFound": "Không tìm thấy tồn kho",
+      "loadFailed": "Lỗi khi tải dữ liệu tồn kho"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu tồn kho..."
+    },
+    "fields": {
+      "inventoryCode": "Mã tồn kho",
+      "warehouse": "Kho",
+      "batchCode": "Lô sản xuất",
+      "product": "Sản phẩm",
+      "coffeeType": "Loại cà phê",
+      "quantity": "Số lượng",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "actions": {
+      "backToList": "Quay lại danh sách",
+      "history": "Lịch sử"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noData": "Không có"
+    }
+  },
+  "inventoryLogDetail": {
+    "title": "Chi tiết nhật ký tồn kho",
+    "error": {
+      "notFound": "Không tìm thấy log tồn kho",
+      "loadFailed": "Lỗi khi tải chi tiết log"
+    },
+    "loading": {
+      "title": "Đang tải chi tiết log..."
+    },
+    "status": {
+      "inbound": "📥 Nhập kho",
+      "outbound": "📤 Xuất kho"
+    },
+    "fields": {
+      "inventoryCode": "Mã tồn kho",
+      "warehouse": "Kho hàng",
+      "quantityChanged": "Số lượng thay đổi",
+      "timestamp": "Thời gian",
+      "updatedBy": "Người cập nhật",
+      "actionType": "Loại thao tác",
+      "coffeeType": "Loại cà phê",
+      "batchCode": "Mã lô",
+      "unit": "Đơn vị",
+      "warehouseName": "Tên kho",
+      "warehouseAddress": "Địa chỉ kho",
+      "warehouseCode": "Mã kho",
+      "note": "Ghi chú",
+      "reason": "Lý do thay đổi",
+      "relatedDocument": "Tài liệu liên quan"
+    },
+    "actionTypes": {
+      "increase": "Tăng tồn kho",
+      "decrease": "Giảm tồn kho"
+    },
+    "sections": {
+      "productInfo": "Thông tin sản phẩm",
+      "warehouseInfo": "Thông tin kho"
+    },
+    "actions": {
+      "back": "Quay lại",
+      "viewAllLogs": "Xem tất cả nhật ký"
+    },
+    "common": {
+      "system": "Hệ thống"
+    }
+  },
+  "inventoryHistory": {
+    "title": "Lịch sử thay đổi tồn kho",
+    "subtitle": "Theo dõi các thay đổi về số lượng và trạng thái tồn kho",
+    "error": {
+      "noLogs": "Không có log tồn kho",
+      "loadFailed": "Lỗi khi tải log tồn kho"
+    },
+    "loading": {
+      "title": "Đang tải dữ liệu..."
+    },
+    "stats": {
+      "totalLogs": "Tổng log",
+      "inbound": "Nhập kho",
+      "outbound": "Xuất kho",
+      "today": "Hôm nay"
+    },
+    "sections": {
+      "detailedHistory": "Chi tiết lịch sử"
+    },
+    "actionLabels": {
+      "change": "📦 Thay đổi"
+    },
+    "fields": {
+      "logId": "ID Log",
+      "quantityChanged": "Số lượng thay đổi",
+      "updatedBy": "Người cập nhật",
+      "note": "Ghi chú",
+      "timestamp": "Thời gian"
+    },
+    "actions": {
+      "backToList": "Quay lại danh sách"
+    },
+    "common": {
+      "system": "Hệ thống",
+      "noNote": "Không có ghi chú"
+    },
+    "empty": {
+      "title": "Không có lịch sử tồn kho",
+      "description": "Tồn kho này chưa có thay đổi nào được ghi nhận"
+    }
+  },
+  "createReceipt": {
+    "title": "Tạo phiếu nhập kho",
+    "subtitle": "Xác nhận và tạo phiếu nhập kho từ yêu cầu đã duyệt",
+    "error": {
+      "loadWarehouses": "Không thể tải danh sách kho",
+      "loadWarehousesUnknown": "Lỗi không xác định khi tải danh sách kho",
+      "loadInboundRequests": "Không thể tải phiếu yêu cầu nhập kho",
+      "loadInboundRequestsUnknown": "Lỗi không xác định khi tải phiếu yêu cầu nhập kho",
+      "loadInventories": "Lỗi khi tải tồn kho của kho",
+      "createEmptyInventory": "Không tạo được tồn kho trống",
+      "createReceiptFailed": "Tạo phiếu thất bại từ server",
+      "createReceiptUnknown": "Tạo phiếu thất bại. Vui lòng thử lại"
+    },
+    "success": {
+      "createEmptyInventory": "Đã tạo tồn kho trống cho kho + lô này",
+      "createReceipt": "Tạo phiếu nhập kho thành công"
+    },
+    "validation": {
+      "selectAll": "Vui lòng chọn đầy đủ Phiếu yêu cầu và Kho",
+      "noProductInfo": "Không tìm thấy thông tin sản phẩm (batchId hoặc detailId) tương ứng với phiếu yêu cầu"
+    },
+    "sections": {
+      "receiptInfo": "Thông tin phiếu nhập kho",
+      "requestDetails": "Chi tiết yêu cầu nhập kho",
+      "inventoryStatus": "Tình trạng tồn kho"
+    },
+    "fields": {
+      "inboundRequest": "Phiếu yêu cầu nhập kho",
+      "requestCode": "Mã yêu cầu",
+      "status": "Trạng thái",
+      "requestedQuantity": "Số lượng yêu cầu",
+      "preferredDeliveryDate": "Ngày giao dự kiến",
+      "coffeeType": "Loại cà phê",
+      "information": "Thông tin",
+      "note": "Ghi chú",
+      "warehouse": "Kho nhập hàng"
+    },
+    "placeholders": {
+      "selectRequest": "-- Chọn phiếu yêu cầu --",
+      "selectWarehouse": "-- Chọn kho --",
+      "note": "Ghi chú thêm về phiếu nhập kho (nếu có)..."
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê sơ chế"
+    },
+    "info": {
+      "check": "Kiểm tra",
+      "requestedQuantity": "Số lượng yêu cầu là",
+      "confirmNote": "Khi xác nhận phiếu, bạn sẽ nhập số lượng thực tế nhận được",
+      "remember": "Nhớ",
+      "currentQuantity": "Số lượng hiện tại =",
+      "default": "mặc định",
+      "confirmStep": "Bạn sẽ nhập số lượng thực tế ở bước xác nhận!"
+    },
+    "warning": {
+      "title": "LƯU Ý QUAN TRỌNG - KHÔNG BỎ QUA!",
+      "defaultQuantity": "Số lượng mặc định",
+      "defaultQuantityDesc": "Khi tạo phiếu, hệ thống đặt",
+      "requestedFromFarmer": "Số lượng yêu cầu từ farmer",
+      "nextStep": "Bước tiếp theo",
+      "nextStepDesc": "Khi xác nhận phiếu, bạn PHẢI nhập số lượng thực tế nhận được"
+    },
+    "process": {
+      "title": "Quy trình 2 bước tạo phiếu nhập kho",
+      "step1": {
+        "title": "Bước 1: Tạo phiếu (Bạn đang ở đây)",
+        "autoQuantity": "Hệ thống tự động đặt số lượng =",
+        "selectOnly": "Chỉ cần chọn yêu cầu và kho"
+      },
+      "step2": {
+        "title": "Bước 2: Xác nhận phiếu (Quan trọng!)",
+        "enterActual": "Nhập số lượng thực tế nhận được",
+        "compare": "So sánh với yêu cầu:"
+      }
+    },
+    "inventory": {
+      "selectAll": "Hãy chọn đầy đủ Phiếu và Kho để xem tồn kho",
+      "loading": "Đang tải tồn kho...",
+      "noInventory": "Chưa có tồn kho cho lô này tại kho đã chọn. Hệ thống sẽ tự tạo tồn kho khi bạn xác nhận phiếu.",
+      "creating": "Đang tạo...",
+      "createEmpty": "Tạo tồn kho trống (0 kg)",
+      "createEmptyButton": "Tạo tồn kho trống",
+      "hasInventory": "Đã có tồn kho",
+      "totalExisting": "Tổng hiện có:",
+      "details": "Chi tiết tồn kho",
+      "confirmNote": "Khi bạn xác nhận phiếu, hệ thống sẽ cộng dồn khối lượng vào tồn kho hiện có"
+    },
+    "stats": {
+      "title": "Thống kê nhanh",
+      "warehouses": "Kho",
+      "requests": "Yêu cầu",
+      "approved": "Đã duyệt",
+      "currentRequest": "Yêu cầu hiện tại",
+      "requestedQuantity": "Số lượng yêu cầu",
+      "receiptQuantity": "Số lượng phiếu",
+      "difference": "Chênh lệch"
+    },
+    "actions": {
+      "createReceipt": "Tạo phiếu nhập kho"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "processedBatch": "Lô sơ chế",
+      "cropSeason": "Mùa vụ"
+    }
+  },
+  "sidebar": {
+    "loading": "Đang tải menu...",
+    "navigation": {
+      "overview": "Tổng quan",
+      "batches": "Lô hàng",
+      "notifications": "Thông báo",
+      "warehouseOperations": "Vận hành kho",
+      "warehouseManagement": "Quản lý kho",
+      "inboundRequests": "Yêu cầu nhập kho",
+      "inboundReceipts": "Phiếu nhập kho",
+      "outboundRequests": "Yêu cầu xuất kho",
+      "outboundReceipts": "Phiếu xuất kho",
+      "inventories": "Tồn kho",
+      "inventoryLogs": "Nhật ký tồn kho",
+      "warehouses": "Kho hàng",
+      "warehouseRequest": "Yêu cầu giao hàng"
+    },
+            "user": {
+          "greeting": "Xin chào:",
+          "anonymous": "Ẩn danh",
+          "logout": "Đăng xuất",
+          "logoutTitle": "Đăng xuất và về trang chính"
+        },
+        "profile": "Hồ sơ cá nhân",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất",
+            "staffDashboard": {
+          "title": "Bảng điều khiển Nhân viên",
+          "subtitle": "Quản lý vận hành kho và theo dõi hoạt động",
+          "waitingInbound": "Yêu cầu nhập kho đang chờ",
+          "waitingOutbound": "Yêu cầu xuất kho đang chờ",
+          "monthlyStats": "Thống kê theo tháng",
+          "quickAccess": "Truy cập nhanh",
+          "months": ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"],
+          "chartLabels": {
+            "inbound": "Nhập kho",
+            "outbound": "Xuất kho"
+          },
+          "inv": "Tồn kho",
+          "inventory": "Quản lý tồn kho",
+          "inventoryDesc": "Quản lý tồn kho",
+          "inb": "Nhập kho",
+          "inbound": "Yêu cầu nhập kho",
+          "inboundRequests": "Yêu cầu nhập kho",
+          "inboundRequestsDesc": "Yêu cầu nhập kho",
+          "out": "Xuất kho",
+          "outbound": "Phiếu xuất kho",
+          "outboundRequests": "Yêu cầu xuất kho",
+          "outboundRequestsDesc": "Yêu cầu xuất kho",
+          "outboundReceipts": "Phiếu xuất kho",
+          "outboundReceiptsDesc": "Phiếu xuất kho",
+          "wa": "Kho hàng",
+          "warehou": "Quản lý kho hàng",
+          "warehouses": "Kho hàng",
+          "warehousesDesc": "Quản lý kho hàng",
+          "rec": "Phiếu nhập",
+          "receipts": "Phiếu nhập kho",
+          "receiptsDesc": "Phiếu nhập kho"
+        }
+  },
+  "warehouseDetail": {
+    "title": "Chi tiết kho hàng",
+    "subtitle": "Xem thông tin chi tiết của kho",
+    "error": {
+      "notFound": "Không tìm thấy kho",
+      "loadFailed": "Lỗi khi tải chi tiết kho"
+    },
+    "loading": {
+      "title": "Đang tải danh sách kho hàng...",
+      "inventories": "Đang tải..."
+    },
+          "fields": {
+        "warehouseCode": "Mã kho",
+        "location": "Vị trí",
+        "capacity": "Dung lượng",
+        "manager": "Người quản lý",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "inventories": "Tồn kho trong kho này"
+      },
+      "actions": {
+        "back": "Quay lại"
+      },
+      "common": {
+        "noInventories": "Không có tồn kho",
+        "clickToViewInventories": "Nhấn để xem danh sách tồn kho"
+      },
+      "error": {
+        "title": "Không thể tải dữ liệu",
+        "description": "Lỗi khi tải danh sách kho hàng"
+      },
+    "detail": {
+      "title": "Chi tiết kho hàng",
+      "backToList": "← Quay lại danh sách",
+      "information": {
+        "name": "Tên kho",
+        "address": "Địa chỉ",
+        "capacity": "Dung lượng",
+        "manager": "Quản lý",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo"
+      }
+    },
+    "create": {
+      "title": "Tạo kho hàng mới",
+      "subtitle": "Thêm kho hàng mới vào hệ thống",
+      "form": {
+        "name": "Tên kho *",
+        "namePlaceholder": "Nhập tên kho...",
+        "address": "Địa chỉ *",
+        "addressPlaceholder": "Nhập địa chỉ kho...",
+        "capacity": "Dung lượng (kg) *",
+        "capacityPlaceholder": "Nhập dung lượng kho...",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Nhập mô tả kho..."
+      },
+      "validation": {
+        "nameRequired": "Tên kho là bắt buộc",
+        "addressRequired": "Địa chỉ kho là bắt buộc",
+        "capacityRequired": "Dung lượng kho là bắt buộc",
+        "capacityPositive": "Dung lượng phải lớn hơn 0"
+      },
+      "actions": {
+        "create": "Tạo kho",
+        "cancel": "Hủy bỏ",
+        "creating": "Đang tạo..."
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa kho hàng",
+      "subtitle": "Cập nhật thông tin kho hàng",
+      "actions": {
+        "save": "Lưu thay đổi",
+        "cancel": "Hủy bỏ",
+        "saving": "Đang lưu..."
+      }
+    }
+  },
 
+  "shipments": {
+    "title": "Lô giao hàng",
+    "subtitle": "Xem và quản lý lô giao hàng",
+    "search": {
+      "title": "Tìm kiếm lô giao hàng",
+      "placeholder": "Tìm kiếm...",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày"
+    },
+    "actions": {
+      "createNew": "+ Tạo lô giao mới",
+      "view": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xoá",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "table": {
+      "headers": {
+        "shipmentCode": "Mã lô giao",
+        "orderCode": "Đơn hàng",
+        "deliveryStaff": "Nhân viên giao",
+        "status": "Trạng thái",
+        "timeRange": "Thời gian (Giao – Nhận)",
+        "actions": "Hành động"
+      },
+      "noData": "Không tìm thấy lô giao nào",
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "shipments": "lô giao",
+        "page": "Trang"
+      }
+    },
+    "deleteDialog": {
+      "title": "Xoá lô giao?",
+      "description": "Bạn có chắc chắn muốn xoá lô giao {{shipmentCode}}? Hành động này không thể hoàn tác.",
+      "confirm": "Xoá",
+      "cancel": "Huỷ"
+    },
+    "error": {
+      "notFound": "Không tìm thấy lô giao",
+      "loadFailed": "Lỗi khi tải chi tiết lô giao"
+    },
+    "status": {
+      "pending": "Đang chờ",
+      "inTransit": "Đang giao",
+      "delivered": "Đã giao",
+      "failed": "Thất bại",
+      "returned": "Hoàn trả",
+      "canceled": "Đã huỷ"
+    },
+    "detail": {
+      "title": "Lô giao: {{shipmentCode}}",
+      "editButton": "✏️ Chỉnh sửa",
+      "shipmentInfo": "Thông tin lô giao",
+      "shipmentCode": "Mã lô giao",
+      "order": "Đơn hàng",
+      "deliveryStaff": "Nhân viên giao",
+      "shippedQuantity": "Khối lượng giao",
+      "shippedAt": "Ngày giao",
+      "receivedAt": "Ngày nhận",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "createdBy": "Tạo bởi",
+      "productList": "Danh sách sản phẩm giao",
+      "addProduct": "+ Thêm sản phẩm giao",
+      "table": {
+        "product": "Sản phẩm",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị",
+        "note": "Ghi chú",
+        "actions": "Hành động"
+      },
+      "noProducts": "Không có sản phẩm nào.",
+      "editProduct": "Chỉnh sửa sản phẩm giao",
+      "deleteProduct": "Xoá khỏi lô giao",
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "products": "sản phẩm",
+        "page": "Trang"
+      },
+      "backButton": "← Quay lại",
+      "deleteDialog": {
+        "title": "Xoá sản phẩm khỏi lô giao?",
+        "description": "Bạn có chắc chắn muốn xoá {{productName}} khỏi lô giao? Hành động này không thể hoàn tác.",
+        "confirm": "Xoá",
+        "cancel": "Huỷ"
+      },
+      "error": {
+        "loadFailed": "Không thể xoá sản phẩm khỏi lô giao."
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Tạo lô giao mới",
+        "edit": "Chỉnh sửa lô giao"
+      },
+      "loading": "Đang khởi tạo biểu mẫu chuyến giao...",
+      "order": "Đơn hàng",
+      "selectOrder": "-- Chọn đơn hàng --",
+      "orderCodePlaceholder": "Hoặc nhập OrderCode",
+      "deliveryStaff": "Nhân viên giao",
+      "selectStaff": "-- Chọn nhân viên giao --",
+      "shippedQuantity": "Số lượng đã giao (kg)",
+      "status": "Trạng thái",
+      "shippedAt": "Ngày bắt đầu giao",
+      "receivedAt": "Ngày nhận (nếu có)",
+      "productList": "Danh sách sản phẩm giao",
+      "table": {
+        "orderItem": "Mặt hàng đơn hàng",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị",
+        "note": "Ghi chú"
+      },
+      "selectOrderItem": "-- Chọn order item --",
+      "notePlaceholder": "Ghi chú",
+      "delete": "Xoá",
+      "addRow": "+ Thêm dòng",
+      "totalQuantity": "Tổng khối lượng dòng:",
+      "kg": "kg",
+      "buttons": {
+        "save": "Lưu thay đổi",
+        "create": "Tạo lô giao",
+        "back": "Quay lại"
+      },
+      "validation": {
+        "formNotReady": "Biểu mẫu chưa sẵn sàng, vui lòng thử lại.",
+        "selectOrder": "Vui lòng chọn đơn hàng.",
+        "selectStaff": "Vui lòng chọn nhân viên giao.",
+        "loadOrderItemsFailed": "Không thể tải danh sách mặt hàng đơn hàng.",
+        "saveFailed": "Đã xảy ra lỗi khi lưu chuyến giao."
+      },
+      "success": {
+        "update": "Cập nhật lô giao thành công!",
+        "create": "Tạo lô giao thành công!"
+      }
+    },
+    "detailsForm": {
+      "title": {
+        "create": "Thêm sản phẩm giao",
+        "edit": "Cập nhật sản phẩm giao"
+      },
+      "orderCode": "Mã đơn hàng",
+      "orderItem": "Mặt hàng đơn hàng",
+      "selectOrderItem": "-- Chọn mặt hàng đơn hàng --",
+      "quantity": "Số lượng",
+      "quantityPlaceholder": "vd: 500",
+      "unit": "Đơn vị",
+      "selectUnit": "-- Chọn đơn vị --",
+      "note": "Ghi chú",
+      "notePlaceholder": "Nhập ghi chú (tuỳ chọn)",
+      "buttons": {
+        "cancel": "Huỷ",
+        "add": "Thêm",
+        "update": "Cập nhật",
+        "saving": "Đang lưu..."
+      },
+      "validation": {
+        "selectOrderItem": "Vui lòng chọn mặt hàng đơn hàng (OrderItem).",
+        "quantityRequired": "Số lượng phải lớn hơn 0.",
+        "unitRequired": "Vui lòng chọn đơn vị.",
+        "unknownError": "Đã xảy ra lỗi không xác định.",
+        "serverError": "Lỗi từ máy chủ: {{status}}"
+      },
+      "success": {
+        "add": "Đã thêm sản phẩm giao thành công!",
+        "create": "Cập nhật sản phẩm giao thành công!"
+      }
+    }
+  },
+  "contracts": {
+    "contract": {
+      "title": "Hợp đồng",
+      "description": "Quản lý hợp đồng cung cấp cà phê"
+    },
+    "page": {
+      "list": {
+        "title": "Danh sách hợp đồng",
+        "search": {
+          "title": "Tìm kiếm hợp đồng",
+          "placeholder": "Tìm kiếm...",
+          "description": "Tìm kiếm theo mã hợp đồng, tên hợp đồng, đối tác"
+        },
+        "filters": {
+          "title": "Lọc theo trạng thái",
+          "allStatuses": "Tất cả trạng thái",
+          "dateRange": {
+            "fromDate": "Từ ngày",
+            "toDate": "Đến ngày"
+          }
+        },
+        "table": {
+          "headers": {
+            "contractNumber": "Số hợp đồng",
+            "contractTitle": "Tên hợp đồng",
+            "partner": "Bên mua",
+            "status": "Trạng thái",
+            "time": "Thời gian",
+            "actions": "Hành động"
+          },
+          "empty": "Không tìm thấy hợp đồng nào",
+          "dialog": {
+                "deleteContract": {
+                "title": "Xoá hợp đồng?",
+                "description": "Bạn có chắc chắn muốn xoá hợp đồng <strong>{{contractTitle}}</strong> không? Hành động này không thể hoàn tác.",
+                "confirm": "Xoá",
+                "cancel": "Huỷ"
+              }
+          },
+          "pagination": {
+            "showing": "Đang hiển thị",
+            "to": "đến",
+            "of": "/",
+            "contracts": "hợp đồng",
+            "page": "Trang",
+            "previous": "← Trước",
+            "next": "Sau →"
+          }
+        },
+        "actions": {
+          "createNew": "+ Tạo hợp đồng mới"
+        }
+      },
+      "create": {
+        "title": "Tạo hợp đồng mới",
+        "description": "Tạo hợp đồng cung cấp cà phê mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa hợp đồng",
+        "description": "Cập nhật thông tin hợp đồng",
+        "loading": "Đang tải dữ liệu hợp đồng...",
+        "notFound": "Không tìm thấy hợp đồng với ID: {{id}}"
+      },
+      "detail": {
+        "title": "Chi tiết hợp đồng",
+        "loading": "Đang tải dữ liệu hợp đồng...",
+        "error": "Lỗi tải hợp đồng",
+        "notFound": "Không tìm thấy hợp đồng",
+        "itemList": "Danh sách mặt hàng",
+        "noItems": "Không có mặt hàng nào.",
+        "displaying": "Đang hiển thị",
+        "items": "mặt hàng",
+        "contractInfo": "Thông tin hợp đồng",
+        "contractTitle": "Tiêu đề",
+        "seller": "Bên bán",
+        "buyer": "Bên mua",
+        "deliveryRounds": "Số vòng giao",
+        "totalQuantity": "Tổng khối lượng",
+        "totalValue": "Tổng giá trị",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "signedAt": "Ngày ký",
+        "status": "Trạng thái",
+        "cancelReason": "Lý do huỷ",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "contractFile": "File hợp đồng",
+        "previewContract": "Preview hợp đồng",
+        "clickToViewLarge": "💡 Click vào ảnh để xem lớn hơn",
+        "fileNameWhenDownload": "📁 Tên file khi tải",
+        "downloadContract": "Tải xuống hợp đồng",
+        "viewDirectly": "👁️ Xem trực tiếp",
+        "downloadSuccess": "Đã tải xuống",
+        "downloadError": "Không thể tải file. Vui lòng thử lại.",
+        "itemListTitle": "Danh sách mặt hàng hợp đồng",
+        "addItem": "+ Thêm mặt hàng",
+        "coffeeTypeName": "Tên loại cà phê",
+        "quantity": "Số lượng",
+        "unitPrice": "Đơn giá",
+        "discount": "Chiết khấu",
+        "note": "Ghi chú",
+        "actions": "Hành động",
+        "edit": "Chỉnh sửa",
+        "delete": "Xoá",
+        "deleteItemTitle": "Xoá mặt hàng?",
+        "deleteItemDescription": "Bạn có chắc chắn muốn xoá mặt hàng <strong>{{itemName}}</strong> khỏi hợp đồng không? Hành động này không thể hoàn tác.",
+        "deleteItemConfirm": "Xoá",
+        "deleteItemCancel": "Huỷ",
+        "deleteItemSuccess": "Xóa mặt hàng thành công!",
+        "deleteItemError": "Không thể xoá mặt hàng. Vui lòng thử lại.",
+        "pagination": {
+          "showing": "Đang hiển thị",
+          "to": "đến",
+          "of": "/",
+          "items": "mặt hàng",
+          "page": "Trang",
+          "previous": "← Trước",
+          "next": "Sau →"
+        },
+        "back": "← Quay lại",
+        "editContract": "✏️ Chỉnh sửa"
+      }
+    },
+    "status": {
+      "notStarted": "Chưa bắt đầu",
+      "preparingDelivery": "Chuẩn bị giao",
+      "inProgress": "Đang thực hiện",
+      "partialCompleted": "Hoàn thành một phần",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "expired": "Quá hạn"
+    },
+    "contractStatus": {
+      "NotStarted": "Chưa bắt đầu",
+      "PreparingDelivery": "Chuẩn bị giao",
+      "InProgress": "Đang thực hiện",
+      "PartialCompleted": "Hoàn thành một phần",
+      "Completed": "Hoàn thành",
+      "Cancelled": "Đã hủy",
+      "Expired": "Quá hạn"
+    },
+    "form": {
+      "status": "Trạng thái"
+    },
+    "managerContract": {
+      "status": {
+        "notStarted": "Chưa bắt đầu",
+        "preparingDelivery": "Chuẩn bị giao",
+        "inProgress": "Đang thực hiện",
+        "partialCompleted": "Hoàn thành một phần",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy",
+        "expired": "Quá hạn"
+      },
+      "actions": {
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa",
+        "delete": "Xoá",
+        "deleteConfirm": {
+          "title": "Xoá hợp đồng?",
+          "description": "Bạn có chắc chắn muốn xoá hợp đồng {{contractTitle}}? Hành động này không thể hoàn tác.",
+          "confirm": "Xóa",
+          "cancel": "Hủy"
+        },
+        "download": "Tải xuống hợp đồng",
+        "viewDirectly": "Xem trực tiếp",
+        "addItem": "Thêm mặt hàng",
+        "action": "Hành động"
+      }
+    },
+    "crud": {
+      "form": {
+        "status": "Trạng thái",
+        "basicInfo": "Thông tin cơ bản",
+        "contractNumber": "Số hợp đồng",
+        "contractTitle": "Tên hợp đồng",
+        "seller": "Người bán",
+        "buyer": "Người mua",
+        "deliveryRounds": "Số đợt giao hàng",
+        "totalQuantity": "Tổng khối lượng",
+        "totalValue": "Tổng giá trị",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "signedAt": "Ngày ký kết",
+        "cancelReason": "Lý do hủy",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "contractFile": "Tệp hợp đồng",
+        "previewFile": "Xem trước tệp",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Khối lượng",
+        "unitPrice": "Đơn giá",
+        "discount": "Giảm giá",
+        "note": "Ghi chú",
+        "vndPerKg": "VND/kg"
+      },
+      "validation": {
+        "contractNumberRequired": "Vui lòng nhập số hợp đồng",
+        "contractTitleRequired": "Vui lòng nhập tên hợp đồng",
+        "buyerRequired": "Vui lòng chọn đối tác mua",
+        "startDateRequired": "Vui lòng chọn ngày bắt đầu",
+        "endDateRequired": "Vui lòng chọn ngày kết thúc",
+        "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+        "quantityRequired": "Vui lòng nhập số lượng",
+        "quantityPositive": "Số lượng phải lớn hơn 0",
+        "unitPriceRequired": "Vui lòng nhập đơn giá",
+        "unitPricePositive": "Đơn giá phải lớn hơn 0"
+      },
+      "success": {
+        "create": "Tạo hợp đồng thành công!",
+        "update": "Cập nhật hợp đồng thành công!",
+        "delete": "Xóa hợp đồng thành công!"
+      },
+      "error": {
+        "create": "Tạo hợp đồng thất bại!",
+        "update": "Cập nhật hợp đồng thất bại!",
+        "delete": "Xóa hợp đồng thất bại!"
+      },
+      "dialog": {
+        "deleteItem": {
+          "title": "Xoá mặt hàng?",
+          "description": "Bạn có chắc chắn muốn xoá mặt hàng {{itemName}} khỏi hợp đồng không? Hành động này không thể hoàn tác.",
+          "confirm": "Xoá",
+          "cancel": "Huỷ"
+        }
+      }
+    },
+    "form": {
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "view": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xoá",
+      "download": "Tải xuống hợp đồng",
+      "viewDirectly": "Xem trực tiếp",
+      "addItem": "Thêm mặt hàng",
+      "action": "Hành động"
+    },
+    "contractItem": {
+      "form": {
+        "title": {
+          "create": "Thêm mặt hàng mới",
+          "edit": "Chỉnh sửa mặt hàng"
+        },
+        "fields": {
+          "coffeeType": "Loại cà phê",
+          "coffeeTypePlaceholder": "Chọn loại cà phê...",
+          "quantity": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "discount": "Chiết khấu",
+          "note": "Ghi chú",
+          "notePlaceholder": "Ghi chú bổ sung (tùy chọn)..."
+        },
+        "validation": {
+          "coffeeTypeRequired": "Vui lòng chọn loại cà phê",
+          "quantityRequired": "Vui lòng nhập số lượng",
+          "quantityPositive": "Số lượng phải lớn hơn 0",
+          "unitPriceRequired": "Vui lòng nhập đơn giá",
+          "unitPricePositive": "Đơn giá phải lớn hơn 0",
+          "discountNegative": "Chiết khấu không được âm",
+          "discountExceedsTotal": "Chiết khấu không được vượt quá tổng thành tiền",
+          "noteTooLong": "Ghi chú không được vượt quá 1000 ký tự",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+        },
+        "businessRules": {
+          "title": "Quy tắc nghiệp vụ",
+          "rulesCount": "quy tắc"
+        },
+        "actions": {
+          "create": "Thêm mặt hàng",
+          "update": "Cập nhật",
+          "cancel": "Huỷ",
+          "saving": "Đang lưu..."
+        },
+        "success": {
+          "create": "Thêm mặt hàng thành công!",
+          "update": "Cập nhật mặt hàng thành công!"
+        },
+        "error": {
+          "saveError": "Không thể lưu mặt hàng. Vui lòng thử lại."
+        }
+      }
+    },
+    "contract": {
+      "edit": "Chỉnh sửa hợp đồng",
+      "new": "Tạo hợp đồng mới",
+      "buyerId": "Bên mua",
+      "contractNumber": "Số hợp đồng",
+      "contractTitle": "Tên hợp đồng",
+      "contractFileUrl": "File hợp đồng",
+      "deliveryRounds": "Số đợt giao hàng",
+      "totalQuantity": "Tổng khối lượng",
+      "totalValue": "Tổng giá trị",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "signedAt": "Ngày ký",
+      "status": "Trạng thái",
+      "cancelReason": "Lý do hủy",
+              "contractItems": "Danh sách mặt hàng hợp đồng",
+      "buyer": "Bên mua",
+      "contractFile": "File hợp đồng",
+      "selectFile": "📁 Chọn file",
+      "viewFile": "👁️ Xem file",
+      "support": "💡 Hỗ trợ",
+      "newFile": "File mới được chọn",
+      "currentFile": "File hiện tại",
+      "newFileWillReplace": "ℹ️ File mới sẽ thay thế file hiện tại khi cập nhật",
+      "clickToViewFull": "Click để xem ảnh rõ hơn",
+      "imagePreview": "📷 {{name}}",
+      "viewPdf": "📄 Xem PDF: {{fileName}}",
+      "pdfPreview": "📄 {{name}}",
+      "wordPreview": "📝 {{name}}",
+      "deleteNewFile": "🗑️ Xóa file mới",
+      "deleteCurrentFile": "🗑️ Xóa file hiện tại",
+      "selectBuyer": "Chọn bên mua",
+      "enterCancelReason": "Vui lòng ghi lý do hủy hợp đồng...",
+      "delete": "Xoá",
+      "addItem": "Thêm mặt hàng",
+      "save": "Lưu hợp đồng",
+      "back": "Quay lại",
+      "format": "💡 Định dạng",
+      "example": "💡 VD",
+              "statusAutoUpdate": "💡 Trạng thái sẽ tự động cập nhật: \"Đang thực hiện\" nếu ngày bắt đầu ở quá khứ hoặc hiện tại, \"Chưa bắt đầu\" nếu ngày bắt đầu ở tương lai",
+      "updateSuccess": "Cập nhật hợp đồng thành công!",
+      "createSuccess": "Tạo hợp đồng thành công!",
+      "businessRules": "Cần tuân thủ quy tắc nghiệp vụ",
+      "rules": "quy tắc",
+      "summary": "📋 Tóm tắt",
+      "adjustTotal": " Cần điều chỉnh tổng khối lượng/giá trị hợp đồng",
+      "removeDuplicate": " Cần loại bỏ mặt hàng trùng loại",
+      "changeNumber": " Cần đổi số hợp đồng",
+      "contactAdmin": " Cần liên hệ admin",
+      "instructions": "💡 Hướng dẫn",
+      "checkTotal": "• Kiểm tra lại tổng khối lượng và giá trị của các mặt hàng",
+      "ensureTotal": "• Đảm bảo tổng từ các mặt hàng không vượt quá tổng đã khai báo",
+      "orIncrease": "• Hoặc tăng tổng khối lượng/giá trị hợp đồng lên",
+      "totalFromItems": "• Tổng từ mặt hàng: {{totalQuantity}} kg, {{totalValue}} VND",
+      "currentContract": "• Tổng hợp đồng hiện tại: {{totalQuantity}} kg, {{totalValue}} VND",
+      "updateTotal": "Đã cập nhật tổng từ mặt hàng",
+      "autoUpdateTotal": "Tự động cập nhật tổng",
+      "noDuplicate": "• Không được có 2 dòng hợp đồng cùng loại cà phê",
+      "numberExists": "• Số hợp đồng đã tồn tại, hãy đổi số khác",
+      "contactAdminForPermission": "• Liên hệ admin để được cấp quyền phù hợp",
+      "checkNonNegativeValues": "• Kiểm tra các giá trị số không được âm",
+      "checkMinMaxValues": "• Kiểm tra các điều kiện về giá trị min/max"
+    },
+    "contractItems": {
+      "coffeeTypeId": "Loại cà phê",
+      "quantity": "Số lượng (kg)",
+      "unitPrice": "Đơn giá (VND/Kg)",
+      "discountAmount": "Chiết khấu (%)",
+      "note": "Ghi chú",
+      "selectCoffeeType": "Chọn loại cà phê",
+      "notePlaceholder": "Ghi chú",
+      "item": "Mặt hàng {{index}}"
+    },
+    "validation": {
+      "deliveryRounds": "Số đợt giao hàng phải là số nguyên dương",
+      "totalQuantity": "Tổng khối lượng không được âm",
+      "totalValue": "Tổng giá trị không được âm",
+      "quantity": "Số lượng phải lớn hơn 0",
+      "unitPrice": "Đơn giá phải lớn hơn 0",
+      "discountAmount": "Chiết khấu không được âm",
+      "contractNumberRequired": "Số hợp đồng là bắt buộc",
+      "contractNumberLength": "Số hợp đồng phải có ít nhất 3 ký tự",
+      "contractTitleRequired": "Tên hợp đồng là bắt buộc",
+      "contractTitleLength": "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng",
+      "contractTitleMaxLength": "Tên hợp đồng không được quá 200 ký tự",
+      "buyerIdRequired": "Vui lòng chọn bên mua",
+      "startDateRequired": "Ngày bắt đầu là bắt buộc",
+      "endDateRequired": "Ngày kết thúc là bắt buộc",
+      "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+      "signedAtAfterStartDate": "Ngày ký hợp đồng không được sau ngày bắt đầu",
+              "contractFileSize": "File không được quá lớn",
+      "contractFileType": "Chỉ hỗ trợ file ảnh (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)",
+      "cancelReasonRequired": "Lý do hủy là bắt buộc khi trạng thái là 'Đã hủy'",
+      "contractItemsRequired": "Vui lòng thêm ít nhất 1 mặt hàng vào hợp đồng",
+      "coffeeTypeIdRequired": "Vui lòng chọn loại cà phê",
+      "formErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+      "dateError": "Lỗi ngày tháng: Ngày ký hợp đồng phải ≤ Ngày bắt đầu"
+    },
+    "error": {
+      "loadPreview": "Không thể tải ảnh preview"
+    }
+  },
+  "managerWarehouses": {
+    "title": "🏭 Quản lý kho hàng",
+    "subtitle": "Theo dõi và quản lý tất cả kho hàng",
+    "stats": {
+      "totalWarehouses": "Tổng số kho",
+      "totalCapacity": "Tổng dung lượng",
+      "usedCapacity": "Đã sử dụng",
+      "availableCapacity": "Còn trống",
+      "kg": "kg",
+      "criticalWarehouses": "Kho báo động"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm kho hàng...",
+      "results": "kết quả"
+    },
+    "loading": {
+      "title": "Đang tải danh sách kho hàng..."
+    },
+    "empty": {
+      "title": "Chưa có kho hàng nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "status": {
+      "critical": "Báo động",
+      "warning": "Cảnh báo", 
+      "normal": "Bình thường"
+    },
+    "error": {
+      "loadData": "Không thể tải thông tin kho hàng",
+      "deleteConfirm": "Xoá kho hàng?"
+    },
+    "success": {
+      "deleteSuccess": "Xoá kho hàng thành công"
+    },
+    "actions": {
+      "createNew": "Tạo kho mới",
+      "delete": "Xoá"
+    },
+    "list": {
+      "title": "Danh sách kho hàng",
+      "searchPlaceholder": "Tìm kiếm kho hàng...",
+      "noWarehouses": "Chưa có kho hàng nào",
+      "createNew": "Tạo kho mới",
+      "headers": {
+        "warehouseName": "Tên kho",
+        "location": "Địa điểm",
+        "capacity": "Dung lượng",
+        "usedCapacity": "Đã sử dụng",
+        "availableCapacity": "Còn trống",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa",
+        "delete": "Xoá",
+        "deleteConfirm": "Xoá kho hàng?",
+        "deleteMessage": "Bạn có chắc chắn muốn xoá kho hàng {warehouseName}? Hành động này không thể hoàn tác.",
+        "deleteSuccess": "Xoá kho hàng thành công",
+        "deleteError": "Xoá kho hàng thất bại."
+      }
+    },
+    "create": {
+      "title": "Tạo kho hàng mới",
+      "fields": {
+        "warehouseName": "Tên kho hàng",
+        "location": "Địa điểm",
+        "capacity": "Dung lượng",
+        "description": "Mô tả",
+        "name": "Tên kho hàng"
+      },
+      "placeholders": {
+        "warehouseName": "Nhập tên kho hàng",
+        "location": "Nhập địa điểm kho hàng",
+        "capacity": "Nhập dung lượng kho hàng",
+        "description": "Nhập mô tả kho hàng",
+        "name": "Nhập tên kho hàng"
+      },
+      "validation": {
+        "nameRequired": "Vui lòng nhập tên kho hàng",
+        "locationRequired": "Vui lòng nhập địa điểm",
+        "capacityRequired": "Vui lòng nhập dung lượng",
+        "capacityPositive": "Dung lượng phải lớn hơn 0",
+        "nameExists": "Tên kho hàng đã tồn tại",
+        "fillAllFields": "Vui lòng nhập đầy đủ thông tin"
+      },
+      "actions": {
+        "create": "Tạo kho hàng",
+        "creating": "Đang tạo...",
+        "createSuccess": "Tạo kho hàng thành công"
+      }
+    },
+    "detail": {
+      "title": "Chi tiết kho hàng",
+      "subtitle": "Thông tin chi tiết và trạng thái kho hàng",
+      "loading": "Đang tải dữ liệu...",
+      "available": "Còn trống",
+      "error": {
+        "loadData": "Không thể tải thông tin kho hàng: ",
+        "notFound": "Không tìm thấy kho hàng."
+      },
+      "warehouseInfo": {
+        "title": "Thông tin kho hàng",
+        "fields": {
+          "warehouseName": "Tên kho:",
+          "location": "Địa điểm:",
+          "capacity": "Dung lượng:",
+          "usedCapacity": "Đã sử dụng:",
+          "available": "Còn trống:",
+          "description": "Mô tả:",
+          "status": "Trạng thái:",
+          "createdAt": "Ngày tạo:",
+          "updatedAt": "Ngày cập nhật:",
+          "name": "Tên kho:",
+          "manager": "Người quản lý:"
+        }
+      },
+      "inventoryInfo": {
+        "title": "Thông tin tồn kho",
+        "fields": {
+          "itemTypes": "Loại hàng:",
+          "totalQuantity": "Tổng số lượng:",
+          "usageRate": "Tỷ lệ sử dụng:"
+        }
+      },
+      "inventoryList": {
+        "title": "Danh sách tồn kho",
+        "loading": "Đang tải tồn kho...",
+        "empty": "Chưa có tồn kho nào",
+        "headers": {
+          "inventoryCode": "Mã tồn kho",
+          "product": "Sản phẩm",
+          "quantity": "Số lượng",
+          "unit": "Đơn vị"
+        }
+      },
+      "capacityChart": {
+        "title": "Biểu đồ dung lượng",
+        "used": "Đã sử dụng",
+        "available": "Còn trống"
+      },
+      "actions": {
+        "back": "← Quay lại",
+        "edit": "✏️ Chỉnh sửa",
+        "delete": "🗑️ Xoá",
+        "deleteConfirm": "Xoá kho hàng?",
+        "deleteMessage": "Bạn có chắc chắn muốn xoá kho hàng {warehouseName}? Hành động này không thể hoàn tác.",
+        "deleteSuccess": "Xoá kho hàng thành công",
+        "deleteError": "Xoá kho hàng thất bại.",
+        "hideInventory": "Ẩn tồn kho",
+        "showInventory": "Hiện tồn kho"
+      }
+    }
+  },
+     "managerOrders": {
+     "title": "📦 Quản lý đơn hàng",
+     "subtitle": "Theo dõi và quản lý tất cả đơn hàng",
+     "status": {
+       "pending": "Chờ xử lý",
+       "preparing": "Đang chuẩn bị",
+       "shipped": "Đã xuất hàng",
+       "delivered": "Đã giao hàng",
+       "cancelled": "Đã huỷ",
+       "failed": "Giao thất bại"
+     },
+    "list": {
+      "title": "Danh sách đơn hàng",
+      "subtitle": "Quản lý và theo dõi tất cả đơn hàng",
+      "search": {
+        "title": "Tìm kiếm đơn hàng",
+        "placeholder": "Tìm kiếm..."
+      },
+             "filters": {
+         "fromDate": "Từ ngày",
+         "toDate": "Đến ngày",
+         "status": "Lọc theo trạng thái",
+         "allStatuses": "Tất cả trạng thái"
+       },
+      "actions": {
+        "createNew": "+ Tạo đơn hàng mới"
+      },
+             "table": {
+         "headers": {
+           "orderCode": "Mã đơn hàng",
+           "contractNumber": "Số hợp đồng",
+           "deliveryBatchCode": "Mã đợt giao",
+           "deliveryDate": "Ngày giao",
+           "totalAmount": "Tổng giá trị (VNĐ)",
+           "status": "Trạng thái",
+           "actions": "Hành động"
+         },
+         "status": {
+           "pending": "Chờ xử lý",
+           "preparing": "Đang chuẩn bị",
+           "shipped": "Đã xuất hàng",
+           "delivered": "Đã giao hàng",
+           "cancelled": "Đã huỷ",
+           "failed": "Giao thất bại"
+         },
+        "tooltips": {
+          "deliveryDate": "Ngày giao thực tế nếu có, không thì ngày đặt.",
+          "totalAmount": "Tổng giá trị tiền của đơn hàng (sau đối soát).",
+          "viewDetails": "Xem chi tiết",
+          "edit": "Chỉnh sửa",
+          "delete": "Xoá"
+        }
+      },
+      "loading": {
+        "loadingData": "Đang tải dữ liệu..."
+      },
+      "error": {
+        "loadOrders": "Không thể lấy danh sách đơn hàng"
+      },
+      "empty": {
+        "noOrders": "Chưa có đơn hàng nào",
+        "noResults": "Không có đơn hàng phù hợp."
+      },
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "orders": "đơn hàng",
+        "page": "Trang",
+        "previous": "← Trước",
+        "next": "Sau →"
+      },
+      "delete": {
+        "confirm": "Xoá đơn hàng?",
+        "message": "Bạn có chắc chắn muốn xoá đơn hàng {orderCode} không? Hành động này sẽ ẩn đơn hàng khỏi danh sách và không thể hoàn tác.",
+        "success": "Xoá thành công",
+        "error": "Lỗi xoá đơn hàng"
+      }
+    },
+    "create": {
+      "title": "Tạo đơn hàng mới",
+      "fields": {
+        "deliveryBatch": "Đợt giao hàng",
+        "deliveryRound": "Vòng giao hàng",
+        "orderDate": "Ngày đặt hàng",
+        "actualDeliveryDate": "Ngày giao thực tế",
+        "note": "Ghi chú",
+        "status": "Trạng thái",
+        "cancelReason": "Lý do hủy"
+      },
+      "placeholders": {
+        "deliveryBatch": "Chọn đợt giao hàng",
+        "deliveryRound": "VD: 1",
+        "orderDate": "Chọn ngày đặt hàng",
+        "actualDeliveryDate": "Chọn ngày giao thực tế",
+        "note": "Nhập ghi chú cho đơn hàng",
+        "cancelReason": "Nhập lý do hủy đơn hàng"
+      },
+      "validation": {
+        "fillRequiredFields": "Vui lòng nhập đầy đủ thông tin bắt buộc",
+        "selectDeliveryBatch": "Vui lòng chọn đợt giao hàng",
+        "addAtLeastOneItem": "Vui lòng thêm ít nhất một mặt hàng"
+      },
+      "actions": {
+        "create": "Tạo đơn hàng",
+        "creating": "Đang tạo...",
+        "createSuccess": "Tạo đơn hàng thành công"
+      },
+      "loading": "Đang tải...",
+      "form": {
+        "fields": {
+          "deliveryBatch": "Đợt giao hàng",
+          "deliveryRound": "Vòng giao hàng",
+          "orderDate": "Ngày đặt hàng",
+          "actualDeliveryDate": "Ngày giao thực tế",
+          "note": "Ghi chú",
+          "status": "Trạng thái",
+          "cancelReason": "Lý do hủy",
+          "productName": "Tên sản phẩm",
+          "quantity": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "discount": "Giảm giá (%)",
+          "totalPrice": "Thành tiền"
+        },
+        "placeholders": {
+          "selectDeliveryBatch": "Chọn đợt giao hàng",
+          "deliveryRound": "VD: 1",
+          "orderDate": "Chọn ngày đặt hàng",
+          "actualDeliveryDate": "Chọn ngày giao thực tế",
+          "note": "Nhập ghi chú cho đơn hàng",
+          "cancelReason": "Nhập lý do hủy đơn hàng",
+          "selectProduct": "Chọn sản phẩm",
+          "quantity": "Nhập số lượng",
+          "unitPrice": "Nhập đơn giá",
+          "discount": "Nhập % giảm giá"
+        },
+        "validation": {
+          "selectDeliveryBatch": "Vui lòng chọn đợt giao hàng.",
+          "addAtLeastOneItem": "Cần ít nhất 1 dòng sản phẩm.",
+          "selectDeliveryItem": "Vui lòng chọn mặt hàng đợt giao.",
+          "selectProduct": "Vui lòng chọn sản phẩm.",
+          "quantityRequired": "Số lượng phải lớn hơn 0.",
+          "unitPriceRequired": "Đơn giá phải lớn hơn 0.",
+          "actualDeliveryDateBeforeOrderDate": "Ngày giao thực tế không được trước ngày tạo đơn hàng.",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+        },
+        "actions": {
+          "addItem": "+ Thêm mặt hàng",
+          "removeItem": "Xóa",
+          "updateOrder": "Cập nhật đơn hàng",
+          "updating": "Đang cập nhật đơn hàng...",
+          "updateSuccess": "Cập nhật đơn hàng thành công!",
+          "updateError": "Cập nhật đơn hàng thất bại.",
+          "createOrder": "Tạo đơn hàng",
+          "creating": "Đang tạo đơn hàng...",
+          "createSuccess": "Tạo đơn hàng thành công!",
+          "createError": "Tạo đơn hàng thất bại."
+        },
+        "errors": {
+          "loadDeliveryBatch": "Không thể tải chi tiết đợt giao và danh sách sản phẩm.",
+          "loadDeliveryBatches": "Không tải được danh sách đợt giao.",
+          "loadData": "Không thể tải dữ liệu.",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+          "saveOrderError": "Đã xảy ra lỗi khi lưu đơn hàng.",
+          "businessError": "Lỗi nghiệp vụ: ",
+          "accessError": "Lỗi quyền truy cập: ",
+          "dataError": "Lỗi dữ liệu: "
+        },
+        "businessRules": {
+          "title": "Cần tuân thủ quy tắc nghiệp vụ:",
+          "rules": "quy tắc",
+          "summary": "Tóm tắt",
+          "adjustOrderInfo": "Cần điều chỉnh thông tin đơn hàng",
+          "removeDuplicateProducts": "Cần loại bỏ sản phẩm trùng lặp",
+          "changeOrderInfo": "Cần đổi thông tin đơn hàng",
+          "contactAdmin": "Cần liên hệ admin",
+          "deliveryBatchUsed": "Lô giao hàng đã được sử dụng",
+          "dataNotFound": "Dữ liệu không tồn tại",
+          "guidance": "Hướng dẫn",
+          "checkOrderInfo": "Kiểm tra lại thông tin đơn hàng",
+          "noDuplicateProducts": "Không được có 2 dòng đơn hàng cùng sản phẩm",
+          "orderInfoExists": "Thông tin đơn hàng đã tồn tại, hãy đổi thông tin khác",
+          "contactAdminForPermission": "Liên hệ admin để được cấp quyền phù hợp",
+          "oneOrderPerBatch": "Mỗi lô giao hàng chỉ có thể tạo 1 đơn hàng",
+          "orderDateNotExceedCurrent": "Ngày đặt hàng không được vượt quá ngày hiện tại",
+          "deliveryDateNotBeforeOrder": "Ngày giao thực tế không được trước ngày đặt hàng",
+          "discountNotExceedTotal": "Giảm giá không được vượt quá tổng thành tiền",
+          "discountNotNegative": "Giảm giá không được âm",
+          "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa"
+        },
+        "fields": {
+          "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+        },
+        "table": {
+          "headers": {
+            "deliveryItem": "Mặt hàng đợt giao",
+            "product": "Sản phẩm",
+            "quantity": "Số lượng (kg)",
+            "unitPrice": "Đơn giá (VND/Kg)",
+            "discount": "Giảm trừ (%)",
+            "note": "Ghi chú"
+          }
+        },
+        "placeholders": {
+          "selectDeliveryItem": "Chọn mặt hàng",
+          "selectProduct": "Chọn sản phẩm",
+          "note": "Ghi chú"
+        },
+        "summary": {
+          "totalQuantity": "Tổng SL",
+          "totalAmount": "Tổng tiền tạm tính"
+        }
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa đơn hàng",
+      "loading": "Đang tải đơn hàng...",
+      "notFound": "Không tìm thấy đơn hàng.",
+      "error": {
+        "loadOrder": "Không thể tải chi tiết đơn hàng."
+      }
+    },
+    "detail": {
+      "title": "📦 Chi tiết đơn hàng",
+      "subtitle": "Thông tin chi tiết và mặt hàng trong đơn hàng",
+      "loading": "⏳ Đang tải dữ liệu...",
+      "error": {
+        "loadData": "Không thể tải chi tiết đơn hàng: ",
+        "notFound": "❌ Không tìm thấy đơn hàng."
+      },
+      "orderInfo": {
+        "title": "Thông tin đơn hàng",
+        "fields": {
+          "orderCode": "Mã đơn hàng:",
+          "contractNumber": "Số hợp đồng:",
+          "deliveryRound": "Đợt giao:",
+          "deliveryDate": "Ngày giao:",
+          "totalAmount": "Tổng giá trị (VNĐ):",
+          "status": "Trạng thái:",
+          "note": "Ghi chú:",
+          "cancelReason": "Lý do huỷ:"
+        },
+        "tooltips": {
+          "deliveryDate": "Ngày giao thực tế nếu có, không thì ngày đặt.",
+          "totalAmount": "Tổng giá trị tiền của đơn hàng."
+        }
+      },
+      "productList": {
+        "title": "Danh sách sản phẩm",
+        "headers": {
+          "productName": "Tên sản phẩm",
+          "quantity": "Số lượng",
+          "unitPrice": "Đơn giá (VNĐ)",
+          "discount": "Giảm giá (%)",
+          "totalPrice": "Thành tiền (VNĐ)",
+          "note": "Ghi chú",
+          "actions": "Hành động"
+        },
+        "empty": "Chưa có mặt hàng nào",
+        "addItem": "+ Thêm mặt hàng"
+      },
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "to": "đến",
+        "of": "/",
+        "items": "mặt hàng",
+        "page": "Trang",
+        "previous": "← Trước",
+        "next": "Sau →"
+      },
+      "actions": {
+        "back": "← Quay lại",
+        "edit": "✏️ Chỉnh sửa",
+        "delete": "Xoá",
+        "deleteConfirm": "Xoá mặt hàng?",
+        "deleteMessage": "Bạn có chắc chắn muốn xoá mặt hàng {productName} khỏi đơn hàng không? Hành động này sẽ ẩn khỏi danh sách và không thể hoàn tác.",
+        "deleteSuccess": "Xoá mặt hàng thành công",
+        "deleteError": "Xoá mặt hàng thất bại.",
+        "loading": "Đang xoá..."
+      }
+    }
+  },
+  "managerInventories": {
+    "title": "📦 Quản lý tồn kho",
+    "subtitle": "Theo dõi và quản lý tồn kho trong các kho hàng",
+    "stats": {
+      "totalInventories": "Tổng số tồn kho",
+      "totalQuantity": "Tổng số lượng",
+      "inStock": "Còn hàng",
+      "outOfStock": "Hết hàng",
+      "warehouses": "Số kho hàng",
+      "coffeeTypes": "Loại cà phê",
+      "kg": "kg"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm theo mã tồn kho, kho hàng, loại cà phê...",
+      "results": "kết quả"
+    },
+    "filters": {
+      "warehouse": "Kho hàng:",
+      "coffeeType": "Loại cà phê:",
+      "all": "Tất cả",
+      "selectWarehouse": "Chọn kho hàng",
+      "selectCoffeeType": "Chọn loại cà phê"
+    },
+    "table": {
+      "title": "Danh sách tồn kho",
+      "headers": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouseName": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "info": "Thông tin",
+        "product": "Sản phẩm",
+        "quantity": "Số lượng",
+        "status": "Trạng thái",
+        "actions": "Hành động",
+        "batchCode": "Mã lô",
+        "lastUpdated": "Cập nhật lần cuối"
+      },
+      "status": {
+        "inStock": "Còn hàng",
+        "outOfStock": "Hết hàng"
+      },
+      "actions": {
+        "view": "Xem",
+        "logs": "Nhật ký",
+        "edit": "Chỉnh sửa"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "items": "mục",
+      "inventories": "tồn kho"
+    },
+    "empty": {
+      "title": "Không có tồn kho nào",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách tồn kho..."
+    },
+    "error": {
+      "loadData": "Không thể tải danh sách tồn kho",
+      "systemError": "Lỗi hệ thống: ",
+      "deleteConfirm": "Xoá tồn kho này?",
+      "deleteSuccess": "Xoá tồn kho thành công",
+      "deleteFailed": "Xoá tồn kho thất bại",
+      "notFound": "Không tìm thấy tồn kho",
+      "loadInventoryData": "Không thể tải dữ liệu tồn kho",
+      "unknownError": "Lỗi không xác định",
+      "systemErrorCreate": "Lỗi hệ thống khi tạo tồn kho: "
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định"
+    },
+    "coffeeInfo": {
+      "season": "Mùa vụ",
+      "batch": "Lô sơ chế",
+      "info": "Thông tin"
+    },
+    "status": {
+      "inStock": "Còn hàng",
+      "outOfStock": "Hết hàng"
+    },
+    "actions": {
+      "createNew": "Tạo tồn kho mới",
+      "viewDetails": "Xem chi tiết",
+      "viewHistory": "Xem lịch sử"
+    },
+    "create": {
+      "title": "Tạo tồn kho mới",
+      "fields": {
+        "warehouse": "Kho hàng",
+        "batch": "Mẻ hàng",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị"
+      },
+      "placeholders": {
+        "selectWarehouse": "Chọn kho hàng",
+        "selectBatch": "Chọn mẻ hàng",
+        "quantity": "Nhập số lượng",
+        "unit": "Nhập đơn vị"
+      },
+      "validation": {
+        "selectWarehouse": "Vui lòng chọn kho hàng",
+        "quantityRequired": "Vui lòng nhập số lượng",
+        "unitRequired": "Vui lòng nhập đơn vị"
+      },
+      "actions": {
+        "create": "Tạo tồn kho"
+      }
+    },
+    "success": {
+      "createSuccess": "Tạo tồn kho thành công!"
+    },
+    "detail": {
+      "title": "Chi tiết tồn kho",
+      "subtitle": "Thông tin chi tiết về tồn kho",
+      "fields": {
+        "inventoryCode": "Mã tồn kho",
+        "warehouseName": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "product": "Sản phẩm",
+        "quantity": "Số lượng",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật"
+      },
+      "actions": {
+        "backToList": "Quay lại danh sách"
+      },
+      "loading": "Đang tải..."
+    },
+    "logs": {
+      "title": "Lịch sử tồn kho",
+      "subtitle": "Theo dõi mọi thay đổi của tồn kho này",
+      "backToDetail": "Quay lại chi tiết",
+      "stats": {
+        "totalLogs": "Tổng số log",
+        "inbound": "Nhập kho",
+        "outbound": "Xuất kho",
+        "today": "Hôm nay"
+      },
+      "detail": {
+        "title": "Chi tiết lịch sử",
+        "logs": "log"
+      },
+      "loading": {
+        "title": "Đang tải lịch sử..."
+      },
+      "fields": {
+        "logId": "Mã log",
+        "quantityChanged": "Số lượng thay đổi",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú",
+        "time": "Thời gian"
+      },
+      "actions": {
+        "inbound": "Nhập kho",
+        "outbound": "Xuất kho",
+        "change": "Thay đổi"
+      },
+      "empty": {
+        "title": "Không có lịch sử",
+        "description": "Chưa có hoạt động nào được ghi nhận"
+      },
+      "common": {
+        "system": "Hệ thống",
+        "noNote": "Không có ghi chú"
+      },
+      "error": {
+        "noLogs": "Không có log nào",
+        "loadLogs": "Không thể tải lịch sử"
+      }
+    }
+  },
+  "managerInventoryLogs": {
+    "title": "📋 Nhật ký tồn kho",
+    "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",
+    "stats": {
+      "totalLogs": "Tổng số log",
+      "inboundToday": "Nhập kho hôm nay",
+      "inboundTurns": "Lượt nhập kho",
+      "outboundTurns": "Lượt xuất kho"
+    },
+    "search": {
+      "placeholder": "🔍 Tìm theo mã kho, loại cà phê, kho hàng..."
+    },
+    "filters": {
+      "all": "🔄 Tất cả",
+      "increase": "📥 Nhập kho",
+      "decrease": "📤 Xuất kho",
+      "inbound": "📥 Nhập kho",
+      "outbound": "📤 Xuất kho"
+    },
+    "table": {
+      "title": "Danh sách lịch sử tồn kho",
+      "headers": {
+        "actionType": "Loại hành động",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "warehouse": "Kho hàng",
+        "coffeeType": "Loại cà phê",
+        "quantity": "Số lượng",
+        "updatedBy": "Người cập nhật",
+        "note": "Ghi chú",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "inbound": "📥 Nhập kho",
+        "outbound": "📤 Xuất kho",
+        "details": "Chi tiết",
+        "delete": "Xoá"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong tổng số",
+      "logs": "log",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "empty": {
+      "title": "Không có log phù hợp với bộ lọc",
+      "description": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
+    },
+    "loading": {
+      "title": "Đang tải danh sách log...",
+      "description": "Vui lòng chờ trong khi chúng tôi tải dữ liệu"
+    },
+    "error": {
+      "title": "Không thể tải dữ liệu",
+      "description": "Lỗi khi tải danh sách log tồn kho",
+      "retry": "Thử lại",
+      "noLogs": "Không có log tồn kho",
+      "loadFailed": "Lỗi khi tải log tồn kho",
+      "deleteFailed": "Xoá log thất bại"
+    },
+    "success": {
+      "deleteLog": "Xoá log thành công"
+    },
+    "confirmation": {
+      "deleteMessage": "Bạn có chắc chắn muốn xoá log này?"
+    },
+    "common": {
+      "kg": "kg",
+      "system": "Hệ thống",
+      "na": "N/A",
+      "noNote": "Không có ghi chú"
+    },
+    "detail": {
+      "title": "Chi tiết log tồn kho",
+      "subtitle": "Thông tin chi tiết về hoạt động tồn kho",
+      "back": "Quay lại",
+      "backToList": "Quay lại danh sách",
+      "loading": {
+        "title": "Đang tải chi tiết log..."
+      },
+      "error": {
+        "loadData": "Không thể tải dữ liệu log",
+        "notFound": "Không tìm thấy log"
+      },
+      "sections": {
+        "batchInfo": "Thông tin lô hàng",
+        "changeDetails": "Chi tiết thay đổi",
+        "quickStats": "Thống kê nhanh",
+        "actions": "Hành động"
+      },
+      "fields": {
+        "logId": "Mã log",
+        "timestamp": "Thời gian",
+        "inventoryCode": "Mã tồn kho",
+        "batchCode": "Mã lô",
+        "product": "Sản phẩm",
+        "coffeeType": "Loại cà phê",
+        "seasonCode": "Mã vụ mùa",
+        "farmerName": "Tên nông dân",
+        "warehouseName": "Tên kho hàng",
+        "quantityChanged": "Số lượng thay đổi",
+        "note": "Ghi chú",
+        "updatedBy": "Người cập nhật",
+        "actionType": "Loại hành động"
+      },
+      "status": {
+        "completed": "Hoàn thành"
+      },
+      "actions": {
+        "printDetails": "In chi tiết",
+        "viewWarehouseLocation": "Xem vị trí kho"
+      }
+    }
+  },
+  "managerWarehouseRequest": {
+    "title": "📤 Yêu cầu xuất kho",
+    "subtitle": "Quản lý yêu cầu xuất kho từ đơn hàng",
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingRequests": "Đang chờ",
+      "approvedRequests": "Đã duyệt",
+      "completedRequests": "Hoàn thành",
+      "cancelledRequests": "Đã hủy"
+    },
+    "search": {
+      "results": "kết quả"
+    },
+    "placeholders": {
+      "search": "Tìm kiếm theo mã yêu cầu...",
+      "selectWarehouse": "Chọn kho hàng",
+      "selectInventory": "Chọn tồn kho",
+      "quantity": "Nhập số lượng",
+      "unit": "Nhập đơn vị (kg, tấn...)",
+      "purpose": "Mô tả mục đích xuất kho",
+      "reason": "Lý do xuất kho",
+      "selectOrder": "Chọn đơn hàng",
+      "selectOrderItem": "Chọn mục hàng"
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "of": "trong tổng số",
+      "requests": "yêu cầu"
+    },
+    "empty": {
+      "noRequests": "Không có yêu cầu xuất kho nào",
+      "noRequestsYet": "Chưa có yêu cầu xuất kho nào"
+    },
+    "loading": {
+      "loadingData": "Đang tải dữ liệu...",
+      "loadingDetail": "Đang tải chi tiết yêu cầu..."
+    },
+    "error": {
+      "loadRequests": "Không thể tải danh sách yêu cầu",
+      "invalidData": "Dữ liệu không hợp lệ",
+      "cancelRequest": "Không thể hủy yêu cầu",
+      "loadDetail": "Không thể tải chi tiết yêu cầu",
+      "loadData": "Không thể tải dữ liệu",
+      "createRequest": "Không thể tạo yêu cầu"
+    },
+    "success": {
+      "cancelSuccess": "Hủy yêu cầu thành công",
+      "createRequest": "Tạo yêu cầu thành công"
+    },
+    "confirmation": {
+      "cancelMessage": "Bạn có chắc chắn muốn hủy yêu cầu này?"
+    },
+    "status": {
+      "pending": "Đang chờ",
+      "approved": "Đã duyệt",
+      "accepted": "Đã chấp nhận",
+      "rejected": "Đã từ chối",
+      "cancelled": "Đã hủy",
+      "completed": "Hoàn thành",
+      "unknown": "Không xác định"
+    },
+    "actions": {
+      "view": "Xem chi tiết",
+      "cancel": "Hủy yêu cầu",
+      "create": "Tạo yêu cầu mới",
+      "createNew": "Tạo yêu cầu mới",
+      "cancelRequest": "Hủy yêu cầu"
+    },
+    "fields": {
+      "requestCode": "Mã yêu cầu",
+      "warehouse": "Kho hàng",
+      "inventory": "Tồn kho",
+      "quantity": "Số lượng",
+      "purpose": "Mục đích",
+      "reason": "Lý do",
+      "requestedBy": "Người yêu cầu",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật",
+      "status": "Trạng thái",
+      "actions": "Hành động",
+      "order": "Đơn hàng",
+      "requester": "Người yêu cầu",
+      "rejectionReason": "Lý do từ chối",
+      "remaining": "Còn lại"
+    },
+    "common": {
+      "unknown": "Không xác định",
+      "noData": "Không có dữ liệu",
+      "notFound": "Không tìm thấy",
+      "notAvailable": "Không có sẵn"
+    },
+    "sections": {
+      "requestList": "Danh sách yêu cầu"
+    },
+    "detail": {
+      "title": "Chi tiết yêu cầu xuất kho",
+      "backToList": "Quay lại danh sách"
+    },
+    "create": {
+      "title": "Tạo yêu cầu xuất kho mới",
+      "subtitle": "Tạo yêu cầu xuất kho từ tồn kho hiện có",
+      "back": "Quay lại",
+      "cancel": "Hủy",
+      "submit": "Tạo yêu cầu",
+      "submitting": "Đang tạo...",
+      "form": {
+        "title": "Thông tin yêu cầu",
+        "warehouseLabel": "Kho hàng",
+        "inventoryLabel": "Tồn kho",
+        "quantityLabel": "Số lượng yêu cầu",
+        "unitLabel": "Đơn vị",
+        "purposeLabel": "Mục đích",
+        "reasonLabel": "Lý do",
+        "orderLabel": "Đơn hàng",
+        "orderItemLabel": "Mục hàng"
+      },
+      "info": {
+        "stats": "Thống kê nhanh",
+        "totalWarehouses": "Tổng kho",
+        "totalOrders": "Tổng đơn hàng",
+        "currentInventory": "Tồn kho hiện tại",
+        "selectedWarehouse": "Kho đã chọn",
+        "selectedInventory": "Tồn kho đã chọn",
+        "selectedOrderItem": "Mục hàng đã chọn",
+        "recommended": "Khuyến nghị",
+        "fifoPriority": "Ưu tiên FIFO",
+        "totalQuantity": "Tổng số lượng",
+        "confirmedQuantity": "Số lượng đã xác nhận",
+        "remainingQuantity": "Số lượng còn lại",
+        "outOfStock": "Hết hàng"
+      },
+      "guide": {
+        "title": "Hướng dẫn sử dụng",
+        "step1": "1. Chọn kho hàng cần xuất",
+        "step2": "2. Chọn tồn kho và số lượng",
+        "step3": "3. Điền mục đích và lý do",
+        "step4": "4. Liên kết với đơn hàng (tùy chọn)",
+        "fifoTitle": "💡 Khuyến nghị FIFO",
+        "fifo1": "• Hệ thống tự động khuyến nghị",
+        "fifo2": "• Ưu tiên xuất hàng cũ trước",
+        "featuresTitle": "✨ Tính năng nổi bật",
+        "feature1": "• Tự động điền số lượng",
+        "feature2": "• Kiểm tra tồn kho thời gian thực",
+        "feature3": "• Liên kết với đơn hàng"
+      },
+      "errors": {
+        "loadWarehouses": "Không thể tải danh sách kho",
+        "loadInventories": "Không thể tải danh sách tồn kho",
+        "loadOrders": "Không thể tải danh sách đơn hàng",
+        "loadOrderItems": "Không thể tải danh sách mục hàng",
+        "requiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc",
+        "invalidQuantity": "Số lượng không hợp lệ",
+        "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng còn lại ({remaining})"
+      }
+    }
+  },
+  "farmerDeliveryRequest": {
+    "title": "Yêu cầu giao hàng",
+    "subtitle": "Quản lý và theo dõi các yêu cầu giao hàng của bạn",
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingRequests": "Yêu cầu chờ duyệt", 
+      "approvedRequests": "Yêu cầu đã duyệt",
+      "totalQuantity": "Tổng số lượng",
+      "processedRequests": "Yêu cầu đã sơ chế"
+    },
+    "actions": {
+      "createNew": "Tạo yêu cầu mới",
+      "createRequest": "Tạo yêu cầu mới",
+      "view": "Xem chi tiết",
+      "cancel": "Hủy yêu cầu"
+    },
+    "sections": {
+      "search": "Tìm kiếm yêu cầu",
+      "requestList": "Danh sách yêu cầu giao hàng",
+      "filterByType": "Lọc theo loại",
+      "filterByStatus": "Lọc theo trạng thái"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "coffeeTypes": {
+        "fresh": "Cà phê tươi",
+        "processed": "Cà phê đã sơ chế"
+      },
+      "status": {
+        "pending": "Chờ duyệt",
+        "approved": "Đã duyệt", 
+        "completed": "Hoàn thành",
+        "rejected": "Từ chối",
+        "cancelled": "Đã hủy",
+        "waiting": "Đang chờ",
+        "finished": "Hoàn thành"
+      }
+    },
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Hoàn thành",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy",
+      "waiting": "Đang chờ",
+      "finished": "Hoàn thành"
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định"
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "requests": "yêu cầu",
+      "of": "trong tổng số",
+      "allRequests": "tất cả yêu cầu",
+      "page": "Trang"
+    },
+    "common": {
+      "kg": "kg",
+      "na": "N/A",
+      "unknown": "Không xác định",
+      "id": "ID"
+    },
+    "detail": {
+      "title": "Chi tiết yêu cầu giao hàng",
+      "subtitle": "Thông tin chi tiết về yêu cầu giao hàng",
+      "backToList": "Quay lại danh sách",
+      "back": "Quay lại",
+      "stats": {
+        "requestedQuantity": "Số lượng yêu cầu",
+        "processed": "Đã sơ chế",
+        "remaining": "Còn lại",
+        "status": "Trạng thái"
+      },
+      "sections": {
+        "requestInfo": "Thông tin yêu cầu",
+        "batchInfo": "Thông tin lô",
+        "statusSummary": "Tóm tắt trạng thái",
+        "actions": "Hành động"
+      },
+      "fields": {
+        "requestCode": "Mã yêu cầu",
+        "status": "Trạng thái",
+        "requestedQuantity": "Số lượng yêu cầu",
+        "preferredDeliveryDate": "Ngày giao hàng mong muốn",
+        "actualDeliveryDate": "Ngày giao hàng thực tế",
+        "note": "Ghi chú",
+        "batchCode": "Mã lô",
+        "coffeeType": "Loại cà phê",
+        "seasonCode": "Mã vụ mùa",
+        "totalProcessed": "Tổng đã sơ chế",
+        "remainingAvailable": "Còn lại có sẵn"
+      },
+      "actions": {
+        "viewAllRequests": "Xem tất cả yêu cầu",
+        "createNewRequest": "Tạo yêu cầu mới"
+      },
+      "error": {
+        "loadData": "Không thể tải dữ liệu",
+        "notFound": "Không tìm thấy yêu cầu",
+        "notFoundMessage": "Yêu cầu giao hàng không tồn tại hoặc đã bị xóa"
+      }
+    },
+    "error": {
+      "loadRequests": "Không thể tải danh sách yêu cầu",
+      "loadRequestsUnknown": "Không thể tải danh sách yêu cầu",
+      "loadData": "Không thể tải dữ liệu",
+      "loadDetail": "Không thể tải chi tiết yêu cầu",
+      "cancelRequest": "Không thể hủy yêu cầu"
+    },
+    "confirmation": {
+      "cancelTitle": "Xác nhận hủy yêu cầu",
+      "cancelMessage": "Bạn có chắc chắn muốn hủy yêu cầu giao hàng này?",
+      "cancelConfirm": "Hủy yêu cầu",
+      "cancelCancel": "Giữ lại"
+    },
+    "placeholders": {
+      "search": "Tìm mã yêu cầu, loại cà phê..."
+    },
+    "create": {
+      "title": "Tạo yêu cầu giao hàng mới",
+      "subtitle": "Tạo yêu cầu giao hàng từ cà phê đã sơ chế hoặc cà phê tươi",
+      "cancel": "Hủy",
+      "tabs": {
+        "processed": "Cà phê đã sơ chế",
+        "fresh": "Cà phê tươi"
+      },
+      "guide": {
+        "title": "Hướng dẫn",
+        "description": "Chọn loại cà phê bạn muốn giao hàng",
+        "security": "Bảo mật",
+        "securityDescription": "Chỉ hiển thị cà phê thuộc sở hữu của bạn"
+      },
+      "processed": {
+        "title": "Cà phê đã sơ chế",
+        "subtitle": "Giao hàng từ các lô cà phê đã sơ chế",
+        "batchLabel": "Chọn lô cà phê",
+        "batchDescription": "Lô đã sơ chế có sẵn",
+        "batchPlaceholder": "-- Chọn lô cà phê --",
+        "quantityLabel": "Số lượng yêu cầu",
+        "quantityPlaceholder": "Nhập số lượng (kg)",
+        "deliveryDateLabel": "Ngày giao hàng mong muốn",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Ghi chú bổ sung (tùy chọn)",
+        "submit": "Tạo yêu cầu",
+        "submitting": "Đang tạo...",
+        "errors": {
+          "noBatchSelected": "Vui lòng chọn lô cà phê",
+          "invalidQuantity": "Số lượng không hợp lệ",
+          "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng có sẵn ({available})",
+          "invalidDate": "Ngày giao hàng phải sau ngày hôm nay",
+          "general": "Lỗi: {message}"
+        }
+      },
+      "fresh": {
+        "title": "Cà phê tươi",
+        "subtitle": "Giao hàng từ cà phê tươi",
+        "detailLabel": "Chọn chi tiết vụ mùa",
+        "detailDescription": "Chi tiết cà phê tươi có sẵn",
+        "detailPlaceholder": "-- Chọn chi tiết vụ mùa --",
+        "quantityLabel": "Số lượng yêu cầu",
+        "quantityPlaceholder": "Nhập số lượng (kg)",
+        "deliveryDateLabel": "Ngày giao hàng mong muốn",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Ghi chú bổ sung (tùy chọn)",
+        "submit": "Tạo yêu cầu",
+        "submitting": "Đang tạo...",
+        "errors": {
+          "noDetailSelected": "Vui lòng chọn chi tiết vụ mùa",
+          "invalidQuantity": "Số lượng không hợp lệ",
+          "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng có sẵn ({available})",
+          "invalidDate": "Ngày giao hàng phải sau ngày hôm nay",
+          "general": "Lỗi: {message}"
+        }
+      },
+      "errors": {
+        "loadData": "Không thể tải dữ liệu"
+      }
+    },
+    "loading": {
+      "loadingData": "Đang tải dữ liệu..."
+    },
+    "empty": {
+      "noRequests": "Không có yêu cầu nào",
+      "noRequestsFilter": "Không tìm thấy yêu cầu phù hợp với bộ lọc",
+      "noRequestsYet": "Chưa có yêu cầu giao hàng nào"
+    },
+    "fields": {
+      "requestCode": "Mã yêu cầu",
+      "type": "Loại",
+      "quantity": "Số lượng",
+      "source": "Nguồn",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    }
   }
 }

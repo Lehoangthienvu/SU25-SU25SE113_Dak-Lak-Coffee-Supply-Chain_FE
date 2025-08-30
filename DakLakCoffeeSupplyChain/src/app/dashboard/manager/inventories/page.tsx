@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getAllInventories, softDeleteInventory } from "@/lib/api/inventory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 export default function ManagerInventoryListPage() {
+  const { t } = useTranslation();
   const [inventories, setInventories] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,17 +42,17 @@ export default function ManagerInventoryListPage() {
         } else if (Array.isArray(res)) {
           setInventories(res);
         } else {
-          toast.error(res.message || "Không thể tải tồn kho.");
+          toast.error(res.message || t('managerInventories.error.loadData'));
         }
       } catch (err: any) {
-        toast.error("❌ Lỗi hệ thống: " + err.message);
+        toast.error(t('managerInventories.error.systemError') + err.message);
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, []);
+  }, [t]);
 
   const filtered = inventories.filter((inv) =>
     inv.inventoryCode?.toLowerCase().includes(search.toLowerCase()) ||
@@ -77,9 +79,9 @@ export default function ManagerInventoryListPage() {
   const getCoffeeTypeLabel = (inventory: any) => {
     const type = getCoffeeType(inventory);
     switch (type) {
-      case 'fresh': return 'Cà phê tươi';
-      case 'processed': return 'Cà phê đã sơ chế';
-      default: return 'Không xác định';
+      case 'fresh': return t('managerInventories.coffeeTypes.fresh');
+      case 'processed': return t('managerInventories.coffeeTypes.processed');
+      default: return t('managerInventories.coffeeTypes.unknown');
     }
   };
 
@@ -97,20 +99,20 @@ export default function ManagerInventoryListPage() {
     switch (type) {
       case 'fresh':
         return {
-          label: 'Mùa vụ',
-          value: inventory?.cropSeasonName || inventory?.detailCode || 'N/A',
+          label: t('managerInventories.coffeeInfo.season'),
+          value: inventory?.cropSeasonName || inventory?.detailCode || t('common.notAvailable'),
           color: 'text-orange-700'
         };
       case 'processed':
         return {
-          label: 'Lô sơ chế',
-          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || 'Đã sơ chế'}` : 'N/A',
+          label: t('managerInventories.coffeeInfo.batch'),
+          value: inventory?.batchCode ? `${inventory.batchCode} - ${inventory.coffeeTypeName || t('managerInventories.coffeeTypes.processed')}` : t('common.notAvailable'),
           color: 'text-purple-700'
         };
       default:
         return {
-          label: 'Thông tin',
-          value: 'N/A',
+          label: t('managerInventories.coffeeInfo.info'),
+          value: t('common.notAvailable'),
           color: 'text-gray-700'
         };
     }
@@ -124,18 +126,18 @@ export default function ManagerInventoryListPage() {
   const uniqueProducts = [...new Set(inventories.map(inv => inv.productName))].length;
 
   const handleSoftDelete = async (id: string) => {
-    if (!confirm("Bạn có chắc muốn xoá tồn kho này?")) return;
+    if (!confirm(t('managerInventories.error.deleteConfirm'))) return;
 
     try {
       const res = await softDeleteInventory(id);
       if (res.status === 200) {
-        toast.success("✅ Đã xoá tồn kho.");
+        toast.success(t('managerInventories.error.deleteSuccess'));
         setInventories((prev) => prev.filter((i) => i.inventoryId !== id));
       } else {
-        toast.error(`❌ ${res.message || "Không thể xoá tồn kho."}`);
+        toast.error(`❌ ${res.message || t('managerInventories.error.deleteFailed')}`);
       }
     } catch (err: any) {
-      toast.error(`❌ Lỗi hệ thống: ${err.message}`);
+      toast.error(t('managerInventories.error.systemError') + err.message);
     }
   };
 
@@ -145,9 +147,9 @@ export default function ManagerInventoryListPage() {
       <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
           <Package className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 Quản lý Tồn kho</h1>
+          <h1 className="text-2xl font-bold">{t('managerInventories.title')}</h1>
         </div>
-        <p className="text-blue-100 text-base">Theo dõi và quản lý tồn kho trong hệ thống kho hàng</p>
+        <p className="text-blue-100 text-base">{t('managerInventories.subtitle')}</p>
       </div>
 
       {/* Thống kê tổng quan */}
@@ -159,7 +161,7 @@ export default function ManagerInventoryListPage() {
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng tồn kho</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerInventories.stats.totalInventories')}</p>
                 <p className="text-xl font-bold text-blue-600">{totalInventories}</p>
               </div>
             </div>
@@ -173,8 +175,8 @@ export default function ManagerInventoryListPage() {
                 <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Tổng số lượng</p>
-                <p className="text-xl font-bold text-green-600">{totalQuantity.toLocaleString()} kg</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerInventories.stats.totalQuantity')}</p>
+                <p className="text-xl font-bold text-green-600">{totalQuantity.toLocaleString()} {t('managerInventories.stats.kg')}</p>
               </div>
             </div>
           </CardContent>
@@ -187,7 +189,7 @@ export default function ManagerInventoryListPage() {
                 <Package className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Còn hàng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerInventories.stats.inStock')}</p>
                 <p className="text-xl font-bold text-emerald-600">{inStockCount}</p>
               </div>
             </div>
@@ -201,7 +203,7 @@ export default function ManagerInventoryListPage() {
                 <AlertTriangle className="w-5 h-5 text-red-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Hết hàng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerInventories.stats.outOfStock')}</p>
                 <p className="text-xl font-bold text-red-600">{outOfStockCount}</p>
               </div>
             </div>
@@ -215,7 +217,7 @@ export default function ManagerInventoryListPage() {
                 <Warehouse className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600 font-medium">Kho hàng</p>
+                <p className="text-xs text-gray-600 font-medium">{t('managerInventories.stats.warehouses')}</p>
                 <p className="text-xl font-bold text-purple-600">{uniqueWarehouses}</p>
               </div>
             </div>
@@ -230,7 +232,7 @@ export default function ManagerInventoryListPage() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Input
-                  placeholder="🔍 Tìm kiếm tồn kho..."
+                  placeholder={t('managerInventories.search.placeholder')}
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -242,14 +244,14 @@ export default function ManagerInventoryListPage() {
               </div>
               {search && (
                 <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                  {filtered.length} kết quả
+                  {filtered.length} {t('managerInventories.search.results')}
                 </Badge>
               )}
             </div>
             <Link href="/dashboard/manager/inventories/create">
               <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-sm px-4 py-2">
                 <Plus className="w-4 h-4 mr-2" />
-                Tạo tồn kho mới
+                {t('managerInventories.actions.createNew')}
               </Button>
             </Link>
           </div>
@@ -261,7 +263,7 @@ export default function ManagerInventoryListPage() {
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
           <CardTitle className="text-lg font-bold text-blue-800 flex items-center gap-2">
             <Package className="w-4 h-4" />
-            Danh sách tồn kho
+            {t('managerInventories.table.title')}
           </CardTitle>
         </CardHeader>
 
@@ -269,20 +271,20 @@ export default function ManagerInventoryListPage() {
           {loading ? (
             <div className="p-6 text-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
-              <p className="text-gray-600 text-base">Đang tải dữ liệu tồn kho...</p>
+              <p className="text-gray-600 text-base">{t('managerInventories.loading.title')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                                  <thead className="bg-gradient-to-r from-blue-50 to-indigo-50">
                    <tr>
-                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">Tên kho</th>
-                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">Loại cà phê</th>
-                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">Thông tin</th>
-                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">Sản phẩm</th>
-                     <th className="text-right px-4 py-3 text-sm font-semibold text-blue-800">Số lượng (kg)</th>
-                     <th className="text-center px-4 py-3 text-sm font-semibold text-blue-800">Trạng thái</th>
-                     <th className="text-center px-4 py-3 text-sm font-semibold text-blue-800">Hành động</th>
+                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.warehouseName')}</th>
+                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.coffeeType')}</th>
+                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.info')}</th>
+                     <th className="text-left px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.product')}</th>
+                     <th className="text-right px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.quantity')}</th>
+                     <th className="text-center px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.status')}</th>
+                     <th className="text-center px-4 py-3 text-sm font-semibold text-blue-800">{t('managerInventories.table.headers.actions')}</th>
                    </tr>
                  </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -324,8 +326,8 @@ export default function ManagerInventoryListPage() {
                         {(() => {
                           const coffeeType = getCoffeeType(inv);
                           return coffeeType === 'fresh' 
-                            ? (inv.coffeeTypeNameDetail || inv.coffeeTypeName || 'Cà phê tươi')
-                            : (inv.productName || 'N/A');
+                            ? (inv.coffeeTypeNameDetail || inv.coffeeTypeName || t('managerInventories.coffeeTypes.fresh'))
+                            : (inv.productName || t('common.notAvailable'));
                         })()}
                       </td>
                       <td className="px-4 py-3 text-right font-semibold">{inv.quantity?.toLocaleString() ?? 0}</td>
@@ -337,7 +339,7 @@ export default function ManagerInventoryListPage() {
                               : 'bg-red-100 text-red-800 border-red-200'
                           }`}
                         >
-                          {inv.quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                          {inv.quantity > 0 ? t('managerInventories.table.status.inStock') : t('managerInventories.table.status.outOfStock')}
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -371,8 +373,8 @@ export default function ManagerInventoryListPage() {
                       <td colSpan={7} className="text-center py-8">
                         <div className="flex flex-col items-center gap-3">
                           <Package className="w-12 h-12 text-gray-300" />
-                          <p className="text-gray-500 text-base">Không có tồn kho phù hợp</p>
-                          <p className="text-gray-400 text-sm">Thử thay đổi từ khóa tìm kiếm</p>
+                          <p className="text-gray-500 text-base">{t('managerInventories.empty.title')}</p>
+                          <p className="text-gray-400 text-sm">{t('managerInventories.empty.description')}</p>
                         </div>
                       </td>
                     </tr>
@@ -390,7 +392,7 @@ export default function ManagerInventoryListPage() {
           <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <span className="text-xs text-gray-600">
-                Hiển thị {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} trong {filtered.length} mục
+                {t('managerInventories.pagination.showing')} {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} {t('managerInventories.pagination.of')} {filtered.length} {t('managerInventories.pagination.items')}
               </span>
               <div className="flex items-center gap-2">
                 <Button

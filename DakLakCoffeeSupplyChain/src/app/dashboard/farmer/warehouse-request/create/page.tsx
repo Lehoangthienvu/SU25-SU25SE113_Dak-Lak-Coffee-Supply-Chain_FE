@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ interface AvailableBatch {
 }
 
 export default function CreateDeliveryRequestPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   // ✅ TÁCH RIÊNG 2 FORM STATE
@@ -124,13 +126,13 @@ export default function CreateDeliveryRequestPage() {
       return {
         batchId: batch.batchId,
         batchCode: batch.batchCode,
-        typeName: batch.coffeeTypeName || 'Không rõ',
-        cropSeasonName: batch.cropSeasonName || 'Không rõ',
+        typeName: batch.coffeeTypeName || t('farmerDeliveryRequest.common.unknown'),
+        cropSeasonName: batch.cropSeasonName || t('farmerDeliveryRequest.common.unknown'),
         status: batch.status,
         availableForNewRequest,
         // ✅ THÊM: Thông tin công ty
         companyId: batch.companyId || '',
-        companyName: batch.companyName || 'Không rõ công ty',
+        companyName: batch.companyName || t('farmerDeliveryRequest.common.unknown'),
         commitmentId: batch.commitmentId || '',
         debug: {
           finalProcessed: batch.maxOutputQuantity || 0,
@@ -138,7 +140,7 @@ export default function CreateDeliveryRequestPage() {
         },
       };
     });
-  }, [availableBatchesData, inboundRequests]);
+  }, [availableBatchesData, inboundRequests, t]);
 
   // Sử dụng dữ liệu từ API available crop season details
   const cropDetailsWithRemaining = useMemo(() => {
@@ -151,8 +153,8 @@ export default function CreateDeliveryRequestPage() {
 
       return {
         detailId: detail.detailId,
-        cropSeasonName: detail.cropSeasonName || 'Không rõ',
-        coffeeTypeName: detail.coffeeTypeName || 'Không rõ',
+        cropSeasonName: detail.cropSeasonName || t('farmerDeliveryRequest.common.unknown'),
+        coffeeTypeName: detail.coffeeTypeName || t('farmerDeliveryRequest.common.unknown'),
         availableForNewRequest,
         debug: {
           actualYield: detail.actualYield || 0,
@@ -160,7 +162,7 @@ export default function CreateDeliveryRequestPage() {
         },
       };
     });
-  }, [availableCropDetailsData, inboundRequests]);
+  }, [availableCropDetailsData, inboundRequests, t]);
 
   // ✅ TÁCH RIÊNG 2 HANDLE SUBMIT
   const handleProcessedSubmit = async (e: React.FormEvent) => {
@@ -171,13 +173,13 @@ export default function CreateDeliveryRequestPage() {
       const { requestedQuantity, preferredDeliveryDate, note, batchId } = processedForm;
 
       if (!batchId) {
-        toast.error('Bạn chưa chọn lô sơ chế');
+        toast.error(t('farmerDeliveryRequest.create.processed.errors.noBatchSelected'));
         return;
       }
 
       const quantity = Number(requestedQuantity);
       if (isNaN(quantity) || quantity <= 0) {
-        toast.error('Số lượng phải là số dương lớn hơn 0');
+        toast.error(t('farmerDeliveryRequest.create.processed.errors.invalidQuantity'));
         return;
       }
 
@@ -185,7 +187,11 @@ export default function CreateDeliveryRequestPage() {
       const selectedBatch = batchesWithRemaining.find((b) => b.batchId === batchId);
       if (selectedBatch && quantity > selectedBatch.availableForNewRequest) {
         toast.error(
-          `Số lượng yêu cầu (${quantity}kg) vượt quá số lượng có thể gửi yêu cầu mới (${selectedBatch.availableForNewRequest}kg). Tổng số lượng (đã duyệt + đang chờ + yêu cầu mới) không được vượt quá sản lượng cuối (${selectedBatch.debug.finalProcessed}kg)`
+          t('farmerDeliveryRequest.create.processed.errors.exceedQuantity', {
+            quantity,
+            available: selectedBatch.availableForNewRequest,
+            total: selectedBatch.debug.finalProcessed
+          })
         );
         setLoading(false);
         return;
@@ -197,7 +203,7 @@ export default function CreateDeliveryRequestPage() {
       const selectedDate = new Date(preferredDeliveryDate);
 
       if (selectedDate < today) {
-        dateInput.setCustomValidity('Ngày giao dự kiến không được nhỏ hơn hôm nay.');
+        dateInput.setCustomValidity(t('farmerDeliveryRequest.create.processed.errors.invalidDate'));
         dateInput.reportValidity();
         setLoading(false);
         return;
@@ -216,7 +222,7 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('Lỗi: ' + err.message);
+      toast.error(t('farmerDeliveryRequest.create.fresh.errors.general', { message: err.message }));
     } finally {
       setLoading(false);
     }
@@ -230,13 +236,13 @@ export default function CreateDeliveryRequestPage() {
       const { requestedQuantity, preferredDeliveryDate, note, detailId } = freshForm;
 
       if (!detailId) {
-        toast.error('Bạn chưa chọn vùng trồng');
+        toast.error(t('farmerDeliveryRequest.create.fresh.errors.noDetailSelected'));
         return;
       }
 
       const quantity = Number(requestedQuantity);
       if (isNaN(quantity) || quantity <= 0) {
-        toast.error('Số lượng phải là số dương lớn hơn 0');
+        toast.error(t('farmerDeliveryRequest.create.fresh.errors.invalidQuantity'));
         return;
       }
 
@@ -244,7 +250,11 @@ export default function CreateDeliveryRequestPage() {
       const selectedDetail = cropDetailsWithRemaining.find((d) => d.detailId === detailId);
       if (selectedDetail && quantity > selectedDetail.availableForNewRequest) {
         toast.error(
-          `Số lượng yêu cầu (${quantity}kg) vượt quá số lượng có thể gửi yêu cầu mới (${selectedDetail.availableForNewRequest}kg). Tổng số lượng không được vượt quá sản lượng thực tế (${selectedDetail.debug.actualYield}kg)`
+          t('farmerDeliveryRequest.create.fresh.errors.exceedQuantity', {
+            quantity,
+            available: selectedDetail.availableForNewRequest,
+            total: selectedDetail.debug.actualYield
+          })
         );
         setLoading(false);
         return;
@@ -256,7 +266,7 @@ export default function CreateDeliveryRequestPage() {
       const selectedDate = new Date(preferredDeliveryDate);
 
       if (selectedDate < today) {
-        dateInput.setCustomValidity('Ngày giao dự kiến không được nhỏ hơn hôm nay.');
+        dateInput.setCustomValidity(t('farmerDeliveryRequest.create.fresh.errors.invalidDate'));
         dateInput.reportValidity();
         setLoading(false);
         return;
@@ -275,7 +285,7 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error('Lỗi: ' + err.message);
+      toast.error(t('farmerDeliveryRequest.create.processed.errors.general', { message: err.message }));
     } finally {
       setLoading(false);
     }
@@ -313,7 +323,7 @@ export default function CreateDeliveryRequestPage() {
       } catch (error: any) {
         console.error('Error fetching data:', error);
         // Hiển thị thông báo lỗi cụ thể từ backend thay vì thông báo chung
-        const errorMessage = error?.message || 'Không thể tải dữ liệu';
+        const errorMessage = error?.message || t('farmerDeliveryRequest.create.errors.loadData');
         toast.error(errorMessage);
       } finally {
         setIsLoadingBatches(false);
@@ -322,7 +332,7 @@ export default function CreateDeliveryRequestPage() {
     };
 
     fetchData();
-  }, []);
+  }, [t]);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -336,8 +346,8 @@ export default function CreateDeliveryRequestPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tạo yêu cầu nhập kho</h1>
-          <p className="text-gray-600">Gửi yêu cầu nhập kho cà phê</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('farmerDeliveryRequest.create.title')}</h1>
+          <p className="text-gray-600">{t('farmerDeliveryRequest.create.subtitle')}</p>
         </div>
       </div>
 
@@ -345,22 +355,22 @@ export default function CreateDeliveryRequestPage() {
         <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="processed" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
-            Cà phê đã sơ chế
+            {t('farmerDeliveryRequest.create.tabs.processed')}
           </TabsTrigger>
           {/* TẠM THỜI ẨN - Tab cà phê tươi */}
           {/* <TabsTrigger value="fresh" className="flex items-center gap-2">
             <Leaf className="h-4 w-4" />
-            Cà phê tươi
+            {t('farmerDeliveryRequest.create.tabs.fresh')}
           </TabsTrigger> */}
         </TabsList>
         
         {/* ✅ THÔNG BÁO RÕ RÀNG CHO TỪNG TAB */}
         <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="text-sm text-blue-800">
-            <strong>💡 Hướng dẫn:</strong> Mỗi tab có form riêng biệt. Vui lòng chọn đúng tab tương ứng với loại cà phê bạn muốn gửi.
+            <strong>💡 {t('farmerDeliveryRequest.create.guide.title')}:</strong> {t('farmerDeliveryRequest.create.guide.description')}
           </div>
           <div className="mt-2 text-xs text-blue-700">
-            <strong>🔒 Bảo mật:</strong> Mỗi form chỉ xử lý loại cà phê tương ứng, không thể nhầm lẫn giữa cà phê tươi và cà phê sơ chế.
+            <strong>🔒 {t('farmerDeliveryRequest.create.guide.security')}:</strong> {t('farmerDeliveryRequest.create.guide.securityDescription')}
           </div>
         </div>
 
@@ -371,17 +381,17 @@ export default function CreateDeliveryRequestPage() {
             <CardHeader className="bg-orange-100/50 border-b border-orange-200">
               <CardTitle className="flex items-center gap-2 text-orange-800">
                 <Package className="h-5 w-5" />
-                Yêu cầu nhập kho cà phê đã sơ chế
+                {t('farmerDeliveryRequest.create.processed.title')}
               </CardTitle>
-              <p className="text-sm text-orange-700">Chọn lô sơ chế đã hoàn thành để gửi yêu cầu nhập kho</p>
+              <p className="text-sm text-orange-700">{t('farmerDeliveryRequest.create.processed.subtitle')}</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleProcessedSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="processedBatchId" className="text-orange-700 font-medium">
-                      Chọn lô sơ chế * 
-                      <span className="text-xs text-orange-600 ml-2">(Cà phê đã qua xử lý)</span>
+                      {t('farmerDeliveryRequest.create.processed.batchLabel')} * 
+                      <span className="text-xs text-orange-600 ml-2">({t('farmerDeliveryRequest.create.processed.batchDescription')})</span>
                     </Label>
                     <select
                       id="processedBatchId"
@@ -391,25 +401,25 @@ export default function CreateDeliveryRequestPage() {
                       className="w-full p-2 border border-orange-300 rounded-md focus:border-orange-500 focus:ring-orange-200"
                       required
                     >
-                      <option value="">-- Chọn lô sơ chế --</option>
+                      <option value="">{t('farmerDeliveryRequest.create.processed.batchPlaceholder')}</option>
                       {batchesWithRemaining
                         .map((batch) => (
                           <option key={batch.batchId} value={batch.batchId}>
-                            {batch.batchCode} - {batch.typeName || 'Không rõ'} ({batch.availableForNewRequest}kg còn lại) - {batch.companyName || 'Không rõ công ty'}
+                            {batch.batchCode} - {batch.typeName || t('farmerDeliveryRequest.common.unknown')} ({batch.availableForNewRequest}{t('farmerDeliveryRequest.common.kg')} {t('farmerDeliveryRequest.detail.stats.remaining')}) - {batch.companyName || t('farmerDeliveryRequest.common.unknown')}
                           </option>
                         ))}
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="processedRequestedQuantity">Số lượng yêu cầu (kg) *</Label>
+                    <Label htmlFor="processedRequestedQuantity">{t('farmerDeliveryRequest.create.processed.quantityLabel')} *</Label>
                     <Input
                       id="processedRequestedQuantity"
                       name="requestedQuantity"
                       type="number"
                       value={processedForm.requestedQuantity}
                       onChange={handleProcessedFormChange}
-                      placeholder="Nhập số lượng"
+                      placeholder={t('farmerDeliveryRequest.create.processed.quantityPlaceholder')}
                       required
                     />
                   </div>
@@ -417,7 +427,7 @@ export default function CreateDeliveryRequestPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="processedPreferredDeliveryDate">Ngày giao dự kiến *</Label>
+                    <Label htmlFor="processedPreferredDeliveryDate">{t('farmerDeliveryRequest.create.processed.deliveryDateLabel')} *</Label>
                     <Input
                       id="processedPreferredDeliveryDate"
                       name="preferredDeliveryDate"
@@ -429,13 +439,13 @@ export default function CreateDeliveryRequestPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="processedNote">Ghi chú</Label>
+                    <Label htmlFor="processedNote">{t('farmerDeliveryRequest.create.processed.noteLabel')}</Label>
                     <Textarea
                       id="processedNote"
                       name="note"
                       value={processedForm.note}
                       onChange={handleProcessedFormChange}
-                      placeholder="Ghi chú thêm (nếu có)"
+                      placeholder={t('farmerDeliveryRequest.create.processed.notePlaceholder')}
                       rows={3}
                     />
                   </div>
@@ -447,10 +457,10 @@ export default function CreateDeliveryRequestPage() {
                     variant="outline"
                     onClick={() => router.back()}
                   >
-                    Hủy
+                    {t('farmerDeliveryRequest.create.cancel')}
                   </Button>
                   <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700 text-white">
-                    {loading ? 'Đang gửi...' : 'Gửi yêu cầu cà phê sơ chế'}
+                    {loading ? t('farmerDeliveryRequest.create.processed.submitting') : t('farmerDeliveryRequest.create.processed.submit')}
                   </Button>
                 </div>
               </form>
@@ -464,17 +474,17 @@ export default function CreateDeliveryRequestPage() {
             <CardHeader className="bg-green-100/50 border-b border-green-200">
               <CardTitle className="flex items-center gap-2 text-green-800">
                 <Leaf className="h-5 w-5" />
-                Yêu cầu nhập kho cà phê tươi
+                {t('farmerDeliveryRequest.create.fresh.title')}
               </CardTitle>
-              <p className="text-sm text-green-700">Chọn vùng trồng đã hoàn thành để gửi yêu cầu nhập kho</p>
+              <p className="text-sm text-green-700">{t('farmerDeliveryRequest.create.fresh.subtitle')}</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleFreshSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="freshDetailId" className="text-green-700 font-medium">
-                      Chọn vùng trồng * 
-                      <span className="text-xs text-green-600 ml-2">(Cà phê tươi nguyên bản)</span>
+                      {t('farmerDeliveryRequest.create.fresh.detailLabel')} * 
+                      <span className="text-xs text-green-600 ml-2">({t('farmerDeliveryRequest.create.fresh.detailDescription')})</span>
                     </Label>
                     <select
                       id="freshDetailId"
@@ -484,25 +494,25 @@ export default function CreateDeliveryRequestPage() {
                       className="w-full p-2 border border-green-300 rounded-md focus:border-green-500 focus:ring-green-200"
                       required
                     >
-                      <option value="">-- Chọn vùng trồng --</option>
+                      <option value="">{t('farmerDeliveryRequest.create.fresh.detailPlaceholder')}</option>
                       {cropDetailsWithRemaining
                         .map((detail) => (
                           <option key={detail.detailId} value={detail.detailId}>
-                            {detail.cropSeasonName} - {detail.coffeeTypeName} ({detail.availableForNewRequest}kg còn lại)
+                            {detail.cropSeasonName} - {detail.coffeeTypeName} ({detail.availableForNewRequest}{t('farmerDeliveryRequest.common.kg')} {t('farmerDeliveryRequest.detail.stats.remaining')})
                       </option>
                         ))}
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="freshRequestedQuantity">Số lượng yêu cầu (kg) *</Label>
+                    <Label htmlFor="freshRequestedQuantity">{t('farmerDeliveryRequest.create.fresh.quantityLabel')} *</Label>
                     <Input
                       id="freshRequestedQuantity"
                       name="requestedQuantity"
                       type="number"
                       value={freshForm.requestedQuantity}
                       onChange={handleFreshFormChange}
-                      placeholder="Nhập số lượng"
+                      placeholder={t('farmerDeliveryRequest.create.fresh.quantityPlaceholder')}
                       required
                     />
                   </div>
@@ -510,7 +520,7 @@ export default function CreateDeliveryRequestPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="freshPreferredDeliveryDate">Ngày giao dự kiến *</Label>
+                    <Label htmlFor="freshPreferredDeliveryDate">{t('farmerDeliveryRequest.create.fresh.deliveryDateLabel')} *</Label>
                     <Input
                       id="freshPreferredDeliveryDate"
                       name="preferredDeliveryDate"
@@ -522,13 +532,13 @@ export default function CreateDeliveryRequestPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="freshNote">Ghi chú</Label>
+                    <Label htmlFor="freshNote">{t('farmerDeliveryRequest.create.fresh.noteLabel')}</Label>
                     <Textarea
                       id="freshNote"
                       name="note"
                       value={freshForm.note}
                       onChange={handleFreshFormChange}
-                      placeholder="Ghi chú thêm (nếu có)"
+                      placeholder={t('farmerDeliveryRequest.create.fresh.notePlaceholder')}
                       rows={3}
                     />
                   </div>
@@ -540,10 +550,10 @@ export default function CreateDeliveryRequestPage() {
                     variant="outline"
                     onClick={() => router.back()}
                   >
-                    Hủy
+                    {t('farmerDeliveryRequest.create.cancel')}
                   </Button>
                   <Button type="submit" disabled={loading} className="bg-green-600 hover:bg-green-700 text-white">
-                    {loading ? 'Đang gửi...' : 'Gửi yêu cầu cà phê tươi'}
+                    {loading ? t('farmerDeliveryRequest.create.fresh.submitting') : t('farmerDeliveryRequest.create.fresh.submit')}
                   </Button>
                 </div>
               </form>

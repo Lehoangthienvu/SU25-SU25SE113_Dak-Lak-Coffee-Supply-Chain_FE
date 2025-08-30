@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ChevronLeft, ChevronRight, Eye, Check, X, TrendingDown, Clock, CheckCircle, XCircle, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { useConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { useTranslation } from 'react-i18next';
 
 
 function StaffOutboundRequestListContent() {
@@ -26,6 +27,7 @@ function StaffOutboundRequestListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { openDialog, ConfirmationDialog } = useConfirmationDialog();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Lấy status filter từ URL query params
@@ -70,16 +72,16 @@ function StaffOutboundRequestListContent() {
 
   const handleAccept = async (id: string) => {
     openDialog({
-      title: "Xác nhận duyệt yêu cầu",
-      message: "Bạn chắc chắn muốn duyệt yêu cầu này?",
-      confirmText: "Duyệt",
-      cancelText: "Hủy",
+      title: t('warehouseOutboundRequests.confirmModal.title'),
+      message: t('warehouseOutboundRequests.confirmModal.description'),
+      confirmText: t('warehouseOutboundRequests.confirmModal.acceptButton'),
+      cancelText: t('warehouseOutboundRequests.confirmModal.cancelButton'),
       type: "info",
       onConfirm: async () => {
         try {
           const result = await acceptOutboundRequest(id);
           if (result.status === 1) {
-            toast.success(result.message);
+            toast.success(t('warehouseOutboundRequests.success.acceptSuccess'));
             location.reload();
           } else {
             toast.error(result.message);
@@ -104,7 +106,7 @@ function StaffOutboundRequestListContent() {
 
   const confirmReject = async () => {
     if (!rejectReason.trim()) {
-      toast.error('Vui lòng nhập lý do từ chối');
+      toast.error(t('warehouseOutboundRequests.rejectModal.reasonPlaceholder'));
       return;
     }
 
@@ -113,7 +115,7 @@ function StaffOutboundRequestListContent() {
     try {
       const result = await rejectOutboundRequest(rejectingId, rejectReason.trim());
       if (result.status === 1) {
-        toast.success(result.message);
+        toast.success(t('warehouseOutboundRequests.success.rejectSuccess'));
         setData((prev) =>
           prev.map((item) =>
             item.outboundRequestId === rejectingId
@@ -138,27 +140,27 @@ function StaffOutboundRequestListContent() {
       case 'Pending':
         return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
           <Clock className="w-3 h-3 mr-1" />
-          Chờ duyệt
+          {t('warehouseOutboundRequests.detail.status.pending')}
         </Badge>;
       case 'Accepted':
         return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Đã duyệt
+          {t('warehouseOutboundRequests.detail.status.accepted')}
         </Badge>;
       case 'Completed':
         return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Hoàn tất
+          {t('warehouseOutboundRequests.detail.status.completed')}
         </Badge>;
       case 'Cancelled':
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
           <XCircle className="w-3 h-3 mr-1" />
-          Đã huỷ
+          {t('warehouseOutboundRequests.detail.status.cancelled')}
         </Badge>;
       case 'Rejected':
         return <Badge className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full">
           <XCircle className="w-3 h-3 mr-1" />
-          Từ chối
+          {t('warehouseOutboundRequests.detail.status.rejected')}
         </Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
@@ -171,7 +173,7 @@ function StaffOutboundRequestListContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p className="text-gray-600">Đang tải danh sách yêu cầu xuất kho...</p>
+        <p className="text-gray-600">{t('warehouseOutboundRequests.loading.title')}</p>
       </div>
     </div>
   );
@@ -185,8 +187,8 @@ function StaffOutboundRequestListContent() {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Package className="w-8 h-8 text-gray-400" />
               </div>
-              <p className="text-gray-500 font-medium">Không có yêu cầu xuất kho nào</p>
-              <p className="text-gray-400 text-sm">Chưa có yêu cầu nào được tạo</p>
+              <p className="text-gray-500 font-medium">{t('warehouseOutboundRequests.empty.title')}</p>
+              <p className="text-gray-400 text-sm">{t('warehouseOutboundRequests.empty.description')}</p>
             </div>
           </div>
         </div>
@@ -206,10 +208,10 @@ function StaffOutboundRequestListContent() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  📤 Danh sách yêu cầu xuất kho
+                  📤 {t('warehouseOutboundRequests.title')}
                 </h1>
                 <p className="text-gray-600 text-sm">
-                  Quản lý và duyệt các yêu cầu xuất kho từ quản lý
+                  {t('warehouseOutboundRequests.subtitle')}
                 </p>
               </div>
             </div>
@@ -220,15 +222,15 @@ function StaffOutboundRequestListContent() {
               setCurrentPage(1);
             }} value={statusFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Lọc trạng thái" />
+                <SelectValue placeholder={t('warehouseOutboundRequests.filters.byStatus.title')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="Pending">Chờ duyệt</SelectItem>
-                <SelectItem value="Accepted">Đã duyệt</SelectItem>
-                <SelectItem value="Completed">Hoàn tất</SelectItem>
-                <SelectItem value="Cancelled">Đã huỷ</SelectItem>
-                <SelectItem value="Rejected">Từ chối</SelectItem>
+                <SelectItem value="all">{t('warehouseOutboundRequests.filters.byStatus.all')}</SelectItem>
+                <SelectItem value="Pending">{t('warehouseOutboundRequests.filters.byStatus.pending')}</SelectItem>
+                <SelectItem value="Accepted">{t('warehouseOutboundRequests.filters.byStatus.accepted')}</SelectItem>
+                <SelectItem value="Completed">{t('warehouseOutboundRequests.filters.byStatus.completed')}</SelectItem>
+                <SelectItem value="Cancelled">{t('warehouseOutboundRequests.filters.byStatus.cancelled')}</SelectItem>
+                <SelectItem value="Rejected">{t('warehouseOutboundRequests.filters.byStatus.rejected')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -238,7 +240,7 @@ function StaffOutboundRequestListContent() {
             <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-red-100 text-sm font-medium">Tổng yêu cầu</p>
+                  <p className="text-red-100 text-sm font-medium">{t('warehouseOutboundRequests.stats.totalRequests')}</p>
                   <p className="text-2xl font-bold">{filteredData.length}</p>
                 </div>
                 <Package className="w-8 h-8 text-red-200" />
@@ -247,7 +249,7 @@ function StaffOutboundRequestListContent() {
             <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-sm font-medium">Đang chờ</p>
+                  <p className="text-yellow-100 text-sm font-medium">{t('warehouseOutboundRequests.stats.pendingRequests')}</p>
                   <p className="text-2xl font-bold">{pendingRequests.length}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-200" />
@@ -256,7 +258,7 @@ function StaffOutboundRequestListContent() {
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Đã duyệt</p>
+                  <p className="text-blue-100 text-sm font-medium">{t('warehouseOutboundRequests.stats.acceptedRequests')}</p>
                   <p className="text-2xl font-bold">{acceptedRequests.length}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-blue-200" />
@@ -265,7 +267,7 @@ function StaffOutboundRequestListContent() {
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Tổng lượng</p>
+                  <p className="text-purple-100 text-sm font-medium">{t('warehouseOutboundRequests.stats.totalQuantity')}</p>
                   <p className="text-2xl font-bold">{totalQuantity.toLocaleString()} kg</p>
                 </div>
                 <TrendingDown className="w-8 h-8 text-purple-200" />
@@ -278,7 +280,7 @@ function StaffOutboundRequestListContent() {
         <Card className="border-blue-100 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold text-gray-800">
-              Chi tiết yêu cầu xuất kho
+              {t('warehouseOutboundRequests.table.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -300,12 +302,12 @@ function StaffOutboundRequestListContent() {
                   <table className="w-full table-auto border border-gray-200 rounded-lg text-sm bg-white">
                     <thead className="bg-gradient-to-r from-red-50 to-pink-50 text-red-800 font-semibold">
                       <tr>
-                        <th className="px-4 py-3 text-left border-b border-red-200">Mã yêu cầu</th>
-                        <th className="px-4 py-3 text-left border-b border-red-200">Kho</th>
-                        <th className="px-4 py-3 text-left border-b border-red-200">Thông tin hàng</th>
-                        <th className="px-4 py-3 text-right border-b border-red-200">Số lượng</th>
-                        <th className="px-4 py-3 text-center border-b border-red-200">Trạng thái</th>
-                        <th className="px-4 py-3 text-center border-b border-red-200">Thao tác</th>
+                        <th className="px-4 py-3 text-left border-b border-red-200">{t('warehouseOutboundRequests.table.headers.requestId')}</th>
+                        <th className="px-4 py-3 text-left border-b border-red-200">{t('warehouseOutboundRequests.table.headers.warehouse')}</th>
+                        <th className="px-4 py-3 text-left border-b border-red-200">{t('warehouseOutboundRequests.table.headers.inventory')}</th>
+                        <th className="px-4 py-3 text-right border-b border-red-200">{t('warehouseOutboundRequests.table.headers.quantity')}</th>
+                        <th className="px-4 py-3 text-center border-b border-red-200">{t('warehouseOutboundRequests.table.headers.status')}</th>
+                        <th className="px-4 py-3 text-center border-b border-red-200">{t('warehouseOutboundRequests.table.headers.action')}</th>
                       </tr>
                     </thead>
                     <tbody>
