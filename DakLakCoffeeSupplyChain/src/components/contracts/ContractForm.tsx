@@ -25,6 +25,7 @@ import {
   ContractItemUpdateDto,
 } from "@/lib/api/contractItems";
 import { getErrorMessage } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 // Sử dụng useRef thay vì biến global để tránh vấn đề HMR
 
@@ -85,35 +86,45 @@ export default function ContractForm({
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
   const router = useRouter();
   const lastStatusRef = useRef<ContractStatus | null>(null);
+  const { t } = useTranslation();
 
   const getStatusDisplay = (status: string) => {
     switch (status) {
       case "NotStarted":
         return {
-          label: "Chưa bắt đầu",
+          label: t("contracts.contractStatus.NotStarted"),
           className: "bg-gray-100 text-gray-600",
         };
       case "PreparingDelivery":
         return {
-          label: "Chuẩn bị giao",
+          label: t("contracts.contractStatus.PreparingDelivery"),
           className: "bg-purple-100 text-purple-700",
         };
       case "InProgress":
         return {
-          label: "Đang thực hiện",
+          label: t("contracts.contractStatus.InProgress"),
           className: "bg-green-100 text-green-700",
         };
       case "PartialCompleted":
         return {
-          label: "Hoàn thành một phần",
+          label: t("contracts.contractStatus.PartialCompleted"),
           className: "bg-yellow-100 text-yellow-700",
         };
       case "Completed":
-        return { label: "Hoàn thành", className: "bg-blue-100 text-blue-700" };
+        return {
+          label: t("contracts.contractStatus.Completed"),
+          className: "bg-blue-100 text-blue-700",
+        };
       case "Cancelled":
-        return { label: "Đã huỷ", className: "bg-red-100 text-red-700" };
+        return {
+          label: t("contracts.contractStatus.Cancelled"),
+          className: "bg-red-100 text-red-700",
+        };
       case "Expired":
-        return { label: "Quá hạn", className: "bg-orange-100 text-orange-700" };
+        return {
+          label: t("contracts.contractStatus.Expired"),
+          className: "bg-orange-100 text-orange-700",
+        };
       default:
         return { label: status, className: "bg-gray-100 text-gray-600" };
     }
@@ -435,7 +446,7 @@ export default function ContractForm({
     }
 
     if (!data.buyerId) {
-      clientErrors.buyerId = "Vui lòng chọn đối tác";
+      clientErrors.buyerId = t("contracts.validation.buyerIdRequired");
     }
 
     if (!data.startDate) {
@@ -456,9 +467,9 @@ export default function ContractForm({
 
     // Validate file upload (nếu có)
     if (selectedFile) {
-      const maxSize = 30 * 1024 * 1024; // 30MB
+      const maxSize = 10 * 1024 * 1024; // 10MB
       if (selectedFile.size > maxSize) {
-        clientErrors.contractFile = "File không được lớn hơn 30MB";
+        clientErrors.contractFile = t("contracts.validation.contractFileSize");
       }
 
       const allowedTypes = [
@@ -544,7 +555,7 @@ export default function ContractForm({
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
             toast.info(
-              "Hợp đồng đã quá hạn, trạng thái sẽ được cập nhật thành 'Quá hạn'"
+              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
             );
           }
         }
@@ -579,7 +590,7 @@ export default function ContractForm({
 
         await updateContract(dto.contractId, updateData);
 
-        toast.success("Cập nhật hợp đồng thành công!");
+        toast.success(t("contracts.contract.updateSuccess"));
       } else {
         const dto = data as ContractCreateDto;
 
@@ -595,7 +606,7 @@ export default function ContractForm({
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
             toast.info(
-              "Hợp đồng đã quá hạn, trạng thái sẽ được cập nhật thành 'Quá hạn'"
+              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
             );
           }
         }
@@ -621,7 +632,7 @@ export default function ContractForm({
           contractItems: normalizedItems,
         });
 
-        toast.success("Tạo hợp đồng thành công!");
+        toast.success(t("contracts.contract.createSuccess"));
       }
 
       onSuccess();
@@ -1077,31 +1088,33 @@ export default function ContractForm({
         const index = parseInt(match[1]) + 1;
         const itemField = match[2];
         const fieldMap: Record<string, string> = {
-          coffeetypeid: "Loại cà phê",
-          quantity: "Số lượng",
-          unitprice: "Đơn giá",
-          discountamount: "Chiết khấu",
-          note: "Ghi chú",
+          coffeetypeid: t("contracts.contractItems.coffeeTypeId"),
+          quantity: t("contracts.contractItems.quantity"),
+          unitprice: t("contracts.contractItems.unitPrice"),
+          discountamount: t("contracts.contractItems.discountAmount"),
+          note: t("contracts.contractItems.note"),
         };
-        return `Mặt hàng ${index} - ${fieldMap[itemField] || itemField}`;
+        return `${t("contracts.contractItems.item", { index })} - ${
+          fieldMap[itemField] || itemField
+        }`;
       }
     }
 
     // Map cho các field chính
     const fieldMap: Record<string, string> = {
-      buyerid: "Đối tác",
-      contractnumber: "Số hợp đồng",
-      contracttitle: "Tiêu đề hợp đồng",
-      contractfileurl: "File hợp đồng",
-      deliveryrounds: "Số đợt giao hàng",
-      totalquantity: "Tổng khối lượng",
-      totalvalue: "Tổng giá trị",
-      startdate: "Ngày bắt đầu",
-      enddate: "Ngày kết thúc",
-      signedat: "Ngày ký",
-      status: "Trạng thái",
-      cancelreason: "Lý do hủy",
-      contractitems: "Danh sách mặt hàng",
+      buyerid: t("contracts.contract.buyerId"),
+      contractnumber: t("contracts.contract.contractNumber"),
+      contracttitle: t("contracts.contract.contractTitle"),
+      contractfileurl: t("contracts.contract.contractFileUrl"),
+      deliveryrounds: t("contracts.contract.deliveryRounds"),
+      totalquantity: t("contracts.contract.totalQuantity"),
+      totalvalue: t("contracts.contract.totalValue"),
+      startdate: t("contracts.contract.startDate"),
+      enddate: t("contracts.contract.endDate"),
+      signedat: t("contracts.contract.signedAt"),
+      status: t("contracts.contract.status"),
+      cancelreason: t("contracts.contract.cancelReason"),
+      contractitems: t("contracts.contract.contractItems"),
     };
 
     return (
@@ -1142,7 +1155,7 @@ export default function ContractForm({
 
       <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
         <h2 className="text-2xl font-semibold text-center mb-6">
-          {isEdit ? "Chỉnh sửa hợp đồng" : "Tạo hợp đồng mới"}
+          {isEdit ? t("contracts.contract.edit") : t("contracts.contract.new")}
         </h2>
 
         {/* Hiển thị lỗi nghiệp vụ */}
@@ -1150,53 +1163,54 @@ export default function ContractForm({
           <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-orange-800 font-medium">
-                Cần tuân thủ quy tắc nghiệp vụ:
+                {t("contracts.contract.businessRules")}:
               </h3>
               <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-                {businessErrors.length} quy tắc
+                {businessErrors.length} {t("contracts.contract.rules")}
               </span>
             </div>
 
             {/* Tóm tắt nhanh */}
             <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
-              <strong>📋 Tóm tắt:</strong>
+              <strong>{t("contracts.contract.summary")}:</strong>
               {businessErrors.some((err) => err.includes("vượt quá")) &&
-                " Cần điều chỉnh tổng khối lượng/giá trị hợp đồng"}
+                t("contracts.contract.adjustTotal")}
               {businessErrors.some((err) => err.includes("cùng loại")) &&
-                " Cần loại bỏ mặt hàng trùng loại"}
+                t("contracts.contract.removeDuplicate")}
               {businessErrors.some((err) => err.includes("đã tồn tại")) &&
-                " Cần đổi số hợp đồng"}
+                t("contracts.contract.changeNumber")}
               {businessErrors.some((err) => err.includes("không có quyền")) &&
-                " Cần liên hệ admin"}
+                t("contracts.contract.contactAdmin")}
             </div>
 
             {/* Hướng dẫn giải quyết */}
             <div className="mt-3 pt-3 border-t border-orange-200">
               <p className="text-orange-600 text-sm font-medium mb-2">
-                💡 Hướng dẫn:
+                {t("contracts.contract.instructions")}:
               </p>
               <ul className="text-orange-600 text-xs space-y-1">
                 {businessErrors.some((err) => err.includes("vượt quá")) && (
                   <>
-                    <li>
-                      • Kiểm tra lại tổng khối lượng và giá trị của các mặt hàng
-                    </li>
-                    <li>
-                      • Đảm bảo tổng từ các mặt hàng không vượt quá tổng đã khai
-                      báo
-                    </li>
-                    <li>• Hoặc tăng tổng khối lượng/giá trị hợp đồng lên</li>
+                    <li>• {t("contracts.contract.checkTotal")}</li>
+                    <li>• {t("contracts.contract.ensureTotal")}</li>
+                    <li>{t("contracts.contract.orIncrease")}</li>
                     {(() => {
                       const { totalQuantity, totalValue } = calculateTotals();
                       return (
                         <>
                           <li>
-                            • Tổng từ mặt hàng: {totalQuantity.toFixed(1)} kg,{" "}
-                            {totalValue.toLocaleString()} VND
+                            •{" "}
+                            {t("contracts.contract.totalFromItems", {
+                              totalQuantity: totalQuantity.toFixed(1),
+                              totalValue: totalValue.toLocaleString(),
+                            })}
                           </li>
                           <li>
-                            • Tổng hợp đồng hiện tại: {data.totalQuantity || 0}{" "}
-                            kg, {data.totalValue || 0} VND
+                            •{" "}
+                            {t("contracts.contract.currentContract", {
+                              totalQuantity: data.totalQuantity || 0,
+                              totalValue: data.totalValue || 0,
+                            })}
                           </li>
                           <li className="mt-2">
                             <Button
@@ -1208,11 +1222,13 @@ export default function ContractForm({
                                   calculateTotals();
                                 handleChange("totalQuantity", totalQuantity);
                                 handleChange("totalValue", totalValue);
-                                toast.success("Đã cập nhật tổng từ mặt hàng");
+                                toast.success(
+                                  t("contracts.contract.updateTotal")
+                                );
                               }}
                               className="text-xs h-6 px-2"
                             >
-                              Tự động cập nhật tổng
+                              {t("contracts.contract.autoUpdateTotal")}
                             </Button>
                           </li>
                         </>
@@ -1221,21 +1237,23 @@ export default function ContractForm({
                   </>
                 )}
                 {businessErrors.some((err) => err.includes("cùng loại")) && (
-                  <li>• Không được có 2 dòng hợp đồng cùng loại cà phê</li>
+                  <li>• {t("contracts.contract.noDuplicate")}</li>
                 )}
                 {businessErrors.some((err) => err.includes("đã tồn tại")) && (
-                  <li>• Số hợp đồng đã tồn tại, hãy đổi số khác</li>
+                  <li>• {t("contracts.contract.numberExists")}</li>
                 )}
                 {businessErrors.some((err) =>
                   err.includes("không có quyền")
-                ) && <li>• Liên hệ admin để được cấp quyền phù hợp</li>}
+                ) && (
+                  <li>{t("contracts.contract.contactAdminForPermission")}</li>
+                )}
                 {businessErrors.some((err) =>
                   err.includes("không được âm")
-                ) && <li>• Kiểm tra các giá trị số không được âm</li>}
+                ) && <li>{t("contracts.contract.checkNonNegativeValues")}</li>}
                 {businessErrors.some(
                   (err) =>
                     err.includes("phải lớn hơn") || err.includes("phải nhỏ hơn")
-                ) && <li>• Kiểm tra các điều kiện về giá trị min/max</li>}
+                ) && <li>{t("contracts.contract.checkMinMaxValues")}</li>}
               </ul>
             </div>
           </div>
@@ -1244,7 +1262,8 @@ export default function ContractForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Số hợp đồng <span className="text-red-500">*</span>
+              {t("contracts.contract.contractNumber")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               placeholder="VD: CT001-2024, HD001, CONTRACT-001"
@@ -1261,13 +1280,15 @@ export default function ContractForm({
               </p>
             )}
             <p className="text-xs text-gray-500 mt-1">
-              💡 Định dạng: CT001-2024, HD001, CONTRACT-001, v.v.
+              {t("contracts.contract.format")}: CT001-2024, HD001, CONTRACT-001,
+              v.v.
             </p>
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tên hợp đồng <span className="text-red-500">*</span>
+              {t("contracts.contract.contractTitle")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               placeholder="VD: Hợp đồng cung cấp cà phê Robusta 2024"
@@ -1282,14 +1303,15 @@ export default function ContractForm({
               </p>
             )}
             <p className="text-xs text-gray-500 mt-1">
-              💡 VD: Hợp đồng cung cấp cà phê Robusta Dak Lak 2024
+              {t("contracts.contract.example")}: Hợp đồng cung cấp cà phê
+              Robusta Dak Lak 2024
             </p>
           </div>
         </div>
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            File hợp đồng
+            {t("contracts.contract.contractFile")}
           </label>
           <div className="flex items-center gap-3">
             <Input
@@ -1331,7 +1353,7 @@ export default function ContractForm({
               }}
               className="whitespace-nowrap"
             >
-              📁 Chọn file
+              {t("contracts.contract.selectFile")}
             </Button>
             {data.contractFileUrl && (
               <Button
@@ -1350,7 +1372,7 @@ export default function ContractForm({
                 }}
                 className="whitespace-nowrap"
               >
-                👁️ Xem file
+                {t("contracts.contract.viewFile")}
               </Button>
             )}
           </div>
@@ -1365,7 +1387,8 @@ export default function ContractForm({
             </p>
           )}
           <p className="text-xs text-gray-500 mt-1">
-            💡 Hỗ trợ: Ảnh (JPG, PNG, GIF, WebP), Word (DOC, DOCX) - Tối đa 30MB
+            {t("contracts.contract.support")}: Ảnh (JPG, PNG, GIF, WebP), Word
+            (DOC, DOCX)
           </p>
 
           {/* Preview file đã chọn hoặc file hiện tại */}
@@ -1373,7 +1396,10 @@ export default function ContractForm({
             <div className="mt-3 p-3 bg-gray-50 border rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">
-                  {selectedFile ? "File mới được chọn:" : "File hiện tại:"}
+                  {selectedFile
+                    ? t("contracts.contract.newFile")
+                    : t("contracts.contract.currentFile")}
+                  :
                 </span>
                 <span className="text-xs text-gray-500">
                   {selectedFile ? selectedFile.name : data.contractFileUrl}
@@ -1383,7 +1409,7 @@ export default function ContractForm({
               {/* Thông báo trạng thái */}
               {selectedFile && (
                 <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700 text-xs">
-                  ℹ️ File mới sẽ thay thế file hiện tại khi cập nhật
+                  ℹ️ {t("contracts.contract.newFileWillReplace")}
                 </div>
               )}
 
@@ -1403,7 +1429,7 @@ export default function ContractForm({
                           setShowImageModal(true);
                         }
                       }}
-                      title="Click để xem ảnh rõ hơn"
+                      title={t("contracts.contract.clickToViewFull")}
                     />
                   ) : data.contractFileUrl?.startsWith("http") ? (
                     <img
@@ -1417,15 +1443,16 @@ export default function ContractForm({
                           setShowImageModal(true);
                         }
                       }}
-                      title="Click để xem ảnh rõ hơn"
+                      title={t("contracts.contract.clickToViewFull")}
                     />
                   ) : (
                     <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
                       <span className="text-gray-500 text-sm">
-                        📷{" "}
-                        {selectedFile
-                          ? selectedFile.name
-                          : data.contractFileUrl}
+                        {t("contracts.contract.imagePreview", {
+                          name: selectedFile
+                            ? selectedFile.name
+                            : data.contractFileUrl,
+                        })}
                       </span>
                     </div>
                   )}
@@ -1444,16 +1471,19 @@ export default function ContractForm({
                         rel="noopener noreferrer"
                         className="text-red-600 hover:text-red-800 text-sm font-medium"
                       >
-                        📄 Xem PDF: {data.contractFileUrl.split("/").pop()}
+                        {t("contracts.contract.viewPdf", {
+                          fileName: data.contractFileUrl.split("/").pop(),
+                        })}
                       </a>
                     </div>
                   ) : (
                     <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
                       <span className="text-gray-500 text-sm">
-                        📄{" "}
-                        {selectedFile
-                          ? selectedFile.name
-                          : data.contractFileUrl}
+                        {t("contracts.contract.pdfPreview", {
+                          name: selectedFile
+                            ? selectedFile.name
+                            : data.contractFileUrl,
+                        })}
                       </span>
                     </div>
                   )}
@@ -1466,8 +1496,11 @@ export default function ContractForm({
                 <div className="mt-2">
                   <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
                     <span className="text-blue-600 text-sm font-medium">
-                      📝{" "}
-                      {selectedFile ? selectedFile.name : data.contractFileUrl}
+                      {t("contracts.contract.wordPreview", {
+                        name: selectedFile
+                          ? selectedFile.name
+                          : data.contractFileUrl,
+                      })}
                     </span>
                   </div>
                 </div>
@@ -1484,11 +1517,11 @@ export default function ContractForm({
                       setSelectedFile(null);
                       setFilePreviewUrl(null);
                       handleChange("contractFileUrl", "");
-                      toast.info("Đã xóa file mới được chọn");
+                      toast.info(t("contracts.contract.deleteNewFile"));
                     }}
                     className="text-red-600 border-red-200 hover:bg-red-50"
                   >
-                    🗑️ Xóa file mới
+                    {t("contracts.contract.deleteNewFile")}
                   </Button>
                 )}
 
@@ -1500,11 +1533,11 @@ export default function ContractForm({
                     onClick={() => {
                       handleChange("contractFileUrl", "");
                       setFilePreviewUrl(null);
-                      toast.info("Đã xóa file hiện tại");
+                      toast.info(t("contracts.contract.deleteCurrentFile"));
                     }}
                     className="text-orange-600 border-orange-200 hover:bg-orange-50"
                   >
-                    🗑️ Xóa file hiện tại
+                    {t("contracts.contract.deleteCurrentFile")}
                   </Button>
                 )}
               </div>
@@ -1514,7 +1547,8 @@ export default function ContractForm({
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Đối tác <span className="text-red-500">*</span>
+            {t("contracts.contract.buyer")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <select
             value={data.buyerId}
@@ -1524,7 +1558,9 @@ export default function ContractForm({
             }`}
             required
           >
-            <option value="">-- Chọn đối tác --</option>
+            <option value="">
+              -- {t("contracts.contract.selectBuyer")} --
+            </option>
             {buyers.map((buyer) => (
               <option key={buyer.buyerId} value={buyer.buyerId}>
                 {buyer.companyName}
@@ -1541,7 +1577,8 @@ export default function ContractForm({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Số đợt <span className="text-red-500">*</span>
+              {t("contracts.contract.deliveryRounds")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -1563,7 +1600,8 @@ export default function ContractForm({
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tổng KL (kg) <span className="text-red-500">*</span>
+              {t("contracts.contract.totalQuantity")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -1584,7 +1622,8 @@ export default function ContractForm({
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tổng GT (VND) <span className="text-red-500">*</span>
+              {t("contracts.contract.totalValue")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -1606,7 +1645,8 @@ export default function ContractForm({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Ngày bắt đầu <span className="text-red-500">*</span>
+              {t("contracts.contract.startDate")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <DatePicker
               value={data.startDate as any}
@@ -1618,7 +1658,8 @@ export default function ContractForm({
           </div>
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Ngày kết thúc <span className="text-red-500">*</span>
+              {t("contracts.contract.endDate")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <DatePicker
               value={data.endDate as any}
@@ -1629,7 +1670,9 @@ export default function ContractForm({
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium">Ngày ký</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("contracts.contract.signedAt")}
+            </label>
             <DatePicker
               value={data.signedAt as any}
               onChange={(date) => {
@@ -1644,7 +1687,9 @@ export default function ContractForm({
         {/* Chỉ hiển thị trạng thái khi edit */}
         {isEdit && (
           <div>
-            <label className="block mb-1 text-sm font-medium">Trạng thái</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("contracts.contract.status")}
+            </label>
             <select
               className={`w-full p-2 border rounded ${
                 hasFieldError("status") ? "border-red-500" : ""
@@ -1725,7 +1770,9 @@ export default function ContractForm({
         {/* Hiển thị trạng thái hiện tại khi create */}
         {!isEdit && (
           <div>
-            <label className="block mb-1 text-sm font-medium">Trạng thái</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("contracts.contract.status")}
+            </label>
             <div className="p-2 border rounded bg-gray-50">
               <span
                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -1736,9 +1783,7 @@ export default function ContractForm({
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              💡 Trạng thái sẽ tự động cập nhật: "Chưa bắt đầu" nếu ngày bắt đầu
-              trong tương lai, "Đang thực hiện" nếu ngày bắt đầu là hôm nay hoặc
-              quá khứ
+              {t("contracts.contract.statusAutoUpdate")}
             </p>
           </div>
         )}
@@ -1747,10 +1792,11 @@ export default function ContractForm({
         {isEdit && data.status === ContractStatus.Cancelled && (
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Lý do huỷ <span className="text-red-500">*</span>
+              {t("contracts.contract.cancelReason")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Textarea
-              placeholder="Vui lòng ghi lý do hủy hợp đồng..."
+              placeholder={t("contracts.contract.enterCancelReason")}
               value={data.cancelReason}
               onChange={(e) => handleChange("cancelReason", e.target.value)}
               className={hasFieldError("cancelReason") ? "border-red-500" : ""}
@@ -1766,7 +1812,8 @@ export default function ContractForm({
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Danh sách mặt hàng <span className="text-red-500">*</span>
+            {t("contracts.contract.contractItems")}{" "}
+            <span className="text-red-500">*</span>
           </label>
 
           {/* Hiển thị lỗi tổng quát cho contract items */}
@@ -1782,11 +1829,11 @@ export default function ContractForm({
             <>
               {/* Header */}
               <div className="hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground">
-                <span>Loại cà phê</span>
-                <span>Số lượng (kg)</span>
-                <span>Đơn giá (VND/Kg)</span>
-                <span>Chiết khấu (%)</span>
-                <span>Ghi chú</span>
+                <span>{t("contracts.contractItems.coffeeTypeId")}</span>
+                <span>{t("contracts.contractItems.quantity")}</span>
+                <span>{t("contracts.contractItems.unitPrice")}</span>
+                <span>{t("contracts.contractItems.discountAmount")}</span>
+                <span>{t("contracts.contractItems.note")}</span>
                 <span></span>
               </div>
 
@@ -1808,7 +1855,9 @@ export default function ContractForm({
                         : ""
                     }`}
                   >
-                    <option value="">-- Chọn loại cà phê --</option>
+                    <option value="">
+                      -- {t("contracts.contractItems.selectCoffeeType")} --
+                    </option>
                     {coffeeTypes.map((type) => (
                       <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
                         {type.typeName}
@@ -1897,7 +1946,7 @@ export default function ContractForm({
 
                   {/* Ghi chú */}
                   <Input
-                    placeholder="Ghi chú"
+                    placeholder={t("contracts.contractItems.notePlaceholder")}
                     value={item.note || ""}
                     onChange={(e) =>
                       updateContractItem(index, "note", e.target.value)
@@ -1919,7 +1968,7 @@ export default function ContractForm({
                     variant="destructive"
                     onClick={() => removeContractItem(index)}
                   >
-                    Xoá
+                    {t("contracts.contract.delete")}
                   </Button>
                 </div>
               ))}
@@ -1932,20 +1981,20 @@ export default function ContractForm({
             onClick={addContractItem}
             className="mt-2"
           >
-            + Thêm mặt hàng
+            + {t("contracts.contract.addItem")}
           </Button>
         </div>
 
         <DialogFooter className="flex justify-between pt-4">
           <Button type="submit" onClick={handleSubmit}>
-            <h2>Lưu hợp đồng</h2>
+            <h2>{t("contracts.contract.save")}</h2>
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push("/dashboard/manager/contracts")}
           >
-            Quay lại
+            {t("contracts.contract.back")}
           </Button>
         </DialogFooter>
       </form>

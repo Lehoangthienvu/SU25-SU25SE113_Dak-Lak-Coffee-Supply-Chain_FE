@@ -4082,12 +4082,20 @@
           "headers": {
             "contractNumber": "Contract Number",
             "contractTitle": "Contract Title",
-            "partner": "Partner",
+            "partner": "Buyer",
             "status": "Status",
             "time": "Time",
             "actions": "Actions"
           },
           "empty": "No contracts found",
+          "dialog": {
+                "deleteContract": {
+                "title": "Delete Contract?",
+                "description": "Are you sure you want to delete contract <strong>{{contractTitle}}</strong>? This action cannot be undone.",
+                "confirm": "Delete",
+                "cancel": "Cancel"
+              }
+          },
           "pagination": {
             "showing": "Showing",
             "to": "to",
@@ -4154,7 +4162,7 @@
         "edit": "Edit",
         "delete": "Delete",
         "deleteItemTitle": "Delete Item?",
-        "deleteItemDescription": "Are you sure you want to delete item {{itemName}} from the contract? This action cannot be undone.",
+        "deleteItemDescription": "Are you sure you want to delete item <strong>{{itemName}}</strong> from the contract? This action cannot be undone.",
         "deleteItemConfirm": "Delete",
         "deleteItemCancel": "Cancel",
         "deleteItemSuccess": "Item deleted successfully!",
@@ -4180,6 +4188,15 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "expired": "Expired"
+    },
+    "contractStatus": {
+      "NotStarted": "Not Started",
+      "PreparingDelivery": "Preparing Delivery",
+      "InProgress": "In Progress",
+      "PartialCompleted": "Partially Completed",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
     },
     "form": {
       "status": "Status"
@@ -4278,6 +4295,152 @@
       "viewDirectly": "View Directly",
       "addItem": "Add Item",
       "action": "Action"
+    },
+    "contractItem": {
+      "form": {
+        "title": {
+          "create": "Add New Item",
+          "edit": "Edit Item"
+        },
+        "fields": {
+          "coffeeType": "Coffee Type",
+          "coffeeTypePlaceholder": "Select coffee type...",
+          "quantity": "Quantity",
+          "unitPrice": "Unit Price",
+          "discount": "Discount",
+          "note": "Note",
+          "notePlaceholder": "Additional notes (optional)..."
+        },
+        "validation": {
+          "coffeeTypeRequired": "Please select a coffee type",
+          "quantityRequired": "Please enter quantity",
+          "quantityPositive": "Quantity must be greater than 0",
+          "unitPriceRequired": "Please enter unit price",
+          "unitPricePositive": "Unit price must be greater than 0",
+          "discountNegative": "Discount cannot be negative",
+          "discountExceedsTotal": "Discount cannot exceed total amount",
+          "noteTooLong": "Note cannot exceed 1000 characters",
+          "checkFormErrors": "Please check and fix form errors"
+        },
+        "businessRules": {
+          "title": "Business Rules",
+          "rulesCount": "rules"
+        },
+        "actions": {
+          "create": "Add Item",
+          "update": "Update",
+          "cancel": "Cancel",
+          "saving": "Saving..."
+        },
+        "success": {
+          "create": "Item added successfully!",
+          "update": "Item updated successfully!"
+        },
+        "error": {
+          "saveError": "Cannot save item. Please try again."
+        }
+      }
+    },
+    "contract": {
+      "edit": "Edit Contract",
+      "new": "Create New Contract",
+      "buyerId": "Business Buyer",
+      "contractNumber": "Contract Number",
+      "contractTitle": "Contract Title",
+      "contractFileUrl": "Contract File",
+      "deliveryRounds": "Delivery Rounds",
+      "totalQuantity": "Total Quantity",
+      "totalValue": "Total Value",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "signedAt": "Signed Date",
+      "status": "Status",
+      "cancelReason": "Cancel Reason",
+              "contractItems": "Contract Item List",
+      "buyer": "Business Buyer",
+      "contractFile": "Contract File",
+      "selectFile": "📁 Select File",
+      "viewFile": "👁️ View File",
+      "support": "💡 Support",
+      "newFile": "New file selected",
+      "currentFile": "Current file",
+      "newFileWillReplace": "ℹ️ New file will replace current file when updating",
+      "clickToViewFull": "Click to view image larger",
+      "imagePreview": "📷 {{name}}",
+      "viewPdf": "📄 View PDF: {{fileName}}",
+      "pdfPreview": "📄 {{name}}",
+      "wordPreview": "📝 {{name}}",
+      "deleteNewFile": "🗑️ Delete new file",
+      "deleteCurrentFile": "🗑️ Delete current file",
+      "selectBuyer": "Select business buyer",
+      "enterCancelReason": "Please enter the reason for canceling the contract...",
+      "delete": "Delete",
+      "addItem": "Add Item",
+      "save": "Save Contract",
+      "back": "Back",
+      "format": "💡 Format",
+      "example": "💡 Example",
+              "statusAutoUpdate": "💡 Status will automatically update: \"In Progress\" if start date is in the past or present, \"Not Started\" if start date is in the future",
+      "updateSuccess": "Contract updated successfully!",
+      "createSuccess": "Contract created successfully!",
+      "businessRules": "Business rules must be followed",
+      "rules": "rules",
+      "summary": "📋 Summary",
+      "adjustTotal": " Need to adjust total quantity/value of contract",
+      "removeDuplicate": " Need to remove duplicate items",
+      "changeNumber": " Need to change contract number",
+      "contactAdmin": " Need to contact admin",
+      "instructions": "💡 Instructions",
+      "checkTotal": "• Check total quantity and value of items",
+      "ensureTotal": "• Ensure total from items does not exceed declared total",
+      "orIncrease": "• Or increase total quantity/value of contract",
+      "totalFromItems": "• Total from items: {{totalQuantity}} kg, {{totalValue}} VND",
+      "currentContract": "• Current contract total: {{totalQuantity}} kg, {{totalValue}} VND",
+      "updateTotal": "Updated total from items",
+      "autoUpdateTotal": "Auto update total",
+      "noDuplicate": "• Cannot have 2 contract lines with same coffee type",
+      "numberExists": "• Contract number already exists, please change to another number",
+      "contactAdminForPermission": "• Contact admin for appropriate permissions",
+      "checkNonNegativeValues": "• Check numeric values cannot be negative",
+      "checkMinMaxValues": "• Check min/max value conditions"
+    },
+    "contractItems": {
+      "coffeeTypeId": "Coffee Type",
+      "quantity": "Quantity (kg)",
+      "unitPrice": "Unit Price (VND/Kg)",
+      "discountAmount": "Discount (%)",
+      "note": "Note",
+      "selectCoffeeType": "Select coffee type",
+      "notePlaceholder": "Note",
+      "item": "Item {{index}}"
+    },
+    "validation": {
+      "deliveryRounds": "Delivery rounds must be a positive integer",
+      "totalQuantity": "Total quantity cannot be negative",
+      "totalValue": "Total value cannot be negative",
+      "quantity": "Quantity must be greater than 0",
+      "unitPrice": "Unit price must be greater than 0",
+      "discountAmount": "Discount cannot be negative",
+      "contractNumberRequired": "Contract number is required",
+      "contractNumberLength": "Contract number must have at least 3 characters",
+      "contractTitleRequired": "Contract title is required",
+      "contractTitleLength": "Contract title must have at least 10 characters to describe clearly",
+      "contractTitleMaxLength": "Contract title cannot exceed 200 characters",
+      "buyerIdRequired": "Please select a business buyer",
+      "startDateRequired": "Start date is required",
+      "endDateRequired": "End date is required",
+      "endDateAfterStartDate": "End date must be after start date",
+      "signedAtAfterStartDate": "Contract signed date cannot be after start date",
+              "contractFileSize": "File cannot be too large",
+      "contractFileType": "Only supports image files (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)",
+      "cancelReasonRequired": "Cancel reason is required when status is 'Cancelled'",
+      "contractItemsRequired": "Please add at least 1 item to the contract",
+      "coffeeTypeIdRequired": "Please select a coffee type",
+      "formErrors": "Please check and fix errors in the form",
+      "dateError": "Date error: Contract signed date must be ≤ Start date"
+    },
+    "error": {
+      "loadPreview": "Cannot load image preview"
     }
   }
 }

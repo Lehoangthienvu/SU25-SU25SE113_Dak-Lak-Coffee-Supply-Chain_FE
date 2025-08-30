@@ -123,22 +123,6 @@ export default function ContractsPage() {
   const [contractToDelete, setContractToDelete] =
     useState<ContractViewAllDto | null>(null);
 
-  async function handleDelete() {
-    if (!contractToDelete) return;
-    try {
-      await softDeleteContract(contractToDelete.contractId);
-      setContracts((prev) =>
-        prev.filter((c) => c.contractId !== contractToDelete.contractId)
-      );
-      setShowDeleteDialog(false);
-      setContractToDelete(null);
-      toast.success(t("contracts.crud.success.delete"));
-    } catch (error) {
-      console.error("Lỗi khi xoá hợp đồng:", error);
-      toast.error(t("contracts.crud.error.delete"));
-    }
-  }
-
   return (
     <div className="flex min-h-screen bg-amber-50 p-6 gap-6">
       <aside className="w-64 space-y-4">
@@ -236,7 +220,7 @@ export default function ContractsPage() {
                 {pagedContracts.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={6}
                       className="text-center py-8 text-sm text-muted-foreground"
                     >
                       {t("contracts.page.list.table.empty")}
@@ -380,17 +364,39 @@ export default function ContractsPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t("contracts.crud.dialog.deleteItem.title")}
+        title={t("contracts.page.list.table.dialog.deleteContract.title")}
         description={
-          <span>
-            {t("contracts.crud.dialog.deleteItem.description", {
-              itemName: contractToDelete?.contractTitle,
-            })}
-          </span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t(
+                "contracts.page.list.table.dialog.deleteContract.description",
+                {
+                  contractTitle: contractToDelete?.contractTitle,
+                }
+              ),
+            }}
+          />
         }
-        confirmText={t("contracts.crud.dialog.deleteItem.confirm")}
-        cancelText={t("contracts.crud.dialog.deleteItem.cancel")}
-        onConfirm={handleDelete}
+        confirmText={t(
+          "contracts.page.list.table.dialog.deleteContract.confirm"
+        )}
+        cancelText={t("contracts.page.list.table.dialog.deleteContract.cancel")}
+        onConfirm={async () => {
+          if (!contractToDelete) return;
+          try {
+            await softDeleteContract(contractToDelete.contractId);
+            setContracts((prev) =>
+              prev.filter((c) => c.contractId !== contractToDelete.contractId)
+            );
+            toast.success(t("contracts.crud.success.delete"));
+          } catch (error) {
+            console.error("Lỗi khi xoá hợp đồng:", error);
+            toast.error(t("contracts.crud.error.delete"));
+          } finally {
+            setShowDeleteDialog(false);
+            setContractToDelete(null);
+          }
+        }}
       />
     </div>
   );
