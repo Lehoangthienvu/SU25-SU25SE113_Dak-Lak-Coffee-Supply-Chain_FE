@@ -337,8 +337,8 @@ export default function ContractsPage() {
               {t("contracts.page.list.table.pagination.showing")}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * pageSize + 1}
-              </span>
-              –
+              </span>{" "}
+              –{" "}
               <span className="font-medium">
                 {Math.min(currentPage * pageSize, filtered.length)}
               </span>{" "}
