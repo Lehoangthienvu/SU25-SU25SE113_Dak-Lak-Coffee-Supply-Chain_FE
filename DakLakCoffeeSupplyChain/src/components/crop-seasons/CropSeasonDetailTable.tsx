@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,6 @@ export default function CropSeasonDetailTable({
   const [deletingDetailId, setDeletingDetailId] = useState<string | null>(null);
   const [isClosingDialog, setIsClosingDialog] = useState(false);
   const router = useRouter();
-  const dialogRef = useRef<HTMLDivElement>(null);
 
   // Prevent body scroll and handle dialog backdrop clicks
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function CropSeasonDetailTable({
     router.push(`/dashboard/farmer/crop-progress/${detailId}`);
   };
 
-  const handleDelete = async (detailId: string, event: React.MouseEvent) => {
+  const handleDelete = async (detailId: string) => {
     if (!confirm(t('cropSeasons.detailTable.confirmDelete'))) {
       return;
     }
@@ -185,7 +185,7 @@ export default function CropSeasonDetailTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-green-100">
-            {details.map((detail) => (
+            {details.map((detail: CropSeasonDetail) => (
               <tr
                 key={detail.detailId}
                 className={`transition-colors ${(editingDetailId || isClosingDialog) ? 'cursor-default' : 'hover:bg-green-50 cursor-pointer'}`}
@@ -261,7 +261,6 @@ export default function CropSeasonDetailTable({
                           setEditingDetailId(detail.detailId);
                         }
                       }}
-                      onOpenAutoFocus={(e) => e.preventDefault()}
                     >
                       <DialogTrigger asChild>
                         <Button
@@ -289,7 +288,7 @@ export default function CropSeasonDetailTable({
                       variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(detail.detailId, e);
+                        handleDelete(detail.detailId);
                       }}
                       disabled={deletingDetailId === detail.detailId}
                       className="text-red-600 hover:text-red-800 hover:bg-red-50"
