@@ -1954,7 +1954,9 @@
     "totalSizeLimit": "Tổng kích thước files ({{totalSizeMB}}MB) vượt quá giới hạn 50MB",
     "totalFilesLimit": "Số lượng files ({{totalFiles}}) vượt quá giới hạn 10 files",
     "createProgressFailed": "Tạo tiến trình thất bại!",
-    "createProgressSuccess": "Tạo tiến trình thành công!"
+    "createProgressSuccess": "Tạo tiến trình thành công!",
+    "filterByStatus": "Lọc theo trạng thái",
+    "allStatuses": "Tất cả trạng thái"
   },
 
   "farmerBatchSelector": {
