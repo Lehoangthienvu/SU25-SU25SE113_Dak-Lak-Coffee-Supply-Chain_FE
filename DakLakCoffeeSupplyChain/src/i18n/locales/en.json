@@ -4056,5 +4056,179 @@
         "create": "Product updated successfully!"
       }
     }
+  },
+  "contracts": {
+    "contract": {
+      "title": "Contracts",
+      "description": "Manage coffee supply contracts"
+    },
+    "page": {
+      "list": {
+        "title": "Contract List",
+        "search": {
+          "title": "Search Contracts",
+          "placeholder": "Search...",
+          "description": "Search by contract code, contract title, partner"
+        },
+        "filters": {
+          "title": "Filter by Status",
+          "allStatuses": "All Statuses",
+          "dateRange": {
+            "fromDate": "From Date",
+            "toDate": "To Date"
+          }
+        },
+        "table": {
+          "headers": {
+            "contractNumber": "Contract Number",
+            "contractTitle": "Contract Title",
+            "partner": "Partner",
+            "status": "Status",
+            "time": "Time",
+            "actions": "Actions"
+          },
+          "empty": "No contracts found",
+          "pagination": {
+            "showing": "Showing",
+            "to": "to",
+            "of": "/",
+            "contracts": "contracts",
+            "page": "Page",
+            "previous": "← Previous",
+            "next": "Next →"
+          }
+        },
+        "actions": {
+          "createNew": "+ Create New Contract"
+        }
+      },
+      "create": {
+        "title": "Create New Contract",
+        "description": "Create new coffee supply contract"
+      },
+      "edit": {
+        "title": "Edit Contract",
+        "description": "Update contract information",
+        "loading": "Loading contract data...",
+        "notFound": "Contract not found with ID: {{id}}"
+      },
+      "detail": {
+        "title": "Contract Details",
+        "loading": "Loading contract data...",
+        "error": "Error loading contract",
+        "notFound": "Contract not found",
+        "itemList": "Item List",
+        "noItems": "No items found.",
+        "displaying": "Displaying",
+        "items": "items"
+      }
+    },
+    "status": {
+      "notStarted": "Not Started",
+      "preparingDelivery": "Preparing Delivery",
+              "inProgress": "In Progress",
+      "partialCompleted": "Partially Completed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "form": {
+      "status": "Status"
+    },
+    "managerContract": {
+      "status": {
+        "notStarted": "Not Started",
+        "preparingDelivery": "Preparing Delivery",
+        "inProgress": "In Progress",
+        "partialCompleted": "Partially Completed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "expired": "Expired"
+      },
+      "actions": {
+        "view": "View Details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": {
+          "title": "Delete Contract?",
+          "description": "Are you sure you want to delete contract {{contractTitle}}? This action cannot be undone.",
+          "confirm": "Delete",
+          "cancel": "Cancel"
+        },
+        "download": "Download Contract",
+        "viewDirectly": "View Directly",
+        "addItem": "Add Item",
+        "action": "Action"
+      }
+    },
+    "crud": {
+      "form": {
+        "status": "Status",
+        "basicInfo": "Basic Information",
+        "contractNumber": "Contract Number",
+        "contractTitle": "Contract Title",
+        "seller": "Seller",
+        "buyer": "Buyer",
+        "deliveryRounds": "Delivery Rounds",
+        "totalQuantity": "Total Quantity",
+        "totalValue": "Total Value",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "signedAt": "Signed Date",
+        "cancelReason": "Cancel Reason",
+        "createdAt": "Created Date",
+        "updatedAt": "Updated Date",
+        "contractFile": "Contract File",
+        "previewFile": "Preview File",
+        "coffeeType": "Coffee Type",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "discount": "Discount",
+        "note": "Note",
+        "vndPerKg": "VND/kg"
+      },
+      "validation": {
+        "contractNumberRequired": "Please enter contract number",
+        "contractTitleRequired": "Please enter contract title",
+        "buyerRequired": "Please select buyer partner",
+        "startDateRequired": "Please select start date",
+        "endDateRequired": "Please select end date",
+        "endDateAfterStartDate": "End date must be after start date",
+        "quantityRequired": "Please enter quantity",
+        "quantityPositive": "Quantity must be greater than 0",
+        "unitPriceRequired": "Please enter unit price",
+        "unitPricePositive": "Unit price must be greater than 0"
+      },
+      "success": {
+        "create": "Contract created successfully!",
+        "update": "Contract updated successfully!",
+        "delete": "Contract deleted successfully!"
+      },
+      "error": {
+        "create": "Failed to create contract!",
+        "update": "Failed to update contract!",
+        "delete": "Failed to delete contract!"
+      },
+      "dialog": {
+        "deleteItem": {
+          "title": "Delete Item?",
+          "description": "Are you sure you want to delete item {{itemName}} from the contract? This action cannot be undone.",
+          "confirm": "Delete",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "form": {
+      "status": "Status"
+    },
+    "actions": {
+      "view": "View Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "download": "Download Contract",
+      "viewDirectly": "View Directly",
+      "addItem": "Add Item",
+      "action": "Action"
+    }
   }
 }

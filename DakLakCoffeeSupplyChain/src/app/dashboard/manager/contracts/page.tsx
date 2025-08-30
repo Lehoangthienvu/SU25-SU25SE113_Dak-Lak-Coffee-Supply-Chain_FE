@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getAllContracts, ContractViewAllDto } from "@/lib/api/contracts";
@@ -21,6 +22,7 @@ import { softDeleteContract } from "@/lib/api/contracts";
 import { Tooltip } from "@/components/ui/tooltip";
 
 export default function ContractsPage() {
+  const { t } = useTranslation();
   const [contracts, setContracts] = useState<ContractViewAllDto[]>([]);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -79,30 +81,39 @@ export default function ContractsPage() {
     switch (status) {
       case "NotStarted":
         return {
-          label: "Chưa bắt đầu",
+          label: t("contracts.status.notStarted"),
           className: "bg-gray-100 text-gray-600",
         };
       case "PreparingDelivery":
         return {
-          label: "Chuẩn bị giao",
+          label: t("contracts.status.preparingDelivery"),
           className: "bg-purple-100 text-purple-700",
         };
       case "InProgress":
         return {
-          label: "Đang thực hiện",
+          label: t("contracts.status.inProgress"),
           className: "bg-green-100 text-green-700",
         };
       case "PartialCompleted":
         return {
-          label: "Hoàn thành một phần",
+          label: t("contracts.status.partialCompleted"),
           className: "bg-yellow-100 text-yellow-700",
         };
       case "Completed":
-        return { label: "Hoàn thành", className: "bg-blue-100 text-blue-700" };
+        return {
+          label: t("contracts.status.completed"),
+          className: "bg-blue-100 text-blue-700",
+        };
       case "Cancelled":
-        return { label: "Đã hủy", className: "bg-red-100 text-red-700" };
+        return {
+          label: t("contracts.status.cancelled"),
+          className: "bg-red-100 text-red-700",
+        };
       case "Expired":
-        return { label: "Quá hạn", className: "bg-orange-100 text-orange-700" };
+        return {
+          label: t("contracts.status.expired"),
+          className: "bg-orange-100 text-orange-700",
+        };
       default:
         return { label: status, className: "bg-gray-100 text-gray-600" };
     }
@@ -121,10 +132,10 @@ export default function ContractsPage() {
       );
       setShowDeleteDialog(false);
       setContractToDelete(null);
-      toast.success("Xóa hợp đồng thành công!");
+      toast.success(t("contracts.crud.success.delete"));
     } catch (error) {
       console.error("Lỗi khi xoá hợp đồng:", error);
-      toast.error("Xóa hợp đồng thất bại!");
+      toast.error(t("contracts.crud.error.delete"));
     }
   }
 
@@ -133,11 +144,11 @@ export default function ContractsPage() {
       <aside className="w-64 space-y-4">
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            Tìm kiếm hợp đồng
+            {t("contracts.page.list.search.title")}
           </h2>
           <div className="relative">
             <Input
-              placeholder="Tìm kiếm..."
+              placeholder={t("contracts.page.list.search.placeholder")}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -161,7 +172,7 @@ export default function ContractsPage() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Từ ngày
+                  {t("contracts.page.list.filters.dateRange.fromDate")}
                 </label>
                 <Input
                   type="date"
@@ -176,7 +187,7 @@ export default function ContractsPage() {
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Đến ngày
+                  {t("contracts.page.list.filters.dateRange.toDate")}
                 </label>
                 <Input
                   type="date"
@@ -193,7 +204,7 @@ export default function ContractsPage() {
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => router.push("/dashboard/manager/contracts/create")}
             >
-              + Tạo hợp đồng mới
+              {t("contracts.page.list.actions.createNew")}
             </Button>
           </div>
 
@@ -201,12 +212,24 @@ export default function ContractsPage() {
             <table className="min-w-full table-auto">
               <thead className="bg-gray-100 text-sm text-gray-600">
                 <tr>
-                  <th className="px-4 py-2 text-left">Số hợp đồng</th>
-                  <th className="px-4 py-2 text-left">Tên hợp đồng</th>
-                  <th className="px-4 py-2 text-left">Đối tác</th>
-                  <th className="px-4 py-2 text-center">Trạng thái</th>
-                  <th className="px-4 py-2 text-center">Thời gian</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">
+                    {t("contracts.page.list.table.headers.contractNumber")}
+                  </th>
+                  <th className="px-4 py-2 text-left">
+                    {t("contracts.page.list.table.headers.contractTitle")}
+                  </th>
+                  <th className="px-4 py-2 text-left">
+                    {t("contracts.page.list.table.headers.partner")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contracts.page.list.table.headers.status")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contracts.page.list.table.headers.time")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contracts.page.list.table.headers.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -216,7 +239,7 @@ export default function ContractsPage() {
                       colSpan={5}
                       className="text-center py-8 text-sm text-muted-foreground"
                     >
-                      Không tìm thấy hợp đồng nào
+                      {t("contracts.page.list.table.empty")}
                     </td>
                   </tr>
                 ) : (
@@ -258,7 +281,7 @@ export default function ContractsPage() {
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-[2px]">
-                          <Tooltip content="Xem chi tiết">
+                          <Tooltip content={t("contracts.actions.view")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -271,7 +294,7 @@ export default function ContractsPage() {
                               <Eye className="w-4 h-4 text-blue-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t("contracts.actions.edit")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -284,7 +307,7 @@ export default function ContractsPage() {
                               <Pencil className="w-4 h-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t("contracts.actions.delete")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -311,7 +334,7 @@ export default function ContractsPage() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
             {/* Thông tin hiển thị hợp đồng */}
             <div className="text-sm text-gray-600">
-              Đang hiển thị{" "}
+              {t("contracts.page.list.table.pagination.showing")}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * pageSize + 1}
               </span>
@@ -319,7 +342,8 @@ export default function ContractsPage() {
               <span className="font-medium">
                 {Math.min(currentPage * pageSize, filtered.length)}
               </span>{" "}
-              / {filtered.length} hợp đồng
+              {t("contracts.page.list.table.pagination.of")} {filtered.length}{" "}
+              {t("contracts.page.list.table.pagination.contracts")}
             </div>
 
             {/* Điều khiển phân trang */}
@@ -331,11 +355,12 @@ export default function ContractsPage() {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               >
-                ← Trước
+                {t("contracts.page.list.table.pagination.previous")}
               </Button>
               <span className="flex items-center px-2">
-                Trang <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                / {totalPages}
+                {t("contracts.page.list.table.pagination.page")}{" "}
+                <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t("contracts.page.list.table.pagination.of")} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -346,7 +371,7 @@ export default function ContractsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
               >
-                Sau →
+                {t("contracts.page.list.table.pagination.next")}
               </Button>
             </div>
           </div>
@@ -355,16 +380,16 @@ export default function ContractsPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Xoá hợp đồng?"
+        title={t("contracts.crud.dialog.deleteItem.title")}
         description={
           <span>
-            Bạn có chắc chắn muốn xoá hợp đồng{" "}
-            <strong>{contractToDelete?.contractTitle}</strong>? Hành động này
-            không thể hoàn tác.
+            {t("contracts.crud.dialog.deleteItem.description", {
+              itemName: contractToDelete?.contractTitle,
+            })}
           </span>
         }
-        confirmText="Xóa"
-        cancelText="Hủy"
+        confirmText={t("contracts.crud.dialog.deleteItem.confirm")}
+        cancelText={t("contracts.crud.dialog.deleteItem.cancel")}
         onConfirm={handleDelete}
       />
     </div>
