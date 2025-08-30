@@ -4,7 +4,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
 import {
   getContractDetails,
   ContractViewDetailsDto,
@@ -81,8 +80,6 @@ export default function ContractDetailPage() {
   >(null);
 
   const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
-
-  const { t } = useTranslation();
 
   // Helper function to convert PascalCase status to camelCase for translation keys
   const getStatusTranslationKey = (status: string) => {
