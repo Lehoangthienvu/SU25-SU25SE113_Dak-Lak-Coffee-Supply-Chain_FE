@@ -1961,6 +1961,15 @@
     "currency": "VNĐ"
   },
 
+  "notifications": {
+    "title": "Thông báo",
+    "justNow": "Vừa xong",
+    "markAllAsRead": "Đánh dấu tất cả đã đọc",
+    "noNotifications": "Không có thông báo nào",
+    "read": "Đã đọc",
+    "viewAll": "Xem tất cả thông báo"
+  },
+
   "farmerBatchSelector": {
     "title": "Chọn Nông Dân để Xem Lô Sơ Chế",
     "selectFarmer": "Chọn Nông Dân",
@@ -2378,6 +2387,7 @@
             "placeholder": "Mô tả thêm về mùa vụ, điều kiện đặc biệt..."
           },
           "submit": "Cập nhật",
+          "cancel": "Hủy",
           "updating": "Đang cập nhật..."
         },
         "validation": {
@@ -2428,6 +2438,15 @@
         "noPlantingAreas": "Chưa có vùng trồng nào được tạo.",
         "coffeeType": "Loại cà phê",
         "area": "Diện tích (ha)",
+        "areaAllocated": "Diện tích phân bổ (ha)",
+        "areaAllocatedPlaceholder": "Nhập diện tích",
+        "plannedQuality": "Chất lượng dự kiến",
+        "plannedQualityPlaceholder": "Nhập hoặc chọn chất lượng...",
+        "suggestionsFor": "Gợi ý cho",
+        "coffee": "cà phê",
+        "certificationsAndStandards": "Chứng nhận & Tiêu chuẩn chung",
+        "orEnterCustomQuality": "Hoặc nhập chất lượng tùy chỉnh ở trên",
+        "selectedQuality": "Chất lượng đã chọn",
         "estimatedYield": "Sản lượng ước tính",
         "actualYield": "Sản lượng thu hoạch",
         "ratio": "Tỷ lệ (%)",
@@ -3804,6 +3823,8 @@
     "procurementPlans": "Kế hoạch thu mua",
     "commitments": "Cam kết trồng trọt",
     "cropSeasons": "Mùa vụ",
+    "cropStages": "Giai đoạn sinh trưởng",
+    "cropProgress": "Tiến độ mùa vụ",
     "batches": "Lô sơ chế",
     "evaluations": "Đánh giá",
     "progress": "Tiến trình",
@@ -5604,5 +5625,51 @@
       "status": "Trạng thái",
       "actions": "Hành động"
     }
+  },
+  "cropSeasons": {
+    "error": {
+      "loadFailed": "Không thể tải thông tin mùa vụ",
+      "notFound": "Không tìm thấy mùa vụ",
+      "notFoundDescription": "Mùa vụ này không tồn tại hoặc đã bị xóa"
+    },
+    "detail": {
+      "subtitle": "Chi tiết mùa vụ cà phê",
+      "farmer": "Nông dân",
+      "area": "Diện tích",
+      "time": "Thời gian",
+      "status": "Trạng thái",
+      "overview": "Tổng quan",
+      "plantingDetails": "Chi tiết vùng trồng",
+      "cultivationProgress": "Tiến độ canh tác",
+      "generalInfo": "Thông tin tổng quan",
+      "seasonInfo": "Thông tin mùa vụ",
+      "farmerInfo": "Thông tin nông dân",
+      "seasonName": "Tên mùa vụ",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "farmerName": "Tên nông dân",
+      "commitmentCode": "Mã cam kết",
+      "registrationCode": "Mã đăng ký",
+      "notes": "Ghi chú",
+      "plantingAreaDetails": "Chi tiết vùng trồng",
+      "noPlantingDetails": "Chưa có chi tiết vùng trồng nào",
+      "allocatedArea": "Diện tích phân bổ",
+      "estimatedYield": "Sản lượng dự kiến",
+      "actualYield": "Sản lượng thực tế",
+      "expectedHarvestStart": "Ngày thu hoạch dự kiến",
+      "expectedHarvestEnd": "Ngày thu hoạch kết thúc",
+      "plannedQuality": "Chất lượng dự kiến",
+      "cultivationProgressTitle": "Tiến độ canh tác",
+      "noProgressToShow": "Chưa có chi tiết vùng trồng nào để hiển thị tiến độ",
+      "noProgressRecorded": "Chưa có tiến độ nào được ghi nhận"
+    }
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "markAllAsRead": "Đánh dấu tất cả đã đọc",
+    "noNotifications": "Không có thông báo nào",
+    "read": "Đã đọc",
+    "justNow": "Vừa xong",
+    "viewAll": "Xem tất cả thông báo"
   }
 }
