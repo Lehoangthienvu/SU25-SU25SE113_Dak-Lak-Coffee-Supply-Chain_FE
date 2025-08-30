@@ -23,6 +23,7 @@ import {
 } from "@/lib/api/shipments";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export interface OrderItemOption {
   orderItemId: string;
@@ -50,6 +51,7 @@ export default function ShipmentDetailsFormDialog({
   initialData,
   onSuccess,
 }: ShipmentDetailsFormDialogProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<
     ShipmentDetailCreateDto | ShipmentDetailUpdateDto
   >({
@@ -106,15 +108,15 @@ export default function ShipmentDetailsFormDialog({
 
   const handleSubmit = async () => {
     if (!formData.orderItemId) {
-      toast.error("Vui lòng chọn mặt hàng đơn hàng (OrderItem).");
+      toast.error(t('shipments.detailsForm.validation.selectOrderItem'));
       return;
     }
     if ((formData.quantity ?? 0) <= 0) {
-      toast.error("Số lượng phải lớn hơn 0.");
+      toast.error(t('shipments.detailsForm.validation.quantityRequired'));
       return;
     }
     if (!formData.unit) {
-      toast.error("Vui lòng chọn đơn vị.");
+      toast.error(t('shipments.detailsForm.validation.unitRequired'));
       return;
     }
 
@@ -122,20 +124,20 @@ export default function ShipmentDetailsFormDialog({
     try {
       if (mode === "create") {
         await createShipmentDetail(formData as ShipmentDetailCreateDto);
-        toast.success("Đã thêm sản phẩm giao thành công!");
+        toast.success(t('shipments.detailsForm.success.add'));
       } else {
         await updateShipmentDetail(formData as ShipmentDetailUpdateDto);
-        toast.success("Cập nhật sản phẩm giao thành công!");
+        toast.success(t('shipments.detailsForm.success.create'));
       }
 
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
-      let message = "Đã xảy ra lỗi không xác định.";
+      let message = t('shipments.detailsForm.validation.unknownError');
       if (axios.isAxiosError(error)) {
         message =
           error.response?.data?.message ??
-          `Lỗi từ máy chủ: ${error.response?.status}`;
+          t('shipments.detailsForm.validation.serverError', { status: error.response?.status });
       } else if (error instanceof Error) {
         message = error.message;
       }
@@ -151,19 +153,19 @@ export default function ShipmentDetailsFormDialog({
         <BaseDialog.DialogHeader className="px-5 pt-5 pb-0 text-left">
           <BaseDialog.DialogTitle>
             {mode === "create"
-              ? "Thêm sản phẩm giao"
-              : "Cập nhật sản phẩm giao"}
+              ? t('shipments.detailsForm.title.create')
+              : t('shipments.detailsForm.title.edit')}
           </BaseDialog.DialogTitle>
         </BaseDialog.DialogHeader>
 
         <div className="grid gap-2 px-5 py-4">
           <div className="grid gap-1">
-            <Label>Mã đơn hàng</Label>
+            <Label>{t('shipments.detailsForm.orderCode')}</Label>
             <Input value={orderCode ?? ""} disabled />
           </div>
 
           <div className="grid gap-1">
-            <Label>Mặt hàng đơn hàng</Label>
+            <Label>{t('shipments.detailsForm.orderItem')}</Label>
             <Select
               value={(formData.orderItemId as string) || undefined}
               onValueChange={(value) =>
@@ -171,7 +173,7 @@ export default function ShipmentDetailsFormDialog({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="-- Chọn mặt hàng đơn hàng --" />
+                <SelectValue placeholder={t('shipments.detailsForm.selectOrderItem')} />
               </SelectTrigger>
               <SelectContent>
                 {orderItemOptions.map((o) => (
@@ -184,7 +186,7 @@ export default function ShipmentDetailsFormDialog({
           </div>
 
           <div className="grid gap-1">
-            <Label>Số lượng</Label>
+            <Label>{t('shipments.detailsForm.quantity')}</Label>
             <Input
               name="quantity"
               type="number"
@@ -192,12 +194,12 @@ export default function ShipmentDetailsFormDialog({
               onChange={handleChange}
               min={0}
               step={1}
-              placeholder="vd: 500"
+              placeholder={t('shipments.detailsForm.quantityPlaceholder')}
             />
           </div>
 
           <div className="grid gap-1">
-            <Label>Đơn vị</Label>
+            <Label>{t('shipments.detailsForm.unit')}</Label>
             <Select
               value={formData.unit || undefined}
               onValueChange={(value) =>
@@ -205,7 +207,7 @@ export default function ShipmentDetailsFormDialog({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="-- Chọn đơn vị --" />
+                <SelectValue placeholder={t('shipments.detailsForm.selectUnit')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Kg">Kg</SelectItem>
@@ -216,12 +218,12 @@ export default function ShipmentDetailsFormDialog({
           </div>
 
           <div className="grid gap-1">
-            <Label>Ghi chú</Label>
+            <Label>{t('shipments.detailsForm.note')}</Label>
             <Textarea
               name="note"
               value={formData.note ?? ""}
               onChange={handleChange}
-              placeholder="Nhập ghi chú (tuỳ chọn)"
+              placeholder={t('shipments.detailsForm.notePlaceholder')}
             />
           </div>
         </div>
@@ -232,14 +234,14 @@ export default function ShipmentDetailsFormDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Huỷ
+            {t('shipments.detailsForm.buttons.cancel')}
           </Button>
           <Button
             className="bg-orange-500 hover:bg-orange-600 text-white"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Đang lưu..." : mode === "create" ? "Thêm" : "Cập nhật"}
+            {loading ? t('shipments.detailsForm.buttons.saving') : mode === "create" ? t('shipments.detailsForm.buttons.add') : t('shipments.detailsForm.buttons.update')}
           </Button>
         </div>
       </FormDialog.Content>

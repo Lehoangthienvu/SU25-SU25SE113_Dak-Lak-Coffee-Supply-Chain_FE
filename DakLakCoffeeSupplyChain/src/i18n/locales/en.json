@@ -3881,5 +3881,178 @@
         "saving": "Saving..."
       }
     }
+  },
+
+  "shipments": {
+    "title": "Shipments",
+    "subtitle": "View and manage shipments",
+    "search": {
+      "title": "Search Shipments",
+      "placeholder": "Search...",
+      "fromDate": "From Date",
+      "toDate": "To Date"
+    },
+    "actions": {
+      "createNew": "+ Create New Shipment",
+      "view": "View Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "previous": "← Previous",
+      "next": "Next →"
+    },
+    "table": {
+      "headers": {
+        "shipmentCode": "Shipment Code",
+        "orderCode": "Order",
+        "deliveryStaff": "Delivery Staff",
+        "status": "Status",
+        "timeRange": "Time (Shipped – Received)",
+        "actions": "Actions"
+      },
+      "noData": "No shipments found",
+      "pagination": {
+        "showing": "Showing",
+        "of": "/",
+        "shipments": "shipments",
+        "page": "Page"
+      }
+    },
+    "deleteDialog": {
+      "title": "Delete Shipment?",
+      "description": "Are you sure you want to delete shipment {{shipmentCode}}? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "error": {
+      "notFound": "Shipment not found",
+      "loadFailed": "Error loading shipment details"
+    },
+    "status": {
+      "pending": "Pending",
+      "inTransit": "In Transit",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "returned": "Returned",
+      "canceled": "Canceled"
+    },
+    "detail": {
+      "title": "Shipment: {{shipmentCode}}",
+      "editButton": "✏️ Edit",
+      "shipmentInfo": "Shipment Information",
+      "shipmentCode": "Shipment Code",
+      "order": "Order",
+      "deliveryStaff": "Delivery Staff",
+      "shippedQuantity": "Shipped Quantity",
+      "shippedAt": "Shipped Date",
+      "receivedAt": "Received Date",
+      "status": "Status",
+      "createdAt": "Created Date",
+      "createdBy": "Created By",
+      "productList": "Product Delivery List",
+      "addProduct": "+ Add Product",
+      "table": {
+        "product": "Product",
+        "quantity": "Quantity",
+        "unit": "Unit",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "noProducts": "No products found.",
+      "editProduct": "Edit Product",
+      "deleteProduct": "Remove from Shipment",
+      "pagination": {
+        "showing": "Showing",
+        "of": "/",
+        "products": "products",
+        "page": "Page"
+      },
+      "backButton": "← Back",
+      "deleteDialog": {
+        "title": "Remove Product from Shipment?",
+        "description": "Are you sure you want to remove {{productName}} from the shipment? This action cannot be undone.",
+        "confirm": "Remove",
+        "cancel": "Cancel"
+      },
+      "error": {
+        "loadFailed": "Cannot remove product from shipment."
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Create New Shipment",
+        "edit": "Edit Shipment"
+      },
+      "loading": "Initializing shipment form...",
+      "order": "Order",
+      "selectOrder": "-- Select Order --",
+      "orderCodePlaceholder": "Or enter OrderCode",
+      "deliveryStaff": "Delivery Staff",
+      "selectStaff": "-- Select Delivery Staff --",
+      "shippedQuantity": "Shipped Quantity (kg)",
+      "status": "Status",
+      "shippedAt": "Shipment Start Date",
+      "receivedAt": "Received Date (if any)",
+      "productList": "Product Delivery List",
+      "table": {
+        "orderItem": "Order Item",
+        "quantity": "Quantity",
+        "unit": "Unit",
+        "note": "Note"
+      },
+      "selectOrderItem": "-- Select order item --",
+      "notePlaceholder": "Note",
+      "delete": "Delete",
+      "addRow": "+ Add Row",
+      "totalQuantity": "Total row quantity:",
+      "kg": "kg",
+      "buttons": {
+        "save": "Save Changes",
+        "create": "Create Shipment",
+        "back": "Back"
+      },
+      "validation": {
+        "formNotReady": "Form is not ready, please try again.",
+        "selectOrder": "Please select an order.",
+        "selectStaff": "Please select delivery staff.",
+        "loadOrderItemsFailed": "Cannot load order items list.",
+        "saveFailed": "An error occurred while saving the shipment."
+      },
+      "success": {
+        "update": "Shipment updated successfully!",
+        "create": "Shipment created successfully!"
+      }
+    },
+    "detailsForm": {
+      "title": {
+        "create": "Add Product",
+        "edit": "Update Product"
+      },
+      "orderCode": "Order Code",
+      "orderItem": "Order Item",
+      "selectOrderItem": "-- Select Order Item --",
+      "quantity": "Quantity",
+      "quantityPlaceholder": "e.g. 500",
+      "unit": "Unit",
+      "selectUnit": "-- Select Unit --",
+      "note": "Note",
+      "notePlaceholder": "Enter note (optional)",
+      "buttons": {
+        "cancel": "Cancel",
+        "add": "Add",
+        "update": "Update",
+        "saving": "Saving..."
+      },
+      "validation": {
+        "selectOrderItem": "Please select an order item (OrderItem).",
+        "quantityRequired": "Quantity must be greater than 0.",
+        "unitRequired": "Please select a unit.",
+        "unknownError": "An unknown error occurred.",
+        "serverError": "Server error: {{status}}"
+      },
+      "success": {
+        "add": "Product added to shipment successfully!",
+        "create": "Product updated successfully!"
+      }
+    }
   }
 }

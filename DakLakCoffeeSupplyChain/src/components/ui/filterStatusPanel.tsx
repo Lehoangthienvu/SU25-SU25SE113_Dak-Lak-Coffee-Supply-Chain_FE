@@ -1,4 +1,5 @@
 import FilterBadge from "./FilterBadge";
+import { useTranslation } from "react-i18next";
 
 interface StatusMeta {
   label: string;
@@ -19,6 +20,7 @@ export default function FilterStatusPanel<T extends string | number | symbol>({
   statusCounts,
   statusMap,
 }: FilterStatusPanelProps<T>) {
+  const { t } = useTranslation();
   const totalCount = (Object.values(statusCounts) as number[]).reduce(
     (sum, val) => sum + val,
     0
@@ -26,11 +28,11 @@ export default function FilterStatusPanel<T extends string | number | symbol>({
 
   return (
     <div className='bg-white rounded-xl shadow-sm p-4 space-y-3'>
-      <h2 className='text-sm font-medium text-gray-700'>Lọc theo trạng thái</h2>
+      <h2 className='text-sm font-medium text-gray-700'>{t('common.filterByStatus')}</h2>
 
       <FilterBadge
         icon='Đ'
-        label='Tất cả trạng thái'
+        label={t('common.allStatuses')}
         count={totalCount}
         color='orange'
         active={selectedStatus === null}
