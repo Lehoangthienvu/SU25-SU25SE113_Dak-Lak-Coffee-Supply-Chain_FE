@@ -93,32 +93,32 @@ export default function FarmerDeliveryRequestListPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Pending":
-        return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-2 py-0.5 rounded-full text-xs">
           <Clock className="w-3 h-3 mr-1" />
           {t('farmerDeliveryRequest.status.pending')}
         </Badge>;
       case "Approved":
-        return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full text-xs">
           <CheckCircle className="w-3 h-3 mr-1" />
           {t('farmerDeliveryRequest.status.approved')}
         </Badge>;
       case "Completed":
-        return <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded-full text-xs">
           <CheckCircle className="w-3 h-3 mr-1" />
           {t('farmerDeliveryRequest.status.completed')}
         </Badge>;
       case "Rejected":
-        return <Badge className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-red-100 text-red-800 border border-red-200 px-2 py-0.5 rounded-full text-xs">
           <XCircle className="w-3 h-3 mr-1" />
           {t('farmerDeliveryRequest.status.rejected')}
         </Badge>;
       case "Cancelled":
-        return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-0.5 rounded-full text-xs">
           <XCircle className="w-3 h-3 mr-1" />
           {t('farmerDeliveryRequest.status.cancelled')}
         </Badge>;
       default:
-        return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full">
+        return <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-0.5 rounded-full text-xs">
           {status}
         </Badge>;
     }
@@ -482,108 +482,108 @@ export default function FarmerDeliveryRequestListPage() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                                     <table className="w-full table-fixed min-w-[720px]">
-                     <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
-                       <tr>
-                         <th className="w-32 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           {t('farmerDeliveryRequest.fields.requestCode')}
-                         </th>
-                         <th className="w-40 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           {t('farmerDeliveryRequest.fields.type')}
-                         </th>
-                         <th className="w-24 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           {t('farmerDeliveryRequest.fields.quantity')}
-                         </th>
-                         <th className="w-48 px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           {t('farmerDeliveryRequest.fields.source')}
-                         </th>
-                         <th className="w-32 px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                           {t('farmerDeliveryRequest.fields.status')}
-                         </th>
-                                                   <th className="w-36 px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            {t('farmerDeliveryRequest.fields.actions')}
-                          </th>
-                       </tr>
-                     </thead>
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[15%]">
+                          {t('farmerDeliveryRequest.fields.requestCode')}
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[15%]">
+                          {t('farmerDeliveryRequest.fields.type')}
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[12%]">
+                          {t('farmerDeliveryRequest.fields.quantity')}
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[25%]">
+                          {t('farmerDeliveryRequest.fields.source')}
+                        </th>
+                        <th className="px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-[15%]">
+                          {t('farmerDeliveryRequest.fields.status')}
+                        </th>
+                        <th className="px-3 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-[18%]">
+                          {t('farmerDeliveryRequest.fields.actions')}
+                        </th>
+                      </tr>
+                    </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
                       {paginatedData.map((req) => {
                         const coffeeType = getCoffeeType(req);
                         return (
                           <tr key={req.inboundRequestId} className="hover:bg-blue-50 transition-colors duration-200">
-                            <td className="px-3 py-3">
-                              <div className="flex flex-col">
+                            <td className="px-3 py-2">
+                              <div className="flex flex-col min-w-0">
                                 <span className="text-sm font-semibold text-gray-900 truncate">{req.requestCode}</span>
-                                <span className="text-xs text-gray-500">{t('farmerDeliveryRequest.common.id')}: {req.inboundRequestId.slice(-6)}</span>
+                                <span className="text-xs text-gray-500 truncate">{t('farmerDeliveryRequest.common.id')}: {req.inboundRequestId.slice(-6)}</span>
                               </div>
                             </td>
-                            <td className="px-3 py-3">
-                              <div className="flex items-center gap-2">
+                            <td className="px-3 py-2">
+                              <div className="flex items-center gap-1 min-w-0">
                                 {getCoffeeTypeIcon(coffeeType)}
-                                <Badge className={`px-2 py-1 rounded-full text-xs font-semibold ${getCoffeeTypeStyle(coffeeType)} truncate`}>
+                                <Badge className={`px-2 py-1 rounded-full text-xs font-semibold ${getCoffeeTypeStyle(coffeeType)} truncate max-w-full`}>
                                   {getCoffeeTypeLabel(coffeeType)}
                                 </Badge>
                               </div>
                             </td>
-                            <td className="px-3 py-3">
+                            <td className="px-3 py-2">
                               <div className="text-sm font-semibold text-gray-900">
                                 {req.requestedQuantity} {t('farmerDeliveryRequest.common.kg')}
                               </div>
                             </td>
-                                                         <td className="px-3 py-3">
-                               <div className="flex flex-col">
-                                 <span className="text-sm font-medium text-gray-900 truncate">
-                                   {coffeeType === 'fresh' 
-                                     ? (req.cropSeasonName || req.detailCode || t('farmerDeliveryRequest.common.na'))
-                                     : coffeeType === 'processed' 
-                                       ? (req.batchCode || t('farmerDeliveryRequest.common.na'))
-                                       : t('farmerDeliveryRequest.common.na')
-                                   }
-                                 </span>
-                                 <span className={`text-xs ${
-                                   coffeeType === 'fresh' ? 'text-orange-700' : 
-                                   coffeeType === 'processed' ? 'text-purple-700' : 'text-gray-700'
-                                 } truncate`}>
-                                   {coffeeType === 'fresh'
-                                     ? (req.typeName || t('farmerDeliveryRequest.coffeeTypes.fresh'))
-                                     : coffeeType === 'processed'
-                                       ? (req.coffeeType || t('farmerDeliveryRequest.coffeeTypes.processed'))
-                                       : t('farmerDeliveryRequest.common.unknown')
-                                   }
-                                 </span>
-                                 <span className="text-xs text-gray-500 mt-1">
-                                   {new Date(req.createdAt).toLocaleDateString("vi-VN")} {new Date(req.createdAt).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}
-                                 </span>
-                               </div>
-                             </td>
+                            <td className="px-3 py-2">
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-sm font-medium text-gray-900 truncate">
+                                  {coffeeType === 'fresh' 
+                                    ? (req.cropSeasonName || req.detailCode || t('farmerDeliveryRequest.common.na'))
+                                    : coffeeType === 'processed' 
+                                      ? (req.batchCode || t('farmerDeliveryRequest.common.na'))
+                                      : t('farmerDeliveryRequest.common.na')
+                                  }
+                                </span>
+                                <span className={`text-xs ${
+                                  coffeeType === 'fresh' ? 'text-orange-700' : 
+                                  coffeeType === 'processed' ? 'text-purple-700' : 'text-gray-700'
+                                } truncate`}>
+                                  {coffeeType === 'fresh'
+                                    ? (req.typeName || t('farmerDeliveryRequest.coffeeTypes.fresh'))
+                                    : coffeeType === 'processed'
+                                      ? (req.coffeeType || t('farmerDeliveryRequest.coffeeTypes.processed'))
+                                      : t('farmerDeliveryRequest.common.unknown')
+                                  }
+                                </span>
+                                <span className="text-xs text-gray-500 truncate">
+                                  {new Date(req.createdAt).toLocaleDateString("vi-VN")} {new Date(req.createdAt).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                            </td>
                             
-                            <td className="px-3 py-3 text-center">
+                            <td className="px-3 py-2 text-center">
                               {getStatusBadge(req.status)}
                             </td>
-                                                         <td className="px-3 py-3 text-center">
-                               <div className="flex items-center justify-center gap-1">
-                                 <Button
-                                   variant="outline"
-                                   size="sm"
-                                   onClick={() => router.push(`/dashboard/farmer/warehouse-request/${req.inboundRequestId}`)}
-                                   className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-xs px-2 py-1"
-                                 >
-                                   <Eye className="w-3 h-3 mr-1" />
-                                   {t('farmerDeliveryRequest.actions.view')}
-                                 </Button>
-                                 {req.status === "Pending" && (
-                                   <Button
-                                     variant="destructive"
-                                     size="sm"
-                                     disabled={loadingId === req.inboundRequestId}
-                                     onClick={() => handleCancel(req.inboundRequestId)}
-                                     className="transition-all duration-200 text-xs px-1 py-1"
-                                   >
-                                     <XCircle className="w-3 h-3 mr-1" />
-                                     {t('farmerDeliveryRequest.actions.cancel')}
-                                   </Button>
-                                 )}
-                               </div>
-                             </td>
+                        <td className="px-3 py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => router.push(`/dashboard/farmer/warehouse-request/${req.inboundRequestId}`)}
+                              className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-xs px-2 py-1 h-7"
+                            >
+                              <Eye className="w-3 h-3 mr-1" />
+                              {t('farmerDeliveryRequest.actions.view')}
+                            </Button>
+                            {req.status === "Pending" && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                disabled={loadingId === req.inboundRequestId}
+                                onClick={() => handleCancel(req.inboundRequestId)}
+                                className="transition-all duration-200 text-xs px-2 py-1 h-7"
+                              >
+                                <XCircle className="w-3 h-3 mr-1" />
+                                {t('farmerDeliveryRequest.actions.cancel')}
+                              </Button>
+                            )}
+                          </div>
+                        </td>
                           </tr>
                         );
                       })}

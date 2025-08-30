@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Eye, TrendingUp, TrendingDown, Activity, Calendar, Package, Warehouse, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslation } from 'react-i18next';
 
 export default function StaffInventoryLogsPage() {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -30,11 +32,11 @@ export default function StaffInventoryLogsPage() {
       if (Array.isArray(data)) {
         setLogs(data);
       } else {
-        setError("Không có log tồn kho nào.");
+        setError(t('inventoryLogs.error.description'));
       }
     } catch (err: any) {
-      setError(err.message || "Lỗi khi tải danh sách log.");
-      toast.error("Lỗi khi tải dữ liệu: " + err.message);
+      setError(err.message || t('inventoryLogs.error.description'));
+      toast.error(t('inventoryLogs.error.title') + ": " + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -146,8 +148,8 @@ export default function StaffInventoryLogsPage() {
       {/* Header với gradient xanh lá */}
       <div className="mb-6">
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-lg">
-          <h1 className="text-2xl font-bold mb-1">📋 Nhật ký tồn kho</h1>
-          <p className="text-green-100 text-sm">Theo dõi mọi thay đổi trong hệ thống kho hàng</p>
+          <h1 className="text-2xl font-bold mb-1">📋 {t('inventoryLogs.title')}</h1>
+          <p className="text-green-100 text-sm">{t('inventoryLogs.subtitle')}</p>
         </div>
       </div>
 
@@ -157,7 +159,7 @@ export default function StaffInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Tổng số log</p>
+                <p className="text-xs font-medium text-gray-600">{t('inventoryLogs.stats.totalLogs')}</p>
                 <p className="text-xl font-bold text-green-600">
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.totalLogs}
                 </p>
@@ -173,7 +175,7 @@ export default function StaffInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Nhập kho hôm nay</p>
+                <p className="text-xs font-medium text-gray-600">{t('inventoryLogs.stats.inboundToday')}</p>
                 <p className="text-xl font-bold text-green-600">
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.todayLogs}
                 </p>
@@ -189,7 +191,7 @@ export default function StaffInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Lượt nhập kho</p>
+                <p className="text-xs font-medium text-gray-600">{t('inventoryLogs.stats.inboundTurns')}</p>
                 <p className="text-xl font-bold text-emerald-600">
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.increaseLogs}
                 </p>
@@ -205,7 +207,7 @@ export default function StaffInventoryLogsPage() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-600">Lượt xuất kho</p>
+                <p className="text-xs font-medium text-gray-600">{t('inventoryLogs.stats.outboundTurns')}</p>
                 <p className="text-xl font-bold text-rose-600">
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : statistics.decreaseLogs}
                 </p>
@@ -225,7 +227,7 @@ export default function StaffInventoryLogsPage() {
             <div className="relative w-full lg:w-72">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="🔍 Tìm theo mã kho, loại cà phê, kho hàng..."
+                placeholder={t('inventoryLogs.search.placeholder')}
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-8 h-9 text-sm border border-gray-200 focus:border-green-500 focus:ring-green-500/20"
@@ -249,10 +251,10 @@ export default function StaffInventoryLogsPage() {
                   }`}
                 >
                   {action === "All"
-                    ? "🔄 Tất cả"
+                    ? t('inventoryLogs.filters.all')
                     : action === "increase"
-                    ? "📥 Nhập kho"
-                    : "📤 Xuất kho"}
+                    ? t('inventoryLogs.filters.inbound')
+                    : t('inventoryLogs.filters.outbound')}
                 </Button>
               ))}
             </div>
@@ -265,9 +267,9 @@ export default function StaffInventoryLogsPage() {
         <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
           <CardTitle className="text-base font-bold text-green-800 flex items-center gap-2">
             <Package className="w-4 h-4 text-green-600" />
-            Danh sách lịch sử tồn kho
+            {t('inventoryLogs.table.title')}
             <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 text-xs">
-              {isLoading ? "..." : `${filteredLogs.length} log`}
+              {isLoading ? "..." : `${filteredLogs.length} ${t('inventoryLogs.pagination.logs')}`}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -289,7 +291,7 @@ export default function StaffInventoryLogsPage() {
                 className="text-xs"
               >
                 <Loader2 className="w-3 h-3 mr-1" />
-                Thử lại
+                {t('inventoryLogs.error.retry')}
               </Button>
             </div>
           )}
@@ -298,8 +300,8 @@ export default function StaffInventoryLogsPage() {
           {!isLoading && !error && filteredLogs.length === 0 && (
             <div className="p-6 text-center">
               <Package className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">Không có log phù hợp với bộ lọc</p>
-              <p className="text-gray-400 text-xs">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+              <p className="text-gray-500 text-sm">{t('inventoryLogs.empty.title')}</p>
+              <p className="text-gray-400 text-xs">{t('inventoryLogs.empty.description')}</p>
             </div>
           )}
 
@@ -321,7 +323,7 @@ export default function StaffInventoryLogsPage() {
                               : "bg-rose-100 text-rose-800 border-rose-200"
                           }`}
                         >
-                          {log.actionType === "increase" ? "📥 Nhập kho" : "📤 Xuất kho"}
+                          {log.actionType === "increase" ? t('inventoryLogs.table.actions.inbound') : t('inventoryLogs.table.actions.outbound')}
                         </Badge>
                         <span className="text-xs text-gray-500">
                           {new Date(log.loggedAt).toLocaleString("vi-VN")}
@@ -334,7 +336,7 @@ export default function StaffInventoryLogsPage() {
                             <Package className="w-3 h-3 text-blue-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Mã tồn kho</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('inventoryLogs.table.headers.inventoryCode')}</p>
                             <p className="text-sm font-semibold text-gray-900">{log.inventoryCode}</p>
                           </div>
                         </div>
@@ -344,7 +346,7 @@ export default function StaffInventoryLogsPage() {
                             <Warehouse className="w-3 h-3 text-emerald-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Kho hàng</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('inventoryLogs.table.headers.warehouse')}</p>
                             <p className="text-sm font-semibold text-gray-900">{log.warehouseName}</p>
                           </div>
                         </div>
@@ -354,7 +356,7 @@ export default function StaffInventoryLogsPage() {
                             <Activity className="w-3 h-3 text-amber-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Số lượng</p>
+                            <p className="text-xs text-gray-500 font-medium">{t('inventoryLogs.table.headers.quantity')}</p>
                             <p className={`font-bold text-sm ${
                               log.actionType === "increase" ? "text-emerald-600" : "text-rose-600"
                             }`}>
@@ -366,32 +368,32 @@ export default function StaffInventoryLogsPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
-                          <p className="text-xs text-gray-500 font-medium mb-1">☕ Loại cà phê</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">☕ {t('inventoryLogs.table.headers.coffeeType')}</p>
                           <p className="text-sm font-medium text-gray-900">{log.coffeeTypeName}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-medium mb-1">👤 Người cập nhật</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">👤 {t('inventoryLogs.table.headers.updatedBy')}</p>
                           <p className="text-sm font-medium text-gray-900">{log.updatedByName || "Hệ thống"}</p>
                         </div>
                       </div>
 
                       {log.note && (
                         <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-200">
-                          <p className="text-xs text-gray-500 font-medium mb-1">📝 Ghi chú</p>
+                          <p className="text-xs text-gray-500 font-medium mb-1">📝 {t('inventoryLogs.table.headers.note')}</p>
                           <p className="text-gray-700 text-sm">{log.note}</p>
                         </div>
                       )}
                     </div>
 
                     <div className="flex gap-1 flex-shrink-0">
-                      <Link href={`/dashboard/staff/inventory-logs/${log.logId}`} title="Xem chi tiết">
+                      <Link href={`/dashboard/staff/inventory-logs/${log.logId}`} title={t('inventoryLogs.table.actions.details')}>
                         <Button 
                           variant="outline" 
                           size="sm"
                           className="h-7 px-2 text-xs border border-green-200 hover:border-green-300 hover:bg-green-50"
                         >
                           <Eye className="w-3 h-3 mr-1" />
-                          Chi tiết
+                          {t('inventoryLogs.table.actions.details')}
                         </Button>
                       </Link>
                     </div>
@@ -406,7 +408,7 @@ export default function StaffInventoryLogsPage() {
             <div className="bg-green-50 px-3 py-2 border-t border-green-100">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div className="text-xs text-gray-600">
-                  Hiển thị {((currentPage - 1) * logsPerPage) + 1} - {Math.min(currentPage * logsPerPage, filteredLogs.length)} trong tổng số {filteredLogs.length} log
+                  {t('inventoryLogs.pagination.showing')} {((currentPage - 1) * logsPerPage) + 1} - {Math.min(currentPage * logsPerPage, filteredLogs.length)} {t('inventoryLogs.pagination.of')} {filteredLogs.length} {t('inventoryLogs.pagination.logs')}
                 </div>
                 
                 <div className="flex items-center gap-1">
@@ -417,7 +419,7 @@ export default function StaffInventoryLogsPage() {
                     disabled={currentPage === 1}
                     className="h-7 px-2 text-xs border-green-200 hover:border-green-300 hover:bg-green-50"
                   >
-                    ← Trước
+                    {t('inventoryLogs.pagination.previous')}
                   </Button>
                   
                   <div className="flex items-center gap-1">
@@ -445,7 +447,7 @@ export default function StaffInventoryLogsPage() {
                     disabled={currentPage === totalPages}
                     className="h-7 px-2 text-xs border-green-200 hover:border-green-300 hover:bg-green-50"
                   >
-                    Sau →
+                    {t('inventoryLogs.pagination.next')}
                   </Button>
                 </div>
               </div>

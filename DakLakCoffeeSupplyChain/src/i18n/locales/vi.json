@@ -3799,7 +3799,8 @@
       "outboundReceipts": "Phiếu xuất kho",
       "inventories": "Tồn kho",
       "inventoryLogs": "Nhật ký tồn kho",
-      "warehouses": "Kho hàng"
+      "warehouses": "Kho hàng",
+      "warehouseRequest": "Yêu cầu giao hàng"
     },
             "user": {
           "greeting": "Xin chào:",
@@ -5364,6 +5365,204 @@
         "invalidQuantity": "Số lượng không hợp lệ",
         "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng còn lại ({remaining})"
       }
+    }
+  },
+  "farmerDeliveryRequest": {
+    "title": "Yêu cầu giao hàng",
+    "subtitle": "Quản lý và theo dõi các yêu cầu giao hàng của bạn",
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pendingRequests": "Yêu cầu chờ duyệt", 
+      "approvedRequests": "Yêu cầu đã duyệt",
+      "totalQuantity": "Tổng số lượng",
+      "processedRequests": "Yêu cầu đã sơ chế"
+    },
+    "actions": {
+      "createNew": "Tạo yêu cầu mới",
+      "createRequest": "Tạo yêu cầu mới",
+      "view": "Xem chi tiết",
+      "cancel": "Hủy yêu cầu"
+    },
+    "sections": {
+      "search": "Tìm kiếm yêu cầu",
+      "requestList": "Danh sách yêu cầu giao hàng",
+      "filterByType": "Lọc theo loại",
+      "filterByStatus": "Lọc theo trạng thái"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "coffeeTypes": {
+        "fresh": "Cà phê tươi",
+        "processed": "Cà phê đã sơ chế"
+      },
+      "status": {
+        "pending": "Chờ duyệt",
+        "approved": "Đã duyệt", 
+        "completed": "Hoàn thành",
+        "rejected": "Từ chối",
+        "cancelled": "Đã hủy",
+        "waiting": "Đang chờ",
+        "finished": "Hoàn thành"
+      }
+    },
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Hoàn thành",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy",
+      "waiting": "Đang chờ",
+      "finished": "Hoàn thành"
+    },
+    "coffeeTypes": {
+      "fresh": "Cà phê tươi",
+      "processed": "Cà phê đã sơ chế",
+      "unknown": "Không xác định"
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "requests": "yêu cầu",
+      "of": "trong tổng số",
+      "allRequests": "tất cả yêu cầu",
+      "page": "Trang"
+    },
+    "common": {
+      "kg": "kg",
+      "na": "N/A",
+      "unknown": "Không xác định",
+      "id": "ID"
+    },
+    "detail": {
+      "title": "Chi tiết yêu cầu giao hàng",
+      "subtitle": "Thông tin chi tiết về yêu cầu giao hàng",
+      "backToList": "Quay lại danh sách",
+      "back": "Quay lại",
+      "stats": {
+        "requestedQuantity": "Số lượng yêu cầu",
+        "processed": "Đã sơ chế",
+        "remaining": "Còn lại",
+        "status": "Trạng thái"
+      },
+      "sections": {
+        "requestInfo": "Thông tin yêu cầu",
+        "batchInfo": "Thông tin lô",
+        "statusSummary": "Tóm tắt trạng thái",
+        "actions": "Hành động"
+      },
+      "fields": {
+        "requestCode": "Mã yêu cầu",
+        "status": "Trạng thái",
+        "requestedQuantity": "Số lượng yêu cầu",
+        "preferredDeliveryDate": "Ngày giao hàng mong muốn",
+        "actualDeliveryDate": "Ngày giao hàng thực tế",
+        "note": "Ghi chú",
+        "batchCode": "Mã lô",
+        "coffeeType": "Loại cà phê",
+        "seasonCode": "Mã vụ mùa",
+        "totalProcessed": "Tổng đã sơ chế",
+        "remainingAvailable": "Còn lại có sẵn"
+      },
+      "actions": {
+        "viewAllRequests": "Xem tất cả yêu cầu",
+        "createNewRequest": "Tạo yêu cầu mới"
+      },
+      "error": {
+        "loadData": "Không thể tải dữ liệu",
+        "notFound": "Không tìm thấy yêu cầu",
+        "notFoundMessage": "Yêu cầu giao hàng không tồn tại hoặc đã bị xóa"
+      }
+    },
+    "error": {
+      "loadRequests": "Không thể tải danh sách yêu cầu",
+      "loadRequestsUnknown": "Không thể tải danh sách yêu cầu",
+      "loadData": "Không thể tải dữ liệu",
+      "loadDetail": "Không thể tải chi tiết yêu cầu",
+      "cancelRequest": "Không thể hủy yêu cầu"
+    },
+    "confirmation": {
+      "cancelTitle": "Xác nhận hủy yêu cầu",
+      "cancelMessage": "Bạn có chắc chắn muốn hủy yêu cầu giao hàng này?",
+      "cancelConfirm": "Hủy yêu cầu",
+      "cancelCancel": "Giữ lại"
+    },
+    "placeholders": {
+      "search": "Tìm mã yêu cầu, loại cà phê..."
+    },
+    "create": {
+      "title": "Tạo yêu cầu giao hàng mới",
+      "subtitle": "Tạo yêu cầu giao hàng từ cà phê đã sơ chế hoặc cà phê tươi",
+      "cancel": "Hủy",
+      "tabs": {
+        "processed": "Cà phê đã sơ chế",
+        "fresh": "Cà phê tươi"
+      },
+      "guide": {
+        "title": "Hướng dẫn",
+        "description": "Chọn loại cà phê bạn muốn giao hàng",
+        "security": "Bảo mật",
+        "securityDescription": "Chỉ hiển thị cà phê thuộc sở hữu của bạn"
+      },
+      "processed": {
+        "title": "Cà phê đã sơ chế",
+        "subtitle": "Giao hàng từ các lô cà phê đã sơ chế",
+        "batchLabel": "Chọn lô cà phê",
+        "batchDescription": "Lô đã sơ chế có sẵn",
+        "batchPlaceholder": "-- Chọn lô cà phê --",
+        "quantityLabel": "Số lượng yêu cầu",
+        "quantityPlaceholder": "Nhập số lượng (kg)",
+        "deliveryDateLabel": "Ngày giao hàng mong muốn",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Ghi chú bổ sung (tùy chọn)",
+        "submit": "Tạo yêu cầu",
+        "submitting": "Đang tạo...",
+        "errors": {
+          "noBatchSelected": "Vui lòng chọn lô cà phê",
+          "invalidQuantity": "Số lượng không hợp lệ",
+          "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng có sẵn ({available})",
+          "invalidDate": "Ngày giao hàng phải sau ngày hôm nay",
+          "general": "Lỗi: {message}"
+        }
+      },
+      "fresh": {
+        "title": "Cà phê tươi",
+        "subtitle": "Giao hàng từ cà phê tươi",
+        "detailLabel": "Chọn chi tiết vụ mùa",
+        "detailDescription": "Chi tiết cà phê tươi có sẵn",
+        "detailPlaceholder": "-- Chọn chi tiết vụ mùa --",
+        "quantityLabel": "Số lượng yêu cầu",
+        "quantityPlaceholder": "Nhập số lượng (kg)",
+        "deliveryDateLabel": "Ngày giao hàng mong muốn",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Ghi chú bổ sung (tùy chọn)",
+        "submit": "Tạo yêu cầu",
+        "submitting": "Đang tạo...",
+        "errors": {
+          "noDetailSelected": "Vui lòng chọn chi tiết vụ mùa",
+          "invalidQuantity": "Số lượng không hợp lệ",
+          "exceedQuantity": "Số lượng yêu cầu ({quantity}) vượt quá số lượng có sẵn ({available})",
+          "invalidDate": "Ngày giao hàng phải sau ngày hôm nay",
+          "general": "Lỗi: {message}"
+        }
+      },
+      "errors": {
+        "loadData": "Không thể tải dữ liệu"
+      }
+    },
+    "loading": {
+      "loadingData": "Đang tải dữ liệu..."
+    },
+    "empty": {
+      "noRequests": "Không có yêu cầu nào",
+      "noRequestsFilter": "Không tìm thấy yêu cầu phù hợp với bộ lọc",
+      "noRequestsYet": "Chưa có yêu cầu giao hàng nào"
+    },
+    "fields": {
+      "requestCode": "Mã yêu cầu",
+      "type": "Loại",
+      "quantity": "Số lượng",
+      "source": "Nguồn",
+      "status": "Trạng thái",
+      "actions": "Hành động"
     }
   }
 }
