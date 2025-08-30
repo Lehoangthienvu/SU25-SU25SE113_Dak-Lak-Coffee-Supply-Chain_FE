@@ -690,11 +690,13 @@ export default function ContractDetailPage() {
         title={t("contracts.page.detail.deleteItemTitle")}
 
         description={
-          <span>
-            {t("contracts.page.detail.deleteItemDescription", {
-              itemName: itemToDelete?.coffeeTypeName,
-            })}
-          </span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t("contracts.page.detail.deleteItemDescription", {
+                itemName: itemToDelete?.coffeeTypeName,
+              }),
+            }}
+          />
         }
 
         confirmText={t("contracts.page.detail.deleteItemConfirm")}

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { getCoffeeTypes, CoffeeType } from "@/lib/api/coffeeType";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 // Helper: input có suffix đơn vị bên phải
 function InputWithSuffix({
@@ -82,6 +83,20 @@ export default function ContractItemFormDialog({
   initialData,
   onSuccess,
 }: ContractItemFormDialogProps) {
+  const { t, i18n } = useTranslation();
+
+  // Add debugging logs
+  console.log("🌐 ContractItemFormDialog: Current language:", i18n.language);
+  console.log("🌐 ContractItemFormDialog: Is i18n ready:", i18n.isInitialized);
+  console.log(
+    "🌐 ContractItemFormDialog: Test translation:",
+    t("contracts.contractItem.form.title.create")
+  );
+  console.log(
+    "🌐 ContractItemFormDialog: Available languages:",
+    i18n.languages
+  );
+
   const [formData, setFormData] = useState<
     ContractItemCreateDto | ContractItemUpdateDto
   >({
@@ -169,7 +184,9 @@ export default function ContractItemFormDialog({
     switch (fieldName) {
       case "coffeeTypeId":
         if (!value || value === "") {
-          newErrors[fieldName] = "Vui lòng chọn loại cà phê";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.coffeeTypeRequired"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -178,9 +195,13 @@ export default function ContractItemFormDialog({
       case "quantity":
         const quantity = Number(value);
         if (!value || value === "" || isNaN(quantity)) {
-          newErrors[fieldName] = "Số lượng là bắt buộc";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.quantityRequired"
+          );
         } else if (quantity <= 0) {
-          newErrors[fieldName] = "Số lượng phải lớn hơn 0";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.quantityPositive"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -189,9 +210,13 @@ export default function ContractItemFormDialog({
       case "unitPrice":
         const unitPrice = Number(value);
         if (!value || value === "" || isNaN(unitPrice)) {
-          newErrors[fieldName] = "Đơn giá là bắt buộc";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.unitPriceRequired"
+          );
         } else if (unitPrice <= 0) {
-          newErrors[fieldName] = "Đơn giá phải lớn hơn 0";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.unitPricePositive"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -201,7 +226,9 @@ export default function ContractItemFormDialog({
         const discountAmount = Number(value);
         if (value !== "" && !isNaN(discountAmount)) {
           if (discountAmount < 0) {
-            newErrors[fieldName] = "Chiết khấu không được âm";
+            newErrors[fieldName] = t(
+              "contracts.contractItem.form.validation.discountNegative"
+            );
           } else {
             // Kiểm tra chiết khấu không vượt quá tổng thành tiền
             const quantity = Number(formData.quantity);
@@ -211,8 +238,9 @@ export default function ContractItemFormDialog({
               unitPrice > 0 &&
               discountAmount > quantity * unitPrice
             ) {
-              newErrors[fieldName] =
-                "Chiết khấu không được vượt quá tổng thành tiền";
+              newErrors[fieldName] = t(
+                "contracts.contractItem.form.validation.discountExceedsTotal"
+              );
             } else {
               delete newErrors[fieldName];
             }
@@ -224,7 +252,9 @@ export default function ContractItemFormDialog({
 
       case "note":
         if (value && value.length > 1000) {
-          newErrors[fieldName] = "Ghi chú không được vượt quá 1000 ký tự";
+          newErrors[fieldName] = t(
+            "contracts.contractItem.form.validation.noteTooLong"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -265,19 +295,27 @@ export default function ContractItemFormDialog({
 
     // Validate tất cả fields
     if (!formData.coffeeTypeId || formData.coffeeTypeId === "") {
-      clientErrors.coffeeTypeId = "Vui lòng chọn loại cà phê";
+      clientErrors.coffeeTypeId = t(
+        "contracts.contractItem.form.validation.coffeeTypeRequired"
+      );
     }
 
     if (!formData.quantity || formData.quantity <= 0) {
-      clientErrors.quantity = "Số lượng phải lớn hơn 0";
+      clientErrors.quantity = t(
+        "contracts.contractItem.form.validation.quantityPositive"
+      );
     }
 
     if (!formData.unitPrice || formData.unitPrice <= 0) {
-      clientErrors.unitPrice = "Đơn giá phải lớn hơn 0";
+      clientErrors.unitPrice = t(
+        "contracts.contractItem.form.validation.unitPricePositive"
+      );
     }
 
     if (formData.discountAmount && formData.discountAmount < 0) {
-      clientErrors.discountAmount = "Chiết khấu không được âm";
+      clientErrors.discountAmount = t(
+        "contracts.contractItem.form.validation.discountNegative"
+      );
     }
 
     // Kiểm tra chiết khấu không vượt quá tổng thành tiền
@@ -290,30 +328,33 @@ export default function ContractItemFormDialog({
         (formData.discountAmount ?? 0) >
         formData.quantity * formData.unitPrice
       ) {
-        clientErrors.discountAmount =
-          "Chiết khấu không được vượt quá tổng thành tiền";
+        clientErrors.discountAmount = t(
+          "contracts.contractItem.form.validation.discountExceedsTotal"
+        );
       }
     }
 
     if (formData.note && formData.note.length > 1000) {
-      clientErrors.note = "Ghi chú không được vượt quá 1000 ký tự";
+      clientErrors.note = t(
+        "contracts.contractItem.form.validation.noteTooLong"
+      );
     }
 
     // Nếu có lỗi client-side, hiển thị và dừng
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
       setLoading(false);
-      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      toast.error(t("contracts.contractItem.form.validation.checkFormErrors"));
       return;
     }
 
     try {
       if (mode === "create") {
         await createContractItem(formData as ContractItemCreateDto);
-        toast.success("Thêm mặt hàng thành công!");
+        toast.success(t("contracts.contractItem.form.success.create"));
       } else {
         await updateContractItem(formData as ContractItemUpdateDto);
-        toast.success("Cập nhật mặt hàng thành công!");
+        toast.success(t("contracts.contractItem.form.success.update"));
       }
       onSuccess?.();
       onOpenChange(false);
@@ -472,7 +513,7 @@ export default function ContractItemFormDialog({
             toast.error(errorMessage);
           }
         } else {
-          toast.error("Đã xảy ra lỗi khi lưu mặt hàng.");
+          toast.error(t("contracts.contractItem.form.error.saveError"));
         }
       }
     } finally {
@@ -485,7 +526,9 @@ export default function ContractItemFormDialog({
       <FormDialog.Content size="sm">
         <BaseDialog.DialogHeader className="px-5 pt-5 pb-0">
           <BaseDialog.DialogTitle>
-            {mode === "create" ? "Thêm mặt hàng" : "Cập nhật mặt hàng"}
+            {mode === "create"
+              ? t("contracts.contractItem.form.title.create")
+              : t("contracts.contractItem.form.title.edit")}
           </BaseDialog.DialogTitle>
         </BaseDialog.DialogHeader>
 
@@ -495,10 +538,11 @@ export default function ContractItemFormDialog({
             <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-orange-800 font-medium">
-                  Cần tuân thủ quy tắc nghiệp vụ:
+                  {t("contracts.contractItem.form.businessRules.title")}
                 </h3>
                 <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-                  {businessErrors.length} quy tắc
+                  {businessErrors.length}{" "}
+                  {t("contracts.contractItem.form.businessRules.rulesCount")}
                 </span>
               </div>
 
@@ -516,7 +560,8 @@ export default function ContractItemFormDialog({
           {/* Loại cà phê */}
           <div className="grid gap-1">
             <Label htmlFor="coffeeTypeId">
-              Loại cà phê <span className="text-red-500">*</span>{" "}
+              {t("contracts.contractItem.form.fields.coffeeType")}{" "}
+              <span className="text-red-500">*</span>
             </Label>
             <Select
               // Nếu state rỗng => truyền undefined để hiện placeholder
@@ -537,7 +582,11 @@ export default function ContractItemFormDialog({
                   hasFieldError("coffeeTypeId") ? "border-red-500" : ""
                 }`}
               >
-                <SelectValue placeholder="-- Chọn loại cà phê --" />
+                <SelectValue
+                  placeholder={t(
+                    "contracts.contractItem.form.fields.coffeeTypePlaceholder"
+                  )}
+                />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {coffeeTypes.map((type) => (
@@ -557,7 +606,8 @@ export default function ContractItemFormDialog({
           {/* Số lượng (kg) */}
           <div className="grid gap-1">
             <Label htmlFor="quantity">
-              Số lượng (Kg) <span className="text-red-500">*</span>
+              {t("contracts.contractItem.form.fields.quantity")}{" "}
+              <span className="text-red-500">*</span>
             </Label>
             <InputWithSuffix
               id="quantity"
@@ -569,6 +619,7 @@ export default function ContractItemFormDialog({
               value={formData.quantity}
               onChange={handleChange}
               className={hasFieldError("quantity") ? "border-red-500" : ""}
+              unit="kg"
             />
             {hasFieldError("quantity") && (
               <p className="text-red-500 text-sm mt-1 font-medium">
@@ -580,7 +631,8 @@ export default function ContractItemFormDialog({
           {/* Đơn giá (VND/Kg) */}
           <div className="grid gap-1">
             <Label htmlFor="unitPrice">
-              Đơn giá (VNĐ/Kg) <span className="text-red-500">*</span>
+              {t("contracts.contractItem.form.fields.unitPrice")}{" "}
+              <span className="text-red-500">*</span>
             </Label>
             <InputWithSuffix
               id="unitPrice"
@@ -591,6 +643,7 @@ export default function ContractItemFormDialog({
               value={formData.unitPrice}
               onChange={handleChange}
               className={hasFieldError("unitPrice") ? "border-red-500" : ""}
+              unit="VND/kg"
             />
             {hasFieldError("unitPrice") && (
               <p className="text-red-500 text-sm mt-1 font-medium">
@@ -601,7 +654,9 @@ export default function ContractItemFormDialog({
 
           {/* Chiết khấu (%) */}
           <div className="grid gap-1">
-            <Label htmlFor="discountAmount">Chiết khấu (%)</Label>
+            <Label htmlFor="discountAmount">
+              {t("contracts.contractItem.form.fields.discount")}
+            </Label>
             <InputWithSuffix
               id="discountAmount"
               name="discountAmount"
@@ -614,6 +669,7 @@ export default function ContractItemFormDialog({
               className={
                 hasFieldError("discountAmount") ? "border-red-500" : ""
               }
+              unit="%"
             />
             {hasFieldError("discountAmount") && (
               <p className="text-red-500 text-sm mt-1 font-medium">
@@ -624,13 +680,17 @@ export default function ContractItemFormDialog({
 
           {/* Ghi chú */}
           <div className="grid gap-1">
-            <Label htmlFor="note">Ghi chú</Label>
+            <Label htmlFor="note">
+              {t("contracts.contractItem.form.fields.note")}
+            </Label>
             <Textarea
               id="note"
               name="note"
               value={formData.note}
               onChange={handleChange}
-              placeholder="Nhập ghi chú (tuỳ chọn)"
+              placeholder={t(
+                "contracts.contractItem.form.fields.notePlaceholder"
+              )}
               className={hasFieldError("note") ? "border-red-500" : ""}
             />
             {hasFieldError("note") && (
@@ -647,14 +707,18 @@ export default function ContractItemFormDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Huỷ
+            {t("contracts.contractItem.form.actions.cancel")}
           </Button>
           <Button
             className="bg-orange-500 hover:bg-orange-600 text-white"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Đang lưu..." : mode === "create" ? "Thêm" : "Cập nhật"}
+            {loading
+              ? t("contracts.contractItem.form.actions.saving")
+              : mode === "create"
+              ? t("contracts.contractItem.form.actions.create")
+              : t("contracts.contractItem.form.actions.update")}
           </Button>
         </div>
       </FormDialog.Content>

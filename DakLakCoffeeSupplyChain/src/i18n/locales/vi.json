@@ -4120,12 +4120,20 @@
           "headers": {
             "contractNumber": "Số hợp đồng",
             "contractTitle": "Tên hợp đồng",
-            "partner": "Đối tác",
+            "partner": "Bên mua",
             "status": "Trạng thái",
             "time": "Thời gian",
             "actions": "Hành động"
           },
           "empty": "Không tìm thấy hợp đồng nào",
+          "dialog": {
+                "deleteContract": {
+                "title": "Xoá hợp đồng?",
+                "description": "Bạn có chắc chắn muốn xoá hợp đồng <strong>{{contractTitle}}</strong> không? Hành động này không thể hoàn tác.",
+                "confirm": "Xoá",
+                "cancel": "Huỷ"
+              }
+          },
           "pagination": {
             "showing": "Đang hiển thị",
             "to": "đến",
@@ -4192,7 +4200,7 @@
         "edit": "Chỉnh sửa",
         "delete": "Xoá",
         "deleteItemTitle": "Xoá mặt hàng?",
-        "deleteItemDescription": "Bạn có chắc chắn muốn xoá mặt hàng {{itemName}} khỏi hợp đồng không? Hành động này không thể hoàn tác.",
+        "deleteItemDescription": "Bạn có chắc chắn muốn xoá mặt hàng <strong>{{itemName}}</strong> khỏi hợp đồng không? Hành động này không thể hoàn tác.",
         "deleteItemConfirm": "Xoá",
         "deleteItemCancel": "Huỷ",
         "deleteItemSuccess": "Xóa mặt hàng thành công!",
@@ -4218,6 +4226,15 @@
       "completed": "Hoàn thành",
       "cancelled": "Đã hủy",
       "expired": "Quá hạn"
+    },
+    "contractStatus": {
+      "NotStarted": "Chưa bắt đầu",
+      "PreparingDelivery": "Chuẩn bị giao",
+      "InProgress": "Đang thực hiện",
+      "PartialCompleted": "Hoàn thành một phần",
+      "Completed": "Hoàn thành",
+      "Cancelled": "Đã hủy",
+      "Expired": "Quá hạn"
     },
     "form": {
       "status": "Trạng thái"
@@ -4316,6 +4333,152 @@
       "viewDirectly": "Xem trực tiếp",
       "addItem": "Thêm mặt hàng",
       "action": "Hành động"
+    },
+    "contractItem": {
+      "form": {
+        "title": {
+          "create": "Thêm mặt hàng mới",
+          "edit": "Chỉnh sửa mặt hàng"
+        },
+        "fields": {
+          "coffeeType": "Loại cà phê",
+          "coffeeTypePlaceholder": "Chọn loại cà phê...",
+          "quantity": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "discount": "Chiết khấu",
+          "note": "Ghi chú",
+          "notePlaceholder": "Ghi chú bổ sung (tùy chọn)..."
+        },
+        "validation": {
+          "coffeeTypeRequired": "Vui lòng chọn loại cà phê",
+          "quantityRequired": "Vui lòng nhập số lượng",
+          "quantityPositive": "Số lượng phải lớn hơn 0",
+          "unitPriceRequired": "Vui lòng nhập đơn giá",
+          "unitPricePositive": "Đơn giá phải lớn hơn 0",
+          "discountNegative": "Chiết khấu không được âm",
+          "discountExceedsTotal": "Chiết khấu không được vượt quá tổng thành tiền",
+          "noteTooLong": "Ghi chú không được vượt quá 1000 ký tự",
+          "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+        },
+        "businessRules": {
+          "title": "Quy tắc nghiệp vụ",
+          "rulesCount": "quy tắc"
+        },
+        "actions": {
+          "create": "Thêm mặt hàng",
+          "update": "Cập nhật",
+          "cancel": "Huỷ",
+          "saving": "Đang lưu..."
+        },
+        "success": {
+          "create": "Thêm mặt hàng thành công!",
+          "update": "Cập nhật mặt hàng thành công!"
+        },
+        "error": {
+          "saveError": "Không thể lưu mặt hàng. Vui lòng thử lại."
+        }
+      }
+    },
+    "contract": {
+      "edit": "Chỉnh sửa hợp đồng",
+      "new": "Tạo hợp đồng mới",
+      "buyerId": "Bên mua",
+      "contractNumber": "Số hợp đồng",
+      "contractTitle": "Tên hợp đồng",
+      "contractFileUrl": "File hợp đồng",
+      "deliveryRounds": "Số đợt giao hàng",
+      "totalQuantity": "Tổng khối lượng",
+      "totalValue": "Tổng giá trị",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "signedAt": "Ngày ký",
+      "status": "Trạng thái",
+      "cancelReason": "Lý do hủy",
+              "contractItems": "Danh sách mặt hàng hợp đồng",
+      "buyer": "Bên mua",
+      "contractFile": "File hợp đồng",
+      "selectFile": "📁 Chọn file",
+      "viewFile": "👁️ Xem file",
+      "support": "💡 Hỗ trợ",
+      "newFile": "File mới được chọn",
+      "currentFile": "File hiện tại",
+      "newFileWillReplace": "ℹ️ File mới sẽ thay thế file hiện tại khi cập nhật",
+      "clickToViewFull": "Click để xem ảnh rõ hơn",
+      "imagePreview": "📷 {{name}}",
+      "viewPdf": "📄 Xem PDF: {{fileName}}",
+      "pdfPreview": "📄 {{name}}",
+      "wordPreview": "📝 {{name}}",
+      "deleteNewFile": "🗑️ Xóa file mới",
+      "deleteCurrentFile": "🗑️ Xóa file hiện tại",
+      "selectBuyer": "Chọn bên mua",
+      "enterCancelReason": "Vui lòng ghi lý do hủy hợp đồng...",
+      "delete": "Xoá",
+      "addItem": "Thêm mặt hàng",
+      "save": "Lưu hợp đồng",
+      "back": "Quay lại",
+      "format": "💡 Định dạng",
+      "example": "💡 VD",
+              "statusAutoUpdate": "💡 Trạng thái sẽ tự động cập nhật: \"Đang thực hiện\" nếu ngày bắt đầu ở quá khứ hoặc hiện tại, \"Chưa bắt đầu\" nếu ngày bắt đầu ở tương lai",
+      "updateSuccess": "Cập nhật hợp đồng thành công!",
+      "createSuccess": "Tạo hợp đồng thành công!",
+      "businessRules": "Cần tuân thủ quy tắc nghiệp vụ",
+      "rules": "quy tắc",
+      "summary": "📋 Tóm tắt",
+      "adjustTotal": " Cần điều chỉnh tổng khối lượng/giá trị hợp đồng",
+      "removeDuplicate": " Cần loại bỏ mặt hàng trùng loại",
+      "changeNumber": " Cần đổi số hợp đồng",
+      "contactAdmin": " Cần liên hệ admin",
+      "instructions": "💡 Hướng dẫn",
+      "checkTotal": "• Kiểm tra lại tổng khối lượng và giá trị của các mặt hàng",
+      "ensureTotal": "• Đảm bảo tổng từ các mặt hàng không vượt quá tổng đã khai báo",
+      "orIncrease": "• Hoặc tăng tổng khối lượng/giá trị hợp đồng lên",
+      "totalFromItems": "• Tổng từ mặt hàng: {{totalQuantity}} kg, {{totalValue}} VND",
+      "currentContract": "• Tổng hợp đồng hiện tại: {{totalQuantity}} kg, {{totalValue}} VND",
+      "updateTotal": "Đã cập nhật tổng từ mặt hàng",
+      "autoUpdateTotal": "Tự động cập nhật tổng",
+      "noDuplicate": "• Không được có 2 dòng hợp đồng cùng loại cà phê",
+      "numberExists": "• Số hợp đồng đã tồn tại, hãy đổi số khác",
+      "contactAdminForPermission": "• Liên hệ admin để được cấp quyền phù hợp",
+      "checkNonNegativeValues": "• Kiểm tra các giá trị số không được âm",
+      "checkMinMaxValues": "• Kiểm tra các điều kiện về giá trị min/max"
+    },
+    "contractItems": {
+      "coffeeTypeId": "Loại cà phê",
+      "quantity": "Số lượng (kg)",
+      "unitPrice": "Đơn giá (VND/Kg)",
+      "discountAmount": "Chiết khấu (%)",
+      "note": "Ghi chú",
+      "selectCoffeeType": "Chọn loại cà phê",
+      "notePlaceholder": "Ghi chú",
+      "item": "Mặt hàng {{index}}"
+    },
+    "validation": {
+      "deliveryRounds": "Số đợt giao hàng phải là số nguyên dương",
+      "totalQuantity": "Tổng khối lượng không được âm",
+      "totalValue": "Tổng giá trị không được âm",
+      "quantity": "Số lượng phải lớn hơn 0",
+      "unitPrice": "Đơn giá phải lớn hơn 0",
+      "discountAmount": "Chiết khấu không được âm",
+      "contractNumberRequired": "Số hợp đồng là bắt buộc",
+      "contractNumberLength": "Số hợp đồng phải có ít nhất 3 ký tự",
+      "contractTitleRequired": "Tên hợp đồng là bắt buộc",
+      "contractTitleLength": "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng",
+      "contractTitleMaxLength": "Tên hợp đồng không được quá 200 ký tự",
+      "buyerIdRequired": "Vui lòng chọn bên mua",
+      "startDateRequired": "Ngày bắt đầu là bắt buộc",
+      "endDateRequired": "Ngày kết thúc là bắt buộc",
+      "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
+      "signedAtAfterStartDate": "Ngày ký hợp đồng không được sau ngày bắt đầu",
+              "contractFileSize": "File không được quá lớn",
+      "contractFileType": "Chỉ hỗ trợ file ảnh (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)",
+      "cancelReasonRequired": "Lý do hủy là bắt buộc khi trạng thái là 'Đã hủy'",
+      "contractItemsRequired": "Vui lòng thêm ít nhất 1 mặt hàng vào hợp đồng",
+      "coffeeTypeIdRequired": "Vui lòng chọn loại cà phê",
+      "formErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+      "dateError": "Lỗi ngày tháng: Ngày ký hợp đồng phải ≤ Ngày bắt đầu"
+    },
+    "error": {
+      "loadPreview": "Không thể tải ảnh preview"
     }
   },
   "managerWarehouses": {
