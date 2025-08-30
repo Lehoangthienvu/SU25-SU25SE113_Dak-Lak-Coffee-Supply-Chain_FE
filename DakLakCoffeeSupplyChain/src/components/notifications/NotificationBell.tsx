@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Bell, Check, CheckCheck, X } from "lucide-react";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 
 const NotificationBell: React.FC = () => {
+  const { t } = useTranslation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,7 +51,7 @@ const NotificationBell: React.FC = () => {
         locale: vi
       });
     } catch {
-      return "Vừa xong";
+      return t('notifications.justNow');
     }
   };
 
@@ -76,7 +78,7 @@ const NotificationBell: React.FC = () => {
         <div className="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Thông báo</h3>
+              <h3 className="font-semibold text-gray-900">{t('notifications.title')}</h3>
               <div className="flex items-center gap-2">
                 {finalUnreadCount > 0 && (
                   <Button
@@ -86,7 +88,7 @@ const NotificationBell: React.FC = () => {
                     className="text-xs text-blue-600 hover:text-blue-700"
                   >
                     <CheckCheck className="h-3 w-3 mr-1" />
-                    Đánh dấu tất cả đã đọc
+                    {t('notifications.markAllAsRead')}
                   </Button>
                 )}
                 <Button
@@ -104,7 +106,7 @@ const NotificationBell: React.FC = () => {
           <div className="flex-1 overflow-y-auto max-h-80">
             {notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
-                Không có thông báo nào
+                {t('notifications.noNotifications')}
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
@@ -144,7 +146,7 @@ const NotificationBell: React.FC = () => {
                           {notification.isRead && (
                             <span className="text-xs text-green-600 flex items-center gap-1">
                               <Check className="h-3 w-3" />
-                              Đã đọc
+                              {t('notifications.read')}
                             </span>
                           )}
                         </div>
@@ -168,7 +170,7 @@ const NotificationBell: React.FC = () => {
                 window.location.href = "/dashboard/notifications";
               }}
             >
-              Xem tất cả thông báo
+              {t('notifications.viewAll')}
             </Button>
           </div>
         </div>

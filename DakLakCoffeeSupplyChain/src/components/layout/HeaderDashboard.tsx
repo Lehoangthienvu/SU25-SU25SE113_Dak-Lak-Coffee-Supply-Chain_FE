@@ -58,7 +58,7 @@ export default function HeaderDashboard() {
       settings: t('sidebar.settings'),
       create: t('common.create'),
       edit: t('common.edit'),
-      "Chi tiết": t('common.details'),
+      details: t('common.details'),
     };
     return titleMap[key] || key;
   };
@@ -81,7 +81,7 @@ export default function HeaderDashboard() {
   const currentTitle = useMemo(() => {
     const segments = pathname.split("/").filter(Boolean);
 
-    // Kiểm tra nếu có segment "create" hoặc "edit" hoặc ID (số)
+    // Kiểm tra nếu có segment "create" hoặc "edit" hoặc ID
     const last = segments[segments.length - 1];
     const secondLast = segments[segments.length - 2];
 
@@ -95,8 +95,11 @@ export default function HeaderDashboard() {
       return getPathTitle(last);
     }
 
-    // Nếu segment cuối là một ID (không nằm trong map) và có segment trước đó
-    if (secondLast && !getPathTitle(last)) {
+    // Kiểm tra xem segment cuối có phải là UUID không (ID có dạng 8-4-4-4-12 ký tự)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(last);
+
+    // Nếu segment cuối là một ID (UUID) và có segment trước đó
+    if (secondLast && isUUID) {
       return getPathTitle(secondLast)
         ? `${getPathTitle(secondLast)} - ${t('common.details')}`
         : t('common.details');
@@ -176,14 +179,14 @@ export default function HeaderDashboard() {
                     alt="avatar"
                     className="w-12 h-12 rounded-full border-2 border-orange-200 object-cover"
                   />
-                                     <div>
-                     <p className="font-semibold text-gray-800">
-                       {userName ?? t('common.anonymous')}
-                     </p>
-                     <p className="text-xs text-gray-500">
-                       {userRole ?? t('common.unknownRole')}
-                     </p>
-                   </div>
+                  <div>
+                    <p className="font-semibold text-gray-800">
+                      {userName ?? t('common.anonymous')}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {userRole ?? t('common.unknownRole')}
+                    </p>
+                  </div>
                 </div>
               </div>
 

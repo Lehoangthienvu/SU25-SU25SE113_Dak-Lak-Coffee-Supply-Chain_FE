@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ const COMMON_QUALITY_OPTIONS = [
 const toDateInput = (d?: string) => (d ? new Date(d).toISOString().slice(0, 10) : "");
 
 export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSuccess }: Props) {
+    const { t } = useTranslation();
     const [form, setForm] = useState({
         areaAllocated: "",
         plannedQuality: "",
@@ -158,7 +160,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
         <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <Label htmlFor="areaAllocated">Diện tích phân bổ (ha) *</Label>
+                    <Label htmlFor="areaAllocated">{t('cropSeasons.detailTable.areaAllocated')} *</Label>
                     <Input
                         id="areaAllocated"
                         name="areaAllocated"
@@ -167,13 +169,13 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                         min="0.01"
                         value={form.areaAllocated}
                         onChange={handleChange}
-                        placeholder="Nhập diện tích"
+                        placeholder={t('cropSeasons.detailTable.areaAllocatedPlaceholder')}
                         required
                     />
                 </div>
 
                 <div>
-                    <Label htmlFor="plannedQuality">Chất lượng dự kiến *</Label>
+                    <Label htmlFor="plannedQuality">{t('cropSeasons.detailTable.plannedQuality')} *</Label>
                     <div className="relative">
                         <Input
                             id="plannedQuality"
@@ -182,7 +184,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                             onChange={handleChange}
                             onFocus={() => setShowQualitySuggestions(true)}
                             onBlur={() => setTimeout(() => setShowQualitySuggestions(false), 200)}
-                            placeholder="Nhập hoặc chọn chất lượng..."
+                            placeholder={t('cropSeasons.detailTable.plannedQualityPlaceholder')}
                             className="w-full"
                             required
                         />
@@ -192,7 +194,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
                                 {/* Gợi ý theo loại cà phê */}
                                 <div className="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50 border-b">
-                                    Gợi ý cho {coffeeType || "cà phê"}
+                                    {t('cropSeasons.detailTable.suggestionsFor')} {coffeeType || t('cropSeasons.detailTable.coffee')}
                                 </div>
                                 {getQualitySuggestions(coffeeType).map((option) => (
                                     <div
@@ -212,7 +214,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
 
                                 {/* Chất lượng chung */}
                                 <div className="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50 border-b">
-                                    Chứng nhận & Tiêu chuẩn chung
+                                    {t('cropSeasons.detailTable.certificationsAndStandards')}
                                 </div>
                                 {COMMON_QUALITY_OPTIONS.map((option) => (
                                     <div
@@ -232,7 +234,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
 
                                 {/* Tùy chọn nhập tự do */}
                                 <div className="px-3 py-2 text-xs text-gray-500 bg-yellow-50 border-t-2 border-yellow-200">
-                                    💡 Hoặc nhập chất lượng tùy chỉnh ở trên
+                                    💡 {t('cropSeasons.detailTable.orEnterCustomQuality')}
                                 </div>
                             </div>
                         )}
@@ -242,14 +244,14 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                     {form.plannedQuality && (
                         <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
                             <p className="text-xs text-blue-700">
-                                <strong>Chất lượng đã chọn:</strong> {form.plannedQuality}
+                                <strong>{t('cropSeasons.detailTable.selectedQuality')}:</strong> {form.plannedQuality}
                             </p>
                         </div>
                     )}
                 </div>
 
                 <div>
-                    <Label htmlFor="expectedHarvestStart">Ngày bắt đầu thu hoạch dự kiến</Label>
+                    <Label htmlFor="expectedHarvestStart">{t('cropSeasons.detailTable.expectedHarvestStart')}</Label>
                     <Input
                         id="expectedHarvestStart"
                         name="expectedHarvestStart"
@@ -260,7 +262,7 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                 </div>
 
                 <div>
-                    <Label htmlFor="expectedHarvestEnd">Ngày kết thúc thu hoạch dự kiến</Label>
+                    <Label htmlFor="expectedHarvestEnd">{t('cropSeasons.detailTable.expectedHarvestEnd')}</Label>
                     <Input
                         id="expectedHarvestEnd"
                         name="expectedHarvestEnd"
@@ -277,14 +279,14 @@ export default function UpdateCropSeasonDetailDialog({ detailId, onClose, onSucc
                         onClick={onClose}
                         disabled={isSubmitting}
                     >
-                        Hủy
+                        {t('cropSeasons.edit.cancel')}
                     </Button>
                     <Button
                         type="submit"
                         disabled={isSubmitting}
                         className="bg-orange-600 hover:bg-orange-700"
                     >
-                        {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
+                        {isSubmitting ? t('cropSeasons.edit.updating') : t('cropSeasons.edit.submit')}
                     </Button>
                 </div>
             </form>

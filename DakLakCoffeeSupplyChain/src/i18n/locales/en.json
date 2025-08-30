@@ -1893,6 +1893,15 @@
     "currency": "VND"
   },
 
+  "notifications": {
+    "title": "Notifications",
+    "justNow": "Just now",
+    "markAllAsRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "read": "Read",
+    "viewAll": "View all notifications"
+  },
+
   "farmerBatchSelector": {
     "title": "Select Farmer to View Processing Batches",
     "selectFarmer": "Select Farmer",
@@ -2340,6 +2349,7 @@
             "placeholder": "Additional description about the season, special conditions..."
           },
           "submit": "Update",
+          "cancel": "Cancel",
           "updating": "Updating..."
         },
         "validation": {
@@ -2390,6 +2400,15 @@
         "noPlantingAreas": "No planting areas have been created yet.",
         "coffeeType": "Coffee Type",
         "area": "Area (ha)",
+        "areaAllocated": "Allocated Area (ha)",
+        "areaAllocatedPlaceholder": "Enter area",
+        "plannedQuality": "Planned Quality",
+        "plannedQualityPlaceholder": "Enter or select quality...",
+        "suggestionsFor": "Suggestions for",
+        "coffee": "coffee",
+        "certificationsAndStandards": "Certifications & Standards",
+        "orEnterCustomQuality": "Or enter custom quality above",
+        "selectedQuality": "Selected Quality",
         "estimatedYield": "Estimated Yield",
         "actualYield": "Actual Yield",
         "ratio": "Ratio (%)",
@@ -3768,6 +3787,8 @@
     "procurementPlans": "Procurement Plans",
     "commitments": "Farming Commitments",
     "cropSeasons": "Crop Seasons",
+    "cropStages": "Growth Stages",
+    "cropProgress": "Crop Progress",
     "batches": "Processing Batches",
     "evaluations": "Evaluations",
     "progress": "Progress",
@@ -5661,5 +5682,51 @@
       "status": "Status",
       "actions": "Actions"
     }
+  },
+  "cropSeasons": {
+    "error": {
+      "loadFailed": "Cannot load crop season information",
+      "notFound": "Crop season not found",
+      "notFoundDescription": "This crop season does not exist or has been deleted"
+    },
+    "detail": {
+      "subtitle": "Coffee crop season details",
+      "farmer": "Farmer",
+      "area": "Area",
+      "time": "Time",
+      "status": "Status",
+      "overview": "Overview",
+      "plantingDetails": "Planting Area Details",
+      "cultivationProgress": "Cultivation Progress",
+      "generalInfo": "General Information",
+      "seasonInfo": "Crop Season Information",
+      "farmerInfo": "Farmer Information",
+      "seasonName": "Crop Season Name",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "farmerName": "Farmer Name",
+      "commitmentCode": "Commitment Code",
+      "registrationCode": "Registration Code",
+      "notes": "Notes",
+      "plantingAreaDetails": "Planting Area Details",
+      "noPlantingDetails": "No planting area details yet",
+      "allocatedArea": "Allocated Area",
+      "estimatedYield": "Estimated Yield",
+      "actualYield": "Actual Yield",
+      "expectedHarvestStart": "Expected Harvest Start",
+      "expectedHarvestEnd": "Expected Harvest End",
+      "plannedQuality": "Planned Quality",
+      "cultivationProgressTitle": "Cultivation Progress",
+      "noProgressToShow": "No planting area details to show progress",
+      "noProgressRecorded": "No progress recorded yet"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "read": "Read",
+    "justNow": "Just now",
+    "viewAll": "View all notifications"
   }
 }
