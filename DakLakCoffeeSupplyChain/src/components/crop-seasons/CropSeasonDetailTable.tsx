@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
-  CropSeasonDetailStatusMap,
+  getCropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
 import { Edit, Coffee, MapPin, Calendar, Target, Trash2 } from "lucide-react";
@@ -233,7 +233,7 @@ export default function CropSeasonDetailTable({
                   })()}
                 </td>
                 <td className="px-3 py-3 text-center">
-                  <StatusBadge status={detail.status} map={CropSeasonDetailStatusMap} />
+                  <StatusBadge status={detail.status} map={getCropSeasonDetailStatusMap(t)} />
                 </td>
                 <td className="px-3 py-3 text-center">
                   <div className="flex items-center justify-center gap-1">

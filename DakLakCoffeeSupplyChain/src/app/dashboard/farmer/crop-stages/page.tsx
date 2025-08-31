@@ -136,7 +136,7 @@ export default function CropStagesDialog() {
         } finally {
             setLoading(false);
         }
-    }, [stages]);
+    }, [stages, t]);
 
     return (
         <Dialog onOpenChange={(open) => open && fetchStages()}>

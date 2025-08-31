@@ -133,9 +133,9 @@ export function EditProgressDialog({
                         <div className="mb-4 p-3 border rounded-lg bg-gray-50 border-gray-200">
                             <div className="flex items-center gap-2 text-xs text-gray-700">
                                 <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-                                <span className="font-medium">Thông tin giai đoạn hiện tại:</span>
+                                <span className="font-medium">{t('cropProgress.editDialog.currentStageInfo')}</span>
                                 <span><strong>{progress.stageName}</strong></span>
-                                <span className="ml-4">Ngày tạo: {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString("vi-VN") : "Chưa có"}</span>
+                                <span className="ml-4">{t('cropProgress.editDialog.createdDate')}: {progress.progressDate ? new Date(progress.progressDate).toLocaleDateString("vi-VN") : t('cropProgress.editDialog.noDate')}</span>
                             </div>
                         </div>
 
@@ -148,13 +148,13 @@ export function EditProgressDialog({
                                     <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
                                         <Leaf className="w-3 h-3 text-gray-600" />
                                     </div>
-                                    Thông tin cơ bản
+                                    {t('cropProgress.editDialog.basicInfo')}
                                 </h3>
 
                                 <div className="space-y-3">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
-                                            Giai đoạn
+                                            {t('cropProgress.editDialog.stage')}
                                         </label>
                                         <div className="w-full h-10 bg-gray-50 border border-gray-200 rounded-md px-3 flex items-center text-sm text-gray-700 font-medium">
                                             {progress.stageName}
@@ -163,7 +163,7 @@ export function EditProgressDialog({
 
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
-                                            Ngày thực hiện
+                                            {t('cropProgress.editDialog.executionDate')}
                                         </label>
                                         <Input
                                             type="date"
@@ -178,7 +178,7 @@ export function EditProgressDialog({
                                     {progress.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE && (
                                         <div>
                                             <label className="block text-xs font-medium text-gray-700 mb-1">
-                                                Sản lượng (kg)
+                                                {t('cropProgress.editDialog.yield')}
                                             </label>
                                             <Input
                                                 type="number"
@@ -187,19 +187,19 @@ export function EditProgressDialog({
                                                 min={0}
                                                 step="any"
                                                 className="w-full h-10 text-sm"
-                                                placeholder="Nhập sản lượng thu hoạch..."
+                                                placeholder={t('cropProgress.editDialog.yieldPlaceholder')}
                                             />
                                         </div>
                                     )}
 
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
-                                            Ghi chú
+                                            {t('cropProgress.editDialog.notes')}
                                         </label>
                                         <Textarea
                                             value={note}
                                             onChange={(e) => setNote(e.target.value)}
-                                            placeholder="Mô tả chi tiết về giai đoạn, điều kiện môi trường, phương pháp chăm sóc..."
+                                            placeholder={t('cropProgress.editDialog.notesPlaceholder')}
                                             className="w-full min-h-[80px] text-sm resize-none"
                                             rows={3}
                                         />
@@ -213,7 +213,7 @@ export function EditProgressDialog({
                                     <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
                                         <Camera className="w-3 h-3 text-gray-600" />
                                     </div>
-                                    Tài liệu hiện tại
+                                    {t('cropProgress.editDialog.currentMedia')}
                                 </h3>
 
                                 <div className="space-y-3">
@@ -221,7 +221,7 @@ export function EditProgressDialog({
                                     {(progress.photoUrl || progress.videoUrl) && (
                                         <div>
                                             <label className="block text-xs font-medium text-gray-700 mb-1">
-                                                Tài liệu hiện tại
+                                                {t('cropProgress.editDialog.currentDocument')}
                                             </label>
                                             <div className="flex gap-3">
                                                 {progress.photoUrl && progress.photoUrl.trim() !== '' && (
@@ -229,7 +229,7 @@ export function EditProgressDialog({
                                                         <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
                                                             <img
                                                                 src={progress.photoUrl}
-                                                                alt="Ảnh hiện tại"
+                                                                alt={t('cropProgress.editDialog.currentImage')}
                                                                 className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
                                                                 onError={(e) => {
                                                                     const target = e.target as HTMLImageElement;
@@ -267,7 +267,7 @@ export function EditProgressDialog({
 
                                     {!progress.photoUrl && !progress.videoUrl && (
                                         <div className="text-center py-8 text-gray-500 text-sm">
-                                            Chưa có tài liệu nào
+                                            {t('cropProgress.editDialog.noDocuments')}
                                         </div>
                                     )}
 
@@ -276,8 +276,8 @@ export function EditProgressDialog({
                                         <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                                             <div className="flex items-center gap-2 text-xs text-gray-700">
                                                 <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-                                                <span className="font-medium">ℹ️ Lưu ý:</span>
-                                                <span>Ảnh/video sẽ được giữ nguyên khi cập nhật</span>
+                                                <span className="font-medium">ℹ️ {t('cropProgress.editDialog.mediaNote')}</span>
+                                                <span>{t('cropProgress.editDialog.mediaNoteDesc')}</span>
                                             </div>
                                         </div>
                                     )}
@@ -293,13 +293,13 @@ export function EditProgressDialog({
                                     <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>Chỉnh sửa thông tin cơ bản</span>
+                                    <span>{t('cropProgress.editDialog.editBasicInfo')}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>📷 Ảnh/video hiện tại được giữ nguyên</span>
+                                    <span>{t('cropProgress.editDialog.keepCurrentMedia')}</span>
                                 </div>
                             </div>
 
@@ -310,21 +310,21 @@ export function EditProgressDialog({
                                     onClick={() => setOpen(false)}
                                     className="px-6 py-3"
                                 >
-                                    Hủy
+                                    {t('cropProgress.editDialog.cancel')}
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={loading}
                                     className="px-8 py-3 bg-gray-700 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
                                 >
-                                    {loading ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            Đang cập nhật...
-                                        </div>
-                                    ) : (
-                                        "Cập nhật tiến độ"
-                                    )}
+                                                                            {loading ? (
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                {t('cropProgress.editDialog.updating')}
+                                            </div>
+                                        ) : (
+                                            t('cropProgress.editDialog.updateProgress')
+                                        )}
                                 </Button>
                             </div>
                         </div>

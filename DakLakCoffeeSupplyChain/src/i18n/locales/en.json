@@ -2421,7 +2421,13 @@
         "delete": "Delete",
         "confirmDelete": "Are you sure you want to delete this planting area?",
         "deleteSuccess": "Planting area deleted successfully!",
-        "deleteError": "Failed to delete planting area!"
+        "deleteError": "Failed to delete planting area!",
+        "detailStatus": {
+          "planned": "Planned",
+          "inProgress": "In Progress",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        }
       },
       "list": {
         "title": "Crop Seasons List",
@@ -2499,6 +2505,171 @@
         "creating": "Creating..."
       }
     },
+    "cropProgress": {
+     "page": {
+       "loading": "Loading crop progress data...",
+       "notFound": "Crop area not found",
+       "notFoundDesc": "The crop area you are looking for does not exist or has been deleted.",
+       "backToList": "Back to list",
+       "title": "Crop Progress - {{coffeeType}}",
+       "subtitle": "Track and manage crop progress by stage"
+     },
+     "header": {
+       "harvestYield": "Harvest Yield",
+       "notUpdated": "Not updated",
+       "requestConsultation": "Request Consultation"
+     },
+     "progressTable": {
+       "title": "Crop Progress Table",
+       "headers": {
+         "stage": "Stage",
+         "status": "Status",
+         "recordedDate": "Recorded Date",
+         "notes": "Notes",
+         "documents": "Documents",
+         "actions": "Actions"
+       },
+       "status": {
+         "completed": "Completed",
+         "inProgress": "In Progress",
+         "notOpen": "Not Open"
+       },
+       "actions": {
+         "edit": "Edit",
+         "record": "Record",
+         "noAction": "No Action"
+       }
+     },
+     "errors": {
+       "loadDataError": "An error occurred while loading crop progress data.",
+       "loadSeasonDetailError": "Unable to get crop area information.",
+       "loadStagesError": "Unable to load stage list."
+     },
+     "media": {
+       "viewImage": "View Image",
+       "viewVideo": "View Video",
+       "imageAlt": "Image",
+       "largeImageAlt": "Large Image"
+     },
+     "createDialog": {
+       "newProgress": "Record Progress",
+       "title": "Record Crop Progress",
+       "description": "Record detailed information about the crop stage",
+       "completedTitle": "Season Completed",
+       "completedDescription": "Congratulations! You have completed all stages",
+       "confirmMessage": "Are you sure you want to continue?",
+       "error": "Cannot complete season with this yield",
+       "basicInfo": "Basic Information",
+       "nextStage": "Next Stage",
+       "nextStageDesc": "Next stage to be performed",
+       "progress": "Progress",
+       "stages": "stages",
+       "allCompleted": "All stages completed",
+       "allCompletedDesc": "Congratulations! You have completed all stages of this season.",
+       "progressComplete": "100% complete!",
+       "executionDate": "Execution Date",
+       "executionDateDesc": "Select the date this stage was performed (cannot be later than today)",
+       "estimatedYield": "Estimated Yield",
+       "yieldRange": "Acceptable Range",
+       "yieldGood": "Good",
+       "yieldWarning": "Warning",
+       "yieldStrongWarning": "Strong Warning",
+       "yieldNotAllowed": "Not Allowed",
+       "yieldNote": "Note",
+       "yieldNoteDesc": "Yield below 80% will NOT meet commitment with the business",
+       "actualYield": "Actual Harvest Yield (kg)",
+       "actualYieldPlaceholder": "Enter harvest yield...",
+       "achievedPercent": "Achieved {{percent}}% compared to expected",
+       "notes": "Notes",
+       "notesPlaceholder": "Describe in detail about the stage, environmental conditions, care methods...",
+       "mediaUpload": "Illustrative Documents",
+       "photoUpload": "Illustrative Photos",
+       "videoUpload": "Illustrative Videos",
+       "selectPhoto": "Select Photos",
+       "selectVideo": "Select Videos",
+       "mediaPreview": "Document Preview",
+       "removeFile": "Remove file",
+       "maxFiles": "Maximum 10 files, 50MB",
+       "autoCompress": "Photos auto-compressed",
+       "cancel": "Cancel",
+       "close": "Close",
+       "saving": "Saving...",
+       "recordStage": "Record {{stageName}}",
+       "validation": {
+         "selectStage": "Please select a stage.",
+         "selectDate": "Please select a record date.",
+         "dateNotFuture": "Record date cannot be later than today.",
+         "dateTooPast": "Record date cannot be too far in the past (maximum 1 year ago).",
+         "yieldRequired": "Please enter a valid harvest yield (> 0).",
+         "fileTooLarge": "File too large. Maximum 10MB.",
+         "fileTypeNotSupported": "Only image files (JPEG, PNG, WebP) and video files (MP4, AVI, MOV) are supported.",
+         "loadStagesError": "Unable to load stage list.",
+         "loadSeasonDetailError": "Unable to load season details.",
+         "createProgressError": "Failed to create progress.",
+         "createProgressSuccess": "Progress created successfully!"
+       },
+       "yieldValidation": {
+         "noData": "No expected data to compare",
+         "overflowError": "Harvest yield ({{actual}} kg) exceeds {{max}}% compared to expected ({{estimated}} kg). Please check again or contact management to adjust targets.",
+         "overflowRecommendation": "Contact management to adjust targets or check data again",
+         "underflowError": "Harvest yield ({{actual}} kg) only reaches {{percent}}% compared to expected ({{estimated}} kg). Yield too low may affect production efficiency and commitments. Please check again or note the reason.",
+         "underflowRecommendation": "Cannot complete season with this yield. Need to check again or contact management",
+         "commitmentFailed": "Harvest yield ({{actual}} kg) only reaches {{percent}}% compared to expected ({{estimated}} kg). COMMITMENT NOT MET with the business. Please note specific reasons and contact management.",
+         "commitmentFailedRecommendation": "Need to contact management to adjust commitment or find alternative solutions",
+         "warningLow": "Harvest yield ({{actual}} kg) reaches {{percent}}% compared to expected ({{estimated}} kg). Yield lower than expected but still meets commitment. Please note reasons if needed.",
+         "warningLowRecommendation": "Can complete season but need to note reasons for low yield",
+         "success": "Yield meets requirements, can complete season",
+         "commitmentNotAchieved": "COMMITMENT NOT MET with the business!",
+         "commitmentPartial": "Partially met commitment",
+         "canContinue": "You can still continue, but please note specific reasons.",
+         "confirmLowYield": "Harvest yield ({{actual}} kg) is lower than expected.\n\n{{commitmentMessage}}\n\nReason: {{reason}}\n\nRecommendation: {{recommendation}}\n\n{{confirmMessage}}"
+       }
+     },
+     "editDialog": {
+       "button": "Edit",
+       "title": "Edit Crop Progress",
+       "description": "Update stage information",
+       "success": "Progress updated successfully!",
+       "error": "Failed to update progress.",
+       "currentStageInfo": "Current stage information:",
+       "createdDate": "Created date",
+       "noDate": "Not available",
+       "basicInfo": "Basic Information",
+       "stage": "Stage",
+       "executionDate": "Execution Date",
+       "yield": "Yield (kg)",
+       "yieldPlaceholder": "Enter harvest yield...",
+       "notes": "Notes",
+       "notesPlaceholder": "Describe in detail about the stage, environmental conditions, care methods...",
+       "currentMedia": "Current Documents",
+       "currentDocument": "Current Document",
+       "currentImage": "Current Image",
+       "noDocuments": "No documents available",
+       "mediaNote": "Note:",
+       "mediaNoteDesc": "Current photos/videos will be preserved when updating",
+       "editBasicInfo": "Edit basic information",
+       "keepCurrentMedia": "📷 Current photos/videos will be preserved",
+       "cancel": "Cancel",
+       "updating": "Updating...",
+       "updateProgress": "Update Progress"
+     },
+     "detailStatus": {
+      "planned": "Planned",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+   },
+   "cropStages": {
+     "dialog": {
+       "button": "View Stages",
+       "title": "Crop Stages",
+       "loading": "Loading...",
+       "noData": "No stage data available",
+       "error": "Error loading stage list"
+     }
+
+    },
     "manager": {
       "cropSeasons": {
         "title": "Crop Season Management",
@@ -2521,6 +2692,42 @@
         "viewDetails": "View Details",
         "showingPage": "Showing {{start}} to {{end}} of {{total}} seasons",
         "page": "Page {{current}} / {{total}}"
+      },
+      "cropSeasonDetail": {
+        "subtitle": "Crop Season Details",
+        "farmer": "Farmer",
+        "area": "Area",
+        "time": "Time",
+        "status": "Status",
+        "overview": "Overview",
+        "plantingDetails": "Planting Details",
+        "cultivationProgress": "Cultivation Progress",
+        "generalInfo": "General Information",
+        "seasonInfo": "Season Information",
+        "seasonName": "Season Name",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "farmerInfo": "Farmer Information",
+        "farmerName": "Farmer Name",
+        "commitmentCode": "Commitment Code",
+        "registrationCode": "Registration Code",
+        "notes": "Notes",
+        "plantingAreaDetails": "Planting Area Details",
+        "noPlantingDetails": "No planting details available",
+        "allocatedArea": "Allocated Area",
+        "estimatedYield": "Estimated Yield",
+        "actualYield": "Actual Yield",
+        "expectedHarvestStart": "Expected Harvest Start",
+        "expectedHarvestEnd": "Expected Harvest End",
+        "plannedQuality": "Planned Quality",
+        "cultivationProgressTitle": "Cultivation Progress",
+        "noProgressToShow": "No progress to show",
+        "noProgressRecorded": "No progress recorded",
+        "error": {
+          "loadFailed": "Failed to load crop season data",
+          "notFound": "Crop season not found",
+          "notFoundDescription": "The crop season you are looking for does not exist or has been deleted."
+        }
       }
     }
   ,
@@ -3302,8 +3509,8 @@
     "success": {
       "submitSuccess": "Response sent successfully 🎉"
     }
-  }
-},
+    }
+  },
   "inventoryLogs": {
     "title": "Inventory Logs",
     "subtitle": "Track all changes in the warehouse system",
@@ -5234,7 +5441,7 @@
     "labels": {
       "currentDeliveryItem": "Contract delivery item (current)"
     }
-  }
+      }
     },
     "form": {
       "fields": {
@@ -5978,44 +6185,7 @@
       "actions": "Actions"
     }
   },
-  "cropSeasons": {
-    "error": {
-      "loadFailed": "Cannot load crop season information",
-      "notFound": "Crop season not found",
-      "notFoundDescription": "This crop season does not exist or has been deleted"
-    },
-    "detail": {
-      "subtitle": "Coffee crop season details",
-      "farmer": "Farmer",
-      "area": "Area",
-      "time": "Time",
-      "status": "Status",
-      "overview": "Overview",
-      "plantingDetails": "Planting Area Details",
-      "cultivationProgress": "Cultivation Progress",
-      "generalInfo": "General Information",
-      "seasonInfo": "Crop Season Information",
-      "farmerInfo": "Farmer Information",
-      "seasonName": "Crop Season Name",
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "farmerName": "Farmer Name",
-      "commitmentCode": "Commitment Code",
-      "registrationCode": "Registration Code",
-      "notes": "Notes",
-      "plantingAreaDetails": "Planting Area Details",
-      "noPlantingDetails": "No planting area details yet",
-      "allocatedArea": "Allocated Area",
-      "estimatedYield": "Estimated Yield",
-      "actualYield": "Actual Yield",
-      "expectedHarvestStart": "Expected Harvest Start",
-      "expectedHarvestEnd": "Expected Harvest End",
-      "plannedQuality": "Planned Quality",
-      "cultivationProgressTitle": "Cultivation Progress",
-      "noProgressToShow": "No planting area details to show progress",
-      "noProgressRecorded": "No progress recorded yet"
-    }
-  },
+
   "notifications": {
     "title": "Notifications",
     "markAllAsRead": "Mark all as read",
@@ -6419,7 +6589,7 @@
         "phone": "Phone",
         "email": "Email",
         "address": "Address",
-        "status": "Status",
+      "status": "Status",
         "createdAt": "Created At",
         "actions": "Actions"
       },

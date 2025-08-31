@@ -7,24 +7,64 @@ export enum CropSeasonDetailStatusEnum {
   Cancelled = 3,
 }
 
+// Function để lấy label theo ngôn ngữ
+export const getCropSeasonDetailStatusLabel = (
+  status: CropSeasonDetailStatusValue,
+  t: (key: string) => string
+): string => {
+  switch (status) {
+    case 'Planned':
+      return t('cropProgress.detailStatus.planned');
+    case 'InProgress':
+      return t('cropProgress.detailStatus.inProgress');
+    case 'Completed':
+      return t('cropProgress.detailStatus.completed');
+    case 'Cancelled':
+      return t('cropProgress.detailStatus.cancelled');
+    default:
+      return String(status);
+  }
+};
+
+// Function để lấy display map theo ngôn ngữ
+export const getCropSeasonDetailStatusMap = (t: (key: string) => string) => ({
+  Planned: {
+    label: t('cropProgress.detailStatus.planned'),
+    color: 'gray' as const,
+  },
+  InProgress: {
+    label: t('cropProgress.detailStatus.inProgress'),
+    color: 'yellow' as const,
+  },
+  Completed: {
+    label: t('cropProgress.detailStatus.completed'),
+    color: 'green' as const,
+  },
+  Cancelled: {
+    label: t('cropProgress.detailStatus.cancelled'),
+    color: 'red' as const,
+  },
+});
+
+// Legacy: Giữ lại để tương thích ngược (sẽ deprecated)
 export const CropSeasonDetailStatusMap: Record<CropSeasonDetailStatusValue, {
   label: string;
   color: 'gray' | 'yellow' | 'green' | 'red';
 }> = {
   Planned: {
-    label: 'cropSeasons.detailStatus.planned',
+    label: 'cropProgress.detailStatus.planned',
     color: 'gray',
   },
   InProgress: {
-    label: 'cropSeasons.detailStatus.inProgress',
+    label: 'cropProgress.detailStatus.inProgress',
     color: 'yellow',
   },
   Completed: {
-    label: 'cropSeasons.detailStatus.completed',
+    label: 'cropProgress.detailStatus.completed',
     color: 'green',
   },
   Cancelled: {
-    label: 'cropSeasons.detailStatus.cancelled',
+    label: 'cropProgress.detailStatus.cancelled',
     color: 'red',
   },
 };
