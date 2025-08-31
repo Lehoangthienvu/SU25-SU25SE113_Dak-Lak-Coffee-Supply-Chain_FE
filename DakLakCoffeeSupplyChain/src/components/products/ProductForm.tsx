@@ -22,6 +22,7 @@ import {
   ProductUnitLabel,
   getProcessingBatchOptions,
   getInventoryOptions,
+  getInventoryDetailTest,
   type ProcessingBatchOption,
   type InventoryOption,
 } from "@/lib/api/products";
@@ -56,6 +57,7 @@ type FormState = {
   evaluationScore: number | "";
   status: ProductStatus;
   approvalNote: string;
+  farmerName: string;
 };
 
 export default function ProductForm({ initialData, onSuccess }: Props) {
@@ -90,6 +92,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
     evaluationScore: "",
     status: ProductStatus.Approved, // Always Approved for new products
     approvalNote: "",
+    farmerName: "",
   });
 
   // Map dữ liệu edit -> form
@@ -169,6 +172,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       evaluationScore: initialData.evaluationScore || "",
       status: (initialData.status as ProductStatus) || ProductStatus.Pending,
       approvalNote: initialData.approvalNote || "",
+      farmerName: (initialData as any).farmerName || "",
     });
   }, [initialData, batchOptions, inventoryOptions, coffeeTypes]);
 
@@ -363,6 +367,51 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       if (selectedInventory.unit) {
         setField("unit", selectedInventory.unit as ProductUnit);
       }
+
+      // ✅ Test: Lấy thông tin chi tiết từ endpoint detail
+      getInventoryDetailTest(inventoryId).then((detailData: any) => {
+        if (detailData) {
+          console.log("🧪 Detail data has farmer info:", {
+            farmerId: detailData.farmerId,
+            farmerName: detailData.farmerName,
+            farmLocation: detailData.farmLocation,
+          });
+          console.log("🧪 Detail data has evaluation info:", {
+            evaluationResult: detailData.evaluationResult,
+            totalScore: detailData.totalScore,
+          });
+
+          // Tự động điền từ detail data
+          if (detailData.farmLocation) {
+            console.log(
+              "✅ Setting originRegion from detail:",
+              detailData.farmLocation
+            );
+            setField("originRegion", detailData.farmLocation);
+          }
+          if (detailData.farmerName) {
+            console.log(
+              "✅ Setting farmerName from detail:",
+              detailData.farmerName
+            );
+            setField("farmerName", detailData.farmerName);
+          }
+          if (detailData.evaluationResult) {
+            console.log(
+              "✅ Setting evaluatedQuality from detail:",
+              detailData.evaluationResult
+            );
+            setField("evaluatedQuality", detailData.evaluationResult);
+          }
+          if (detailData.totalScore !== undefined) {
+            console.log(
+              "✅ Setting evaluationScore from detail:",
+              detailData.totalScore
+            );
+            setField("evaluationScore", detailData.totalScore);
+          }
+        }
+      });
     }
   };
 
@@ -701,7 +750,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               className="no-spinner"
             />
             {form.inventoryId && getMaxQuantity() !== undefined && (
-              <div className="text-xs text-blue-600 mt-1">
+              <div className="text-xs text-gray-500 mt-1">
                 {t("products.form.messages.availableInWarehouse", {
                   quantity: getMaxQuantity(),
                   unit: form.unit,
@@ -721,7 +770,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               <span className="text-red-500">*</span>
             </label>
             <select
-              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
+              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.unit}
               onChange={(e) => setField("unit", e.target.value as ProductUnit)}
               disabled={loadingOptions || !canEditUnit()}
@@ -737,8 +786,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditUnit() ? (
-              <div className="text-xs text-blue-600 mt-1">
-                {t("products.form.messages.autoSelectedFromInventory")}
+              <div className="text-xs text-gray-500 mt-1">
+                Đã tự động điền từ kho
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
@@ -762,7 +811,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               <span className="text-red-500">*</span>
             </label>
             <select
-              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
+              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.batchId}
               onChange={(e) => setField("batchId", e.target.value)}
               disabled={loadingOptions || !canEditBatch()}
@@ -781,8 +830,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditBatch() ? (
-              <div className="text-xs text-blue-600 mt-1">
-                {t("products.form.messages.autoSelectedFromInventory")}
+              <div className="text-xs text-gray-500 mt-1">
+                Đã tự động điền từ kho
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
@@ -846,7 +895,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               <span className="text-red-500">*</span>
             </label>
             <select
-              className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
+              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.coffeeTypeId}
               onChange={(e) => setField("coffeeTypeId", e.target.value)}
               disabled={loadingOptions || !canEditCoffeeType()}
@@ -865,8 +914,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditCoffeeType() ? (
-              <div className="text-xs text-blue-600 mt-1">
-                {t("products.form.messages.autoSelectedFromInventory")}
+              <div className="text-xs text-gray-500 mt-1">
+                Đã tự động điền từ kho
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
@@ -899,49 +948,33 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("originRegion", e.target.value)}
               placeholder={t("products.form.placeholders.originRegion")}
               maxLength={100}
+              readOnly
+              className="bg-gray-50 cursor-not-allowed"
             />
+            <div className="text-xs text-gray-500 mt-1">
+              {!form.inventoryId
+                ? "Vui lòng chọn kho trước"
+                : "Đã tự động điền từ kho"}
+            </div>
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.originFarmLocation")}
+              Nông dân đã thực hiện
             </label>
             <Input
-              value={form.originFarmLocation}
-              onChange={(e) => setField("originFarmLocation", e.target.value)}
-              placeholder={t("products.form.placeholders.originFarmLocation")}
-              maxLength={200}
+              value={form.farmerName || ""}
+              onChange={(e) => setField("farmerName", e.target.value)}
+              placeholder="Tên nông dân đã thực hiện"
+              maxLength={100}
+              readOnly
+              className="bg-gray-50 cursor-not-allowed"
             />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.geographicalIndicationCode")}
-            </label>
-            <Input
-              value={form.geographicalIndicationCode}
-              onChange={(e) =>
-                setField("geographicalIndicationCode", e.target.value)
-              }
-              placeholder={t(
-                "products.form.placeholders.geographicalIndicationCode"
-              )}
-              maxLength={50}
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.certificationUrl")}
-            </label>
-            <Input
-              type="url"
-              value={form.certificationUrl}
-              onChange={(e) => setField("certificationUrl", e.target.value)}
-              placeholder={t("products.form.placeholders.certificationUrl")}
-            />
+            <div className="text-xs text-gray-500 mt-1">
+              {!form.inventoryId
+                ? "Vui lòng chọn kho trước"
+                : "Đã tự động điền từ kho"}
+            </div>
           </div>
         </div>
       </div>
@@ -962,7 +995,14 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("evaluatedQuality", e.target.value)}
               placeholder={t("products.form.placeholders.evaluatedQuality")}
               maxLength={50}
+              readOnly
+              className="bg-gray-50 cursor-not-allowed"
             />
+            <div className="text-xs text-gray-500 mt-1">
+              {!form.inventoryId
+                ? "Vui lòng chọn kho trước"
+                : "Đã tự động điền từ kho"}
+            </div>
           </div>
 
           <div>
@@ -982,31 +1022,39 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 )
               }
               placeholder={t("products.form.placeholders.evaluationScore")}
-              className="no-spinner"
+              className="no-spinner bg-gray-50 cursor-not-allowed"
+              readOnly
             />
+            <div className="text-xs text-gray-500 mt-1">
+              {!form.inventoryId
+                ? "Vui lòng chọn kho trước"
+                : "Đã tự động điền từ kho"}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Approval */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">
-          {t("products.form.sections.approval")}
-        </h3>
+      {/* Approval - Only show when editing */}
+      {isEdit && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-gray-900">
+            {t("products.form.sections.approval")}
+          </h3>
 
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("products.form.fields.approvalNote")}
-          </label>
-          <Textarea
-            placeholder={t("products.form.placeholders.approvalNote")}
-            value={form.approvalNote}
-            onChange={(e) => setField("approvalNote", e.target.value)}
-            maxLength={50}
-            rows={2}
-          />
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.approvalNote")}
+            </label>
+            <Textarea
+              placeholder={t("products.form.placeholders.approvalNote")}
+              value={form.approvalNote}
+              onChange={(e) => setField("approvalNote", e.target.value)}
+              maxLength={50}
+              rows={2}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit} disabled={saving}>

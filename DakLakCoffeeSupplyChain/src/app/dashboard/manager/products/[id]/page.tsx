@@ -20,7 +20,10 @@ import {
   Ruler,
   UserCheck,
 } from "lucide-react";
-import { ProductStatusMap, getProductStatusMap } from "@/lib/constants/productStatus";
+import {
+  ProductStatusMap,
+  getProductStatusMap,
+} from "@/lib/constants/productStatus";
 
 function formatDate(dateStr?: string | null) {
   if (!dateStr) return "—";
@@ -53,7 +56,9 @@ export default function ProductDetailsPage() {
 
   if (loading) return <div className="p-6">{t("products.detail.loading")}</div>;
   if (!product)
-    return <div className="p-6 text-red-500">{t("products.detail.notFound")}</div>;
+    return (
+      <div className="p-6 text-red-500">{t("products.detail.notFound")}</div>
+    );
 
   const productStatusMap = getProductStatusMap(t);
   const statusMeta = productStatusMap[product.status];
@@ -80,11 +85,13 @@ export default function ProductDetailsPage() {
               </div>
               <div className="text-xs text-gray-500 mt-1 flex items-center gap-4">
                 <span className="inline-flex items-center gap-1">
-                  <CalendarDays className="w-3 h-3" /> {t("products.detail.dateLabels.created")}{" "}
+                  <CalendarDays className="w-3 h-3" />{" "}
+                  {t("products.detail.dateLabels.created")}{" "}
                   {formatDate(product.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  {t("products.detail.dateLabels.updated")} {formatDate(product.updatedAt)}
+                  {t("products.detail.dateLabels.updated")}{" "}
+                  {formatDate(product.updatedAt)}
                 </span>
               </div>
             </div>
@@ -146,7 +153,9 @@ export default function ProductDetailsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t("products.detail.sections.qualityOrigin")}</CardTitle>
+              <CardTitle>
+                {t("products.detail.sections.qualityOrigin")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
@@ -155,19 +164,9 @@ export default function ProductDetailsPage() {
                 value={product.originRegion || "—"}
               />
               <InfoRow
-                icon={<MapPin className="w-4 h-4" />}
-                label={t("products.detail.fields.farm")}
-                value={product.originFarmLocation || "—"}
-              />
-              <InfoRow
-                icon={<BadgeInfo className="w-4 h-4" />}
-                label={t("products.detail.fields.geographicalIndicationCode")}
-                value={product.geographicalIndicationCode || "—"}
-              />
-              <InfoRow
-                icon={<BadgeInfo className="w-4 h-4" />}
-                label={t("products.detail.fields.certification")}
-                value={product.certificationUrl || "—"}
+                icon={<UserCheck className="w-4 h-4" />}
+                label="Nông dân"
+                value={(product as any).farmerName || "—"}
               />
               <InfoRow
                 icon={<CheckCircle className="w-4 h-4" />}
@@ -190,7 +189,9 @@ export default function ProductDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("products.detail.sections.pricingInventory")}</CardTitle>
+              <CardTitle>
+                {t("products.detail.sections.pricingInventory")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
