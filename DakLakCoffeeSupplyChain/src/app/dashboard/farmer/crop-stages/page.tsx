@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-
+import { useTranslation } from "react-i18next";
 // Dynamic icon mapping function that can handle new stage codes
 const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
     const code = stageCode.toLowerCase();
@@ -119,6 +119,7 @@ const getStageIcon = (stageCode: string, stageName: string): JSX.Element => {
 
 
 export default function CropStagesDialog() {
+    const { t } = useTranslation();
     const [stages, setStages] = useState<CropStage[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -131,7 +132,7 @@ export default function CropStagesDialog() {
             setStages(data.sort((a, b) => a.orderIndex - b.orderIndex));
         } catch (error) {
             console.error("Error fetching crop stages:", error); // Debug log
-            toast.error("Không thể tải danh sách giai đoạn mùa vụ");
+            toast.error(t('cropStages.dialog.error'));
         } finally {
             setLoading(false);
         }
@@ -146,23 +147,23 @@ export default function CropStagesDialog() {
                     className="flex items-center gap-2"
                 >
                     <StickyNote className="w-4 h-4" />
-                    Ghi chú giai đoạn
+                    {t('cropStages.dialog.button')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-                        📌 Giai đoạn mùa vụ
+                        {t('cropStages.dialog.title')}
                     </DialogTitle>
                 </DialogHeader>
                 {loading ? (
                     <div className="flex justify-center py-6">
                         <Loader2 className="animate-spin h-5 w-5 mr-2" />
-                        Đang tải dữ liệu...
+                        {t('cropStages.dialog.loading')}
                     </div>
                 ) : stages.length === 0 ? (
                     <p className="text-sm text-muted-foreground py-4">
-                        Không có dữ liệu.
+                        {t('cropStages.dialog.noData')}
                     </p>
                 ) : (
                     <ul className="space-y-3 max-h-[400px] overflow-y-auto pr-2">

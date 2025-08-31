@@ -120,6 +120,7 @@ export function SidebarGroup() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [role, setRole] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const [processingOpen, setProcessingOpen] = useState(false);
   const [warehouseOpen, setWarehouseOpen] = useState(false);
   const [contractOpen, setContractOpen] = useState(false);
@@ -129,6 +130,7 @@ export function SidebarGroup() {
   const [staffOpen, setStaffOpen] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const user = authService.getUser();
     if (user) {
       setRole(user.role);
@@ -146,27 +148,27 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Sàn thu mua cà phê",
+        title: t('sidebar.farmer.coffeeMarket'),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
       },
       {
-        title: "Cam kết kế hoạch thu mua",
+        title: t('sidebar.farmer.commitment'),
         href: "/dashboard/farmer/farming-commitments",
         icon: iconMap.contracts,
       },
       {
-        title: "Mùa vụ",
+        title: t('sidebar.farmer.cropSeasons'),
         href: "/dashboard/farmer/crop-seasons",
         icon: iconMap.crops,
       },
       {
-        title: "Tư vấn",
+        title: t('sidebar.farmer.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },
       {
-        title: "Gửi yêu cầu giao hàng",
+        title: t('sidebar.farmer.deliveryRequest'),
         href: "/dashboard/farmer/warehouse-request",
         icon: <FiTruck />,
       },
@@ -179,32 +181,32 @@ export function SidebarGroup() {
     admin: [
       { title: t('sidebar.navigation.overview'), href: "/dashboard/admin", icon: iconMap.dashboard },
       {
-        title: "Quản lý người dùng",
+        title: t('sidebar.admin.userManagement'),
         href: "/dashboard/admin/users",
         icon: iconMap.users,
       },
       {
-        title: "Quản lý chuyên gia",
+        title: t('sidebar.admin.expertManagement'),
         href: "/dashboard/admin/experts",
         icon: <FiUsers />,
       },
       {
-        title: "Quản lý nông dân",
+        title: t('sidebar.admin.farmerManagement'),
         href: "/dashboard/admin/farmers",
         icon: <FiUsers />,
       },
       {
-        title: "Hợp đồng",
+        title: t('sidebar.admin.contracts'),
         href: "/dashboard/admin/contracts",
         icon: iconMap.contracts,
       },
       {
-        title: "Báo cáo",
+        title: t('sidebar.admin.reports'),
         href: "/dashboard/admin/reports",
         icon: iconMap.reports,
       },
       {
-        title: "Cài đặt",
+        title: t('sidebar.admin.settings'),
         href: "/dashboard/admin/settings",
         icon: iconMap.settings,
       },
@@ -221,17 +223,17 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Tư vấn",
+        title: t('sidebar.expert.consultation'),
         href: "/dashboard/expert/anomalies",
         icon: iconMap.consultation,
       },
       {
-        title: "Đánh giá",
+        title: t('sidebar.expert.evaluations'),
         href: "/dashboard/expert/evaluations",
         icon: <FiBarChart2 />,
       },
       {
-        title: "Bài viết",
+        title: t('sidebar.expert.articles'),
         href: "/dashboard/expert/articles",
         icon: iconMap.articles,
       },
@@ -260,35 +262,35 @@ export function SidebarGroup() {
     ],
     manager: [
       {
-        title: "Tổng quan",
+        title: t('sidebar.manager.overview'),
         href: "/dashboard/manager",
         icon: iconMap.dashboard,
       },
       {
-        title: "Mùa vụ",
+        title: t('sidebar.manager.cropSeasons'),
         href: "/dashboard/manager/crop-seasons",
         icon: <FiClipboard />,
       },
       {
-        title: "Báo cáo",
+        title: t('sidebar.manager.reports'),
         href: "/dashboard/manager/reports",
         icon: <FiFileText />,
       },
       {
-        title: "Tư vấn chuyên gia",
+        title: t('sidebar.manager.expertAdvice'),
         href: "/dashboard/manager/expert-advice",
         icon: <FiMessageCircle />,
       },
       {
-        title: "Thông báo",
+        title: t('sidebar.manager.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
     ],
   };
 
-  if (!role || !navigationItems[role]) {
-    return <div className="px-4 text-gray-400 text-sm">{t('sidebar.loading')}</div>;
+  if (!isClient || !role || !navigationItems[role]) {
+    return <div className="px-4 text-gray-400 text-sm" suppressHydrationWarning>{t('sidebar.loading')}</div>;
   }
 
   return (
@@ -326,7 +328,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 {iconMap.articles}
               </span>
-              <span className="truncate">Sơ chế</span>
+              <span className="truncate">{t('sidebar.farmer.processing')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", processingOpen && "rotate-180")}
@@ -343,7 +345,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách lô sơ chế
+                {t('sidebar.farmer.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/progresses"
@@ -354,7 +356,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tiến trình lô sơ chế
+                {t('sidebar.farmer.processingProgress')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/wastes"
@@ -365,7 +367,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Chất thải lô sơ chế
+                {t('sidebar.farmer.processingWastes')}
               </Link>
             </div>
           )}
@@ -392,7 +394,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiFileText />
               </span>
-              <span className="truncate">Hợp đồng & Giao hàng</span>
+              <span className="truncate">{t('sidebar.manager.contractsDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", contractOpen && "rotate-180")}
@@ -409,7 +411,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Hợp đồng cung ứng
+                {t('sidebar.manager.supplyContracts')}
               </Link>
               <Link
                 href="/dashboard/manager/contract-delivery-batches"
@@ -420,7 +422,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lịch giao hàng
+                {t('sidebar.manager.deliverySchedule')}
               </Link>
               <Link
                 href="/dashboard/manager/procurement-plans"
@@ -431,7 +433,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Kế hoạch thu mua
+                {t('sidebar.manager.procurementPlans')}
               </Link>
               <Link
                 href="/dashboard/manager/farming-commitments"
@@ -442,7 +444,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Cam kết kế hoạch thu mua
+                {t('sidebar.manager.farmingCommitments')}
               </Link>
             </div>
           )}
@@ -466,7 +468,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiShoppingCart />
               </span>
-              <span className="truncate">Đơn hàng & Giao hàng</span>
+              <span className="truncate">{t('sidebar.manager.ordersDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", orderOpen && "rotate-180")}
@@ -483,7 +485,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Đơn hàng
+                {t('sidebar.manager.orders')}
               </Link>
               <Link
                 href="/dashboard/manager/shipments"
@@ -494,7 +496,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lô giao hàng
+                {t('sidebar.manager.deliveryBatches')}
               </Link>
             </div>
           )}
@@ -519,7 +521,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiUsers />
               </span>
-              <span className="truncate">Khách hàng & Sản phẩm</span>
+              <span className="truncate">{t('sidebar.manager.customersProducts')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", customerOpen && "rotate-180")}
@@ -536,7 +538,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Khách hàng doanh nghiệp
+                {t('sidebar.manager.businessCustomers')}
               </Link>
               <Link
                 href="/dashboard/manager/products"
@@ -547,7 +549,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Sản phẩm
+                {t('sidebar.manager.products')}
               </Link>
               <Link
                 href="/dashboard/manager/farmers"
@@ -558,7 +560,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Nông dân
+                {t('sidebar.manager.farmers')}
               </Link>
             </div>
           )}
@@ -583,7 +585,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiBarChart2 />
               </span>
-              <span className="truncate">Báo cáo & Chế biến</span>
+              <span className="truncate">{t('sidebar.manager.reportsProcessing')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", reportOpen && "rotate-180")}
@@ -600,7 +602,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Báo cáo
+                {t('sidebar.manager.reports')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/batches"
@@ -611,7 +613,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách lô chế biến
+                {t('sidebar.manager.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/farmer-batches"
@@ -622,7 +624,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lô chế biến theo nông dân
+                {t('sidebar.manager.farmerProcessingBatches')}
               </Link>
 
               <Link
@@ -712,7 +714,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiUsers />
               </span>
-              <span className="truncate">Quản lý nhân viên</span>
+              <span className="truncate">{t('sidebar.manager.staffManagement')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", staffOpen && "rotate-180")}
@@ -729,7 +731,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách nhân viên
+                {t('sidebar.manager.staffList')}
               </Link>
             </div>
           )}
@@ -981,8 +983,10 @@ interface SidebarFooterProps {
 export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const user = authService.getUser();
     if (user) {
       setUserName(user.name);
@@ -991,8 +995,16 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
 
   if (isCollapsed) return null;
 
+  if (!isClient) {
+    return <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600" suppressHydrationWarning>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-gray-400">Loading...</span>
+      </div>
+    </div>;
+  }
+
   return (
-    <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600">
+    <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600" suppressHydrationWarning>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-gray-400">{t('sidebar.user.greeting')}</span>
         <span className="font-medium text-orange-600">

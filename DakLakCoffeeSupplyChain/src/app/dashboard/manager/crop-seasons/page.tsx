@@ -235,7 +235,7 @@ export default function ManagerCropSeasonsPage() {
                                                 : "text-gray-600 hover:bg-orange-50"
                                         )}
                                     >
-                                        {CropSeasonStatusMap[status as CropSeasonStatusValue]?.label || status} ({count})
+                                        {CropSeasonStatusMap[status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[status as CropSeasonStatusValue]?.label) : status} ({count})
                                     </button>
                                 ))}
                             </div>
@@ -306,7 +306,7 @@ export default function ManagerCropSeasonsPage() {
                                                         "inline-flex px-2 py-1 text-xs font-semibold rounded-full",
                                                         getStatusColor(season.status as CropSeasonStatusValue)
                                                     )}>
-                                                        {CropSeasonStatusMap[season.status as CropSeasonStatusValue]?.label || season.status}
+                                                        {CropSeasonStatusMap[season.status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[season.status as CropSeasonStatusValue]?.label) : season.status}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

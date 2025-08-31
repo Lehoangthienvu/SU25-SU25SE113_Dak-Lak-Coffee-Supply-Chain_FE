@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 type StatusInfo = {
     label: string;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function StatusBadge({ status, map }: Props) {
+    const { t } = useTranslation();
     const info = map[status];
 
     const colorClass = cn(
@@ -30,7 +32,7 @@ export default function StatusBadge({ status, map }: Props) {
 
     return (
         <Badge className={colorClass}>
-            {info?.label || status}
+            {info?.label ? t(info.label) : status}
         </Badge>
     );
 }

@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { AppToast } from "@/components/ui/AppToast";
 import { Upload, X, Leaf, Camera, Play, AlertTriangle, Target } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { createCropProgress, CropProgressCreateRequest } from "@/lib/api/cropProgress";
 import { getCropStages, CropStage } from "@/lib/api/cropStage";
@@ -46,6 +47,7 @@ export function CreateProgressDialog({
     onSeasonDetailUpdate,
     triggerButton
 }: Props) {
+    const { t } = useTranslation();
     const [note, setNote] = useState("");
     const [stageOptions, setStageOptions] = useState<CropStage[]>([]);
     const [stageId, setStageId] = useState<number | null>(null);
@@ -315,7 +317,7 @@ export function CreateProgressDialog({
 
             // Chặn submit nếu có lỗi nghiêm trọng
             if (validation.severity === 'error') {
-                AppToast.error("Không thể ghi nhận tiến độ do sản lượng không hợp lệ. Vui lòng kiểm tra lại.");
+                AppToast.error(t('cropProgress.createDialog.error'));
                 return;
             }
 
@@ -332,7 +334,7 @@ export function CreateProgressDialog({
 
                 confirmMessage += `Lý do: ${validation.error}\n\n`;
                 confirmMessage += `Khuyến nghị: ${validation.recommendation}\n\n`;
-                confirmMessage += `Bạn có chắc muốn tiếp tục ghi nhận tiến độ này?`;
+                confirmMessage += t('cropProgress.createDialog.confirmMessage');
 
                 const confirmed = window.confirm(confirmMessage);
                 if (!confirmed) {
@@ -463,7 +465,7 @@ export function CreateProgressDialog({
             <DialogTrigger asChild>
                 {triggerButton || (
                     <Button disabled={disabled} className="bg-gray-700 hover:bg-gray-800">
-                        Tạo tiến độ mới
+                        {t('cropProgress.createDialog.newProgress')}
                     </Button>
                 )}
             </DialogTrigger>
@@ -477,14 +479,14 @@ export function CreateProgressDialog({
                         <div>
                             <DialogTitle className="text-white font-bold text-lg">
                                 {stageOptions.length > 0
-                                    ? `Ghi nhận ${stageOptions[0]?.stageName}`
-                                    : "Hoàn thành mùa vụ"
+                                    ? t('cropProgress.createDialog.title')
+                                    : t('cropProgress.createDialog.completedTitle', { defaultValue: "Hoàn thành mùa vụ" })
                                 }
                             </DialogTitle>
                             <p className="text-gray-300 text-xs">
                                 {stageOptions.length > 0
-                                    ? "Cập nhật thông tin về giai đoạn phát triển của cây cà phê"
-                                    : "Chúc mừng! Bạn đã hoàn thành tất cả các giai đoạn"
+                                    ? t('cropProgress.createDialog.description')
+                                    : t('cropProgress.createDialog.completedDescription', { defaultValue: "Chúc mừng! Bạn đã hoàn thành tất cả các giai đoạn" })
                                 }
                             </p>
                         </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import HeaderDashboard from "@/components/layout/HeaderDashboard";
 import {
   Sidebar,
@@ -11,6 +12,10 @@ import { useState, useEffect } from "react";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { authService } from "@/lib/auth/authService";
 import { roleRawToDisplayName } from "@/lib/constants/role";
+
+// Dynamic import để tránh SSR cho sidebar
+const DynamicSidebarGroup = dynamic(() => Promise.resolve(SidebarGroup), { ssr: false });
+const DynamicSidebarFooter = dynamic(() => Promise.resolve(SidebarFooter), { ssr: false });
 
 export default function AdminLayout({
   children,
@@ -33,9 +38,9 @@ export default function AdminLayout({
       <div className="flex h-screen w-full bg-[#fefaf4]">
         <Sidebar defaultCollapsed={isCollapsed} onCollapseChange={setIsCollapsed}>
           <SidebarContent>
-            <SidebarGroup />
+            <DynamicSidebarGroup />
           </SidebarContent>
-          <SidebarFooter role={role} />
+          <DynamicSidebarFooter role={role} />
         </Sidebar>
 
         <div

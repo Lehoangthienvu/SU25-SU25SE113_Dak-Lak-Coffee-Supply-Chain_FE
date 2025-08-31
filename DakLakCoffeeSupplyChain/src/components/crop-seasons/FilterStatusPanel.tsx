@@ -34,7 +34,7 @@ export default function FilterStatusPanel({
                 <FilterBadge
                     key={key}
                     icon={icon}
-                    label={label}
+                    label={t(label)}
                     color={color}
                     count={statusCounts[key as CropSeasonStatusValue] || 0}
                     active={selectedStatus === key}

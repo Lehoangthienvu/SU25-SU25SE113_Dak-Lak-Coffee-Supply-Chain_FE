@@ -12,19 +12,19 @@ export const CropSeasonDetailStatusMap: Record<CropSeasonDetailStatusValue, {
   color: 'gray' | 'yellow' | 'green' | 'red';
 }> = {
   Planned: {
-    label: 'Đã lên kế hoạch',
+    label: 'cropSeasons.detailStatus.planned',
     color: 'gray',
   },
   InProgress: {
-    label: 'Đang canh tác',
+    label: 'cropSeasons.detailStatus.inProgress',
     color: 'yellow',
   },
   Completed: {
-    label: 'Đã hoàn thành',
+    label: 'cropSeasons.detailStatus.completed',
     color: 'green',
   },
   Cancelled: {
-    label: 'Đã huỷ',
+    label: 'cropSeasons.detailStatus.cancelled',
     color: 'red',
   },
 };

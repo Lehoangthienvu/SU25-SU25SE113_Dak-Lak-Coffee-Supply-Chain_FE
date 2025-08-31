@@ -35,7 +35,7 @@ export default function HeaderDashboard() {
       "inbound-receipts": t('sidebar.inboundReceipts'),
       "procurement-plans": t('sidebar.procurementPlans'),
       "farming-commitments": t('sidebar.commitments'),
-      "crop-seasons": t('sidebar.cropSeasons'),
+      "crop-seasons": t('sidebar.navigation.cropSeasons'),
       batches: t('sidebar.batches'),
       evaluations: t('sidebar.evaluations'),
       progresses: t('sidebar.progress'),

@@ -184,7 +184,7 @@ export default function ManagerCropSeasonDetailPage() {
                             <div>
                                 <p className="text-sm text-gray-600">{t('cropSeasons.detail.status')}</p>
                                 <Badge className={getStatusColor(cropSeason.status as CropSeasonStatusValue)}>
-                                    {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label || cropSeason.status}
+                                    {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label) : cropSeason.status}
                                 </Badge>
                             </div>
                         </div>
@@ -232,7 +232,7 @@ export default function ManagerCropSeasonDetailPage() {
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">{t('cropSeasons.detail.status')}:</span>
                                                 <Badge className={getStatusColor(cropSeason.status as CropSeasonStatusValue)}>
-                                                    {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label || cropSeason.status}
+                                                    {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label) : cropSeason.status}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -289,7 +289,7 @@ export default function ManagerCropSeasonDetailPage() {
                                                 <div className="flex items-center justify-between mb-3">
                                                     <h4 className="font-medium text-gray-800">{detail.typeName}</h4>
                                                     <Badge className={getDetailStatusColor(detail.status as CropSeasonDetailStatusValue)}>
-                                                        {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label || detail.status}
+                                                        {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label ? t(CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label) : detail.status}
                                                     </Badge>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -354,7 +354,7 @@ export default function ManagerCropSeasonDetailPage() {
                                                     <div className="flex items-center justify-between mb-4">
                                                         <h4 className="font-medium text-gray-800">{detail.typeName}</h4>
                                                         <Badge className={getDetailStatusColor(detail.status as CropSeasonDetailStatusValue)}>
-                                                            {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label || detail.status}
+                                                            {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label ? t(CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label) : detail.status}
                                                         </Badge>
                                                     </div>
 

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Pencil, Leaf, Camera, Play } from "lucide-react";
 import { AppToast } from "@/components/ui/AppToast";
+import { useTranslation } from "react-i18next";
 import { CropProgressViewAllDto, updateCropProgress, CropProgressUpdateRequest } from "@/lib/api/cropProgress";
 import { getCropSeasonDetailById } from "@/lib/api/cropSeasonDetail";
 
@@ -31,6 +32,7 @@ export function EditProgressDialog({
     onSeasonDetailUpdate,
     triggerButton,
 }: Props) {
+    const { t } = useTranslation();
     const [note, setNote] = useState(progress.note || "");
     const [progressDate, setProgressDate] = useState(progress.progressDate || "");
     const [open, setOpen] = useState(false);
@@ -80,11 +82,11 @@ export function EditProgressDialog({
                 }
             }
 
-            AppToast.success("Cập nhật tiến độ thành công!");
+            AppToast.success(t('cropProgress.editDialog.success'));
             setOpen(false);
             onSuccess();
         } catch (error: unknown) {
-            let errorMessage = "Cập nhật thất bại.";
+            let errorMessage = t('cropProgress.editDialog.error');
             if (typeof error === 'object' && error !== null && 'response' in error) {
                 const response = (error as { response?: { data?: { message?: string } } }).response;
                 if (response?.data?.message) {
@@ -104,8 +106,7 @@ export function EditProgressDialog({
             <DialogTrigger asChild>
                 {triggerButton || (
                     <Button variant="outline" size="sm">
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Chỉnh sửa
+                        {t('cropProgress.editDialog.button')}
                     </Button>
                 )}
             </DialogTrigger>
@@ -118,10 +119,10 @@ export function EditProgressDialog({
                         </div>
                         <div>
                             <DialogTitle className="text-white font-bold text-lg">
-                                Chỉnh sửa tiến độ canh tác
+                                {t('cropProgress.editDialog.title')}
                             </DialogTitle>
                             <p className="text-gray-300 text-xs">
-                                Cập nhật thông tin về giai đoạn: {progress.stageName}
+                                {t('cropProgress.editDialog.description')}: {progress.stageName}
                             </p>
                         </div>
                     </div>
