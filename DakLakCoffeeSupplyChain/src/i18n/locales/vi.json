@@ -3146,6 +3146,201 @@
       "loadFailed": "Có lỗi xảy ra khi tải dữ liệu"
     }
   },
+
+"expertAnomalies" :{
+  "page": {
+    "title": "Báo cáo cần phản hồi",
+    "subtitle": "Quản lý và phản hồi các báo cáo từ nông dân",
+    "noReports": {
+      "title": "Chưa có báo cáo nào",
+      "description": "Tất cả báo cáo đã được xử lý hoặc chưa có báo cáo mới"
+    },
+    "filters": {
+      "title": "Lọc theo trạng thái:",
+      "all": "Tất cả",
+      "resolved": "Đã phản hồi",
+      "unresolved": "Chưa phản hồi"
+    },
+    "noFilteredReports": {
+      "title": "Không có báo cáo nào",
+      "all": "Không có báo cáo nào",
+      "resolved": "Không có báo cáo nào đã được phản hồi",
+      "unresolved": "Không có báo cáo nào chưa được phản hồi",
+      "viewAll": "Xem tất cả báo cáo"
+    },
+    "reportCard": {
+      "viewDetails": "Xem chi tiết",
+      "responseHistory": "Lịch sử phản hồi",
+      "respond": "Phản hồi",
+      "status": {
+        "resolved": "Đã phản hồi",
+        "unresolved": "Chưa phản hồi"
+      }
+    },
+    "mediaViewer": {
+      "title": "Chi tiết báo cáo:",
+      "close": "Đóng",
+      "description": "Mô tả",
+      "otherInfo": "Thông tin khác",
+      "reporter": "Người báo cáo:",
+      "reportDate": "Ngày báo cáo:",
+      "status": "Trạng thái:",
+      "statusResolved": "Đã xử lý",
+      "statusUnresolved": "Chưa xử lý",
+      "attachments": "Tài liệu đính kèm",
+      "image": "Hình ảnh",
+      "video": "Video",
+      "imageAlt": "Hình ảnh báo cáo",
+      "fullscreenImageAlt": "Hình ảnh phóng to"
+    },
+    "errors": {
+      "loadReports": "Không thể tải danh sách báo cáo",
+      "loadAdvices": "Không thể tải phản hồi",
+      "loadReportDetail": "Không thể tải chi tiết báo cáo"
+    }
+  },
+  "adviceHistoryDialog": {
+    "title": "Lịch sử phản hồi",
+    "loading": "Đang tải chi tiết phản hồi...",
+    "noAdvices": {
+      "title": "Chưa có phản hồi nào",
+      "description": "Chưa có phản hồi nào cho báo cáo này"
+    },
+    "responseTypes": {
+      "corrective": "Khắc phục",
+      "preventive": "Phòng ngừa",
+      "observation": "Nhận xét",
+      "advisory": "Tư vấn",
+      "emergency": "Khẩn cấp",
+      "routine": "Thường xuyên"
+    },
+    "form": {
+      "responseType": "Loại phản hồi",
+      "adviceSource": "Nguồn tư vấn",
+      "content": "Nội dung",
+      "attachedFile": "Tệp đính kèm (URL)",
+      "attachedFilePlaceholder": "https://example.com/file.pdf",
+      "noContent": "(Không có nội dung)"
+    },
+    "actions": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "save": "Lưu thay đổi",
+      "cancel": "Hủy",
+      "viewAttachment": "Xem tệp đính kèm"
+    },
+    "labels": {
+      "type": "Loại:",
+      "source": "Nguồn:"
+    },
+    "messages": {
+      "loadDetailsError": "Không thể tải đầy đủ chi tiết phản hồi.",
+      "updateSuccess": "Cập nhật thành công.",
+      "updateError": "Cập nhật thất bại.",
+      "deleteConfirm": "Bạn có chắc muốn xoá phản hồi này?",
+      "deleteSuccess": "Đã xoá phản hồi.",
+      "deleteError": "Xoá thất bại."
+    }
+  },
+  "editAnomalyPage": {
+    "title": "Chỉnh sửa phản hồi chuyên gia",
+    "subtitle": "Cập nhật thông tin và nội dung phản hồi",
+    "loading": "Đang tải dữ liệu...",
+    "notFound": {
+      "title": "Không tìm thấy phản hồi",
+      "description": "Vui lòng quay lại trang danh sách để chọn phản hồi cần chỉnh sửa",
+      "backToList": "Quay lại danh sách"
+    },
+    "form": {
+      "title": "Thông tin phản hồi",
+      "responseType": {
+        "label": "Loại phản hồi *",
+        "placeholder": "Chọn loại phản hồi",
+        "options": {
+          "preventive": "Phòng ngừa",
+          "corrective": "Khắc phục",
+          "observation": "Nhận xét"
+        }
+      },
+      "adviceSource": {
+        "label": "Nguồn tham khảo (tùy chọn)",
+        "placeholder": "Ví dụ: Thực tế đồng ruộng, báo cáo nghiên cứu, kinh nghiệm chuyên môn..."
+      },
+      "adviceText": {
+        "label": "Nội dung phản hồi *",
+        "placeholder": "Nhập nội dung phản hồi chi tiết..."
+      },
+      "attachedFileUrl": {
+        "label": "URL file đính kèm (tùy chọn)",
+        "placeholder": "https://example.com/file.pdf"
+      }
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "update": "Cập nhật phản hồi",
+      "updating": "Đang cập nhật..."
+    },
+    "errors": {
+      "loadAdvice": "Không thể tải thông tin phản hồi",
+      "loadData": "Lỗi khi tải dữ liệu",
+      "noAdviceId": "Không tìm thấy ID phản hồi",
+      "contentRequired": "Vui lòng nhập nội dung phản hồi",
+      "updateFailed": "Cập nhật thất bại",
+      "systemError": "Lỗi hệ thống khi cập nhật"
+    },
+    "success": {
+      "updateSuccess": "Cập nhật phản hồi thành công!"
+    }
+  },
+  "createAnomalyPage": {
+    "title": "Gửi phản hồi chuyên gia",
+    "subtitle": "Đưa ra lời khuyên và hướng dẫn cho báo cáo bất thường",
+    "notFound": {
+      "title": "Không tìm thấy báo cáo",
+      "description": "Vui lòng quay lại trang danh sách để chọn báo cáo cần phản hồi",
+      "backToList": "Quay lại danh sách"
+    },
+    "form": {
+      "title": "Thông tin phản hồi",
+      "responseType": {
+        "label": "Loại phản hồi *",
+        "placeholder": "Chọn loại phản hồi",
+        "options": {
+          "preventive": "Phòng ngừa",
+          "corrective": "Khắc phục",
+          "observation": "Nhận xét"
+        }
+      },
+      "adviceSource": {
+        "label": "Nguồn tham khảo (tùy chọn)",
+        "placeholder": "Ví dụ: Thực tế đồng ruộng, báo cáo nghiên cứu, kinh nghiệm chuyên môn..."
+      },
+      "adviceText": {
+        "label": "Nội dung phản hồi *",
+        "placeholder": "Nhập nội dung phản hồi chi tiết..."
+      },
+      "attachedFiles": {
+        "label": "📎 Tải lên file đính kèm (tùy chọn)",
+        "selectedFiles": "Đã chọn {count} file(s)",
+        "supportedFormats": "💡 Hỗ trợ: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), ảnh, video"
+      }
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "submit": "Gửi phản hồi",
+      "submitting": "Đang gửi..."
+    },
+    "errors": {
+      "noReportId": "Không tìm thấy ID báo cáo",
+      "contentRequired": "Vui lòng nhập nội dung phản hồi",
+      "submitFailed": "Gửi phản hồi thất bại ❌",
+      "apiError": "Lỗi: {message}"
+    },
+    "success": {
+      "submitSuccess": "Phản hồi đã được gửi thành công 🎉"
+    }
+  }
+},
   "inventoryLogs": {
     "title": "Nhật ký tồn kho",
     "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",

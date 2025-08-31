@@ -3110,6 +3110,200 @@
       "loadFailed": "Error loading data"
     }
   },
+  "expertAnomalies" :{
+  "page": {
+    "title": "Reports Requiring Response",
+    "subtitle": "Manage and respond to reports from farmers",
+    "noReports": {
+      "title": "No reports yet",
+      "description": "All reports have been processed or no new reports available"
+    },
+    "filters": {
+      "title": "Filter by status:",
+      "all": "All",
+      "resolved": "Responded",
+      "unresolved": "Not responded"
+    },
+    "noFilteredReports": {
+      "title": "No reports found",
+      "all": "No reports found",
+      "resolved": "No reports have been responded to",
+      "unresolved": "No reports are pending response",
+      "viewAll": "View all reports"
+    },
+    "reportCard": {
+      "viewDetails": "View details",
+      "responseHistory": "Response history",
+      "respond": "Respond",
+      "status": {
+        "resolved": "Responded",
+        "unresolved": "Not responded"
+      }
+    },
+    "mediaViewer": {
+      "title": "Report details:",
+      "close": "Close",
+      "description": "Description",
+      "otherInfo": "Other information",
+      "reporter": "Reporter:",
+      "reportDate": "Report date:",
+      "status": "Status:",
+      "statusResolved": "Processed",
+      "statusUnresolved": "Not processed",
+      "attachments": "Attachments",
+      "image": "Image",
+      "video": "Video",
+      "imageAlt": "Report image",
+      "fullscreenImageAlt": "Fullscreen image"
+    },
+    "errors": {
+      "loadReports": "Unable to load reports list",
+      "loadAdvices": "Unable to load responses",
+      "loadReportDetail": "Unable to load report details"
+    }
+  },
+  "adviceHistoryDialog": {
+    "title": "Response History",
+    "loading": "Loading response details...",
+    "noAdvices": {
+      "title": "No responses yet",
+      "description": "No responses have been provided for this report"
+    },
+    "responseTypes": {
+      "corrective": "Corrective",
+      "preventive": "Preventive",
+      "observation": "Observation",
+      "advisory": "Advisory",
+      "emergency": "Emergency",
+      "routine": "Routine"
+    },
+    "form": {
+      "responseType": "Response type",
+      "adviceSource": "Advice source",
+      "content": "Content",
+      "attachedFile": "Attached file (URL)",
+      "attachedFilePlaceholder": "https://example.com/file.pdf",
+      "noContent": "(No content)"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "viewAttachment": "View attachment"
+    },
+    "labels": {
+      "type": "Type:",
+      "source": "Source:"
+    },
+    "messages": {
+      "loadDetailsError": "Unable to load full response details.",
+      "updateSuccess": "Updated successfully.",
+      "updateError": "Update failed.",
+      "deleteConfirm": "Are you sure you want to delete this response?",
+      "deleteSuccess": "Response deleted.",
+      "deleteError": "Delete failed."
+    }
+  },
+  "editAnomalyPage": {
+    "title": "Edit Expert Response",
+    "subtitle": "Update response information and content",
+    "loading": "Loading data...",
+    "notFound": {
+      "title": "Response not found",
+      "description": "Please return to the list page to select a response to edit",
+      "backToList": "Back to list"
+    },
+    "form": {
+      "title": "Response Information",
+      "responseType": {
+        "label": "Response type *",
+        "placeholder": "Select response type",
+        "options": {
+          "preventive": "Preventive",
+          "corrective": "Corrective",
+          "observation": "Observation"
+        }
+      },
+      "adviceSource": {
+        "label": "Reference source (optional)",
+        "placeholder": "Example: Field experience, research report, professional expertise..."
+      },
+      "adviceText": {
+        "label": "Response content *",
+        "placeholder": "Enter detailed response content..."
+      },
+      "attachedFileUrl": {
+        "label": "Attached file URL (optional)",
+        "placeholder": "https://example.com/file.pdf"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "update": "Update response",
+      "updating": "Updating..."
+    },
+    "errors": {
+      "loadAdvice": "Unable to load response information",
+      "loadData": "Error loading data",
+      "noAdviceId": "Response ID not found",
+      "contentRequired": "Please enter response content",
+      "updateFailed": "Update failed",
+      "systemError": "System error during update"
+    },
+    "success": {
+      "updateSuccess": "Response updated successfully!"
+    }
+  },
+  "createAnomalyPage": {
+    "title": "Send Expert Response",
+    "subtitle": "Provide advice and guidance for anomaly reports",
+    "notFound": {
+      "title": "Report not found",
+      "description": "Please return to the list page to select a report to respond to",
+      "backToList": "Back to list"
+    },
+    "form": {
+      "title": "Response Information",
+      "responseType": {
+        "label": "Response type *",
+        "placeholder": "Select response type",
+        "options": {
+          "preventive": "Preventive",
+          "corrective": "Corrective",
+          "observation": "Observation"
+        }
+      },
+      "adviceSource": {
+        "label": "Reference source (optional)",
+        "placeholder": "Example: Field experience, research report, professional expertise..."
+      },
+      "adviceText": {
+        "label": "Response content *",
+        "placeholder": "Enter detailed response content..."
+      },
+      "attachedFiles": {
+        "label": "📎 Upload attached files (optional)",
+        "selectedFiles": "Selected {count} file(s)",
+        "supportedFormats": "💡 Supported: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), images, videos"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Send response",
+      "submitting": "Sending..."
+    },
+    "errors": {
+      "noReportId": "Report ID not found",
+      "contentRequired": "Please enter response content",
+      "submitFailed": "Failed to send response ❌",
+      "apiError": "Error: {message}"
+    },
+    "success": {
+      "submitSuccess": "Response sent successfully 🎉"
+    }
+  }
+},
   "inventoryLogs": {
     "title": "Inventory Logs",
     "subtitle": "Track all changes in the warehouse system",

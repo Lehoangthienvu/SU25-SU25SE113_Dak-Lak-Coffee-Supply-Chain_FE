@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { GeneralFarmerReportViewAllDto, getAllFarmerReports, getFarmerReportById, GeneralFarmerReportViewDetailsDto } from '@/lib/api/generalFarmerReports';
 import { ExpertAdvice, getAllExpertAdvices } from '@/lib/api/expertAdvice';
@@ -13,6 +14,7 @@ import { AlertTriangle, FileText, User, Calendar, CheckCircle, XCircle, History,
 type FilterType = 'all' | 'resolved' | 'unresolved';
 
 export default function ReportResponsePage() {
+    const { t } = useTranslation();
     const [reports, setReports] = useState<GeneralFarmerReportViewAllDto[]>([]);
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [allAdvices, setAllAdvices] = useState<ExpertAdvice[]>([]);
@@ -28,12 +30,12 @@ export default function ReportResponsePage() {
     useEffect(() => {
         getAllFarmerReports()
             .then(setReports)
-            .catch(() => toast.error('Không thể tải danh sách báo cáo'));
+            .catch(() => toast.error(t('expertAnomalies.page.errors.loadReports')));
 
         getAllExpertAdvices()
             .then(setAllAdvices)
-            .catch(() => toast.error('Không thể tải phản hồi'));
-    }, []);
+            .catch(() => toast.error(t('expertAnomalies.page.errors.loadAdvices')));
+    }, [t]);
 
     useEffect(() => {
         if (selectedReportId) {
@@ -51,7 +53,7 @@ export default function ReportResponsePage() {
                 setShowMediaViewer(true);
             }
         } catch {
-            toast.error('Không thể tải chi tiết báo cáo');
+            toast.error(t('expertAnomalies.page.errors.loadReportDetail'));
         }
     };
 
@@ -84,8 +86,8 @@ export default function ReportResponsePage() {
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FileText className="w-8 h-8 text-orange-600" />
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-700 mb-2">Chưa có báo cáo nào</h2>
-                    <p className="text-gray-500">Tất cả báo cáo đã được xử lý hoặc chưa có báo cáo mới</p>
+                    <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('expertAnomalies.page.noReports.title')}</h2>
+                    <p className="text-gray-500">{t('expertAnomalies.page.noReports.description')}</p>
                 </div>
             </div>
         );
@@ -98,8 +100,8 @@ export default function ReportResponsePage() {
                     <AlertTriangle className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Báo cáo cần phản hồi</h1>
-                    <p className="text-gray-600 text-sm">Quản lý và phản hồi các báo cáo từ nông dân</p>
+                    <h1 className="text-2xl font-bold text-gray-800">{t('expertAnomalies.page.title')}</h1>
+                    <p className="text-gray-600 text-sm">{t('expertAnomalies.page.subtitle')}</p>
                 </div>
             </div>
 
@@ -109,7 +111,7 @@ export default function ReportResponsePage() {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <Filter className="w-5 h-5 text-orange-600" />
-                            <span className="text-sm font-medium text-gray-700">Lọc theo trạng thái:</span>
+                            <span className="text-sm font-medium text-gray-700">{t('expertAnomalies.page.filters.title')}</span>
                         </div>
 
                         <div className="flex gap-2">
@@ -122,7 +124,7 @@ export default function ReportResponsePage() {
                                     : 'border-orange-200 text-gray-700 hover:bg-orange-50'
                                 }
                             >
-                                Tất cả
+                                {t('expertAnomalies.page.filters.all')}
                                 <span className="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
                                     {totalCount}
                                 </span>
@@ -138,7 +140,7 @@ export default function ReportResponsePage() {
                                 }
                             >
                                 <CheckCircle className="w-4 h-4 mr-2" />
-                                Đã phản hồi
+                                {t('expertAnomalies.page.filters.resolved')}
                                 <span className="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
                                     {resolvedCount}
                                 </span>
@@ -154,7 +156,7 @@ export default function ReportResponsePage() {
                                 }
                             >
                                 <XCircle className="w-4 h-4 mr-2" />
-                                Chưa phản hồi
+                                {t('expertAnomalies.page.filters.unresolved')}
                                 <span className="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
                                     {unresolvedCount}
                                 </span>
@@ -172,13 +174,13 @@ export default function ReportResponsePage() {
                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <Filter className="w-8 h-8 text-gray-400" />
                             </div>
-                            <h3 className="text-lg font-medium text-gray-700 mb-2">Không có báo cáo nào</h3>
+                            <h3 className="text-lg font-medium text-gray-700 mb-2">{t('expertAnomalies.page.noFilteredReports.title')}</h3>
                             <p className="text-gray-500">
                                 {activeFilter === 'resolved'
-                                    ? 'Không có báo cáo nào đã được phản hồi'
+                                    ? t('expertAnomalies.page.noFilteredReports.resolved')
                                     : activeFilter === 'unresolved'
-                                        ? 'Không có báo cáo nào chưa được phản hồi'
-                                        : 'Không có báo cáo nào'
+                                        ? t('expertAnomalies.page.noFilteredReports.unresolved')
+                                        : t('expertAnomalies.page.noFilteredReports.all')
                                 }
                             </p>
                             <Button
@@ -186,7 +188,7 @@ export default function ReportResponsePage() {
                                 onClick={() => setActiveFilter('all')}
                                 className="mt-4"
                             >
-                                Xem tất cả báo cáo
+                                {t('expertAnomalies.page.noFilteredReports.viewAll')}
                             </Button>
                         </CardContent>
                     </Card>
@@ -210,12 +212,12 @@ export default function ReportResponsePage() {
                                                 {report.isResolved ? (
                                                     <>
                                                         <CheckCircle className="w-4 h-4 text-green-600" />
-                                                        <span className="text-green-600 font-medium">Đã phản hồi</span>
+                                                        <span className="text-green-600 font-medium">{t('expertAnomalies.page.reportCard.status.resolved')}</span>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <XCircle className="w-4 h-4 text-red-600" />
-                                                        <span className="text-red-600 font-medium">Chưa phản hồi</span>
+                                                        <span className="text-red-600 font-medium">{t('expertAnomalies.page.reportCard.status.unresolved')}</span>
                                                     </>
                                                 )}
                                             </div>
@@ -234,7 +236,7 @@ export default function ReportResponsePage() {
                                             className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                                         >
                                             <FileText className="w-4 h-4 mr-2" />
-                                            Xem chi tiết
+                                            {t('expertAnomalies.page.reportCard.viewDetails')}
                                         </Button>
 
                                         {/* Button xem lịch sử phản hồi */}
@@ -251,7 +253,7 @@ export default function ReportResponsePage() {
                                                     className="text-orange-600 hover:text-orange-800 hover:bg-orange-50"
                                                 >
                                                     <History className="w-4 h-4 mr-2" />
-                                                    Lịch sử phản hồi ({adviceCount})
+                                                    {t('expertAnomalies.page.reportCard.responseHistory')} ({adviceCount})
                                                 </Button>
                                             ) : null;
                                         })()}
@@ -264,7 +266,7 @@ export default function ReportResponsePage() {
                                         className="bg-orange-600 hover:bg-orange-700 text-white"
                                     >
                                         <MessageSquare className="w-4 h-4 mr-2" />
-                                        Phản hồi
+                                        {t('expertAnomalies.page.reportCard.respond')}
                                     </Button>
                                 </div>
                             </CardContent>
@@ -293,7 +295,7 @@ export default function ReportResponsePage() {
                         {/* Header */}
                         <div className="flex justify-between items-center p-6 border-b">
                             <h2 className="text-xl font-semibold text-gray-800">
-                                Chi tiết báo cáo: {selectedReportDetail.title}
+                                {t('expertAnomalies.page.mediaViewer.title')} {selectedReportDetail.title}
                             </h2>
                             <button
                                 onClick={() => {
@@ -301,7 +303,7 @@ export default function ReportResponsePage() {
                                     setSelectedReportDetail(null);
                                 }}
                                 className="text-gray-400 hover:text-gray-600 transition-colors"
-                                aria-label="Đóng"
+                                aria-label={t('expertAnomalies.page.mediaViewer.close')}
                             >
                                 <X className="w-6 h-6" />
                             </button>
@@ -312,15 +314,15 @@ export default function ReportResponsePage() {
                             {/* Thông tin cơ bản */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <h3 className="font-medium text-gray-700 mb-2">Mô tả</h3>
+                                    <h3 className="font-medium text-gray-700 mb-2">{t('expertAnomalies.page.mediaViewer.description')}</h3>
                                     <p className="text-gray-600">{selectedReportDetail.description}</p>
                                 </div>
                                 <div>
-                                    <h3 className="font-medium text-gray-700 mb-2">Thông tin khác</h3>
+                                    <h3 className="font-medium text-gray-700 mb-2">{t('expertAnomalies.page.mediaViewer.otherInfo')}</h3>
                                     <div className="space-y-2 text-sm text-gray-600">
-                                        <p>Người báo cáo: {selectedReportDetail.reportedByName}</p>
-                                        <p>Ngày báo cáo: {new Date(selectedReportDetail.reportedAt).toLocaleDateString('vi-VN')}</p>
-                                        <p>Trạng thái: {selectedReportDetail.isResolved ? 'Đã xử lý' : 'Chưa xử lý'}</p>
+                                        <p>{t('expertAnomalies.page.mediaViewer.reporter')} {selectedReportDetail.reportedByName}</p>
+                                        <p>{t('expertAnomalies.page.mediaViewer.reportDate')} {new Date(selectedReportDetail.reportedAt).toLocaleDateString('vi-VN')}</p>
+                                        <p>{t('expertAnomalies.page.mediaViewer.status')} {selectedReportDetail.isResolved ? t('expertAnomalies.page.mediaViewer.statusResolved') : t('expertAnomalies.page.mediaViewer.statusUnresolved')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -328,19 +330,19 @@ export default function ReportResponsePage() {
                             {/* Media Section */}
                             {(selectedReportDetail.imageUrl || selectedReportDetail.videoUrl) && (
                                 <div>
-                                    <h3 className="font-medium text-gray-700 mb-4">Tài liệu đính kèm</h3>
+                                    <h3 className="font-medium text-gray-700 mb-4">{t('expertAnomalies.page.mediaViewer.attachments')}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {/* Image */}
                                         {selectedReportDetail.imageUrl && (
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                     <Image className="w-5 h-5 text-blue-500" />
-                                                    <span className="text-sm font-medium text-gray-700">Hình ảnh</span>
+                                                    <span className="text-sm font-medium text-gray-700">{t('expertAnomalies.page.mediaViewer.image')}</span>
                                                 </div>
                                                 <div className="relative group cursor-pointer" onClick={() => handleViewMedia('image', selectedReportDetail.imageUrl!)}>
                                                     <img
                                                         src={selectedReportDetail.imageUrl}
-                                                        alt="Hình ảnh báo cáo"
+                                                        alt={t('expertAnomalies.page.mediaViewer.imageAlt')}
                                                         className="w-full h-48 object-cover rounded-lg border hover:shadow-lg transition-shadow"
                                                     />
                                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center">
@@ -355,7 +357,7 @@ export default function ReportResponsePage() {
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                     <Video className="w-5 h-5 text-purple-500" />
-                                                    <span className="text-sm font-medium text-gray-700">Video</span>
+                                                    <span className="text-sm font-medium text-gray-700">{t('expertAnomalies.page.mediaViewer.video')}</span>
                                                 </div>
                                                 <div className="relative group cursor-pointer" onClick={() => handleViewMedia('video', selectedReportDetail.videoUrl!)}>
                                                     <video
@@ -382,7 +384,7 @@ export default function ReportResponsePage() {
                                         setSelectedReportDetail(null);
                                     }}
                                 >
-                                    Đóng
+                                    {t('expertAnomalies.page.mediaViewer.close')}
                                 </Button>
                             </div>
                         </div>
@@ -397,7 +399,7 @@ export default function ReportResponsePage() {
                         <button
                             onClick={() => setSelectedMedia(null)}
                             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
-                            aria-label="Đóng"
+                            aria-label={t('expertAnomalies.page.mediaViewer.close')}
                         >
                             <X className="w-8 h-8" />
                         </button>
@@ -405,7 +407,7 @@ export default function ReportResponsePage() {
                         {selectedMedia.type === 'image' ? (
                             <img
                                 src={selectedMedia.url}
-                                alt="Hình ảnh phóng to"
+                                alt={t('expertAnomalies.page.mediaViewer.fullscreenImageAlt')}
                                 className="max-w-full max-h-full object-contain"
                             />
                         ) : (

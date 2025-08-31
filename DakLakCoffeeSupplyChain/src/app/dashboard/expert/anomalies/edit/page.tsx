@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, MessageSquare, Save, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 function EditAnomalyContent() {
+    const { t } = useTranslation();
     const router = useRouter();
     const searchParams = useSearchParams();
     const adviceId = searchParams.get('adviceId');
@@ -50,12 +52,12 @@ function EditAnomalyContent() {
                     attachedFileUrl: data.attachedFileUrl || '',
                 });
             } else {
-                toast.error('Không thể tải thông tin phản hồi');
+                toast.error(t('editAnomalyPage.errors.loadAdvice'));
                 router.push('/dashboard/expert/anomalies');
             }
         } catch (error) {
             console.error('Lỗi khi tải dữ liệu:', error);
-            toast.error('Lỗi khi tải dữ liệu');
+            toast.error(t('editAnomalyPage.errors.loadData'));
             router.push('/dashboard/expert/anomalies');
         } finally {
             setInitialLoading(false);
@@ -68,12 +70,12 @@ function EditAnomalyContent() {
 
     const handleSubmit = async () => {
         if (!adviceId) {
-            toast.error('Không tìm thấy ID phản hồi');
+            toast.error(t('editAnomalyPage.errors.noAdviceId'));
             return;
         }
 
         if (!form.adviceText.trim()) {
-            toast.error('Vui lòng nhập nội dung phản hồi');
+            toast.error(t('editAnomalyPage.errors.contentRequired'));
             return;
         }
 
@@ -89,15 +91,15 @@ function EditAnomalyContent() {
             });
 
             if (response.ok) {
-                toast.success('Cập nhật phản hồi thành công!');
+                toast.success(t('editAnomalyPage.success.updateSuccess'));
                 router.push('/dashboard/expert/anomalies');
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.message || 'Cập nhật thất bại');
+                toast.error(errorData.message || t('editAnomalyPage.errors.updateFailed'));
             }
         } catch (error) {
             console.error('Lỗi khi cập nhật:', error);
-            toast.error('Lỗi hệ thống khi cập nhật');
+            toast.error(t('editAnomalyPage.errors.systemError'));
         } finally {
             setLoading(false);
         }
@@ -108,7 +110,7 @@ function EditAnomalyContent() {
             <div className="p-6">
                 <div className="text-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+                    <p className="mt-4 text-gray-600">{t('editAnomalyPage.loading')}</p>
                 </div>
             </div>
         );
@@ -121,10 +123,10 @@ function EditAnomalyContent() {
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FileText className="w-8 h-8 text-red-600" />
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-700 mb-2">Không tìm thấy phản hồi</h2>
-                    <p className="text-gray-500 mb-4">Vui lòng quay lại trang danh sách để chọn phản hồi cần chỉnh sửa</p>
+                    <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('editAnomalyPage.notFound.title')}</h2>
+                    <p className="text-gray-500 mb-4">{t('editAnomalyPage.notFound.description')}</p>
                     <Button onClick={() => router.push('/dashboard/expert/anomalies')} variant="outline">
-                        Quay lại danh sách
+                        {t('editAnomalyPage.notFound.backToList')}
                     </Button>
                 </div>
             </div>
@@ -147,8 +149,8 @@ function EditAnomalyContent() {
                     <MessageSquare className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Chỉnh sửa phản hồi chuyên gia</h1>
-                    <p className="text-gray-600">Cập nhật thông tin và nội dung phản hồi</p>
+                    <h1 className="text-2xl font-bold text-gray-800">{t('editAnomalyPage.title')}</h1>
+                    <p className="text-gray-600">{t('editAnomalyPage.subtitle')}</p>
                 </div>
             </div>
 
@@ -157,61 +159,61 @@ function EditAnomalyContent() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <MessageSquare className="w-5 h-5 text-blue-600" />
-                            Thông tin phản hồi
+                            {t('editAnomalyPage.form.title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="responseType">Loại phản hồi *</Label>
+                                <Label htmlFor="responseType">{t('editAnomalyPage.form.responseType.label')}</Label>
                                 <select
                                     id="responseType"
                                     name="responseType"
                                     value={form.responseType}
                                     onChange={handleChange}
-                                    aria-label="Chọn loại phản hồi"
+                                    aria-label={t('editAnomalyPage.form.responseType.placeholder')}
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    <option value="">Chọn loại phản hồi</option>
-                                    <option value="Preventive">Phòng ngừa</option>
-                                    <option value="Corrective">Khắc phục</option>
-                                    <option value="Observation">Nhận xét</option>
+                                    <option value="">{t('editAnomalyPage.form.responseType.placeholder')}</option>
+                                    <option value="Preventive">{t('editAnomalyPage.form.responseType.options.preventive')}</option>
+                                    <option value="Corrective">{t('editAnomalyPage.form.responseType.options.corrective')}</option>
+                                    <option value="Observation">{t('editAnomalyPage.form.responseType.options.observation')}</option>
                                 </select>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="adviceSource">Nguồn tham khảo (tùy chọn)</Label>
+                                <Label htmlFor="adviceSource">{t('editAnomalyPage.form.adviceSource.label')}</Label>
                                 <Input
                                     id="adviceSource"
                                     name="adviceSource"
                                     value={form.adviceSource}
                                     onChange={handleChange}
-                                    placeholder="Ví dụ: Thực tế đồng ruộng, báo cáo nghiên cứu, kinh nghiệm chuyên môn..."
+                                    placeholder={t('editAnomalyPage.form.adviceSource.placeholder')}
                                     className="w-full"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="adviceText">Nội dung phản hồi *</Label>
+                                <Label htmlFor="adviceText">{t('editAnomalyPage.form.adviceText.label')}</Label>
                                 <Textarea
                                     id="adviceText"
                                     name="adviceText"
                                     value={form.adviceText}
                                     onChange={handleChange}
                                     rows={6}
-                                    placeholder="Nhập nội dung phản hồi chi tiết..."
+                                    placeholder={t('editAnomalyPage.form.adviceText.placeholder')}
                                     className="w-full resize-none"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="attachedFileUrl">URL file đính kèm (tùy chọn)</Label>
+                                <Label htmlFor="attachedFileUrl">{t('editAnomalyPage.form.attachedFileUrl.label')}</Label>
                                 <Input
                                     id="attachedFileUrl"
                                     name="attachedFileUrl"
                                     value={form.attachedFileUrl}
                                     onChange={handleChange}
-                                    placeholder="https://example.com/file.pdf"
+                                    placeholder={t('editAnomalyPage.form.attachedFileUrl.placeholder')}
                                     className="w-full"
                                 />
                             </div>
@@ -223,14 +225,14 @@ function EditAnomalyContent() {
                                     onClick={() => router.back()}
                                     className="flex-1"
                                 >
-                                    Hủy
+                                    {t('editAnomalyPage.actions.cancel')}
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={loading}
                                     className="flex-1 bg-blue-600 hover:bg-blue-700"
                                 >
-                                    {loading ? 'Đang cập nhật...' : 'Cập nhật phản hồi'}
+                                    {loading ? t('editAnomalyPage.actions.updating') : t('editAnomalyPage.actions.update')}
                                 </Button>
                             </div>
                         </form>
