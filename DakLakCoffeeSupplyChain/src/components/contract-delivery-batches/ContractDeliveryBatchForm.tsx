@@ -152,7 +152,9 @@ export default function ContractDeliveryBatchForm({
           }, 200);
         } catch (e) {
           console.error(e);
-          toast.error(t("contractDeliveryBatches.form.messages.loadItemsError"));
+          toast.error(
+            t("contractDeliveryBatches.form.messages.loadItemsError")
+          );
         }
       })();
     } else {
@@ -189,7 +191,9 @@ export default function ContractDeliveryBatchForm({
         );
       } catch (e) {
         console.error(e);
-        toast.error(t("contractDeliveryBatches.form.messages.loadContractItemsError"));
+        toast.error(
+          t("contractDeliveryBatches.form.messages.loadContractItemsError")
+        );
       } finally {
         setLoadingItems(false);
       }
@@ -315,14 +319,16 @@ export default function ContractDeliveryBatchForm({
     if (field === "plannedQuantity" && value <= 0) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractDeliveryItems.${index}.plannedQuantity`]:
-          t("contractDeliveryBatches.form.validation.quantityGreaterThanZero"),
+        [`contractDeliveryItems.${index}.plannedQuantity`]: t(
+          "contractDeliveryBatches.form.validation.quantityGreaterThanZero"
+        ),
       }));
     } else if (field === "contractItemId" && !value) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractDeliveryItems.${index}.contractItemId`]:
-          t("contractDeliveryBatches.form.validation.selectCoffeeType"),
+        [`contractDeliveryItems.${index}.contractItemId`]: t(
+          "contractDeliveryBatches.form.validation.selectCoffeeType"
+        ),
       }));
     }
   };
@@ -366,39 +372,49 @@ export default function ContractDeliveryBatchForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.contractId) {
-      clientErrors.contractId = t("contractDeliveryBatches.form.validation.selectContract");
+      clientErrors.contractId = t(
+        "contractDeliveryBatches.form.validation.selectContract"
+      );
     }
 
     if (!data.expectedDeliveryDate) {
-      clientErrors.expectedDeliveryDate = t("contractDeliveryBatches.form.validation.selectExpectedDate");
+      clientErrors.expectedDeliveryDate = t(
+        "contractDeliveryBatches.form.validation.selectExpectedDate"
+      );
     } else {
       const picked = new Date(data.expectedDeliveryDate as any);
       picked.setHours(0, 0, 0, 0);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (picked < today) {
-        clientErrors.expectedDeliveryDate =
-          t("contractDeliveryBatches.form.validation.pastDate");
+        clientErrors.expectedDeliveryDate = t(
+          "contractDeliveryBatches.form.validation.pastDate"
+        );
       }
     }
 
     if (data.deliveryRound < 1) {
-      clientErrors.deliveryRound = t("contractDeliveryBatches.form.validation.deliveryRoundMin");
+      clientErrors.deliveryRound = t(
+        "contractDeliveryBatches.form.validation.deliveryRoundMin"
+      );
     }
 
     const items = data.contractDeliveryItems || [];
     if (!items.length) {
-      clientErrors.contractDeliveryItems =
-        t("contractDeliveryBatches.form.validation.atLeastOneItem");
+      clientErrors.contractDeliveryItems = t(
+        "contractDeliveryBatches.form.validation.atLeastOneItem"
+      );
     } else {
       items.forEach((item, index) => {
         if (!item.contractItemId) {
-          clientErrors[`contractDeliveryItems.${index}.contractItemId`] =
-            t("contractDeliveryBatches.form.validation.selectCoffeeType");
+          clientErrors[`contractDeliveryItems.${index}.contractItemId`] = t(
+            "contractDeliveryBatches.form.validation.selectCoffeeType"
+          );
         }
         if (!(Number(item.plannedQuantity) > 0)) {
-          clientErrors[`contractDeliveryItems.${index}.plannedQuantity`] =
-            t("contractDeliveryBatches.form.validation.quantityGreaterThanZero");
+          clientErrors[`contractDeliveryItems.${index}.plannedQuantity`] = t(
+            "contractDeliveryBatches.form.validation.quantityGreaterThanZero"
+          );
         }
       });
     }
@@ -408,7 +424,9 @@ export default function ContractDeliveryBatchForm({
       0
     );
     if (!(total > 0)) {
-      clientErrors.totalPlannedQuantity = t("contractDeliveryBatches.form.validation.totalQuantityGreaterThanZero");
+      clientErrors.totalPlannedQuantity = t(
+        "contractDeliveryBatches.form.validation.totalQuantityGreaterThanZero"
+      );
     }
 
     // If there are client-side errors, display them and stop
@@ -584,12 +602,16 @@ export default function ContractDeliveryBatchForm({
           Object.keys(newFieldErrors).length > 0 ||
           newBusinessErrors.length > 0
         ) {
-          toast.error(t("contractDeliveryBatches.form.messages.checkFormErrors"));
+          toast.error(
+            t("contractDeliveryBatches.form.messages.checkFormErrors")
+          );
         }
       } else {
         // Xử lý lỗi khác
         const errorMessage = getErrorMessage(err);
-        toast.error(errorMessage || t("contractDeliveryBatches.form.messages.saveError"));
+        toast.error(
+          errorMessage || t("contractDeliveryBatches.form.messages.saveError")
+        );
       }
     }
   }
@@ -600,7 +622,9 @@ export default function ContractDeliveryBatchForm({
   return (
     <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
       <h2 className="text-2xl font-semibold text-center mb-6">
-        {isEdit ? t("contractDeliveryBatches.form.title.edit") : t("contractDeliveryBatches.form.title.create")}
+        {isEdit
+          ? t("contractDeliveryBatches.form.title.edit")
+          : t("contractDeliveryBatches.form.title.create")}
       </h2>
 
       {/* Hiển thị lỗi nghiệp vụ */}
@@ -659,11 +683,17 @@ export default function ContractDeliveryBatchForm({
                             onClick={() => {
                               const total = sumPlannedQuantity();
                               handleChange("totalPlannedQuantity", total);
-                              toast.success(t("contractDeliveryBatches.form.messages.autoUpdateTotalSuccess"));
+                              toast.success(
+                                t(
+                                  "contractDeliveryBatches.form.messages.autoUpdateTotalSuccess"
+                                )
+                              );
                             }}
                             className="text-xs h-6 px-2"
                           >
-                            {t("contractDeliveryBatches.form.actions.autoUpdateTotal")}
+                            {t(
+                              "contractDeliveryBatches.form.actions.autoUpdateTotal"
+                            )}
                           </Button>
                         </li>
                       </>
@@ -695,12 +725,17 @@ export default function ContractDeliveryBatchForm({
       {/* Hợp đồng */}
       {contractId ? (
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.contract")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.contract")}
+          </label>
           <Input value={contractId} disabled />
         </div>
       ) : (
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.contract")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.contract")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
           <select
             value={formData.contractId}
             onChange={(e) => handleChange("contractId", e.target.value)}
@@ -709,7 +744,9 @@ export default function ContractDeliveryBatchForm({
             }`}
             required
           >
-            <option value="">{t("contractDeliveryBatches.form.placeholders.selectContract")}</option>
+            <option value="">
+              {t("contractDeliveryBatches.form.placeholders.selectContract")}
+            </option>
             {contractOptions.map((c) => (
               <option key={c.contractId} value={c.contractId}>
                 {c.contractNumber}
@@ -727,7 +764,10 @@ export default function ContractDeliveryBatchForm({
       {/* Fields chính */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.deliveryRound")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.deliveryRound")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
           <Input
             type="number"
             min={1}
@@ -751,7 +791,10 @@ export default function ContractDeliveryBatchForm({
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.expectedDeliveryDate")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.expectedDeliveryDate")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
           <DatePicker
             value={dateString}
             onChange={(d) =>
@@ -764,7 +807,8 @@ export default function ContractDeliveryBatchForm({
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            {t("contractDeliveryBatches.form.fields.totalPlannedQuantity")}
+            {t("contractDeliveryBatches.form.fields.totalPlannedQuantity")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <Input
             type="number"
@@ -793,7 +837,9 @@ export default function ContractDeliveryBatchForm({
       {/* Trạng thái */}
       {isEdit ? (
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.status")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.status")}
+          </label>
           <select
             className="w-full p-2 border rounded"
             value={formData.status}
@@ -817,21 +863,28 @@ export default function ContractDeliveryBatchForm({
         </div>
       ) : (
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.status")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("contractDeliveryBatches.form.fields.status")}
+          </label>
           <div className="p-2 border rounded bg-gray-50">
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-              {getContractDeliveryBatchStatusLabel(ContractDeliveryBatchStatus.InProgress, t)}
+              {getContractDeliveryBatchStatusLabel(
+                ContractDeliveryBatchStatus.InProgress,
+                t
+              )}
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            �� Đợt giao mới sẽ có trạng thái "Đang thực hiện" mặc định
+            {t("contractDeliveryBatches.form.status.defaultNote")}
           </p>
         </div>
       )}
 
       {/* Ghi chú */}
       <div>
-        <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.note")}</label>
+        <label className="block mb-1 text-sm font-medium">
+          {t("contractDeliveryBatches.form.fields.note")}
+        </label>
         <Textarea
           placeholder={t("contractDeliveryBatches.form.placeholders.note")}
           value={formData.note || ""}
@@ -842,7 +895,8 @@ export default function ContractDeliveryBatchForm({
       {/* Danh sách mặt hàng */}
       <div>
         <label className="block mb-1 text-sm font-medium">
-          {t("contractDeliveryBatches.form.fields.deliveryItems")}
+          {t("contractDeliveryBatches.form.fields.deliveryItems")}{" "}
+          <span className="text-red-500">*</span>
         </label>
 
         {/* Hiển thị lỗi tổng quát cho contract delivery items */}
@@ -860,9 +914,19 @@ export default function ContractDeliveryBatchForm({
               isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
             }`}
           >
-            <span>{t("contractDeliveryBatches.form.table.headers.coffeeType")}</span>
-            <span className="text-left">{t("contractDeliveryBatches.form.table.headers.quantity")}</span>
-            {isEdit && <span className="text-left">{t("contractDeliveryBatches.form.table.headers.fulfilled")}</span>}
+            <span>
+              {t("contractDeliveryBatches.form.table.headers.coffeeType")}{" "}
+              <span className="text-red-500">*</span>
+            </span>
+            <span className="text-left">
+              {t("contractDeliveryBatches.form.table.headers.quantity")}{" "}
+              <span className="text-red-500">*</span>
+            </span>
+            {isEdit && (
+              <span className="text-left">
+                {t("contractDeliveryBatches.form.table.headers.fulfilled")}
+              </span>
+            )}
             <span className={isEdit ? "col-span-3" : "col-span-3"}>
               {t("contractDeliveryBatches.form.table.headers.note")}
             </span>
@@ -887,7 +951,11 @@ export default function ContractDeliveryBatchForm({
               }`}
               disabled={loadingItems || !itemOptions.length}
             >
-              <option value="">{t("contractDeliveryBatches.form.placeholders.selectCoffeeType")}</option>
+              <option value="">
+                {t(
+                  "contractDeliveryBatches.form.placeholders.selectCoffeeType"
+                )}
+              </option>
               {itemOptions.map((opt) => (
                 <option key={opt.contractItemId} value={opt.contractItemId}>
                   {opt.coffeeTypeName}
@@ -935,12 +1003,16 @@ export default function ContractDeliveryBatchForm({
                   updateRow(idx, "fulfilledQuantity", Number(e.target.value));
                 }}
                 className="no-spinner text-left"
-                title={t("contractDeliveryBatches.form.table.headers.fulfilled")}
+                title={t(
+                  "contractDeliveryBatches.form.table.headers.fulfilled"
+                )}
               />
             )}
 
             <Input
-              placeholder={t("contractDeliveryBatches.form.placeholders.itemNote")}
+              placeholder={t(
+                "contractDeliveryBatches.form.placeholders.itemNote"
+              )}
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
               className={isEdit ? "md:col-span-3" : "md:col-span-3"}
@@ -985,7 +1057,9 @@ export default function ContractDeliveryBatchForm({
                 </strong>{" "}
                 kg
                 {sumFulfilledQuantity() >= sumPlannedQuantity() && (
-                  <span className="ml-2 text-green-600">{t("contractDeliveryBatches.form.summary.completed")}</span>
+                  <span className="ml-2 text-green-600">
+                    {t("contractDeliveryBatches.form.summary.completed")}
+                  </span>
                 )}
               </>
             )}
@@ -995,7 +1069,11 @@ export default function ContractDeliveryBatchForm({
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit}>
-          <h2>{isEdit ? t("contractDeliveryBatches.form.actions.save") : t("contractDeliveryBatches.form.actions.create")}</h2>
+          <h2>
+            {isEdit
+              ? t("contractDeliveryBatches.form.actions.save")
+              : t("contractDeliveryBatches.form.actions.create")}
+          </h2>
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
           {t("contractDeliveryBatches.form.actions.back")}
