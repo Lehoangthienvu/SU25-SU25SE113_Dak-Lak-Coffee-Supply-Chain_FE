@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
-import { Pencil, Trash2, Info, Package } from "lucide-react";
+import { Info, Package } from "lucide-react";
 import { formatDate, formatQuantity, formatDiscount } from "@/lib/utils";
 import { OrderViewDetailsDto, getOrderDetails } from "@/lib/api/orders";
 import {
@@ -317,18 +317,17 @@ export default function OrderDetailPage() {
       <div className="w-full max-w-6xl space-y-6">
         {/* Title / Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
-            <Package className="text-orange-600 w-6 h-6" />
-            <div className="flex flex-col">
-              <span>{t('managerOrders.detail.title')}: {order.orderCode}</span>
-              {order.deliveryBatchCode && (
-                <span className="text-sm font-normal text-gray-600">
-                  {t('managerOrders.detail.orderInfo.fields.deliveryRound')}{" "}
-                  <span className="font-medium">{order.deliveryBatchCode}</span>
-                </span>
-              )}
-            </div>
-          </div>
+                     <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
+             <div className="flex flex-col">
+               <span>{t('managerOrders.detail.title')}: {order.orderCode}</span>
+               {order.deliveryBatchCode && (
+                 <span className="text-sm font-normal text-gray-600">
+                   {t('managerOrders.detail.orderInfo.fields.deliveryRound')}{" "}
+                   <span className="font-medium">{order.deliveryBatchCode}</span>
+                 </span>
+               )}
+             </div>
+           </div>
 
           <Button
             className="bg-[#f59e0b] hover:bg-[#d97706] text-white font-medium px-4 py-2 rounded-lg shadow-md"
@@ -488,19 +487,7 @@ export default function OrderDetailPage() {
                               className="h-7 w-7 p-[2px]"
                               onClick={() => openEditDialog(it)}
                             >
-                              <Pencil className="h-4 w-4 text-yellow-500" />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip content={t('managerOrders.detail.actions.delete')}>
-                            <Button
-                              variant="ghost"
-                              className="h-7 w-7 p-[2px]"
-                              onClick={() => {
-                                setItemToDelete(it);
-                                setShowDeleteDialog(true);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
+                              <span className="text-sm text-gray-600">Sửa</span>
                             </Button>
                           </Tooltip>
                         </div>

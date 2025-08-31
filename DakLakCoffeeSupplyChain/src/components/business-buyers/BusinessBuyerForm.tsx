@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -29,6 +30,7 @@ type FormState = {
 };
 
 export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
+  const { t } = useTranslation();
   const isEdit = !!initialData?.buyerId;
 
   const [formData, setFormData] = useState<FormState | null>(null);
@@ -62,7 +64,7 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
   if (!formData) {
     return (
       <div className="text-gray-500 text-center py-10">
-        Đang khởi tạo biểu mẫu...
+        {isEdit ? t('businessBuyers.edit.loading') : t('businessBuyers.create.form.creating')}
       </div>
     );
   }
@@ -73,16 +75,16 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formData) {
-      toast.error("Biểu mẫu chưa sẵn sàng, vui lòng thử lại.");
+      toast.error(t('businessBuyers.create.validation.checkFormErrors'));
       return;
     }
     const data: FormState = formData;
 
     if (!data.companyName?.trim())
-      return toast.error("Vui lòng nhập tên công ty.");
-    if (!data.email?.trim()) return toast.error("Vui lòng nhập email.");
+      return toast.error(t('businessBuyers.create.validation.companyNameRequired'));
+    if (!data.email?.trim()) return toast.error(t('businessBuyers.create.validation.emailRequired'));
     if (!data.phoneNumber?.trim())
-      return toast.error("Vui lòng nhập số điện thoại.");
+      return toast.error(t('businessBuyers.create.validation.phoneRequired'));
 
     try {
       const normalizedWebsite =
@@ -96,7 +98,7 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
           website: normalizedWebsite,
         };
         await updateBusinessBuyer(payload);
-        toast.success("Cập nhật khách hàng thành công!");
+        toast.success(t('businessBuyers.edit.success'));
         // Điều hướng về trang chi tiết buyer
         onSuccess();
       } else {
@@ -105,7 +107,7 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
           website: normalizedWebsite,
         };
         const newId = await createBusinessBuyer(payload);
-        toast.success("Tạo khách hàng thành công!");
+        toast.success(t('businessBuyers.create.success'));
         // Nếu backend trả về id, điều hướng sang trang chi tiết
         if (newId) {
           window.location.href = `/dashboard/manager/business-buyers/${newId}`;
@@ -116,7 +118,7 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
     } catch (err: any) {
       console.error("[BusinessBuyerForm] Error:", err);
       const message =
-        typeof err === "string" ? err : err?.message || "Có lỗi xảy ra";
+        typeof err === "string" ? err : err?.message || (isEdit ? t('businessBuyers.edit.error') : t('businessBuyers.create.error'));
       toast.error(message);
     }
   }
@@ -127,88 +129,95 @@ export default function BusinessBuyerForm({ initialData, onSuccess }: Props) {
       className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6"
     >
       <h2 className="text-2xl font-semibold text-center mb-4">
-        {isEdit ? "Chỉnh sửa khách hàng DN" : "Tạo khách hàng DN"}
+        {isEdit ? t('businessBuyers.edit.title') : t('businessBuyers.create.title')}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Tên công ty</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.companyName.label')}</label>
           <Input
             value={formData.companyName}
             onChange={(e) => handleChange("companyName", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.companyName.placeholder')}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Người liên hệ</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.contactPerson.label')}</label>
           <Input
             value={formData.contactPerson}
             onChange={(e) => handleChange("contactPerson", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.contactPerson.placeholder')}
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Chức vụ</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.position.label')}</label>
           <Input
             value={formData.position}
             onChange={(e) => handleChange("position", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.position.placeholder')}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Mã số thuế</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.taxCode.label')}</label>
           <Input
             value={formData.taxId}
             onChange={(e) => handleChange("taxId", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.taxCode.placeholder')}
           />
         </div>
 
         <div className="md:col-span-2 flex flex-col gap-2">
-          <label className="text-sm font-medium">Địa chỉ</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.address.label')}</label>
           <Input
             value={formData.companyAddress}
             onChange={(e) => handleChange("companyAddress", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.address.placeholder')}
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Email</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.email.label')}</label>
           <Input
             type="email"
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.email.placeholder')}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Số điện thoại</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.phone.label')}</label>
           <Input
             value={formData.phoneNumber}
             onChange={(e) => handleChange("phoneNumber", e.target.value)}
             className="h-10"
+            placeholder={t('businessBuyers.create.form.phone.placeholder')}
           />
         </div>
 
         <div className="md:col-span-2 flex flex-col gap-2">
-          <label className="text-sm font-medium">Website</label>
+          <label className="text-sm font-medium">{t('businessBuyers.create.form.website.label')}</label>
           <Input
             value={formData.website ?? ""}
             onChange={(e) => handleChange("website", e.target.value)}
             className="h-10"
-            placeholder="https://example.com"
+            placeholder={t('businessBuyers.create.form.website.placeholder')}
           />
         </div>
       </div>
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit">
-          <h2>{isEdit ? "Lưu thay đổi" : "Tạo khách hàng"}</h2>
+          <h2>{isEdit ? t('businessBuyers.edit.form.submit') : t('businessBuyers.create.form.submit')}</h2>
         </Button>
         <Button type="button" variant="outline" onClick={() => history.back()}>
-          Quay lại
+          {t('businessBuyers.create.form.cancel')}
         </Button>
       </DialogFooter>
     </form>

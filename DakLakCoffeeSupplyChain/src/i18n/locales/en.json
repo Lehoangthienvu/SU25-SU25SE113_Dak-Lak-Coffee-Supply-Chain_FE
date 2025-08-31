@@ -6144,6 +6144,253 @@
       }
     }
   },
+  "businessBuyers": {
+    "title": "Business Buyers",
+    "subtitle": "Manage business customers",
+    "description": "View and manage all business buyers in the system",
+    "stats": {
+      "totalBuyers": "Total Buyers",
+      "activeBuyers": "Active Buyers",
+      "inactiveBuyers": "Inactive Buyers"
+    },
+    "actions": {
+      "addNew": "Add New Buyer",
+      "search": "Search buyers...",
+      "filter": "Filter",
+      "export": "Export",
+      "refresh": "Refresh"
+    },
+    "table": {
+      "headers": {
+        "buyerCode": "Buyer Code",
+        "companyName": "Company Name",
+        "contactPerson": "Contact Person",
+        "position": "Position",
+        "phone": "Phone",
+        "email": "Email",
+        "address": "Address",
+        "status": "Status",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "tooltips": {
+        "view": "View details",
+        "edit": "Edit buyer",
+        "delete": "Delete buyer"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "empty": {
+        "title": "No business buyers found",
+        "description": "No business buyers match your search criteria",
+        "action": "Add your first buyer"
+      },
+      "loading": "Loading business buyers..."
+    },
+    "deleteDialog": {
+      "title": "Delete Business Buyer?",
+      "description": "Are you sure you want to delete",
+      "buyerName": "this business buyer?",
+      "warning": "This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "deleting": "Deleting..."
+    },
+    "messages": {
+      "deleteSuccess": "Business buyer deleted successfully",
+      "deleteError": "Failed to delete business buyer",
+      "loadError": "Failed to load business buyers"
+    },
+    "list": {
+      "title": "Business Buyers List",
+      "subtitle": "Manage all business customers",
+      "searchPlaceholder": "Search by code, company name, contact person...",
+      "filterByDate": "Filter by creation date",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "clearFilters": "Clear Filters",
+      "noResults": "No business buyers found matching your criteria"
+    },
+    "detail": {
+      "title": "Business Buyer Details",
+      "subtitle": "View buyer information",
+      "backToList": "Back to List",
+      "edit": "Edit Buyer",
+      "delete": "Delete Buyer",
+      "sections": {
+        "basicInfo": "Basic Information",
+        "contactInfo": "Contact Information",
+        "systemInfo": "System Information"
+      },
+      "fields": {
+        "buyerCode": "Buyer Code",
+        "companyName": "Company Name",
+        "contactPerson": "Contact Person",
+        "position": "Position",
+        "phone": "Phone Number",
+        "email": "Email Address",
+        "address": "Address",
+        "status": "Status",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "taxCode": "Tax Code",
+        "website": "Website"
+      },
+      "actions": {
+        "sendEmail": "Send Email",
+        "call": "Call",
+        "open": "Open"
+      },
+      "loading": "Loading buyer details...",
+      "error": "Error loading buyer details",
+      "notFound": "Business buyer not found"
+    },
+    "create": {
+      "title": "Add New Business Buyer",
+      "subtitle": "Create a new business customer",
+      "backToList": "Back to List",
+      "form": {
+        "title": "Business Buyer Information",
+        "buyerCode": {
+          "label": "Buyer Code",
+          "placeholder": "Enter buyer code",
+          "description": "Unique identifier for the buyer"
+        },
+        "companyName": {
+          "label": "Company Name",
+          "placeholder": "Enter company name",
+          "description": "Full name of the company"
+        },
+        "contactPerson": {
+          "label": "Contact Person",
+          "placeholder": "Enter contact person name",
+          "description": "Primary contact person"
+        },
+        "position": {
+          "label": "Position",
+          "placeholder": "Enter position/title",
+          "description": "Contact person's position in company"
+        },
+        "phone": {
+          "label": "Phone Number",
+          "placeholder": "Enter phone number",
+          "description": "Contact phone number"
+        },
+        "email": {
+          "label": "Email Address",
+          "placeholder": "Enter email address",
+          "description": "Contact email address"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "Enter company address",
+          "description": "Company's physical address"
+        },
+        "taxCode": {
+          "label": "Tax Code",
+          "placeholder": "Enter tax code"
+        },
+        "website": {
+          "label": "Website",
+          "placeholder": "https://example.com"
+        },
+        "submit": "Create Buyer",
+        "cancel": "Cancel",
+        "creating": "Creating..."
+      },
+      "validation": {
+        "buyerCodeRequired": "Buyer code is required",
+        "buyerCodeMinLength": "Buyer code must be at least 3 characters",
+        "buyerCodeMaxLength": "Buyer code cannot exceed 50 characters",
+        "companyNameRequired": "Company name is required",
+        "companyNameMinLength": "Company name must be at least 3 characters",
+        "companyNameMaxLength": "Company name cannot exceed 200 characters",
+        "contactPersonRequired": "Contact person is required",
+        "contactPersonMinLength": "Contact person name must be at least 2 characters",
+        "contactPersonMaxLength": "Contact person name cannot exceed 100 characters",
+        "positionRequired": "Position is required",
+        "positionMinLength": "Position must be at least 2 characters",
+        "positionMaxLength": "Position cannot exceed 100 characters",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Please enter a valid phone number",
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Please enter a valid email address",
+        "addressRequired": "Address is required",
+        "addressMinLength": "Address must be at least 10 characters",
+        "addressMaxLength": "Address cannot exceed 500 characters",
+        "checkFormErrors": "Please check and fix errors in the form"
+      },
+      "success": "Business buyer created successfully!",
+      "error": "Cannot create business buyer. Please try again."
+    },
+    "edit": {
+      "title": "Edit Business Buyer",
+      "subtitle": "Update buyer information",
+      "backToList": "Back to List",
+      "form": {
+        "title": "Update Business Buyer Information",
+        "buyerCode": {
+          "label": "Buyer Code",
+          "placeholder": "Enter buyer code"
+        },
+        "companyName": {
+          "label": "Company Name",
+          "placeholder": "Enter company name"
+        },
+        "contactPerson": {
+          "label": "Contact Person",
+          "placeholder": "Enter contact person name"
+        },
+        "position": {
+          "label": "Position",
+          "placeholder": "Enter position/title"
+        },
+        "phone": {
+          "label": "Phone Number",
+          "placeholder": "Enter phone number"
+        },
+        "email": {
+          "label": "Email Address",
+          "placeholder": "Enter email address"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "Enter company address"
+        },
+        "submit": "Update Buyer",
+        "cancel": "Cancel",
+        "updating": "Updating..."
+      },
+      "validation": {
+        "buyerCodeRequired": "Buyer code is required",
+        "buyerCodeMinLength": "Buyer code must be at least 3 characters",
+        "buyerCodeMaxLength": "Buyer code cannot exceed 50 characters",
+        "companyNameRequired": "Company name is required",
+        "companyNameMinLength": "Company name must be at least 3 characters",
+        "companyNameMaxLength": "Company name cannot exceed 200 characters",
+        "contactPersonRequired": "Contact person is required",
+        "contactPersonMinLength": "Contact person name must be at least 2 characters",
+        "contactPersonMaxLength": "Contact person name cannot exceed 100 characters",
+        "positionRequired": "Position is required",
+        "positionMinLength": "Position must be at least 2 characters",
+        "positionMaxLength": "Position cannot exceed 100 characters",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Please enter a valid phone number",
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Please enter a valid email address",
+        "addressRequired": "Address is required",
+        "addressMinLength": "Address must be at least 10 characters",
+        "addressMaxLength": "Address cannot exceed 500 characters",
+        "checkFormErrors": "Please check and fix errors in the form"
+      },
+      "success": "Business buyer updated successfully!",
+      "error": "Cannot update business buyer. Please try again.",
+      "loading": "Loading buyer data...",
+      "notFound": "Business buyer not found."
+    }
+  },
   "products": {
     "title": "Products",
     "subtitle": "Manage and track products",
