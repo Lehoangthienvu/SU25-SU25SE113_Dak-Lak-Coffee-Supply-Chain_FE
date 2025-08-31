@@ -4975,9 +4975,153 @@
         "deleteSuccess": "Xoá mặt hàng thành công",
         "deleteError": "Xoá mặt hàng thất bại.",
         "loading": "Đang xoá..."
+      },
+             "addOrderItem": {
+         "title": {
+           "create": "Thêm mặt hàng đơn hàng",
+           "edit": "Cập nhật mặt hàng đơn hàng"
+         },
+         "fields": {
+           "orderCode": "Mã đơn hàng",
+           "contractDeliveryItem": "Mặt hàng đợt giao",
+           "product": "Sản phẩm",
+           "quantity": "Số lượng (kg)",
+           "unitPrice": "Đơn giá (VNĐ/kg)",
+           "discountAmount": "Chiết khấu (%)",
+           "note": "Ghi chú"
+         },
+         "placeholders": {
+           "selectContractDeliveryItem": "-- Chọn mặt hàng đợt giao --",
+           "selectProduct": "-- Chọn sản phẩm --",
+           "quantity": "vd: 500",
+           "unitPrice": "vd: 95000",
+           "discountAmount": "vd: 10",
+           "note": "Nhập ghi chú (tuỳ chọn)"
+         },
+         "units": {
+           "kg": "kg",
+           "vndPerKg": "VNĐ/kg",
+           "percent": "%"
+         },
+         "actions": {
+           "cancel": "Huỷ",
+           "saving": "Đang lưu...",
+           "add": "Thêm",
+           "update": "Cập nhật"
+         },
+         "validation": {
+           "selectContractDeliveryItem": "Vui lòng chọn mặt hàng đợt giao (ContractDeliveryItem).",
+           "selectProduct": "Vui lòng chọn sản phẩm (Product).",
+           "quantityRequired": "Số lượng phải lớn hơn 0.",
+           "unitPriceInvalid": "Đơn giá không hợp lệ.",
+           "discountRange": "Chiết khấu phải nằm trong khoảng 0–100%."
+         },
+         "messages": {
+           "addSuccess": "Đã thêm mặt hàng đơn hàng thành công!",
+           "updateSuccess": "Cập nhật mặt hàng đơn hàng thành công!",
+           "unknownError": "Đã xảy ra lỗi không xác định.",
+           "serverError": "Lỗi từ máy chủ: {{status}}"
+         },
+         "labels": {
+           "currentDeliveryItem": "Mặt hàng đợt giao (hiện tại)"
+         }
+       }
+    },
+    "form": {
+      "fields": {
+        "deliveryBatch": "Đợt giao hàng",
+        "deliveryRound": "Vòng giao hàng",
+        "orderDate": "Ngày đặt hàng",
+        "actualDeliveryDate": "Ngày giao thực tế",
+        "note": "Ghi chú",
+        "status": "Trạng thái",
+        "cancelReason": "Lý do hủy",
+        "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+      },
+      "common": {
+        "optional": "(tùy chọn)"
+      },
+      "placeholders": {
+        "selectDeliveryBatch": "Chọn đợt giao hàng",
+        "deliveryRound": "VD: 1",
+        "orderDate": "Chọn ngày đặt hàng",
+        "actualDeliveryDate": "Chọn ngày giao thực tế",
+        "note": "Nhập ghi chú đơn hàng",
+        "cancelReason": "Nhập lý do hủy",
+        "selectDeliveryItem": "Chọn mặt hàng",
+        "selectProduct": "Chọn sản phẩm"
+      },
+      "validation": {
+        "selectDeliveryBatch": "Vui lòng chọn đợt giao hàng.",
+        "addAtLeastOneItem": "Cần ít nhất 1 dòng sản phẩm.",
+        "selectDeliveryItem": "Vui lòng chọn mặt hàng đợt giao.",
+        "selectProduct": "Vui lòng chọn sản phẩm.",
+        "quantityRequired": "Số lượng phải lớn hơn 0.",
+        "unitPriceRequired": "Đơn giá phải lớn hơn 0.",
+        "actualDeliveryDateBeforeOrderDate": "Ngày giao thực tế không được trước ngày tạo đơn hàng.",
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+      },
+      "actions": {
+        "addItem": "+ Thêm mặt hàng",
+        "removeItem": "Xóa",
+        "updateOrder": "Cập nhật đơn hàng",
+        "updating": "Đang cập nhật đơn hàng...",
+        "updateSuccess": "Cập nhật đơn hàng thành công!",
+        "updateError": "Cập nhật đơn hàng thất bại.",
+        "createOrder": "Tạo đơn hàng",
+        "creating": "Đang tạo đơn hàng...",
+        "createSuccess": "Tạo đơn hàng thành công!",
+        "createError": "Tạo đơn hàng thất bại."
+      },
+      "errors": {
+        "loadDeliveryBatch": "Không thể tải chi tiết đợt giao và danh sách sản phẩm.",
+        "loadDeliveryBatches": "Không tải được danh sách đợt giao.",
+        "loadData": "Không thể tải dữ liệu.",
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+        "saveOrderError": "Đã xảy ra lỗi khi lưu đơn hàng.",
+        "businessError": "Lỗi nghiệp vụ: ",
+        "accessError": "Lỗi quyền truy cập: ",
+        "dataError": "Lỗi dữ liệu: "
+      },
+      "businessRules": {
+        "title": "Cần tuân thủ quy tắc nghiệp vụ:",
+        "rules": "quy tắc",
+        "summary": "Tóm tắt",
+        "adjustOrderInfo": "Cần điều chỉnh thông tin đơn hàng",
+        "removeDuplicateProducts": "Cần loại bỏ sản phẩm trùng lặp",
+        "changeOrderInfo": "Cần đổi thông tin đơn hàng",
+        "contactAdmin": "Cần liên hệ admin",
+        "deliveryBatchUsed": "Đợt giao hàng đã được sử dụng",
+        "dataNotFound": "Dữ liệu không tồn tại",
+        "guidance": "Hướng dẫn",
+        "checkOrderInfo": "Kiểm tra lại thông tin đơn hàng",
+        "noDuplicateProducts": "Không được có 2 dòng đơn hàng cùng sản phẩm",
+        "orderInfoExists": "Thông tin đơn hàng đã tồn tại, hãy đổi thông tin khác",
+        "contactAdminForPermission": "Liên hệ admin để được cấp quyền phù hợp",
+        "oneOrderPerBatch": "Mỗi đợt giao hàng chỉ có thể tạo 1 đơn hàng",
+        "orderDateNotExceedCurrent": "Ngày đặt hàng không được vượt quá ngày hiện tại",
+        "deliveryDateNotBeforeOrder": "Ngày giao thực tế không được trước ngày đặt hàng",
+        "discountNotExceedTotal": "Giảm giá không được vượt quá tổng thành tiền",
+        "discountNotNegative": "Giảm giá không được âm",
+        "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa"
+      },
+      "table": {
+        "headers": {
+          "deliveryItem": "Mặt hàng đợt giao",
+          "product": "Sản phẩm",
+          "quantity": "Số lượng (kg)",
+          "unitPrice": "Đơn giá (VND/Kg)",
+          "discount": "Giảm giá (%)",
+          "note": "Ghi chú"
+        }
+      },
+      "summary": {
+        "totalQuantity": "Tổng SL",
+        "totalAmount": "Tổng tiền tạm tính"
       }
     }
-  },
+    },
+    
   "managerInventories": {
     "title": "📦 Quản lý tồn kho",
     "subtitle": "Theo dõi và quản lý tồn kho trong các kho hàng",

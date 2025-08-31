@@ -4939,7 +4939,57 @@
         "deleteSuccess": "Item deleted successfully",
         "deleteError": "Failed to delete item.",
         "loading": "Deleting..."
-      }
+      },
+      "addOrderItem": {
+    "title": {
+      "create": "Add Order Item",
+      "edit": "Update Order Item"
+    },
+    "fields": {
+      "orderCode": "Order Code",
+      "contractDeliveryItem": "Contract Delivery Item",
+      "product": "Product",
+      "quantity": "Quantity (kg)",
+      "unitPrice": "Unit Price (VND/kg)",
+      "discountAmount": "Discount (%)",
+      "note": "Note"
+    },
+    "placeholders": {
+      "selectContractDeliveryItem": "-- Select contract delivery item --",
+      "selectProduct": "-- Select product --",
+      "quantity": "e.g: 500",
+      "unitPrice": "e.g: 95000",
+      "discountAmount": "e.g: 10",
+      "note": "Enter note (optional)"
+    },
+    "units": {
+      "kg": "kg",
+      "vndPerKg": "VND/kg",
+      "percent": "%"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "add": "Add",
+      "update": "Update"
+    },
+    "validation": {
+      "selectContractDeliveryItem": "Please select contract delivery item (ContractDeliveryItem).",
+      "selectProduct": "Please select product (Product).",
+      "quantityRequired": "Quantity must be greater than 0.",
+      "unitPriceInvalid": "Unit price is invalid.",
+      "discountRange": "Discount must be between 0-100%."
+    },
+    "messages": {
+      "addSuccess": "Order item added successfully!",
+      "updateSuccess": "Order item updated successfully!",
+      "unknownError": "An unknown error occurred.",
+      "serverError": "Server error: {{status}}"
+    },
+    "labels": {
+      "currentDeliveryItem": "Contract delivery item (current)"
+    }
+  }
     },
     "form": {
       "fields": {
