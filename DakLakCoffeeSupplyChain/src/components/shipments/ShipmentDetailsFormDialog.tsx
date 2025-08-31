@@ -108,15 +108,15 @@ export default function ShipmentDetailsFormDialog({
 
   const handleSubmit = async () => {
     if (!formData.orderItemId) {
-      toast.error(t('shipments.detailsForm.validation.selectOrderItem'));
+      toast.error(t("shipments.detailsForm.validation.selectOrderItem"));
       return;
     }
     if ((formData.quantity ?? 0) <= 0) {
-      toast.error(t('shipments.detailsForm.validation.quantityRequired'));
+      toast.error(t("shipments.detailsForm.validation.quantityRequired"));
       return;
     }
     if (!formData.unit) {
-      toast.error(t('shipments.detailsForm.validation.unitRequired'));
+      toast.error(t("shipments.detailsForm.validation.unitRequired"));
       return;
     }
 
@@ -124,20 +124,22 @@ export default function ShipmentDetailsFormDialog({
     try {
       if (mode === "create") {
         await createShipmentDetail(formData as ShipmentDetailCreateDto);
-        toast.success(t('shipments.detailsForm.success.add'));
+        toast.success(t("shipments.detailsForm.success.add"));
       } else {
         await updateShipmentDetail(formData as ShipmentDetailUpdateDto);
-        toast.success(t('shipments.detailsForm.success.create'));
+        toast.success(t("shipments.detailsForm.success.create"));
       }
 
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
-      let message = t('shipments.detailsForm.validation.unknownError');
+      let message = t("shipments.detailsForm.validation.unknownError");
       if (axios.isAxiosError(error)) {
         message =
           error.response?.data?.message ??
-          t('shipments.detailsForm.validation.serverError', { status: error.response?.status });
+          t("shipments.detailsForm.validation.serverError", {
+            status: error.response?.status,
+          });
       } else if (error instanceof Error) {
         message = error.message;
       }
@@ -153,19 +155,22 @@ export default function ShipmentDetailsFormDialog({
         <BaseDialog.DialogHeader className="px-5 pt-5 pb-0 text-left">
           <BaseDialog.DialogTitle>
             {mode === "create"
-              ? t('shipments.detailsForm.title.create')
-              : t('shipments.detailsForm.title.edit')}
+              ? t("shipments.detailsForm.title.create")
+              : t("shipments.detailsForm.title.edit")}
           </BaseDialog.DialogTitle>
         </BaseDialog.DialogHeader>
 
         <div className="grid gap-2 px-5 py-4">
           <div className="grid gap-1">
-            <Label>{t('shipments.detailsForm.orderCode')}</Label>
+            <Label>{t("shipments.detailsForm.orderCode")}</Label>
             <Input value={orderCode ?? ""} disabled />
           </div>
 
           <div className="grid gap-1">
-            <Label>{t('shipments.detailsForm.orderItem')}</Label>
+            <Label>
+              {t("shipments.detailsForm.orderItem")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={(formData.orderItemId as string) || undefined}
               onValueChange={(value) =>
@@ -173,7 +178,9 @@ export default function ShipmentDetailsFormDialog({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('shipments.detailsForm.selectOrderItem')} />
+                <SelectValue
+                  placeholder={t("shipments.detailsForm.selectOrderItem")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {orderItemOptions.map((o) => (
@@ -186,7 +193,10 @@ export default function ShipmentDetailsFormDialog({
           </div>
 
           <div className="grid gap-1">
-            <Label>{t('shipments.detailsForm.quantity')}</Label>
+            <Label>
+              {t("shipments.detailsForm.quantity")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Input
               name="quantity"
               type="number"
@@ -194,12 +204,15 @@ export default function ShipmentDetailsFormDialog({
               onChange={handleChange}
               min={0}
               step={1}
-              placeholder={t('shipments.detailsForm.quantityPlaceholder')}
+              placeholder={t("shipments.detailsForm.quantityPlaceholder")}
             />
           </div>
 
           <div className="grid gap-1">
-            <Label>{t('shipments.detailsForm.unit')}</Label>
+            <Label>
+              {t("shipments.detailsForm.unit")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={formData.unit || undefined}
               onValueChange={(value) =>
@@ -207,7 +220,9 @@ export default function ShipmentDetailsFormDialog({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('shipments.detailsForm.selectUnit')} />
+                <SelectValue
+                  placeholder={t("shipments.detailsForm.selectUnit")}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Kg">Kg</SelectItem>
@@ -218,12 +233,12 @@ export default function ShipmentDetailsFormDialog({
           </div>
 
           <div className="grid gap-1">
-            <Label>{t('shipments.detailsForm.note')}</Label>
+            <Label>{t("shipments.detailsForm.note")}</Label>
             <Textarea
               name="note"
               value={formData.note ?? ""}
               onChange={handleChange}
-              placeholder={t('shipments.detailsForm.notePlaceholder')}
+              placeholder={t("shipments.detailsForm.notePlaceholder")}
             />
           </div>
         </div>
@@ -234,14 +249,18 @@ export default function ShipmentDetailsFormDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            {t('shipments.detailsForm.buttons.cancel')}
+            {t("shipments.detailsForm.buttons.cancel")}
           </Button>
           <Button
             className="bg-orange-500 hover:bg-orange-600 text-white"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? t('shipments.detailsForm.buttons.saving') : mode === "create" ? t('shipments.detailsForm.buttons.add') : t('shipments.detailsForm.buttons.update')}
+            {loading
+              ? t("shipments.detailsForm.buttons.saving")
+              : mode === "create"
+              ? t("shipments.detailsForm.buttons.add")
+              : t("shipments.detailsForm.buttons.update")}
           </Button>
         </div>
       </FormDialog.Content>

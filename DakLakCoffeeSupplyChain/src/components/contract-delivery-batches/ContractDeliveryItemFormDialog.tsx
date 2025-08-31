@@ -121,7 +121,9 @@ export default function ContractDeliveryItemFormDialog({
         // Nếu fulfilledQuantity > plannedQuantity mới, hiển thị lỗi
         setFieldErrors((prev) => ({
           ...prev,
-          fulfilledQuantity: t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned"),
+          fulfilledQuantity: t(
+            "contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned"
+          ),
         }));
       } else {
         // Nếu hợp lệ, xóa lỗi
@@ -141,7 +143,9 @@ export default function ContractDeliveryItemFormDialog({
     switch (fieldName) {
       case "contractItemId":
         if (!value || value === "") {
-          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType");
+          newErrors[fieldName] = t(
+            "contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -150,13 +154,19 @@ export default function ContractDeliveryItemFormDialog({
       case "plannedQuantity":
         const plannedQuantity = Number(value);
         if (!value || value === "" || isNaN(plannedQuantity)) {
-          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityRequired");
+          newErrors[fieldName] = t(
+            "contractDeliveryBatches.itemFormDialog.validation.plannedQuantityRequired"
+          );
         } else if (plannedQuantity <= 0) {
-          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero");
+          newErrors[fieldName] = t(
+            "contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero"
+          );
         } else if (batchTotalQuantity && plannedQuantity > batchTotalQuantity) {
-          newErrors[
-            fieldName
-          ] = `${t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityExceedLimit")} (${batchTotalQuantity} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")})`;
+          newErrors[fieldName] = `${t(
+            "contractDeliveryBatches.itemFormDialog.validation.plannedQuantityExceedLimit"
+          )} (${batchTotalQuantity} ${t(
+            "contractDeliveryBatches.itemFormDialog.labels.kg"
+          )})`;
         } else {
           delete newErrors[fieldName];
         }
@@ -167,9 +177,13 @@ export default function ContractDeliveryItemFormDialog({
         if (mode === "edit" && value !== "" && !isNaN(Number(value))) {
           const fulfilledQuantity = Number(value);
           if (fulfilledQuantity < 0) {
-            newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative");
+            newErrors[fieldName] = t(
+              "contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative"
+            );
           } else if (fulfilledQuantity > (formData.plannedQuantity || 0)) {
-            newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned");
+            newErrors[fieldName] = t(
+              "contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned"
+            );
           } else {
             delete newErrors[fieldName];
           }
@@ -180,7 +194,9 @@ export default function ContractDeliveryItemFormDialog({
 
       case "note":
         if (value && value.length > 1000) {
-          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.noteMaxLength");
+          newErrors[fieldName] = t(
+            "contractDeliveryBatches.itemFormDialog.validation.noteMaxLength"
+          );
         } else {
           delete newErrors[fieldName];
         }
@@ -210,11 +226,15 @@ export default function ContractDeliveryItemFormDialog({
 
     // Validate tất cả fields
     if (!formData.contractItemId || formData.contractItemId === "") {
-      clientErrors.contractItemId = t("contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType");
+      clientErrors.contractItemId = t(
+        "contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType"
+      );
     }
 
     if (!formData.plannedQuantity || formData.plannedQuantity <= 0) {
-      clientErrors.plannedQuantity = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero");
+      clientErrors.plannedQuantity = t(
+        "contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero"
+      );
     }
 
     // Kiểm tra fulfilledQuantity không vượt quá plannedQuantity (chỉ khi ở mode edit)
@@ -224,11 +244,15 @@ export default function ContractDeliveryItemFormDialog({
       (formData as any).fulfilledQuantity !== null
     ) {
       if ((formData as any).fulfilledQuantity < 0) {
-        clientErrors.fulfilledQuantity = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative");
+        clientErrors.fulfilledQuantity = t(
+          "contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative"
+        );
       } else if (
         (formData as any).fulfilledQuantity > (formData.plannedQuantity || 0)
       ) {
-        clientErrors.fulfilledQuantity = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned");
+        clientErrors.fulfilledQuantity = t(
+          "contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned"
+        );
       }
     }
 
@@ -247,19 +271,29 @@ export default function ContractDeliveryItemFormDialog({
       }
 
       if (currentTotalPlanned > batchTotalQuantity) {
-        clientErrors.plannedQuantity = `${t("contractDeliveryBatches.itemFormDialog.validation.totalQuantityExceedLimit")} (${currentTotalPlanned} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")}) vượt quá giới hạn của đợt giao (${batchTotalQuantity} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")})`;
+        clientErrors.plannedQuantity = `${t(
+          "contractDeliveryBatches.itemFormDialog.validation.totalQuantityExceedLimit"
+        )} (${currentTotalPlanned} ${t(
+          "contractDeliveryBatches.itemFormDialog.labels.kg"
+        )}) vượt quá giới hạn của đợt giao (${batchTotalQuantity} ${t(
+          "contractDeliveryBatches.itemFormDialog.labels.kg"
+        )})`;
       }
     }
 
     if (formData.note && formData.note.length > 1000) {
-      clientErrors.note = t("contractDeliveryBatches.itemFormDialog.validation.noteMaxLength");
+      clientErrors.note = t(
+        "contractDeliveryBatches.itemFormDialog.validation.noteMaxLength"
+      );
     }
 
     // Nếu có lỗi client-side, hiển thị và dừng
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
       setLoading(false);
-      toast.error(t("contractDeliveryBatches.itemFormDialog.messages.checkFormErrors"));
+      toast.error(
+        t("contractDeliveryBatches.itemFormDialog.messages.checkFormErrors")
+      );
       return;
     }
 
@@ -268,12 +302,16 @@ export default function ContractDeliveryItemFormDialog({
         await createContractDeliveryItem(
           formData as ContractDeliveryItemCreateDto
         );
-        toast.success(t("contractDeliveryBatches.itemFormDialog.messages.addSuccess"));
+        toast.success(
+          t("contractDeliveryBatches.itemFormDialog.messages.addSuccess")
+        );
       } else {
         await updateContractDeliveryItem(
           formData as ContractDeliveryItemUpdateDto
         );
-        toast.success(t("contractDeliveryBatches.itemFormDialog.messages.updateSuccess"));
+        toast.success(
+          t("contractDeliveryBatches.itemFormDialog.messages.updateSuccess")
+        );
       }
 
       onSuccess?.();
@@ -476,7 +514,9 @@ export default function ContractDeliveryItemFormDialog({
             toast.error(errorMessage);
           }
         } else {
-          toast.error(t("contractDeliveryBatches.itemFormDialog.messages.saveError"));
+          toast.error(
+            t("contractDeliveryBatches.itemFormDialog.messages.saveError")
+          );
         }
       }
     } finally {
@@ -501,10 +541,15 @@ export default function ContractDeliveryItemFormDialog({
             <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-orange-800 font-medium">
-                  {t("contractDeliveryBatches.itemFormDialog.businessRules.title")}
+                  {t(
+                    "contractDeliveryBatches.itemFormDialog.businessRules.title"
+                  )}
                 </h3>
                 <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-                  {businessErrors.length} {t("contractDeliveryBatches.itemFormDialog.businessRules.rules")}
+                  {businessErrors.length}{" "}
+                  {t(
+                    "contractDeliveryBatches.itemFormDialog.businessRules.rules"
+                  )}
                 </span>
               </div>
 
@@ -520,7 +565,10 @@ export default function ContractDeliveryItemFormDialog({
           )}
 
           <div className="grid gap-1">
-            <Label htmlFor="contractItemId">{t("contractDeliveryBatches.itemFormDialog.fields.coffeeType")}</Label>
+            <Label htmlFor="contractItemId">
+              {t("contractDeliveryBatches.itemFormDialog.fields.coffeeType")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={formData.contractItemId || undefined} // Khi rỗng -> undefined để hiện placeholder
               onValueChange={(value) => {
@@ -539,7 +587,11 @@ export default function ContractDeliveryItemFormDialog({
                   hasFieldError("contractItemId") ? "border-red-500" : ""
                 }`}
               >
-                <SelectValue placeholder={t("contractDeliveryBatches.itemFormDialog.placeholders.selectCoffeeType")} />
+                <SelectValue
+                  placeholder={t(
+                    "contractDeliveryBatches.itemFormDialog.placeholders.selectCoffeeType"
+                  )}
+                />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {contractItems.map((item) => (
@@ -561,10 +613,15 @@ export default function ContractDeliveryItemFormDialog({
 
           <div className="grid gap-1">
             <Label htmlFor="plannedQuantity">
-              {t("contractDeliveryBatches.itemFormDialog.fields.plannedQuantity")}
+              {t(
+                "contractDeliveryBatches.itemFormDialog.fields.plannedQuantity"
+              )}{" "}
+              <span className="text-red-500">*</span>
               {batchTotalQuantity && (
                 <span className="text-gray-500 text-sm ml-2">
-                  ({t("contractDeliveryBatches.itemFormDialog.labels.limit")} {batchTotalQuantity} {t("contractDeliveryBatches.itemFormDialog.labels.kg")})
+                  ({t("contractDeliveryBatches.itemFormDialog.labels.limit")}{" "}
+                  {batchTotalQuantity}{" "}
+                  {t("contractDeliveryBatches.itemFormDialog.labels.kg")})
                 </span>
               )}
             </Label>
@@ -589,7 +646,12 @@ export default function ContractDeliveryItemFormDialog({
 
           {mode === "edit" && "fulfilledQuantity" in formData && (
             <div className="grid gap-1">
-              <Label htmlFor="fulfilledQuantity">{t("contractDeliveryBatches.itemFormDialog.fields.fulfilledQuantity")}</Label>
+              <Label htmlFor="fulfilledQuantity">
+                {t(
+                  "contractDeliveryBatches.itemFormDialog.fields.fulfilledQuantity"
+                )}{" "}
+                <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="fulfilledQuantity"
                 name="fulfilledQuantity"
@@ -613,13 +675,17 @@ export default function ContractDeliveryItemFormDialog({
           )}
 
           <div className="grid gap-1">
-            <Label htmlFor="note">{t("contractDeliveryBatches.itemFormDialog.fields.note")}</Label>
+            <Label htmlFor="note">
+              {t("contractDeliveryBatches.itemFormDialog.fields.note")}
+            </Label>
             <Textarea
               id="note"
               name="note"
               value={formData.note}
               onChange={handleChange}
-              placeholder={t("contractDeliveryBatches.itemFormDialog.placeholders.note")}
+              placeholder={t(
+                "contractDeliveryBatches.itemFormDialog.placeholders.note"
+              )}
               className={hasFieldError("note") ? "border-red-500" : ""}
             />
             {hasFieldError("note") && (
@@ -643,7 +709,11 @@ export default function ContractDeliveryItemFormDialog({
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? t("contractDeliveryBatches.itemFormDialog.actions.saving") : mode === "create" ? t("contractDeliveryBatches.itemFormDialog.actions.add") : t("contractDeliveryBatches.itemFormDialog.actions.update")}
+            {loading
+              ? t("contractDeliveryBatches.itemFormDialog.actions.saving")
+              : mode === "create"
+              ? t("contractDeliveryBatches.itemFormDialog.actions.add")
+              : t("contractDeliveryBatches.itemFormDialog.actions.update")}
           </Button>
         </div>
       </FormDialog.Content>
