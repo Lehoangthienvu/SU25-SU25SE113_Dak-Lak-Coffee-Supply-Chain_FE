@@ -1014,7 +1014,7 @@
             },
             "actions": {
               "cancel": "Cancel",
-              "creating": "Creating..."
+              "creating": "Creating...",
               "create": "Create Processing Batch"
             },
             "loading": {
@@ -4110,7 +4110,50 @@
       "inventories": "Inventories",
       "inventoryLogs": "Inventory Logs",
       "warehouses": "Warehouses",
-      "cropSeasons": "Crop Seasons"
+      "cropSeasons": "Crop Seasons",
+      "farmer": {
+        "dashboard": "Dashboard",
+        "cropProgress": "Crop Progress",
+        "cropSeasons": "Crop Seasons",
+        "commitments": "Commitments",
+        "consultation": "Consultation",
+        "deliveryRequest": "Delivery Request",
+        "processing": "Processing",
+        "waste": "Waste",
+        "marketplace": "Marketplace",
+        "progress": "Progress",
+        "evaluations": "Evaluations",
+        "warehouseRequest": "Warehouse Request",
+        "coffeeMarket": "Coffee Purchasing Floor",
+        "commitment": "Commitment to Purchasing Plan",
+        "processingBatches": "Processing Batches List",
+        "processingProgress": "Processing Batch Progress",
+        "processingWastes": "Processing Batch Wastes",
+        "sendDeliveryRequest": "Send Delivery Request",
+        "season": "Season",
+        "send": "Send",
+        "coffeeProcessingFloor": "Coffee Processing Floor",
+        "processingWaste": "Processing Waste",
+        "generalPlanCommitment": "General Plan Commitment",
+        "pro": "Progress",
+        "coffeeProcurementFloor": "Coffee Procurement Floor",
+        "procurementPlanCommitment": "Procurement Plan Commitment"
+      }
+    },
+    "navulation": {
+      "farmer": {
+        "pro": "Progress",
+        "coffeeProcessingFloor": "Coffee Processing Floor",
+        "processingWaste": "Processing Waste",
+        "generalPlanCommitment": "General Plan Commitment",
+        "coffeeprocingeralfloor": "General Coffee Processing Floor",
+        "Pro cingeralPlancommitment": "Progress General Plan Commitment"
+      },
+      "Farmer": {
+        "Pro": "Progress",
+        "coffeeprocingeralfloor": "General Coffee Processing Floor",
+        "Pro cingeralPlancommitment": "Progress General Plan Commitment"
+      }
     },
     "warehouseRequest": "Warehouse Request",
     "outboundRequests": "Outbound Requests",
@@ -4200,8 +4243,8 @@
       "wasteDisposals": "Waste Disposals",
       "staffManagement": "Staff Management",
       "staffList": "Staff List"
-    }
-      "warehouseOperations": "Warehouse Operations",
+    },
+    "warehouseOperations": "Warehouse Operations",
       "warehouseManagement": "Warehouse Management",
       "inboundRequests": "Inbound Requests",
       "inboundReceipts": "Inbound Receipts",
@@ -4334,7 +4377,6 @@
           "rec": "Receipts",
           "receipts": "Inbound Receipts",
           "receiptsDesc": "Inbound Receipts"
-        }
   },
   "warehouseDetail": {
     "title": "Warehouse Details",

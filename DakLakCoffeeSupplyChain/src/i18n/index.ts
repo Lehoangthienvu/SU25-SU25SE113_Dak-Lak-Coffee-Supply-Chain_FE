@@ -31,10 +31,16 @@ if (typeof window !== 'undefined') {
   // Đợi hydration hoàn tất và đảm bảo không có hydration mismatch
   const savedLang = localStorage.getItem('i18nextLng');
   if (savedLang && savedLang !== 'vi') {
-    // Sử dụng setTimeout với delay lớn hơn để đảm bảo hydration hoàn tất
-    setTimeout(() => {
+    // Sử dụng requestIdleCallback hoặc setTimeout với delay lớn hơn để đảm bảo hydration hoàn tất
+    const changeLangAfterHydration = () => {
       i18n.changeLanguage(savedLang);
-    }, 100);
+    };
+    
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(changeLangAfterHydration);
+    } else {
+      setTimeout(changeLangAfterHydration, 200);
+    }
   }
 
   // Lưu ngôn ngữ khi thay đổi
