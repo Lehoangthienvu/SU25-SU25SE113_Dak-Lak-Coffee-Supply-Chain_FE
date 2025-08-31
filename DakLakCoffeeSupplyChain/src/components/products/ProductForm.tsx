@@ -4,6 +4,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import { getCoffeeTypes, type CoffeeType } from "@/lib/api/coffeeType";
 import {
   ProductStatus,
   ProductStatusLabel,
+  getProductStatusLabel,
 } from "@/lib/constants/productStatus";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -57,6 +59,7 @@ type FormState = {
 };
 
 export default function ProductForm({ initialData, onSuccess }: Props) {
+  const { t } = useTranslation();
   const isEdit = !!initialData;
   const router = useRouter();
   const { user } = useAuth(); // Lấy thông tin user hiện tại
@@ -260,7 +263,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         }
       } catch (e) {
         console.error("Error loading options:", e);
-        toast.error("Không thể tải danh sách tùy chọn.");
+        toast.error(t("products.form.messages.loadingOptions"));
 
         // Fallback data khi có lỗi
         console.log("Setting fallback coffee types due to error");
@@ -420,15 +423,15 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
     // Validate
     if (!data.productName.trim())
-      return toast.error("Vui lòng nhập tên sản phẩm.");
+      return toast.error(t("products.form.validation.productNameRequired"));
     if (data.productName.length > 100)
-      return toast.error("Tên sản phẩm không được vượt quá 100 ký tự.");
+      return toast.error(t("products.form.validation.productNameTooLong"));
     if (data.description.length > 500)
-      return toast.error("Mô tả sản phẩm không được vượt quá 500 ký tự.");
+      return toast.error(t("products.form.validation.descriptionTooLong"));
     if (!(Number(data.unitPrice) > 0))
-      return toast.error("Giá bán phải lớn hơn 0.");
+      return toast.error(t("products.form.validation.unitPriceRequired"));
     if (!(Number(data.quantityAvailable) >= 0))
-      return toast.error("Số lượng phải lớn hơn hoặc bằng 0.");
+      return toast.error(t("products.form.validation.quantityRequired"));
 
     // Kiểm tra số lượng không được vượt quá số lượng có sẵn trong kho
     const maxQuantity = getMaxQuantity();
@@ -437,28 +440,31 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       Number(data.quantityAvailable) > maxQuantity
     ) {
       return toast.error(
-        `Số lượng không được vượt quá ${maxQuantity} ${data.unit} có sẵn trong kho.`
+        t("products.form.validation.quantityExceedsAvailable", {
+          maxQuantity,
+          unit: data.unit,
+        })
       );
     }
-    if (!data.batchId) return toast.error("Vui lòng chọn mã mẻ sơ chế.");
-    if (!data.inventoryId) return toast.error("Vui lòng chọn mã kho.");
-    if (!data.coffeeTypeId) return toast.error("Vui lòng chọn loại cà phê.");
+    if (!data.batchId) return toast.error(t("products.form.validation.batchRequired"));
+    if (!data.inventoryId) return toast.error(t("products.form.validation.inventoryRequired"));
+    if (!data.coffeeTypeId) return toast.error(t("products.form.validation.coffeeTypeRequired"));
     if (data.originRegion.length > 100)
-      return toast.error("Vùng sản xuất không được vượt quá 100 ký tự.");
+      return toast.error(t("products.form.validation.originRegionTooLong"));
     if (data.originFarmLocation.length > 200)
-      return toast.error("Vị trí nông trại không được vượt quá 200 ký tự.");
+      return toast.error(t("products.form.validation.originFarmLocationTooLong"));
     if (data.geographicalIndicationCode.length > 50)
-      return toast.error("Mã chỉ dẫn địa lý không được vượt quá 50 ký tự.");
+      return toast.error(t("products.form.validation.geographicalIndicationCodeTooLong"));
     if (data.evaluatedQuality.length > 50)
-      return toast.error("Chất lượng đánh giá không được vượt quá 50 ký tự.");
+      return toast.error(t("products.form.validation.evaluatedQualityTooLong"));
     if (
       data.evaluationScore !== "" &&
       (Number(data.evaluationScore) < 0 || Number(data.evaluationScore) > 100)
     ) {
-      return toast.error("Điểm đánh giá phải trong khoảng từ 0 đến 100.");
+      return toast.error(t("products.form.validation.evaluationScoreRange"));
     }
     if (data.approvalNote.length > 50)
-      return toast.error("Ghi chú duyệt không được vượt quá 50 ký tự.");
+      return toast.error(t("products.form.validation.approvalNoteTooLong"));
 
     try {
       setSaving(true);
@@ -496,9 +502,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
         const req = updateProduct(payload.productId, payload);
         toast.promise(req, {
-          loading: "Đang cập nhật sản phẩm...",
-          success: "Cập nhật sản phẩm thành công!",
-          error: "Cập nhật sản phẩm thất bại.",
+          loading: t("products.form.toast.updating"),
+          success: t("products.form.toast.updateSuccess"),
+          error: t("products.form.toast.updateError"),
         });
         await req;
       } else {
@@ -526,9 +532,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
         const req = createProduct(payload);
         toast.promise(req, {
-          loading: "Đang tạo sản phẩm...",
-          success: "Tạo sản phẩm thành công!",
-          error: "Tạo sản phẩm thất bại.",
+          loading: t("products.form.toast.creating"),
+          success: t("products.form.toast.createSuccess"),
+          error: t("products.form.toast.createError"),
         });
         await req;
       }
@@ -536,7 +542,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      toast.error("Đã xảy ra lỗi khi lưu sản phẩm.");
+      toast.error(t("products.form.messages.saveError"));
     } finally {
       setSaving(false);
     }
@@ -545,12 +551,12 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
   return (
     <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
       <h2 className="text-2xl font-semibold text-center">
-        {isEdit ? "Chỉnh sửa sản phẩm" : "Tạo sản phẩm mới"}
+        {isEdit ? t("products.form.title.edit") : t("products.form.title.create")}
       </h2>
 
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Thông tin cơ bản</h3>
+        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.basicInfo")}</h3>
 
         <div
           className={`grid grid-cols-1 ${
@@ -559,12 +565,12 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         >
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Tên sản phẩm *
+              {t("products.form.fields.productName")} *
             </label>
             <Input
               value={form.productName}
               onChange={(e) => setField("productName", e.target.value)}
-              placeholder="Nhập tên sản phẩm"
+              placeholder={t("products.form.placeholders.productName")}
               maxLength={100}
             />
           </div>
@@ -573,7 +579,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           {isEdit && (
             <div>
               <label className="block mb-1 text-sm font-medium">
-                Trạng thái *
+                {t("products.form.fields.status")} *
               </label>
               <select
                 className="w-full p-2 border rounded"
@@ -589,7 +595,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   )
                   .map((s) => (
                     <option key={s} value={s}>
-                      {ProductStatusLabel[s]}
+                      {getProductStatusLabel(s, t)}
                     </option>
                   ))}
               </select>
@@ -598,9 +604,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">Mô tả</label>
+          <label className="block mb-1 text-sm font-medium">{t("products.form.fields.description")}</label>
           <Textarea
-            placeholder="Nhập mô tả sản phẩm (tối đa 500 ký tự)"
+            placeholder={t("products.form.placeholders.description")}
             value={form.description}
             onChange={(e) => setField("description", e.target.value)}
             maxLength={500}
@@ -611,12 +617,12 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       {/* Pricing & Quantity */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Giá cả & Số lượng</h3>
+        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.pricingQuantity")}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Giá bán (VND/kg) *
+              {t("products.form.fields.unitPrice")} *
             </label>
             <Input
               type="number"
@@ -636,13 +642,13 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   e.preventDefault();
                 }
               }}
-              placeholder="0"
+              placeholder={t("products.form.placeholders.unitPrice")}
               className="no-spinner"
             />
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">Số lượng *</label>
+            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.quantityAvailable")} *</label>
             <Input
               type="number"
               min={0}
@@ -666,15 +672,18 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   e.preventDefault();
                 }
               }}
-              placeholder="0"
+              placeholder={t("products.form.placeholders.quantityAvailable")}
               className="no-spinner"
             />
             {form.inventoryId && getMaxQuantity() !== undefined && (
               <div className="text-xs text-blue-600 mt-1">
-                Số lượng có sẵn trong kho: {getMaxQuantity()} {form.unit}
+                {t("products.form.messages.availableInWarehouse", {
+                  quantity: getMaxQuantity(),
+                  unit: form.unit,
+                })}
                 {Number(form.quantityAvailable) > (getMaxQuantity() || 0) && (
                   <span className="text-red-600 ml-2">
-                    ⚠️ Vượt quá số lượng có sẵn
+                    {t("products.form.messages.quantityExceedsWarning")}
                   </span>
                 )}
               </div>
@@ -682,7 +691,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">Đơn vị *</label>
+            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.unit")} *</label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.unit}
@@ -697,15 +706,15 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             </select>
             {!form.inventoryId ? (
               <div className="text-xs text-gray-500 mt-1">
-                Vui lòng chọn kho trước
+                {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditUnit() ? (
               <div className="text-xs text-blue-600 mt-1">
-                Đã tự động chọn từ kho
+                {t("products.form.messages.autoSelectedFromInventory")}
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
-                Có thể chỉnh sửa
+                {t("products.form.messages.canEdit")}
               </div>
             )}
           </div>
@@ -715,13 +724,13 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       {/* References */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
-          Thông tin liên kết
+          {t("products.form.sections.references")}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Mã mẻ sơ chế *
+              {t("products.form.fields.batchId")} *
             </label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
@@ -729,7 +738,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("batchId", e.target.value)}
               disabled={loadingOptions || !canEditBatch()}
             >
-              <option value="">-- Chọn mẻ sơ chế --</option>
+              <option value="">{t("products.form.selectOptions.selectBatch")}</option>
               {batchOptions.map((batch) => (
                 <option key={batch.batchId} value={batch.batchId}>
                   {batch.batchCode}
@@ -738,15 +747,15 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             </select>
             {!form.inventoryId ? (
               <div className="text-xs text-gray-500 mt-1">
-                Vui lòng chọn kho trước
+                {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditBatch() ? (
               <div className="text-xs text-blue-600 mt-1">
-                Đã tự động chọn từ kho
+                {t("products.form.messages.autoSelectedFromInventory")}
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
-                Có thể chỉnh sửa
+                {t("products.form.messages.canEdit")}
               </div>
             )}
             {/* Debug info */}
@@ -758,7 +767,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">Mã kho *</label>
+            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.inventoryId")} *</label>
             <select
               className="w-full p-2 border rounded"
               value={form.inventoryId}
@@ -769,7 +778,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               }}
               disabled={loadingOptions}
             >
-              <option value="">-- Chọn kho --</option>
+              <option value="">{t("products.form.selectOptions.selectInventory")}</option>
               {inventoryOptions.map((inventory) => (
                 <option
                   key={inventory.inventoryId}
@@ -797,7 +806,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Loại cà phê *
+              {t("products.form.fields.coffeeTypeId")} *
             </label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
@@ -805,7 +814,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("coffeeTypeId", e.target.value)}
               disabled={loadingOptions || !canEditCoffeeType()}
             >
-              <option value="">-- Chọn loại cà phê --</option>
+              <option value="">{t("products.form.selectOptions.selectCoffeeType")}</option>
               {coffeeTypes.map((type) => (
                 <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
                   {type.typeName}
@@ -814,15 +823,15 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             </select>
             {!form.inventoryId ? (
               <div className="text-xs text-gray-500 mt-1">
-                Vui lòng chọn kho trước
+                {t("products.form.messages.selectInventoryFirst")}
               </div>
             ) : !canEditCoffeeType() ? (
               <div className="text-xs text-blue-600 mt-1">
-                Đã tự động chọn từ kho
+                {t("products.form.messages.autoSelectedFromInventory")}
               </div>
             ) : (
               <div className="text-xs text-green-600 mt-1">
-                Có thể chỉnh sửa
+                {t("products.form.messages.canEdit")}
               </div>
             )}
             {/* Debug info
@@ -838,30 +847,30 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       {/* Origin Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
-          Thông tin nguồn gốc
+          {t("products.form.sections.originInfo")}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Vùng sản xuất
+              {t("products.form.fields.originRegion")}
             </label>
             <Input
               value={form.originRegion}
               onChange={(e) => setField("originRegion", e.target.value)}
-              placeholder="Nhập vùng sản xuất"
+              placeholder={t("products.form.placeholders.originRegion")}
               maxLength={100}
             />
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Vị trí nông trại
+              {t("products.form.fields.originFarmLocation")}
             </label>
             <Input
               value={form.originFarmLocation}
               onChange={(e) => setField("originFarmLocation", e.target.value)}
-              placeholder="Nhập vị trí nông trại"
+              placeholder={t("products.form.placeholders.originFarmLocation")}
               maxLength={200}
             />
           </div>
@@ -870,27 +879,27 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Mã chỉ dẫn địa lý
+              {t("products.form.fields.geographicalIndicationCode")}
             </label>
             <Input
               value={form.geographicalIndicationCode}
               onChange={(e) =>
                 setField("geographicalIndicationCode", e.target.value)
               }
-              placeholder="Nhập mã chỉ dẫn địa lý"
+              placeholder={t("products.form.placeholders.geographicalIndicationCode")}
               maxLength={50}
             />
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Đường dẫn chứng nhận
+              {t("products.form.fields.certificationUrl")}
             </label>
             <Input
               type="url"
               value={form.certificationUrl}
               onChange={(e) => setField("certificationUrl", e.target.value)}
-              placeholder="https://example.com/certification"
+              placeholder={t("products.form.placeholders.certificationUrl")}
             />
           </div>
         </div>
@@ -899,25 +908,25 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       {/* Quality Assessment */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
-          Đánh giá chất lượng
+          {t("products.form.sections.qualityAssessment")}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Chất lượng đánh giá
+              {t("products.form.fields.evaluatedQuality")}
             </label>
             <Input
               value={form.evaluatedQuality}
               onChange={(e) => setField("evaluatedQuality", e.target.value)}
-              placeholder="Nhập chất lượng đánh giá"
+              placeholder={t("products.form.placeholders.evaluatedQuality")}
               maxLength={50}
             />
           </div>
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Điểm đánh giá (0-100)
+              {t("products.form.fields.evaluationScore")}
             </label>
             <Input
               type="number"
@@ -931,7 +940,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                   e.target.value === "" ? "" : Number(e.target.value)
                 )
               }
-              placeholder="0-100"
+              placeholder={t("products.form.placeholders.evaluationScore")}
               className="no-spinner"
             />
           </div>
@@ -940,14 +949,14 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       {/* Approval */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Phê duyệt</h3>
+        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.approval")}</h3>
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Ghi chú duyệt
+            {t("products.form.fields.approvalNote")}
           </label>
           <Textarea
-            placeholder="Nhập ghi chú duyệt (tối đa 50 ký tự)"
+            placeholder={t("products.form.placeholders.approvalNote")}
             value={form.approvalNote}
             onChange={(e) => setField("approvalNote", e.target.value)}
             maxLength={50}
@@ -958,10 +967,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit} disabled={saving}>
-          {isEdit ? "Lưu thay đổi" : "Tạo sản phẩm"}
+          {isEdit ? t("products.form.actions.update") : t("products.form.actions.create")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Quay lại
+          {t("products.form.actions.back")}
         </Button>
       </DialogFooter>
     </form>

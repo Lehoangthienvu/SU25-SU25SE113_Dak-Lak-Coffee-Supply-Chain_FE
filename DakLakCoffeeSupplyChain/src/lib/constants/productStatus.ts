@@ -12,6 +12,7 @@ export enum ProductStatus {
 
 export type ProductStatusValue = keyof typeof ProductStatus;
 
+// Legacy constants - kept for backward compatibility
 export const ProductStatusMap: Record<
   ProductStatusValue,
   { label: string; color: string; icon: string }
@@ -33,6 +34,36 @@ export const ProductStatusLabel: Record<ProductStatusValue, string> = {
   InStock: "Còn hàng",
   OutOfStock: "Hết hàng",
   Archived: "Ngừng kinh doanh",
+};
+
+// New i18n-aware functions
+export const getProductStatusLabel = (status: ProductStatusValue, t: (key: string) => string): string => {
+  const statusKeyMap: Record<ProductStatusValue, string> = {
+    Draft: "productStatus.draft",
+    Pending: "productStatus.pending",
+    Approved: "productStatus.approved",
+    Rejected: "productStatus.rejected",
+    InStock: "productStatus.inStock",
+    OutOfStock: "productStatus.outOfStock",
+    Archived: "productStatus.archived",
+  };
+  
+  return t(statusKeyMap[status]);
+};
+
+export const getProductStatusMap = (t: (key: string) => string): Record<
+  ProductStatusValue,
+  { label: string; color: string; icon: string }
+> => {
+  return {
+    Draft: { label: t("productStatus.draft"), color: "gray", icon: "📝" },
+    Pending: { label: t("productStatus.pending"), color: "yellow", icon: "⏳" },
+    Approved: { label: t("productStatus.approved"), color: "green", icon: "✅" },
+    Rejected: { label: t("productStatus.rejected"), color: "red", icon: "❌" },
+    InStock: { label: t("productStatus.inStock"), color: "blue", icon: "📦" },
+    OutOfStock: { label: t("productStatus.outOfStock"), color: "orange", icon: "🚫" },
+    Archived: { label: t("productStatus.archived"), color: "gray", icon: "📁" },
+  };
 };
 
 

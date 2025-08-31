@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getProductById, ProductViewDetailsDto } from "@/lib/api/products";
@@ -19,7 +20,7 @@ import {
   Ruler,
   UserCheck,
 } from "lucide-react";
-import { ProductStatusMap } from "@/lib/constants/productStatus";
+import { ProductStatusMap, getProductStatusMap } from "@/lib/constants/productStatus";
 
 function formatDate(dateStr?: string | null) {
   if (!dateStr) return "—";
@@ -32,6 +33,7 @@ function formatDate(dateStr?: string | null) {
 }
 
 export default function ProductDetailsPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [product, setProduct] = useState<ProductViewDetailsDto | null>(null);
@@ -49,11 +51,12 @@ export default function ProductDetailsPage() {
     })();
   }, [id]);
 
-  if (loading) return <div className="p-6">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-6">{t("products.detail.loading")}</div>;
   if (!product)
-    return <div className="p-6 text-red-500">Không tìm thấy sản phẩm.</div>;
+    return <div className="p-6 text-red-500">{t("products.detail.notFound")}</div>;
 
-  const statusMeta = ProductStatusMap[product.status];
+  const productStatusMap = getProductStatusMap(t);
+  const statusMeta = productStatusMap[product.status];
 
   return (
     <div className="w-full min-h-screen bg-orange-50 px-4 py-6 lg:px-20 flex justify-center">
@@ -77,11 +80,11 @@ export default function ProductDetailsPage() {
               </div>
               <div className="text-xs text-gray-500 mt-1 flex items-center gap-4">
                 <span className="inline-flex items-center gap-1">
-                  <CalendarDays className="w-3 h-3" /> Tạo:{" "}
+                  <CalendarDays className="w-3 h-3" /> {t("products.detail.dateLabels.created")}{" "}
                   {formatDate(product.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  Cập nhật: {formatDate(product.updatedAt)}
+                  {t("products.detail.dateLabels.updated")} {formatDate(product.updatedAt)}
                 </span>
               </div>
             </div>
@@ -95,7 +98,7 @@ export default function ProductDetailsPage() {
                 )
               }
             >
-              Chỉnh sửa
+              {t("products.detail.actions.edit")}
             </Button>
           </div>
         </div>
@@ -104,38 +107,38 @@ export default function ProductDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Thông tin sản phẩm</CardTitle>
+              <CardTitle>{t("products.detail.sections.productInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<Hash className="w-4 h-4" />}
-                label="Mã sản phẩm"
+                label={t("products.detail.fields.productCode")}
                 value={product.productCode}
               />
               <InfoRow
                 icon={<ClipboardList className="w-4 h-4" />}
-                label="Mô tả"
+                label={t("products.detail.fields.description")}
                 value={product.description || "—"}
                 multiline
               />
               <InfoRow
                 icon={<Ruler className="w-4 h-4" />}
-                label="Đơn vị"
+                label={t("products.detail.fields.unit")}
                 value={product.unit || "—"}
               />
               <InfoRow
                 icon={<BadgeInfo className="w-4 h-4" />}
-                label="Loại cà phê"
+                label={t("products.detail.fields.coffeeType")}
                 value={product.coffeeTypeName || "—"}
               />
               <InfoRow
                 icon={<Factory className="w-4 h-4" />}
-                label="Kho"
+                label={t("products.detail.fields.warehouse")}
                 value={product.inventoryLocation || "—"}
               />
               <InfoRow
                 icon={<FileText className="w-4 h-4" />}
-                label="Lô chế biến"
+                label={t("products.detail.fields.batchCode")}
                 value={product.batchCode || "—"}
               />
             </CardContent>
@@ -143,37 +146,37 @@ export default function ProductDetailsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Chất lượng & nguồn gốc</CardTitle>
+              <CardTitle>{t("products.detail.sections.qualityOrigin")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<MapPin className="w-4 h-4" />}
-                label="Khu vực"
+                label={t("products.detail.fields.region")}
                 value={product.originRegion || "—"}
               />
               <InfoRow
                 icon={<MapPin className="w-4 h-4" />}
-                label="Trang trại"
+                label={t("products.detail.fields.farm")}
                 value={product.originFarmLocation || "—"}
               />
               <InfoRow
                 icon={<BadgeInfo className="w-4 h-4" />}
-                label="Mã chỉ dẫn địa lý"
+                label={t("products.detail.fields.geographicalIndicationCode")}
                 value={product.geographicalIndicationCode || "—"}
               />
               <InfoRow
                 icon={<BadgeInfo className="w-4 h-4" />}
-                label="Chứng nhận"
+                label={t("products.detail.fields.certification")}
                 value={product.certificationUrl || "—"}
               />
               <InfoRow
                 icon={<CheckCircle className="w-4 h-4" />}
-                label="Chất lượng"
+                label={t("products.detail.fields.quality")}
                 value={product.evaluatedQuality || "—"}
               />
               <InfoRow
                 icon={<CheckCircle className="w-4 h-4" />}
-                label="Điểm đánh giá"
+                label={t("products.detail.fields.evaluationScore")}
                 value={
                   product.evaluationScore != null
                     ? String(product.evaluationScore)
@@ -187,12 +190,12 @@ export default function ProductDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Giá & tồn kho</CardTitle>
+              <CardTitle>{t("products.detail.sections.pricingInventory")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<FileText className="w-4 h-4" />}
-                label="Đơn giá"
+                label={t("products.detail.fields.unitPrice")}
                 value={
                   product.unitPrice != null
                     ? `${product.unitPrice.toLocaleString()} VND/kg`
@@ -201,7 +204,7 @@ export default function ProductDetailsPage() {
               />
               <InfoRow
                 icon={<FileText className="w-4 h-4" />}
-                label="SL có sẵn"
+                label={t("products.detail.fields.availableQuantity")}
                 value={
                   product.quantityAvailable != null
                     ? formatQuantity(product.quantityAvailable)
@@ -213,22 +216,22 @@ export default function ProductDetailsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Phê duyệt</CardTitle>
+              <CardTitle>{t("products.detail.sections.approval")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<UserCheck className="w-4 h-4" />}
-                label="Người duyệt"
+                label={t("products.detail.fields.approver")}
                 value={product.approvedByName || "—"}
               />
               <InfoRow
                 icon={<CalendarDays className="w-4 h-4" />}
-                label="Ngày duyệt"
+                label={t("products.detail.fields.approvalDate")}
                 value={formatDate(product.approvedAt)}
               />
               <InfoRow
                 icon={<FileText className="w-4 h-4" />}
-                label="Ghi chú duyệt"
+                label={t("products.detail.fields.approvalNote")}
                 value={product.approvalNote || "—"}
                 multiline
               />
@@ -242,7 +245,7 @@ export default function ProductDetailsPage() {
             variant="outline"
             onClick={() => router.push(`/dashboard/manager/products`)}
           >
-            ← Quay lại
+            {t("products.detail.actions.back")}
           </Button>
         </div>
       </div>
