@@ -24,21 +24,21 @@ i18n
       vi: {
         translation: {
           ...vi,
+          ...commonVi,
           ...procurementPlanVi,
           ...farmingcommitmentVi,
           ...cultivationRegistrationVi,
-          ...marketplaceVi,
-          ...commonVi
+          ...marketplaceVi
         }
       },
       en: {
         translation: {
           ...en,
+          ...commonEn,
           ...procurementPlanEn,
           ...farmingcommitmentEn,
           ...cultivationRegistrationEn,
-          ...marketplaceEn,
-          ...commonEn
+          ...marketplaceEn
         }
       }
     },

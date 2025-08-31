@@ -146,27 +146,27 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Sàn thu mua cà phê",
+        title: t('sidebar.navigation.coffeeMarketplace'),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
       },
       {
-        title: "Cam kết kế hoạch thu mua",
+        title: t('sidebar.navigation.farmingCommitments'),
         href: "/dashboard/farmer/farming-commitments",
         icon: iconMap.contracts,
       },
       {
-        title: "Mùa vụ",
+        title: t('sidebar.navigation.cropSeasons'),
         href: "/dashboard/farmer/crop-seasons",
         icon: iconMap.crops,
       },
       {
-        title: "Tư vấn",
+        title: t('sidebar.navigation.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },
       {
-        title: "Gửi yêu cầu giao hàng",
+        title: t('sidebar.navigation.deliveryRequests'),
         href: "/dashboard/farmer/warehouse-request",
         icon: <FiTruck />,
       },
@@ -179,32 +179,32 @@ export function SidebarGroup() {
     admin: [
       { title: t('sidebar.navigation.overview'), href: "/dashboard/admin", icon: iconMap.dashboard },
       {
-        title: "Quản lý người dùng",
+        title: t('sidebar.navigation.userManagement'),
         href: "/dashboard/admin/users",
         icon: iconMap.users,
       },
       {
-        title: "Quản lý chuyên gia",
+        title: t('sidebar.navigation.expertManagement'),
         href: "/dashboard/admin/experts",
         icon: <FiUsers />,
       },
       {
-        title: "Quản lý nông dân",
+        title: t('sidebar.navigation.farmerManagement'),
         href: "/dashboard/admin/farmers",
         icon: <FiUsers />,
       },
       {
-        title: "Hợp đồng",
+        title: t('sidebar.navigation.contracts'),
         href: "/dashboard/admin/contracts",
         icon: iconMap.contracts,
       },
       {
-        title: "Báo cáo",
+        title: t('sidebar.navigation.reports'),
         href: "/dashboard/admin/reports",
         icon: iconMap.reports,
       },
       {
-        title: "Cài đặt",
+        title: t('sidebar.navigation.settings'),
         href: "/dashboard/admin/settings",
         icon: iconMap.settings,
       },
@@ -221,17 +221,17 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Tư vấn",
+        title: t('sidebar.navigation.consultation'),
         href: "/dashboard/expert/anomalies",
         icon: iconMap.consultation,
       },
       {
-        title: "Đánh giá",
+        title: t('sidebar.navigation.evaluations'),
         href: "/dashboard/expert/evaluations",
         icon: <FiBarChart2 />,
       },
       {
-        title: "Bài viết",
+        title: t('sidebar.navigation.articles'),
         href: "/dashboard/expert/articles",
         icon: iconMap.articles,
       },
@@ -326,7 +326,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 {iconMap.articles}
               </span>
-              <span className="truncate">Sơ chế</span>
+              <span className="truncate">{t('sidebar.navigation.processing')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", processingOpen && "rotate-180")}
@@ -343,7 +343,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách lô sơ chế
+                {t('sidebar.navigation.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/progresses"
@@ -354,7 +354,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tiến trình lô sơ chế
+                {t('sidebar.navigation.processingProgresses')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/wastes"
@@ -365,7 +365,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Chất thải lô sơ chế
+                {t('sidebar.navigation.processingWastes')}
               </Link>
             </div>
           )}
