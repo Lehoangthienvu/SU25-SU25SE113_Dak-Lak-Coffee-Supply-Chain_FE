@@ -8,6 +8,7 @@ import {
     updateExpertAdvice,
 } from '@/lib/api/expertAdvice';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
     X,
     Edit2,
@@ -30,29 +31,31 @@ type Props = {
 };
 
 export default function AdviceHistoryDialog({ advices, onClose }: Props) {
+    const { t } = useTranslation();
     const [fullAdvices, setFullAdvices] = useState<ExpertAdvice[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<ExpertAdvice>>({});
 
-    // Hàm chuyển đổi loại phản hồi sang tiếng Việt
-    const getResponseTypeInVietnamese = (responseType: string): string => {
-        const typeMap: Record<string, string> = {
-            'Corrective': 'Khắc phục',
-            'Preventive': 'Phòng ngừa',
-            'Observation': 'Nhận xét',
-            'Advisory': 'Tư vấn',
-            'Emergency': 'Khẩn cấp',
-            'Routine': 'Thường xuyên',
-            'corrective': 'Khắc phục',
-            'preventive': 'Phòng ngừa',
-            'observation': 'Nhận xét',
-            'advisory': 'Tư vấn',
-            'emergency': 'Khẩn cấp',
-            'routine': 'Thường xuyên'
+    // Hàm chuyển đổi loại phản hồi sang ngôn ngữ hiện tại
+    const getResponseTypeLabel = (responseType: string): string => {
+        const typeKeyMap: Record<string, string> = {
+            'Corrective': 'corrective',
+            'Preventive': 'preventive',
+            'Observation': 'observation',
+            'Advisory': 'advisory',
+            'Emergency': 'emergency',
+            'Routine': 'routine',
+            'corrective': 'corrective',
+            'preventive': 'preventive',
+            'observation': 'observation',
+            'advisory': 'advisory',
+            'emergency': 'emergency',
+            'routine': 'routine'
         };
 
-        return typeMap[responseType] || responseType;
+        const key = typeKeyMap[responseType];
+        return key ? t(`expertAnomalies.adviceHistoryDialog.responseTypes.${key}`) : responseType;
     };
 
     useEffect(() => {
@@ -61,14 +64,14 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                 const results = await Promise.all(advices.map((a) => getExpertAdviceById(a.adviceId)));
                 setFullAdvices(results);
             } catch {
-                toast.error('Không thể tải đầy đủ chi tiết phản hồi.');
+                toast.error(t('expertAnomalies.adviceHistoryDialog.messages.loadDetailsError'));
             } finally {
                 setLoading(false);
             }
         };
 
         fetchAllDetails();
-    }, [advices]);
+    }, [advices, t]);
 
     const handleStartEdit = (advice: ExpertAdvice) => {
         setEditingId(advice.adviceId);
@@ -89,25 +92,25 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                 attachedFileUrl: editForm.attachedFileUrl,
             });
 
-            toast.success('Cập nhật thành công.');
+            toast.success(t('expertAnomalies.adviceHistoryDialog.messages.updateSuccess'));
             setEditingId(null);
 
             const updated = await getExpertAdviceById(adviceId);
             setFullAdvices((prev) => prev.map((a) => (a.adviceId === adviceId ? updated : a)));
         } catch {
-            toast.error('Cập nhật thất bại.');
+            toast.error(t('expertAnomalies.adviceHistoryDialog.messages.updateError'));
         }
     };
 
     const handleDelete = async (adviceId: string) => {
-        if (!confirm('Bạn có chắc muốn xoá phản hồi này?')) return;
+        if (!confirm(t('expertAnomalies.adviceHistoryDialog.messages.deleteConfirm'))) return;
 
         try {
             await softDeleteExpertAdvice(adviceId);
-            toast.success('Đã xoá phản hồi.');
+            toast.success(t('expertAnomalies.adviceHistoryDialog.messages.deleteSuccess'));
             setFullAdvices((prev) => prev.filter((a) => a.adviceId !== adviceId));
         } catch {
-            toast.error('Xoá thất bại.');
+            toast.error(t('expertAnomalies.adviceHistoryDialog.messages.deleteError'));
         }
     };
 
@@ -119,7 +122,7 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                         <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
                             <FileText className="w-4 h-4 text-orange-600" />
                         </div>
-                        <h2 className="text-xl font-semibold text-gray-800">Lịch sử phản hồi</h2>
+                        <h2 className="text-xl font-semibold text-gray-800">{t('expertAnomalies.adviceHistoryDialog.title')}</h2>
                     </div>
                     <Button
                         variant="ghost"
@@ -136,15 +139,15 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                         <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
                             <div className="w-6 h-6 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
                         </div>
-                        <p className="text-gray-500">Đang tải chi tiết phản hồi...</p>
+                        <p className="text-gray-500">{t('expertAnomalies.adviceHistoryDialog.loading')}</p>
                     </div>
                 ) : fullAdvices.length === 0 ? (
                     <div className="text-center py-8">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                             <FileText className="w-8 h-8 text-gray-400" />
                         </div>
-                        <p className="text-gray-500 font-medium">Chưa có phản hồi nào</p>
-                        <p className="text-gray-400 text-sm">Chưa có phản hồi nào cho báo cáo này</p>
+                        <p className="text-gray-500 font-medium">{t('expertAnomalies.adviceHistoryDialog.noAdvices.title')}</p>
+                        <p className="text-gray-400 text-sm">{t('expertAnomalies.adviceHistoryDialog.noAdvices.description')}</p>
                     </div>
                 ) : (
                     <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
@@ -193,7 +196,7 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                         <div className="space-y-4">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Loại phản hồi</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('expertAnomalies.adviceHistoryDialog.form.responseType')}</label>
                                                     <Input
                                                         name="responseType"
                                                         value={editForm.responseType || ''}
@@ -202,7 +205,7 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Nguồn tư vấn</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('expertAnomalies.adviceHistoryDialog.form.adviceSource')}</label>
                                                     <Input
                                                         name="adviceSource"
                                                         value={editForm.adviceSource || ''}
@@ -212,7 +215,7 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('expertAnomalies.adviceHistoryDialog.form.content')}</label>
                                                 <Textarea
                                                     name="adviceText"
                                                     value={editForm.adviceText || ''}
@@ -222,13 +225,13 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Tệp đính kèm (URL)</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('expertAnomalies.adviceHistoryDialog.form.attachedFile')}</label>
                                                 <Input
                                                     name="attachedFileUrl"
                                                     value={editForm.attachedFileUrl || ''}
                                                     onChange={(e) => setEditForm({ ...editForm, attachedFileUrl: e.target.value })}
                                                     className="w-full"
-                                                    placeholder="https://example.com/file.pdf"
+                                                    placeholder={t('expertAnomalies.adviceHistoryDialog.form.attachedFilePlaceholder')}
                                                 />
                                             </div>
                                             <div className="flex gap-3 pt-2">
@@ -237,31 +240,31 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                                     className="bg-green-600 hover:bg-green-700 text-white"
                                                 >
                                                     <Save size={16} className="mr-2" />
-                                                    Lưu thay đổi
+                                                    {t('expertAnomalies.adviceHistoryDialog.actions.save')}
                                                 </Button>
                                                 <Button
                                                     variant="outline"
                                                     onClick={() => setEditingId(null)}
                                                 >
                                                     <XCircle size={16} className="mr-2" />
-                                                    Huỷ
+                                                    {t('expertAnomalies.adviceHistoryDialog.actions.cancel')}
                                                 </Button>
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-sm">
-                                                <span className="text-gray-600">Loại:</span>
+                                                <span className="text-gray-600">{t('expertAnomalies.adviceHistoryDialog.labels.type')}</span>
                                                 <span className="font-medium text-gray-800">
-                                                    {getResponseTypeInVietnamese(advice.responseType)}
+                                                    {getResponseTypeLabel(advice.responseType)}
                                                 </span>
                                                 <span className="text-gray-400">•</span>
-                                                <span className="text-gray-600">Nguồn:</span>
+                                                <span className="text-gray-600">{t('expertAnomalies.adviceHistoryDialog.labels.source')}</span>
                                                 <span className="font-medium text-gray-800">{advice.adviceSource}</span>
                                             </div>
                                             <div className="bg-gray-50 rounded-lg p-4">
                                                 <p className="text-gray-800 whitespace-pre-wrap">
-                                                    {advice.adviceText || '(Không có nội dung)'}
+                                                    {advice.adviceText || t('expertAnomalies.adviceHistoryDialog.form.noContent')}
                                                 </p>
                                             </div>
                                             {advice.attachedFileUrl && (
@@ -273,7 +276,7 @@ export default function AdviceHistoryDialog({ advices, onClose }: Props) {
                                                         className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-800 font-medium"
                                                     >
                                                         <Paperclip size={16} />
-                                                        Xem tệp đính kèm
+                                                        {t('expertAnomalies.adviceHistoryDialog.actions.viewAttachment')}
                                                     </a>
                                                 </div>
                                             )}
