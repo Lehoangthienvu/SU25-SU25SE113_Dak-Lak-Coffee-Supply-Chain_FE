@@ -112,7 +112,7 @@ export default function ShipmentForm({
         setOrderItems(detail.orderItems || []);
       } catch (e) {
         console.error(e);
-        toast.error(t('shipments.form.validation.loadOrderItemsFailed'));
+        toast.error(t("shipments.form.validation.loadOrderItemsFailed"));
       }
     })();
   }, [formData?.orderId, t]);
@@ -138,7 +138,7 @@ export default function ShipmentForm({
   if (!formData) {
     return (
       <div className="text-gray-500 text-center py-10">
-        {t('shipments.form.loading')}
+        {t("shipments.form.loading")}
       </div>
     );
   }
@@ -199,13 +199,14 @@ export default function ShipmentForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formData) {
-      toast.error(t('shipments.form.validation.formNotReady'));
+      toast.error(t("shipments.form.validation.formNotReady"));
       return;
     }
     const data: FormState = formData;
-    if (!data.orderId) return toast.error(t('shipments.form.validation.selectOrder'));
+    if (!data.orderId)
+      return toast.error(t("shipments.form.validation.selectOrder"));
     if (!data.deliveryStaffId)
-      return toast.error(t('shipments.form.validation.selectStaff'));
+      return toast.error(t("shipments.form.validation.selectStaff"));
 
     const shippedAtStr = data.shippedAt
       ? toDateOnly(data.shippedAt)
@@ -235,7 +236,7 @@ export default function ShipmentForm({
         };
         console.log("[ShipmentForm] Update payload:", payload);
         await updateShipment(payload.shipmentId, payload);
-        toast.success(t('shipments.form.success.update'));
+        toast.success(t("shipments.form.success.update"));
         console.log("[ShipmentForm] Update success");
       } else {
         const payload: ShipmentCreateDto = {
@@ -254,7 +255,7 @@ export default function ShipmentForm({
         };
         console.log("[ShipmentForm] Create payload:", payload);
         const newId = await createShipment(payload);
-        toast.success(t('shipments.form.success.create'));
+        toast.success(t("shipments.form.success.create"));
         console.log("[ShipmentForm] Create success id=", newId);
       }
       onSuccess();
@@ -263,7 +264,7 @@ export default function ShipmentForm({
       if (err?.response) {
         console.error("[ShipmentForm] Error response:", err.response?.data);
       }
-      toast.error(t('shipments.form.validation.saveFailed'));
+      toast.error(t("shipments.form.validation.saveFailed"));
     }
   }
 
@@ -276,13 +277,17 @@ export default function ShipmentForm({
       className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-8"
     >
       <h2 className="text-2xl font-semibold text-center mb-6">
-        {isEdit ? t('shipments.form.title.edit') : t('shipments.form.title.create')}
+        {isEdit
+          ? t("shipments.form.title.edit")
+          : t("shipments.form.title.create")}
       </h2>
 
       {/* Đơn hàng + Nhân viên giao */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.order')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.order")} <span className="text-red-500">*</span>
+          </label>
           {isEdit ? (
             <Input
               value={orderCodeDisplay || formData.orderId}
@@ -296,7 +301,7 @@ export default function ShipmentForm({
                 value={formData.orderId}
                 onChange={(e) => handleChange("orderId", e.target.value)}
               >
-                <option value="">{t('shipments.form.selectOrder')}</option>
+                <option value="">{t("shipments.form.selectOrder")}</option>
                 {orderOptions.map((o) => (
                   <option key={o.orderId} value={o.orderId}>
                     {o.orderCode}
@@ -304,7 +309,7 @@ export default function ShipmentForm({
                 ))}
               </select>
               <Input
-                placeholder={t('shipments.form.orderCodePlaceholder')}
+                placeholder={t("shipments.form.orderCodePlaceholder")}
                 className="h-10"
                 onChange={(e) => {
                   const code = e.target.value.trim().toLowerCase();
@@ -318,13 +323,16 @@ export default function ShipmentForm({
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.deliveryStaff')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.deliveryStaff")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
           <select
             className="w-full p-2 border rounded h-10"
             value={formData.deliveryStaffId}
             onChange={(e) => handleChange("deliveryStaffId", e.target.value)}
           >
-            <option value="">{t('shipments.form.selectStaff')}</option>
+            <option value="">{t("shipments.form.selectStaff")}</option>
             {deliveryStaffOptions.map((s) => (
               <option key={s.deliveryStaffId} value={s.deliveryStaffId}>
                 {s.name}
@@ -337,7 +345,9 @@ export default function ShipmentForm({
       {/* Thông tin giao hàng */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.shippedQuantity')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.shippedQuantity")}
+          </label>
           <Input
             type="number"
             min={0}
@@ -350,7 +360,9 @@ export default function ShipmentForm({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.status')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.status")}
+          </label>
           <select
             className="w-full p-2 border rounded h-10"
             value={formData.deliveryStatus}
@@ -362,9 +374,9 @@ export default function ShipmentForm({
             }
           >
             {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
-            <option value="Pending">{t('shipments.status.pending')}</option>
-            <option value="InTransit">{t('shipments.status.inTransit')}</option>
-            <option value="Delivered">{t('shipments.status.delivered')}</option>
+            <option value="Pending">{t("shipments.status.pending")}</option>
+            <option value="InTransit">{t("shipments.status.inTransit")}</option>
+            <option value="Delivered">{t("shipments.status.delivered")}</option>
           </select>
         </div>
       </div>
@@ -372,7 +384,9 @@ export default function ShipmentForm({
       {/* Date pickers nhóm cuối bên trái */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.shippedAt')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.shippedAt")}
+          </label>
           <DatePicker
             className="h-10"
             value={shippedStr}
@@ -380,7 +394,9 @@ export default function ShipmentForm({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{t('shipments.form.receivedAt')}</label>
+          <label className="text-sm font-medium">
+            {t("shipments.form.receivedAt")}
+          </label>
           <DatePicker
             className="h-10"
             value={receivedStr}
@@ -392,14 +408,21 @@ export default function ShipmentForm({
       {/* Danh sách sản phẩm giao */}
       <div>
         <label className="block mb-1 text-sm font-medium">
-          {t('shipments.form.productList')}
+          {t("shipments.form.productList")}{" "}
+          <span className="text-red-500">*</span>
         </label>
         {(formData.shipmentDetails?.length ?? 0) > 0 && (
           <div className="hidden md:grid md:grid-cols-6 gap-3 mb-1 text-xs font-medium text-muted-foreground">
-            <span>{t('shipments.form.table.orderItem')}</span>
-            <span className="text-left">{t('shipments.form.table.quantity')}</span>
-            <span>{t('shipments.form.table.unit')}</span>
-            <span className="col-span-3">{t('shipments.form.table.note')}</span>
+            <span>
+              {t("shipments.form.table.orderItem")}{" "}
+              <span className="text-red-500">*</span>
+            </span>
+            <span className="text-left">
+              {t("shipments.form.table.quantity")}{" "}
+              <span className="text-red-500">*</span>
+            </span>
+            <span>{t("shipments.form.table.unit")}</span>
+            <span className="col-span-3">{t("shipments.form.table.note")}</span>
             <span></span>
           </div>
         )}
@@ -411,7 +434,7 @@ export default function ShipmentForm({
               onChange={(e) => updateRow(idx, "orderItemId", e.target.value)}
               className="p-2 border rounded h-10"
             >
-              <option value="">{t('shipments.form.selectOrderItem')}</option>
+              <option value="">{t("shipments.form.selectOrderItem")}</option>
               {orderItems.map((opt) => (
                 <option key={opt.orderItemId} value={opt.orderItemId}>
                   {opt.productName}
@@ -439,7 +462,7 @@ export default function ShipmentForm({
             </select>
 
             <Input
-              placeholder={t('shipments.form.notePlaceholder')}
+              placeholder={t("shipments.form.notePlaceholder")}
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
               className="md:col-span-3 h-10"
@@ -450,7 +473,7 @@ export default function ShipmentForm({
               variant="destructive"
               onClick={() => removeRow(idx)}
             >
-              {t('shipments.form.delete')}
+              {t("shipments.form.delete")}
             </Button>
           </div>
         ))}
@@ -462,21 +485,26 @@ export default function ShipmentForm({
             onClick={addRow}
             disabled={!formData.orderId}
           >
-            {t('shipments.form.addRow')}
+            {t("shipments.form.addRow")}
           </Button>
           <div className="text-sm text-gray-600">
-            {t('shipments.form.totalQuantity')}{" "}
-            <strong>{sumQuantity().toLocaleString()}</strong> {t('shipments.form.kg')}
+            {t("shipments.form.totalQuantity")}{" "}
+            <strong>{sumQuantity().toLocaleString()}</strong>{" "}
+            {t("shipments.form.kg")}
           </div>
         </div>
       </div>
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit">
-          <h2>{isEdit ? t('shipments.form.buttons.save') : t('shipments.form.buttons.create')}</h2>
+          <h2>
+            {isEdit
+              ? t("shipments.form.buttons.save")
+              : t("shipments.form.buttons.create")}
+          </h2>
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {t('shipments.form.buttons.back')}
+          {t("shipments.form.buttons.back")}
         </Button>
       </DialogFooter>
     </form>
