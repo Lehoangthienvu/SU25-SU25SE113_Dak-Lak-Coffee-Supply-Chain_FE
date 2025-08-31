@@ -260,27 +260,27 @@ export function SidebarGroup() {
     ],
     manager: [
       {
-        title: "Tổng quan",
+        title: t('sidebar.navigation.overview'),
         href: "/dashboard/manager",
         icon: iconMap.dashboard,
       },
       {
-        title: "Mùa vụ",
+        title: t('sidebar.navigation.cropSeasons'),
         href: "/dashboard/manager/crop-seasons",
         icon: <FiClipboard />,
       },
       {
-        title: "Báo cáo",
+        title: t('sidebar.navigation.reports'),
         href: "/dashboard/manager/reports",
         icon: <FiFileText />,
       },
       {
-        title: "Tư vấn chuyên gia",
+        title: t('sidebar.navigation.expertAdvice'),
         href: "/dashboard/manager/expert-advice",
         icon: <FiMessageCircle />,
       },
       {
-        title: "Thông báo",
+        title: t('sidebar.navigation.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
@@ -392,7 +392,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiFileText />
               </span>
-              <span className="truncate">Hợp đồng & Giao hàng</span>
+              <span className="truncate">{t('sidebar.navigation.contractsAndDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", contractOpen && "rotate-180")}
@@ -409,7 +409,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Hợp đồng cung ứng
+                {t('sidebar.navigation.supplyContracts')}
               </Link>
               <Link
                 href="/dashboard/manager/contract-delivery-batches"
@@ -420,7 +420,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lịch giao hàng
+                {t('sidebar.navigation.deliverySchedule')}
               </Link>
               <Link
                 href="/dashboard/manager/procurement-plans"
@@ -431,7 +431,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Kế hoạch thu mua
+                {t('sidebar.navigation.procurementPlans')}
               </Link>
               <Link
                 href="/dashboard/manager/farming-commitments"
@@ -442,7 +442,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Cam kết kế hoạch thu mua
+                {t('sidebar.navigation.procurementCommitments')}
               </Link>
             </div>
           )}
@@ -466,7 +466,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiShoppingCart />
               </span>
-              <span className="truncate">Đơn hàng & Giao hàng</span>
+              <span className="truncate">{t('sidebar.navigation.ordersAndDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", orderOpen && "rotate-180")}
@@ -483,7 +483,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Đơn hàng
+                {t('sidebar.navigation.orders')}
               </Link>
               <Link
                 href="/dashboard/manager/shipments"
@@ -494,7 +494,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lô giao hàng
+                {t('sidebar.navigation.deliveryBatches')}
               </Link>
             </div>
           )}
@@ -519,7 +519,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiUsers />
               </span>
-              <span className="truncate">Khách hàng & Sản phẩm</span>
+              <span className="truncate">{t('sidebar.navigation.customersAndProducts')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", customerOpen && "rotate-180")}
@@ -536,7 +536,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Khách hàng doanh nghiệp
+                {t('sidebar.navigation.businessCustomers')}
               </Link>
               <Link
                 href="/dashboard/manager/products"
@@ -547,7 +547,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Sản phẩm
+                {t('sidebar.navigation.products')}
               </Link>
               <Link
                 href="/dashboard/manager/farmers"
@@ -558,7 +558,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Nông dân
+                {t('sidebar.navigation.farmers')}
               </Link>
             </div>
           )}
@@ -583,7 +583,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiBarChart2 />
               </span>
-              <span className="truncate">Báo cáo & Chế biến</span>
+              <span className="truncate">{t('sidebar.navigation.reportsAndProcessing')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", reportOpen && "rotate-180")}
@@ -600,7 +600,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Báo cáo
+                {t('sidebar.navigation.reports')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/batches"
@@ -611,7 +611,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách lô chế biến
+                {t('sidebar.navigation.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/farmer-batches"
@@ -622,7 +622,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Lô chế biến theo nông dân
+                {t('sidebar.navigation.farmerProcessingBatches')}
               </Link>
 
               <Link
@@ -634,7 +634,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tiến trình lô chế biến
+                {t('sidebar.navigation.processingProgress')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/wastes"
@@ -645,7 +645,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Chất thải lô chế biến
+                {t('sidebar.navigation.processingWaste')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/methods"
@@ -656,7 +656,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Phương pháp chế biến
+                {t('sidebar.navigation.processingMethods')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/parameters"
@@ -667,7 +667,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tham số chế biến
+                {t('sidebar.navigation.processingParameters')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/stages"
@@ -678,7 +678,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Công đoạn chế biến
+                {t('sidebar.navigation.processingStages')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/waste-disposals"
@@ -689,7 +689,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Xử lý chất thải lô chế biến
+                {t('sidebar.navigation.wasteDisposal')}
               </Link>
             </div>
           )}
@@ -712,7 +712,7 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiUsers />
               </span>
-              <span className="truncate">Quản lý nhân viên</span>
+              <span className="truncate">{t('sidebar.navigation.staffManagement')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", staffOpen && "rotate-180")}
@@ -729,7 +729,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Danh sách nhân viên
+                {t('sidebar.navigation.staffList')}
               </Link>
             </div>
           )}
@@ -742,25 +742,25 @@ export function SidebarGroup() {
           {(() => {
             const warehouseLinks = [
               {
-                label: "Kho hàng",
+                label: t('sidebar.navigation.warehouses'),
                 href: "/dashboard/manager/warehouses",
                 activeMatch: (path: string) =>
                   path === "/dashboard/manager/warehouses",
               },
               {
-                label: "Tồn kho",
+                label: t('sidebar.navigation.warehouseInventory'),
                 href: "/dashboard/manager/inventories",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/manager/inventories"),
               },
               {
-                label: "Lịch sử tồn kho",
+                label: t('sidebar.navigation.inventoryHistory'),
                 href: "/dashboard/manager/inventory-logs",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/manager/inventory-logs"),
               },
               {
-                label: "Yêu cầu xuất kho",
+                label: t('sidebar.navigation.outboundRequests'),
                 href: "/dashboard/manager/warehouse-request",
                 activeMatch: (path: string) =>
                   path === "/dashboard/manager/warehouse-request",

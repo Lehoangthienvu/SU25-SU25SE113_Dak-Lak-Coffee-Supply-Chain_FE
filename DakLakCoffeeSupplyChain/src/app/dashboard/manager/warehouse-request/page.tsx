@@ -122,8 +122,7 @@ export default function ManagerOutboundRequestList() {
       {/* Header với gradient */}
       <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
-          <Package className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">📦 {t('managerWarehouseRequest.title')}</h1>
+          <h1 className="text-2xl font-bold">{t('managerWarehouseRequest.title')}</h1>
         </div>
         <p className="text-orange-100 text-base">{t('managerWarehouseRequest.subtitle')}</p>
       </div>
