@@ -6157,6 +6157,200 @@
       "pendingProducts": "Pending Products",
       "completedProducts": "Completed Products",
       "totalQuantity": "Total Quantity"
+    },
+    "page": {
+      "searchTitle": "Search Products",
+      "searchPlaceholder": "Search...",
+      "dateRange": {
+        "fromDate": "From Date",
+        "toDate": "To Date"
+      },
+      "actions": {
+        "createProduct": "+ Create New Product"
+      },
+      "table": {
+        "displayOptions": {
+          "show": "Show",
+          "rows": "rows"
+        },
+        "headers": {
+          "expand": "",
+          "productCode": "Product Code",
+          "productName": "Product Name",
+          "coffeeType": "Coffee Type",
+          "warehouse": "Warehouse",
+          "availableQuantity": "Available Qty",
+          "status": "Status",
+          "createdAt": "Created At",
+          "actions": "Actions"
+        },
+        "tooltips": {
+          "expand": "Expand",
+          "collapse": "Collapse",
+          "viewDetails": "View Details",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "expandedInfo": {
+          "unitPrice": "Unit Price",
+          "quality": "Quality",
+          "evaluationScore": "Evaluation Score",
+          "origin": "Origin",
+          "batchCode": "Batch Code",
+          "unit": "Unit"
+        }
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "/",
+        "products": "products",
+        "page": "Page",
+        "previous": "← Previous",
+        "next": "Next →"
+      },
+      "deleteDialog": {
+        "title": "Delete Product?",
+        "description": "Are you sure you want to delete product",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "loading": "Loading data...",
+      "noData": "No products found"
+    },
+    "form": {
+      "title": {
+        "create": "Create New Product",
+        "edit": "Edit Product"
+      },
+      "sections": {
+        "basicInfo": "Basic Information",
+        "pricingQuantity": "Pricing & Quantity",
+        "references": "Reference Information",
+        "originInfo": "Origin Information",
+        "qualityAssessment": "Quality Assessment",
+        "approval": "Approval"
+      },
+      "fields": {
+        "productName": "Product Name",
+        "description": "Description",
+        "unitPrice": "Unit Price (VND/kg)",
+        "quantityAvailable": "Quantity",
+        "unit": "Unit",
+        "batchId": "Processing Batch Code",
+        "inventoryId": "Warehouse Code",
+        "coffeeTypeId": "Coffee Type",
+        "originRegion": "Origin Region",
+        "originFarmLocation": "Farm Location",
+        "geographicalIndicationCode": "Geographical Indication Code",
+        "certificationUrl": "Certification URL",
+        "evaluatedQuality": "Evaluated Quality",
+        "evaluationScore": "Evaluation Score (0-100)",
+        "status": "Status",
+        "approvalNote": "Approval Note"
+      },
+      "placeholders": {
+        "productName": "Enter product name",
+        "description": "Enter product description (max 500 characters)",
+        "unitPrice": "0",
+        "quantityAvailable": "0",
+        "originRegion": "Enter origin region",
+        "originFarmLocation": "Enter farm location",
+        "geographicalIndicationCode": "Enter geographical indication code",
+        "certificationUrl": "https://example.com/certification",
+        "evaluatedQuality": "Enter evaluated quality",
+        "evaluationScore": "0-100",
+        "approvalNote": "Enter approval note (max 50 characters)"
+      },
+      "selectOptions": {
+        "selectBatch": "-- Select Processing Batch --",
+        "selectInventory": "-- Select Warehouse --",
+        "selectCoffeeType": "-- Select Coffee Type --"
+      },
+      "validation": {
+        "productNameRequired": "Please enter product name.",
+        "productNameTooLong": "Product name cannot exceed 100 characters.",
+        "descriptionTooLong": "Product description cannot exceed 500 characters.",
+        "unitPriceRequired": "Unit price must be greater than 0.",
+        "quantityRequired": "Quantity must be greater than or equal to 0.",
+        "quantityExceedsAvailable": "Quantity cannot exceed {{maxQuantity}} {{unit}} available in warehouse.",
+        "batchRequired": "Please select processing batch code.",
+        "inventoryRequired": "Please select warehouse code.",
+        "coffeeTypeRequired": "Please select coffee type.",
+        "originRegionTooLong": "Origin region cannot exceed 100 characters.",
+        "originFarmLocationTooLong": "Farm location cannot exceed 200 characters.",
+        "geographicalIndicationCodeTooLong": "Geographical indication code cannot exceed 50 characters.",
+        "evaluatedQualityTooLong": "Evaluated quality cannot exceed 50 characters.",
+        "evaluationScoreRange": "Evaluation score must be between 0 and 100.",
+        "approvalNoteTooLong": "Approval note cannot exceed 50 characters."
+      },
+      "messages": {
+        "availableInWarehouse": "Available quantity in warehouse: {{quantity}} {{unit}}",
+        "quantityExceedsWarning": "⚠️ Exceeds available quantity",
+        "selectInventoryFirst": "Please select warehouse first",
+        "autoSelectedFromInventory": "Auto-selected from warehouse",
+        "canEdit": "Can edit",
+        "loadingOptions": "Unable to load options list.",
+        "saveError": "An error occurred while saving product."
+      },
+      "actions": {
+        "create": "Create Product",
+        "update": "Save Changes",
+        "back": "Back"
+      },
+      "toast": {
+        "creating": "Creating product...",
+        "createSuccess": "Product created successfully!",
+        "createError": "Failed to create product.",
+        "updating": "Updating product...",
+        "updateSuccess": "Product updated successfully!",
+        "updateError": "Failed to update product."
+      }
+    },
+    "detail": {
+      "loading": "Loading data...",
+      "notFound": "Product not found.",
+      "sections": {
+        "productInfo": "Product Information",
+        "qualityOrigin": "Quality & Origin",
+        "pricingInventory": "Pricing & Inventory",
+        "approval": "Approval"
+      },
+      "fields": {
+        "productCode": "Product Code",
+        "description": "Description",
+        "unit": "Unit",
+        "coffeeType": "Coffee Type",
+        "warehouse": "Warehouse",
+        "batchCode": "Batch Code",
+        "region": "Region",
+        "farm": "Farm",
+        "geographicalIndicationCode": "Geographical Indication Code",
+        "certification": "Certification",
+        "quality": "Quality",
+        "evaluationScore": "Evaluation Score",
+        "unitPrice": "Unit Price",
+        "availableQuantity": "Available Quantity",
+        "approver": "Approver",
+        "approvalDate": "Approval Date",
+        "approvalNote": "Approval Note"
+      },
+      "actions": {
+        "edit": "Edit",
+        "back": "← Back"
+      },
+      "dateLabels": {
+        "created": "Created:",
+        "updated": "Updated:"
+      }
     }
+  },
+  "productStatus": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "archived": "Archived"
   }
 }

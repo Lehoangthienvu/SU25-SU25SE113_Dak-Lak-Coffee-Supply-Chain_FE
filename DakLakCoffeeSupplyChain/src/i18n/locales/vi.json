@@ -6194,6 +6194,200 @@
       "pendingProducts": "Sản phẩm chờ",
       "completedProducts": "Sản phẩm đã hoàn thành",
       "totalQuantity": "Tổng số lượng"
+    },
+    "page": {
+      "searchTitle": "Tìm kiếm sản phẩm",
+      "searchPlaceholder": "Tìm kiếm...",
+      "dateRange": {
+        "fromDate": "Từ ngày",
+        "toDate": "Đến ngày"
+      },
+      "actions": {
+        "createProduct": "+ Tạo sản phẩm mới"
+      },
+      "table": {
+        "displayOptions": {
+          "show": "Hiển thị",
+          "rows": "dòng"
+        },
+        "headers": {
+          "expand": "",
+          "productCode": "Mã SP",
+          "productName": "Tên sản phẩm",
+          "coffeeType": "Loại cà phê",
+          "warehouse": "Kho",
+          "availableQuantity": "SL có sẵn",
+          "status": "Trạng thái",
+          "createdAt": "Ngày tạo",
+          "actions": "Hành động"
+        },
+        "tooltips": {
+          "expand": "Mở rộng",
+          "collapse": "Thu gọn",
+          "viewDetails": "Xem chi tiết",
+          "edit": "Chỉnh sửa",
+          "delete": "Xoá"
+        },
+        "expandedInfo": {
+          "unitPrice": "Đơn giá",
+          "quality": "Chất lượng",
+          "evaluationScore": "Điểm đánh giá",
+          "origin": "Nguồn gốc",
+          "batchCode": "Lô chế biến",
+          "unit": "Đơn vị"
+        }
+      },
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "products": "sản phẩm",
+        "page": "Trang",
+        "previous": "← Trước",
+        "next": "Sau →"
+      },
+      "deleteDialog": {
+        "title": "Xoá sản phẩm?",
+        "description": "Bạn có chắc chắn muốn xoá sản phẩm",
+        "confirm": "Xoá",
+        "cancel": "Huỷ"
+      },
+      "loading": "Đang tải dữ liệu...",
+      "noData": "Không tìm thấy sản phẩm"
+    },
+    "form": {
+      "title": {
+        "create": "Tạo sản phẩm mới",
+        "edit": "Chỉnh sửa sản phẩm"
+      },
+      "sections": {
+        "basicInfo": "Thông tin cơ bản",
+        "pricingQuantity": "Giá cả & Số lượng",
+        "references": "Thông tin liên kết",
+        "originInfo": "Thông tin nguồn gốc",
+        "qualityAssessment": "Đánh giá chất lượng",
+        "approval": "Phê duyệt"
+      },
+      "fields": {
+        "productName": "Tên sản phẩm",
+        "description": "Mô tả",
+        "unitPrice": "Giá bán (VND/kg)",
+        "quantityAvailable": "Số lượng",
+        "unit": "Đơn vị",
+        "batchId": "Mã mẻ sơ chế",
+        "inventoryId": "Mã kho",
+        "coffeeTypeId": "Loại cà phê",
+        "originRegion": "Vùng sản xuất",
+        "originFarmLocation": "Vị trí nông trại",
+        "geographicalIndicationCode": "Mã chỉ dẫn địa lý",
+        "certificationUrl": "Đường dẫn chứng nhận",
+        "evaluatedQuality": "Chất lượng đánh giá",
+        "evaluationScore": "Điểm đánh giá (0-100)",
+        "status": "Trạng thái",
+        "approvalNote": "Ghi chú duyệt"
+      },
+      "placeholders": {
+        "productName": "Nhập tên sản phẩm",
+        "description": "Nhập mô tả sản phẩm (tối đa 500 ký tự)",
+        "unitPrice": "0",
+        "quantityAvailable": "0",
+        "originRegion": "Nhập vùng sản xuất",
+        "originFarmLocation": "Nhập vị trí nông trại",
+        "geographicalIndicationCode": "Nhập mã chỉ dẫn địa lý",
+        "certificationUrl": "https://example.com/certification",
+        "evaluatedQuality": "Nhập chất lượng đánh giá",
+        "evaluationScore": "0-100",
+        "approvalNote": "Nhập ghi chú duyệt (tối đa 50 ký tự)"
+      },
+      "selectOptions": {
+        "selectBatch": "-- Chọn mẻ sơ chế --",
+        "selectInventory": "-- Chọn kho --",
+        "selectCoffeeType": "-- Chọn loại cà phê --"
+      },
+      "validation": {
+        "productNameRequired": "Vui lòng nhập tên sản phẩm.",
+        "productNameTooLong": "Tên sản phẩm không được vượt quá 100 ký tự.",
+        "descriptionTooLong": "Mô tả sản phẩm không được vượt quá 500 ký tự.",
+        "unitPriceRequired": "Giá bán phải lớn hơn 0.",
+        "quantityRequired": "Số lượng phải lớn hơn hoặc bằng 0.",
+        "quantityExceedsAvailable": "Số lượng không được vượt quá {{maxQuantity}} {{unit}} có sẵn trong kho.",
+        "batchRequired": "Vui lòng chọn mã mẻ sơ chế.",
+        "inventoryRequired": "Vui lòng chọn mã kho.",
+        "coffeeTypeRequired": "Vui lòng chọn loại cà phê.",
+        "originRegionTooLong": "Vùng sản xuất không được vượt quá 100 ký tự.",
+        "originFarmLocationTooLong": "Vị trí nông trại không được vượt quá 200 ký tự.",
+        "geographicalIndicationCodeTooLong": "Mã chỉ dẫn địa lý không được vượt quá 50 ký tự.",
+        "evaluatedQualityTooLong": "Chất lượng đánh giá không được vượt quá 50 ký tự.",
+        "evaluationScoreRange": "Điểm đánh giá phải trong khoảng từ 0 đến 100.",
+        "approvalNoteTooLong": "Ghi chú duyệt không được vượt quá 50 ký tự."
+      },
+      "messages": {
+        "availableInWarehouse": "Số lượng có sẵn trong kho: {{quantity}} {{unit}}",
+        "quantityExceedsWarning": "⚠️ Vượt quá số lượng có sẵn",
+        "selectInventoryFirst": "Vui lòng chọn kho trước",
+        "autoSelectedFromInventory": "Đã tự động chọn từ kho",
+        "canEdit": "Có thể chỉnh sửa",
+        "loadingOptions": "Đang tải danh sách tùy chọn.",
+        "saveError": "Đã xảy ra lỗi khi lưu sản phẩm."
+      },
+      "actions": {
+        "create": "Tạo sản phẩm",
+        "update": "Lưu thay đổi",
+        "back": "Quay lại"
+      },
+      "toast": {
+        "creating": "Đang tạo sản phẩm...",
+        "createSuccess": "Tạo sản phẩm thành công!",
+        "createError": "Tạo sản phẩm thất bại.",
+        "updating": "Đang cập nhật sản phẩm...",
+        "updateSuccess": "Cập nhật sản phẩm thành công!",
+        "updateError": "Cập nhật sản phẩm thất bại."
+      }
+    },
+    "detail": {
+      "loading": "Đang tải dữ liệu...",
+      "notFound": "Không tìm thấy sản phẩm.",
+      "sections": {
+        "productInfo": "Thông tin sản phẩm",
+        "qualityOrigin": "Chất lượng & nguồn gốc",
+        "pricingInventory": "Giá & tồn kho",
+        "approval": "Phê duyệt"
+      },
+      "fields": {
+        "productCode": "Mã sản phẩm",
+        "description": "Mô tả",
+        "unit": "Đơn vị",
+        "coffeeType": "Loại cà phê",
+        "warehouse": "Kho",
+        "batchCode": "Lô chế biến",
+        "region": "Khu vực",
+        "farm": "Trang trại",
+        "geographicalIndicationCode": "Mã chỉ dẫn địa lý",
+        "certification": "Chứng nhận",
+        "quality": "Chất lượng",
+        "evaluationScore": "Điểm đánh giá",
+        "unitPrice": "Đơn giá",
+        "availableQuantity": "SL có sẵn",
+        "approver": "Người duyệt",
+        "approvalDate": "Ngày duyệt",
+        "approvalNote": "Ghi chú duyệt"
+      },
+      "actions": {
+        "edit": "Chỉnh sửa",
+        "back": "← Quay lại"
+      },
+      "dateLabels": {
+        "created": "Tạo:",
+        "updated": "Cập nhật:"
+      }
     }
+  },
+  "productStatus": {
+    "draft": "Bản nháp",
+    "pending": "Chờ duyệt",
+    "approved": "Đã duyệt",
+    "rejected": "Bị từ chối",
+    "inStock": "Còn hàng",
+    "outOfStock": "Hết hàng",
+    "archived": "Ngừng kinh doanh"
   }
 }
