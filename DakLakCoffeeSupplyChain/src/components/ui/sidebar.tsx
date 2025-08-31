@@ -71,7 +71,7 @@ export function Sidebar({
       className={cn(
         "h-screen bg-white border-r border-orange-100 shadow-sm transition-all duration-300",
         isCollapsed ? "w-[64px]" : "w-[260px]",
-        "flex flex-col fixed left-0 top-0 z-50"
+        "flex flex-col fixed left-0 top-0 z-30"
       )}
     >
       <div className="h-16 flex items-center justify-between px-4 border-b border-orange-100">
@@ -92,6 +92,8 @@ export function Sidebar({
             onCollapseChange?.(newState);
           }}
           className="text-orange-600 hover:bg-orange-100 rounded-lg p-2 transition-colors"
+          title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
+          aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
         >
           <Menu size={20} />
         </button>
@@ -931,7 +933,7 @@ export function SidebarGroup() {
                     <span className="shrink-0 w-5 text-center">
                       <FiSettings />
                     </span>
-                                         <span className="truncate">{t('sidebar.navigation.warehouseManagement')}</span>
+                    <span className="truncate">{t('sidebar.navigation.warehouseManagement')}</span>
                   </div>
                   <FiChevronDown
                     className={cn("transition-transform duration-200", warehouseOpen && "rotate-180")}

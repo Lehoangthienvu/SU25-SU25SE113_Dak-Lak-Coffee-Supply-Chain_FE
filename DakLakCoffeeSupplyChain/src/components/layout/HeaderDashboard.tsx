@@ -114,7 +114,7 @@ export default function HeaderDashboard() {
   )}&background=FD7622&color=fff`;
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-orange-100 bg-white shadow-sm">
+    <div className="flex items-center justify-between px-6 py-4 border-b border-orange-100 bg-white shadow-sm relative z-40">
       {/* Title */}
       <div className="flex items-center gap-3">
         <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full"></div>

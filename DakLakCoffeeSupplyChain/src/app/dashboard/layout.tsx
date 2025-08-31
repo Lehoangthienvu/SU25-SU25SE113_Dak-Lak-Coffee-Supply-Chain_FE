@@ -30,7 +30,7 @@ export default function AdminLayout({
 
   return (
     <NotificationProvider>
-      <div className="flex h-screen w-full bg-[#fefaf4] overflow-hidden">
+      <div className="flex h-screen w-full bg-[#fefaf4]">
         <Sidebar defaultCollapsed={isCollapsed} onCollapseChange={setIsCollapsed}>
           <SidebarContent>
             <SidebarGroup />
@@ -39,13 +39,15 @@ export default function AdminLayout({
         </Sidebar>
 
         <div
-          className={`flex flex-col flex-1 transition-all duration-300 ${isCollapsed ? "ml-[64px]" : "ml-[260px]"
+          className={`flex flex-col flex-1 min-w-0 transition-all duration-300 ${isCollapsed ? "ml-[64px]" : "ml-[260px]"
             }`}
         >
           <div className="shrink-0">
             <HeaderDashboard />
           </div>
-          <div className="flex-1 p-5 bg-orange-50 overflow-auto ">{children}</div>
+          <div className="flex-1 p-6 bg-orange-50 overflow-auto">
+            {children}
+          </div>
         </div>
       </div>
     </NotificationProvider>
