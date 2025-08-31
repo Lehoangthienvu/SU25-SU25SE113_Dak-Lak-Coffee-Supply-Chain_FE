@@ -136,14 +136,6 @@ export default function ManagerCropSeasonDetailPage() {
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-4 border border-orange-100">
                     <div className="flex items-center gap-4 mb-4">
-                        <Button
-                            variant="ghost"
-                            onClick={() => router.back()}
-                            className="text-gray-600 hover:text-gray-800"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            {t('common.back')}
-                        </Button>
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800 mb-1">
                                 {cropSeason.seasonName}

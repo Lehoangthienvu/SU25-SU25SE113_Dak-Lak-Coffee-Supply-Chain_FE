@@ -5,6 +5,10 @@
     "processing": "Đang xử lý...",
     "confirm": "Xác nhận",
     "cancel": "Hủy",
+    "details": "Chi tiết",
+    "search": "Tìm kiếm",
+    "create": "Tạo",
+    "edit": "Sửa",
     "components" : {
       "filterStatusPanel": {
         "title": "Lọc theo trạng thái",
@@ -14,6 +18,6 @@
         "placeholder": "Lý do từ chối...",
         "loadingButton": "Đang xử lý..."
       }
-    }
+    }    
   }
 }
