@@ -2510,12 +2510,6 @@
         "completed": "Hoàn thành",
         "cancelled": "Đã hủy"
       },
-      "detailStatus": {
-        "planned": "Đã lên kế hoạch",
-        "inProgress": "Đang canh tác",
-        "completed": "Đã hoàn thành",
-        "cancelled": "Đã huỷ"
-      },
       "common": {
         "loading": "Đang tải danh sách mùa vụ...",
         "error": "Không thể tải danh sách mùa vụ",
@@ -2541,42 +2535,6 @@
         "noDate": "Không có",
         "cannotAutoCalculate": "❌ Không thể tự động tính thời gian mùa vụ. Vui lòng chọn cam kết đã được duyệt.",
         "creating": "Đang tạo..."
-      },
-      "error": {
-        "loadFailed": "Không thể tải thông tin mùa vụ",
-        "notFound": "Không tìm thấy mùa vụ",
-        "notFoundDescription": "Mùa vụ này không tồn tại hoặc đã bị xóa"
-      },
-      "detail": {
-        "subtitle": "Chi tiết mùa vụ cà phê",
-        "farmer": "Nông dân",
-        "area": "Diện tích",
-        "time": "Thời gian",
-        "status": "Trạng thái",
-        "overview": "Tổng quan",
-        "plantingDetails": "Chi tiết vùng trồng",
-        "cultivationProgress": "Tiến độ canh tác",
-        "generalInfo": "Thông tin tổng quan",
-        "seasonInfo": "Thông tin mùa vụ",
-        "farmerInfo": "Thông tin nông dân",
-        "seasonName": "Tên mùa vụ",
-        "startDate": "Ngày bắt đầu",
-        "endDate": "Ngày kết thúc",
-        "farmerName": "Tên nông dân",
-        "commitmentCode": "Mã cam kết",
-        "registrationCode": "Mã đăng ký",
-        "notes": "Ghi chú",
-        "plantingAreaDetails": "Chi tiết vùng trồng",
-        "noPlantingDetails": "Chưa có chi tiết vùng trồng nào",
-        "allocatedArea": "Diện tích phân bổ",
-        "estimatedYield": "Sản lượng dự kiến",
-        "actualYield": "Sản lượng thực tế",
-        "expectedHarvestStart": "Ngày thu hoạch dự kiến",
-        "expectedHarvestEnd": "Ngày thu hoạch kết thúc",
-        "plannedQuality": "Chất lượng dự kiến",
-        "cultivationProgressTitle": "Tiến độ canh tác",
-        "noProgressToShow": "Chưa có chi tiết vùng trồng nào để hiển thị tiến độ",
-        "noProgressRecorded": "Chưa có tiến độ nào được ghi nhận"
       }
     },
     "manager": {
@@ -2602,85 +2560,8 @@
         "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
         "page": "Trang {{current}} / {{total}}"
       }
-    },
-    "cropStages": {
-      "title": "Giai đoạn sinh trưởng",
-      "description": "Xem và quản lý các giai đoạn sinh trưởng",
-      "dialog": {
-        "title": "📌 Giai đoạn mùa vụ",
-        "loading": "Đang tải dữ liệu...",
-        "noData": "Không có dữ liệu.",
-        "button": "Ghi chú giai đoạn",
-        "error": "Không thể tải danh sách giai đoạn mùa vụ"
-      },
-      "stage": {
-        "name": "Tên giai đoạn",
-        "code": "Mã giai đoạn",
-        "description": "Mô tả",
-        "order": "Thứ tự"
-      },
-      "status": {
-        "completed": "Hoàn thành",
-        "inProgress": "Đang tiến hành",
-        "notStarted": "Chưa mở"
-      }
-    },
-    "cropProgress": {
-      "title": "Theo dõi tiến độ mùa vụ",
-      "description": "Theo dõi và ghi nhận tiến độ phát triển",
-      "page": {
-        "title": "Tiến độ mùa vụ - {{coffeeType}}",
-        "subtitle": "Theo dõi và ghi nhận tiến độ phát triển",
-        "backToList": "Quay lại danh sách",
-        "notFound": "Không tìm thấy vùng trồng",
-        "notFoundDesc": "Vùng trồng không tồn tại hoặc đã bị xóa",
-        "loading": "Đang tải..."
-      },
-      "header": {
-        "harvestYield": "Sản lượng thu hoạch",
-        "notUpdated": "Chưa cập nhật",
-        "requestConsultation": "Gửi tư vấn"
-      },
-      "progressTable": {
-        "title": "Bảng tiến độ",
-        "headers": {
-          "stage": "Giai đoạn",
-          "status": "Trạng thái",
-          "recordedDate": "Ngày ghi nhận",
-          "notes": "Ghi chú",
-          "documents": "Tài liệu",
-          "actions": "Hành động"
-        },
-        "status": {
-          "completed": "Hoàn thành",
-          "inProgress": "Đang tiến hành",
-          "notOpen": "Chưa mở"
-        },
-        "actions": {
-          "edit": "Sửa",
-          "record": "Ghi nhận",
-          "noAction": "—"
-        }
-      },
-      "createDialog": {
-        "title": "Ghi nhận tiến độ",
-        "description": "Ghi nhận tiến độ cho giai đoạn này",
-        "completedTitle": "Hoàn thành mùa vụ",
-        "completedDescription": "Chúc mừng! Bạn đã hoàn thành tất cả các giai đoạn",
-        "newProgress": "Tạo tiến độ mới",
-        "success": "Ghi nhận tiến độ thành công!",
-        "error": "Không thể ghi nhận tiến độ do sản lượng không hợp lệ. Vui lòng kiểm tra lại.",
-        "confirmMessage": "Bạn có chắc muốn tiếp tục ghi nhận tiến độ này?"
-      }
-    },
-      "editDialog": {
-        "title": "Sửa tiến độ",
-        "description": "Chỉnh sửa thông tin tiến độ",
-        "button": "Sửa",
-        "success": "Cập nhật tiến độ thành công!",
-        "error": "Cập nhật thất bại."
-      }
-    ,
+    }
+  ,
   "warehouseInboundRequests": {
     "title": "Yêu cầu nhập kho",
     "subtitle": "Quản lý và duyệt các yêu cầu nhập kho từ nông dân",
@@ -4127,112 +4008,45 @@
     }
   },
   "sidebar": {
-    "loading": "Đang tải...",
+    "loading": "Đang tải menu...",
     "dashboard": "Bảng điều khiển",
-    "navigation": {
-      "overview": "Tổng quan",
-      "notifications": "Thông báo",
-      "batches": "Lô hàng",
-      "warehouseOperations": "Vận hành kho",
-      "warehouseManagement": "Quản lý kho",
-      "inboundRequests": "Yêu cầu nhập kho",
-      "inboundReceipts": "Phiếu nhập kho",
-      "outboundRequests": "Yêu cầu xuất kho",
-      "outboundReceipts": "Phiếu xuất kho",
-      "inventories": "Tồn kho",
-      "inventoryLogs": "Nhật ký tồn kho",
-      "warehouses": "Kho hàng",
-      "cropSeasons": "Mùa vụ"
-    },
-    "warehouseRequest": "Yêu cầu kho",
+    "warehouseRequest": "Yêu cầu giao hàng",
     "outboundRequests": "Yêu cầu xuất kho",
     "inboundRequests": "Yêu cầu nhập kho",
     "outboundReceipts": "Phiếu xuất kho",
     "inboundReceipts": "Phiếu nhập kho",
     "procurementPlans": "Kế hoạch thu mua",
-    "commitments": "Cam kết",
-    "batches": "Lô hàng",
+    "commitments": "Cam kết trồng trọt",
+    "cropSeasons": "Mùa vụ",
+    "cropStages": "Giai đoạn sinh trưởng",
+    "cropProgress": "Tiến độ mùa vụ",
+    "batches": "Lô sơ chế",
     "evaluations": "Đánh giá",
     "progress": "Tiến trình",
-    "waste": "Chất thải",
-    "processingMethods": "Phương pháp chế biến",
+    "waste": "Phế phẩm",
+    "processingMethods": "Phương pháp xử lý",
     "parameters": "Tham số",
-    "stages": "Giai đoạn",
-    "wasteDisposals": "Xử lý chất thải",
-    "requestFeedback": "Phản hồi yêu cầu",
+    "stages": "Các bước",
+    "wasteDisposals": "Xử lý phế phẩm",
+    "requestFeedback": "Yêu cầu phản hồi",
     "consultation": "Tư vấn",
     "articles": "Bài viết",
     "contracts": "Hợp đồng",
-    "businessBuyers": "Khách hàng doanh nghiệp",
+    "businessBuyers": "Người mua",
     "orders": "Đơn hàng",
-    "shipments": "Giao hàng",
+    "shipments": "Vận chuyển",
     "deliveries": "Giao hàng",
     "products": "Sản phẩm",
     "reports": "Báo cáo",
     "users": "Người dùng",
     "settings": "Cài đặt",
-    "profile": "Hồ sơ",
+    "profile": "Hồ sơ cá nhân",
     "logout": "Đăng xuất",
-    "user": {
-      "greeting": "Xin chào:",
-      "anonymous": "Ẩn danh",
-      "logout": "Đăng xuất",
-      "logoutTitle": "Đăng xuất và về trang chính"
-    },
-    "farmer": {
-      "coffeeMarket": "Sàn thu mua cà phê",
-      "commitment": "Cam kết kế hoạch thu mua",
-      "cropSeasons": "Mùa vụ",
-      "consultation": "Tư vấn",
-      "deliveryRequest": "Gửi yêu cầu giao hàng",
-      "processing": "Sơ chế",
-      "processingBatches": "Danh sách lô sơ chế",
-      "processingProgress": "Tiến trình lô sơ chế",
-      "processingWastes": "Chất thải lô sơ chế"
-    },
-    "admin": {
-      "userManagement": "Quản lý người dùng",
-      "expertManagement": "Quản lý chuyên gia",
-      "farmerManagement": "Quản lý nông dân",
-      "contracts": "Hợp đồng",
-      "reports": "Báo cáo",
-      "settings": "Cài đặt"
-    },
-    "expert": {
-      "consultation": "Tư vấn",
-      "evaluations": "Đánh giá",
-      "articles": "Bài viết"
-    },
-    "manager": {
+    "farmer": "Nông dân",
+    "navigation": {
       "overview": "Tổng quan",
-      "cropSeasons": "Mùa vụ",
-      "reports": "Báo cáo",
-      "expertAdvice": "Tư vấn chuyên gia",
+      "batches": "Lô hàng",
       "notifications": "Thông báo",
-      "contractsDelivery": "Hợp đồng & Giao hàng",
-      "supplyContracts": "Hợp đồng cung ứng",
-      "deliverySchedule": "Lịch giao hàng",
-      "procurementPlans": "Kế hoạch thu mua",
-      "farmingCommitments": "Cam kết kế hoạch thu mua",
-      "ordersDelivery": "Đơn hàng & Giao hàng",
-      "orders": "Đơn hàng",
-      "deliveryBatches": "Lô giao hàng",
-      "customersProducts": "Khách hàng & Sản phẩm",
-      "businessCustomers": "Khách hàng doanh nghiệp",
-      "products": "Sản phẩm",
-      "farmers": "Nông dân",
-      "reportsProcessing": "Báo cáo & Chế biến",
-      "processingBatches": "Danh sách lô chế biến",
-      "farmerProcessingBatches": "Lô chế biến theo nông dân",
-      "processingProgress": "Tiến trình lô chế biến",
-      "processingWastes": "Chất thải lô chế biến",
-      "processingMethods": "Phương pháp chế biến",
-      "processingParameters": "Tham số chế biến",
-      "processingStages": "Công đoạn chế biến",
-      "wasteDisposals": "Xử lý chất thải lô chế biến",
-      "staffManagement": "Quản lý nhân viên",
-      "staffList": "Danh sách nhân viên"
-    }
       "warehouseOperations": "Vận hành kho",
       "warehouseManagement": "Quản lý kho",
       "inboundRequests": "Yêu cầu nhập kho",
@@ -4271,59 +4085,7 @@
       "staffList": "Danh sách nhân viên",
       "warehouseInventory": "Tồn kho",
       "inventoryHistory": "Lịch sử tồn kho",
-      "outboundRequests": "Yêu cầu xuất kho",
-      "farmer": {
-        "dashboard": "Bảng điều khiển",
-        "cropSeasons": "Mùa vụ",
-        "cropStages": "Giai đoạn sinh trưởng",
-        "cropProgress": "Tiến độ mùa vụ",
-        "consultation": "Tư vấn",
-        "warehouseRequest": "Yêu cầu giao hàng",
-        "marketPlace": "Chợ nông sản",
-        "farmingCommitments": "Cam kết trồng trọt",
-        "coffeeProcurementFloor": "Sàn thu mua cà phê",
-        "procurementPlanCommitment": "Cam kết kế hoạch thu mua",
-        "sendDeliveryRequest": "Gửi yêu cầu giao hàng",
-        "processing": "Sơ chế",
-        "processingBatches": "Danh sách lô sơ chế",
-        "processingProgress": "Tiến trình lô sơ chế",
-        "processingWaste": "Chất thải lô sơ chế"
-      },
-      "manager": {
-        "dashboard": "Tổng quan",
-        "cropSeasons": "Mùa vụ",
-        "reports": "Báo cáo",
-        "expertAdvice": "Tư vấn chuyên gia",
-        "notifications": "Thông báo",
-        "contractsAndDelivery": "Hợp đồng & Giao hàng",
-        "supplyContracts": "Hợp đồng cung ứng",
-        "deliverySchedule": "Lịch giao hàng",
-        "procurementPlans": "Kế hoạch thu mua",
-        "procurementCommitments": "Cam kết kế hoạch thu mua",
-        "ordersAndDelivery": "Đơn hàng & Giao hàng",
-        "orders": "Đơn hàng",
-        "deliveryBatches": "Lô giao hàng",
-        "customersAndProducts": "Khách hàng & Sản phẩm",
-        "businessCustomers": "Khách hàng doanh nghiệp",
-        "products": "Sản phẩm",
-        "farmers": "Nông dân",
-        "reportsAndProcessing": "Báo cáo & Chế biến",
-        "processingBatches": "Danh sách lô chế biến",
-        "farmerProcessingBatches": "Lô chế biến theo nông dân",
-        "processingProgress": "Tiến trình lô chế biến",
-        "processingWaste": "Chất thải lô chế biến",
-        "processingMethods": "Phương pháp chế biến",
-        "processingParameters": "Tham số chế biến",
-        "processingStages": "Công đoạn chế biến",
-        "wasteDisposal": "Xử lý chất thải lô chế biến",
-        "staffManagement": "Quản lý nhân viên",
-        "staffList": "Danh sách nhân viên",
-        "warehouseManagement": "Quản lý kho",
-        "warehouses": "Kho hàng",
-        "inventories": "Tồn kho",
-        "inventoryHistory": "Lịch sử tồn kho",
-        "outboundRequests": "Yêu cầu xuất kho"
-      }
+      "outboundRequests": "Yêu cầu xuất kho"
     },
             "user": {
           "greeting": "Xin chào:",
@@ -4367,7 +4129,6 @@
           "receipts": "Phiếu nhập kho",
           "receiptsDesc": "Phiếu nhập kho"
         }
-
   },
   "warehouseDetail": {
     "title": "Chi tiết kho hàng",
@@ -4380,15 +4141,15 @@
       "title": "Đang tải danh sách kho hàng...",
       "inventories": "Đang tải..."
     },
-    "fields": {
-      "warehouseCode": "Mã kho",
-      "location": "Vị trí",
-      "capacity": "Dung lượng",
-      "manager": "Người quản lý",
-      "createdAt": "Ngày tạo",
-      "updatedAt": "Ngày cập nhật",
-      "inventories": "Tồn kho trong kho này"
-    },
+          "fields": {
+        "warehouseCode": "Mã kho",
+        "location": "Vị trí",
+        "capacity": "Dung lượng",
+        "manager": "Người quản lý",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "inventories": "Tồn kho trong kho này"
+      },
       "actions": {
         "back": "Quay lại"
       },
@@ -6259,7 +6020,44 @@
       "actions": "Hành động"
     }
   },
-
+  "cropSeasons": {
+    "error": {
+      "loadFailed": "Không thể tải thông tin mùa vụ",
+      "notFound": "Không tìm thấy mùa vụ",
+      "notFoundDescription": "Mùa vụ này không tồn tại hoặc đã bị xóa"
+    },
+    "detail": {
+      "subtitle": "Chi tiết mùa vụ cà phê",
+      "farmer": "Nông dân",
+      "area": "Diện tích",
+      "time": "Thời gian",
+      "status": "Trạng thái",
+      "overview": "Tổng quan",
+      "plantingDetails": "Chi tiết vùng trồng",
+      "cultivationProgress": "Tiến độ canh tác",
+      "generalInfo": "Thông tin tổng quan",
+      "seasonInfo": "Thông tin mùa vụ",
+      "farmerInfo": "Thông tin nông dân",
+      "seasonName": "Tên mùa vụ",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "farmerName": "Tên nông dân",
+      "commitmentCode": "Mã cam kết",
+      "registrationCode": "Mã đăng ký",
+      "notes": "Ghi chú",
+      "plantingAreaDetails": "Chi tiết vùng trồng",
+      "noPlantingDetails": "Chưa có chi tiết vùng trồng nào",
+      "allocatedArea": "Diện tích phân bổ",
+      "estimatedYield": "Sản lượng dự kiến",
+      "actualYield": "Sản lượng thực tế",
+      "expectedHarvestStart": "Ngày thu hoạch dự kiến",
+      "expectedHarvestEnd": "Ngày thu hoạch kết thúc",
+      "plannedQuality": "Chất lượng dự kiến",
+      "cultivationProgressTitle": "Tiến độ canh tác",
+      "noProgressToShow": "Chưa có chi tiết vùng trồng nào để hiển thị tiến độ",
+      "noProgressRecorded": "Chưa có tiến độ nào được ghi nhận"
+    }
+  },
   "notifications": {
     "title": "Thông báo",
     "markAllAsRead": "Đánh dấu tất cả đã đọc",
