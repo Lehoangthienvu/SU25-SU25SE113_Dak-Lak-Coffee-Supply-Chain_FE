@@ -258,7 +258,7 @@ export default function ContractForm({
   if (!formData) {
     return (
       <div className="text-gray-500 text-center py-10">
-        Đang khởi tạo biểu mẫu hợp đồng...
+        {t("contracts.messages.loading")}
       </div>
     );
   }
@@ -316,13 +316,13 @@ export default function ContractForm({
       field === "deliveryRounds" &&
       (value <= 0 || !Number.isInteger(value))
     ) {
-      return "Số đợt giao hàng phải là số nguyên dương";
+      return t("contracts.validation.deliveryRoundsPositiveInteger");
     }
     if (field === "totalQuantity" && value < 0) {
-      return "Tổng khối lượng không được âm";
+      return t("contracts.validation.totalQuantityNonNegative");
     }
     if (field === "totalValue" && value < 0) {
-      return "Tổng giá trị không được âm";
+      return t("contracts.validation.totalValueNonNegative");
     }
     return null;
   };
@@ -394,17 +394,17 @@ export default function ContractForm({
     if (field === "quantity" && value <= 0) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.quantity`]: "Số lượng phải lớn hơn 0",
+        [`contractItems.${index}.quantity`]: t("contracts.validation.quantityGreaterThanZero"),
       }));
     } else if (field === "unitPrice" && value <= 0) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.unitPrice`]: "Đơn giá phải lớn hơn 0",
+        [`contractItems.${index}.unitPrice`]: t("contracts.validation.unitPriceGreaterThanZero"),
       }));
     } else if (field === "discountAmount" && value < 0) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.discountAmount`]: "Chiết khấu không được âm",
+        [`contractItems.${index}.discountAmount`]: t("contracts.validation.discountAmountNonNegative"),
       }));
     }
   }
@@ -431,18 +431,17 @@ export default function ContractForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.contractNumber?.trim()) {
-      clientErrors.contractNumber = "Số hợp đồng là bắt buộc";
+      clientErrors.contractNumber = t("contracts.validation.contractNumberRequired");
     } else if (data.contractNumber.trim().length < 3) {
-      clientErrors.contractNumber = "Số hợp đồng phải có ít nhất 3 ký tự";
+      clientErrors.contractNumber = t("contracts.validation.contractNumberMinLength");
     }
 
     if (!data.contractTitle?.trim()) {
-      clientErrors.contractTitle = "Tên hợp đồng là bắt buộc";
+      clientErrors.contractTitle = t("contracts.validation.contractTitleRequired");
     } else if (data.contractTitle.trim().length < 10) {
-      clientErrors.contractTitle =
-        "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng";
+      clientErrors.contractTitle = t("contracts.validation.contractTitleMinLength");
     } else if (data.contractTitle.trim().length > 200) {
-      clientErrors.contractTitle = "Tên hợp đồng không được quá 200 ký tự";
+      clientErrors.contractTitle = t("contracts.validation.contractTitleMaxLength");
     }
 
     if (!data.buyerId) {
@@ -450,19 +449,19 @@ export default function ContractForm({
     }
 
     if (!data.startDate) {
-      clientErrors.startDate = "Ngày bắt đầu là bắt buộc";
+      clientErrors.startDate = t("contracts.validation.startDateRequired");
     }
 
     if (!data.endDate) {
-      clientErrors.endDate = "Ngày kết thúc là bắt buộc";
+      clientErrors.endDate = t("contracts.validation.endDateRequired");
     }
 
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
-      clientErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu";
+      clientErrors.endDate = t("contracts.validation.endDateAfterStartDate");
     }
 
     if (data.signedAt && data.startDate && data.signedAt > data.startDate) {
-      clientErrors.signedAt = "Ngày ký hợp đồng không được sau ngày bắt đầu";
+      clientErrors.signedAt = t("contracts.validation.signedAtBeforeStartDate");
     }
 
     // Validate file upload (nếu có)
@@ -484,18 +483,17 @@ export default function ContractForm({
       ];
 
       if (!allowedTypes.includes(selectedFile.type)) {
-        clientErrors.contractFile =
-          "Chỉ hỗ trợ file ảnh (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)";
+        clientErrors.contractFile = t("contracts.validation.contractFileType");
       }
     }
 
     // Validate tổng khối lượng và giá trị không được âm (phù hợp với backend)
     if (data.totalQuantity !== undefined && data.totalQuantity < 0) {
-      clientErrors.totalQuantity = "Tổng khối lượng không được âm";
+      clientErrors.totalQuantity = t("contracts.validation.totalQuantityNonNegative");
     }
 
     if (data.totalValue !== undefined && data.totalValue < 0) {
-      clientErrors.totalValue = "Tổng giá trị không được âm";
+      clientErrors.totalValue = t("contracts.validation.totalValueNonNegative");
     }
 
     // Validate lý do hủy khi trạng thái = "Đã hủy"
@@ -503,31 +501,25 @@ export default function ContractForm({
       data.status === ContractStatus.Cancelled &&
       !data.cancelReason?.trim()
     ) {
-      clientErrors.cancelReason =
-        "Lý do hủy là bắt buộc khi trạng thái là 'Đã hủy'";
+      clientErrors.cancelReason = t("contracts.validation.cancelReasonRequired");
     }
 
     // Validate contract items
     if (!data.contractItems || data.contractItems.length === 0) {
-      clientErrors.contractItems =
-        "Vui lòng thêm ít nhất 1 mặt hàng vào hợp đồng";
+      clientErrors.contractItems = t("contracts.validation.contractItemsRequired");
     } else {
       data.contractItems.forEach((item, index) => {
         if (!item.coffeeTypeId) {
-          clientErrors[`contractItems.${index}.coffeeTypeId`] =
-            "Vui lòng chọn loại cà phê";
+          clientErrors[`contractItems.${index}.coffeeTypeId`] = t("contracts.validation.coffeeTypeRequired");
         }
         if (!item.quantity || item.quantity <= 0) {
-          clientErrors[`contractItems.${index}.quantity`] =
-            "Số lượng phải lớn hơn 0";
+          clientErrors[`contractItems.${index}.quantity`] = t("contracts.validation.quantityGreaterThanZero");
         }
         if (!item.unitPrice || item.unitPrice <= 0) {
-          clientErrors[`contractItems.${index}.unitPrice`] =
-            "Đơn giá phải lớn hơn 0";
+          clientErrors[`contractItems.${index}.unitPrice`] = t("contracts.validation.unitPriceGreaterThanZero");
         }
         if (item.discountAmount && item.discountAmount < 0) {
-          clientErrors[`contractItems.${index}.discountAmount`] =
-            "Chiết khấu không được âm";
+          clientErrors[`contractItems.${index}.discountAmount`] = t("contracts.validation.discountAmountNonNegative");
         }
       });
     }
@@ -535,7 +527,7 @@ export default function ContractForm({
     // If there are client-side errors, display them and stop
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
-      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      toast.error(t("contracts.validation.checkFormErrors"));
       return;
     }
 
@@ -554,9 +546,7 @@ export default function ContractForm({
           if (endDate < today) {
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
-            toast.info(
-              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
-            );
+            toast.info("Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'");
           }
         }
 
@@ -590,7 +580,7 @@ export default function ContractForm({
 
         await updateContract(dto.contractId, updateData);
 
-        toast.success(t("contracts.contract.updateSuccess"));
+        toast.success(t("contracts.messages.updateSuccess"));
       } else {
         const dto = data as ContractCreateDto;
 
@@ -605,9 +595,7 @@ export default function ContractForm({
           if (endDate < today) {
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
-            toast.info(
-              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
-            );
+            toast.info("Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'");
           }
         }
 
@@ -632,7 +620,7 @@ export default function ContractForm({
           contractItems: normalizedItems,
         });
 
-        toast.success(t("contracts.contract.createSuccess"));
+        toast.success(t("contracts.messages.createSuccess"));
       }
 
       onSuccess();
@@ -814,9 +802,9 @@ export default function ContractForm({
             newFieldErrors.signedat || newFieldErrors.startdate;
 
           if (hasDateError) {
-            toast.error("Lỗi ngày tháng: Ngày ký hợp đồng phải ≤ Ngày bắt đầu");
+            toast.error(t("contracts.validation.dateError"));
           } else {
-            toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+            toast.error(t("contracts.validation.checkFormErrors"));
           }
         }
 
@@ -825,7 +813,7 @@ export default function ContractForm({
           Object.keys(newFieldErrors).length > 0 &&
           newBusinessErrors.length === 0
         ) {
-          toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+          toast.error(t("contracts.validation.checkFormErrors"));
         }
       } else {
         // Xử lý lỗi khác (bao gồm lỗi nghiệp vụ chỉ trả về message)
@@ -1223,7 +1211,7 @@ export default function ContractForm({
                                 handleChange("totalQuantity", totalQuantity);
                                 handleChange("totalValue", totalValue);
                                 toast.success(
-                                  t("contracts.contract.updateTotal")
+                                  t("contracts.messages.updateTotal")
                                 );
                               }}
                               className="text-xs h-6 px-2"
@@ -1280,8 +1268,7 @@ export default function ContractForm({
               </p>
             )}
             <p className="text-xs text-gray-500 mt-1">
-              {t("contracts.contract.format")}: CT001-2024, HD001, CONTRACT-001,
-              v.v.
+              {t("contracts.contract.format")}: {t("contracts.contract.formatText")}
             </p>
           </div>
 
@@ -1303,8 +1290,7 @@ export default function ContractForm({
               </p>
             )}
             <p className="text-xs text-gray-500 mt-1">
-              {t("contracts.contract.example")}: Hợp đồng cung cấp cà phê
-              Robusta Dak Lak 2024
+              {t("contracts.contract.example")}: {t("contracts.contract.exampleText")}
             </p>
           </div>
         </div>
@@ -1346,7 +1332,7 @@ export default function ContractForm({
 
                     // Khi chọn file mới, xóa URL cũ và hiển thị tên file
                     handleChange("contractFileUrl", "");
-                    toast.success(`Đã chọn file mới: ${file.name}`);
+                    toast.success(t("contracts.messages.fileSelected", { fileName: file.name }));
                   }
                 };
                 input.click();
@@ -1365,9 +1351,7 @@ export default function ContractForm({
                     window.open(data.contractFileUrl, "_blank");
                   } else {
                     // Nếu là tên file local, hiển thị thông tin
-                    toast.info(
-                      `File: ${data.contractFileUrl}\nĐể xem nội dung, hãy upload file lên server hoặc cung cấp URL.`
-                    );
+                    toast.info(t("contracts.messages.fileInfo", { fileName: data.contractFileUrl }));
                   }
                 }}
                 className="whitespace-nowrap"
@@ -1517,7 +1501,7 @@ export default function ContractForm({
                       setSelectedFile(null);
                       setFilePreviewUrl(null);
                       handleChange("contractFileUrl", "");
-                      toast.info(t("contracts.contract.deleteNewFile"));
+                      toast.info(t("contracts.messages.deleteNewFile"));
                     }}
                     className="text-red-600 border-red-200 hover:bg-red-50"
                   >
@@ -1533,7 +1517,7 @@ export default function ContractForm({
                     onClick={() => {
                       handleChange("contractFileUrl", "");
                       setFilePreviewUrl(null);
-                      toast.info(t("contracts.contract.deleteCurrentFile"));
+                      toast.info(t("contracts.messages.deleteCurrentFile"));
                     }}
                     className="text-orange-600 border-orange-200 hover:bg-orange-50"
                   >
