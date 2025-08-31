@@ -133,7 +133,7 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-orange-50 p-6">
+    <div className="w-full">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-4">
           <CardTitle>Quản lý người dùng</CardTitle>
@@ -153,7 +153,7 @@ export default function UserManagement() {
               <div className="flex items-center gap-4 mb-4">
                 <input
                   type="text"
-                  placeholder="Tìm kiếm theo mã, tên hoặc email..."
+                  placeholder="Tìm kiếm theo mã, tên, email..."
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -168,6 +168,8 @@ export default function UserManagement() {
                     setRoleFilter(e.target.value);
                     setPage(1);
                   }}
+                  title="Lọc theo vai trò"
+                  aria-label="Lọc theo vai trò"
                 >
                   <option value="">Tất cả vai trò</option>
                   {roleOptions.map((role) => (
@@ -178,16 +180,14 @@ export default function UserManagement() {
                 </select>
               </div>
               <div className="overflow-x-auto p-2">
-                <Table className="min-w-[1000px]">
+                <Table className="min-w-[800px]">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Mã người dùng</TableHead>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Mã</TableHead>
                       <TableHead>Họ tên</TableHead>
-                      <TableHead>Số điện thoại</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Vai trò</TableHead>
                       <TableHead>Trạng thái</TableHead>
-                      <TableHead>Ngày đăng ký</TableHead>
                       <TableHead style={{ minWidth: 120 }}>Hành động</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -197,9 +197,8 @@ export default function UserManagement() {
                       return (
                         <TableRow key={user.userId}>
                           <TableCell className="font-medium">{user.userCode}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.phoneNumber}</TableCell>
+                          <TableCell className="font-medium">{user.name}</TableCell>
+                          <TableCell className="text-sm text-gray-600">{user.email}</TableCell>
                           <TableCell>{roleNameToVietnamese[user.roleName] || user.roleName}</TableCell>
                           <TableCell>
                             <span
@@ -208,7 +207,6 @@ export default function UserManagement() {
                               {statusInfo.text}
                             </span>
                           </TableCell>
-                          <TableCell>{formatDate(user.registrationDate)}</TableCell>
                           <TableCell style={{ minWidth: 120 }}>
                             <div className="flex gap-2">
                               <Button
@@ -247,7 +245,7 @@ export default function UserManagement() {
                     })}
                     {paginatedUsers.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center">
+                        <TableCell colSpan={6} className="text-center">
                           Không có người dùng nào.
                         </TableCell>
                       </TableRow>

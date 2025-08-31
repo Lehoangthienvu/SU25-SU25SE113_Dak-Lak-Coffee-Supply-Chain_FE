@@ -135,6 +135,25 @@ export const getVerifiedExperts = async (): Promise<AgriculturalExpert[]> => {
   }
 };
 
+// Cập nhật trạng thái xác thực chuyên gia
+export const updateExpertVerification = async (
+  expertId: string,
+  isVerified: boolean
+): Promise<AgriculturalExpert> => {
+  try {
+    const response = await api.patch(`/AgriculturalExperts/${expertId}/verify`, isVerified);
+    
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return response.data.data;
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error updating expert verification:", error);
+    throw error;
+  }
+};
+
 // Tạo mới chuyên gia
 export const createExpert = async (
   expertData: CreateExpertRequest,

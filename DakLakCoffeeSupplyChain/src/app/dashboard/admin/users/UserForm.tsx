@@ -153,7 +153,7 @@ export default function UserForm({ mode, userId }: UserFormProps) {
   };
 
   return (
-    <div className="w-full min-h-screen bg-orange-50 p-6 flex justify-center items-start">
+    <div className="w-full flex justify-center items-start">
       <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle>
@@ -178,6 +178,8 @@ export default function UserForm({ mode, userId }: UserFormProps) {
                     className="border rounded px-3 py-2 w-full"
                     required
                     type="email"
+                    placeholder="Nhập email"
+                    title="Email"
                   />
                 </div>
                 <div>
@@ -187,6 +189,8 @@ export default function UserForm({ mode, userId }: UserFormProps) {
                     value={form.phoneNumber || ""}
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
+                    placeholder="Nhập số điện thoại"
+                    title="Số điện thoại"
                   />
                 </div>
                 <div>
@@ -199,6 +203,8 @@ export default function UserForm({ mode, userId }: UserFormProps) {
                     onChange={handleChange}
                     className="border rounded px-3 py-2 w-full"
                     required
+                    placeholder="Nhập họ tên"
+                    title="Họ tên"
                   />
                 </div>
                 <div>
