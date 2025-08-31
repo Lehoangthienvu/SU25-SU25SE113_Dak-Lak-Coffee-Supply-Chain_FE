@@ -4158,10 +4158,7 @@
     }
   },
   "contracts": {
-    "contract": {
-      "title": "Hợp đồng",
-      "description": "Quản lý hợp đồng cung cấp cà phê"
-    },
+   
     "page": {
       "list": {
         "title": "Danh sách hợp đồng",
@@ -4442,6 +4439,7 @@
       }
     },
     "contract": {
+      "title": "Hợp đồng",
       "edit": "Chỉnh sửa hợp đồng",
       "new": "Tạo hợp đồng mới",
       "buyerId": "Bên mua",

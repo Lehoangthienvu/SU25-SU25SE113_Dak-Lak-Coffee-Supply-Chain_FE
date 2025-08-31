@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Link from "next/link";
-import { getAllExperts, softDeleteExpert } from "@/lib/api/agriculturalExpert";
+import { getAllExperts, softDeleteExpert, updateExpertVerification } from "@/lib/api/agriculturalExpert";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 
 interface AgriculturalExpert {
@@ -81,17 +81,20 @@ export default function AdminExpertsPage() {
 
     const handleVerify = async (expertId: string) => {
         try {
-            // TODO: Implement API call để cập nhật trạng thái xác thực
-            // await updateExpertVerification(expertId, !expert.isVerified);
+            const expert = experts.find(e => e.expertId === expertId);
+            if (!expert) return;
 
-            // Tạm thời cập nhật local state
+            await updateExpertVerification(expertId, !expert.isVerified);
+
+            // Cập nhật local state
             setExperts(prev => prev.map(expert =>
                 expert.expertId === expertId
                     ? { ...expert, isVerified: !expert.isVerified }
                     : expert
             ));
             toast.success("Cập nhật trạng thái xác thực thành công!");
-        } catch {
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trạng thái xác thực:", error);
             toast.error("Không thể cập nhật trạng thái xác thực!");
         }
     };

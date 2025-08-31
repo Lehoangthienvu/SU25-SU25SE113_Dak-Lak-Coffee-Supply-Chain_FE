@@ -1,20 +1,20 @@
 "use client";
-import { 
-  useParams, 
-  useRouter 
+import {
+  useParams,
+  useRouter
 } from "next/navigation";
-import { 
-  getUserById, 
-  UserProfileDetails, 
-  UserAccountStatus, 
-  Gender, 
-  LoginType 
+import {
+  getUserById,
+  UserProfileDetails,
+  UserAccountStatus,
+  Gender,
+  LoginType
 } from "@/lib/api/users";
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import React from "react";
@@ -82,64 +82,64 @@ export default function UserDetail() {
   };
 
   // Get status display info
-const getStatusInfo = (status: UserAccountStatus) => {
-  switch (status) {
-    case UserAccountStatus.PendingApproval:
-      return { text: "Chờ duyệt", className: "bg-blue-100 text-blue-700" };
-    case UserAccountStatus.Active:
-      return { text: "Hoạt động", className: "bg-green-100 text-green-700" };
-    case UserAccountStatus.Inactive:
-      return { text: "Tạm ngưng", className: "bg-gray-200 text-gray-600" };
-    case UserAccountStatus.Locked:
-      return { text: "Bị khóa", className: "bg-orange-100 text-orange-700" };
-    case UserAccountStatus.Suspended:
-      return { text: "Tạm đình chỉ", className: "bg-red-100 text-red-700" };
-    case UserAccountStatus.Rejected:
-      return { text: "Từ chối duyệt", className: "bg-pink-100 text-pink-700" };
-    case UserAccountStatus.Deleted:
-      return { text: "Đã xoá", className: "bg-gray-300 text-gray-700" };
-    case UserAccountStatus.Banned:
-      return { text: "Cấm vĩnh viễn", className: "bg-black text-white" };
-    default:
-      return { text: "Không xác định", className: "bg-yellow-100 text-yellow-700" };
-  }
-};
+  const getStatusInfo = (status: UserAccountStatus) => {
+    switch (status) {
+      case UserAccountStatus.PendingApproval:
+        return { text: "Chờ duyệt", className: "bg-blue-100 text-blue-700" };
+      case UserAccountStatus.Active:
+        return { text: "Hoạt động", className: "bg-green-100 text-green-700" };
+      case UserAccountStatus.Inactive:
+        return { text: "Tạm ngưng", className: "bg-gray-200 text-gray-600" };
+      case UserAccountStatus.Locked:
+        return { text: "Bị khóa", className: "bg-orange-100 text-orange-700" };
+      case UserAccountStatus.Suspended:
+        return { text: "Tạm đình chỉ", className: "bg-red-100 text-red-700" };
+      case UserAccountStatus.Rejected:
+        return { text: "Từ chối duyệt", className: "bg-pink-100 text-pink-700" };
+      case UserAccountStatus.Deleted:
+        return { text: "Đã xoá", className: "bg-gray-300 text-gray-700" };
+      case UserAccountStatus.Banned:
+        return { text: "Cấm vĩnh viễn", className: "bg-black text-white" };
+      default:
+        return { text: "Không xác định", className: "bg-yellow-100 text-yellow-700" };
+    }
+  };
 
   // Get gender display
-const getGenderDisplay = (gender: Gender) => {
-  switch (gender) {
-    case Gender.Male:
-      return "Nam";
-    case Gender.Female:
-      return "Nữ";
-    case Gender.Other:
-      return "Khác";
-    case Gender.Unknown:
-    default:
-      return "Không xác định";
-  }
-};
+  const getGenderDisplay = (gender: Gender) => {
+    switch (gender) {
+      case Gender.Male:
+        return "Nam";
+      case Gender.Female:
+        return "Nữ";
+      case Gender.Other:
+        return "Khác";
+      case Gender.Unknown:
+      default:
+        return "Không xác định";
+    }
+  };
 
   // Get login type display
-const getLoginTypeLabel = (loginType: LoginType) => {
-  switch (loginType) {
-    case "System":
-      return "Hệ thống";
-    case "Google":
-      return "Google";
-    case "Facebook":
-      return "Facebook";
-    case "Apple":
-      return "Apple";
-    default:
-      return "Không xác định";
-  }
-};
+  const getLoginTypeLabel = (loginType: LoginType) => {
+    switch (loginType) {
+      case "System":
+        return "Hệ thống";
+      case "Google":
+        return "Google";
+      case "Facebook":
+        return "Facebook";
+      case "Apple":
+        return "Apple";
+      default:
+        return "Không xác định";
+    }
+  };
 
   const statusInfo = getStatusInfo(user.status);
 
   return (
-    <div className="w-full min-h-screen bg-orange-50 p-6 flex justify-center items-start">
+    <div className="w-full flex justify-center items-start">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle>Chi tiết người dùng</CardTitle>
@@ -148,11 +148,19 @@ const getLoginTypeLabel = (loginType: LoginType) => {
           <div className="flex flex-col gap-6">
             {/* Profile Picture and Basic Info */}
             <div className="flex flex-col items-center gap-4">
-              <img 
-                src={user.profilePictureUrl} 
-                alt={user.name} 
-                className="w-32 h-32 rounded-full object-cover border-4 border-orange-200" 
-              />
+              {user.profilePictureUrl ? (
+                <img
+                  src={user.profilePictureUrl}
+                  alt={user.name}
+                  className="w-32 h-32 rounded-full object-cover border-4 border-orange-200"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-orange-100 border-4 border-orange-200 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-orange-600">
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                </div>
+              )}
               <div className="text-center">
                 <h2 className="font-semibold text-xl">{user.name}</h2>
                 <p className="text-gray-600">{user.roleName}</p>
@@ -247,8 +255,8 @@ const getLoginTypeLabel = (loginType: LoginType) => {
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => router.push(`/dashboard/admin/users/${userId}/edit`)}
               >
                 Chỉnh sửa
