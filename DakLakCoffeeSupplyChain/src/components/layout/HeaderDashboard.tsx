@@ -19,6 +19,12 @@ export default function HeaderDashboard() {
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  // Đảm bảo component chỉ render sau khi mounted để tránh hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Function để lấy title theo ngôn ngữ - di chuyển vào trong component để có thể sử dụng t()
   const getPathTitle = (key: string) => {
@@ -126,7 +132,7 @@ export default function HeaderDashboard() {
         <div className="relative">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder={t('common.search')}
+            placeholder={mounted ? t('common.search') : "Tìm kiếm"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"

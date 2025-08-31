@@ -148,31 +148,26 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: t('sidebar.farmer.coffeeMarket'),
         title: t('sidebar.navigation.farmer.coffeeProcurementFloor'),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
       },
       {
-        title: t('sidebar.farmer.commitment'),
         title: t('sidebar.navigation.farmer.procurementPlanCommitment'),
         href: "/dashboard/farmer/farming-commitments",
         icon: iconMap.contracts,
       },
       {
-        title: t('sidebar.farmer.cropSeasons'),
         title: t('sidebar.navigation.farmer.cropSeasons'),
         href: "/dashboard/farmer/crop-seasons",
         icon: iconMap.crops,
       },
       {
-        title: t('sidebar.farmer.consultation'),
         title: t('sidebar.navigation.farmer.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },
       {
-        title: t('sidebar.farmer.deliveryRequest'),
         title: t('sidebar.navigation.farmer.sendDeliveryRequest'),
         href: "/dashboard/farmer/warehouse-request",
         icon: <FiTruck />,
@@ -267,34 +262,28 @@ export function SidebarGroup() {
     ],
     manager: [
       {
-        title: t('sidebar.manager.overview'),
         title: t('sidebar.navigation.manager.dashboard'),
         href: "/dashboard/manager",
         icon: iconMap.dashboard,
       },
       {
-        title: t('sidebar.manager.cropSeasons'),
         title: t('sidebar.navigation.manager.cropSeasons'),
         href: "/dashboard/manager/crop-seasons",
-        icon: <FiClipboard />,
+        icon: iconMap.crops,
       },
       {
-        title: t('sidebar.manager.reports'),
         title: t('sidebar.navigation.manager.reports'),
         href: "/dashboard/manager/reports",
-        icon: <FiFileText />,
+        icon: iconMap.reports,
       },
       {
-        title: t('sidebar.manager.expertAdvice'),
-
         title: t('sidebar.navigation.manager.expertAdvice'),
         href: "/dashboard/manager/expert-advice",
-        icon: <FiMessageCircle />,
+        icon: iconMap.feedback,
       },
       {
-        title: t('sidebar.manager.notifications'),
         title: t('sidebar.navigation.manager.notifications'),
-        href: "/dashboard/notifications",
+        href: "/dashboard/manager/notifications",
         icon: <FiBell />,
       },
     ],
@@ -335,28 +324,18 @@ export function SidebarGroup() {
             )}
             onClick={() => setProcessingOpen((v) => !v)}
           >
-
             <div className="flex items-center gap-2 overflow-hidden">
               <span className="shrink-0 w-5 text-center">
                 {iconMap.articles}
               </span>
-              <span className="truncate">{t('sidebar.farmer.processing')}</span>
+              <span className="truncate">{t('sidebar.navigation.farmer.processing')}</span>
             </div>
-
-                         <div className="flex items-center gap-2 overflow-hidden">
-               <span className="shrink-0 w-5 text-center">
-                 {iconMap.articles}
-               </span>
-               <span className="truncate">{t('sidebar.navigation.farmer.processing')}</span>
-             </div>
-
             <FiChevronDown
               className={cn("transition-transform duration-200", processingOpen && "rotate-180")}
             />
           </button>
           {processingOpen && (
             <div className="pl-8 space-y-1">
-
               <Link
                 href="/dashboard/farmer/processing/batches"
                 className={cn(
@@ -366,7 +345,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.farmer.processingBatches')}
+                {t('sidebar.navigation.farmer.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/progresses"
@@ -377,7 +356,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.farmer.processingProgress')}
+                {t('sidebar.navigation.farmer.processingProgress')}
               </Link>
               <Link
                 href="/dashboard/farmer/processing/wastes"
@@ -388,41 +367,8 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.farmer.processingWastes')}
+                {t('sidebar.navigation.farmer.processingWaste')}
               </Link>
-                             <Link
-                 href="/dashboard/farmer/processing/batches"
-                 className={cn(
-                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                   pathname.startsWith("/dashboard/farmer/processing/batches")
-                     ? "bg-orange-100 text-orange-700 shadow-sm"
-                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-                 )}
-               >
-                 {t('sidebar.navigation.farmer.processingBatches')}
-               </Link>
-               <Link
-                 href="/dashboard/farmer/processing/progresses"
-                 className={cn(
-                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                   pathname.startsWith("/dashboard/farmer/processing/progresses")
-                     ? "bg-orange-100 text-orange-700 shadow-sm"
-                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-                 )}
-               >
-                 {t('sidebar.navigation.farmer.processingProgress')}
-               </Link>
-               <Link
-                 href="/dashboard/farmer/processing/wastes"
-                 className={cn(
-                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                   pathname.startsWith("/dashboard/farmer/processing/wastes")
-                     ? "bg-orange-100 text-orange-700 shadow-sm"
-                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-                 )}
-               >
-                 {t('sidebar.navigation.farmer.processingWaste')}
-               </Link>
             </div>
           )}
         </div>
@@ -448,7 +394,6 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiFileText />
               </span>
-              <span className="truncate">{t('sidebar.manager.contractsDelivery')}</span>
               <span className="truncate">{t('sidebar.navigation.manager.contractsAndDelivery')}</span>
             </div>
             <FiChevronDown
@@ -466,7 +411,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.supplyContracts')}
                 {t('sidebar.navigation.manager.supplyContracts')}
               </Link>
               <Link
@@ -478,7 +422,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.deliverySchedule')}
                 {t('sidebar.navigation.manager.deliverySchedule')}
               </Link>
               <Link
@@ -490,7 +433,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.procurementPlans')}
                 {t('sidebar.navigation.manager.procurementPlans')}
               </Link>
               <Link
@@ -502,7 +444,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.farmingCommitments')}
                 {t('sidebar.navigation.manager.procurementCommitments')}
               </Link>
             </div>
@@ -527,7 +468,6 @@ export function SidebarGroup() {
               <span className="shrink-0 w-5 text-center">
                 <FiShoppingCart />
               </span>
-              <span className="truncate">{t('sidebar.manager.ordersDelivery')}</span>
               <span className="truncate">{t('sidebar.navigation.manager.ordersAndDelivery')}</span>
             </div>
             <FiChevronDown
@@ -545,7 +485,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.orders')}
                 {t('sidebar.navigation.manager.orders')}
               </Link>
               <Link
@@ -557,7 +496,6 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                {t('sidebar.manager.deliveryBatches')}
                 {t('sidebar.navigation.manager.deliveryBatches')}
               </Link>
             </div>
