@@ -5778,5 +5778,114 @@
     "read": "Read",
     "justNow": "Just now",
     "viewAll": "View all notifications"
+  },
+  "businessStaffs": {
+    "title": "Staff Management",
+    "subtitle": "Manage staff information and permissions in the system",
+    "page": {
+      "title": "Staff Management",
+      "subtitle": "Manage staff information and permissions in the system",
+      "addStaff": "Add Staff",
+      "staffCount": "{{filtered}}/{{total}} staff",
+      "searchPlaceholder": "Search staff by name, code, email, position...",
+      "filterButton": "Filters",
+      "clearFilters": "Clear Filters",
+      "department": "Department",
+      "allDepartments": "All Departments",
+      "statistics": "Statistics",
+      "total": "Total",
+      "filtered": "Filtered",
+      "searchFilter": "🔍 Search: \"{{term}}\"",
+      "departmentFilter": "🏢 Department: {{department}}",
+      "clearAllFilters": "Clear All Filters"
+    },
+    "table": {
+      "headers": {
+        "staffCode": "Staff Code",
+        "fullName": "Full Name",
+        "email": "Email",
+        "department": "Department",
+        "position": "Position",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View Details",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "detail": {
+      "title": "🧾 Staff Information",
+      "staffCode": "Staff Code:",
+      "fullName": "Full Name:",
+      "email": "Email:",
+      "phoneNumber": "Phone Number:",
+      "department": "Department:",
+      "position": "Position:",
+      "assignedWarehouse": "Assigned Warehouse:",
+      "createdAt": "Created At:",
+      "noPhone": "None",
+      "notAssigned": "Not Assigned",
+      "unknown": "Unknown",
+      "back": "Back",
+      "edit": "✏️ Edit"
+    },
+    "create": {
+      "title": "Create New Staff",
+      "fullName": "Full Name *",
+      "email": "Email *",
+      "phoneNumber": "Phone Number",
+      "password": "Password *",
+      "position": "Position *",
+      "department": "Department",
+      "assignedWarehouse": "Assigned Warehouse",
+      "noSelection": "-- No Selection --",
+      "cancel": "Cancel",
+      "create": "Create Staff",
+      "creating": "Creating...",
+      "success": "Staff created successfully!",
+      "error": "Failed to create staff.",
+      "warehouseError": "Cannot load warehouse list."
+    },
+    "edit": {
+      "title": "✏️ Edit Staff",
+      "staffCode": "Staff Code",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "department": "Department",
+      "position": "Position",
+      "assignedWarehouse": "Assigned Warehouse (if any)",
+      "noSelection": "-- No Selection --",
+      "back": "Back",
+      "saveChanges": "Save Changes",
+      "success": "Updated successfully.",
+      "error": "Update failed.",
+      "notFound": "Staff not found.",
+      "warehouseError": "Cannot load warehouse list.",
+      "loadError": "Error loading data."
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this staff?",
+      "success": "Deleted successfully.",
+      "error": "Delete failed.",
+      "deleteError": "Error deleting staff."
+    },
+    "loading": {
+      "list": "Loading staff list...",
+      "detail": "Loading staff information...",
+      "data": "Loading data..."
+    },
+    "error": {
+      "loadList": "Cannot load staff list.",
+      "loadDetail": "Error loading staff data.",
+      "noData": "No data."
+    },
+    "empty": {
+      "noStaff": "No staff yet",
+      "noResults": "No matching staff found",
+      "noStaffDesc": "Start adding the first staff member",
+      "noResultsDesc": "Try changing filters or search keywords"
+    }
   }
 }
