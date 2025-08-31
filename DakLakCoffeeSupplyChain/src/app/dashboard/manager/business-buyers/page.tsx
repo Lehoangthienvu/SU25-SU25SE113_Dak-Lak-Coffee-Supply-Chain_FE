@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,7 @@ import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BusinessBuyersPage() {
+  const { t } = useTranslation();
   const [buyers, setBuyers] = useState<BusinessBuyerDto[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,10 +90,10 @@ export default function BusinessBuyersPage() {
       );
       setShowDeleteDialog(false);
       setBuyerToDelete(null);
-      toast.success("Đã xoá khách hàng doanh nghiệp thành công");
+      toast.success(t('businessBuyers.messages.deleteSuccess'));
     } catch (e) {
       console.error("Xoá khách hàng thất bại:", e);
-      toast.error("Xoá khách hàng thất bại");
+      toast.error(t('businessBuyers.messages.deleteError'));
     } finally {
       setDeleting(false);
     }
@@ -103,11 +105,11 @@ export default function BusinessBuyersPage() {
       <aside className="w-64 space-y-4">
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            Tìm kiếm khách hàng DN
+            {t('businessBuyers.list.searchPlaceholder')}
           </h2>
           <div className="relative">
             <Input
-              placeholder="Tìm kiếm..."
+              placeholder={t('businessBuyers.actions.search')}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -120,7 +122,7 @@ export default function BusinessBuyersPage() {
           <div className="flex flex-col gap-3 pt-2">
             <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-700">
-                Từ ngày
+                {t('businessBuyers.list.startDate')}
               </label>
               <Input
                 type="date"
@@ -130,7 +132,7 @@ export default function BusinessBuyersPage() {
             </div>
             <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-700">
-                Đến ngày
+                {t('businessBuyers.list.endDate')}
               </label>
               <Input
                 type="date"
@@ -153,7 +155,7 @@ export default function BusinessBuyersPage() {
                 router.push("/dashboard/manager/business-buyers/create")
               }
             >
-              + Thêm khách hàng
+              + {t('businessBuyers.actions.addNew')}
             </Button>
           </div>
 
@@ -161,11 +163,11 @@ export default function BusinessBuyersPage() {
             <table className="min-w-full table-auto">
               <thead className="bg-gray-100 text-sm text-gray-600">
                 <tr>
-                  <th className="px-4 py-2 text-left">Công ty</th>
-                  <th className="px-4 py-2 text-left">Người liên hệ</th>
-                  <th className="px-4 py-2 text-left">Chức vụ</th>
-                  <th className="px-4 py-2 text-center">Ngày tạo</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">{t('businessBuyers.table.headers.companyName')}</th>
+                  <th className="px-4 py-2 text-left">{t('businessBuyers.table.headers.contactPerson')}</th>
+                  <th className="px-4 py-2 text-left">{t('businessBuyers.table.headers.position')}</th>
+                  <th className="px-4 py-2 text-center">{t('businessBuyers.table.headers.createdAt')}</th>
+                  <th className="px-4 py-2 text-center">{t('businessBuyers.table.headers.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -175,7 +177,7 @@ export default function BusinessBuyersPage() {
                       colSpan={5}
                       className="text-center py-8 text-sm text-muted-foreground"
                     >
-                      Không tìm thấy khách hàng
+                      {t('businessBuyers.list.noResults')}
                     </td>
                   </tr>
                 ) : (
@@ -198,7 +200,7 @@ export default function BusinessBuyersPage() {
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-[2px] justify-center">
-                          <Tooltip content="Xem chi tiết">
+                          <Tooltip content={t('businessBuyers.table.tooltips.view')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -211,7 +213,7 @@ export default function BusinessBuyersPage() {
                               <Eye className="w-4 h-4 text-blue-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t('businessBuyers.table.tooltips.edit')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -224,7 +226,7 @@ export default function BusinessBuyersPage() {
                               <Pencil className="w-4 h-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t('businessBuyers.table.tooltips.delete')}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -277,25 +279,25 @@ export default function BusinessBuyersPage() {
           </div>
         )}
       </main>
-      <ConfirmDialog
+              <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         title={
           <div className="flex items-center justify-center gap-2 text-red-600">
-            <AlertTriangle className="w-5 h-5" /> Xoá khách hàng?
+            <AlertTriangle className="w-5 h-5" /> {t('businessBuyers.deleteDialog.title')}
           </div>
         }
         description={
           <div className="mt-1 text-gray-700 text-center">
-            Bạn có chắc chắn muốn xoá khách hàng
+            {t('businessBuyers.deleteDialog.description')}
             <span className="font-semibold"> {buyerToDelete?.companyName}</span>
-            ?
+            {t('businessBuyers.deleteDialog.buyerName')}
             <br />
-            Hành động này không thể hoàn tác.
+            {t('businessBuyers.deleteDialog.warning')}
           </div>
         }
-        confirmText={deleting ? "Đang xoá..." : "Xóa"}
-        cancelText="Hủy"
+        confirmText={deleting ? t('businessBuyers.deleteDialog.deleting') : t('businessBuyers.deleteDialog.confirm')}
+        cancelText={t('businessBuyers.deleteDialog.cancel')}
         onConfirm={handleDelete}
         loading={deleting}
       />

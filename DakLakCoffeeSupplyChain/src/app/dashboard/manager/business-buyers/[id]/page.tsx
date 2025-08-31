@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   getBusinessBuyerById,
   BusinessBuyerViewDetailsDto,
@@ -35,6 +36,7 @@ function formatDate(dateStr?: string) {
 }
 
 export default function BusinessBuyerDetailsPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [buyer, setBuyer] = useState<BusinessBuyerViewDetailsDto | null>(null);
@@ -54,9 +56,9 @@ export default function BusinessBuyerDetailsPage() {
     })();
   }, [id]);
 
-  if (loading) return <div className="p-6">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-6">{t('businessBuyers.detail.loading')}</div>;
   if (!buyer)
-    return <div className="p-6 text-red-500">Không tìm thấy khách hàng.</div>;
+    return <div className="p-6 text-red-500">{t('businessBuyers.detail.notFound')}</div>;
 
   return (
     <div className="w-full min-h-screen bg-orange-50 px-4 py-6 lg:px-20 flex justify-center">
@@ -76,10 +78,10 @@ export default function BusinessBuyerDetailsPage() {
               <div className="text-xs text-gray-500 mt-1 flex items-center gap-4">
                 <span className="inline-flex items-center gap-1">
                   <CalendarDays className="w-3 h-3" />
-                  Tạo: {formatDate(buyer.createdAt)}
+                  {t('businessBuyers.detail.fields.createdAt')}: {formatDate(buyer.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  Cập nhật: {formatDate(buyer.updatedAt)}
+                  {t('businessBuyers.detail.fields.updatedAt')}: {formatDate(buyer.updatedAt)}
                 </span>
               </div>
             </div>
@@ -97,7 +99,7 @@ export default function BusinessBuyerDetailsPage() {
                   )
                 }
               >
-                Mở website
+                {t('businessBuyers.detail.fields.website')}
               </Button>
             )}
             <Button
@@ -108,7 +110,7 @@ export default function BusinessBuyerDetailsPage() {
                 )
               }
             >
-              <Pencil className="w-4 h-4" /> Chỉnh sửa
+              <Pencil className="w-4 h-4" /> {t('businessBuyers.detail.edit')}
             </Button>
           </div>
         </div>
@@ -117,38 +119,38 @@ export default function BusinessBuyerDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Thông tin doanh nghiệp</CardTitle>
+              <CardTitle>{t('businessBuyers.detail.sections.basicInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<Hash className="w-4 h-4" />}
-                label="Mã khách hàng"
+                label={t('businessBuyers.detail.fields.buyerCode')}
                 value={buyer.buyerCode}
               />
               <InfoRow
                 icon={<Building2 className="w-4 h-4" />}
-                label="Tên công ty"
+                label={t('businessBuyers.detail.fields.companyName')}
                 value={buyer.companyName}
               />
               <InfoRow
                 icon={<User className="w-4 h-4" />}
-                label="Người liên hệ"
+                label={t('businessBuyers.detail.fields.contactPerson')}
                 value={buyer.contactPerson}
               />
               <InfoRow
                 icon={<BadgeInfo className="w-4 h-4" />}
-                label="Chức vụ"
+                label={t('businessBuyers.detail.fields.position')}
                 value={buyer.position}
               />
               <InfoRow
                 icon={<MapPin className="w-4 h-4" />}
-                label="Địa chỉ"
+                label={t('businessBuyers.detail.fields.address')}
                 value={buyer.companyAddress}
                 multiline
               />
               <InfoRow
                 icon={<BadgePercent className="w-4 h-4" />}
-                label="Mã số thuế"
+                label={t('businessBuyers.detail.fields.taxCode')}
                 value={buyer.taxId || "—"}
               />
             </CardContent>
@@ -156,14 +158,14 @@ export default function BusinessBuyerDetailsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Thông tin liên hệ</CardTitle>
+              <CardTitle>{t('businessBuyers.detail.sections.contactInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<Mail className="w-4 h-4" />}
-                label="Email"
+                label={t('businessBuyers.detail.fields.email')}
                 value={buyer.email || "—"}
-                actionLabel={buyer.email ? "Gửi email" : undefined}
+                actionLabel={buyer.email ? t('businessBuyers.detail.actions.sendEmail') : undefined}
                 onAction={() =>
                   buyer.email &&
                   (window.location.href = `mailto:${buyer.email}`)
@@ -171,18 +173,18 @@ export default function BusinessBuyerDetailsPage() {
               />
               <InfoRow
                 icon={<Phone className="w-4 h-4" />}
-                label="Điện thoại"
+                label={t('businessBuyers.detail.fields.phone')}
                 value={buyer.phone || "—"}
-                actionLabel={buyer.phone ? "Gọi" : undefined}
+                actionLabel={buyer.phone ? t('businessBuyers.detail.actions.call') : undefined}
                 onAction={() =>
                   buyer.phone && (window.location.href = `tel:${buyer.phone}`)
                 }
               />
               <InfoRow
                 icon={<Globe className="w-4 h-4" />}
-                label="Website"
+                label={t('businessBuyers.detail.fields.website')}
                 value={buyer.website || "—"}
-                actionLabel={buyer.website ? "Mở" : undefined}
+                actionLabel={buyer.website ? t('businessBuyers.detail.actions.open') : undefined}
                 onAction={() =>
                   buyer.website &&
                   window.open(
@@ -195,12 +197,12 @@ export default function BusinessBuyerDetailsPage() {
               />
               <InfoRow
                 icon={<CalendarDays className="w-4 h-4" />}
-                label="Ngày tạo"
+                label={t('businessBuyers.detail.fields.createdAt')}
                 value={formatDate(buyer.createdAt)}
               />
               <InfoRow
                 icon={<CalendarDays className="w-4 h-4" />}
-                label="Ngày cập nhật"
+                label={t('businessBuyers.detail.fields.updatedAt')}
                 value={formatDate(buyer.updatedAt)}
               />
             </CardContent>
@@ -213,7 +215,7 @@ export default function BusinessBuyerDetailsPage() {
             variant="outline"
             onClick={() => router.push(`/dashboard/manager/business-buyers`)}
           >
-            ← Quay lại
+            ← {t('businessBuyers.detail.backToList')}
           </Button>
         </div>
       </div>

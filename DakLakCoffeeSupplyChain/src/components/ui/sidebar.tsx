@@ -189,6 +189,11 @@ export function SidebarGroup() {
         icon: <FiUsers />,
       },
       {
+        title: "Quản lý nông dân",
+        href: "/dashboard/admin/farmers",
+        icon: <FiUsers />,
+      },
+      {
         title: "Hợp đồng",
         href: "/dashboard/admin/contracts",
         icon: iconMap.contracts,

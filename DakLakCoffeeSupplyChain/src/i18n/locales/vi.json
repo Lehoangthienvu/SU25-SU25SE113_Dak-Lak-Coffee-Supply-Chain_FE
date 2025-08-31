@@ -6379,6 +6379,253 @@
       }
     }
   },
+  "businessBuyers": {
+    "title": "Khách hàng doanh nghiệp",
+    "subtitle": "Quản lý khách hàng doanh nghiệp",
+    "description": "Xem và quản lý tất cả khách hàng doanh nghiệp trong hệ thống",
+    "stats": {
+      "totalBuyers": "Tổng khách hàng",
+      "activeBuyers": "Khách hàng hoạt động",
+      "inactiveBuyers": "Khách hàng không hoạt động"
+    },
+    "actions": {
+      "addNew": "Thêm khách hàng mới",
+      "search": "Tìm kiếm khách hàng...",
+      "filter": "Lọc",
+      "export": "Xuất",
+      "refresh": "Làm mới"
+    },
+    "table": {
+      "headers": {
+        "buyerCode": "Mã khách hàng",
+        "companyName": "Tên công ty",
+        "contactPerson": "Người liên hệ",
+        "position": "Chức vụ",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "address": "Địa chỉ",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "actions": "Hành động"
+      },
+      "tooltips": {
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa khách hàng",
+        "delete": "Xoá khách hàng"
+      },
+      "status": {
+        "active": "Hoạt động",
+        "inactive": "Không hoạt động"
+      },
+      "empty": {
+        "title": "Không tìm thấy khách hàng doanh nghiệp",
+        "description": "Không có khách hàng doanh nghiệp nào phù hợp với tiêu chí tìm kiếm",
+        "action": "Thêm khách hàng đầu tiên"
+      },
+      "loading": "Đang tải danh sách khách hàng..."
+    },
+    "deleteDialog": {
+      "title": "Xoá khách hàng doanh nghiệp?",
+      "description": "Bạn có chắc chắn muốn xoá",
+      "buyerName": "khách hàng doanh nghiệp này?",
+      "warning": "Hành động này không thể hoàn tác.",
+      "confirm": "Xoá",
+      "cancel": "Huỷ",
+      "deleting": "Đang xoá..."
+    },
+    "messages": {
+      "deleteSuccess": "Đã xoá khách hàng doanh nghiệp thành công",
+      "deleteError": "Xoá khách hàng doanh nghiệp thất bại",
+      "loadError": "Tải danh sách khách hàng thất bại"
+    },
+    "list": {
+      "title": "Danh sách khách hàng doanh nghiệp",
+      "subtitle": "Quản lý tất cả khách hàng doanh nghiệp",
+      "searchPlaceholder": "Tìm kiếm theo mã, tên công ty, người liên hệ...",
+      "filterByDate": "Lọc theo ngày tạo",
+      "startDate": "Từ ngày",
+      "endDate": "Đến ngày",
+      "clearFilters": "Xoá bộ lọc",
+      "noResults": "Không tìm thấy khách hàng doanh nghiệp nào phù hợp"
+    },
+    "detail": {
+      "title": "Chi tiết khách hàng doanh nghiệp",
+      "subtitle": "Xem thông tin khách hàng",
+      "backToList": "Quay lại danh sách",
+      "edit": "Chỉnh sửa khách hàng",
+      "delete": "Xoá khách hàng",
+      "sections": {
+        "basicInfo": "Thông tin cơ bản",
+        "contactInfo": "Thông tin liên hệ",
+        "systemInfo": "Thông tin hệ thống"
+      },
+      "fields": {
+        "buyerCode": "Mã khách hàng",
+        "companyName": "Tên công ty",
+        "contactPerson": "Người liên hệ",
+        "position": "Chức vụ",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "address": "Địa chỉ",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "taxCode": "Mã số thuế",
+        "website": "Website"
+      },
+      "actions": {
+        "sendEmail": "Gửi email",
+        "call": "Gọi",
+        "open": "Mở"
+      },
+      "loading": "Đang tải chi tiết khách hàng...",
+      "error": "Lỗi khi tải chi tiết khách hàng",
+      "notFound": "Không tìm thấy khách hàng doanh nghiệp"
+    },
+    "create": {
+      "title": "Thêm khách hàng doanh nghiệp mới",
+      "subtitle": "Tạo khách hàng doanh nghiệp mới",
+      "backToList": "Quay lại danh sách",
+      "form": {
+        "title": "Thông tin khách hàng doanh nghiệp",
+        "buyerCode": {
+          "label": "Mã khách hàng",
+          "placeholder": "Nhập mã khách hàng",
+          "description": "Mã định danh duy nhất cho khách hàng"
+        },
+        "companyName": {
+          "label": "Tên công ty",
+          "placeholder": "Nhập tên công ty",
+          "description": "Tên đầy đủ của công ty"
+        },
+        "contactPerson": {
+          "label": "Người liên hệ",
+          "placeholder": "Nhập tên người liên hệ",
+          "description": "Người liên hệ chính"
+        },
+        "position": {
+          "label": "Chức vụ",
+          "placeholder": "Nhập chức vụ/chức danh",
+          "description": "Chức vụ của người liên hệ trong công ty"
+        },
+        "phone": {
+          "label": "Số điện thoại",
+          "placeholder": "Nhập số điện thoại",
+          "description": "Số điện thoại liên hệ"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Nhập địa chỉ email",
+          "description": "Địa chỉ email liên hệ"
+        },
+        "address": {
+          "label": "Địa chỉ",
+          "placeholder": "Nhập địa chỉ công ty",
+          "description": "Địa chỉ thực tế của công ty"
+        },
+        "taxCode": {
+          "label": "Mã số thuế",
+          "placeholder": "Nhập mã số thuế"
+        },
+        "website": {
+          "label": "Website",
+          "placeholder": "https://example.com"
+        },
+        "submit": "Tạo khách hàng",
+        "cancel": "Huỷ",
+        "creating": "Đang tạo..."
+      },
+      "validation": {
+        "buyerCodeRequired": "Mã khách hàng là bắt buộc",
+        "buyerCodeMinLength": "Mã khách hàng phải có ít nhất 3 ký tự",
+        "buyerCodeMaxLength": "Mã khách hàng không được vượt quá 50 ký tự",
+        "companyNameRequired": "Tên công ty là bắt buộc",
+        "companyNameMinLength": "Tên công ty phải có ít nhất 3 ký tự",
+        "companyNameMaxLength": "Tên công ty không được vượt quá 200 ký tự",
+        "contactPersonRequired": "Người liên hệ là bắt buộc",
+        "contactPersonMinLength": "Tên người liên hệ phải có ít nhất 2 ký tự",
+        "contactPersonMaxLength": "Tên người liên hệ không được vượt quá 100 ký tự",
+        "positionRequired": "Chức vụ là bắt buộc",
+        "positionMinLength": "Chức vụ phải có ít nhất 2 ký tự",
+        "positionMaxLength": "Chức vụ không được vượt quá 100 ký tự",
+        "phoneRequired": "Số điện thoại là bắt buộc",
+        "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ",
+        "emailRequired": "Email là bắt buộc",
+        "emailInvalid": "Vui lòng nhập email hợp lệ",
+        "addressRequired": "Địa chỉ là bắt buộc",
+        "addressMinLength": "Địa chỉ phải có ít nhất 10 ký tự",
+        "addressMaxLength": "Địa chỉ không được vượt quá 500 ký tự",
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+      },
+      "success": "Tạo khách hàng doanh nghiệp thành công!",
+      "error": "Không thể tạo khách hàng doanh nghiệp. Vui lòng thử lại."
+    },
+    "edit": {
+      "title": "Chỉnh sửa khách hàng doanh nghiệp",
+      "subtitle": "Cập nhật thông tin khách hàng",
+      "backToList": "Quay lại danh sách",
+      "form": {
+        "title": "Cập nhật thông tin khách hàng doanh nghiệp",
+        "buyerCode": {
+          "label": "Mã khách hàng",
+          "placeholder": "Nhập mã khách hàng"
+        },
+        "companyName": {
+          "label": "Tên công ty",
+          "placeholder": "Nhập tên công ty"
+        },
+        "contactPerson": {
+          "label": "Người liên hệ",
+          "placeholder": "Nhập tên người liên hệ"
+        },
+        "position": {
+          "label": "Chức vụ",
+          "placeholder": "Nhập chức vụ/chức danh"
+        },
+        "phone": {
+          "label": "Số điện thoại",
+          "placeholder": "Nhập số điện thoại"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Nhập địa chỉ email"
+        },
+        "address": {
+          "label": "Địa chỉ",
+          "placeholder": "Nhập địa chỉ công ty"
+        },
+        "submit": "Cập nhật khách hàng",
+        "cancel": "Huỷ",
+        "updating": "Đang cập nhật..."
+      },
+      "validation": {
+        "buyerCodeRequired": "Mã khách hàng là bắt buộc",
+        "buyerCodeMinLength": "Mã khách hàng phải có ít nhất 3 ký tự",
+        "buyerCodeMaxLength": "Mã khách hàng không được vượt quá 50 ký tự",
+        "companyNameRequired": "Tên công ty là bắt buộc",
+        "companyNameMinLength": "Tên công ty phải có ít nhất 3 ký tự",
+        "companyNameMaxLength": "Tên công ty không được vượt quá 200 ký tự",
+        "contactPersonRequired": "Người liên hệ là bắt buộc",
+        "contactPersonMinLength": "Tên người liên hệ phải có ít nhất 2 ký tự",
+        "contactPersonMaxLength": "Tên người liên hệ không được vượt quá 100 ký tự",
+        "positionRequired": "Chức vụ là bắt buộc",
+        "positionMinLength": "Chức vụ phải có ít nhất 2 ký tự",
+        "positionMaxLength": "Chức vụ không được vượt quá 100 ký tự",
+        "phoneRequired": "Số điện thoại là bắt buộc",
+        "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ",
+        "emailRequired": "Email là bắt buộc",
+        "emailInvalid": "Vui lòng nhập email hợp lệ",
+        "addressRequired": "Địa chỉ là bắt buộc",
+        "addressMinLength": "Địa chỉ phải có ít nhất 10 ký tự",
+        "addressMaxLength": "Địa chỉ không được vượt quá 500 ký tự",
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu"
+      },
+      "success": "Cập nhật khách hàng doanh nghiệp thành công!",
+      "error": "Không thể cập nhật khách hàng doanh nghiệp. Vui lòng thử lại.",
+      "loading": "Đang tải dữ liệu khách hàng...",
+      "notFound": "Không tìm thấy khách hàng doanh nghiệp."
+    }
+  },
   "products": {
     "title": "Sản phẩm",
     "subtitle": "Quản lý và theo dõi sản phẩm",
