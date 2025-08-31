@@ -47,30 +47,30 @@ export const useMenuConfig = () => {
     farmer: [
       {
         type: "link",
-        title: t('sidebar.dashboard'),
+        title: t('sidebar.navigation.farmer.dashboard'),
         href: "/dashboard/farmer",
         icon: iconMap.dashboard,
       },
       {
         type: "group",
-        title: t('sidebar.cropSeasons'),
+        title: t('sidebar.navigation.farmer.cropSeasons'),
         icon: iconMap.crops,
         children: [
           {
             type: "link",
-            title: t('sidebar.cropSeasons'),
+            title: t('sidebar.navigation.farmer.cropSeasons'),
             href: "/dashboard/farmer/crop-seasons",
             icon: iconMap.crops,
           },
           {
             type: "link",
-            title: t('sidebar.cropStages'),
+            title: t('sidebar.navigation.farmer.cropStages'),
             href: "/dashboard/farmer/crop-stages",
             icon: iconMap.crops,
           },
           {
             type: "link",
-            title: t('sidebar.cropProgress'),
+            title: t('sidebar.navigation.farmer.cropProgress'),
             href: "/dashboard/farmer/crop-progress",
             icon: iconMap.crops,
           },
@@ -78,13 +78,13 @@ export const useMenuConfig = () => {
       },
       {
         type: "link",
-        title: t('sidebar.consultation'),
+        title: t('sidebar.navigation.farmer.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },
       {
         type: "link",
-        title: t('sidebar.warehouseRequest'),
+        title: t('sidebar.navigation.farmer.warehouseRequest'),
         href: "/dashboard/farmer/warehouse-request",
         icon: iconMap.crops,
       },
