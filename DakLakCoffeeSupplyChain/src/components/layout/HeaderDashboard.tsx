@@ -20,6 +20,14 @@ export default function HeaderDashboard() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Test: Kiểm tra xem common.details có hoạt động không
+  console.log('🔍 Testing translations:');
+  console.log('  - common.details:', t('common.details'));
+  console.log('  - common.search:', t('common.search'));
+  console.log('  - common.create:', t('common.create'));
+  console.log('  - common.edit:', t('common.edit'));
+  console.log('  - sidebar.navigation.cropSeasons:', t('sidebar.navigation.cropSeasons'));
+
   // Function để lấy title theo ngôn ngữ - di chuyển vào trong component để có thể sử dụng t()
   const getPathTitle = (key: string) => {
     const titleMap: Record<string, string> = {
@@ -36,6 +44,7 @@ export default function HeaderDashboard() {
       "procurement-plans": t('sidebar.procurementPlans'),
       "farming-commitments": t('sidebar.commitments'),
       "crop-seasons": t('sidebar.navigation.cropSeasons'),
+      "crop-progress": t('sidebar.navigation.cropProgress'),
       batches: t('sidebar.batches'),
       evaluations: t('sidebar.evaluations'),
       progresses: t('sidebar.progress'),
@@ -60,6 +69,7 @@ export default function HeaderDashboard() {
       edit: t('common.edit'),
       details: t('common.details'),
     };
+
     return titleMap[key] || key;
   };
 
@@ -87,12 +97,14 @@ export default function HeaderDashboard() {
 
     // Nếu segment cuối là "create"
     if (last === "create") {
-      return getPathTitle(last);
+      const title = getPathTitle(last);
+      return title;
     }
 
     // Nếu segment cuối là "edit"
     if (last === "edit") {
-      return getPathTitle(last);
+      const title = getPathTitle(last);
+      return title;
     }
 
     // Kiểm tra xem segment cuối có phải là UUID không (ID có dạng 8-4-4-4-12 ký tự)
@@ -100,13 +112,17 @@ export default function HeaderDashboard() {
 
     // Nếu segment cuối là một ID (UUID) và có segment trước đó
     if (secondLast && isUUID) {
-      return getPathTitle(secondLast)
-        ? `${getPathTitle(secondLast)} - ${t('common.details')}`
-        : t('common.details');
+      const secondLastTitle = getPathTitle(secondLast);
+      const detailsTitle = t('common.details');
+      const finalTitle = secondLastTitle
+        ? `${secondLastTitle} - ${detailsTitle}`
+        : detailsTitle;
+      return finalTitle;
     }
 
     // Trường hợp thông thường
-    return getPathTitle(last) || t('sidebar.dashboard');
+    const normalTitle = getPathTitle(last) || t('sidebar.dashboard');
+    return normalTitle;
   }, [pathname, t]);
 
   const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(

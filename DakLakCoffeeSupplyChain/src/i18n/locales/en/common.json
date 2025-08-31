@@ -5,6 +5,10 @@
     "processing": "Processing...",
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "details": "Details",
+    "search": "Search",
+    "create": "Create",
+    "edit": "Edit",
     "components" : {
       "filterStatusPanel": {
         "title": "Filter by Status",
