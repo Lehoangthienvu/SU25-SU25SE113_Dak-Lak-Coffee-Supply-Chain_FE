@@ -9,6 +9,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { LoadingButton } from "@/components/ui/loadingProgress";
 import { CultivationRegistration } from "@/lib/api/cultivationRegistrations";
 import { calculateEstimatedDeliveryDates } from "@/lib/helpers/dateHelpers";
+import { useTranslation } from "react-i18next";
 
 export interface FarmingCommitmentDetailsFormData {
   commitmentDetailId?: string | undefined;
@@ -51,6 +52,7 @@ export default function FarmingCommitmentForm({
   onAddDetail,
   onRemoveDetail,
 }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<FarmingCommitmentFormData>(
     initialData || {
       commitmentName: "",
@@ -148,13 +150,14 @@ export default function FarmingCommitmentForm({
       <div className='space-y-4 max-w-2xl mx-auto'>
         <div>
           <Label htmlFor='commitmentName'>
-            Tên cam kết<span className='text-red-500'>*</span>
+            {t('farmingCommitment.components.farmingCommitmentForm.fields.commitmentName.label')}<span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.commitmentName.required')}</span>
           </Label>
           <Input
             name='commitmentName'
             value={form.commitmentName}
             onChange={handleChange}
             required
+            placeholder={t('farmingCommitment.components.farmingCommitmentForm.fields.commitmentName.placeholder')}
           />
           {errors["commitmentName"] && (
             <p className='text-red-500 text-xs'>{errors["commitmentName"]}</p>
@@ -162,19 +165,20 @@ export default function FarmingCommitmentForm({
         </div>
 
         <div>
-          <Label htmlFor='note'>Các điều khoản chung</Label>
+          <Label htmlFor='note'>{t('farmingCommitment.components.farmingCommitmentForm.fields.generalTerms.label')}</Label>
           <Textarea
             id={"note"}
             name='note'
             value={form.note}
             onChange={handleChange}
+            placeholder={t('farmingCommitment.components.farmingCommitmentForm.fields.generalTerms.placeholder')}
           />
         </div>
 
         {form.farmingCommitmentDetails.length === 0 ? (
           <div className='text-center py-8 text-gray-500'>
-            <p>Chưa có chi tiết cam kết nào.</p>
-            <p className='text-sm mt-1'>Vui lòng chờ dữ liệu được tải hoặc thêm chi tiết thủ công.</p>
+            <p>{t('farmingCommitment.components.farmingCommitmentForm.noDetails.title')}</p>
+            <p className='text-sm mt-1'>{t('farmingCommitment.components.farmingCommitmentForm.noDetails.subtitle')}</p>
           </div>
         ) : (
           form.farmingCommitmentDetails.map((detail, index) => {
@@ -191,7 +195,7 @@ export default function FarmingCommitmentForm({
           return (
             <Card key={index} className='mb-4 border'>
               <CardHeader className='flex justify-between items-center'>
-                <CardTitle>Chi tiết cam kết #{index + 1}</CardTitle>
+                <CardTitle>{t('farmingCommitment.components.farmingCommitmentForm.detailTitle', { index: index + 1 })}</CardTitle>
                 {form.farmingCommitmentDetails.length > 1 && (
                   <Button
                     variant='destructiveGradient'
@@ -200,21 +204,21 @@ export default function FarmingCommitmentForm({
                     type='button'
                   >
                     <FiTrash2 className='mr-1' />
-                    Xóa
+                    {t('farmingCommitment.components.farmingCommitmentForm.buttons.removeDetail')}
                   </Button>
                 )}
               </CardHeader>
               <CardContent className='space-y-3'>
                 <div>
                   <Label htmlFor={`registrationDetailId-${index}`}>
-                    Chi tiết đơn đăng ký (Chỉ chọn được những chi tiết đã duyệt)
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.registrationDetailId.label')}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.registrationDetailId.required')}</span>
                   </Label>
                   {loading ? (
                     <LoadingSpinner />
                   ) : !options || options.length === 0 ? (
                     <p className='text-red-500 text-sm italic'>
-                      Không có chi tiết đơn đăng ký nào đã duyệt để chọn
+                      {t('farmingCommitment.components.farmingCommitmentForm.fields.registrationDetailId.noOptions')}
                     </p>
                   ) : (
                     <>
@@ -226,7 +230,7 @@ export default function FarmingCommitmentForm({
                         required
                         className='block w-full rounded border border-gray-300 px-3 py-2 cursor-pointer'
                       >
-                        <option value=''>-- Chọn chi tiết --</option>
+                        <option value=''>{t('farmingCommitment.components.farmingCommitmentForm.fields.registrationDetailId.placeholder')}</option>
                         {options?.map((registrationDetail) => (
                           <option
                             key={
@@ -256,8 +260,8 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`confirmedPrice-${index}`}>
-                    Giá cả thống nhất (VNĐ/kg)
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.confirmedPrice.label')}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.confirmedPrice.required')}</span>
                   </Label>
                   <Input
                     id={`confirmedPrice-${index}`}
@@ -277,7 +281,7 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`advancePayment-${index}`}>
-                    Số tiền tạm ứng cho nông dân (VNĐ/kg) (Có thể bỏ trống)
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.advancePayment.label')}
                   </Label>
                   <Input
                     id={`advancePayment-${index}`}
@@ -291,8 +295,8 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`committedQuantity-${index}`}>
-                    Sản lượng mục tiêu thống nhất (kg)
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.committedQuantity.label')}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.committedQuantity.required')}</span>
                   </Label>
                   <Input
                     id={`committedQuantity-${index}`}
@@ -307,8 +311,8 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`estimatedDeliveryStart-${index}`}>
-                    Ngày giao hàng dự kiến bắt đầu{" "}
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.estimatedDeliveryStart.label')}{" "}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.estimatedDeliveryStart.required')}</span>
                   </Label>
                   <Input
                     id={`estimatedDeliveryStart-${index}`}
@@ -327,8 +331,8 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`estimatedDeliveryEnd-${index}`}>
-                    Ngày giao hàng dự kiến kết thúc{" "}
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.estimatedDeliveryEnd.label')}{" "}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.estimatedDeliveryEnd.required')}</span>
                   </Label>
                   <Input
                     id={`estimatedDeliveryEnd-${index}`}
@@ -347,8 +351,8 @@ export default function FarmingCommitmentForm({
 
                 <div>
                   <Label htmlFor={`note-${index}`}>
-                    Các điều khoản cụ thể
-                    <span className='text-red-500'>*</span>
+                    {t('farmingCommitment.components.farmingCommitmentForm.fields.note.label')}
+                    <span className='text-red-500'>{t('farmingCommitment.components.farmingCommitmentForm.fields.note.required')}</span>
                   </Label>
                   <Textarea
                     id={`note-${index}`}
@@ -375,7 +379,7 @@ export default function FarmingCommitmentForm({
             size='sm'
             type='button'
           >
-            + Thêm chi tiết cam kết
+            {t('farmingCommitment.components.farmingCommitmentForm.buttons.addDetail')}
           </Button>
         </div>
 
@@ -386,7 +390,7 @@ export default function FarmingCommitmentForm({
             variant='default'
             disabled={isSubmitting}
           >
-            Lưu cam kết
+            {t('farmingCommitment.components.farmingCommitmentForm.buttons.submit')}
           </LoadingButton>
         </div>
       </div>

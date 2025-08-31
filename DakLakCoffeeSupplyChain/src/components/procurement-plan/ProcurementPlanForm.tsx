@@ -11,6 +11,7 @@ import { LoadingButton } from "@/components/ui/loadingProgress";
 import { CoffeeType } from "@/lib/api/coffeeType";
 import { ProcessingMethod } from "@/lib/api/processingMethods";
 import { getTargetRegionOptions } from "@/lib/constants/targetRegion";
+import { useTranslation } from "react-i18next";
 
 export interface ProcurementPlanDetailFormData {
   planDetailsId?: string; // Optional for new details
@@ -58,6 +59,7 @@ export default function ProcurementPlanForm({
   onAddDetail,
   onRemoveDetail,
 }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<ProcurementPlanFormData>(
     initialData || {
       title: "",
@@ -155,11 +157,11 @@ export default function ProcurementPlanForm({
       <div className='bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4'>
         <div className='flex items-center gap-2 mb-3'>
           <ImCalculator className='w-5 h-5 text-blue-600' />
-          <h4 className='font-semibold text-blue-800'>Thành tiền ước tính</h4>
+          <h4 className='font-semibold text-blue-800'>{t('procurementPlan.components.procurementPlanForm.estimatedCost.title')}</h4>
         </div>
         <div className='grid grid-cols-2 gap-4'>
           <div className='text-center'>
-            <div className='text-sm text-gray-600 mb-1'>Giá tối thiểu</div>
+            <div className='text-sm text-gray-600 mb-1'>{t('procurementPlan.components.procurementPlanForm.estimatedCost.minCost')}</div>
             <div className='text-lg font-bold text-green-600'>
               {minTotal.toLocaleString("vi-VN")} VNĐ
             </div>
@@ -169,7 +171,7 @@ export default function ProcurementPlanForm({
             </div>
           </div>
           <div className='text-center'>
-            <div className='text-sm text-gray-600 mb-1'>Giá tối đa</div>
+            <div className='text-sm text-gray-600 mb-1'>{t('procurementPlan.components.procurementPlanForm.estimatedCost.maxCost')}</div>
             <div className='text-lg font-bold text-orange-600'>
               {maxTotal.toLocaleString("vi-VN")} VNĐ
             </div>
@@ -195,7 +197,7 @@ export default function ProcurementPlanForm({
         <div className='bg-white rounded-lg border border-gray-200 p-6'>
           <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
             {/* <Package className='w-5 h-5 text-blue-600' /> */}
-            Thông tin cơ bản
+            {t('procurementPlan.components.procurementPlanForm.sections.basicInfo.title')}
           </h3>
 
           <div className='space-y-4'>
@@ -204,7 +206,7 @@ export default function ProcurementPlanForm({
                 htmlFor='title'
                 className='text-sm font-medium text-gray-700'
               >
-                Tên kế hoạch<span className='text-red-500 ml-1'>*</span>
+                {t('procurementPlan.components.procurementPlanForm.fields.title.label')}<span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.title.required')}</span>
               </Label>
               <Input
                 name='title'
@@ -212,7 +214,7 @@ export default function ProcurementPlanForm({
                 onChange={handleChange}
                 required
                 className='mt-1'
-                placeholder='Nhập tên kế hoạch thu mua...'
+                placeholder={t('procurementPlan.components.procurementPlanForm.fields.title.placeholder')}
               />
               {errors["title"] && (
                 <p className='text-red-500 text-xs mt-1'>{errors["title"]}</p>
@@ -225,8 +227,8 @@ export default function ProcurementPlanForm({
                   htmlFor='startDate'
                   className='text-sm font-medium text-gray-700'
                 >
-                  Ngày bắt đầu mở đăng ký
-                  <span className='text-red-500 ml-1'>*</span>
+                  {t('procurementPlan.components.procurementPlanForm.fields.startDate.label')}
+                  <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.startDate.required')}</span>
                 </Label>
                 <Input
                   type='date'
@@ -248,8 +250,8 @@ export default function ProcurementPlanForm({
                   htmlFor='endDate'
                   className='text-sm font-medium text-gray-700'
                 >
-                  Ngày kết thúc đăng ký
-                  <span className='text-red-500 ml-1'>*</span>
+                  {t('procurementPlan.components.procurementPlanForm.fields.endDate.label')}
+                  <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.endDate.required')}</span>
                 </Label>
                 <Input
                   type='date'
@@ -272,14 +274,14 @@ export default function ProcurementPlanForm({
                 htmlFor='description'
                 className='text-sm font-medium text-gray-700'
               >
-                Mô tả<span className='text-red-500 ml-1'>*</span>
+                {t('procurementPlan.components.procurementPlanForm.fields.description.label')}<span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.description.required')}</span>
               </Label>
               <Textarea
                 name='description'
                 value={form.description}
                 onChange={handleChange}
                 className='mt-1'
-                placeholder='Mô tả chi tiết về kế hoạch thu mua...'
+                placeholder={t('procurementPlan.components.procurementPlanForm.fields.description.placeholder')}
                 rows={4}
               />
               {errors["description"] && (
@@ -295,7 +297,7 @@ export default function ProcurementPlanForm({
         <div className='bg-white rounded-lg  p-6'>
           <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
             {/* <DollarSign className='w-5 h-5 text-green-600' /> */}
-            Chi tiết kế hoạch thu mua
+            {t('procurementPlan.components.procurementPlanForm.sections.planDetails.title')}
           </h3>
 
           {form.procurementPlansDetails.map((detail, index) => (
@@ -306,7 +308,7 @@ export default function ProcurementPlanForm({
               <CardHeader className='bg-gradient-to-r from-gray-100 to-gray-100 border-b border-gray-200 py-4 m-0 rounded-t-x1'>
                 <div className='flex justify-between items-center'>
                   <CardTitle className='text-lg text-gray-800'>
-                    Chi tiết kế hoạch #{index + 1}
+                    {t('procurementPlan.components.procurementPlanForm.sections.planDetails.detailTitle', { index: index + 1 })}
                   </CardTitle>
                   {form.procurementPlansDetails.length > 1 && (
                     <Button
@@ -317,7 +319,7 @@ export default function ProcurementPlanForm({
                       //className='hover:bg-red-600'
                     >
                       <FiTrash2 className='mr-2' />
-                      Xóa
+                      {t('procurementPlan.components.procurementPlanForm.buttons.removeDetail')}
                     </Button>
                   )}
                 </div>
@@ -336,13 +338,13 @@ export default function ProcurementPlanForm({
                       htmlFor={`coffeeTypeId-${index}`}
                       className='text-sm font-medium text-gray-700'
                     >
-                      Loại cà phê<span className='text-red-500 ml-1'>*</span>
+                      {t('procurementPlan.components.procurementPlanForm.fields.coffeeType.label')}<span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.coffeeType.required')}</span>
                     </Label>
                     {loading ? (
                       <LoadingSpinner />
                     ) : availableCoffeeTypes.length === 0 ? (
                       <p className='text-red-500 text-sm italic mt-1'>
-                        Không có loại cà phê nào
+                        {t('procurementPlan.components.procurementPlanForm.fields.coffeeType.noOptions')}
                       </p>
                     ) : (
                       <>
@@ -355,7 +357,7 @@ export default function ProcurementPlanForm({
                           className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 cursor-pointer focus:border-blue-500 focus:ring-blue-500'
                         >
                           <option value='' className='cursor-pointer'>
-                            -- Chọn loại cà phê --
+                            {t('procurementPlan.components.procurementPlanForm.fields.coffeeType.placeholder')}
                           </option>
                           {availableCoffeeTypes.map((type) => (
                             <option
@@ -381,14 +383,14 @@ export default function ProcurementPlanForm({
                       htmlFor={`processMethodId-${index}`}
                       className='text-sm font-medium text-gray-700'
                     >
-                      Phương pháp sơ chế
-                      <span className='text-red-500 ml-1'>*</span>
+                      {t('procurementPlan.components.procurementPlanForm.fields.processingMethod.label')}
+                      <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.processingMethod.required')}</span>
                     </Label>
                     {loading ? (
                       <LoadingSpinner />
                     ) : availableProcessingMethods.length === 0 ? (
                       <p className='text-red-500 text-sm italic mt-1'>
-                        Không có phương pháp sơ chế nào
+                        {t('procurementPlan.components.procurementPlanForm.fields.processingMethod.noOptions')}
                       </p>
                     ) : (
                       <>
@@ -398,15 +400,16 @@ export default function ProcurementPlanForm({
                           value={detail.processMethodId}
                           onChange={(e) => handleDetailChange(index, e)}
                           required
-                          className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
+                          className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 cursor-pointer focus:border-blue-500 focus:ring-blue-500'
                         >
-                          <option value={0}>
-                            -- Chọn phương pháp sơ chế --
+                          <option value={0} className='cursor-pointer'>
+                            {t('procurementPlan.components.procurementPlanForm.fields.processingMethod.placeholder')}
                           </option>
                           {availableProcessingMethods.map((method) => (
                             <option
                               key={method.methodId}
                               value={method.methodId}
+                              className='cursor-pointer'
                             >
                               {method.name}
                             </option>
@@ -426,8 +429,8 @@ export default function ProcurementPlanForm({
                        htmlFor={`targetQuantity-${index}`}
                        className='text-sm font-medium text-gray-700'
                      >
-                       Sản lượng mục tiêu (kg)
-                       <span className='text-red-500 ml-1'>*</span>
+                       {t('procurementPlan.components.procurementPlanForm.fields.targetQuantity.label')}
+                       <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.targetQuantity.required')}</span>
                      </Label>
                      <Input
                        id={`targetQuantity-${index}`}
@@ -438,7 +441,7 @@ export default function ProcurementPlanForm({
                        onChange={(e) => handleDetailChange(index, e)}
                        required
                        className='mt-1'
-                       placeholder='Nhập sản lượng mục tiêu...'
+                       placeholder={t('procurementPlan.components.procurementPlanForm.fields.targetQuantity.placeholder')}
                      />
                      {/* Suggestion badges for target quantity */}
                      <div className='flex flex-wrap gap-2 mt-2'>
@@ -474,8 +477,8 @@ export default function ProcurementPlanForm({
                        htmlFor={`minimumRegistrationQuantity-${index}`}
                        className='text-sm font-medium text-gray-700'
                      >
-                       Sản lượng đăng ký tối thiểu (kg)
-                       <span className='text-red-500 ml-1'>*</span>
+                       {t('procurementPlan.components.procurementPlanForm.fields.minimumRegistrationQuantity.label')}
+                       <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.minimumRegistrationQuantity.required')}</span>
                      </Label>
                      <Input
                        id={`minimumRegistrationQuantity-${index}`}
@@ -485,7 +488,7 @@ export default function ProcurementPlanForm({
                        value={detail.minimumRegistrationQuantity}
                        onChange={(e) => handleDetailChange(index, e)}
                        className='mt-1'
-                       placeholder='Nhập sản lượng tối thiểu...'
+                       placeholder={t('procurementPlan.components.procurementPlanForm.fields.minimumRegistrationQuantity.placeholder')}
                      />
                      {/* Suggestion badges for minimum registration quantity */}
                      <div className='flex flex-wrap gap-2 mt-2'>
@@ -521,8 +524,8 @@ export default function ProcurementPlanForm({
                        htmlFor={`minPriceRange-${index}`}
                        className='text-sm font-medium text-gray-700'
                      >
-                       Giá tối thiểu (VNĐ/kg)
-                       <span className='text-red-500 ml-1'>*</span>
+                       {t('procurementPlan.components.procurementPlanForm.fields.minPriceRange.label')}
+                       <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.minPriceRange.required')}</span>
                      </Label>
                      <Input
                        id={`minPriceRange-${index}`}
@@ -532,7 +535,7 @@ export default function ProcurementPlanForm({
                        value={detail.minPriceRange}
                        onChange={(e) => handleDetailChange(index, e)}
                        className='mt-1'
-                       placeholder='Nhập giá tối thiểu...'
+                       placeholder={t('procurementPlan.components.procurementPlanForm.fields.minPriceRange.placeholder')}
                      />
                      {/* Suggestion badges for minimum price */}
                      <div className='flex flex-wrap gap-2 mt-2'>
@@ -568,8 +571,8 @@ export default function ProcurementPlanForm({
                        htmlFor={`maxPriceRange-${index}`}
                        className='text-sm font-medium text-gray-700'
                      >
-                       Giá tối đa (VNĐ/kg)
-                       <span className='text-red-500 ml-1'>*</span>
+                       {t('procurementPlan.components.procurementPlanForm.fields.maxPriceRange.label')}
+                       <span className='text-red-500 ml-1'>{t('procurementPlan.components.procurementPlanForm.fields.maxPriceRange.required')}</span>
                      </Label>
                      <Input
                        id={`maxPriceRange-${index}`}
@@ -579,7 +582,7 @@ export default function ProcurementPlanForm({
                        value={detail.maxPriceRange}
                        onChange={(e) => handleDetailChange(index, e)}
                        className='mt-1'
-                       placeholder='Nhập giá tối đa...'
+                       placeholder={t('procurementPlan.components.procurementPlanForm.fields.maxPriceRange.placeholder')}
                      />
                      {/* Suggestion badges for maximum price */}
                      <div className='flex flex-wrap gap-2 mt-2'>
@@ -615,7 +618,7 @@ export default function ProcurementPlanForm({
                       htmlFor={`targetRegion-${index}`}
                       className='text-sm font-medium text-gray-700'
                     >
-                      Khu vực ưu tiên
+                      {t('procurementPlan.components.procurementPlanForm.fields.targetRegion.label')}
                     </Label>
                     <select
                       id={`targetRegion-${index}`}
@@ -625,7 +628,7 @@ export default function ProcurementPlanForm({
                       className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 cursor-pointer focus:border-blue-500 focus:ring-blue-500'
                     >
                       <option value='' className='cursor-pointer'>
-                        -- Chọn khu vực ưu tiên --
+                        {t('procurementPlan.components.procurementPlanForm.fields.targetRegion.placeholder')}
                       </option>
                       {getTargetRegionOptions().map((region) => (
                         <option
@@ -664,7 +667,7 @@ export default function ProcurementPlanForm({
                       htmlFor={`note-${index}`}
                       className='text-sm font-medium text-gray-700'
                     >
-                      Mô tả
+                      {t('procurementPlan.components.procurementPlanForm.fields.note.label')}
                     </Label>
                     <Textarea
                       id={`note-${index}`}
@@ -672,7 +675,7 @@ export default function ProcurementPlanForm({
                       value={detail.note}
                       onChange={(e) => handleDetailChange(index, e)}
                       className='mt-1'
-                      placeholder='Nhập mô tả chi tiết...'
+                      placeholder={t('procurementPlan.components.procurementPlanForm.fields.note.placeholder')}
                       rows={3}
                     />
                   </div>
@@ -689,7 +692,7 @@ export default function ProcurementPlanForm({
               type='button'
               //className='border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
             >
-              + Thêm chi tiết kế hoạch
+              + {t('procurementPlan.components.procurementPlanForm.buttons.addDetail')}
             </Button>
           </div>
 
@@ -698,10 +701,10 @@ export default function ProcurementPlanForm({
             <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
               <div>
                 <h3 className='text-lg font-semibold text-blue-800'>
-                  Hoàn tất kế hoạch
+                  {t('procurementPlan.components.procurementPlanForm.buttons.submit')}
                 </h3>
                 <p className='text-blue-600 text-sm'>
-                  Kiểm tra lại thông tin trước khi lưu
+                  {t('procurementPlan.components.procurementPlanForm.buttons.submit')}
                 </p>
               </div>
               <LoadingButton
@@ -711,7 +714,7 @@ export default function ProcurementPlanForm({
                 disabled={isSubmitting}
                 //className='bg-blue-600 hover:bg-blue-700 px-8 py-3'
               >
-                {isSubmitting ? "Đang lưu..." : "Lưu kế hoạch"}
+                {isSubmitting ? t('procurementPlan.components.procurementPlanForm.buttons.submit') : t('procurementPlan.components.procurementPlanForm.buttons.submit')}
               </LoadingButton>
             </div>
           </div>

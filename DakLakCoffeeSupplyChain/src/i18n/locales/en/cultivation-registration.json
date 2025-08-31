@@ -1,0 +1,156 @@
+{
+  "cultivationRegistration": {
+    "status": {
+      "approved": "Has Commitment",
+      "rejected": "Rejected",
+      "pending": "Pending Approval",
+      "cancelled": "Contract Cancelled",
+      "detailApproved": "Approved",
+      "detailRejected": "Rejected",
+      "detailPending": "Pending Approval"
+    },
+    "components": {
+      "registrationCard": {
+        "labels": {
+          "registeredArea": "Registered Area:",
+          "registrationCode": "Registration Code:",
+          "registrationDate": "Registration Date:",
+          "description": "Description:",
+          "coffeeType": "Coffee Type:",
+          "estimatedYield": "Estimated Yield:",
+          "wantedPrice": "Desired Price:",
+          "harvestTime": "Harvest Time:",
+          "note": "Note:"
+        },
+        "buttons": {
+          "expand": "View Details",
+          "collapse": "Collapse",
+          "approve": "Approve",
+          "reject": "Reject",
+          "createCommitment": "Create Commitment",
+          "editCommitment": "Edit Commitment"
+        },
+        "ariaLabels": {
+          "expandDetails": "View details",
+          "collapseDetails": "Collapse details"
+        },
+        "units": {
+          "hectare": "ha",
+          "kilogram": "kg",
+          "vndPerKg": "VND/kg"
+        },
+        "status": {
+          "notUpdated": "Not updated"
+        },
+        "messages": {
+          "approveSuccess": "Registration approved successfully!",
+          "approveError": "Failed to approve registration!",
+          "rejectSuccess": "Registration rejected successfully!",
+          "rejectError": "Failed to reject registration!"
+        }
+      },
+      "registrationForm": {
+        "title": "Register to Join Plan",
+        "subtitle": "Fill in information to register for the procurement plan",
+        "labels": {
+          "registeredArea": "Registered Area (ha)",
+          "note": "Note",
+          "planDetail": "Plan Detail",
+          "estimatedYield": "Estimated Yield (kg)",
+          "wantedPrice": "Desired Price (VND/kg)",
+          "expectedHarvestStart": "Expected Harvest Start Date",
+          "expectedHarvestEnd": "Expected Harvest End Date",
+          "detailNote": "Detail Note"
+        },
+        "placeholders": {
+          "planDetail": "Plan Detail",
+          "registeredArea": "Enter registered area",
+          "note": "Enter note (optional)",
+          "estimatedYield": "Enter estimated yield",
+          "wantedPrice": "Enter desired price",
+          "expectedHarvestStart": "Select start date",
+          "expectedHarvestEnd": "Select end date",
+          "detailNote": "Enter detail note (optional)"
+        },
+        "buttons": {
+          "addDetail": "Add Detail",
+          "removeDetail": "Remove",
+          "submit": "Submit Registration",
+          "submitting": "Submitting..."
+        },
+        "validation": {
+          "planId": "Please select a plan.",
+          "registeredArea": "Please enter a valid registered area.",
+          "planDetailId": "Please select a plan detail.",
+          "estimatedYield": "Please enter a valid estimated yield.",
+          "wantedPrice": "Please enter a valid desired price.",
+          "wantedPriceTooLow": "Desired price must be at least {{minPrice}} VND/kg.",
+          "wantedPriceTooHigh": "Desired price must not exceed {{maxPrice}} VND/kg.",
+          "expectedHarvestStart": "Please select a start date.",
+          "expectedHarvestEnd": "Please select an end date.",
+          "harvestEndAfterStart": "End date must be after start date.",
+          "harvestStartInThePast": "Start date must not be in the past."
+        },
+        "messages": {
+          "success": "Registration successful!",
+          "error": "Registration failed!",
+          "maxRegistrationsReached": "You have reached the maximum number of registrations ({{count}} applications).",
+          "priceRange": "Price range: {{minPrice}} - {{maxPrice}} VND/kg",
+          "priceRangeHint": "Desired price must be within this range to be accepted",
+          "loginRequired": "Please log in to submit registration.",
+          "farmerOnly": "Only farmers can register to join plans."
+        }
+      },
+      "registrationGuide": {
+        "title": "Registration Guide",
+        "subtitle": "Join coffee procurement plan",
+        "steps": {
+          "step1": {
+            "title": "Registered Area",
+            "description": "This is information about the planting area for all plan details you have registered. Unit is measured in hectares (ha)."
+          },
+          "step2": {
+            "title": "Select Plan Detail",
+            "description": "Select the plan detail you want to register to sell."
+          },
+          "step3": {
+            "title": "Enter Detail Information",
+            "description": "Fill in complete information about yield, price and harvest time"
+          },
+          "step4": {
+            "title": "Submit Registration",
+            "description": "Review the information and submit registration for business review"
+          }
+        },
+        "importantNotes": {
+          "title": "Important Notes",
+          "items": [
+            "Only farmers can register to join plans",
+            "Login required to submit registration",
+            "Registration information will be reviewed by businesses"
+          ]
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "description": "If you encounter issues or need support, please contact us."
+        }
+      }
+    },
+    "dialogs": {
+      "confirm": {
+        "approve": {
+          "title": "Confirm Approve Registration Detail",
+          "description": "Are you sure you want to approve this {{coffeeType}} registration detail? After approval, the farmer will be notified and you can proceed with next steps. You can create a commitment with them to unlock the crop season reporting feature for farmers."
+        },
+        "reject": {
+          "title": "Reject Registration Detail",
+          "description": "Are you sure you want to reject this {{coffeeType}} registration detail? After rejection, you cannot approve this detail again, other details of this registration will not be affected by this action."
+        },
+        "actions": {
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        }
+      }
+    }
+  }
+}

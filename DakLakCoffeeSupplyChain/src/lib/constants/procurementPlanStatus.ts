@@ -26,3 +26,29 @@ export const ProcurementPlanStatusMap: Record<ProcurementPlanStatusValue, {
     icon: 'Đ'
   }
 };
+
+// Function để lấy status map với i18n
+export const getProcurementPlanStatusMap = (t: (key: string) => string) => {
+  return {
+    Open: {
+      label: t('procurementPlan.status.open'),
+      color: 'green' as const,
+      icon: 'O'
+    },
+    Closed: {
+      label: t('procurementPlan.status.closed'),
+      color: 'yellow' as const,
+      icon: 'C'
+    },
+    Draft: {
+      label: t('procurementPlan.status.draft'),
+      color: 'blue' as const,
+      icon: 'D'
+    },
+    Cancelled: {
+      label: t('procurementPlan.status.cancelled'),
+      color: 'red' as const,
+      icon: 'Đ'
+    }
+  };
+};

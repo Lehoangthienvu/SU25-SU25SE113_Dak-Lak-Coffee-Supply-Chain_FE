@@ -20,9 +20,11 @@ import {
   updateFarmingCommitment,
 } from "@/lib/api/farmingCommitments";
 import FarmingCommitmentFormGuide from "@/components/farming-commitments/FarmingCommitmentFormGuide";
+import { useTranslation } from "react-i18next";
 
 function EditFarmmingCommitmentContent() {
   useAuthGuard(["manager"]);
+  const { t } = useTranslation();
 
   const router = useRouter();
   const params = useParams();
@@ -85,7 +87,7 @@ function EditFarmmingCommitmentContent() {
       }
     } catch (error) {
       AppToast.error(
-        "Không tải được dữ liệu cam kết: " + getErrorMessage(error)
+        t('farmingCommitment.pages.edit.loadError') + getErrorMessage(error)
       );
     } finally {
       setLoading(false);
@@ -220,7 +222,7 @@ function EditFarmmingCommitmentContent() {
         farmingCommitmentsDetailsUpdateDtos: detailsUpdateDto,
       });
 
-      AppToast.success("Cập nhật cam kết thành công!");
+      AppToast.success(t('farmingCommitment.pages.edit.success'));
       router.push("/dashboard/manager/farming-commitments");
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -243,10 +245,10 @@ function EditFarmmingCommitmentContent() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            Chỉnh sửa cam kết
+            {t('farmingCommitment.pages.edit.title')}
           </h1>
           <p className='text-gray-600 mt-2'>
-            Cập nhật thông tin cam kết thu mua với nông hộ
+            {t('farmingCommitment.pages.edit.subtitle')}
           </p>
         </div>
 
@@ -264,10 +266,10 @@ function EditFarmmingCommitmentContent() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-orange-600 to-orange-700 text-white px-6 py-6 m-0 rounded-t-xl'>
                 <CardTitle className='text-white text-2xl font-bold'>
-                  Thông tin cam kết
+                  {t('farmingCommitment.pages.edit.form.title')}
                 </CardTitle>
                 <p className='text-green-100 text-sm mt-1'>
-                  Cập nhật thông tin để chỉnh sửa cam kết thu mua
+                  {t('farmingCommitment.pages.edit.form.subtitle')}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>

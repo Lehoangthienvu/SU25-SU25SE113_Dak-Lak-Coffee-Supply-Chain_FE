@@ -1,0 +1,490 @@
+{
+  "farmingCommitment": {
+    "pages": {
+      "list": {
+        "title": "Cam kết canh tác",
+        "search": {
+          "title": "Tìm kiếm cam kết",
+          "placeholder": "Tìm kiếm...",
+          "button": "Tìm kiếm"
+        },
+        "actions": {
+          "createNew": "+ Tạo cam kết mới"
+        },
+        "table": {
+          "headers": {
+            "commitmentName": "Tên cam kết",
+            "farmerName": "Tên nông dân",
+            "totalPrice": "Tổng thành tiền",
+            "status": "Trạng thái",
+            "commitmentDate": "Ngày cam kết",
+            "actions": "Hành động"
+          },
+          "noData": "Không tìm thấy cam kết nào"
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "of": "trên",
+          "commitments": "cam kết"
+        }
+      },
+      "create": {
+        "title": "Tạo cam kết mới",
+        "subtitle": "Tạo cam kết thu mua với nông hộ dựa trên đơn đăng ký đã được duyệt",
+        "form": {
+          "title": "Thông tin cam kết",
+          "subtitle": "Điền đầy đủ thông tin để tạo cam kết thu mua"
+        },
+        "success": "Tạo cam kết thành công!",
+        "error": "Tạo cam kết thất bại."
+      },
+      "edit": {
+        "title": "Chỉnh sửa cam kết",
+        "subtitle": "Cập nhật thông tin cam kết thu mua với nông hộ",
+        "form": {
+          "title": "Thông tin cam kết",
+          "subtitle": "Cập nhật thông tin để chỉnh sửa cam kết thu mua"
+        },
+        "success": "Cập nhật cam kết thành công!",
+        "error": "Cập nhật cam kết thất bại.",
+        "loadError": "Không tải được dữ liệu cam kết: "
+      },
+      "farmer": {
+        "title": "Cam kết canh tác",
+        "search": {
+          "title": "Tìm kiếm cam kết",
+          "placeholder": "Tìm kiếm..."
+        },
+        "table": {
+          "headers": {
+            "commitmentName": "Tên cam kết",
+            "businessName": "Tên doanh nghiệp",
+            "totalAmount": "Tổng thành tiền",
+            "status": "Trạng thái",
+            "commitmentDate": "Ngày lập cam kết",
+            "actions": "Hành động"
+          }
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "to": "–",
+          "of": "trong",
+          "commitments": "cam kết"
+        },
+        "detail": {
+          "title": "Cam kết: {{commitmentName}}",
+          "loading": "Đang tải dữ liệu cam kết...",
+          "error": "Không thể tải dữ liệu cam kết",
+          "notFound": "Không tìm thấy cam kết",
+          "loadingText": "Đang tải dữ liệu...",
+          "notFoundText": "Không tìm thấy cam kết nào",
+          "basicInfo": {
+            "title": "Thông tin cam kết kế hoạch thu mua",
+            "code": "Mã: {{code}}"
+          },
+          "sections": {
+            "basicInfo": {
+              "title": "Thông tin cơ bản",
+              "status_label": "Trạng thái",
+              "progress_label": "Tiến độ",
+              "createdDate_label": "Ngày tạo",
+              "approvedDate_label": "Ngày duyệt"
+            },
+            "finance": {
+              "title": "Tài chính",
+              "totalCost_label": "Tổng chi phí",
+              "advancePayment_label": "Trả trước",
+              "remaining_label": "Còn lại"
+            },
+            "partners": {
+              "title": "Đối tác",
+              "farmer_label": "Nông dân",
+              "business_label": "Doanh nghiệp",
+              "plan_label": "Kế hoạch"
+            },
+            "notes": {
+              "generalTerms": "Điều khoản chung",
+              "rejectionReason": "Lý do từ chối"
+            }
+          },
+          "procurementPlan": {
+            "title": "Thông tin kế hoạch thu mua",
+            "code": "Mã: {{code}}",
+            "sections": {
+              "basicInfo": {
+                "title": "Thông tin cơ bản",
+                "title_label": "Tiêu đề",
+                "status_label": "Trạng thái",
+                "registrationPeriod_label": "Thời gian mở đơn"
+              },
+              "output": {
+                "title": "Sản lượng",
+                "totalOutput_label": "Tổng sản lượng",
+                "registrationProgress_label": "Tiến độ đăng ký",
+                "planDetailsCount_label": "Số chi tiết"
+              },
+              "business": {
+                "title": "Doanh nghiệp",
+                "name_label": "Tên",
+                "address_label": "Địa chỉ",
+                "email_label": "Email"
+              },
+              "description": {
+                "title": "Mô tả"
+              }
+            }
+          },
+          "registration": {
+            "title": "Thông tin đơn đăng ký",
+            "code": "Mã: {{code}}",
+            "sections": {
+              "farmer": {
+                "title": "Nông dân",
+                "name_label": "Tên",
+                "location_label": "Vị trí",
+                "registrationDate_label": "Ngày đăng ký"
+              },
+              "cultivation": {
+                "title": "Canh tác",
+                "area_label": "Diện tích",
+                "status_label": "Trạng thái",
+                "detailsCount_label": "Số chi tiết"
+              },
+              "details": {
+                "title": "Chi tiết đăng ký",
+                "coffeeTypesCount_label": "Số loại cà phê",
+                "totalOutput_label": "Tổng sản lượng",
+                "averagePrice_label": "Giá trung bình"
+              },
+              "notes": {
+                "title": "Ghi chú"
+              }
+            }
+          },
+          "commitmentDetails": {
+            "title": "Chi tiết cam kết",
+            "subtitle": "{{count}} chi tiết cam kết",
+            "expand": "Mở rộng",
+            "collapse": "Thu gọn",
+            "noDetails": {
+              "title": "Không có chi tiết cam kết nào.",
+              "subtitle": "Hãy thêm chi tiết cam kết để bắt đầu thực hiện hợp đồng."
+            },
+            "progress": "Tiến độ",
+            "sections": {
+              "output": {
+                "title": "Sản lượng",
+                "purchase_label": "Thu mua",
+                "delivered_label": "Đã giao",
+                "remaining_label": "Còn lại"
+              },
+              "pricing": {
+                "title": "Giá cả",
+                "confirmedPrice_label": "Giá thống nhất",
+                "advancePayment_label": "Trả trước",
+                "totalValue_label": "Tổng giá trị"
+              },
+              "timing": {
+                "title": "Thời gian",
+                "deliveryStart_label": "Bắt đầu giao",
+                "deliveryEnd_label": "Kết thúc giao"
+              },
+              "terms": {
+                "title": "Điều khoản cụ thể"
+              }
+            }
+          },
+          "common": {
+            "notUpdated": "Chưa cập nhật",
+            "dateFormat": "Lỗi định dạng ngày"
+          },
+          "actions": {
+            "accept": "Chấp nhận cam kết",
+            "acceptToast": "Cam kết đã được chấp nhận",
+            "reject": "Từ chối cam kết",
+            "rejectToast": "Cam kết đã bị từ chối",
+            "acceptConfirm": {
+              "title": "Xác nhận cam kết",
+              "description": "Bạn có chắc chắn muốn chấp nhận cam kết này không?",
+              "confirmText": "Chấp nhận",
+              "cancelText": "Hủy"
+            },
+            "rejectConfirm": {
+              "title": "Từ chối cam kết",
+              "description": "Vui lòng nhập lý do từ chối cam kết bên dưới.",
+              "confirmText": "Xác nhận từ chối",
+              "cancelText": "Hủy"
+            }
+          }
+        }
+      },
+      "detail": {
+        "title": "Cam kết: {{commitmentName}}",
+        "loading": "Đang tải dữ liệu cam kết...",
+        "error": "Không thể tải dữ liệu cam kết",
+        "notFound": "Không tìm thấy cam kết",
+        "loadingText": "Đang tải dữ liệu...",
+        "notFoundText": "Không tìm thấy cam kết nào",
+        "basicInfo": {
+          "title": "Thông tin cam kết kế hoạch thu mua",
+          "code": "Mã: {{code}}",
+          "edit": "Chỉnh sửa"
+        },
+        "sections": {
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "status_label": "Trạng thái",
+            "progress_label": "Tiến độ",
+            "createdDate_label": "Ngày tạo",
+            "approvedDate_label": "Ngày duyệt"
+          },
+          "finance": {
+            "title": "Tài chính",
+            "totalCost_label": "Tổng chi phí",
+            "advancePayment_label": "Trả trước",
+            "remaining_label": "Còn lại"
+          },
+          "partners": {
+            "title": "Đối tác",
+            "farmer_label": "Nông dân",
+            "business_label": "Doanh nghiệp",
+            "plan_label": "Kế hoạch"
+          },
+          "notes": {
+            "generalTerms": "Điều khoản chung",
+            "rejectionReason": "Lý do từ chối"
+          }
+        },
+        "procurementPlan": {
+          "title": "Thông tin kế hoạch thu mua",
+          "code": "Mã: {{code}}",
+          "sections": {
+            "basicInfo": {
+              "title": "Thông tin cơ bản",
+              "title_label": "Tiêu đề",
+              "status_label": "Trạng thái",
+              "registrationPeriod_label": "Thời gian mở đơn"
+            },
+            "output": {
+              "title": "Sản lượng",
+              "totalOutput_label": "Tổng sản lượng",
+              "registrationProgress_label": "Tiến độ đăng ký",
+              "planDetailsCount_label": "Số chi tiết"
+            },
+            "business": {
+              "title": "Doanh nghiệp",
+              "name_label": "Tên",
+              "address_label": "Địa chỉ",
+              "email_label": "Email"
+            },
+            "description": {
+              "title": "Mô tả"
+            }
+          }
+        },
+        "registration": {
+          "title": "Thông tin đơn đăng ký",
+          "code": "Mã: {{code}}",
+          "sections": {
+            "farmer": {
+              "title": "Nông dân",
+              "name_label": "Tên",
+              "location_label": "Vị trí",
+              "registrationDate_label": "Ngày đăng ký"
+            },
+            "cultivation": {
+              "title": "Canh tác",
+              "area_label": "Diện tích",
+              "status_label": "Trạng thái",
+              "detailsCount_label": "Số chi tiết"
+            },
+            "details": {
+              "title": "Chi tiết đăng ký",
+              "coffeeTypesCount_label": "Số loại cà phê",
+              "totalOutput_label": "Tổng sản lượng",
+              "averagePrice_label": "Giá trung bình"
+            },
+            "notes": {
+              "title": "Ghi chú"
+            }
+          }
+        },
+        "commitmentDetails": {
+          "title": "Chi tiết cam kết",
+          "subtitle": "{{count}} chi tiết cam kết",
+          "expand": "Mở rộng",
+          "collapse": "Thu gọn",
+          "noDetails": {
+            "title": "Không có chi tiết cam kết nào.",
+            "subtitle": "Hãy thêm chi tiết cam kết để bắt đầu thực hiện hợp đồng."
+          },
+          "progress": "Tiến độ",
+          "sections": {
+            "output": {
+              "title": "Sản lượng",
+              "purchase_label": "Thu mua",
+              "delivered_label": "Đã giao",
+              "remaining_label": "Còn lại"
+            },
+            "pricing": {
+              "title": "Giá cả",
+              "confirmedPrice_label": "Giá thống nhất",
+              "advancePayment_label": "Trả trước",
+              "totalValue_label": "Tổng giá trị"
+            },
+            "timing": {
+              "title": "Thời gian",
+              "deliveryStart_label": "Bắt đầu giao",
+              "deliveryEnd_label": "Kết thúc giao"
+            },
+            "terms": {
+              "title": "Điều khoản cụ thể"
+            }
+          }
+        },
+        "common": {
+          "notUpdated": "Chưa cập nhật",
+          "dateFormat": "Lỗi định dạng ngày"
+        }
+      }
+    },
+    "components": {
+      "farmingCommitmentCard":{
+        "actions": {
+          "edit": "Chỉnh sửa",
+          "view": "Xem chi tiết"
+        }
+      },
+      "farmingCommitmentForm": {
+        "fields": {
+          "commitmentName": {
+            "label": "Tên cam kết",
+            "placeholder": "Nhập tên cam kết...",
+            "required": "*"
+          },
+          "generalTerms": {
+            "label": "Các điều khoản chung",
+            "placeholder": "Nhập các điều khoản chung..."
+          },
+          "registrationDetailId": {
+            "label": "Chi tiết đơn đăng ký (Chỉ chọn được những chi tiết đã duyệt)",
+            "placeholder": "-- Chọn chi tiết --",
+            "required": "*",
+            "noOptions": "Không có chi tiết đơn đăng ký nào đã duyệt để chọn"
+          },
+          "confirmedPrice": {
+            "label": "Giá cả thống nhất (VNĐ/kg)",
+            "required": "*"
+          },
+          "advancePayment": {
+            "label": "Số tiền tạm ứng cho nông dân (VNĐ/kg) (Có thể bỏ trống)"
+          },
+          "committedQuantity": {
+            "label": "Sản lượng mục tiêu thống nhất (kg)",
+            "required": "*"
+          },
+          "estimatedDeliveryStart": {
+            "label": "Ngày giao hàng dự kiến bắt đầu",
+            "required": "*"
+          },
+          "estimatedDeliveryEnd": {
+            "label": "Ngày giao hàng dự kiến kết thúc",
+            "required": "*"
+          },
+          "note": {
+            "label": "Các điều khoản cụ thể",
+            "required": "*"
+          }
+        },
+        "detailTitle": "Chi tiết cam kết #{{index}}",
+        "noDetails": {
+          "title": "Chưa có chi tiết cam kết nào.",
+          "subtitle": "Vui lòng chờ dữ liệu được tải hoặc thêm chi tiết thủ công."
+        },
+        "buttons": {
+          "removeDetail": "Xóa",
+          "addDetail": "+ Thêm chi tiết cam kết",
+          "submit": "Lưu cam kết"
+        },
+        "formGuide": {
+          "title": "Hướng dẫn điền form cam kết",
+          "sections": {
+            "commitmentName": {
+              "title": "Tên cam kết",
+              "description": "Đặt tên rõ ràng cho cam kết thu mua. Ví dụ: \"Cam kết thu mua cà phê Robusta vụ 2025\""
+            },
+            "generalTerms": {
+              "title": "Các điều khoản chung",
+              "description": "Các điều khoản chung cho toàn bộ các chi tiết cam kết."
+            },
+            "registrationDetails": {
+              "title": "Chi tiết đơn đăng ký",
+              "description": "Hệ thống sẽ tự động lấy các chi tiết đăng ký của nông dân đã được duyệt và tự điền vào đơn cam kết. Doanh nghiệp có thể trên đó để tùy chỉnh lại."
+            },
+            "commitmentDetails": {
+              "title": "Chi tiết cam kết",
+              "description": "Xác nhận sản lượng, giá cả và thời gian giao hàng cho từng loại cà phê"
+            },
+            "confirmedPrice": {
+              "title": "Giá cả thống nhất",
+              "description": "Giá thu mua thỏa thuận với nông hộ (VNĐ/kg). Có thể khác với giá trong kế hoạch."
+            },
+            "advancePayment": {
+              "title": "Số tiền tạm ứng cho nông dân",
+              "description": "Có thể trả trước cho nông dân để họ đầu tư vào các nguyên vật liệu cho mùa vụ. Mục này tùy chọn."
+            },
+            "committedQuantity": {
+              "title": "Sản lượng mục tiêu thống nhất",
+              "description": "Số lượng cà phê mà nông hộ cam kết cung cấp (kg). Có thể điều chỉnh theo khả năng thực tế"
+            },
+            "deliveryTime": {
+              "title": "Thời gian giao hàng",
+              "description": "Khoảng thời gian dự kiến nông hộ sẽ giao hàng. Hệ thống sẽ tự điền cách 1 ngày dựa trên ngày dự kiến thu hoạch kết thúc từ chi tiết đơn đăng ký của nông hộ. Nên phù hợp với mùa vụ thu hoạch."
+            },
+            "importantNotes": {
+              "title": "Lưu ý quan trọng",
+              "items": [
+                "Cam kết sau khi được duyệt sẽ trở thành hợp đồng ràng buộc",
+                "Đảm bảo thông tin chính xác về sản lượng và thời gian giao hàng",
+                "Giá cam kết phải phù hợp với thị trường và chất lượng cà phê",
+                "Thời gian giao hàng nên phù hợp với chu kỳ thu hoạch",
+                "Kiểm tra kỹ thông tin nông hộ và kế hoạch thu mua"
+              ]
+            },
+            "workflow": {
+              "title": "Quy trình xử lý cam kết",
+              "steps": [
+                "Tạo cam kết (Pending)",
+                "Nông hộ xác nhận cam kết",
+                "Nông hộ có thể bắt đầu quy trình tạo mùa vụ"
+              ]
+            },
+            "statuses": {
+              "title": "Các trạng thái cam kết",
+              "pending": "Đang chờ nông hộ xác nhận",
+              "approved": "Đã được duyệt và thực hiện",
+              "rejected": "Bị từ chối hoặc hủy bỏ"
+            }
+          }
+        },
+        "validation": {
+          "commitmentName": "Tên cam kết là bắt buộc.",
+          "detailsRequired": "Cần ít nhất một chi tiết cam kết.",
+          "confirmedPrice": "Giá thống nhất phải lớn hơn 0.",
+          "committedQuantity": "Sản lượng cam kết phải lớn hơn 0.",
+          "estimatedDeliveryStart": "Ngày bắt đầu giao hàng là bắt buộc.",
+          "estimatedDeliveryEnd": "Ngày kết thúc giao hàng là bắt buộc.",
+          "deliveryEndAfterStart": "Ngày kết thúc giao hàng phải sau ngày bắt đầu."
+        }
+      }
+    },
+    "status": {
+      "pending": "Đang chờ",
+      "active": "Đang hoạt động",
+      "completed": "Đã hoàn thành",
+      "cancelled": "Đã hủy",
+      "breached": "Đã vi phạm",
+      "rejected": "Đã từ chối"
+    }
+  }
+}

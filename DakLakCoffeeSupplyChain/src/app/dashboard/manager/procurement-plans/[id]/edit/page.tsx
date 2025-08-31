@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
 import ProcurementPlanForm, {
@@ -23,6 +24,7 @@ import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementP
 
 export default function EditProcurementPlanPage() {
   useAuthGuard(["manager"]);
+  const { t } = useTranslation();
 
   const router = useRouter();
   const params = useParams();
@@ -82,7 +84,7 @@ export default function EditProcurementPlanPage() {
         }
       } catch (error) {
         AppToast.error(
-          "Không tải được dữ liệu kế hoạch: " + getErrorMessage(error)
+          t('procurementPlan.pages.edit.error', { error: getErrorMessage(error) })
         );
       } finally {
         setLoading(false);
@@ -90,8 +92,7 @@ export default function EditProcurementPlanPage() {
     }
 
     fetchData();
-  }, [planId]);
-
+  }, [planId, t]);
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
@@ -108,45 +109,38 @@ export default function EditProcurementPlanPage() {
     data: ProcurementPlanFormData
   ): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
-    if (!data.title) newErrors.title = "Vui lòng nhập tên kế hoạch.";
-    if (!data.startDate) newErrors.startDate = "Vui lòng chọn ngày bắt đầu.";
-    if (!data.endDate) newErrors.endDate = "Vui lòng chọn ngày kết thúc.";
+    if (!data.title) newErrors.title = t('procurementPlan.pages.edit.validation.title');
+    if (!data.startDate) newErrors.startDate = t('procurementPlan.pages.edit.validation.startDate');
+    if (!data.endDate) newErrors.endDate = t('procurementPlan.pages.edit.validation.endDate');
     if (
       data.startDate &&
       new Date(data.startDate) <
         new Date(new Date().toISOString().split("T")[0])
     ) {
-      newErrors.startDate = "Ngày bắt đầu không thể là ngày trong quá khứ.";
+      newErrors.startDate = t('procurementPlan.pages.edit.validation.startDatePast');
     }
     if (new Date(data.startDate) >= new Date(data.endDate))
-      newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu.";
-    if (!data.description) newErrors.description = "Vui lòng nhập mô tả.";
+      newErrors.endDate = t('procurementPlan.pages.edit.validation.endDateAfterStart');
+    if (!data.description) newErrors.description = t('procurementPlan.pages.edit.validation.description');
     if (data.procurementPlansDetails.length === 0) {
-      newErrors.procurementPlansDetails =
-        "Vui lòng thêm ít nhất một chi tiết kế hoạch.";
+      newErrors.procurementPlansDetails = t('procurementPlan.pages.edit.validation.detailsRequired');
     } else {
       data.procurementPlansDetails.forEach((detail, index) => {
         if (!detail.coffeeTypeId)
-          newErrors[`coffeeTypeId-${index}`] = "Vui lòng chọn loại cà phê.";
+          newErrors[`coffeeTypeId-${index}`] = t('procurementPlan.pages.edit.validation.coffeeType');
         if (detail.processMethodId === 0)
-          newErrors[`processMethodId-${index}`] =
-            "Vui lòng chọn phương pháp sơ chế.";
+          newErrors[`processMethodId-${index}`] = t('procurementPlan.pages.edit.validation.processingMethod');
         if (detail.targetQuantity < 100)
-          newErrors[`targetQuantity-${index}`] =
-            "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.";
+          newErrors[`targetQuantity-${index}`] = t('procurementPlan.pages.edit.validation.targetQuantity');
         if (detail.minimumRegistrationQuantity < 100)
-          newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.pages.edit.validation.minRegistrationQuantity');
         if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
-          newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.";
+          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.pages.edit.validation.minRegistrationQuantityMax');
         }
         if (detail.minPriceRange < 1000)
-          newErrors[`minPriceRange-${index}`] =
-            "Giá tối thiểu không thể nhỏ hơn 1000 đồng.";
+          newErrors[`minPriceRange-${index}`] = t('procurementPlan.pages.edit.validation.minPrice');
         if (detail.maxPriceRange < detail.minPriceRange)
-          newErrors[`maxPriceRange-${index}`] =
-            "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.";
+          newErrors[`maxPriceRange-${index}`] = t('procurementPlan.pages.edit.validation.maxPrice');
         // if (detail.expectedYieldPerHectare <= 0)
         //   newErrors[`expectedYieldPerHectare-${index}`] =
         //     "Sản lượng dự kiến trên 1 ha phải lớn hơn 0.";
@@ -227,7 +221,7 @@ export default function EditProcurementPlanPage() {
         procurementPlansDetailsCreateDto: detailsCreateDto,
       });
 
-      AppToast.success("Cập nhật kế hoạch thành công!");
+      AppToast.success(t('procurementPlan.pages.edit.success'));
       router.push("/dashboard/manager/procurement-plans");
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -294,10 +288,10 @@ export default function EditProcurementPlanPage() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            Chỉnh sửa kế hoạch thu mua
+            {t('procurementPlan.pages.edit.title')}
           </h1>
           <p className='mt-2 text-gray-600'>
-            Cập nhật thông tin kế hoạch thu mua cà phê
+            {t('procurementPlan.pages.edit.subtitle')}
           </p>
         </div>
 
@@ -315,10 +309,10 @@ export default function EditProcurementPlanPage() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
                 <CardTitle className='text-white text-3xl font-bold pt-6'>
-                  Thông tin kế hoạch
+                  {t('procurementPlan.pages.edit.form.title')}
                 </CardTitle>
                 <p className='text-white text-md mt-1 pb-4'>
-                  Cập nhật thông tin kế hoạch thu mua
+                  {t('procurementPlan.pages.edit.form.subtitle')}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>

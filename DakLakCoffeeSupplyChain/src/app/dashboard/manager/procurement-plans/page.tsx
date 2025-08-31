@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import {
-  ProcurementPlanStatusMap,
+  getProcurementPlanStatusMap,
   ProcurementPlanStatusValue,
 } from "@/lib/constants/procurementPlanStatus";
 import { cn, getErrorMessage } from "@/lib/utils";
@@ -21,8 +21,10 @@ import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { AppToast } from "@/components/ui/AppToast";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
+import { useTranslation } from "react-i18next";
 
 export default function BusinessProcurementPlansPage() {
+  const { t } = useTranslation();
   const [procurementPlans, setProcurementPlans] = useState<ProcurementPlan[]>(
     []
   );
@@ -66,21 +68,24 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
-        
+
         // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans.filter(
-          (plan) =>
-            (!selectedStatus || plan.status === selectedStatus) &&
-            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
-        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
-        
+        const currentPageItems = procurementPlans
+          .filter(
+            (plan) =>
+              (!selectedStatus || plan.status === selectedStatus) &&
+              (!search ||
+                plan.title.toLowerCase().includes(search.toLowerCase()))
+          )
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
         // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
         if (currentPageItems.length === 0 && currentPage > 1) {
           setCurrentPage(1);
         }
-        
+
         closeDialog();
-        AppToast.success("Kế hoạch đã được mở đăng ký thành công");
+        AppToast.success(t("procurementPlan.messages.success.opened"));
       }
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -100,27 +105,30 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
-        
+
         // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans.filter(
-          (plan) =>
-            (!selectedStatus || plan.status === selectedStatus) &&
-            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
-        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
-        
+        const currentPageItems = procurementPlans
+          .filter(
+            (plan) =>
+              (!selectedStatus || plan.status === selectedStatus) &&
+              (!search ||
+                plan.title.toLowerCase().includes(search.toLowerCase()))
+          )
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
         // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
         if (currentPageItems.length === 0 && currentPage > 1) {
           setCurrentPage(1);
         }
-        
+
         closeDialog();
-        AppToast.success("Kế hoạch đã được kết thúc đăng ký thành công");
+        AppToast.success(t("procurementPlan.messages.success.closed"));
       }
     } catch (error) {
       AppToast.error(getErrorMessage(error));
-          } finally {
-        setLoadingConfirm(false);
-      }
+    } finally {
+      setLoadingConfirm(false);
+    }
   }
 
   async function handleDelete(planId?: string) {
@@ -134,10 +142,10 @@ export default function BusinessProcurementPlansPage() {
           AppToast.error(getErrorMessage(error));
           return [];
         });
-        
+
         // Cập nhật state
         setProcurementPlans(newData);
-        
+
         // Kiểm tra và điều chỉnh trang ngay lập tức với dữ liệu mới
         const filteredPlans = newData.filter(
           (plan) =>
@@ -145,7 +153,7 @@ export default function BusinessProcurementPlansPage() {
             (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
         );
         const totalPages = Math.ceil(filteredPlans.length / pageSize);
-        
+
         // Nếu trang hiện tại vượt quá tổng số trang, chuyển về trang cuối cùng
         if (currentPage > totalPages && totalPages > 0) {
           setCurrentPage(totalPages);
@@ -154,9 +162,9 @@ export default function BusinessProcurementPlansPage() {
         else if (totalPages === 0) {
           setCurrentPage(1);
         }
-        
+
         closeDialog();
-        AppToast.success("Kế hoạch đã được xóa thành công");
+        AppToast.success(t("procurementPlan.messages.success.deleted"));
         setIsLoading(false);
       }
     } catch (error) {
@@ -177,21 +185,24 @@ export default function BusinessProcurementPlansPage() {
         setProcurementPlans((prev) =>
           prev.map((p) => (p.planId === planId ? updatedPlan : p))
         );
-        
+
         // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans.filter(
-          (plan) =>
-            (!selectedStatus || plan.status === selectedStatus) &&
-            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
-        ).slice((currentPage - 1) * pageSize, currentPage * pageSize);
-        
+        const currentPageItems = procurementPlans
+          .filter(
+            (plan) =>
+              (!selectedStatus || plan.status === selectedStatus) &&
+              (!search ||
+                plan.title.toLowerCase().includes(search.toLowerCase()))
+          )
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
         // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
         if (currentPageItems.length === 0 && currentPage > 1) {
           setCurrentPage(1);
         }
-        
+
         closeDialog();
-        AppToast.success("Kế hoạch đã được hủy thành công");
+        AppToast.success(t("procurementPlan.messages.success.cancelled"));
       }
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -242,6 +253,7 @@ export default function BusinessProcurementPlansPage() {
     currentPage * pageSize
   );
 
+  const statusMap = getProcurementPlanStatusMap(t);
   const statusCounts = procurementPlans.reduce<
     Record<ProcurementPlanStatusValue, number>
   >(
@@ -265,29 +277,24 @@ export default function BusinessProcurementPlansPage() {
         {/* Search block */}
         <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
           <h2 className='text-sm font-medium text-gray-700'>
-            Tìm kiếm kế hoạch thu mua
+            {t("procurementPlan.pages.list.search.title")}
           </h2>
           <div className='relative'>
             <Input
-              placeholder='Tìm kiếm...'
+              placeholder={t("procurementPlan.pages.list.search.placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className='pr-10'
             />
             <Search className='absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
           </div>
-          {/* <div className='flex justify-end text-sm'>
-            <Button className='w-full bg-[#FD7622] hover:bg-[#d74f0f] text-white font-medium text-sm'>
-              Search
-            </Button>
-          </div> */}
         </div>
 
         <FilterStatusPanel<ProcurementPlanStatusValue>
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
           statusCounts={statusCounts}
-          statusMap={ProcurementPlanStatusMap}
+          statusMap={statusMap}
         />
       </aside>
 
@@ -299,30 +306,43 @@ export default function BusinessProcurementPlansPage() {
               onClick={() =>
                 router.push("/dashboard/manager/procurement-plans/create")
               }
-              //className='bg-[#FD7622] hover:bg-[#d74f0f] text-white font-medium text-sm cursor-pointer'
               variant='default'
             >
-              + Tạo kế hoạch mới
+              {t("procurementPlan.pages.list.actions.createNew")}
             </Button>
           </div>
           {isLoading ? (
             <LoadingSpinner />
           ) : pagedPlans.length === 0 ? (
             <p className='text-center py-8 text-sm text-muted-foreground'>
-              Không tìm thấy kế hoạch nào
+              {t("procurementPlan.pages.list.table.noData")}
             </p>
           ) : (
             <table className='w-full text-sm table-auto'>
               <thead className='bg-gray-100 text-gray-700 font-medium'>
                 <tr>
-                  <th className='px-4 py-3 text-left'>Tên kế hoạch</th>
-                  <th className='px-4 py-3 text-left'>Tổng sản lượng</th>
-                  <th className='px-4 py-3 text-left'>Tỷ lệ sản lượng đã được đăng ký</th>
-                  <th className='px-4 py-3 text-left'>Trạng thái</th>
                   <th className='px-4 py-3 text-left'>
-                    Ngày bắt đầu – kết thúc mở đơn
+                    {t("procurementPlan.pages.list.table.headers.planName")}
                   </th>
-                  <th className='px-4 py-3 text-left'>Hành động</th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("procurementPlan.pages.list.table.headers.totalOutput")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "procurementPlan.pages.list.table.headers.registeredRatio"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("procurementPlan.pages.list.table.headers.status")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "procurementPlan.pages.list.table.headers.registrationPeriod"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("procurementPlan.pages.list.table.headers.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -336,6 +356,7 @@ export default function BusinessProcurementPlansPage() {
                     openClosedRegisterDialog={() =>
                       openClosedRegisterDialog(plan)
                     }
+                    statusMap={statusMap}
                   />
                 ))}
               </tbody>
@@ -348,48 +369,44 @@ export default function BusinessProcurementPlansPage() {
           onOpenChange={(open) => !open && closeDialog()}
           title={
             dialogType === "open"
-              ? "Xác nhận mở quá trình nhận đơn đăng ký kế hoạch"
+              ? t("procurementPlan.dialogs.confirm.open.title")
               : dialogType === "closed"
-                ? "Xác nhận kết thúc quá trình nhận đơn đăng ký kế hoạch"
-                : dialogType === "cancel"
-                  ? "Xác nhận hủy kế hoạch"
-                  : dialogType === "delete"
-                    ? "Xác nhận xóa kế hoạch"
-                    : ""
+              ? t("procurementPlan.dialogs.confirm.close.title")
+              : dialogType === "cancel"
+              ? t("procurementPlan.dialogs.confirm.cancel.title")
+              : dialogType === "delete"
+              ? t("procurementPlan.dialogs.confirm.delete.title")
+              : ""
           }
           description={
             dialogType === "open" ? (
               <>
-                Bạn có chắc chắn muốn mở quá trình nhận đơn đăng ký kế hoạch <b>{selectedPlan?.title}</b>?
-                <br /> Kế hoạch sau khi được mở sẽ tự cập nhật lại thời gian mở đơn đăng ký và sẽ được hiển thị trên sàn thu mua cà phê. Nông hộ sẽ có thể đăng ký kế hoạch này.
-                <br />
-                <b>Lưu ý: Kế hoạch sau khi đã mở sẽ không thể chỉnh sửa được nữa.</b>
+                {t("procurementPlan.dialogs.confirm.open.description", {
+                  planName: selectedPlan?.title,
+                })}
               </>
             ) : dialogType === "closed" ? (
               <>
-                Bạn có chắc chắn muốn kết thúc quá trình nhận đơn đăng ký kế hoạch <b>{selectedPlan?.title}</b>?
-                <br /> Kế hoạch sau khi kết thúc sẽ tự cập nhật lại thời gian kết thúc đơn đăng ký. Sau khi kết thúc, kế hoạch sẽ không còn hiển thị trên sàn thu mua cà phê và cũng không thể mở lại. Các cam kết đã được duyệt vẫn sẽ hoạt động bình thường.
-                <br />
-                <br />
-                <b>Lưu ý: Kế hoạch có thể tự kết thúc sau khi đã đạt đủ sản lượng dựa trên các cam kết đã được duyệt từ hai phía.</b>
+                {t("procurementPlan.dialogs.confirm.close.description", {
+                  planName: selectedPlan?.title,
+                })}
               </>
             ) : dialogType === "cancel" ? (
               <>
-                Bạn có chắc chắn muốn hủy kế hoạch <b>{selectedPlan?.title}</b>?
-                <br />
-                Sau khi hủy, kế hoạch sẽ không còn hoạt động và bị gỡ khỏi sàn
-                thu mua cà phê. Các nông hộ sẽ không thể đăng ký kế hoạch này được nữa. Kế hoạch cũng sẽ không thể mở lại được nữa.
+                {t("procurementPlan.dialogs.confirm.cancel.description", {
+                  planName: selectedPlan?.planId,
+                })}
               </>
             ) : dialogType === "delete" ? (
               <>
-                Bạn có chắc chắn muốn xóa kế hoạch <b>{selectedPlan?.title}</b>?<br /> Hành động này không thể hoàn tác.
+                {t("procurementPlan.dialogs.confirm.delete.description", {
+                  planName: selectedPlan?.title,
+                })}
               </>
             ) : (
               ""
             )
           }
-          confirmText='Xác nhận'
-          cancelText='Hủy'
           loading={loadingConfirm}
           onConfirm={() => {
             if (dialogType === "open") {
@@ -408,9 +425,12 @@ export default function BusinessProcurementPlansPage() {
         {!isLoading && totalPages > 1 && (
           <div className='flex justify-between items-center'>
             <span className='text-sm text-muted-foreground'>
-              Hiển thị {(currentPage - 1) * pageSize + 1}–
-              {Math.min(currentPage * pageSize, filteredPlans.length)} trong{" "}
-              {filteredPlans.length} kế hoạch
+              {t("procurementPlan.pages.list.pagination.showing")}{" "}
+              {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filteredPlans.length)}{" "}
+              {t("procurementPlan.pages.list.pagination.of")}{" "}
+              {filteredPlans.length}{" "}
+              {t("procurementPlan.pages.list.pagination.plans")}
             </span>
             <div className='flex items-center gap-2'>
               <Button

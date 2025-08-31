@@ -14,6 +14,7 @@ import { getErrorMessage } from "@/lib/utils";
 import { createCultivationRegistration } from "@/lib/api/cultivationRegistrations";
 import { ProcurementPlan } from "@/lib/api/procurementPlans";
 import { getSytemConfigurationByName } from "@/lib/api/systemConfiguration";
+import { useTranslation } from "react-i18next";
 
 interface CultivationRegistrationFormProps {
   plan: ProcurementPlan;
@@ -28,6 +29,7 @@ export default function CultivationRegistrationForm({
   isFarmer,
   isLoggedIn,
 }: CultivationRegistrationFormProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [maxRegistrationCount, setMaxRegistrationCount] = useState<number | null>(null);
   
@@ -70,23 +72,48 @@ export default function CultivationRegistrationForm({
     const newErrors: Record<string, string> = {};
 
     if (!formData.planId) {
-      newErrors.planId = "Vui lòng chọn kế hoạch.";
+      newErrors.planId = t('cultivationRegistration.components.registrationForm.validation.planId');
     }
     if (formData.registeredArea <= 0) {
-      newErrors.registeredArea = "Vui lòng nhập diện tích đăng ký hợp lệ.";
+      newErrors.registeredArea = t('cultivationRegistration.components.registrationForm.validation.registeredArea');
     }
     formData.cultivationRegistrationDetailsCreateViewDto.forEach(
       (detail, idx) => {
         if (!detail.planDetailId)
-          newErrors[`planDetailId_${idx}`] = "Cần chọn chi tiết kế hoạch.";
+          newErrors[`planDetailId_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.planDetailId');
         if (detail.estimatedYield <= 0)
-          newErrors[`estimatedYield_${idx}`] = "Nhập sản lượng đăng ký hợp lệ.";
+          newErrors[`estimatedYield_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.estimatedYield');
         if (detail.wantedPrice <= 0)
-          newErrors[`wantedPrice_${idx}`] = "Nhập giá mong muốn hợp lệ.";
+          newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPrice');
+        
+        // Validate wanted price is within the plan's price range
+        if (detail.planDetailId) {
+          const selectedPlanDetail = plan.procurementPlansDetails.find(
+            (d) => d.planDetailsId === detail.planDetailId
+          );
+          if (selectedPlanDetail) {
+            if (detail.wantedPrice < (selectedPlanDetail.minPriceRange || 0)) {
+              newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPriceTooLow', { 
+                minPrice: selectedPlanDetail.minPriceRange 
+              });
+            } else if (detail.wantedPrice > (selectedPlanDetail.maxPriceRange || 0)) {
+              newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPriceTooHigh', { 
+                maxPrice: selectedPlanDetail.maxPriceRange 
+              });
+            }
+          }
+        }
+        
         if (!detail.expectedHarvestStart)
-          newErrors[`expectedHarvestStart_${idx}`] = "Chọn ngày bắt đầu.";
+          newErrors[`expectedHarvestStart_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.expectedHarvestStart');
         if (!detail.expectedHarvestEnd)
-          newErrors[`expectedHarvestEnd_${idx}`] = "Chọn ngày kết thúc.";
+          newErrors[`expectedHarvestEnd_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.expectedHarvestEnd');
+        if (new Date(detail.expectedHarvestStart) < new Date(new Date().toISOString().split("T")[0])) {
+          newErrors[`expectedHarvestStart_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.harvestStartInThePast');
+        }
+        if (detail.expectedHarvestStart > detail.expectedHarvestEnd) {
+          newErrors[`expectedHarvestEnd_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.harvestEndAfterStart');
+        }
       }
     );
 
@@ -133,6 +160,15 @@ export default function CultivationRegistrationForm({
       details[index] = { ...details[index], [key]: value };
       return { ...prev, cultivationRegistrationDetailsCreateViewDto: details };
     });
+    
+    // Clear validation errors when plan detail changes
+    if (key === 'planDetailId') {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[`wantedPrice_${index}`];
+        return newErrors;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,7 +184,7 @@ export default function CultivationRegistrationForm({
 
     try {
       await createCultivationRegistration(formData);
-      AppToast.success("Đăng ký thành công!");
+      AppToast.success(t('cultivationRegistration.components.registrationForm.messages.success'));
       onRegistrationSuccess();
 
       // Reset form after successful submission
@@ -178,7 +214,7 @@ export default function CultivationRegistrationForm({
   return (
     <Card className='p-6 rounded-xl shadow-lg'>
       <h3 className='text-2xl font-semibold mb-6 text-orange-700'>
-        Đăng ký tham gia kế hoạch
+        {t('cultivationRegistration.components.registrationForm.title')}
       </h3>
 
       {/* Thông báo số lần đăng ký tối đa */}
@@ -189,19 +225,19 @@ export default function CultivationRegistrationForm({
         //   </p>
         // </div>
         <p className='text-red-700 text-sm font-medium'>
-            Lưu ý: Nông hộ chỉ có thể đăng ký cùng một kế hoạch <span className='font-bold'>{maxRegistrationCount}</span> lần
+            {t('cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached', { count: maxRegistrationCount })}
         </p>
       )}
 
       <form className='space-y-6' onSubmit={handleSubmit}>
         {!isLoggedIn && (
           <div className='mb-2 text-red-600 text-sm'>
-            * Vui lòng <b>đăng nhập</b> để có thể đăng ký kế hoạch này!
+            * {t('cultivationRegistration.components.registrationForm.messages.loginRequired')}
           </div>
         )}
 
         <Label className='text-sm'>
-          Diện tích đăng ký (ha) <span className='text-red-500'>*</span>
+          {t('cultivationRegistration.components.registrationForm.labels.registeredArea')} <span className='text-red-500'>*</span>
         </Label>
         <Input
           type='number'
@@ -217,7 +253,7 @@ export default function CultivationRegistrationForm({
 
         <div>
           <Label htmlFor='note' className='text-sm'>
-            Mô tả
+            {t('cultivationRegistration.components.registrationForm.labels.note')}
           </Label>
           <Textarea
             id='note'
@@ -253,7 +289,7 @@ export default function CultivationRegistrationForm({
                 className='border rounded-md p-4 bg-orange-50 mb-2 flex flex-col gap-3 relative'
               >
                 <Label className='text-sm'>
-                  Chi tiết kế hoạch{" "}
+                  {t('cultivationRegistration.components.registrationForm.labels.planDetail')}{" "}
                   <span className='text-red-500'>*</span>
                 </Label>
                 <select
@@ -267,7 +303,7 @@ export default function CultivationRegistrationForm({
                     )
                   }
                 >
-                  <option value=''>-- Chọn chi tiết --</option>
+                  <option value=''>-- {t('cultivationRegistration.components.registrationForm.placeholders.planDetail')} --</option>
                   {options.map((d) => (
                     <option
                       key={d.planDetailsId}
@@ -291,7 +327,7 @@ export default function CultivationRegistrationForm({
                 )}
 
                 <Label className='text-sm'>
-                  Sản lượng đăng ký (kg){" "}
+                  {t('cultivationRegistration.components.registrationForm.labels.estimatedYield')}{" "}
                   <span className='text-red-500'>*</span>
                 </Label>
                 <Input
@@ -314,7 +350,7 @@ export default function CultivationRegistrationForm({
                 )}
 
                 <Label className='text-sm'>
-                  Giá mong muốn (VNĐ/kg){" "}
+                  {t('cultivationRegistration.components.registrationForm.labels.wantedPrice')}{" "}
                   <span className='text-red-500'>*</span>
                 </Label>
                 <Input
@@ -330,6 +366,25 @@ export default function CultivationRegistrationForm({
                     )
                   }
                 />
+                {/* Show price range for selected plan detail */}
+                {detail.planDetailId && (() => {
+                  const selectedPlanDetail = plan.procurementPlansDetails.find(
+                    (d) => d.planDetailsId === detail.planDetailId
+                  );
+                  return selectedPlanDetail ? (
+                    <div className='text-xs text-gray-600 mt-1 space-y-1'>
+                      <p>
+                        {t('cultivationRegistration.components.registrationForm.messages.priceRange', {
+                          minPrice: selectedPlanDetail.minPriceRange?.toLocaleString('vi-VN'),
+                          maxPrice: selectedPlanDetail.maxPriceRange?.toLocaleString('vi-VN')
+                        })}
+                      </p>
+                      <p className='text-blue-600'>
+                        {t('cultivationRegistration.components.registrationForm.messages.priceRangeHint')}
+                      </p>
+                    </div>
+                  ) : null;
+                })()}
                 {errors[`wantedPrice_${idx}`] && (
                   <p className='text-red-500 text-xs'>
                     {errors[`wantedPrice_${idx}`]}
@@ -339,7 +394,7 @@ export default function CultivationRegistrationForm({
                 <div className='flex gap-3'>
                   <div className='flex-1'>
                     <Label className='text-sm'>
-                      Ngày bắt đầu thu hoạch dự kiến{" "}
+                      {t('cultivationRegistration.components.registrationForm.labels.expectedHarvestStart')}{" "}
                       <span className='text-red-500'>*</span>
                     </Label>
                     <Input
@@ -362,7 +417,7 @@ export default function CultivationRegistrationForm({
                   </div>
                   <div className='flex-1'>
                     <Label className='text-sm'>
-                      Ngày kết thúc thu hoạch dự kiến{" "}
+                      {t('cultivationRegistration.components.registrationForm.labels.expectedHarvestEnd')}{" "}
                       <span className='text-red-500'>*</span>
                     </Label>
                     <Input
@@ -385,7 +440,7 @@ export default function CultivationRegistrationForm({
                   </div>
                 </div>
 
-                <Label className='text-sm'>Ghi chú</Label>
+                <Label className='text-sm'>{t('cultivationRegistration.components.registrationForm.labels.detailNote')}</Label>
                 <Textarea
                   className='bg-white'
                   value={detail.note}
@@ -403,7 +458,7 @@ export default function CultivationRegistrationForm({
                     className='text-red-500 py-1 px-2 text-xs absolute right-2 top-2 hover:bg-red-500 hover:text-white trasition bg-red-100'
                   >
                     <FiTrash2 className='mr-1' />
-                    Xóa
+                    {t('cultivationRegistration.components.registrationForm.buttons.removeDetail')}
                   </Button>
                 )}
               </div>
@@ -419,8 +474,8 @@ export default function CultivationRegistrationForm({
                 (d) => Number(d.progressPercentage ?? 0) < 100
               ).length;
               return formData.cultivationRegistrationDetailsCreateViewDto.length >= availableCount
-                ? `Hiện chỉ có ${availableCount} chi tiết còn khả dụng`
-                : "Thêm chi tiết kế hoạch";
+                ? t('cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached', { count: availableCount })
+                : t('cultivationRegistration.components.registrationForm.buttons.addDetail');
             })()
           }
           side='bottom'
@@ -442,7 +497,7 @@ export default function CultivationRegistrationForm({
             }
             onClick={handleAddDetail}
           >
-            + Thêm chi tiết kế hoạch
+            + {t('cultivationRegistration.components.registrationForm.buttons.addDetail')}
           </Button>
         </Tooltip>
 
@@ -453,7 +508,7 @@ export default function CultivationRegistrationForm({
             variant='default'
             disabled={isSubmitting || !isLoggedIn || !isFarmer}
           >
-            Gửi đăng ký
+            {t('cultivationRegistration.components.registrationForm.buttons.submit')}
           </LoadingButton>
         </div>
       </form>

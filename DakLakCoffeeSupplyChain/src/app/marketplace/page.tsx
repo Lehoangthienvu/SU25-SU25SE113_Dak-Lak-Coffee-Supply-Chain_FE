@@ -12,8 +12,10 @@ import { useEffect, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { usePathname } from "next/navigation";
 import { getTargetRegionOptions } from "@/lib/constants/targetRegion";
+import { useTranslation } from "react-i18next";
 
 export default function MarketplacePage() {
+  const { t } = useTranslation();
   const [plans, setPlans] = useState<ProcurementPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -125,19 +127,19 @@ export default function MarketplacePage() {
   };
 
   if (loading) {
-    return <p className='text-center py-20'>Đang tải dữ liệu...</p>;
+    return <p className='text-center py-20'>{t('marketplace.pages.loading')}</p>;
   }
   if (plans.length == 0 && !loading) {
     return (
       <div className='min-h-screen flex flex-col items-center justify-center py-20 bg-[#fefaf4]'>
         <p className='text-gray-600 text-lg mb-4'>
-          Hiện tại chưa có kế hoạch thu mua nào.
+          {t('marketplace.pages.noPlans.title')}
         </p>
         <Button
           onClick={fetchData}
           className='bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded'
         >
-          Tải lại
+          {t('marketplace.pages.noPlans.reloadButton')}
         </Button>
       </div>
     );
@@ -150,11 +152,11 @@ export default function MarketplacePage() {
           <aside className='w-64 flex flex-col space-y-4'>
             <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
               <h2 className='text-sm font-medium text-gray-700'>
-                Tìm kiếm kế hoạch thu mua
+                {t('marketplace.components.searchSection.title')}
               </h2>
               <div className='relative'>
                 <Input
-                  placeholder='Tìm kiếm...'
+                  placeholder={t('marketplace.components.searchSection.placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className='pr-10'
@@ -166,7 +168,7 @@ export default function MarketplacePage() {
             <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
               <div className='flex items-center justify-between'>
                 <h2 className='text-sm font-medium text-gray-700'>
-                  Bộ lọc tìm kiếm
+                  {t('marketplace.components.filterSection.title')}
                 </h2>
                 <Button
                   onClick={resetFilters}
@@ -174,21 +176,21 @@ export default function MarketplacePage() {
                   size='sm'
                   className='text-xs px-2 py-1 h-7'
                 >
-                  Reset
+                  {t('marketplace.components.filterSection.resetButton')}
                 </Button>
               </div>
 
               {/* Loại cà phê */}
               <div>
                 <label className='block text-xs font-medium text-gray-600 mb-2'>
-                  Loại cà phê
+                  {t('marketplace.components.filterSection.coffeeType.label')}
                 </label>
                 <select
                   value={filters.coffeeType}
                   onChange={(e) => setFilters({ ...filters, coffeeType: e.target.value })}
                   className='w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-orange-500 focus:ring-orange-500'
                 >
-                  <option value=''>Tất cả loại cà phê</option>
+                  <option value=''>{t('marketplace.components.filterSection.coffeeType.allTypes')}</option>
                   {getUniqueCoffeeTypes().map((type) => (
                     <option key={type} value={type}>
                       {type}
@@ -200,14 +202,14 @@ export default function MarketplacePage() {
               {/* Khu vực */}
               <div>
                 <label className='block text-xs font-medium text-gray-600 mb-2'>
-                  Khu vực
+                  {t('marketplace.components.filterSection.region.label')}
                 </label>
                 <select
                   value={filters.region}
                   onChange={(e) => setFilters({ ...filters, region: e.target.value })}
                   className='w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-orange-500 focus:ring-orange-500'
                 >
-                  <option value=''>Tất cả khu vực</option>
+                  <option value=''>{t('marketplace.components.filterSection.region.allRegions')}</option>
                   {getTargetRegionOptions().map((region) => (
                     <option key={region.value} value={region.value}>
                       {region.label}
@@ -219,12 +221,12 @@ export default function MarketplacePage() {
                              {/* Sản lượng */}
                <div>
                  <label className='block text-xs font-medium text-gray-600 mb-2'>
-                   Sản lượng (kg)
+                   {t('marketplace.components.filterSection.quantity.label')}
                  </label>
                  <div className='space-y-3'>
                    <div className='flex justify-between text-xs text-gray-500'>
-                     <span>Từ: {filters.minQuantity || '0'} kg</span>
-                     <span>Đến: {filters.maxQuantity || '100,000'} kg</span>
+                     <span>{t('marketplace.components.filterSection.quantity.fromValue', { value: filters.minQuantity || '0' })}</span>
+                     <span>{t('marketplace.components.filterSection.quantity.toValue', { value: filters.maxQuantity || '100,000' })}</span>
                    </div>
                    <div className='relative'>
                      <input
@@ -249,14 +251,14 @@ export default function MarketplacePage() {
                    <div className='flex gap-2'>
                      <Input
                        type='number'
-                       placeholder='Từ'
+                       placeholder={t('marketplace.components.filterSection.quantity.fromPlaceholder')}
                        value={filters.minQuantity}
                        onChange={(e) => setFilters({ ...filters, minQuantity: e.target.value })}
                        //className='flex-1 text-xs border border-gray-300 rounded px-2 py-1 focus:border-orange-500 focus:ring-orange-500'
                      />
                      <Input
                        type='number'
-                       placeholder='Đến'
+                       placeholder={t('marketplace.components.filterSection.quantity.toPlaceholder')}
                        value={filters.maxQuantity}
                        onChange={(e) => setFilters({ ...filters, maxQuantity: e.target.value })}
                        //className='flex-1 text-xs border border-gray-300 rounded px-2 py-1 focus:border-orange-500 focus:ring-orange-500'
@@ -268,12 +270,12 @@ export default function MarketplacePage() {
               {/* Giá thu mua */}
               <div>
                 <label className='block text-xs font-medium text-gray-600 mb-2'>
-                  Giá thu mua (VNĐ/kg)
+                  {t('marketplace.components.filterSection.price.label')}
                 </label>
                 <div className='space-y-3'>
                   <div className='flex justify-between text-xs text-gray-500'>
-                    <span>Từ: {filters.minPrice ? Number(filters.minPrice).toLocaleString() : '0'} VNĐ</span>
-                    <span>Đến: {filters.maxPrice ? Number(filters.maxPrice).toLocaleString() : '10,000,000,000'} VNĐ</span>
+                    <span>{t('marketplace.components.filterSection.price.fromValue', { value: filters.minPrice ? Number(filters.minPrice).toLocaleString() : '0' })}</span>
+                    <span>{t('marketplace.components.filterSection.price.toValue', { value: filters.maxPrice ? Number(filters.maxPrice).toLocaleString() : '10,000,000,000' })}</span>
                   </div>
                   <div className='relative'>
                     <input
@@ -298,13 +300,13 @@ export default function MarketplacePage() {
                   <div className='flex gap-2'>
                     <Input
                       type='number'
-                      placeholder='Từ'
+                      placeholder={t('marketplace.components.filterSection.price.fromPlaceholder')}
                       value={filters.minPrice}
                       onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
                     />
                     <Input
                       type='number'
-                      placeholder='Đến'
+                      placeholder={t('marketplace.components.filterSection.price.toPlaceholder')}
                       value={filters.maxPrice}
                       onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
                     />
@@ -315,13 +317,13 @@ export default function MarketplacePage() {
               {/* Hiển thị số kết quả */}
               <div className='pt-2 border-t border-gray-200'>
                 <p className='text-xs text-gray-500 text-center'>
-                  Tìm thấy {filteredPlans.length} kế hoạch
+                  {t('marketplace.components.filterSection.resultsCount', { count: filteredPlans.length })}
                 </p>
               </div>
             </div>
           </aside>
           <main className='flex-1'>
-            {filteredPlans.length === 0 && <p>Chưa có kế hoạch thu mua nào.</p>}
+            {filteredPlans.length === 0 && <p>{t('marketplace.pages.noResults')}</p>}
 
             <div className='space-y-5'>
               {filteredPlans.map((plan) => (
@@ -340,12 +342,12 @@ export default function MarketplacePage() {
                     </div>
                     <div className='w-48 flex flex-col space-y-2 text-right text-sm text-gray-700 flex-shrink-0'>
                       <p>
-                        <span className='font-semibold'>Sản lượng:</span>{" "}
+                        <span className='font-semibold'>{t('marketplace.components.planCard.quantity')}</span>{" "}
                         {plan.totalQuantity} kg
                       </p>
                       <p>
                         <span className='font-semibold'>
-                          Hạn đăng ký còn lại:
+                          {t('marketplace.components.planCard.deadlineRemaining')}
                         </span>{" "}
                         {Math.max(
                           differenceInCalendarDays(
@@ -354,7 +356,7 @@ export default function MarketplacePage() {
                           ),
                           0
                         )}{" "}
-                        ngày
+                        {t('marketplace.components.planCard.days')}
                       </p>
                       {/* <p>
                         <span className='font-semibold'>Trạng thái:</span>{" "}
@@ -369,7 +371,7 @@ export default function MarketplacePage() {
                         </span>
                       </p> */}
                       <p>
-                        <span className='font-semibold'>Đã đăng ký:</span>{" "}
+                        <span className='font-semibold'>{t('marketplace.components.planCard.registered')}</span>{" "}
                         {plan.progressPercentage.toFixed(2)}%
                       </p>
                     </div>
@@ -396,28 +398,28 @@ export default function MarketplacePage() {
                   {/* Chi tiết kế hoạch theo loại cà phê */}
                   <div>
                     <h4 className='font-semibold text-lg mb-2'>
-                      Chi tiết kế hoạch
+                      {t('marketplace.components.planCard.planDetails')}
                     </h4>
                     <table className='w-full text-left border-collapse'>
                       <thead className='bg-gray-100 text-gray-700 font-medium'>
                         <tr>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Loại cà phê
+                            {t('marketplace.components.planTable.headers.coffeeType')}
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Phương pháp sơ chế
+                            {t('marketplace.components.planTable.headers.processingMethod')}
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Sản lượng (kg)
+                            {t('marketplace.components.planTable.headers.quantity')}
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Khu vực ưu tiên
+                            {t('marketplace.components.planTable.headers.targetRegion')}
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Giá (VNĐ/kg)
+                            {t('marketplace.components.planTable.headers.price')}
                           </th>
                           <th className='border-b border-gray-300 px-3 py-2'>
-                            Ghi chú
+                            {t('marketplace.components.planTable.headers.note')}
                           </th>
                         </tr>
                       </thead>
@@ -434,7 +436,7 @@ export default function MarketplacePage() {
                               {detail.processingMethodName ? (
                                 <>{detail.processingMethodName}</>
                               ) : (
-                                <>Không có</>
+                                <>{t('marketplace.components.planTable.noProcessingMethod')}</>
                               )}
                             </td>
                             <td className='px-3 py-2'>
@@ -458,7 +460,7 @@ export default function MarketplacePage() {
                       href={getDetailLink(plan.planId)}
                       className='inline-block bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md transition'
                     >
-                      Xem chi tiết
+                      {t('marketplace.components.planCard.viewDetails')}
                     </Link>
                   </div>
                 </Card>

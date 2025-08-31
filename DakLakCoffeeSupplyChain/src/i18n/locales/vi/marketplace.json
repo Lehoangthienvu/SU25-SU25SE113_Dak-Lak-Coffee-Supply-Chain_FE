@@ -1,0 +1,109 @@
+{
+  "marketplace": {
+    "pages": {
+      "title": "Marketplace",
+      "loading": "Đang tải dữ liệu...",
+      "noPlans": {
+        "title": "Hiện tại chưa có kế hoạch thu mua nào.",
+        "reloadButton": "Tải lại"
+      },
+      "noResults": "Chưa có kế hoạch thu mua nào."
+    },
+    "components": {
+      "searchSection": {
+        "title": "Tìm kiếm kế hoạch thu mua",
+        "placeholder": "Tìm kiếm..."
+      },
+      "filterSection": {
+        "title": "Bộ lọc tìm kiếm",
+        "resetButton": "Reset",
+        "coffeeType": {
+          "label": "Loại cà phê",
+          "allTypes": "Tất cả loại cà phê"
+        },
+        "region": {
+          "label": "Khu vực",
+          "allRegions": "Tất cả khu vực"
+        },
+        "quantity": {
+          "label": "Sản lượng (kg)",
+          "from": "Từ",
+          "to": "Đến",
+          "fromValue": "Từ: {{value}} kg",
+          "toValue": "Đến: {{value}} kg",
+          "fromPlaceholder": "Từ",
+          "toPlaceholder": "Đến"
+        },
+        "price": {
+          "label": "Giá thu mua (VNĐ/kg)",
+          "from": "Từ",
+          "to": "Đến",
+          "fromValue": "Từ: {{value}} VNĐ",
+          "toValue": "Đến: {{value}} VNĐ",
+          "fromPlaceholder": "Từ",
+          "toPlaceholder": "Đến"
+        },
+        "resultsCount": "Tìm thấy {{count}} kế hoạch"
+      },
+      "planCard": {
+        "quantity": "Sản lượng:",
+        "deadlineRemaining": "Hạn đăng ký còn lại:",
+        "days": "ngày",
+        "registered": "Đã đăng ký:",
+        "planDetails": "Chi tiết kế hoạch",
+        "viewDetails": "Xem chi tiết"
+      },
+      "planTable": {
+        "headers": {
+          "coffeeType": "Loại cà phê",
+          "processingMethod": "Phương pháp sơ chế",
+          "quantity": "Sản lượng (kg)",
+          "targetRegion": "Khu vực ưu tiên",
+          "price": "Giá (VNĐ/kg)",
+          "note": "Ghi chú"
+        },
+               "noProcessingMethod": "Không có"
+     }
+   },
+   "detailPage": {
+     "loading": "Đang tải dữ liệu...",
+     "notFound": "Không tìm thấy kế hoạch này.",
+     "banner": {
+       "title": "Chi tiết kế hoạch"
+     },
+     "planCard": {
+       "totalQuantity": "Sản lượng tổng",
+       "timeRemaining": "Thời gian còn lại",
+       "days": "ngày",
+       "registrationProgress": "Tỷ lệ sản lượng đã được đăng ký",
+       "planDetails": "Chi tiết kế hoạch",
+       "collapse": "Thu gọn",
+       "viewMore": "Xem thêm ({{count}})",
+       "planCode": "Mã kế hoạch: {{code}}"
+     },
+     "planDetailCard": {
+       "detailCode": "Mã chi tiết",
+       "coffeeType": "Loại cà phê",
+       "processingMethod": "Phương pháp sơ chế",
+       "purchaseRegion": "Khu vực thu mua",
+       "targetQuantity": "Sản lượng mục tiêu (kg)",
+       "minimumRegistration": "Tối thiểu đăng ký (kg)",
+       "desiredPrice": "Giá mong muốn (VNĐ/kg)",
+       "registeredQuantity": "Đã đăng ký (kg)",
+       "progress": "Tiến độ",
+       "note": "Ghi chú"
+     },
+     "registrationsList": {
+       "title": "Danh sách đơn đăng ký",
+       "noRegistrations": "Chưa có đơn đăng ký nào.",
+       "details": "chi tiết",
+       "registeredArea": "Diện tích đăng ký: {{area}}ha"
+     },
+     "businessInfo": {
+       "title": "Thông tin doanh nghiệp",
+       "website": "Website",
+       "email": "Email: {{email}}"
+     }
+   }
+ }
+}

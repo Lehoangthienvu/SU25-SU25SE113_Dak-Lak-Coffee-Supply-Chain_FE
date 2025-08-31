@@ -36,3 +36,38 @@ export const FarmingCommitmentStatusMap: Record<FarmingCommitmentStatusValue, {
     icon: 'X'
   }
 };
+
+export const getFarmingCommitmentStatusMap = (t: (key: string) => string) => {
+  return {
+    Pending: {
+      label: t('farmingCommitment.status.pending'),
+      color: 'blue' as const,
+      icon: 'P'
+    },
+    Active: {
+      label: t('farmingCommitment.status.active'),
+      color: 'green' as const,
+      icon: 'A'
+    },
+    Completed: {
+      label: t('farmingCommitment.status.completed'),
+      color: 'gray' as const,
+      icon: 'D'
+    },
+    Cancelled: {
+      label: t('farmingCommitment.status.cancelled'),
+      color: 'red' as const,
+      icon: 'C'
+    },
+    Breached: {
+      label: t('farmingCommitment.status.breached'),
+      color: 'red' as const,
+      icon: 'X'
+    },
+    Rejected: {
+      label: t('farmingCommitment.status.rejected'),
+      color: 'red' as const,
+      icon: 'X'
+    }
+  };
+};
