@@ -40,23 +40,23 @@ export default function CropProgressPage() {
             if (typeof error === "object" && error !== null && "response" in error) {
                 const response = (error as { response?: { status?: number } }).response;
                 if (response?.status !== 404) {
-                    AppToast.error("Đã xảy ra lỗi khi tải dữ liệu tiến độ.");
+                    AppToast.error(t('cropProgress.errors.loadDataError'));
                 }
             }
             setProgressList([]);
         } finally {
             setLoading(false);
         }
-    }, [cropSeasonDetailId]);
+    }, [cropSeasonDetailId, t]);
 
     const loadSeasonDetail = useCallback(async () => {
         try {
             const detail = await getCropSeasonDetailById(cropSeasonDetailId);
             setSeasonDetail(detail);
         } catch {
-            AppToast.error("Không thể lấy thông tin vùng trồng.");
+            AppToast.error(t('cropProgress.errors.loadSeasonDetailError'));
         }
-    }, [cropSeasonDetailId]);
+    }, [cropSeasonDetailId, t]);
 
     const handleEditSuccess = useCallback(() => {
         reloadData();
@@ -85,12 +85,12 @@ export default function CropProgressPage() {
             try {
                 const stages = await getCropStages();
                 setAllStages(stages);
-            } catch {
-                AppToast.error("Không thể tải danh sách giai đoạn.");
+                        } catch {
+                AppToast.error(t('cropProgress.errors.loadStagesError'));
             }
         };
         loadStages();
-    }, [reloadData, loadSeasonDetail]);
+    }, [reloadData, loadSeasonDetail, t]);
 
     const formatDate = (date?: string) => {
         if (!date) return "—";
@@ -264,14 +264,14 @@ export default function CropProgressPage() {
                                                                     <DialogTrigger asChild>
                                                                         <button
                                                                             className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300"
-                                                                            title="Xem ảnh"
+                                                                            title={t('cropProgress.media.viewImage')}
                                                                         >
-                                                                            <img src={progress.photoUrl} alt="Ảnh" className="h-full w-full object-cover" />
+                                                                            <img src={progress.photoUrl} alt={t('cropProgress.media.imageAlt')} className="h-full w-full object-cover" />
                                                                         </button>
                                                                     </DialogTrigger>
                                                                     <DialogContent className="max-w-4xl">
-                                                                        <DialogTitle className="sr-only">Xem ảnh</DialogTitle>
-                                                                        <img src={progress.photoUrl} alt="Ảnh lớn" className="max-h-[75vh] w-auto object-contain mx-auto" />
+                                                                        <DialogTitle className="sr-only">{t('cropProgress.media.viewImage')}</DialogTitle>
+                                                                        <img src={progress.photoUrl} alt={t('cropProgress.media.largeImageAlt')} className="max-h-[75vh] w-auto object-contain mx-auto" />
                                                                     </DialogContent>
                                                                 </Dialog>
                                                             )}
@@ -280,7 +280,7 @@ export default function CropProgressPage() {
                                                                     <DialogTrigger asChild>
                                                                         <button
                                                                             className="h-14 w-20 border border-neutral-200 rounded-md overflow-hidden hover:border-neutral-300 relative"
-                                                                            title="Xem video"
+                                                                            title={t('cropProgress.media.viewVideo')}
                                                                         >
                                                                             <video muted playsInline className="h-full w-full object-cover">
                                                                                 <source src={progress.videoUrl} />
@@ -291,7 +291,7 @@ export default function CropProgressPage() {
                                                                         </button>
                                                                     </DialogTrigger>
                                                                     <DialogContent className="max-w-5xl">
-                                                                        <DialogTitle className="sr-only">Xem video</DialogTitle>
+                                                                        <DialogTitle className="sr-only">{t('cropProgress.media.viewVideo')}</DialogTitle>
                                                                         <video controls autoPlay className="max-h-[75vh] w-auto mx-auto rounded-md">
                                                                             <source src={progress.videoUrl} />
                                                                         </video>

@@ -2459,7 +2459,14 @@
         "delete": "Xóa",
         "confirmDelete": "Bạn có chắc chắn muốn xóa vùng trồng này không?",
         "deleteSuccess": "Xóa vùng trồng thành công!",
-        "deleteError": "Xóa vùng trồng thất bại!"
+        "deleteError": "Xóa vùng trồng thất bại!",
+        "detailStatus": {
+            "planned": "Dự kiến",
+            "inProgress": "Đang thực hiện",
+            "completed": "Hoàn thành",
+            "cancelled": "Đã hủy"
+          }
+
       },
       "list": {
         "title": "Danh sách mùa vụ",
@@ -2537,6 +2544,171 @@
         "creating": "Đang tạo..."
       }
     },
+    "cropProgress": {
+     "page": {
+       "loading": "Đang tải dữ liệu tiến độ...",
+       "notFound": "Không tìm thấy vùng trồng",
+       "notFoundDesc": "Vùng trồng bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+       "backToList": "Quay lại danh sách",
+       "title": "Tiến độ canh tác - {{coffeeType}}",
+       "subtitle": "Theo dõi và quản lý tiến độ canh tác theo từng giai đoạn"
+     },
+     "header": {
+       "harvestYield": "Năng suất thu hoạch",
+       "notUpdated": "Chưa cập nhật",
+       "requestConsultation": "Yêu cầu tư vấn"
+     },
+     "progressTable": {
+       "title": "Bảng tiến độ canh tác",
+       "headers": {
+         "stage": "Giai đoạn",
+         "status": "Trạng thái",
+         "recordedDate": "Ngày ghi nhận",
+         "notes": "Ghi chú",
+         "documents": "Tài liệu",
+         "actions": "Thao tác"
+       },
+       "status": {
+         "completed": "Hoàn thành",
+         "inProgress": "Đang thực hiện",
+         "notOpen": "Chưa mở"
+       },
+       "actions": {
+         "edit": "Chỉnh sửa",
+         "record": "Ghi nhận",
+         "noAction": "Chưa thể thực hiện"
+       }
+     },
+     "errors": {
+       "loadDataError": "Đã xảy ra lỗi khi tải dữ liệu tiến độ.",
+       "loadSeasonDetailError": "Không thể lấy thông tin vùng trồng.",
+       "loadStagesError": "Không thể tải danh sách giai đoạn."
+     },
+     "media": {
+       "viewImage": "Xem ảnh",
+       "viewVideo": "Xem video",
+       "imageAlt": "Ảnh",
+       "largeImageAlt": "Ảnh lớn"
+     },
+     "createDialog": {
+       "newProgress": "Ghi nhận tiến độ",
+       "title": "Ghi nhận tiến độ canh tác",
+       "description": "Ghi nhận thông tin chi tiết về giai đoạn canh tác",
+       "completedTitle": "Hoàn thành mùa vụ",
+       "completedDescription": "Chúc mừng! Bạn đã hoàn thành tất cả các giai đoạn",
+       "confirmMessage": "Bạn có chắc chắn muốn tiếp tục?",
+       "error": "Không thể hoàn thành mùa vụ với sản lượng này",
+       "basicInfo": "Thông tin cơ bản",
+       "nextStage": "Giai đoạn tiếp theo",
+       "nextStageDesc": "Giai đoạn tiếp theo cần thực hiện",
+       "progress": "Tiến trình",
+       "stages": "giai đoạn",
+       "allCompleted": "Đã hoàn thành tất cả giai đoạn",
+       "allCompletedDesc": "Chúc mừng! Bạn đã hoàn thành tất cả các giai đoạn của mùa vụ này.",
+       "progressComplete": "100% hoàn thành!",
+       "executionDate": "Ngày thực hiện",
+       "executionDateDesc": "Chọn ngày thực hiện giai đoạn này (không được lớn hơn hôm nay)",
+       "estimatedYield": "Sản lượng dự kiến",
+       "yieldRange": "Phạm vi chấp nhận",
+       "yieldGood": "Tốt",
+       "yieldWarning": "Cảnh báo",
+       "yieldStrongWarning": "Cảnh báo mạnh",
+       "yieldNotAllowed": "Không cho phép",
+       "yieldNote": "Lưu ý",
+       "yieldNoteDesc": "Sản lượng dưới 80% sẽ KHÔNG đạt cam kết với doanh nghiệp",
+       "actualYield": "Sản lượng thu hoạch (kg)",
+       "actualYieldPlaceholder": "Nhập sản lượng thu hoạch...",
+       "achievedPercent": "Đạt {{percent}}% so với dự kiến",
+       "notes": "Ghi chú",
+       "notesPlaceholder": "Mô tả chi tiết về giai đoạn, điều kiện môi trường, phương pháp chăm sóc...",
+       "mediaUpload": "Tài liệu minh họa",
+       "photoUpload": "Ảnh minh hoạ",
+       "videoUpload": "Video minh hoạ",
+       "selectPhoto": "Chọn ảnh",
+       "selectVideo": "Chọn video",
+       "mediaPreview": "Xem trước tài liệu",
+       "removeFile": "Xóa file",
+       "maxFiles": "Tối đa 10 files, 50MB",
+       "autoCompress": "Ảnh tự động nén",
+       "cancel": "Hủy",
+       "close": "Đóng",
+       "saving": "Đang lưu...",
+       "recordStage": "Ghi nhận {{stageName}}",
+       "validation": {
+         "selectStage": "Vui lòng chọn giai đoạn.",
+         "selectDate": "Vui lòng chọn ngày ghi nhận.",
+         "dateNotFuture": "Ngày ghi nhận không được lớn hơn hôm nay.",
+         "dateTooPast": "Ngày ghi nhận không được quá xa trong quá khứ (tối đa 1 năm trước).",
+         "yieldRequired": "Vui lòng nhập sản lượng thu hoạch hợp lệ (> 0).",
+         "fileTooLarge": "File quá lớn. Tối đa 10MB.",
+         "fileTypeNotSupported": "Chỉ hỗ trợ file ảnh (JPEG, PNG, WebP) và video (MP4, AVI, MOV).",
+         "loadStagesError": "Không thể tải danh sách giai đoạn.",
+         "loadSeasonDetailError": "Không thể tải chi tiết mùa vụ.",
+         "createProgressError": "Tạo tiến độ thất bại.",
+         "createProgressSuccess": "Tạo tiến độ thành công!"
+       },
+       "yieldValidation": {
+         "noData": "Không có dữ liệu dự kiến để so sánh",
+         "overflowError": "Sản lượng thu hoạch ({{actual}} kg) vượt quá {{max}}% so với dự kiến ({{estimated}} kg). Vui lòng kiểm tra lại hoặc liên hệ quản lý để điều chỉnh chỉ tiêu.",
+         "overflowRecommendation": "Liên hệ quản lý để điều chỉnh chỉ tiêu hoặc kiểm tra lại dữ liệu",
+         "underflowError": "Sản lượng thu hoạch ({{actual}} kg) chỉ đạt {{percent}}% so với dự kiến ({{estimated}} kg). Sản lượng quá thấp có thể ảnh hưởng đến hiệu quả sản xuất và cam kết. Vui lòng kiểm tra lại hoặc ghi chú lý do.",
+         "underflowRecommendation": "Không thể hoàn thành mùa vụ với sản lượng này. Cần kiểm tra lại hoặc liên hệ quản lý",
+         "commitmentFailed": "Sản lượng thu hoạch ({{actual}} kg) chỉ đạt {{percent}}% so với dự kiến ({{estimated}} kg). KHÔNG ĐẠT CAM KẾT với doanh nghiệp. Vui lòng ghi chú lý do cụ thể và liên hệ quản lý.",
+         "commitmentFailedRecommendation": "Cần liên hệ quản lý để điều chỉnh cam kết hoặc tìm giải pháp thay thế",
+         "warningLow": "Sản lượng thu hoạch ({{actual}} kg) đạt {{percent}}% so với dự kiến ({{estimated}} kg). Sản lượng thấp hơn dự kiến nhưng vẫn đạt cam kết. Vui lòng ghi chú lý do nếu cần.",
+         "warningLowRecommendation": "Có thể hoàn thành mùa vụ nhưng cần ghi chú lý do sản lượng thấp",
+         "success": "Sản lượng đạt yêu cầu, có thể hoàn thành mùa vụ",
+         "commitmentNotAchieved": "KHÔNG ĐẠT CAM KẾT với doanh nghiệp!",
+         "commitmentPartial": "Đạt cam kết một phần",
+         "canContinue": "Bạn vẫn có thể tiếp tục, nhưng vui lòng ghi chú lý do cụ thể.",
+         "confirmLowYield": "Sản lượng thu hoạch ({{actual}} kg) thấp hơn dự kiến.\n\n{{commitmentMessage}}\n\nLý do: {{reason}}\n\nKhuyến nghị: {{recommendation}}\n\n{{confirmMessage}}"
+       }
+     },
+     "editDialog": {
+       "button": "Chỉnh sửa",
+       "title": "Chỉnh sửa tiến độ canh tác",
+       "description": "Cập nhật thông tin giai đoạn",
+       "success": "Cập nhật tiến độ thành công!",
+       "error": "Cập nhật tiến độ thất bại.",
+       "currentStageInfo": "Thông tin giai đoạn hiện tại:",
+       "createdDate": "Ngày tạo",
+       "noDate": "Chưa có",
+       "basicInfo": "Thông tin cơ bản",
+       "stage": "Giai đoạn",
+       "executionDate": "Ngày thực hiện",
+       "yield": "Sản lượng (kg)",
+       "yieldPlaceholder": "Nhập sản lượng thu hoạch...",
+       "notes": "Ghi chú",
+       "notesPlaceholder": "Mô tả chi tiết về giai đoạn, điều kiện môi trường, phương pháp chăm sóc...",
+       "currentMedia": "Tài liệu hiện tại",
+       "currentDocument": "Tài liệu hiện tại",
+       "currentImage": "Ảnh hiện tại",
+       "noDocuments": "Chưa có tài liệu nào",
+       "mediaNote": "Lưu ý:",
+       "mediaNoteDesc": "Ảnh/video sẽ được giữ nguyên khi cập nhật",
+       "editBasicInfo": "Chỉnh sửa thông tin cơ bản",
+       "keepCurrentMedia": "📷 Ảnh/video hiện tại được giữ nguyên",
+       "cancel": "Hủy",
+       "updating": "Đang cập nhật...",
+       "updateProgress": "Cập nhật tiến độ"
+          },
+          "detailStatus": {
+            "planned": "Dự kiến",
+            "inProgress": "Đang thực hiện",
+            "completed": "Hoàn thành",
+            "cancelled": "Đã hủy"
+          }
+   },
+   "cropStages": {
+     "dialog": {
+       "button": "Xem giai đoạn",
+       "title": "Các giai đoạn canh tác",
+       "loading": "Đang tải...",
+       "noData": "Không có dữ liệu giai đoạn",
+       "error": "Lỗi khi tải danh sách giai đoạn"
+     }
+   },
+    
     "manager": {
       "cropSeasons": {
         "title": "Quản lý mùa vụ",
@@ -2559,6 +2731,42 @@
         "viewDetails": "Xem chi tiết",
         "showingPage": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} mùa vụ",
         "page": "Trang {{current}} / {{total}}"
+      },
+      "cropSeasonDetail": {
+        "subtitle": "Chi tiết mùa vụ canh tác",
+        "farmer": "Nông dân",
+        "area": "Diện tích",
+        "time": "Thời gian",
+        "status": "Trạng thái",
+        "overview": "Tổng quan",
+        "plantingDetails": "Chi tiết vùng trồng",
+        "cultivationProgress": "Tiến độ canh tác",
+        "generalInfo": "Thông tin chung",
+        "seasonInfo": "Thông tin mùa vụ",
+        "seasonName": "Tên mùa vụ",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "farmerInfo": "Thông tin nông dân",
+        "farmerName": "Tên nông dân",
+        "commitmentCode": "Mã cam kết",
+        "registrationCode": "Mã đăng ký",
+        "notes": "Ghi chú",
+        "plantingAreaDetails": "Chi tiết vùng trồng",
+        "noPlantingDetails": "Chưa có chi tiết vùng trồng",
+        "allocatedArea": "Diện tích phân bổ",
+        "estimatedYield": "Sản lượng ước tính",
+        "actualYield": "Sản lượng thực tế",
+        "expectedHarvestStart": "Ngày thu hoạch dự kiến (bắt đầu)",
+        "expectedHarvestEnd": "Ngày thu hoạch dự kiến (kết thúc)",
+        "plannedQuality": "Chất lượng dự kiến",
+        "cultivationProgressTitle": "Tiến độ canh tác",
+        "noProgressToShow": "Không có tiến độ để hiển thị",
+        "noProgressRecorded": "Chưa có tiến độ được ghi nhận",
+        "error": {
+          "loadFailed": "Lỗi khi tải dữ liệu mùa vụ",
+          "notFound": "Không tìm thấy mùa vụ",
+          "notFoundDescription": "Mùa vụ bạn đang tìm kiếm không tồn tại hoặc đã bị xóa."
+        }
       }
     }
   ,
@@ -3339,8 +3547,8 @@
     "success": {
       "submitSuccess": "Phản hồi đã được gửi thành công 🎉"
     }
-  }
-},
+    }
+  },
   "inventoryLogs": {
     "title": "Nhật ký tồn kho",
     "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",
@@ -5275,7 +5483,7 @@
          "labels": {
            "currentDeliveryItem": "Mặt hàng đợt giao (hiện tại)"
          }
-       }
+      }
     },
     "form": {
       "fields": {
@@ -6020,44 +6228,7 @@
       "actions": "Hành động"
     }
   },
-  "cropSeasons": {
-    "error": {
-      "loadFailed": "Không thể tải thông tin mùa vụ",
-      "notFound": "Không tìm thấy mùa vụ",
-      "notFoundDescription": "Mùa vụ này không tồn tại hoặc đã bị xóa"
-    },
-    "detail": {
-      "subtitle": "Chi tiết mùa vụ cà phê",
-      "farmer": "Nông dân",
-      "area": "Diện tích",
-      "time": "Thời gian",
-      "status": "Trạng thái",
-      "overview": "Tổng quan",
-      "plantingDetails": "Chi tiết vùng trồng",
-      "cultivationProgress": "Tiến độ canh tác",
-      "generalInfo": "Thông tin tổng quan",
-      "seasonInfo": "Thông tin mùa vụ",
-      "farmerInfo": "Thông tin nông dân",
-      "seasonName": "Tên mùa vụ",
-      "startDate": "Ngày bắt đầu",
-      "endDate": "Ngày kết thúc",
-      "farmerName": "Tên nông dân",
-      "commitmentCode": "Mã cam kết",
-      "registrationCode": "Mã đăng ký",
-      "notes": "Ghi chú",
-      "plantingAreaDetails": "Chi tiết vùng trồng",
-      "noPlantingDetails": "Chưa có chi tiết vùng trồng nào",
-      "allocatedArea": "Diện tích phân bổ",
-      "estimatedYield": "Sản lượng dự kiến",
-      "actualYield": "Sản lượng thực tế",
-      "expectedHarvestStart": "Ngày thu hoạch dự kiến",
-      "expectedHarvestEnd": "Ngày thu hoạch kết thúc",
-      "plannedQuality": "Chất lượng dự kiến",
-      "cultivationProgressTitle": "Tiến độ canh tác",
-      "noProgressToShow": "Chưa có chi tiết vùng trồng nào để hiển thị tiến độ",
-      "noProgressRecorded": "Chưa có tiến độ nào được ghi nhận"
-    }
-  },
+
   "notifications": {
     "title": "Thông báo",
     "markAllAsRead": "Đánh dấu tất cả đã đọc",

@@ -130,15 +130,7 @@ function buildStatusFilter(raw?: string): string | undefined {
 
   const s = raw.trim();
 
-  // Map label VN → số enum
-  const vnToNumber: Record<string, number> = {
-    "Đang hoạt động": 0,
-    "Tạm dừng": 1,
-    "Hoàn thành": 2,
-    "Đã hủy": 3,
-  };
-
-  // Map value EN → số enum
+  // Map value EN → số enum (chỉ sử dụng enum values, không dùng hardcoded text)
   const enToNumber: Record<string, number> = {
     Active: 0,
     Paused: 1,
@@ -151,7 +143,6 @@ function buildStatusFilter(raw?: string): string | undefined {
     return `Status eq ${CropSeasonStatusValueToNumber[s as CropSeasonStatusValue]}`;
   }
 
-  if (vnToNumber[s] !== undefined) return `Status eq ${vnToNumber[s]}`;
   if (enToNumber[s] !== undefined) return `Status eq ${enToNumber[s]}`;
   if (/^\d+$/.test(s)) return `Status eq ${parseInt(s, 10)}`; // fallback nếu truyền số trực tiếp
 

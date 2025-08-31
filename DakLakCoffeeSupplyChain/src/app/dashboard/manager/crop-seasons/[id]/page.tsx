@@ -25,7 +25,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
 
 import { CropSeasonStatusMap, CropSeasonStatusValue } from "@/lib/constants/cropSeasonStatus";
-import { CropSeasonDetailStatusMap, CropSeasonDetailStatusValue } from "@/lib/constants/cropSeasonDetailStatus";
+import { getCropSeasonDetailStatusMap, CropSeasonDetailStatusValue } from "@/lib/constants/cropSeasonDetailStatus";
 
 export default function ManagerCropSeasonDetailPage() {
     const { t } = useTranslation();
@@ -65,14 +65,14 @@ export default function ManagerCropSeasonDetailPage() {
                 setCropProgresses(progressData);
             } catch (error) {
                 console.error("Error fetching crop season data:", error);
-                toast.error(t('cropSeasons.error.loadFailed'));
+                toast.error(t('manager.cropSeasonDetail.error.loadFailed'));
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchData();
-    }, [cropSeasonId]);
+    }, [cropSeasonId, t]);
 
     if (isLoading) {
         return (
@@ -87,8 +87,8 @@ export default function ManagerCropSeasonDetailPage() {
             <div className="min-h-screen bg-orange-50 flex items-center justify-center">
                 <div className="text-center">
                     <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">{t('cropSeasons.error.notFound')}</h2>
-                    <p className="text-gray-600 mb-4">{t('cropSeasons.error.notFoundDescription')}</p>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-2">{t('manager.cropSeasonDetail.error.notFound')}</h2>
+                    <p className="text-gray-600 mb-4">{t('manager.cropSeasonDetail.error.notFoundDescription')}</p>
                     <Button onClick={() => router.back()}>{t('common.back')}</Button>
                 </div>
             </div>
@@ -109,7 +109,7 @@ export default function ManagerCropSeasonDetailPage() {
     };
 
     const getDetailStatusColor = (status: CropSeasonDetailStatusValue) => {
-        const statusInfo = CropSeasonDetailStatusMap[status];
+        const statusInfo = getCropSeasonDetailStatusMap(t)[status];
         if (!statusInfo) return 'bg-gray-100 text-gray-800';
 
         switch (statusInfo.color) {
@@ -149,7 +149,7 @@ export default function ManagerCropSeasonDetailPage() {
                                 {cropSeason.seasonName}
                             </h1>
                             <p className="text-gray-600 text-sm">
-                                {t('cropSeasons.detail.subtitle')}
+                                {t('manager.cropSeasonDetail.subtitle')}
                             </p>
                         </div>
                     </div>
@@ -159,21 +159,21 @@ export default function ManagerCropSeasonDetailPage() {
                         <div className="flex items-center gap-2">
                             <Users className="w-5 h-5 text-blue-600" />
                             <div>
-                                <p className="text-sm text-gray-600">{t('cropSeasons.detail.farmer')}</p>
+                                <p className="text-sm text-gray-600">{t('manager.cropSeasonDetail.farmer')}</p>
                                 <p className="font-medium">{cropSeason.farmerName}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <MapPin className="w-5 h-5 text-orange-600" />
                             <div>
-                                <p className="text-sm text-gray-600">{t('cropSeasons.detail.area')}</p>
+                                <p className="text-sm text-gray-600">{t('manager.cropSeasonDetail.area')}</p>
                                 <p className="font-medium">{cropSeason.area} ha</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-5 h-5 text-green-600" />
                             <div>
-                                <p className="text-sm text-gray-600">{t('cropSeasons.detail.time')}</p>
+                                <p className="text-sm text-gray-600">{t('manager.cropSeasonDetail.time')}</p>
                                 <p className="font-medium">
                                     {new Date(cropSeason.startDate).toLocaleDateString('vi-VN')} - {new Date(cropSeason.endDate).toLocaleDateString('vi-VN')}
                                 </p>
@@ -182,7 +182,7 @@ export default function ManagerCropSeasonDetailPage() {
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-purple-600" />
                             <div>
-                                <p className="text-sm text-gray-600">{t('cropSeasons.detail.status')}</p>
+                                <p className="text-sm text-gray-600">{t('manager.cropSeasonDetail.status')}</p>
                                 <Badge className={getStatusColor(cropSeason.status as CropSeasonStatusValue)}>
                                     {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label) : cropSeason.status}
                                 </Badge>
@@ -194,9 +194,9 @@ export default function ManagerCropSeasonDetailPage() {
                 {/* Tabs */}
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="overview">{t('cropSeasons.detail.overview')}</TabsTrigger>
-                        <TabsTrigger value="details">{t('cropSeasons.detail.plantingDetails')}</TabsTrigger>
-                        <TabsTrigger value="progress">{t('cropSeasons.detail.cultivationProgress')}</TabsTrigger>
+                        <TabsTrigger value="overview">{t('manager.cropSeasonDetail.overview')}</TabsTrigger>
+                        <TabsTrigger value="details">{t('manager.cropSeasonDetail.plantingDetails')}</TabsTrigger>
+                        <TabsTrigger value="progress">{t('manager.cropSeasonDetail.cultivationProgress')}</TabsTrigger>
                     </TabsList>
 
                     {/* Overview Tab */}
@@ -205,32 +205,32 @@ export default function ManagerCropSeasonDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Coffee className="w-5 h-5 text-orange-600" />
-                                    {t('cropSeasons.detail.generalInfo')}
+                                    {t('manager.cropSeasonDetail.generalInfo')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h4 className="font-medium text-gray-800 mb-2">{t('cropSeasons.detail.seasonInfo')}</h4>
+                                        <h4 className="font-medium text-gray-800 mb-2">{t('manager.cropSeasonDetail.seasonInfo')}</h4>
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.seasonName')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.seasonName')}:</span>
                                                 <span className="font-medium">{cropSeason.seasonName}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.startDate')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.startDate')}:</span>
                                                 <span>{new Date(cropSeason.startDate).toLocaleDateString('vi-VN')}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.endDate')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.endDate')}:</span>
                                                 <span>{new Date(cropSeason.endDate).toLocaleDateString('vi-VN')}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.area')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.area')}:</span>
                                                 <span>{cropSeason.area} ha</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.status')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.status')}:</span>
                                                 <Badge className={getStatusColor(cropSeason.status as CropSeasonStatusValue)}>
                                                     {CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label ? t(CropSeasonStatusMap[cropSeason.status as CropSeasonStatusValue]?.label) : cropSeason.status}
                                                 </Badge>
@@ -238,18 +238,18 @@ export default function ManagerCropSeasonDetailPage() {
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 className="font-medium text-gray-800 mb-2">{t('cropSeasons.detail.farmerInfo')}</h4>
+                                        <h4 className="font-medium text-gray-800 mb-2">{t('manager.cropSeasonDetail.farmerInfo')}</h4>
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.farmerName')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.farmerName')}:</span>
                                                 <span className="font-medium">{cropSeason.farmerName}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.commitmentCode')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.commitmentCode')}:</span>
                                                 <span>{cropSeason.commitmentName}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('cropSeasons.detail.registrationCode')}:</span>
+                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.registrationCode')}:</span>
                                                 <span>{cropSeason.registrationCode}</span>
                                             </div>
                                         </div>
@@ -257,7 +257,7 @@ export default function ManagerCropSeasonDetailPage() {
                                 </div>
                                 {cropSeason.note && (
                                     <div>
-                                        <h4 className="font-medium text-gray-800 mb-2">{t('cropSeasons.detail.notes')}</h4>
+                                        <h4 className="font-medium text-gray-800 mb-2">{t('manager.cropSeasonDetail.notes')}</h4>
                                         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                                             {cropSeason.note}
                                         </p>
@@ -273,7 +273,7 @@ export default function ManagerCropSeasonDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <MapPin className="w-5 h-5 text-blue-600" />
-                                    {t('cropSeasons.detail.plantingAreaDetails')} ({cropSeason.details?.length || 0})
+                                    {t('manager.cropSeasonDetail.plantingAreaDetails')} ({cropSeason.details?.length || 0})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -281,7 +281,7 @@ export default function ManagerCropSeasonDetailPage() {
                                     {!cropSeason.details || cropSeason.details.length === 0 ? (
                                         <div className="text-center py-8 text-gray-500">
                                             <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                                            <p>{t('cropSeasons.detail.noPlantingDetails')}</p>
+                                            <p>{t('manager.cropSeasonDetail.noPlantingDetails')}</p>
                                         </div>
                                     ) : (
                                         cropSeason.details.map((detail) => (
@@ -289,36 +289,36 @@ export default function ManagerCropSeasonDetailPage() {
                                                 <div className="flex items-center justify-between mb-3">
                                                     <h4 className="font-medium text-gray-800">{detail.typeName}</h4>
                                                     <Badge className={getDetailStatusColor(detail.status as CropSeasonDetailStatusValue)}>
-                                                        {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label ? t(CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label) : detail.status}
+                                                        {getCropSeasonDetailStatusMap(t)[detail.status as CropSeasonDetailStatusValue]?.label || detail.status}
                                                     </Badge>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.allocatedArea')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.allocatedArea')}:</span>
                                                         <span className="ml-2 font-medium">{detail.areaAllocated || 0} ha</span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.estimatedYield')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.estimatedYield')}:</span>
                                                         <span className="ml-2 font-medium">{detail.estimatedYield || 0} kg</span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.actualYield')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.actualYield')}:</span>
                                                         <span className="ml-2 font-medium">{detail.actualYield || 0} kg</span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.expectedHarvestStart')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.expectedHarvestStart')}:</span>
                                                         <span className="ml-2">
                                                             {detail.expectedHarvestStart ? new Date(detail.expectedHarvestStart).toLocaleDateString('vi-VN') : 'N/A'}
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.expectedHarvestEnd')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.expectedHarvestEnd')}:</span>
                                                         <span className="ml-2">
                                                             {detail.expectedHarvestEnd ? new Date(detail.expectedHarvestEnd).toLocaleDateString('vi-VN') : 'N/A'}
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">{t('cropSeasons.detail.plannedQuality')}:</span>
+                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.plannedQuality')}:</span>
                                                         <span className="ml-2">{detail.plannedQuality || 'N/A'}</span>
                                                     </div>
                                                 </div>
@@ -336,7 +336,7 @@ export default function ManagerCropSeasonDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-green-600" />
-                                    {t('cropSeasons.detail.cultivationProgressTitle')}
+                                    {t('manager.cropSeasonDetail.cultivationProgressTitle')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -344,7 +344,7 @@ export default function ManagerCropSeasonDetailPage() {
                                     {!cropSeason.details || cropSeason.details.length === 0 ? (
                                         <div className="text-center py-8 text-gray-500">
                                             <TrendingUp className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                                            <p>{t('cropSeasons.detail.noProgressToShow')}</p>
+                                            <p>{t('manager.cropSeasonDetail.noProgressToShow')}</p>
                                         </div>
                                     ) : (
                                         cropSeason.details.map((detail) => {
@@ -354,14 +354,14 @@ export default function ManagerCropSeasonDetailPage() {
                                                     <div className="flex items-center justify-between mb-4">
                                                         <h4 className="font-medium text-gray-800">{detail.typeName}</h4>
                                                         <Badge className={getDetailStatusColor(detail.status as CropSeasonDetailStatusValue)}>
-                                                            {CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label ? t(CropSeasonDetailStatusMap[detail.status as CropSeasonDetailStatusValue]?.label) : detail.status}
+                                                            {getCropSeasonDetailStatusMap(t)[detail.status as CropSeasonDetailStatusValue]?.label || detail.status}
                                                         </Badge>
                                                     </div>
 
                                                     {progress.length === 0 ? (
                                                         <div className="text-center py-6 text-gray-500">
                                                             <Clock className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                                                            <p>{t('cropSeasons.detail.noProgressRecorded')}</p>
+                                                            <p>{t('manager.cropSeasonDetail.noProgressRecorded')}</p>
                                                         </div>
                                                     ) : (
                                                         <div className="space-y-3">
