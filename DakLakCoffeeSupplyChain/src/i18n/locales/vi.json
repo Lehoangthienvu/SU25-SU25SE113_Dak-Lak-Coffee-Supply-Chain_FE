@@ -6185,5 +6185,15 @@
         "kg": "kg"
       }
     }
+  },
+  "products": {
+    "title": "Sản phẩm",
+    "subtitle": "Quản lý và theo dõi sản phẩm",
+    "stats": {
+      "totalProducts": "Tổng sản phẩm",
+      "pendingProducts": "Sản phẩm chờ",
+      "completedProducts": "Sản phẩm đã hoàn thành",
+      "totalQuantity": "Tổng số lượng"
+    }
   }
 }
