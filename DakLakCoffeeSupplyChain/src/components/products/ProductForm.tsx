@@ -446,15 +446,22 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         })
       );
     }
-    if (!data.batchId) return toast.error(t("products.form.validation.batchRequired"));
-    if (!data.inventoryId) return toast.error(t("products.form.validation.inventoryRequired"));
-    if (!data.coffeeTypeId) return toast.error(t("products.form.validation.coffeeTypeRequired"));
+    if (!data.batchId)
+      return toast.error(t("products.form.validation.batchRequired"));
+    if (!data.inventoryId)
+      return toast.error(t("products.form.validation.inventoryRequired"));
+    if (!data.coffeeTypeId)
+      return toast.error(t("products.form.validation.coffeeTypeRequired"));
     if (data.originRegion.length > 100)
       return toast.error(t("products.form.validation.originRegionTooLong"));
     if (data.originFarmLocation.length > 200)
-      return toast.error(t("products.form.validation.originFarmLocationTooLong"));
+      return toast.error(
+        t("products.form.validation.originFarmLocationTooLong")
+      );
     if (data.geographicalIndicationCode.length > 50)
-      return toast.error(t("products.form.validation.geographicalIndicationCodeTooLong"));
+      return toast.error(
+        t("products.form.validation.geographicalIndicationCodeTooLong")
+      );
     if (data.evaluatedQuality.length > 50)
       return toast.error(t("products.form.validation.evaluatedQualityTooLong"));
     if (
@@ -551,12 +558,16 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
   return (
     <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
       <h2 className="text-2xl font-semibold text-center">
-        {isEdit ? t("products.form.title.edit") : t("products.form.title.create")}
+        {isEdit
+          ? t("products.form.title.edit")
+          : t("products.form.title.create")}
       </h2>
 
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.basicInfo")}</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("products.form.sections.basicInfo")}
+        </h3>
 
         <div
           className={`grid grid-cols-1 ${
@@ -565,7 +576,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         >
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.productName")} *
+              {t("products.form.fields.productName")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               value={form.productName}
@@ -579,7 +591,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           {isEdit && (
             <div>
               <label className="block mb-1 text-sm font-medium">
-                {t("products.form.fields.status")} *
+                {t("products.form.fields.status")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <select
                 className="w-full p-2 border rounded"
@@ -589,9 +602,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 }
               >
                 {Object.values(ProductStatus)
-                  .filter(status => 
-                    status !== ProductStatus.Draft && 
-                    status !== ProductStatus.InStock
+                  .filter(
+                    (status) =>
+                      status !== ProductStatus.Draft &&
+                      status !== ProductStatus.InStock
                   )
                   .map((s) => (
                     <option key={s} value={s}>
@@ -604,7 +618,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">{t("products.form.fields.description")}</label>
+          <label className="block mb-1 text-sm font-medium">
+            {t("products.form.fields.description")}
+          </label>
           <Textarea
             placeholder={t("products.form.placeholders.description")}
             value={form.description}
@@ -617,12 +633,15 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       {/* Pricing & Quantity */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.pricingQuantity")}</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("products.form.sections.pricingQuantity")}
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.unitPrice")} *
+              {t("products.form.fields.unitPrice")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -648,7 +667,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.quantityAvailable")} *</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.quantityAvailable")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
             <Input
               type="number"
               min={0}
@@ -659,7 +681,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 const value = e.target.value;
                 // Chỉ cho phép nhập số thập phân dương
                 if (value === "" || /^\d*\.?\d*$/.test(value)) {
-                  setField("quantityAvailable", value === "" ? "" : Number(value));
+                  setField(
+                    "quantityAvailable",
+                    value === "" ? "" : Number(value)
+                  );
                 }
               }}
               onKeyDown={(e) => {
@@ -691,7 +716,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.unit")} *</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.unit")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
               value={form.unit}
@@ -730,7 +758,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.batchId")} *
+              {t("products.form.fields.batchId")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
@@ -738,7 +767,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("batchId", e.target.value)}
               disabled={loadingOptions || !canEditBatch()}
             >
-              <option value="">{t("products.form.selectOptions.selectBatch")}</option>
+              <option value="">
+                {t("products.form.selectOptions.selectBatch")}
+              </option>
               {batchOptions.map((batch) => (
                 <option key={batch.batchId} value={batch.batchId}>
                   {batch.batchCode}
@@ -767,7 +798,10 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">{t("products.form.fields.inventoryId")} *</label>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.inventoryId")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
             <select
               className="w-full p-2 border rounded"
               value={form.inventoryId}
@@ -778,7 +812,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               }}
               disabled={loadingOptions}
             >
-              <option value="">{t("products.form.selectOptions.selectInventory")}</option>
+              <option value="">
+                {t("products.form.selectOptions.selectInventory")}
+              </option>
               {inventoryOptions.map((inventory) => (
                 <option
                   key={inventory.inventoryId}
@@ -806,7 +842,8 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.coffeeTypeId")} *
+              {t("products.form.fields.coffeeTypeId")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <select
               className="w-full p-2 border rounded disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500"
@@ -814,7 +851,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) => setField("coffeeTypeId", e.target.value)}
               disabled={loadingOptions || !canEditCoffeeType()}
             >
-              <option value="">{t("products.form.selectOptions.selectCoffeeType")}</option>
+              <option value="">
+                {t("products.form.selectOptions.selectCoffeeType")}
+              </option>
               {coffeeTypes.map((type) => (
                 <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
                   {type.typeName}
@@ -886,7 +925,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
               onChange={(e) =>
                 setField("geographicalIndicationCode", e.target.value)
               }
-              placeholder={t("products.form.placeholders.geographicalIndicationCode")}
+              placeholder={t(
+                "products.form.placeholders.geographicalIndicationCode"
+              )}
               maxLength={50}
             />
           </div>
@@ -949,7 +990,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       {/* Approval */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">{t("products.form.sections.approval")}</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("products.form.sections.approval")}
+        </h3>
 
         <div>
           <label className="block mb-1 text-sm font-medium">
@@ -967,7 +1010,9 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit} disabled={saving}>
-          {isEdit ? t("products.form.actions.update") : t("products.form.actions.create")}
+          {isEdit
+            ? t("products.form.actions.update")
+            : t("products.form.actions.create")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
           {t("products.form.actions.back")}
