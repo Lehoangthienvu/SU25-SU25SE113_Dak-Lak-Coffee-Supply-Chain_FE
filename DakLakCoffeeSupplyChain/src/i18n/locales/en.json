@@ -1014,7 +1014,7 @@
             },
             "actions": {
               "cancel": "Cancel",
-              "creating": "Creating..."
+              "creating": "Creating...",
               "create": "Create Processing Batch"
             },
             "loading": {
@@ -2472,12 +2472,6 @@
         "completed": "Completed",
         "cancelled": "Cancelled"
       },
-      "detailStatus": {
-        "planned": "Planned",
-        "inProgress": "In Progress",
-        "completed": "Completed",
-        "cancelled": "Cancelled"
-      },
       "common": {
         "loading": "Loading crop seasons...",
         "error": "Cannot load crop seasons list",
@@ -2503,48 +2497,6 @@
         "noDate": "No date",
         "cannotAutoCalculate": "❌ Cannot automatically calculate season time. Please select an approved commitment.",
         "creating": "Creating..."
-      },
-      "error": {
-        "loadFailed": "Cannot load crop season information",
-        "notFound": "Crop season not found",
-        "notFoundDescription": "This crop season does not exist or has been deleted"
-      },
-      "status": {
-        "active": "Active",
-        "paused": "Paused",
-        "completed": "Completed",
-        "cancelled": "Cancelled"
-      },
-      "detail": {
-        "subtitle": "Coffee crop season details",
-        "farmer": "Farmer",
-        "area": "Area",
-        "time": "Time",
-        "status": "Status",
-        "overview": "Overview",
-        "plantingDetails": "Planting Area Details",
-        "cultivationProgress": "Cultivation Progress",
-        "generalInfo": "General Information",
-        "seasonInfo": "Crop Season Information",
-        "farmerInfo": "Farmer Information",
-        "seasonName": "Crop Season Name",
-        "startDate": "Start Date",
-        "endDate": "End Date",
-        "farmerName": "Farmer Name",
-        "commitmentCode": "Commitment Code",
-        "registrationCode": "Registration Code",
-        "notes": "Notes",
-        "plantingAreaDetails": "Planting Area Details",
-        "noPlantingDetails": "No planting area details yet",
-        "allocatedArea": "Allocated Area",
-        "estimatedYield": "Estimated Yield",
-        "actualYield": "Actual Yield",
-        "expectedHarvestStart": "Expected Harvest Start",
-        "expectedHarvestEnd": "Expected Harvest End",
-        "plannedQuality": "Planned Quality",
-        "cultivationProgressTitle": "Cultivation Progress",
-        "noProgressToShow": "No planting area details to show progress",
-        "noProgressRecorded": "No progress recorded yet"
       }
     },
     "manager": {
@@ -2570,84 +2522,8 @@
         "showingPage": "Showing {{start}} to {{end}} of {{total}} seasons",
         "page": "Page {{current}} / {{total}}"
       }
-    },
-    "cropStages": {
-      "title": "Crop Growth Stages",
-      "description": "View and manage crop growth stages",
-      "dialog": {
-        "title": "📌 Crop Growth Stages",
-        "loading": "Loading data...",
-        "noData": "No data available.",
-        "button": "Stage Notes",
-        "error": "Cannot load crop stages list"
-      },
-      "stage": {
-        "name": "Stage Name",
-        "code": "Stage Code",
-        "description": "Description",
-        "order": "Order"
-      },
-      "status": {
-        "completed": "Completed",
-        "inProgress": "In Progress",
-        "notStarted": "Not Started"
-      }
-    },
-    "cropProgress": {
-      "title": "Crop Progress Tracking",
-      "description": "Track and record crop development progress",
-      "page": {
-        "title": "Crop Progress - {{coffeeType}}",
-        "subtitle": "Track and record development progress",
-        "backToList": "Back to List",
-        "notFound": "Crop season not found",
-        "notFoundDesc": "This crop season does not exist or has been deleted",
-        "loading": "Loading..."
-      },
-      "header": {
-        "harvestYield": "Harvest Yield",
-        "notUpdated": "Not updated",
-        "requestConsultation": "Request Consultation"
-      },
-      "progressTable": {
-        "title": "Progress Table",
-        "headers": {
-          "stage": "Stage",
-          "status": "Status",
-          "recordedDate": "Recorded Date",
-          "notes": "Notes",
-          "documents": "Documents",
-          "actions": "Actions"
-        },
-        "status": {
-          "completed": "Completed",
-          "inProgress": "In Progress",
-          "notOpen": "Not Open"
-        },
-        "actions": {
-          "edit": "Edit",
-          "record": "Record",
-          "noAction": "—"
-        }
-      },
-      "createDialog": {
-        "title": "Record Progress",
-        "description": "Record progress for this stage",
-        "completedTitle": "Complete Season",
-        "completedDescription": "Congratulations! You have completed all stages",
-        "newProgress": "Create New Progress",
-        "success": "Progress recorded successfully!",
-        "error": "Cannot record progress due to invalid yield. Please check again.",
-        "confirmMessage": "Are you sure you want to continue recording this progress?"
-      }
-    },
-      "editDialog": {
-        "title": "Edit Progress",
-        "description": "Edit progress information",
-        "button": "Edit",
-        "success": "Progress updated successfully!",
-        "error": "Update failed."
-      },
+    }
+  ,
   "warehouseInboundRequests": {
     "title": "Warehouse Inbound Requests",
     "subtitle": "Manage and approve warehouse inbound requests from farmers",
@@ -4095,31 +3971,19 @@
     }
   },
   "sidebar": {
-    "loading": "Loading...",
+    "loading": "Loading menu...",
     "dashboard": "Dashboard",
-    "navigation": {
-      "overview": "Overview",
-      "notifications": "Notifications",
-      "batches": "Batches",
-      "warehouseOperations": "Warehouse Operations",
-      "warehouseManagement": "Warehouse Management",
-      "inboundRequests": "Inbound Requests",
-      "inboundReceipts": "Inbound Receipts",
-      "outboundRequests": "Outbound Requests",
-      "outboundReceipts": "Outbound Receipts",
-      "inventories": "Inventories",
-      "inventoryLogs": "Inventory Logs",
-      "warehouses": "Warehouses",
-      "cropSeasons": "Crop Seasons"
-    },
-    "warehouseRequest": "Warehouse Request",
+    "warehouseRequest": "Delivery Requests",
     "outboundRequests": "Outbound Requests",
     "inboundRequests": "Inbound Requests",
     "outboundReceipts": "Outbound Receipts",
     "inboundReceipts": "Inbound Receipts",
     "procurementPlans": "Procurement Plans",
-    "commitments": "Commitments",
-    "batches": "Batches",
+    "commitments": "Farming Commitments",
+    "cropSeasons": "Crop Seasons",
+    "cropStages": "Growth Stages",
+    "cropProgress": "Crop Progress",
+    "batches": "Processing Batches",
     "evaluations": "Evaluations",
     "progress": "Progress",
     "waste": "Waste",
@@ -4141,66 +4005,11 @@
     "settings": "Settings",
     "profile": "Profile",
     "logout": "Logout",
-    "user": {
-      "greeting": "Hello:",
-      "anonymous": "Anonymous",
-      "logout": "Logout",
-      "logoutTitle": "Logout and return to main page"
-    },
-    "farmer": {
-      "coffeeMarket": "Coffee Purchasing Floor",
-      "commitment": "Commitment to Purchasing Plan",
-      "cropSeasons": "Crop Seasons",
-      "consultation": "Consultation",
-      "deliveryRequest": "Send Delivery Request",
-      "processing": "Processing",
-      "processingBatches": "Processing Batches List",
-      "processingProgress": "Processing Batch Progress",
-      "processingWastes": "Processing Batch Wastes"
-    },
-    "admin": {
-      "userManagement": "User Management",
-      "expertManagement": "Expert Management",
-      "farmerManagement": "Farmer Management",
-      "contracts": "Contracts",
-      "reports": "Reports",
-      "settings": "Settings"
-    },
-    "expert": {
-      "consultation": "Consultation",
-      "evaluations": "Evaluations",
-      "articles": "Articles"
-    },
-    "manager": {
+    "farmer": "Farmer",
+    "navigation": {
       "overview": "Overview",
-      "cropSeasons": "Crop Seasons",
-      "reports": "Reports",
-      "expertAdvice": "Expert Advice",
+      "batches": "Batches",
       "notifications": "Notifications",
-      "contractsDelivery": "Contracts & Delivery",
-      "supplyContracts": "Supply Contracts",
-      "deliverySchedule": "Delivery Schedule",
-      "procurementPlans": "Procurement Plans",
-      "farmingCommitments": "Farming Commitments",
-      "ordersDelivery": "Orders & Delivery",
-      "orders": "Orders",
-      "deliveryBatches": "Delivery Batches",
-      "customersProducts": "Customers & Products",
-      "businessCustomers": "Business Customers",
-      "products": "Products",
-      "farmers": "Farmers",
-      "reportsProcessing": "Reports & Processing",
-      "processingBatches": "Processing Batches List",
-      "farmerProcessingBatches": "Farmer Processing Batches",
-      "processingProgress": "Processing Progress",
-      "processingWastes": "Processing Wastes",
-      "processingMethods": "Processing Methods",
-      "processingParameters": "Processing Parameters",
-      "processingStages": "Processing Stages",
-      "wasteDisposals": "Waste Disposals",
-      "staffManagement": "Staff Management",
-      "staffList": "Staff List"
-    }
       "warehouseOperations": "Warehouse Operations",
       "warehouseManagement": "Warehouse Management",
       "inboundRequests": "Inbound Requests",
@@ -4239,59 +4048,7 @@
       "staffList": "Staff List",
       "warehouseInventory": "Warehouse Inventory",
       "inventoryHistory": "Inventory History",
-      "outboundRequests": "Outbound Requests",
-      "farmer": {
-        "dashboard": "Dashboard",
-        "cropSeasons": "Crop Seasons",
-        "cropStages": "Growth Stages",
-        "cropProgress": "Crop Progress",
-        "consultation": "Consultation",
-        "warehouseRequest": "Delivery Requests",
-        "marketPlace": "Marketplace",
-        "farmingCommitments": "Farming Commitments",
-        "coffeeProcurementFloor": "Coffee Procurement Floor",
-        "procurementPlanCommitment": "Procurement Plan Commitment",
-        "sendDeliveryRequest": "Send Delivery Request",
-        "processing": "Processing",
-        "processingBatches": "Processing Batches List",
-        "processingProgress": "Processing Progress",
-        "processingWaste": "Processing Waste"
-      },
-      "manager": {
-        "dashboard": "Overview",
-        "cropSeasons": "Crop Seasons",
-        "reports": "Reports",
-        "expertAdvice": "Expert Advice",
-        "notifications": "Notifications",
-        "contractsAndDelivery": "Contracts & Delivery",
-        "supplyContracts": "Supply Contracts",
-        "deliverySchedule": "Delivery Schedule",
-        "procurementPlans": "Procurement Plans",
-        "procurementCommitments": "Procurement Commitments",
-        "ordersAndDelivery": "Orders & Delivery",
-        "orders": "Orders",
-        "deliveryBatches": "Delivery Batches",
-        "customersAndProducts": "Customers & Products",
-        "businessCustomers": "Business Customers",
-        "products": "Products",
-        "farmers": "Farmers",
-        "reportsAndProcessing": "Reports & Processing",
-        "processingBatches": "Processing Batches",
-        "farmerProcessingBatches": "Farmer Processing Batches",
-        "processingProgress": "Processing Progress",
-        "processingWaste": "Processing Waste",
-        "processingMethods": "Processing Methods",
-        "processingParameters": "Processing Parameters",
-        "processingStages": "Processing Stages",
-        "wasteDisposal": "Waste Disposal",
-        "staffManagement": "Staff Management",
-        "staffList": "Staff List",
-        "warehouseManagement": "Warehouse Management",
-        "warehouses": "Warehouses",
-        "inventories": "Inventories",
-        "inventoryHistory": "Inventory History",
-        "outboundRequests": "Outbound Requests"
-      }
+      "outboundRequests": "Outbound Requests"
     },
             "user": {
           "greeting": "Hello:",
@@ -6221,7 +5978,44 @@
       "actions": "Actions"
     }
   },
-
+  "cropSeasons": {
+    "error": {
+      "loadFailed": "Cannot load crop season information",
+      "notFound": "Crop season not found",
+      "notFoundDescription": "This crop season does not exist or has been deleted"
+    },
+    "detail": {
+      "subtitle": "Coffee crop season details",
+      "farmer": "Farmer",
+      "area": "Area",
+      "time": "Time",
+      "status": "Status",
+      "overview": "Overview",
+      "plantingDetails": "Planting Area Details",
+      "cultivationProgress": "Cultivation Progress",
+      "generalInfo": "General Information",
+      "seasonInfo": "Crop Season Information",
+      "farmerInfo": "Farmer Information",
+      "seasonName": "Crop Season Name",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "farmerName": "Farmer Name",
+      "commitmentCode": "Commitment Code",
+      "registrationCode": "Registration Code",
+      "notes": "Notes",
+      "plantingAreaDetails": "Planting Area Details",
+      "noPlantingDetails": "No planting area details yet",
+      "allocatedArea": "Allocated Area",
+      "estimatedYield": "Estimated Yield",
+      "actualYield": "Actual Yield",
+      "expectedHarvestStart": "Expected Harvest Start",
+      "expectedHarvestEnd": "Expected Harvest End",
+      "plannedQuality": "Planned Quality",
+      "cultivationProgressTitle": "Cultivation Progress",
+      "noProgressToShow": "No planting area details to show progress",
+      "noProgressRecorded": "No progress recorded yet"
+    }
+  },
   "notifications": {
     "title": "Notifications",
     "markAllAsRead": "Mark all as read",
