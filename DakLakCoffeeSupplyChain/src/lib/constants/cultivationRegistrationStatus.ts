@@ -1,28 +1,27 @@
 export type CultivationRegistrationStatusValue = 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
 
-export const CultivationRegistrationStatusMap: Record<CultivationRegistrationStatusValue, {
-  label: string;
-  color: 'green' | 'yellow' | 'blue' | 'red' | 'gray';
-  icon: string;
-}> = {
+export const getCultivationRegistrationStatusMap = (t: (key: string) => string) => ({
   'Approved': {
-    label: 'Đã có cam kết',
-    color: 'green',
+    label: t('cultivationRegistration.status.approved'),
+    color: 'green' as const,
     icon: 'A'
   },
   'Rejected': {
-    label: 'Đã từ chối',
-    color: 'red',
+    label: t('cultivationRegistration.status.rejected'),
+    color: 'red' as const,
     icon: 'R'
   },
   'Pending': {
-    label: 'Đang chờ duyệt',
-    color: 'blue',
+    label: t('cultivationRegistration.status.pending'),
+    color: 'blue' as const,
     icon: 'P'
   },
   'Cancelled': {
-    label: 'Đã hủy hợp đồng',
-    color: 'red',
+    label: t('cultivationRegistration.status.cancelled'),
+    color: 'red' as const,
     icon: 'C'
   },
-};
+});
+
+// Legacy export for backward compatibility
+export const CultivationRegistrationStatusMap = getCultivationRegistrationStatusMap(() => '');

@@ -1,0 +1,386 @@
+{
+  "procurementPlan": {
+    "pages": {
+      "list": {
+        "title": "Kế hoạch thu mua",
+        "search": {
+          "title": "Tìm kiếm kế hoạch thu mua",
+          "placeholder": "Tìm kiếm...",
+          "button": "Tìm kiếm"
+        },
+        "actions": {
+          "createNew": "+ Tạo kế hoạch mới"
+        },
+        "table": {
+          "headers": {
+            "planName": "Tên kế hoạch",
+            "totalOutput": "Tổng sản lượng",
+            "registeredRatio": "Tỷ lệ sản lượng đã được đăng ký",
+            "status": "Trạng thái",
+            "registrationPeriod": "Ngày bắt đầu – kết thúc mở đơn",
+            "actions": "Hành động"
+          },
+          "noData": "Không tìm thấy kế hoạch nào"
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "of": "trong",
+          "plans": "kế hoạch"
+        }
+      },
+      "create": {
+        "title": "Tạo kế hoạch thu mua mới",
+        "subtitle": "Thiết lập kế hoạch thu mua cà phê từ nông hộ",
+        "form": {
+          "title": "Thông tin kế hoạch",
+          "subtitle": "Điền đầy đủ thông tin để tạo kế hoạch thu mua"
+        },
+        "success": "Tạo kế hoạch thành công!"
+      },
+      "detail": {
+        "title": "Kế hoạch: {{planTitle}}",
+        "loading": "Đang tải dữ liệu kế hoạch...",
+        "error": "Không thể tải dữ liệu kế hoạch",
+        "notFound": "Không tìm thấy kế hoạch",
+        "basicInfo": {
+          "title": "Thông tin kế hoạch thu mua",
+          "code": "Mã: {{planCode}}",
+          "edit": "Chỉnh sửa"
+        },
+        "sections": {
+          "basicInfo": {
+            "title": "Thông tin cơ bản",
+            "title_label": "Tiêu đề:",
+            "status_label": "Trạng thái:",
+            "registrationPeriod_label": "Thời gian mở đơn:"
+          },
+          "output": {
+            "title": "Sản lượng",
+            "totalOutput_label": "Tổng sản lượng:",
+            "registrationProgress_label": "Tổng tiến độ đăng ký:",
+            "planDetailsCount_label": "Số chi tiết kế hoạch:",
+            "details": "chi tiết"
+          },
+          "business": {
+            "title": "Doanh nghiệp",
+            "name_label": "Tên:",
+            "address_label": "Địa chỉ:",
+            "email_label": "Email:"
+          },
+          "description": {
+            "title": "Mô tả"
+          }
+        },
+        "planDetails": {
+          "title": "Chi tiết kế hoạch",
+          "subtitle": "{{count}} chi tiết kế hoạch",
+          "expand": "Mở rộng",
+          "collapse": "Thu gọn",
+          "addDetail": "+ Thêm chi tiết kế hoạch",
+          "noDetails": {
+            "title": "Không có chi tiết kế hoạch nào.",
+            "subtitle": "Hãy thêm chi tiết kế hoạch để bắt đầu thu mua cà phê."
+          },
+          "detail": {
+            "coffeeType": "{{coffeeType}} - {{processingMethod}}",
+            "progress": "Tiến độ",
+            "targetRegion": "Khu vực thu mua",
+            "sections": {
+              "output": {
+                "title": "Sản lượng",
+                "target_label": "Mục tiêu:",
+                "minRegistration_label": "Tối thiểu đăng ký:",
+                "registered_label": "Đã đăng ký:"
+              },
+              "pricing": {
+                "title": "Giá cả",
+                "minPrice_label": "Giá tối thiểu:",
+                "maxPrice_label": "Giá tối đa:"
+              },
+              "progress": {
+                "title": "Tiến độ",
+                "status_label": "Trạng thái:",
+                "progress_label": "Tiến độ:"
+              }
+            },
+            "note": "Ghi chú"
+          }
+        },
+        "registrations": {
+          "title": "Danh sách đăng ký",
+          "subtitle": "Đang có {{count}} đơn đăng ký ở kế hoạch này",
+          "noRegistrations": "Chưa có đơn đăng ký nào."
+        }
+      },
+      "edit": {
+        "title": "Chỉnh sửa kế hoạch thu mua",
+        "subtitle": "Cập nhật thông tin kế hoạch thu mua cà phê",
+        "loading": "Đang tải dữ liệu kế hoạch...",
+        "error": "Không tải được dữ liệu kế hoạch: {{error}}",
+        "success": "Cập nhật kế hoạch thành công!",
+        "form": {
+          "title": "Thông tin kế hoạch",
+          "subtitle": "Cập nhật thông tin kế hoạch thu mua"
+        },
+        "validation": {
+          "title": "Vui lòng nhập tên kế hoạch.",
+          "startDate": "Vui lòng chọn ngày bắt đầu.",
+          "endDate": "Vui lòng chọn ngày kết thúc.",
+          "startDatePast": "Ngày bắt đầu không thể là ngày trong quá khứ.",
+          "endDateAfterStart": "Ngày kết thúc phải sau ngày bắt đầu.",
+          "description": "Vui lòng nhập mô tả.",
+          "detailsRequired": "Vui lòng thêm ít nhất một chi tiết kế hoạch.",
+          "coffeeType": "Vui lòng chọn loại cà phê.",
+          "processingMethod": "Vui lòng chọn phương pháp sơ chế.",
+          "targetQuantity": "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.",
+          "minRegistrationQuantity": "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.",
+          "minRegistrationQuantityMax": "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.",
+          "minPrice": "Giá tối thiểu không thể nhỏ hơn 1000 đồng.",
+          "maxPrice": "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu."
+        }
+      }
+    },
+    "components": {
+      "procurementPlanCard": {
+        "actions": {
+          "edit": "Chỉnh sửa",
+          "details": "Chi tiết",
+          "openRegistration": "Mở đăng ký",
+          "closeRegistration": "Kết thúc đăng ký",
+          "cancel": "Hủy kế hoạch",
+          "delete": "Xóa"
+        },
+        "tooltips": {
+          "editDisabled": "Chỉ có thể chỉnh sửa khi kế hoạch đang là bản nháp",
+          "editEnabled": "Chỉnh sửa kế hoạch",
+          "cancelDisabled": "Không thể hủy kế hoạch đã có cam kết",
+          "cancelEnabled": "Hủy kế hoạch"
+        },
+        "units": {
+          "kilogram": "kg",
+          "percentage": "%"
+        }
+      },
+      "filterStatusPanel": {
+        "title": "Lọc theo trạng thái",
+        "allStatuses": "Tất cả trạng thái"
+      },
+      "procurementPlanForm": {
+        "sections": {
+          "basicInfo": {
+            "title": "Thông tin cơ bản"
+          },
+          "planDetails": {
+            "title": "Chi tiết kế hoạch thu mua",
+            "detailTitle": "Chi tiết kế hoạch #{{index}}"
+          }
+        },
+        "fields": {
+          "title": {
+            "label": "Tên kế hoạch",
+            "placeholder": "Nhập tên kế hoạch thu mua...",
+            "required": "*"
+          },
+          "startDate": {
+            "label": "Ngày bắt đầu mở đăng ký",
+            "required": "*"
+          },
+          "endDate": {
+            "label": "Ngày kết thúc đăng ký",
+            "required": "*"
+          },
+          "description": {
+            "label": "Mô tả",
+            "placeholder": "Mô tả chi tiết về kế hoạch thu mua...",
+            "required": "*"
+          },
+          "coffeeType": {
+            "label": "Loại cà phê",
+            "placeholder": "-- Chọn loại cà phê --",
+            "required": "*",
+            "noOptions": "Không có loại cà phê nào"
+          },
+          "processingMethod": {
+            "label": "Phương pháp sơ chế",
+            "placeholder": "-- Chọn phương pháp sơ chế --",
+            "required": "*",
+            "noOptions": "Không có phương pháp sơ chế nào"
+          },
+          "targetQuantity": {
+            "label": "Sản lượng mục tiêu",
+            "placeholder": "Nhập sản lượng mục tiêu...",
+            "required": "*"
+          },
+          "targetRegion": {
+            "label": "Khu vực thu mua",
+            "placeholder": "Chọn khu vực thu mua..."
+          },
+          "minimumRegistrationQuantity": {
+            "label": "Sản lượng đăng ký tối thiểu",
+            "placeholder": "Nhập sản lượng đăng ký tối thiểu...",
+            "required": "*"
+          },
+          "minPriceRange": {
+            "label": "Giá tối thiểu",
+            "placeholder": "Nhập giá tối thiểu...",
+            "required": "*"
+          },
+          "maxPriceRange": {
+            "label": "Giá tối đa",
+            "placeholder": "Nhập giá tối đa...",
+            "required": "*"
+          },
+          "expectedYieldPerHectare": {
+            "label": "Năng suất dự kiến trên 1 ha",
+            "placeholder": "Nhập năng suất dự kiến..."
+          },
+          "note": {
+            "label": "Mô tả",
+            "placeholder": "Nhập mô tả chi tiết..."
+          },
+          "targetRegion": {
+            "label": "Khu vực ưu tiên",
+            "placeholder": "-- Chọn khu vực ưu tiên --"
+          },
+          "minimumRegistrationQuantity": {
+            "label": "Sản lượng đăng ký tối thiểu (kg)",
+            "placeholder": "Nhập sản lượng tối thiểu...",
+            "required": "*"
+          }
+        },
+        "buttons": {
+          "addDetail": "Thêm chi tiết kế hoạch",
+          "removeDetail": "Xóa",
+          "submit": "Tạo kế hoạch",
+          "update": "Cập nhật kế hoạch"
+        },
+        "validation": {
+          "title": "Vui lòng nhập tên kế hoạch.",
+          "startDate": "Vui lòng chọn ngày bắt đầu.",
+          "endDate": "Vui lòng chọn ngày kết thúc.",
+          "startDatePast": "Ngày bắt đầu không thể là ngày trong quá khứ.",
+          "endDateAfterStart": "Ngày kết thúc phải sau ngày bắt đầu.",
+          "description": "Vui lòng nhập mô tả.",
+          "detailsRequired": "Vui lòng thêm ít nhất một chi tiết kế hoạch.",
+          "coffeeType": "Vui lòng chọn loại cà phê.",
+          "processingMethod": "Vui lòng chọn phương pháp sơ chế.",
+          "targetQuantity": "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.",
+          "minRegistrationQuantity": "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.",
+          "minRegistrationQuantityMax": "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.",
+          "minPrice": "Giá tối thiểu không thể nhỏ hơn 1000 đồng.",
+          "maxPrice": "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu."
+        },
+        "estimatedCost": {
+          "title": "Chi phí ước tính",
+          "minCost": "Chi phí tối thiểu:",
+          "maxCost": "Chi phí tối đa:"
+        }
+      },
+      "procurementPlanFormGuide": {
+        "title": "Hướng dẫn điền form",
+        "sections": {
+          "planTitle": {
+            "title": "Tên kế hoạch",
+            "description": "Đặt tên rõ ràng, mô tả ngắn gọn về mục tiêu thu mua. Ví dụ: \"Thu mua cà phê Robusta vụ 2025\"."
+          },
+          "time": {
+            "title": "Thời gian mở đơn",
+            "description": "Khoảng thời gian cho phép nông hộ đăng ký tham gia kế hoạch. Nên đặt đủ dài để nông hộ có thời gian chuẩn bị."
+          },
+          "description": {
+            "title": "Mô tả",
+            "description": "Mô tả đầy đủ về kế hoạch, bao gồm mục tiêu, phạm vi và các yêu cầu đặc biệt."
+          },
+          "processingMethod": {
+            "title": "Phương pháp sơ chế",
+            "description": "Nền tảng không hỗ trợ thu mua cà phê tươi vì khó bảo quản khi nhập kho, do đó lựa chọn này là bắt buộc."
+          },
+          "targetQuantity": {
+            "title": "Sản lượng mục tiêu",
+            "description": "Số lượng cà phê cần thu mua (tính bằng kg). Đây là mục tiêu tổng thể của kế hoạch."
+          },
+          "minRegistrationQuantity": {
+            "title": "Sản lượng đăng ký tối thiểu",
+            "description": "Đây là sản lượng mà nông dân bắt buộc phải đăng ký từ mức được đề ra này trở lên. Tuy nhiên khi kế hoạch đã gần đạt mục tiêu sản lượng thì nông dân được phép đăng ký ít hơn để đảm bảo kế hoạch có thể hoàn thành trọn vẹn."
+          },
+          "targetRegion": {
+            "title": "Khu vực ưu tiên",
+            "description": "Xác định rõ nông hộ nào có thể tham gia (theo vùng, loại cà phê, tiêu chuẩn chất lượng)."
+          },
+          "qualityStandards": {
+            "title": "Tiêu chuẩn chất lượng (Mô tả trong chi tiết)",
+            "description": "Các yêu cầu về chất lượng cà phê (độ ẩm, kích thước hạt, màu sắc, mùi vị)."
+          }
+        },
+        "importantNotes": {
+          "title": "Lưu ý quan trọng",
+          "items": [
+            "Kế hoạch sau khi được lưu sẽ được lưu ở trạng thái nháp (Draft)",
+            "Kế hoạch sau khi được mở đăng ký sẽ không thể chỉnh sửa được nữa",
+            "Đảm bảo thông tin chính xác trước khi lưu",
+            "Thời gian mở đơn nên phù hợp với chu kỳ sản xuất của nông hộ",
+            "Sản lượng đặt ra phải thực tế và khả thi",
+            "Nếu đã vượt thời hạn đăng ký mà sản lượng mục tiêu vẫn chưa đạt thì hệ thống sẽ tự thống kê lại ở chi tiết kế hoạch, doanh nghiệp có thể dựa vào đó để tạo kế hoạch tiếp theo",
+            "Thành tiền ước tính sẽ không bao gồm thuế"
+          ]
+        },
+        "workflow": {
+          "title": "Quy trình sau khi tạo kế hoạch",
+          "steps": [
+            "Tạo kế hoạch (Draft)",
+            "Mở đăng ký cho nông hộ",
+            "Nông hộ đăng ký kế hoạch",
+            "Duyệt đơn đăng ký và tạo đơn cam kết",
+            "Nông hộ chấp nhận hoặc từ chối cam kết",
+            "Kết thúc quy trình lập kế hoạch thu mua",
+            "Bắt đầu quy trình theo dõi tiến độ mùa vụ"
+          ]
+        }
+      }
+    },
+    "status": {
+      "open": "Đang mở",
+      "closed": "Đã đóng",
+      "draft": "Bản nháp",
+      "cancelled": "Đã hủy"
+    },
+    "dialogs": {
+      "confirm": {
+        "open": {
+          "title": "Xác nhận mở quá trình nhận đơn đăng ký kế hoạch",
+          "description": "Bạn có chắc chắn muốn mở quá trình nhận đơn đăng ký kế hoạch {{planName}}? Kế hoạch sau khi được mở sẽ tự cập nhật lại thời gian mở đơn đăng ký và sẽ được hiển thị trên sàn thu mua cà phê. Nông hộ sẽ có thể đăng ký kế hoạch này. Lưu ý: Kế hoạch sau khi đã mở sẽ không thể chỉnh sửa được nữa."
+        },
+        "close": {
+          "title": "Xác nhận kết thúc quá trình nhận đơn đăng ký kế hoạch",
+          "description": "Bạn có chắc chắn muốn kết thúc quá trình nhận đơn đăng ký kế hoạch {{planName}}? Kế hoạch sau khi kết thúc sẽ tự cập nhật lại thời gian kết thúc đơn đăng ký. Sau khi kết thúc, kế hoạch sẽ không còn hiển thị trên sàn thu mua cà phê và cũng không thể mở lại. Các cam kết đã được duyệt vẫn sẽ hoạt động bình thường. Lưu ý: Kế hoạch có thể tự kết thúc sau khi đã đạt đủ sản lượng dựa trên các cam kết đã được duyệt từ hai phía."
+        },
+        "cancel": {
+          "title": "Xác nhận hủy kế hoạch",
+          "description": "Bạn có chắc chắn muốn hủy kế hoạch {{planName}}? Sau khi hủy, kế hoạch sẽ không còn hoạt động và bị gỡ khỏi sàn thu mua cà phê. Các nông hộ sẽ không thể đăng ký kế hoạch này được nữa. Kế hoạch cũng sẽ không thể mở lại được nữa."
+        },
+        "delete": {
+          "title": "Xác nhận xóa kế hoạch",
+          "description": "Bạn có chắc chắn muốn xóa kế hoạch {{planName}}? Hành động này không thể hoàn tác."
+        },
+        "actions": {
+          "confirm": "Xác nhận",
+          "cancel": "Hủy"
+        }
+      }
+    },
+    "messages": {
+      "success": {
+        "opened": "Kế hoạch đã được mở đăng ký thành công",
+        "closed": "Kế hoạch đã được kết thúc đăng ký thành công",
+        "cancelled": "Kế hoạch đã được hủy thành công",
+        "deleted": "Kế hoạch đã được xóa thành công"
+      }
+    },
+    "common": {
+      "loading": "Đang xử lý...",
+      "notUpdated": "Chưa cập nhật",
+      "noData": "N/A",
+      "noProcessingMethod": "Không có"
+    }
+  }
+}

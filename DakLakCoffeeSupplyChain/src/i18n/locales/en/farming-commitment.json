@@ -1,0 +1,490 @@
+{
+  "farmingCommitment": {
+    "pages": {
+      "list": {
+        "title": "Farming Commitments",
+        "search": {
+          "title": "Search farming commitments",
+          "placeholder": "Search...",
+          "button": "Search"
+        },
+        "actions": {
+          "createNew": "+ Create New Commitment"
+        },
+        "table": {
+          "headers": {
+            "commitmentName": "Commitment Name",
+            "farmerName": "Farmer Name",
+            "totalPrice": "Total Price",
+            "status": "Status",
+            "commitmentDate": "Commitment Date",
+            "actions": "Actions"
+          },
+          "noData": "No commitments found"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "of": "of",
+          "commitments": "commitments"
+        }
+      },
+      "create": {
+        "title": "Create New Commitment",
+        "subtitle": "Create procurement commitment with farmers based on approved registration",
+        "form": {
+          "title": "Commitment Information",
+          "subtitle": "Fill in complete information to create procurement commitment"
+        },
+        "success": "Commitment created successfully!",
+        "error": "Failed to create commitment."
+      },
+      "edit": {
+        "title": "Edit Commitment",
+        "subtitle": "Update procurement commitment information with farmers",
+        "form": {
+          "title": "Commitment Information",
+          "subtitle": "Update information to edit procurement commitment"
+        },
+        "success": "Commitment updated successfully!",
+        "error": "Failed to update commitment.",
+        "loadError": "Cannot load commitment data: "
+      },
+      "farmer": {
+        "title": "Farming Commitments",
+        "search": {
+          "title": "Search Commitments",
+          "placeholder": "Search..."
+        },
+        "table": {
+          "headers": {
+            "commitmentName": "Commitment Name",
+            "businessName": "Business Name",
+            "totalAmount": "Total Amount",
+            "status": "Status",
+            "commitmentDate": "Commitment Date",
+            "actions": "Actions"
+          }
+        },
+        "pagination": {
+          "showing": "Showing",
+          "to": "–",
+          "of": "of",
+          "commitments": "commitments"
+        },
+        "detail": {
+          "title": "Commitment: {{commitmentName}}",
+          "loading": "Loading commitment data...",
+          "error": "Cannot load commitment data",
+          "notFound": "Commitment not found",
+          "loadingText": "Loading data...",
+          "notFoundText": "No commitment found",
+          "basicInfo": {
+            "title": "Farming Commitment Information",
+            "code": "Code: {{code}}"
+          },
+          "sections": {
+            "basicInfo": {
+              "title": "Basic Information",
+              "status_label": "Status",
+              "progress_label": "Progress",
+              "createdDate_label": "Created Date",
+              "approvedDate_label": "Approved Date"
+            },
+            "finance": {
+              "title": "Finance",
+              "totalCost_label": "Total Cost",
+              "advancePayment_label": "Advance Payment",
+              "remaining_label": "Remaining"
+            },
+            "partners": {
+              "title": "Partners",
+              "farmer_label": "Farmer",
+              "business_label": "Business",
+              "plan_label": "Plan"
+            },
+            "notes": {
+              "generalTerms": "General Terms",
+              "rejectionReason": "Rejection Reason"
+            }
+          },
+          "procurementPlan": {
+            "title": "Procurement Plan Information",
+            "code": "Code: {{code}}",
+            "sections": {
+              "basicInfo": {
+                "title": "Basic Information",
+                "title_label": "Title",
+                "status_label": "Status",
+                "registrationPeriod_label": "Registration Period"
+              },
+              "output": {
+                "title": "Output",
+                "totalOutput_label": "Total Output",
+                "registrationProgress_label": "Registration Progress",
+                "planDetailsCount_label": "Plan Details Count"
+              },
+              "business": {
+                "title": "Business",
+                "name_label": "Name",
+                "address_label": "Address",
+                "email_label": "Email"
+              },
+              "description": {
+                "title": "Description"
+              }
+            }
+          },
+          "registration": {
+            "title": "Registration Information",
+            "code": "Code: {{code}}",
+            "sections": {
+              "farmer": {
+                "title": "Farmer",
+                "name_label": "Name",
+                "location_label": "Location",
+                "registrationDate_label": "Registration Date"
+              },
+              "cultivation": {
+                "title": "Cultivation",
+                "area_label": "Area",
+                "status_label": "Status",
+                "detailsCount_label": "Details Count"
+              },
+              "details": {
+                "title": "Registration Details",
+                "coffeeTypesCount_label": "Coffee Types Count",
+                "totalOutput_label": "Total Output",
+                "averagePrice_label": "Average Price"
+              },
+              "notes": {
+                "title": "Notes"
+              }
+            }
+          },
+          "commitmentDetails": {
+            "title": "Commitment Details",
+            "subtitle": "{{count}} commitment details",
+            "expand": "Expand",
+            "collapse": "Collapse",
+            "noDetails": {
+              "title": "No commitment details found.",
+              "subtitle": "Please add commitment details to start implementing the contract."
+            },
+            "progress": "Progress",
+            "sections": {
+              "output": {
+                "title": "Output",
+                "purchase_label": "Purchase",
+                "delivered_label": "Delivered",
+                "remaining_label": "Remaining"
+              },
+              "pricing": {
+                "title": "Pricing",
+                "confirmedPrice_label": "Confirmed Price",
+                "advancePayment_label": "Advance Payment",
+                "totalValue_label": "Total Value"
+              },
+              "timing": {
+                "title": "Timing",
+                "deliveryStart_label": "Delivery Start",
+                "deliveryEnd_label": "Delivery End"
+              },
+              "terms": {
+                "title": "Specific Terms"
+              }
+            }
+          },
+          "common": {
+            "notUpdated": "Not updated",
+            "dateFormat": "Date format error"
+          },
+          "actions": {
+            "accept": "Accept Commitment",
+            "acceptToast": "Commitment has been accepted",
+            "reject": "Reject Commitment",
+            "rejectToast": "Commitment has been rejected",
+            "acceptConfirm": {
+              "title": "Confirm Commitment",
+              "description": "Are you sure you want to accept this commitment?",
+              "confirmText": "Accept",
+              "cancelText": "Cancel"
+            },
+            "rejectConfirm": {
+              "title": "Reject Commitment",
+              "description": "Please enter the reason for rejecting the commitment below.",
+              "confirmText": "Confirm Rejection",
+              "cancelText": "Cancel"
+            }
+          }
+        }
+      },
+      "detail": {
+        "title": "Commitment: {{commitmentName}}",
+        "loading": "Loading commitment data...",
+        "error": "Cannot load commitment data",
+        "notFound": "Commitment not found",
+        "loadingText": "Loading data...",
+        "notFoundText": "No commitment found",
+        "basicInfo": {
+          "title": "Farming Commitment Information",
+          "code": "Code: {{code}}",
+          "edit": "Edit"
+        },
+        "sections": {
+          "basicInfo": {
+            "title": "Basic Information",
+            "status_label": "Status",
+            "progress_label": "Progress",
+            "createdDate_label": "Created Date",
+            "approvedDate_label": "Approved Date"
+          },
+          "finance": {
+            "title": "Finance",
+            "totalCost_label": "Total Cost",
+            "advancePayment_label": "Advance Payment",
+            "remaining_label": "Remaining"
+          },
+          "partners": {
+            "title": "Partners",
+            "farmer_label": "Farmer",
+            "business_label": "Business",
+            "plan_label": "Plan"
+          },
+          "notes": {
+            "generalTerms": "General Terms",
+            "rejectionReason": "Rejection Reason"
+          }
+        },
+        "procurementPlan": {
+          "title": "Procurement Plan Information",
+          "code": "Code: {{code}}",
+          "sections": {
+            "basicInfo": {
+              "title": "Basic Information",
+              "title_label": "Title",
+              "status_label": "Status",
+              "registrationPeriod_label": "Registration Period"
+            },
+            "output": {
+              "title": "Output",
+              "totalOutput_label": "Total Output",
+              "registrationProgress_label": "Registration Progress",
+              "planDetailsCount_label": "Plan Details Count"
+            },
+            "business": {
+              "title": "Business",
+              "name_label": "Name",
+              "address_label": "Address",
+              "email_label": "Email"
+            },
+            "description": {
+              "title": "Description"
+            }
+          }
+        },
+        "registration": {
+          "title": "Registration Information",
+          "code": "Code: {{code}}",
+          "sections": {
+            "farmer": {
+              "title": "Farmer",
+              "name_label": "Name",
+              "location_label": "Location",
+              "registrationDate_label": "Registration Date"
+            },
+            "cultivation": {
+              "title": "Cultivation",
+              "area_label": "Area",
+              "status_label": "Status",
+              "detailsCount_label": "Details Count"
+            },
+            "details": {
+              "title": "Registration Details",
+              "coffeeTypesCount_label": "Coffee Types Count",
+              "totalOutput_label": "Total Output",
+              "averagePrice_label": "Average Price"
+            },
+            "notes": {
+              "title": "Notes"
+            }
+          }
+        },
+        "commitmentDetails": {
+          "title": "Commitment Details",
+          "subtitle": "{{count}} commitment details",
+          "expand": "Expand",
+          "collapse": "Collapse",
+          "noDetails": {
+            "title": "No commitment details found.",
+            "subtitle": "Please add commitment details to start implementing the contract."
+          },
+          "progress": "Progress",
+          "sections": {
+            "output": {
+              "title": "Output",
+              "purchase_label": "Purchase",
+              "delivered_label": "Delivered",
+              "remaining_label": "Remaining"
+            },
+            "pricing": {
+              "title": "Pricing",
+              "confirmedPrice_label": "Confirmed Price",
+              "advancePayment_label": "Advance Payment",
+              "totalValue_label": "Total Value"
+            },
+            "timing": {
+              "title": "Timing",
+              "deliveryStart_label": "Delivery Start",
+              "deliveryEnd_label": "Delivery End"
+            },
+            "terms": {
+              "title": "Specific Terms"
+            }
+          }
+        },
+        "common": {
+          "notUpdated": "Not updated",
+          "dateFormat": "Date format error"
+        }
+      }
+    },
+    "components": {
+      "farmingCommitmentCard": {
+        "actions": {
+          "edit": "Edit",
+          "view": "View Details"
+        }
+      },
+      "farmingCommitmentForm": {
+        "fields": {
+          "commitmentName": {
+            "label": "Commitment Name",
+            "placeholder": "Enter commitment name...",
+            "required": "*"
+          },
+          "generalTerms": {
+            "label": "General Terms",
+            "placeholder": "Enter general terms..."
+          },
+          "registrationDetailId": {
+            "label": "Registration Detail (Only approved details can be selected)",
+            "placeholder": "-- Select Detail --",
+            "required": "*",
+            "noOptions": "No approved registration details available for selection"
+          },
+          "confirmedPrice": {
+            "label": "Confirmed Price (VND/kg)",
+            "required": "*"
+          },
+          "advancePayment": {
+            "label": "Advance Payment for Farmer (VND/kg) (Optional)"
+          },
+          "committedQuantity": {
+            "label": "Unified Target Quantity (kg)",
+            "required": "*"
+          },
+          "estimatedDeliveryStart": {
+            "label": "Estimated Delivery Start Date",
+            "required": "*"
+          },
+          "estimatedDeliveryEnd": {
+            "label": "Estimated Delivery End Date",
+            "required": "*"
+          },
+          "note": {
+            "label": "Specific Terms",
+            "required": "*"
+          }
+        },
+        "detailTitle": "Commitment Detail #{{index}}",
+        "noDetails": {
+          "title": "No commitment details yet.",
+          "subtitle": "Please wait for data to load or add details manually."
+        },
+        "buttons": {
+          "removeDetail": "Remove",
+          "addDetail": "+ Add Commitment Detail",
+          "submit": "Save Commitment"
+        },
+        "formGuide": {
+          "title": "Commitment Form Filling Guide",
+          "sections": {
+            "commitmentName": {
+              "title": "Commitment Name",
+              "description": "Set a clear name for the procurement commitment. Example: \"Robusta Coffee Procurement Commitment 2025 Season\""
+            },
+            "generalTerms": {
+              "title": "General Terms",
+              "description": "General terms for all commitment details."
+            },
+            "registrationDetails": {
+              "title": "Registration Details",
+              "description": "The system will automatically retrieve approved farmer registration details and pre-fill the commitment form. Businesses can customize based on this."
+            },
+            "commitmentDetails": {
+              "title": "Commitment Details",
+              "description": "Confirm quantity, pricing, and delivery time for each coffee type"
+            },
+            "confirmedPrice": {
+              "title": "Confirmed Price",
+              "description": "Agreed purchase price with farmers (VND/kg). May differ from plan price."
+            },
+            "advancePayment": {
+              "title": "Advance Payment for Farmers",
+              "description": "Can pay in advance to farmers so they can invest in materials for the season. This item is optional."
+            },
+            "committedQuantity": {
+              "title": "Unified Target Quantity",
+              "description": "Amount of coffee that farmers commit to provide (kg). Can be adjusted according to actual capacity"
+            },
+            "deliveryTime": {
+              "title": "Delivery Time",
+              "description": "Expected time period when farmers will deliver. The system will automatically fill in 1 day after the expected harvest end date from the farmer's registration details. Should be suitable for the harvest season."
+            },
+            "importantNotes": {
+              "title": "Important Notes",
+              "items": [
+                "Commitment becomes a binding contract after approval",
+                "Ensure accurate information about quantity and delivery time",
+                "Commitment price must be suitable for market and coffee quality",
+                "Delivery time should be suitable for harvest cycle",
+                "Check carefully farmer information and procurement plan"
+              ]
+            },
+            "workflow": {
+              "title": "Commitment Processing Workflow",
+              "steps": [
+                "Create commitment (Pending)",
+                "Farmer confirms commitment",
+                "Farmer can start crop season creation process"
+              ]
+            },
+            "statuses": {
+              "title": "Commitment Statuses",
+              "pending": "Waiting for farmer confirmation",
+              "approved": "Approved and implemented",
+              "rejected": "Rejected or cancelled"
+            }
+          }
+        },
+        "validation": {
+          "commitmentName": "Commitment name is required.",
+          "detailsRequired": "At least one commitment detail is required.",
+          "confirmedPrice": "Confirmed price must be greater than 0.",
+          "committedQuantity": "Committed quantity must be greater than 0.",
+          "estimatedDeliveryStart": "Estimated delivery start date is required.",
+          "estimatedDeliveryEnd": "Estimated delivery end date is required.",
+          "deliveryEndAfterStart": "Delivery end date must be after start date."
+        }
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "breached": "Breached",
+      "rejected": "Rejected"
+    }
+  }
+}

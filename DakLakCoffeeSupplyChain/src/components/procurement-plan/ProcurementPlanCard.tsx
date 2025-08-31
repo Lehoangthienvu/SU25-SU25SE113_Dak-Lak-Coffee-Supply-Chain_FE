@@ -2,7 +2,7 @@
 
 import { ProcurementPlan } from "@/lib/api/procurementPlans";
 import { formatDate } from "@/lib/utils";
-import { ProcurementPlanStatusMap } from "@/lib/constants/procurementPlanStatus";
+import { ProcurementPlanStatusValue } from "@/lib/constants/procurementPlanStatus";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
@@ -10,6 +10,13 @@ import { FiEdit, FiInfo, FiTrash2, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Tooltip } from "@/components/ui/tooltip";
 import StatusBadge from "../crop-seasons/StatusBadge";
+import { useTranslation } from "react-i18next";
+
+type StatusInfo = {
+  label: string;
+  color: 'green' | 'yellow' | 'blue' | 'red';
+  icon: string;
+};
 
 export default function ProcurementPlanCard({
   plan,
@@ -17,14 +24,17 @@ export default function ProcurementPlanCard({
   openClosedRegisterDialog,
   openCancelDialog,
   openDeleteDialog,
+  statusMap,
 }: {
   plan: ProcurementPlan;
   openOpenRegisterDialog: () => void;
   openClosedRegisterDialog: () => void;
   openCancelDialog?: () => void;
   openDeleteDialog?: () => void;
+  statusMap: Record<ProcurementPlanStatusValue, StatusInfo>;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <tr key={plan.planId} className='border-t hover:bg-gray-50'>
@@ -37,11 +47,11 @@ export default function ProcurementPlanCard({
         </Link>
       </td>
 
-      <td className='px-4 py-3'>{plan.totalQuantity.toLocaleString()} kg</td>
-      <td className='px-4 py-3 text-center'>{plan.progressPercentage}%</td>
+      <td className='px-4 py-3'>{plan.totalQuantity.toLocaleString()} {t('procurementPlan.components.procurementPlanCard.units.kilogram')}</td>
+      <td className='px-4 py-3 text-center'>{plan.progressPercentage}{t('procurementPlan.components.procurementPlanCard.units.percentage')}</td>
 
       <td className='px-4 py-3'>
-        <StatusBadge status={plan.status} map={ProcurementPlanStatusMap} />
+        <StatusBadge status={plan.status} map={statusMap} />
       </td>
 
       <td className='px-4 py-3'>
@@ -58,8 +68,8 @@ export default function ProcurementPlanCard({
               <Tooltip
                 content={
                   plan.status !== "Draft"
-                    ? `Chỉ có thể chỉnh sửa khi kế hoạch đang là bản nháp`
-                    : "Chỉnh sửa kế hoạch"
+                    ? t('procurementPlan.components.procurementPlanCard.tooltips.editDisabled')
+                    : t('procurementPlan.components.procurementPlanCard.tooltips.editEnabled')
                 }
                 side='bottom'
                 align='center'
@@ -77,7 +87,7 @@ export default function ProcurementPlanCard({
                       );
                   }}
                 >
-                  <FiEdit className='mr-1' /> Chỉnh sửa
+                  <FiEdit className='mr-1' /> {t('procurementPlan.components.procurementPlanCard.actions.edit')}
                 </DropdownMenu.Item>
               </Tooltip>
               <DropdownMenu.Item
@@ -88,7 +98,7 @@ export default function ProcurementPlanCard({
                   )
                 }
               >
-                <FiInfo className='mr-1' /> Chi tiết
+                <FiInfo className='mr-1' /> {t('procurementPlan.components.procurementPlanCard.actions.details')}
               </DropdownMenu.Item>
 
               <DropdownMenu.Item
@@ -105,7 +115,7 @@ export default function ProcurementPlanCard({
                 }}
                 onClick={openOpenRegisterDialog}
               >
-                Mở đăng ký
+                {t('procurementPlan.components.procurementPlanCard.actions.openRegistration')}
               </DropdownMenu.Item>
 
               <DropdownMenu.Item
@@ -122,7 +132,7 @@ export default function ProcurementPlanCard({
                 }}
                 onClick={openClosedRegisterDialog}
               >
-                Kết thúc đăng ký
+                {t('procurementPlan.components.procurementPlanCard.actions.closeRegistration')}
               </DropdownMenu.Item>
 
               {plan.status !== "Closed" && (
@@ -132,8 +142,8 @@ export default function ProcurementPlanCard({
               <Tooltip
                 content={
                   plan.commitments?.length > 0
-                    ? "Không thể hủy kế hoạch đã có cam kết"
-                    : "Hủy kế hoạch"
+                    ? t('procurementPlan.components.procurementPlanCard.tooltips.cancelDisabled')
+                    : t('procurementPlan.components.procurementPlanCard.tooltips.cancelEnabled')
                 }
                 side='bottom'
                 align='center'
@@ -162,7 +172,7 @@ export default function ProcurementPlanCard({
                   }}
                 >
                   <FiXCircle className='mr-1' />
-                  Hủy kế hoạch
+                  {t('procurementPlan.components.procurementPlanCard.actions.cancel')}
                 </DropdownMenu.Item>
               </Tooltip>
 
@@ -179,7 +189,7 @@ export default function ProcurementPlanCard({
                 onClick={openDeleteDialog}
               >
                 <FiTrash2 className='mr-1' />
-                Xóa
+                {t('procurementPlan.components.procurementPlanCard.actions.delete')}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>

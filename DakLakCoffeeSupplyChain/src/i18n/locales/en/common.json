@@ -1,0 +1,19 @@
+{
+  "common": {
+    "filterByStatus": "Filter by Status",
+    "allStatuses": "All Statuses",
+    "processing": "Processing...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "components" : {
+      "filterStatusPanel": {
+        "title": "Filter by Status",
+        "allStatuses": "All Statuses"
+      },
+      "rejectDialog": {
+        "placeholder": "Reject reason...",
+        "loadingButton": "Processing..."
+      }
+    }    
+  }
+}

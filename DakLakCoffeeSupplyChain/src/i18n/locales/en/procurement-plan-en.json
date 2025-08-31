@@ -1,0 +1,386 @@
+{
+  "procurementPlan": {
+    "pages": {
+      "list": {
+        "title": "Procurement Plans",
+        "search": {
+          "title": "Search procurement plans",
+          "placeholder": "Search...",
+          "button": "Search"
+        },
+        "actions": {
+          "createNew": "+ Create New Plan"
+        },
+        "table": {
+          "headers": {
+            "planName": "Plan Name",
+            "totalOutput": "Total Output",
+            "registeredRatio": "Registered Output Ratio",
+            "status": "Status",
+            "registrationPeriod": "Registration Start - End Date",
+            "actions": "Actions"
+          },
+          "noData": "No plans found"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "of": "of",
+          "plans": "plans"
+        }
+      },
+      "create": {
+        "title": "Create New Procurement Plan",
+        "subtitle": "Set up coffee procurement plan from farmers",
+        "form": {
+          "title": "Plan Information",
+          "subtitle": "Fill in complete information to create procurement plan"
+        },
+        "success": "Plan created successfully!"
+      },
+      "detail": {
+        "title": "Plan: {{planTitle}}",
+        "loading": "Loading plan data...",
+        "error": "Cannot load plan data",
+        "notFound": "Plan not found",
+        "basicInfo": {
+          "title": "Procurement Plan Information",
+          "code": "Code: {{planCode}}",
+          "edit": "Edit"
+        },
+        "sections": {
+          "basicInfo": {
+            "title": "Basic Information",
+            "title_label": "Title:",
+            "status_label": "Status:",
+            "registrationPeriod_label": "Registration Period:"
+          },
+          "output": {
+            "title": "Output",
+            "totalOutput_label": "Total Output:",
+            "registrationProgress_label": "Total Registration Progress:",
+            "planDetailsCount_label": "Plan Details Count:",
+            "details": "details"
+          },
+          "business": {
+            "title": "Business",
+            "name_label": "Name:",
+            "address_label": "Address:",
+            "email_label": "Email:"
+          },
+          "description": {
+            "title": "Description"
+          }
+        },
+        "planDetails": {
+          "title": "Plan Details",
+          "subtitle": "{{count}} plan details",
+          "expand": "Expand",
+          "collapse": "Collapse",
+          "addDetail": "+ Add Plan Detail",
+          "noDetails": {
+            "title": "No plan details found.",
+            "subtitle": "Add plan details to start coffee procurement."
+          },
+          "detail": {
+            "coffeeType": "{{coffeeType}} - {{processingMethod}}",
+            "progress": "Progress",
+            "targetRegion": "Target Region",
+            "sections": {
+              "output": {
+                "title": "Output",
+                "target_label": "Target:",
+                "minRegistration_label": "Min Registration:",
+                "registered_label": "Registered:"
+              },
+              "pricing": {
+                "title": "Pricing",
+                "minPrice_label": "Min Price:",
+                "maxPrice_label": "Max Price:"
+              },
+              "progress": {
+                "title": "Progress",
+                "status_label": "Status:",
+                "progress_label": "Progress:"
+              }
+            },
+            "note": "Note"
+          }
+        },
+        "registrations": {
+          "title": "Registration List",
+          "subtitle": "Currently have {{count}} registrations for this plan",
+          "noRegistrations": "No registrations yet."
+        }
+      },
+      "edit": {
+        "title": "Edit Procurement Plan",
+        "subtitle": "Update coffee procurement plan information",
+        "loading": "Loading plan data...",
+        "error": "Cannot load plan data: {{error}}",
+        "success": "Plan updated successfully!",
+        "form": {
+          "title": "Plan Information",
+          "subtitle": "Update procurement plan information"
+        },
+        "validation": {
+          "title": "Please enter plan title.",
+          "startDate": "Please select start date.",
+          "endDate": "Please select end date.",
+          "startDatePast": "Start date cannot be in the past.",
+          "endDateAfterStart": "End date must be after start date.",
+          "description": "Please enter description.",
+          "detailsRequired": "Please add at least one plan detail.",
+          "coffeeType": "Please select coffee type.",
+          "processingMethod": "Please select processing method.",
+          "targetQuantity": "Target quantity cannot be less than 100 kg.",
+          "minRegistrationQuantity": "Minimum registration quantity cannot be less than 100 kg.",
+          "minRegistrationQuantityMax": "Minimum registration quantity cannot be greater than target quantity.",
+          "minPrice": "Minimum price cannot be less than 1000 VND.",
+          "maxPrice": "Maximum price must be greater than or equal to minimum price."
+        }
+      }
+    },
+    "components": {
+      "procurementPlanCard": {
+        "actions": {
+          "edit": "Edit",
+          "details": "Details",
+          "openRegistration": "Open Registration",
+          "closeRegistration": "Close Registration",
+          "cancel": "Cancel Plan",
+          "delete": "Delete"
+        },
+        "tooltips": {
+          "editDisabled": "Can only edit when plan is in draft status",
+          "editEnabled": "Edit plan",
+          "cancelDisabled": "Cannot cancel plan that has commitments",
+          "cancelEnabled": "Cancel plan"
+        },
+        "units": {
+          "kilogram": "kg",
+          "percentage": "%"
+        }
+      },
+      "filterStatusPanel": {
+        "title": "Filter by Status",
+        "allStatuses": "All Statuses"
+      },
+      "procurementPlanForm": {
+        "sections": {
+          "basicInfo": {
+            "title": "Basic Information"
+          },
+          "planDetails": {
+            "title": "Procurement Plan Details",
+            "detailTitle": "Plan Detail #{{index}}"
+          }
+        },
+        "fields": {
+          "title": {
+            "label": "Plan Title",
+            "placeholder": "Enter procurement plan title...",
+            "required": "*"
+          },
+          "startDate": {
+            "label": "Registration Start Date",
+            "required": "*"
+          },
+          "endDate": {
+            "label": "Registration End Date",
+            "required": "*"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Detailed description of procurement plan...",
+            "required": "*"
+          },
+          "coffeeType": {
+            "label": "Coffee Type",
+            "placeholder": "-- Select Coffee Type --",
+            "required": "*",
+            "noOptions": "No coffee types available"
+          },
+          "processingMethod": {
+            "label": "Processing Method",
+            "placeholder": "-- Select Processing Method --",
+            "required": "*",
+            "noOptions": "No processing methods available"
+          },
+          "targetQuantity": {
+            "label": "Target Quantity",
+            "placeholder": "Enter target quantity...",
+            "required": "*"
+          },
+          "targetRegion": {
+            "label": "Target Region",
+            "placeholder": "Select target region..."
+          },
+          "minimumRegistrationQuantity": {
+            "label": "Minimum Registration Quantity",
+            "placeholder": "Enter minimum registration quantity...",
+            "required": "*"
+          },
+          "minPriceRange": {
+            "label": "Minimum Price",
+            "placeholder": "Enter minimum price...",
+            "required": "*"
+          },
+          "maxPriceRange": {
+            "label": "Maximum Price",
+            "placeholder": "Enter maximum price...",
+            "required": "*"
+          },
+          "expectedYieldPerHectare": {
+            "label": "Expected Yield per Hectare",
+            "placeholder": "Enter expected yield..."
+          },
+          "note": {
+            "label": "Description",
+            "placeholder": "Enter detailed description..."
+          },
+          "targetRegion": {
+            "label": "Target Region",
+            "placeholder": "-- Select Target Region --"
+          },
+          "minimumRegistrationQuantity": {
+            "label": "Minimum Registration Quantity (kg)",
+            "placeholder": "Enter minimum quantity...",
+            "required": "*"
+          }
+        },
+        "buttons": {
+          "addDetail": "Add Plan Detail",
+          "removeDetail": "Remove",
+          "submit": "Create Plan",
+          "update": "Update Plan"
+        },
+        "validation": {
+          "title": "Please enter plan title.",
+          "startDate": "Please select start date.",
+          "endDate": "Please select end date.",
+          "startDatePast": "Start date cannot be in the past.",
+          "endDateAfterStart": "End date must be after start date.",
+          "description": "Please enter description.",
+          "detailsRequired": "Please add at least one plan detail.",
+          "coffeeType": "Please select coffee type.",
+          "processingMethod": "Please select processing method.",
+          "targetQuantity": "Target quantity cannot be less than 100 kg.",
+          "minRegistrationQuantity": "Minimum registration quantity cannot be less than 100 kg.",
+          "minRegistrationQuantityMax": "Minimum registration quantity cannot be greater than target quantity.",
+          "minPrice": "Minimum price cannot be less than 1000 VND.",
+          "maxPrice": "Maximum price must be greater than or equal to minimum price."
+        },
+        "estimatedCost": {
+          "title": "Estimated Cost",
+          "minCost": "Minimum Cost:",
+          "maxCost": "Maximum Cost:"
+        }
+      },
+      "procurementPlanFormGuide": {
+        "title": "Form Filling Guide",
+        "sections": {
+          "planTitle": {
+            "title": "Plan Title",
+            "description": "Set a clear name that briefly describes the procurement goal. Example: \"Robusta Coffee Procurement 2025 Season\"."
+          },
+          "time": {
+            "title": "Registration Period",
+            "description": "Time period allowing farmers to register for the plan. Should be long enough for farmers to prepare."
+          },
+          "description": {
+            "title": "Description",
+            "description": "Complete description of the plan, including objectives, scope, and special requirements."
+          },
+          "processingMethod": {
+            "title": "Processing Method",
+            "description": "The platform does not support fresh coffee procurement due to storage difficulties, so this selection is mandatory."
+          },
+          "targetQuantity": {
+            "title": "Target Quantity",
+            "description": "Amount of coffee to be procured (in kg). This is the overall goal of the plan."
+          },
+          "minRegistrationQuantity": {
+            "title": "Minimum Registration Quantity",
+            "description": "This is the quantity that farmers must register from the set minimum level and above. However, when the plan is close to reaching the target quantity, farmers are allowed to register less to ensure the plan can be completed fully."
+          },
+          "targetRegion": {
+            "title": "Priority Region",
+            "description": "Clearly define which farmers can participate (by region, coffee type, quality standards)."
+          },
+          "qualityStandards": {
+            "title": "Quality Standards (Described in Details)",
+            "description": "Requirements for coffee quality (moisture, bean size, color, taste)."
+          }
+        },
+        "importantNotes": {
+          "title": "Important Notes",
+          "items": [
+            "Plan will be saved as Draft status after saving",
+            "Plan cannot be edited after opening for registration",
+            "Ensure accurate information before saving",
+            "Registration period should align with farmers' production cycle",
+            "Set realistic and feasible target quantities",
+            "If registration deadline has passed but target quantity is not reached, system will automatically recalculate in plan details, businesses can use this to create follow-up plans",
+            "Estimated costs do not include taxes"
+          ]
+        },
+        "workflow": {
+          "title": "Workflow After Creating Plan",
+          "steps": [
+            "Create Plan (Draft)",
+            "Open Registration for Farmers",
+            "Farmers Register for Plan",
+            "Approve Registrations and Create Commitment Orders",
+            "Farmers Accept or Reject Commitments",
+            "Complete Procurement Plan Planning Process",
+            "Begin Crop Progress Monitoring Process"
+          ]
+        }
+      }
+    },
+    "status": {
+      "open": "Open",
+      "closed": "Closed",
+      "draft": "Draft",
+      "cancelled": "Cancelled"
+    },
+    "dialogs": {
+      "confirm": {
+        "open": {
+          "title": "Confirm Open Registration Process",
+          "description": "Are you sure you want to open the registration process for plan {{planName}}? After opening, the plan will automatically update the registration start time and will be displayed on the coffee procurement platform. Farmers will be able to register for this plan. Note: The plan cannot be edited after opening."
+        },
+        "close": {
+          "title": "Confirm Close Registration Process",
+          "description": "Are you sure you want to close the registration process for plan {{planName}}? After closing, the plan will automatically update the registration end time. After closing, the plan will no longer be displayed on the coffee procurement platform and cannot be reopened. Approved commitments will continue to function normally. Note: The plan may automatically close after reaching sufficient output based on approved commitments from both parties."
+        },
+        "cancel": {
+          "title": "Confirm Cancel Plan",
+          "description": "Are you sure you want to cancel plan {{planName}}? After cancellation, the plan will no longer be active and will be removed from the coffee procurement platform. Farmers will no longer be able to register for this plan. The plan also cannot be reopened."
+        },
+        "delete": {
+          "title": "Confirm Delete Plan",
+          "description": "Are you sure you want to delete plan {{planName}}? This action cannot be undone."
+        },
+        "actions": {
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "messages": {
+      "success": {
+        "opened": "Plan has been opened for registration successfully",
+        "closed": "Plan registration has been closed successfully",
+        "cancelled": "Plan has been cancelled successfully",
+        "deleted": "Plan has been deleted successfully"
+      }
+    },
+    "common": {
+      "loading": "Processing...",
+      "notUpdated": "Not updated",
+      "noData": "N/A",
+      "noProcessingMethod": "None"
+    }
+  }
+}

@@ -3,6 +3,7 @@
 import { FarmingCommitment } from "@/lib/api/farmingCommitments";
 import {
   FarmingCommitmentStatusMap,
+  FarmingCommitmentStatusValue,
 } from "@/lib/constants/FarmingCommitmentStatus";
 import Link from "next/link";
 import BasicDropdown from "../ui/dropdownMenu";
@@ -10,13 +11,23 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {FiInfo } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../crop-seasons/StatusBadge";
+import { useTranslation } from "react-i18next";
+
+type StatusInfo = {
+  label: string;
+  color: 'green' | 'yellow' | 'blue' | 'red' | 'gray';
+  icon: string;
+};
 
 export default function FarmingCommitmentCardForFarmer({
   commitment,
+  statusMap,
 }: {
   commitment: FarmingCommitment;
+  statusMap: Record<FarmingCommitmentStatusValue, StatusInfo>
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   return (
     <tr key={commitment.commitmentId} className='border-t hover:bg-gray-50'>
       <td className='px-4 py-3'>
@@ -34,7 +45,7 @@ export default function FarmingCommitmentCardForFarmer({
       <td className='px-4 py-3'>{commitment.totalPrice?.toLocaleString()} VNĐ</td>
 
       <td className='px-4 py-3'>
-        <StatusBadge status={commitment.status} map={FarmingCommitmentStatusMap} />
+        <StatusBadge status={commitment.status} map={statusMap} />
       </td>
 
       <td className='px-4 py-3'>
@@ -49,7 +60,7 @@ export default function FarmingCommitmentCardForFarmer({
               router.push(`/dashboard/farmer/farming-commitments/${commitment.commitmentId}`);
             }}
           >
-            <FiInfo className='mr-1' /> Chi tiết
+            <FiInfo className='mr-1' /> {t('farmingCommitment.components.farmingCommitmentCard.actions.view')}
           </DropdownMenu.Item>
         </BasicDropdown>
       </td>

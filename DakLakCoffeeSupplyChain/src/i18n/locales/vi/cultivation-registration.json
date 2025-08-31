@@ -1,0 +1,156 @@
+{
+  "cultivationRegistration": {
+    "status": {
+      "approved": "Đã có cam kết",
+      "rejected": "Đã từ chối",
+      "pending": "Đang chờ duyệt",
+      "cancelled": "Đã hủy hợp đồng",
+      "detailApproved": "Đã duyệt",
+      "detailRejected": "Đã từ chối",
+      "detailPending": "Đang chờ duyệt"
+    },
+    "components": {
+      "registrationCard": {
+        "labels": {
+          "registeredArea": "Diện tích đăng ký:",
+          "registrationCode": "Mã đơn:",
+          "registrationDate": "Ngày đăng ký:",
+          "description": "Mô tả:",
+          "coffeeType": "Loại cà phê:",
+          "estimatedYield": "Sản lượng ước tính:",
+          "wantedPrice": "Giá mong muốn:",
+          "harvestTime": "Thời gian thu hoạch:",
+          "note": "Ghi chú:"
+        },
+        "buttons": {
+          "expand": "Xem chi tiết",
+          "collapse": "Thu gọn",
+          "approve": "Duyệt",
+          "reject": "Từ chối",
+          "createCommitment": "Tạo cam kết",
+          "editCommitment": "Chỉnh sửa cam kết"
+        },
+        "ariaLabels": {
+          "expandDetails": "Xem chi tiết",
+          "collapseDetails": "Thu gọn chi tiết"
+        },
+        "units": {
+          "hectare": "ha",
+          "kilogram": "kg",
+          "vndPerKg": "VNĐ/kg"
+        },
+        "status": {
+          "notUpdated": "Chưa cập nhật"
+        },
+        "messages": {
+          "approveSuccess": "Duyệt đơn đăng ký thành công!",
+          "approveError": "Duyệt đơn đăng ký thất bại!",
+          "rejectSuccess": "Từ chối đơn đăng ký thành công!",
+          "rejectError": "Từ chối đơn đăng ký thất bại!"
+        }
+      },
+      "registrationForm": {
+        "title": "Đăng ký tham gia kế hoạch",
+        "subtitle": "Điền thông tin để đăng ký tham gia kế hoạch thu mua",
+        "labels": {
+          "registeredArea": "Diện tích đăng ký (ha)",
+          "note": "Ghi chú",
+          "planDetail": "Chi tiết kế hoạch",
+          "estimatedYield": "Sản lượng ước tính (kg)",
+          "wantedPrice": "Giá mong muốn (VNĐ/kg)",
+          "expectedHarvestStart": "Ngày bắt đầu thu hoạch",
+          "expectedHarvestEnd": "Ngày kết thúc thu hoạch",
+          "detailNote": "Ghi chú chi tiết"
+        },
+        "placeholders": {
+          "planDetail": "Chi tiết kế hoạch",
+          "registeredArea": "Nhập diện tích đăng ký",
+          "note": "Nhập ghi chú (tùy chọn)",
+          "estimatedYield": "Nhập sản lượng ước tính",
+          "wantedPrice": "Nhập giá mong muốn",
+          "expectedHarvestStart": "Chọn ngày bắt đầu",
+          "expectedHarvestEnd": "Chọn ngày kết thúc",
+          "detailNote": "Nhập ghi chú chi tiết (tùy chọn)"
+        },
+        "buttons": {
+          "addDetail": "Thêm chi tiết",
+          "removeDetail": "Xóa",
+          "submit": "Gửi đăng ký",
+          "submitting": "Đang gửi..."
+        },
+        "validation": {
+          "planId": "Vui lòng chọn kế hoạch.",
+          "registeredArea": "Vui lòng nhập diện tích đăng ký hợp lệ.",
+          "planDetailId": "Cần chọn chi tiết kế hoạch.",
+          "estimatedYield": "Nhập sản lượng đăng ký hợp lệ.",
+          "wantedPrice": "Nhập giá mong muốn hợp lệ.",
+          "wantedPriceTooLow": "Giá mong muốn phải từ {{minPrice}} VNĐ/kg trở lên.",
+          "wantedPriceTooHigh": "Giá mong muốn không được vượt quá {{maxPrice}} VNĐ/kg.",
+          "expectedHarvestStart": "Chọn ngày bắt đầu.",
+          "expectedHarvestEnd": "Chọn ngày kết thúc.",
+          "harvestEndAfterStart": "Ngày kết thúc phải sau ngày bắt đầu.",
+          "harvestStartInThePast": "Ngày bắt đầu không được phép trong quá khứ."
+        },
+        "messages": {
+          "success": "Đăng ký thành công!",
+          "error": "Đăng ký thất bại!",
+          "maxRegistrationsReached": "Bạn đã đạt giới hạn số lượng đăng ký tối đa ({{count}} đơn).",
+          "priceRange": "Khoảng giá: {{minPrice}} - {{maxPrice}} VNĐ/kg",
+          "priceRangeHint": "Giá mong muốn phải nằm trong khoảng này để được chấp nhận",
+          "loginRequired": "Vui lòng đăng nhập để thực hiện đăng ký.",
+          "farmerOnly": "Chỉ nông dân mới có thể đăng ký tham gia kế hoạch."
+        }
+      },
+      "registrationGuide": {
+        "title": "Hướng dẫn đăng ký",
+        "subtitle": "Tham gia kế hoạch thu mua cà phê",
+        "steps": {
+          "step1": {
+            "title": "Diện tích đăng ký",
+            "description": "Đây là thông tin về diện tích đất trồng cho toàn bộ các chi tiết kế hoạch mà bạn đã đăng ký. Đơn vị tính bằng hecta(ha)."
+          },
+          "step2": {
+            "title": "Chọn chi tiết kế hoạch",
+            "description": "Chọn chi tiết kế hoạch mà bạn muốn đăng ký bán."
+          },
+          "step3": {
+            "title": "Nhập thông tin chi tiết",
+            "description": "Điền đầy đủ thông tin về sản lượng, giá cả và thời gian thu hoạch"
+          },
+          "step4": {
+            "title": "Gửi đăng ký",
+            "description": "Kiểm tra lại thông tin và gửi đăng ký để doanh nghiệp xem xét"
+          }
+        },
+        "importantNotes": {
+          "title": "Lưu ý quan trọng",
+          "items": [
+            "Chỉ nông dân mới có thể đăng ký tham gia",
+            "Cần đăng nhập để thực hiện đăng ký",
+            "Thông tin đăng ký sẽ được doanh nghiệp xem xét"
+          ]
+        },
+        "contactInfo": {
+          "title": "Thông tin liên hệ",
+          "description": "Nếu bạn gặp vấn đề hoặc cần hỗ trợ, vui lòng liên hệ với chúng tôi."
+        }
+      }
+    },
+    "dialogs": {
+      "confirm": {
+        "approve": {
+          "title": "Xác nhận duyệt chi tiết đơn đăng ký",
+          "description": "Bạn có chắc chắn muốn duyệt chi tiết đơn {{coffeeType}} này? Sau khi duyệt, người nông dân sẽ được thông báo và bạn có thể tiến hành các bước tiếp theo. Bạn có thể tạo cam kết với họ để mở khóa tính năng báo cáo mùa vụ cho nông dân."
+        },
+        "reject": {
+          "title": "Từ chối chi tiết đơn đăng ký",
+          "description": "Bạn có chắc chắn muốn từ chối chi tiết đơn {{coffeeType}} này? Sau khi từ chối, Bạn không thể duyệt lại chi tiết này của đơn đăng ký, các chi tiết đơn đăng ký khác của đơn đăng ký này sẽ không bị ảnh hưởng bởi hành động này."
+        },
+        "actions": {
+          "confirm": "Đồng ý",
+          "cancel": "Hủy"
+        }
+      }
+    }
+  }
+}

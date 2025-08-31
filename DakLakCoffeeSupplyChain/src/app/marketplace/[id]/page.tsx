@@ -18,8 +18,10 @@ import { FiMapPin, FiCalendar, FiUser } from "react-icons/fi";
 import { Badge } from "@/components/ui/badge";
 import CultivationRegistrationForm from "@/components/cultivation-registrations/CultivationRegistrationForm";
 import RegistrationGuideCard from "@/components/cultivation-registrations/RegistrationGuideCard";
+import { useTranslation } from "react-i18next";
 
 export default function MarketplaceDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const pathname = usePathname();
   const { id } = params;
@@ -89,13 +91,13 @@ export default function MarketplaceDetailPage() {
   };
 
   if (loading) {
-    return <p className='text-center py-20'>Đang tải dữ liệu...</p>;
+    return <p className='text-center py-20'>{t('marketplace.detailPage.loading')}</p>;
   }
 
   if (!plan) {
     return (
       <p className='text-center py-20 text-red-600'>
-        Không tìm thấy kế hoạch này.
+        {t('marketplace.detailPage.notFound')}
       </p>
     );
   }
@@ -112,7 +114,7 @@ export default function MarketplaceDetailPage() {
       return (
         <div className='max-w-7xl mx-auto px-4 md:px-6'>
           <div className='bg-gradient-to-r from-orange-400 to-orange-600 rounded-xl p-6'>
-            <h1 className='text-2xl font-bold text-white'>Chi tiết kế hoạch</h1>
+            <h1 className='text-2xl font-bold text-white'>{t('marketplace.detailPage.banner.title')}</h1>
           </div>
         </div>
       );
@@ -122,7 +124,7 @@ export default function MarketplaceDetailPage() {
         <>
           <div className='h-40 bg-gradient-to-r from-orange-400 to-orange-600 relative'>
             <h1 className='absolute bottom-4 left-8 text-white text-3xl font-bold drop-shadow-lg'>
-              Chi tiết kế hoạch
+              {t('marketplace.detailPage.banner.title')}
             </h1>
           </div>
         </>
@@ -158,7 +160,7 @@ export default function MarketplaceDetailPage() {
               <div className='grid grid-cols-3 gap-6 mb-6 text-gray-700 font-medium'>
                 <div>
                   <p className='text-sm text-gray-500 uppercase'>
-                    Sản lượng tổng
+                    {t('marketplace.detailPage.planCard.totalQuantity')}
                   </p>
                   <p className='text-xl'>
                     {plan.totalQuantity.toLocaleString()} kg
@@ -166,13 +168,13 @@ export default function MarketplaceDetailPage() {
                 </div>
                 <div>
                   <p className='text-sm text-gray-500 uppercase'>
-                    Thời gian còn lại
+                    {t('marketplace.detailPage.planCard.timeRemaining')}
                   </p>
-                  <p className='text-xl'>{daysRemaining} ngày</p>
+                  <p className='text-xl'>{daysRemaining} {t('marketplace.detailPage.planCard.days')}</p>
                 </div>
                 <div>
                   <p className='text-sm text-gray-500 uppercase'>
-                    Tỷ lệ sản lượng đã được đăng ký
+                    {t('marketplace.detailPage.planCard.registrationProgress')}
                   </p>
                   <p className='text-xl'>
                     {plan.progressPercentage.toFixed(2)}%
@@ -182,7 +184,7 @@ export default function MarketplaceDetailPage() {
 
               <div>
                 <div className='flex items-center justify-between mb-3'>
-                  <h3 className='text-xl font-semibold'>Chi tiết kế hoạch</h3>
+                  <h3 className='text-xl font-semibold'>{t('marketplace.detailPage.planCard.planDetails')}</h3>
                   {plan.procurementPlansDetails.length > 4 && (
                     <Button
                       type='button'
@@ -191,10 +193,8 @@ export default function MarketplaceDetailPage() {
                       onClick={() => setShowAllDetails((prev) => !prev)}
                     >
                       {showAllDetails
-                        ? "Thu gọn"
-                        : `Xem thêm (${
-                            plan.procurementPlansDetails.length - 4
-                          })`}
+                        ? t('marketplace.detailPage.planCard.collapse')
+                        : t('marketplace.detailPage.planCard.viewMore', { count: plan.procurementPlansDetails.length - 4 })}
                     </Button>
                   )}
                 </div>
@@ -214,13 +214,13 @@ export default function MarketplaceDetailPage() {
                       >
                         <div className='flex items-start justify-between mb-2'>
                           <div>
-                            <p className='text-sm text-gray-500'>Mã chi tiết</p>
+                            <p className='text-sm text-gray-500'>{t('marketplace.detailPage.planDetailCard.detailCode')}</p>
                             <p className='font-semibold'>
                               {detail.planDetailCode}
                             </p>
                           </div>
                           <div className='text-right'>
-                            <p className='text-sm text-gray-500'>Loại cà phê</p>
+                            <p className='text-sm text-gray-500'>{t('marketplace.detailPage.planDetailCard.coffeeType')}</p>
                             <p className='font-semibold'>
                               {detail.coffeeType?.typeName}
                             </p>
@@ -229,18 +229,18 @@ export default function MarketplaceDetailPage() {
 
                         <div className='grid grid-cols-2 gap-3 text-sm'>
                           <div>
-                            <p className='text-gray-500'>Phương pháp sơ chế</p>
+                            <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.processingMethod')}</p>
                             <p className='font-medium'>
-                              {detail.processingMethodName ?? "Không có"}
+                              {detail.processingMethodName ?? t('marketplace.components.planTable.noProcessingMethod')}
                             </p>
                           </div>
                           <div>
-                            <p className='text-gray-500'>Khu vực thu mua</p>
+                            <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.purchaseRegion')}</p>
                             <p className='font-medium'>{detail.targetRegion}</p>
                           </div>
                           <div>
                             <p className='text-gray-500'>
-                              Sản lượng mục tiêu (kg)
+                              {t('marketplace.detailPage.planDetailCard.targetQuantity')}
                             </p>
                             <p className='font-medium'>
                               {detail.targetQuantity?.toLocaleString()}
@@ -248,7 +248,7 @@ export default function MarketplaceDetailPage() {
                           </div>
                           <div>
                             <p className='text-gray-500'>
-                              Tối thiểu đăng ký (kg)
+                              {t('marketplace.detailPage.planDetailCard.minimumRegistration')}
                             </p>
                             <p className='font-medium'>
                               {detail.minimumRegistrationQuantity?.toLocaleString()}
@@ -256,7 +256,7 @@ export default function MarketplaceDetailPage() {
                           </div>
                           <div>
                             <p className='text-gray-500'>
-                              Giá mong muốn (VNĐ/kg)
+                              {t('marketplace.detailPage.planDetailCard.desiredPrice')}
                             </p>
                             <p className='font-medium'>
                               {detail.minPriceRange?.toLocaleString()} -{" "}
@@ -270,14 +270,14 @@ export default function MarketplaceDetailPage() {
                             </p> */}
                           </div>
                           <div>
-                            <p className='text-gray-500'>Đã đăng ký (kg)</p>
+                            <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.registeredQuantity')}</p>
                             <p className='font-medium'>
                               {detail.registeredQuantity?.toLocaleString?.() ??
                                 detail.registeredQuantity}
                             </p>
                           </div>
                           <div>
-                            <p className='text-gray-500'>Tiến độ</p>
+                            <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.progress')}</p>
                             <div className='mt-1'>
                               <div className='h-2 w-full bg-orange-100 rounded-full overflow-hidden'>
                                 <div
@@ -294,7 +294,7 @@ export default function MarketplaceDetailPage() {
 
                         {detail.note && (
                           <div className='mt-3 text-sm'>
-                            <p className='text-gray-500'>Ghi chú</p>
+                            <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.note')}</p>
                             <p className='font-medium'>{detail.note}</p>
                           </div>
                         )}
@@ -303,7 +303,7 @@ export default function MarketplaceDetailPage() {
                   })}
                 </div>
                 <p className='mt-4 text-sm text-gray-600'>
-                  Mã kế hoạch: {plan.planCode}
+                  {t('marketplace.detailPage.planCard.planCode', { code: plan.planCode })}
                 </p>
               </div>
             </Card>
@@ -311,10 +311,10 @@ export default function MarketplaceDetailPage() {
             {/* Card danh sách đơn đăng ký */}
             <Card className='p-6 rounded-xl shadow-lg'>
               <h3 className='text-2xl font-semibold mb-6 text-orange-700'>
-                Danh sách đơn đăng ký
+                {t('marketplace.detailPage.registrationsList.title')}
               </h3>
               {registrations.length === 0 && (
-                <p className='text-gray-600'>Chưa có đơn đăng ký nào.</p>
+                <p className='text-gray-600'>{t('marketplace.detailPage.registrationsList.noRegistrations')}</p>
               )}
 
               <div className='space-y-3 max-h-[400px] overflow-y-auto pr-1'>
@@ -342,13 +342,13 @@ export default function MarketplaceDetailPage() {
                         variant='secondary'
                         className='bg-white text-orange-700 border border-orange-200'
                       >
-                        {reg.cultivationRegistrationDetails.length} chi tiết
+                        {reg.cultivationRegistrationDetails.length} {t('marketplace.detailPage.registrationsList.details')}
                       </Badge>
                     </div>
 
                     <div className='mt-3 grid grid-cols-2 gap-3 text-sm'>
                       <div>
-                        <p className='text-gray-500'>Diện tích đăng ký: {reg.registeredArea.toLocaleString()}ha</p>
+                        <p className='text-gray-500'>{t('marketplace.detailPage.registrationsList.registeredArea', { area: reg.registeredArea.toLocaleString() })}</p>
                       </div>
                       <div className='text-right'>
                         <div className='inline-flex items-center gap-2 text-gray-600'>
@@ -379,7 +379,7 @@ export default function MarketplaceDetailPage() {
           <aside className={`w-90 flex flex-col gap-6 z-10 ${asideClasses}`}>
             <Card className='w-full p-6 rounded-xl shadow-lg gap-2'>
               <h3 className='text-xl font-semibold text-orange-700'>
-                Thông tin doanh nghiệp
+                {t('marketplace.detailPage.businessInfo.title')}
               </h3>
               <p className='font-semibold'>{plan.createdBy.companyName}</p>
               <p className='mb-2 text-gray-600'>
@@ -391,10 +391,10 @@ export default function MarketplaceDetailPage() {
                 rel='noreferrer'
                 className='text-blue-600 hover:underline mb-1 block'
               >
-                Website
+                {t('marketplace.detailPage.businessInfo.website')}
               </a>
               <p className='text-gray-700'>
-                Email: {plan.createdBy.contactEmail}
+                {t('marketplace.detailPage.businessInfo.email', { email: plan.createdBy.contactEmail })}
               </p>
             </Card>
 

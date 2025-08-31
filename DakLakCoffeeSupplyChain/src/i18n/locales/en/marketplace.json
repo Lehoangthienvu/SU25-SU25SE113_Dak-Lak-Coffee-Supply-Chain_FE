@@ -1,0 +1,109 @@
+{
+  "marketplace": {
+    "pages": {
+      "title": "Marketplace",
+      "loading": "Loading data...",
+      "noPlans": {
+        "title": "Currently there are no procurement plans available.",
+        "reloadButton": "Reload"
+      },
+      "noResults": "No procurement plans found."
+    },
+    "components": {
+      "searchSection": {
+        "title": "Search Procurement Plans",
+        "placeholder": "Search..."
+      },
+      "filterSection": {
+        "title": "Search Filters",
+        "resetButton": "Reset",
+        "coffeeType": {
+          "label": "Coffee Type",
+          "allTypes": "All Coffee Types"
+        },
+        "region": {
+          "label": "Region",
+          "allRegions": "All Regions"
+        },
+        "quantity": {
+          "label": "Quantity (kg)",
+          "from": "From",
+          "to": "To",
+          "fromValue": "From: {{value}} kg",
+          "toValue": "To: {{value}} kg",
+          "fromPlaceholder": "From",
+          "toPlaceholder": "To"
+        },
+        "price": {
+          "label": "Purchase Price (VND/kg)",
+          "from": "From",
+          "to": "To",
+          "fromValue": "From: {{value}} VND",
+          "toValue": "To: {{value}} VND",
+          "fromPlaceholder": "From",
+          "toPlaceholder": "To"
+        },
+        "resultsCount": "Found {{count}} plans"
+      },
+      "planCard": {
+        "quantity": "Quantity:",
+        "deadlineRemaining": "Registration days remaining:",
+        "days": "days",
+        "registered": "Registered:",
+        "planDetails": "Plan Details",
+        "viewDetails": "View Details"
+      },
+      "planTable": {
+        "headers": {
+          "coffeeType": "Coffee Type",
+          "processingMethod": "Processing Method",
+          "quantity": "Quantity (kg)",
+          "targetRegion": "Target Region",
+          "price": "Price (VND/kg)",
+          "note": "Note"
+        },
+               "noProcessingMethod": "None"
+     }
+   },
+   "detailPage": {
+     "loading": "Loading data...",
+     "notFound": "Plan not found.",
+     "banner": {
+       "title": "Plan Details"
+     },
+     "planCard": {
+       "totalQuantity": "Total Quantity",
+       "timeRemaining": "Time Remaining",
+       "days": "days",
+       "registrationProgress": "Registration Progress",
+       "planDetails": "Plan Details",
+       "collapse": "Collapse",
+       "viewMore": "View More ({{count}})",
+       "planCode": "Plan Code: {{code}}"
+     },
+     "planDetailCard": {
+       "detailCode": "Detail Code",
+       "coffeeType": "Coffee Type",
+       "processingMethod": "Processing Method",
+       "purchaseRegion": "Purchase Region",
+       "targetQuantity": "Target Quantity (kg)",
+       "minimumRegistration": "Minimum Registration (kg)",
+       "desiredPrice": "Desired Price (VND/kg)",
+       "registeredQuantity": "Registered Quantity (kg)",
+       "progress": "Progress",
+       "note": "Note"
+     },
+     "registrationsList": {
+       "title": "Registration List",
+       "noRegistrations": "No registrations yet.",
+       "details": "details",
+       "registeredArea": "Registered Area: {{area}}ha"
+     },
+     "businessInfo": {
+       "title": "Business Information",
+       "website": "Website",
+       "email": "Email: {{email}}"
+     }
+   }
+ }
+}

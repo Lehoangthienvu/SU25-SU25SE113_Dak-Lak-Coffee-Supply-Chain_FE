@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { ReactNode } from "react";
 import { Button } from "./button";
+import { useTranslation } from "react-i18next";
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -18,11 +19,10 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmText = "Xác nhận",
-  cancelText = "Hủy",
   onConfirm,
   loading = false,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Overlay className="fixed inset-0 bg-black/20 z-50" />
@@ -56,14 +56,14 @@ export function ConfirmDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            {cancelText}
+            {t("common.cancel")}
           </Button>
           <Button
             className="bg-red-600 text-white hover:bg-red-700"
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? "Đang xử lý..." : confirmText}
+            {loading ? t("common.processing") : t("common.confirm")}
           </Button>
         </div>
       </Dialog.Content>

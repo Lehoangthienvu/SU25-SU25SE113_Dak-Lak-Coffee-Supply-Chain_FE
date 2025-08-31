@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
@@ -19,6 +20,7 @@ import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementP
 
 export default function CreateProcurementPlanPage() {
   useAuthGuard(["manager"]);
+  const { t } = useTranslation();
 
   const formatDate = (d: string) => new Date(d).toISOString().split("T")[0];
   const router = useRouter();
@@ -47,50 +49,43 @@ export default function CreateProcurementPlanPage() {
 
   const validateForm = (): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
-    if (!form.title) newErrors.title = "Vui lòng nhập tên kế hoạch.";
-    if (!form.startDate) newErrors.startDate = "Vui lòng chọn ngày bắt đầu.";
-    if (!form.endDate) newErrors.endDate = "Vui lòng chọn ngày kết thúc.";
+    if (!form.title) newErrors.title = t('procurementPlan.components.procurementPlanForm.validation.title');
+    if (!form.startDate) newErrors.startDate = t('procurementPlan.components.procurementPlanForm.validation.startDate');
+    if (!form.endDate) newErrors.endDate = t('procurementPlan.components.procurementPlanForm.validation.endDate');
     if (
       form.startDate &&
       new Date(form.startDate) <
         new Date(new Date().toISOString().split("T")[0])
     ) {
-      newErrors.startDate = "Ngày bắt đầu không thể là ngày trong quá khứ.";
+      newErrors.startDate = t('procurementPlan.components.procurementPlanForm.validation.startDatePast');
     }
     if (new Date(form.startDate) >= new Date(form.endDate))
-      newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu.";
-    if (!form.description) newErrors.description = "Vui lòng nhập mô tả.";
+      newErrors.endDate = t('procurementPlan.components.procurementPlanForm.validation.endDateAfterStart');
+    if (!form.description) newErrors.description = t('procurementPlan.components.procurementPlanForm.validation.description');
     if (form.procurementPlansDetails.length === 0) {
-      newErrors.procurementPlansDetails =
-        "Vui lòng thêm ít nhất một chi tiết kế hoạch.";
+      newErrors.procurementPlansDetails = t('procurementPlan.components.procurementPlanForm.validation.detailsRequired');
     } else {
       form.procurementPlansDetails.forEach((detail, index) => {
         if (!detail.coffeeTypeId) {
-          newErrors[`coffeeTypeId-${index}`] = "Vui lòng chọn loại cà phê.";
+          newErrors[`coffeeTypeId-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.coffeeType');
         }
         if (detail.processMethodId === 0) {
-          newErrors[`processMethodId-${index}`] =
-            "Vui lòng chọn phương pháp sơ chế.";
+          newErrors[`processMethodId-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.processingMethod');
         }
         if (detail.targetQuantity < 100) {
-          newErrors[`targetQuantity-${index}`] =
-            "Sản lượng mục tiêu không thể nhỏ hơn 100 kg.";
+          newErrors[`targetQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.targetQuantity');
         }
         if (detail.minimumRegistrationQuantity < 100) {
-          newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.";
+          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantity');
         }
         if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
-          newErrors[`minimumRegistrationQuantity-${index}`] =
-            "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.";
+          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantityMax');
         }
         if (detail.minPriceRange < 1000) {
-          newErrors[`minPriceRange-${index}`] =
-            "Giá tối thiểu không thể nhỏ hơn 1000 đồng.";
+          newErrors[`minPriceRange-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minPrice');
         }
         if (detail.maxPriceRange < detail.minPriceRange) {
-          newErrors[`maxPriceRange-${index}`] =
-            "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.";
+          newErrors[`maxPriceRange-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.maxPrice');
         }
         // if (detail.expectedYieldPerHectare <= 0) {
         //   newErrors[`expectedYieldPerHectare-${index}`] =
@@ -211,7 +206,7 @@ export default function CreateProcurementPlanPage() {
       };
       await createProcurementPlan(formDataToSend);
 
-      AppToast.success("Tạo kết hoạch thành công!");
+      AppToast.success(t('procurementPlan.pages.create.success'));
       router.push("/dashboard/manager/procurement-plans");
     } catch (err) {
       const message = getErrorMessage(err);
@@ -233,10 +228,10 @@ export default function CreateProcurementPlanPage() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            Tạo kế hoạch thu mua mới
+            {t('procurementPlan.pages.create.title')}
           </h1>
           <p className='mt-2 text-gray-600'>
-            Thiết lập kế hoạch thu mua cà phê từ nông hộ
+            {t('procurementPlan.pages.create.subtitle')}
           </p>
         </div>
 
@@ -254,10 +249,10 @@ export default function CreateProcurementPlanPage() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
                 <CardTitle className='text-white text-3xl font-bold pt-6'>
-                  Thông tin kế hoạch
+                  {t('procurementPlan.pages.create.form.title')}
                 </CardTitle>
                 <p className='text-white text-md mt-1 pb-4'>
-                  Điền đầy đủ thông tin để tạo kế hoạch thu mua
+                  {t('procurementPlan.pages.create.form.subtitle')}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>

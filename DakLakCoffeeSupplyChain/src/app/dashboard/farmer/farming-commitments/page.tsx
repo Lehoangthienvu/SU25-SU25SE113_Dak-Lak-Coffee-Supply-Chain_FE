@@ -13,11 +13,14 @@ import { toast } from "sonner";
 import {
   FarmingCommitmentStatusMap,
   FarmingCommitmentStatusValue,
+  getFarmingCommitmentStatusMap,
 } from "@/lib/constants/FarmingCommitmentStatus";
 import FilterStatusPanel from "@/components/ui/filterStatusPanel";
 import FarmingCommitmentCardForFarmer from "@/components/farming-commitments/FarmingCommitmentCardForFarmer";
+import { useTranslation } from "react-i18next";
 
 export default function FarmerFarmingCommitmentPage() {
+  const { t } = useTranslation();
   const [farmingCommitments, setFarmingCommitments] = useState<
     FarmingCommitment[]
   >([]);
@@ -55,6 +58,7 @@ export default function FarmerFarmingCommitmentPage() {
     currentPage * pageSize
   );
 
+  const statusMap = getFarmingCommitmentStatusMap(t);
   const statusCounts = farmingCommitments.reduce<
     Record<FarmingCommitmentStatusValue, number>
   >(
@@ -74,17 +78,18 @@ export default function FarmerFarmingCommitmentPage() {
   );
 
   return (
-    <div className='flex bg-amber-200-50 p-6 gap-6'>
+    <div className='flex bg-amber-200-50 p-6 gap-6'>     
+      
       {/* Sidebar */}
       <aside className='w-64 space-y-4'>
         {/* Search block */}
         <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
           <h2 className='text-sm font-medium text-gray-700'>
-            Tìm kiếm cam kết
+            {t('farmingCommitment.pages.farmer.search.title')}
           </h2>
           <div className='relative'>
             <Input
-              placeholder='Tìm kiếm...'
+              placeholder={t('farmingCommitment.pages.farmer.search.placeholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className='pr-10'
@@ -97,7 +102,7 @@ export default function FarmerFarmingCommitmentPage() {
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
           statusCounts={statusCounts}
-          statusMap={FarmingCommitmentStatusMap}
+          statusMap={statusMap}
         />
       </aside>
 
@@ -107,12 +112,12 @@ export default function FarmerFarmingCommitmentPage() {
           <table className='w-full text-sm table-auto'>
             <thead className='bg-gray-100 text-gray-700 font-medium'>
               <tr>
-                <th className='px-4 py-3 text-left'>Tên cam kết</th>
-                <th className='px-4 py-3 text-left'>Tên doanh nghiệp</th>
-                <th className='px-4 py-3 text-left'>Tổng thành tiền</th>
-                <th className='px-4 py-3 text-left'>Trạng thái</th>
-                <th className='px-4 py-3 text-left'>Ngày lập cam kết</th>
-                <th className='px-4 py-3 text-left'>Hành động</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.commitmentName')}</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.businessName')}</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.totalAmount')}</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.status')}</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.commitmentDate')}</th>
+                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -120,6 +125,7 @@ export default function FarmerFarmingCommitmentPage() {
                 <FarmingCommitmentCardForFarmer
                   key={commitment.commitmentId}
                   commitment={commitment}
+                  statusMap={statusMap}
                 />
               ))}
             </tbody>
@@ -130,9 +136,9 @@ export default function FarmerFarmingCommitmentPage() {
         {!isLoading && totalPages > 1 && (
           <div className='flex justify-between items-center'>
             <span className='text-sm text-muted-foreground'>
-              Hiển thị {(currentPage - 1) * pageSize + 1}–
-              {Math.min(currentPage * pageSize, filteredCommitments.length)} trong{" "}
-              {filteredCommitments.length} cam kết
+              {t('farmingCommitment.pages.farmer.pagination.showing')} {(currentPage - 1) * pageSize + 1}{t('farmingCommitment.pages.farmer.pagination.to')}
+              {Math.min(currentPage * pageSize, filteredCommitments.length)} {t('farmingCommitment.pages.farmer.pagination.of')}{" "}
+              {filteredCommitments.length} {t('farmingCommitment.pages.farmer.pagination.commitments')}
             </span>
             <div className='flex items-center gap-2'>
               <Button

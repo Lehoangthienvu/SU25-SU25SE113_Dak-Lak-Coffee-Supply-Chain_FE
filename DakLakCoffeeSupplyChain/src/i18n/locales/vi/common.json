@@ -1,0 +1,19 @@
+{
+  "common": {
+    "filterByStatus": "Lọc theo trạng thái",
+    "allStatuses": "Tất cả trạng thái",
+    "processing": "Đang xử lý...",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy",
+    "components" : {
+      "filterStatusPanel": {
+        "title": "Lọc theo trạng thái",
+        "allStatuses": "Tất cả trạng thái"
+      },
+      "rejectDialog": {
+        "placeholder": "Lý do từ chối...",
+        "loadingButton": "Đang xử lý..."
+      }
+    }
+  }
+}

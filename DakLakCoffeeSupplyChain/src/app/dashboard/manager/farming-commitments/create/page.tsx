@@ -15,9 +15,11 @@ import {
 import FarmingCommitmentFormGuide from "@/components/farming-commitments/FarmingCommitmentFormGuide";
 import FarmingCommitmentForm, { FarmingCommitmentFormData } from "@/components/farming-commitments/FarmingCommitmentForm";
 import { calculateEstimatedDeliveryDates } from "@/lib/helpers/dateHelpers";
+import { useTranslation } from "react-i18next";
 
 function CreateFarmingCommitmentContent() {
   useAuthGuard(["manager"]);
+  const { t } = useTranslation();
 
   const searchParams = useSearchParams();
   const paramRegistrationId = searchParams.get("registrationId") || "";
@@ -91,11 +93,11 @@ function CreateFarmingCommitmentContent() {
   const validateForm = (): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
     if (!form.commitmentName) {
-      newErrors.commitmentName = "Tên cam kết là bắt buộc.";
+      newErrors.commitmentName = t('farmingCommitment.components.farmingCommitmentForm.validation.commitmentName');
     }
     if (form.farmingCommitmentDetails.length === 0) {
       newErrors.farmingCommitmentDetails =
-        "Cần ít nhất một chi tiết cam kết.";
+        t('farmingCommitment.components.farmingCommitmentForm.validation.detailsRequired');
     } else {
       form.farmingCommitmentDetails.forEach((detail, index) => {
         if (!detail.registrationDetailId) {
@@ -197,7 +199,7 @@ function CreateFarmingCommitmentContent() {
       };
 
       await createFarmingCommitment(apiData);
-      AppToast.success("Tạo cam kết thành công!");
+      AppToast.success(t('farmingCommitment.pages.create.success'));
       router.push("/dashboard/manager/farming-commitments");
 
       setErrors({});
@@ -207,7 +209,7 @@ function CreateFarmingCommitmentContent() {
         farmingCommitmentDetails: [],
       });
     } catch (error) {
-      AppToast.error(getErrorMessage(error) || "Tạo cam kết thất bại.");
+      AppToast.error(getErrorMessage(error) || t('farmingCommitment.pages.create.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -220,9 +222,9 @@ function CreateFarmingCommitmentContent() {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Header */}
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-gray-900'>Tạo cam kết mới</h1>
+          <h1 className='text-3xl font-bold text-gray-900'>{t('farmingCommitment.pages.create.title')}</h1>
           <p className='text-gray-600 mt-2'>
-            Tạo cam kết thu mua với nông hộ dựa trên đơn đăng ký đã được duyệt
+            {t('farmingCommitment.pages.create.subtitle')}
           </p>
         </div>
 
@@ -240,10 +242,10 @@ function CreateFarmingCommitmentContent() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-orange-600 to-orange-700 text-white px-6 py-6 m-0 rounded-t-xl'>
                 <CardTitle className='text-white text-2xl font-bold'>
-                  Thông tin cam kết
+                  {t('farmingCommitment.pages.create.form.title')}
                 </CardTitle>
                 <p className='text-green-100 text-sm mt-1'>
-                  Điền đầy đủ thông tin để tạo cam kết thu mua
+                  {t('farmingCommitment.pages.create.form.subtitle')}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>

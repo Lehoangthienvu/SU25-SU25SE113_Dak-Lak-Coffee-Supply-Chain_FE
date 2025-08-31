@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { Button } from "./button";
+import { useTranslation } from "react-i18next";
 
 type RejectionDialogProps = {
   open: boolean;
@@ -25,6 +26,7 @@ export function RejectionDialog({
 }: RejectionDialogProps) {
   // State để lưu lý do từ chối
   const [reason, setReason] = useState("");
+  const { t } = useTranslation();
 
   // Clear reason khi mở hoặc đóng dialog
   const handleOpenChange = (openState: boolean) => {
@@ -50,7 +52,7 @@ export function RejectionDialog({
         <textarea
           className="w-full border border-gray-300 rounded p-2 mb-6 resize-none"
           rows={4}
-          placeholder="Nhập lý do từ chối..."
+          placeholder={t('common.components.rejectDialog.placeholder')}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           disabled={loading}
@@ -65,7 +67,7 @@ export function RejectionDialog({
             onClick={handleConfirm}
             disabled={loading || reason.trim() === ""}
           >
-            {loading ? "Đang xử lý..." : confirmText}
+            {loading ? t('common.components.rejectDialog.loadingButton') : confirmText}
           </Button>
         </div>
       </Dialog.Content>

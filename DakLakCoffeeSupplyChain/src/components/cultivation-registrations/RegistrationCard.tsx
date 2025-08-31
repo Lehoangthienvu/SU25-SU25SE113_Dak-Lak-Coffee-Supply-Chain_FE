@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { AppToast } from "../ui/AppToast";
+import { useTranslation } from "react-i18next";
 import {
   CultivationRegistrationDetail,
   updateCultivationRegistrationDetailStatus,
@@ -15,8 +16,8 @@ import { ConfirmDialog } from "../ui/confirmDialog";
 import { FiCheck, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/dist/client/components/navigation";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
-import { CultivationRegistrationStatusMap } from "@/lib/constants/cultivationRegistrationStatus";
-import { CultivationRegistrationDetailStatusMap } from "@/lib/constants/cultivationRegistrationDetailStatusMap";
+import { getCultivationRegistrationStatusMap } from "@/lib/constants/cultivationRegistrationStatus";
+import { getCultivationRegistrationDetailStatusMap } from "@/lib/constants/cultivationRegistrationDetailStatusMap";
 
 const STORAGE_KEY_PREFIX = "registration-expanded-";
 
@@ -53,6 +54,7 @@ export default function RegistrationCard({
   commitmentStatus,
   onUpdate,
 }: RegistrationCardProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [loadingApprovalId, setLoadingApprovalId] = useState<string | null>(
@@ -63,6 +65,10 @@ export default function RegistrationCard({
   );
   const [currentDetailId, setCurrentDetailId] = useState<string | null>(null);
   // const [confirmOpen, setConfirmOpen] = useState(false);
+
+  // Get i18n-aware status maps
+  const registrationStatusMap = getCultivationRegistrationStatusMap(t);
+  const detailStatusMap = getCultivationRegistrationDetailStatusMap(t);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY_PREFIX + registrationId);
@@ -110,11 +116,11 @@ export default function RegistrationCard({
       await updateCultivationRegistrationDetailStatus(currentDetailId, {
         status: 1,
       });
-      AppToast.success("Duyệt đơn đăng ký thành công!");
+      AppToast.success(t('cultivationRegistration.components.registrationCard.messages.approveSuccess'));
       setDialogType(null);
       onUpdate?.();
     } catch (error) {
-      AppToast.error(getErrorMessage(error) || "Duyệt đơn đăng ký thất bại!");
+      AppToast.error(getErrorMessage(error) || t('cultivationRegistration.components.registrationCard.messages.approveError'));
     } finally {
       setLoadingApprovalId(null);
     }
@@ -128,11 +134,11 @@ export default function RegistrationCard({
       await updateCultivationRegistrationDetailStatus(currentDetailId, {
         status: 3,
       });
-      AppToast.success("Từ chối đơn đăng ký thành công!");
+      AppToast.success(t('cultivationRegistration.components.registrationCard.messages.rejectSuccess'));
       setDialogType(null);
       onUpdate?.();
     } catch (error) {
-      AppToast.error(getErrorMessage(error) || "Từ chối đơn đăng ký thất bại!");
+      AppToast.error(getErrorMessage(error) || t('cultivationRegistration.components.registrationCard.messages.rejectError'));
     } finally {
       setLoadingApprovalId(null);
     }
@@ -164,22 +170,20 @@ export default function RegistrationCard({
             <h4 className='text-lg font-semibold truncate'>{farmerName}</h4>
             <StatusBadge
               status={status}
-              map={CultivationRegistrationStatusMap}
+              map={registrationStatusMap}
             />
           </div>
           <p className='text-sm text-gray-600 truncate'>{farmerLocation}</p>
           <p className='text-sm text-gray-600 mt-1'>
-            Diện tích đăng ký:{" "}
-            <span className='font-medium'>
-              {registeredArea.toLocaleString()} ha
+            {t('cultivationRegistration.components.registrationCard.labels.registeredArea')} <span className='font-medium'>
+              {registeredArea.toLocaleString()} {t('cultivationRegistration.components.registrationCard.units.hectare')}
             </span>
           </p>
           <p className='text-xs text-gray-400 mt-0.5'>
-            Mã đơn: <span className='font-mono'>{registrationCode}</span> - Ngày
-            đăng ký: {format(new Date(registeredAt), "dd/MM/yyyy HH:mm")}
+            {t('cultivationRegistration.components.registrationCard.labels.registrationCode')} <span className='font-mono'>{registrationCode}</span> - {t('cultivationRegistration.components.registrationCard.labels.registrationDate')} {format(new Date(registeredAt), "dd/MM/yyyy HH:mm")}
           </p>
           <p className='text-sm text-gray-600 mt-1'>
-            Mô tả: <span className='font-medium'>{note}</span>
+            {t('cultivationRegistration.components.registrationCard.labels.description')} <span className='font-medium'>{note}</span>
           </p>
         </div>
 
@@ -191,9 +195,9 @@ export default function RegistrationCard({
           onClick={toggleExpanded}
           aria-expanded={expanded}
           aria-controls={`detail-content-${registrationId}`}
-          aria-label={expanded ? "Thu gọn chi tiết" : "Xem chi tiết"}
+          aria-label={expanded ? t('cultivationRegistration.components.registrationCard.ariaLabels.collapseDetails') : t('cultivationRegistration.components.registrationCard.ariaLabels.expandDetails')}
         >
-          {expanded ? "Thu gọn" : "Xem chi tiết"}
+          {expanded ? t('cultivationRegistration.components.registrationCard.buttons.collapse') : t('cultivationRegistration.components.registrationCard.buttons.expand')}
           {expanded ? (
             <ChevronUpIcon className='w-4 h-4' />
           ) : (
@@ -223,33 +227,33 @@ export default function RegistrationCard({
               >
                 <div className='flex items-center gap-1'>
                   <p>
-                    <strong>Loại cà phê:</strong> {detail.coffeeType}
+                    <strong>{t('cultivationRegistration.components.registrationCard.labels.coffeeType')}</strong> {detail.coffeeType}
                   </p>
                   <StatusBadge
                     status={detail.status ?? ""}
-                    map={CultivationRegistrationDetailStatusMap}
+                    map={detailStatusMap}
                   />
                 </div>
                 <p>
-                  <strong>Sản lượng ước tính:</strong>{" "}
+                  <strong>{t('cultivationRegistration.components.registrationCard.labels.estimatedYield')}</strong>{" "}
                   {detail.estimatedYield !== undefined
                     ? detail.estimatedYield.toLocaleString()
-                    : "Chưa cập nhật"}{" "}
-                  kg
+                    : t('cultivationRegistration.components.registrationCard.status.notUpdated')}{" "}
+                  {t('cultivationRegistration.components.registrationCard.units.kilogram')}
                 </p>
                 <p>
-                  <strong>Giá mong muốn:</strong>{" "}
+                  <strong>{t('cultivationRegistration.components.registrationCard.labels.wantedPrice')}</strong>{" "}
                   {detail.wantedPrice
-                    ? detail.wantedPrice.toLocaleString() + " VNĐ/kg"
-                    : "Chưa cập nhật"}
+                    ? detail.wantedPrice.toLocaleString() + " " + t('cultivationRegistration.components.registrationCard.units.vndPerKg')
+                    : t('cultivationRegistration.components.registrationCard.status.notUpdated')}
                 </p>
                 <p>
-                  <strong>Thời gian thu hoạch:</strong>{" "}
+                  <strong>{t('cultivationRegistration.components.registrationCard.labels.harvestTime')}</strong>{" "}
                   {detail.expectedHarvestStart} {detail.expectedHarvestEnd}
                 </p>
                 {detail.note && (
                   <p>
-                    <strong>Ghi chú:</strong> {detail.note}
+                    <strong>{t('cultivationRegistration.components.registrationCard.labels.note')}</strong> {detail.note}
                   </p>
                 )}
 
@@ -266,7 +270,7 @@ export default function RegistrationCard({
                           );
                         }}
                       >
-                        Chỉnh sửa cam kết
+                        {t('cultivationRegistration.components.registrationCard.buttons.editCommitment')}
                       </Button>
                     </>
                   ) : isApproved && !isCommitmentCreated ? (
@@ -280,7 +284,7 @@ export default function RegistrationCard({
                         );
                       }}
                     >
-                      Tạo cam kết
+                      {t('cultivationRegistration.components.registrationCard.buttons.createCommitment')}
                     </Button>
                     <Button
                         size='sm'
@@ -297,7 +301,7 @@ export default function RegistrationCard({
                         }
                         //className='bg-green-200 hover:bg-emerald-400 hover:text-white text-green-800 transition'
                       >
-                        <FiXCircle className='mr-1' /> Từ chối
+                        <FiXCircle className='mr-1' /> {t('cultivationRegistration.components.registrationCard.buttons.reject')}
                       </Button>
                     </div>
                   ) : isRejected || isProcurementPlanCancelled || isCommitmentActive ? (
@@ -319,7 +323,7 @@ export default function RegistrationCard({
                         }
                         //className='bg-green-200 hover:bg-emerald-400 hover:text-white text-green-800 transition'
                       >
-                        <FiCheck className='inline-block' /> Duyệt
+                        <FiCheck className='inline-block' /> {t('cultivationRegistration.components.registrationCard.buttons.approve')}
                       </Button>
                       <Button
                         size='sm'
@@ -336,7 +340,7 @@ export default function RegistrationCard({
                         }
                         //className='bg-green-200 hover:bg-emerald-400 hover:text-white text-green-800 transition'
                       >
-                        <FiXCircle className='mr-1' /> Từ chối
+                        <FiXCircle className='mr-1' /> {t('cultivationRegistration.components.registrationCard.buttons.reject')}
                       </Button>
                     </div>
                   )}
@@ -351,34 +355,26 @@ export default function RegistrationCard({
             onOpenChange={(open) => !open && closeDialog()}
             title={
               dialogType === "approve"
-                ? "Xác nhận duyệt chi tiết đơn đăng ký"
+                ? t('cultivationRegistration.dialogs.confirm.approve.title')
                 : dialogType === "reject"
-                ? "Từ chối chi tiết đơn đăng ký"
+                ? t('cultivationRegistration.dialogs.confirm.reject.title')
                 : ""
             }
             description={
               dialogType === "approve" ? (
                 <>
-                  Bạn có chắc chắn muốn duyệt chi tiết đơn{" "}
-                  <b>{currentDetail?.coffeeType ?? ""}</b> này? Sau khi duyệt,
-                  người nông dân sẽ được thông báo và bạn có thể tiến hành các
-                  bước tiếp theo. Bạn có thể tạo cam kết với họ để mở khóa tính
-                  năng báo cáo mùa vụ cho nông dân.
+                  {t('cultivationRegistration.dialogs.confirm.approve.description', { coffeeType: currentDetail?.coffeeType ?? "" })}
                 </>
               ) : dialogType === "reject" ? (
                 <>
-                  Bạn có chắc chắn muốn từ chối chi tiết đơn{" "}
-                  <b>{currentDetail?.coffeeType ?? ""}</b> này? Sau khi từ chối,
-                  Bạn không thể duyệt lại chi tiết này của đơn đăng ký, các chi tiết đơn đăng ký khác của đơn đăng ký này sẽ không bị ảnh hưởng bởi hành động này.
-                  {/* Bạn sẽ chỉ có thể duyệt lại chi tiết đơn đăng ký này nếu như
-                  cam kết được tạo chưa được 2 bên chấp thuận. */}
+                  {t('cultivationRegistration.dialogs.confirm.reject.description', { coffeeType: currentDetail?.coffeeType ?? "" })}
                 </>
               ) : (
                 ""
               )
             }
-            confirmText='Đồng ý'
-            cancelText='Hủy'
+            confirmText={t('cultivationRegistration.dialogs.confirm.actions.confirm')}
+            cancelText={t('cultivationRegistration.dialogs.confirm.actions.cancel')}
             onConfirm={() => {
               if (dialogType === "approve") {
                 handleApprove();
