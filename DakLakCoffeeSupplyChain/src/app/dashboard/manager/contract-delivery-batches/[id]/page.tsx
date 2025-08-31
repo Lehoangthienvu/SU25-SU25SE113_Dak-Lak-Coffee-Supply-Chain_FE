@@ -34,30 +34,11 @@ import {
   ContractViewDetailsDto,
 } from "@/lib/api/contracts";
 import ContractDeliveryItemFormDialog from "@/components/contract-delivery-batches/ContractDeliveryItemFormDialog";
-
-const contractDeliveryBatchStatusMap: Record<
-  string,
-  { label: string; className: string }
-> = {
-  Planned: {
-    label: "Chuẩn bị giao",
-    className: "bg-purple-100 text-purple-700",
-  },
-  InProgress: {
-    label: "Đang thực hiện",
-    className: "bg-green-100 text-green-700",
-  },
-  Fulfilled: {
-    label: "Hoàn thành",
-    className: "bg-blue-100 text-blue-700",
-  },
-  Cancelled: {
-    label: "Đã huỷ",
-    className: "bg-red-100 text-red-700",
-  },
-};
+import { useTranslation } from "react-i18next";
+import { getContractDeliveryBatchStatusLabel } from "@/lib/constants/contractDeliveryBatchStatus";
 
 export default function ContractDeliveryBatchDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [batch, setBatch] =
     useState<ContractDeliveryBatchViewDetailsDto | null>(null);
@@ -99,7 +80,7 @@ export default function ContractDeliveryBatchDetailPage() {
         }))
       );
     } catch (err) {
-      console.error("Lỗi khi tải dữ liệu:", err);
+      console.error(t("contractDeliveryBatches.detail.errors.loadData"), err);
     } finally {
       setLoading(false);
     }
@@ -128,15 +109,15 @@ export default function ContractDeliveryBatchDetailPage() {
       };
       setBatch(updated);
     } catch (error) {
-      console.error("Xoá thất bại:", error);
-      alert("Không thể xoá mặt hàng. Vui lòng thử lại.");
+      console.error(t("contractDeliveryBatches.detail.errors.deleteFailed"), error);
+      alert(t("contractDeliveryBatches.detail.errors.deleteError"));
     }
   };
 
-  if (loading) return <div className="p-6">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-6">{t("contractDeliveryBatches.detail.loading")}</div>;
   if (!batch)
     return (
-      <div className="p-6 text-red-500">Không tìm thấy đợt giao hàng.</div>
+      <div className="p-6 text-red-500">{t("contractDeliveryBatches.detail.notFound")}</div>
     );
 
   return (
@@ -146,7 +127,7 @@ export default function ContractDeliveryBatchDetailPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-2xl font-semibold text-gray-800">
             <FiCalendar className="text-orange-600 w-6 h-6" />
-            <span>Đợt giao: {batch.deliveryBatchCode}</span>
+            <span>{t("contractDeliveryBatches.detail.title")} {batch.deliveryBatchCode}</span>
           </div>
           <Button
             className="bg-[#f59e0b] hover:bg-[#d97706] text-white font-medium px-4 py-2 rounded-lg shadow-md flex items-center gap-2"
@@ -156,7 +137,7 @@ export default function ContractDeliveryBatchDetailPage() {
               )
             }
           >
-            ✏️ Chỉnh sửa
+            {t("contractDeliveryBatches.detail.actions.edit")}
           </Button>
         </div>
 
@@ -165,45 +146,43 @@ export default function ContractDeliveryBatchDetailPage() {
         {/* Delivery Batch Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Thông tin đợt giao</CardTitle>
+            <CardTitle>{t("contractDeliveryBatches.detail.info.title")}</CardTitle>
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <strong>Số hợp đồng:</strong> {batch.contractNumber}
+              <strong>{t("contractDeliveryBatches.detail.info.contractNumber")}</strong> {batch.contractNumber}
             </div>
             <div>
-              <strong>Tên hợp đồng:</strong> {batch.contractTitle}
+              <strong>{t("contractDeliveryBatches.detail.info.contractTitle")}</strong> {batch.contractTitle}
             </div>
             <div>
-              <strong>Đợt giao:</strong> {batch.deliveryRound}
+              <strong>{t("contractDeliveryBatches.detail.info.deliveryRound")}</strong> {batch.deliveryRound}
             </div>
             <div>
-              <strong>Ngày dự kiến:</strong>{" "}
+              <strong>{t("contractDeliveryBatches.detail.info.expectedDate")}</strong>{" "}
               {batch.expectedDeliveryDate
                 ? formatDate(batch.expectedDeliveryDate)
                 : "—"}
             </div>
             <div>
-              <strong>Khối lượng:</strong>{" "}
+              <strong>{t("contractDeliveryBatches.detail.info.quantity")}</strong>{" "}
               {formatQuantity(batch.totalPlannedQuantity ?? 0)}
             </div>
             <div>
-              <strong>Trạng thái:</strong>
+              <strong>{t("contractDeliveryBatches.detail.info.status")}</strong>
               <span
-                className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${contractDeliveryBatchStatusMap[batch.status]?.className
-                  }`}
+                className={`ml-2 px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700`}
               >
-                {contractDeliveryBatchStatusMap[batch.status]?.label ||
-                  batch.status}
+                {getContractDeliveryBatchStatusLabel(batch.status, t)}
               </span>
             </div>
             <div>
-              <strong>Ngày tạo:</strong>{" "}
+              <strong>{t("contractDeliveryBatches.detail.info.createdAt")}</strong>{" "}
               {batch.createdAt ? formatDate(batch.createdAt) : "—"}
             </div>
             <div>
-              <strong>Ngày cập nhật:</strong>{" "}
+              <strong>{t("contractDeliveryBatches.detail.info.updatedAt")}</strong>{" "}
               {batch.updatedAt ? formatDate(batch.updatedAt) : "—"}
             </div>
           </CardContent>
@@ -213,7 +192,7 @@ export default function ContractDeliveryBatchDetailPage() {
         <div className="rounded-xl border bg-white p-4">
           {/* Header */}
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-semibold">Danh sách mặt hàng giao</h2>
+            <h2 className="text-base font-semibold">{t("contractDeliveryBatches.detail.items.title")}</h2>
             <Button
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => {
@@ -221,7 +200,7 @@ export default function ContractDeliveryBatchDetailPage() {
                 setShowItemFormDialog(true);
               }}
             >
-              + Thêm mặt hàng
+              {t("contractDeliveryBatches.detail.actions.addItem")}
             </Button>
           </div>
 
@@ -231,23 +210,23 @@ export default function ContractDeliveryBatchDetailPage() {
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    Tên loại cà phê
+                    {t("contractDeliveryBatches.detail.items.table.headers.coffeeType")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Khối lượng cần giao
+                    {t("contractDeliveryBatches.detail.items.table.headers.plannedQuantity")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Khối lượng đã giao
+                    {t("contractDeliveryBatches.detail.items.table.headers.fulfilledQuantity")}
                   </th>
-                  <th className="px-4 py-2 text-left">Ghi chú</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-left">{t("contractDeliveryBatches.detail.items.table.headers.note")}</th>
+                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.detail.items.table.headers.actions")}</th>
                 </tr>
               </thead>
               <tbody>
                 {batch.contractDeliveryItems.length === 0 ? (
                   <tr>
                     <td className="py-8 text-center text-gray-500" colSpan={5}>
-                      Không có mặt hàng nào.
+                      {t("contractDeliveryBatches.detail.items.noItems")}
                     </td>
                   </tr>
                 ) : (
@@ -268,7 +247,7 @@ export default function ContractDeliveryBatchDetailPage() {
                       <td className="px-4 py-2">{item.note || "—"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content="Chỉnh sửa">
+                          <Tooltip content={t("contractDeliveryBatches.detail.items.tooltips.edit")}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -280,7 +259,7 @@ export default function ContractDeliveryBatchDetailPage() {
                               <Pencil className="h-4 w-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content="Xoá">
+                          <Tooltip content={t("contractDeliveryBatches.detail.items.tooltips.delete")}>
                             <Button
                               variant="ghost"
                               className="h-7 w-7 p-[2px]"
@@ -305,7 +284,7 @@ export default function ContractDeliveryBatchDetailPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
               <div className="text-sm text-gray-600">
-                Đang hiển thị{" "}
+                {t("contractDeliveryBatches.detail.pagination.showing")}{" "}
                 <span className="font-medium">
                   {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                 </span>
@@ -313,7 +292,7 @@ export default function ContractDeliveryBatchDetailPage() {
                 <span className="font-medium">
                   {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
                 </span>{" "}
-                / {totalItems} mặt hàng
+                {t("contractDeliveryBatches.detail.pagination.of")} {totalItems} {t("contractDeliveryBatches.detail.pagination.items")}
               </div>
               <div className="flex gap-2 justify-end mt-2 sm:mt-0">
                 <Button
@@ -325,10 +304,10 @@ export default function ContractDeliveryBatchDetailPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                 >
-                  ← Trước
+                  {t("contractDeliveryBatches.detail.pagination.previous")}
                 </Button>
                 <span className="flex items-center px-2">
-                  Trang{" "}
+                  {t("contractDeliveryBatches.detail.pagination.page")}{" "}
                   <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
                   {totalPages}
                 </span>
@@ -341,7 +320,7 @@ export default function ContractDeliveryBatchDetailPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                 >
-                  Sau →
+                  {t("contractDeliveryBatches.detail.pagination.next")}
                 </Button>
               </div>
             </div>
@@ -350,7 +329,7 @@ export default function ContractDeliveryBatchDetailPage() {
         {/* Footer */}
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={() => history.back()}>
-            ← Quay lại
+            {t("contractDeliveryBatches.detail.actions.back")}
           </Button>
         </div>
       </div>
@@ -383,16 +362,15 @@ export default function ContractDeliveryBatchDetailPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Xoá mặt hàng?"
+        title={t("contractDeliveryBatches.detail.deleteDialog.title")}
         description={
           <span>
-            Bạn có chắc chắn muốn xoá mặt hàng{" "}
-            <strong>{itemToDelete?.coffeeTypeName}</strong> khỏi đợt giao
-            không? Hành động này không thể hoàn tác.
+            {t("contractDeliveryBatches.detail.deleteDialog.description")}{" "}
+            <strong>{itemToDelete?.coffeeTypeName}</strong> {t("contractDeliveryBatches.detail.deleteDialog.fromDelivery")}
           </span>
         }
-        confirmText="Xoá"
-        cancelText="Huỷ"
+        confirmText={t("contractDeliveryBatches.detail.deleteDialog.confirm")}
+        cancelText={t("contractDeliveryBatches.detail.deleteDialog.cancel")}
         onConfirm={handleDelete}
       />
     </div>

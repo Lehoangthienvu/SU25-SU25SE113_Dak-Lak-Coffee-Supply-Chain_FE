@@ -5887,5 +5887,266 @@
       "noStaffDesc": "Start adding the first staff member",
       "noResultsDesc": "Try changing filters or search keywords"
     }
+  },
+  "contractDeliveryBatches": {
+    "title": "Delivery Batches",
+    "subtitle": "Manage and track delivery batches",
+    "stats": {
+      "totalBatches": "Total Batches",
+      "pendingBatches": "Pending Batches",
+      "completedBatches": "Completed Batches",
+      "totalQuantity": "Total Quantity"
+    },
+    "search": {
+      "title": "Search delivery batches",
+      "placeholder": "Search..."
+    },
+    "filters": {
+      "fromDate": "From date",
+      "toDate": "To date"
+    },
+    "actions": {
+      "createNew": "+ Create new delivery batch"
+    },
+    "table": {
+      "headers": {
+        "deliveryBatchCode": "Delivery Batch Code",
+        "contractNumber": "Contract Number",
+        "deliveryRound": "Round",
+        "expectedDeliveryDate": "Expected Date",
+        "quantity": "Quantity",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "quantityTooltip": "Quantity of coffee to be delivered in this batch, as determined by the contract.",
+      "loading": "Loading data...",
+      "noData": "No matching delivery batches found."
+    },
+    "status": {
+      "all": "All statuses",
+      "planned": "Planned",
+      "inProgress": "In Progress",
+      "fulfilled": "Fulfilled",
+      "cancelled": "Cancelled"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "–",
+      "of": "/",
+      "deliveryBatches": "delivery batches",
+      "page": "Page",
+      "previous": "← Previous",
+      "next": "Next →"
+    },
+    "delete": {
+      "title": "Delete delivery batch?",
+      "description": "Are you sure you want to delete delivery batch {deliveryBatchCode}? This action will hide the delivery batch from the list and cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Delivery batch deleted successfully!",
+      "error": "Failed to delete delivery batch!"
+    },
+    "errors": {
+      "loadBatches": "Cannot load delivery batches:",
+      "reloadBatches": "Cannot reload delivery batch list:",
+      "deleteFailed": "Delete failed:"
+    },
+    "filterPanel": {
+      "title": "Filter by status"
+    },
+    "create": {
+      "loading": "Loading...",
+      "errors": {
+        "loadContracts": "Cannot load contracts list."
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Create New Delivery Batch",
+        "edit": "Edit Delivery Batch"
+      },
+      "loading": "Initializing delivery batch form...",
+      "fields": {
+        "contract": "Contract",
+        "deliveryRound": "Delivery Round",
+        "expectedDeliveryDate": "Expected Date",
+        "totalPlannedQuantity": "Expected Quantity (kg)",
+        "status": "Status",
+        "note": "Note",
+        "deliveryItems": "Delivery Items List"
+      },
+      "placeholders": {
+        "selectContract": "-- Select Contract --",
+        "selectCoffeeType": "-- Select Coffee Type --",
+        "note": "Enter note (optional)",
+        "itemNote": "Note"
+      },
+      "validation": {
+        "selectContract": "Please select a contract.",
+        "selectExpectedDate": "Please select expected date.",
+        "pastDate": "Expected delivery date cannot be in the past.",
+        "deliveryRoundMin": "Delivery round must be ≥ 1.",
+        "atLeastOneItem": "Must have at least 1 delivery item.",
+        "selectCoffeeType": "Please select coffee type",
+        "quantityGreaterThanZero": "Quantity must be greater than 0",
+        "totalQuantityGreaterThanZero": "Total expected quantity must be > 0."
+      },
+      "actions": {
+        "addRow": "+ Add Row",
+        "remove": "Remove",
+        "save": "Save Changes",
+        "create": "Create Delivery Batch",
+        "back": "Back",
+        "autoUpdateTotal": "Auto Update Total"
+      },
+      "messages": {
+        "formNotReady": "Form is not ready, please try again.",
+        "checkFormErrors": "Please check and fix form errors",
+        "updateSuccess": "Delivery batch updated successfully!",
+        "createSuccess": "Delivery batch created successfully!",
+        "saveError": "An error occurred while saving delivery batch.",
+        "loadItemsError": "Cannot load delivery batch items.",
+        "loadContractItemsError": "Cannot load contract items.",
+        "autoUpdateTotalSuccess": "Total updated from items"
+      },
+      "businessRules": {
+        "title": "Business Rules to Follow:",
+        "summary": "📋 Summary:",
+        "guidance": "💡 Guidance:",
+        "adjustQuantity": "Need to adjust total quantity/value of delivery batch",
+        "removeDuplicate": "Need to remove duplicate items",
+        "changeInfo": "Need to change delivery batch information",
+        "contactAdmin": "Need to contact admin",
+        "checkQuantity": "• Check total quantity of items",
+        "ensureNotExceed": "• Ensure total from items does not exceed declared total",
+        "increaseTotal": "• Or increase delivery batch total quantity",
+        "noDuplicateCoffee": "• Cannot have 2 delivery batch lines with same coffee type",
+        "changeDeliveryInfo": "• Delivery batch information already exists, please change to different information",
+        "contactAdminForPermission": "• Contact admin for appropriate permissions",
+        "checkNegativeValues": "• Check numeric values cannot be negative",
+        "checkMinMaxConditions": "• Check min/max value conditions"
+      },
+      "table": {
+        "headers": {
+          "coffeeType": "Coffee Type",
+          "quantity": "Quantity (kg)",
+          "fulfilled": "Fulfilled (kg)",
+          "note": "Note",
+          "actions": ""
+        }
+      },
+      "summary": {
+        "totalQuantity": "Total row quantity:",
+        "totalFulfilled": "Total fulfilled:",
+        "completed": " Completed"
+      },
+      "status": {
+        "defaultNote": " New delivery batch will have \"In Progress\" status by default"
+      }
+    },
+    "detail": {
+      "loading": "Loading data...",
+      "notFound": "Delivery batch not found.",
+      "title": "Delivery Batch:",
+      "actions": {
+        "edit": "✏️ Edit",
+        "addItem": "+ Add Item",
+        "back": "← Back"
+      },
+      "info": {
+        "title": "Delivery Batch Information",
+        "contractNumber": "Contract Number:",
+        "contractTitle": "Contract Title:",
+        "deliveryRound": "Delivery Round:",
+        "expectedDate": "Expected Date:",
+        "quantity": "Quantity:",
+        "status": "Status:",
+        "createdAt": "Created At:",
+        "updatedAt": "Updated At:"
+      },
+      "items": {
+        "title": "Delivery Items List",
+        "noItems": "No items found.",
+        "table": {
+          "headers": {
+            "coffeeType": "Coffee Type Name",
+            "plannedQuantity": "Planned Quantity",
+            "fulfilledQuantity": "Fulfilled Quantity",
+            "note": "Note",
+            "actions": "Actions"
+          }
+        },
+        "tooltips": {
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "/",
+        "items": "items",
+        "page": "Page",
+        "previous": "← Previous",
+        "next": "Next →"
+      },
+      "deleteDialog": {
+        "title": "Delete Item?",
+        "description": "Are you sure you want to delete item",
+        "fromDelivery": "from delivery batch? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "loadData": "Error loading data:",
+        "deleteFailed": "Delete failed:",
+        "deleteError": "Cannot delete item. Please try again."
+      }
+    },
+    "itemFormDialog": {
+      "title": {
+        "create": "Add Delivery Item",
+        "edit": "Update Delivery Item"
+      },
+      "fields": {
+        "coffeeType": "Coffee Type",
+        "plannedQuantity": "Planned Quantity (kg)",
+        "fulfilledQuantity": "Fulfilled Quantity (kg)",
+        "note": "Note"
+      },
+      "placeholders": {
+        "selectCoffeeType": "-- Select Coffee Type --",
+        "note": "Enter note (optional)"
+      },
+      "validation": {
+        "selectCoffeeType": "Please select coffee type",
+        "plannedQuantityRequired": "Planned quantity is required",
+        "plannedQuantityGreaterThanZero": "Planned quantity must be greater than 0",
+        "plannedQuantityExceedLimit": "Planned quantity cannot exceed delivery batch limit",
+        "fulfilledQuantityNotNegative": "Fulfilled quantity cannot be negative",
+        "fulfilledQuantityNotExceedPlanned": "Fulfilled quantity cannot exceed planned quantity",
+        "noteMaxLength": "Note cannot exceed 1000 characters",
+        "totalQuantityExceedLimit": "Total quantity exceeds delivery batch limit"
+      },
+      "businessRules": {
+        "title": "Business Rules to Follow:",
+        "rules": "rules"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "add": "Add",
+        "update": "Update",
+        "saving": "Saving..."
+      },
+      "messages": {
+        "checkFormErrors": "Please check and fix form errors",
+        "addSuccess": "Item added to delivery batch successfully!",
+        "updateSuccess": "Item updated successfully!",
+        "saveError": "An error occurred while saving delivery item."
+      },
+      "labels": {
+        "limit": "Limit:",
+        "kg": "kg"
+      }
+    }
   }
 }

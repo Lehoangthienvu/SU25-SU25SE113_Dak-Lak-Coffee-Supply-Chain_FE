@@ -23,6 +23,7 @@ import {
 import { ContractItemViewDto } from "@/lib/api/contractItems";
 import { toast } from "sonner";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 interface ContractDeliveryItemFormDialogProps {
   open: boolean;
@@ -45,6 +46,7 @@ export default function ContractDeliveryItemFormDialog({
   onSuccess,
   batchTotalQuantity,
 }: ContractDeliveryItemFormDialogProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<
     ContractDeliveryItemCreateDto | ContractDeliveryItemUpdateDto
   >({
@@ -119,8 +121,7 @@ export default function ContractDeliveryItemFormDialog({
         // Nếu fulfilledQuantity > plannedQuantity mới, hiển thị lỗi
         setFieldErrors((prev) => ({
           ...prev,
-          fulfilledQuantity:
-            "Khối lượng đã giao không được vượt quá khối lượng cần giao",
+          fulfilledQuantity: t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned"),
         }));
       } else {
         // Nếu hợp lệ, xóa lỗi
@@ -140,7 +141,7 @@ export default function ContractDeliveryItemFormDialog({
     switch (fieldName) {
       case "contractItemId":
         if (!value || value === "") {
-          newErrors[fieldName] = "Vui lòng chọn loại cà phê";
+          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType");
         } else {
           delete newErrors[fieldName];
         }
@@ -149,13 +150,13 @@ export default function ContractDeliveryItemFormDialog({
       case "plannedQuantity":
         const plannedQuantity = Number(value);
         if (!value || value === "" || isNaN(plannedQuantity)) {
-          newErrors[fieldName] = "Số lượng dự kiến là bắt buộc";
+          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityRequired");
         } else if (plannedQuantity <= 0) {
-          newErrors[fieldName] = "Số lượng dự kiến phải lớn hơn 0";
+          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero");
         } else if (batchTotalQuantity && plannedQuantity > batchTotalQuantity) {
           newErrors[
             fieldName
-          ] = `Số lượng dự kiến không được vượt quá giới hạn của đợt giao (${batchTotalQuantity} kg)`;
+          ] = `${t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityExceedLimit")} (${batchTotalQuantity} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")})`;
         } else {
           delete newErrors[fieldName];
         }
@@ -166,10 +167,9 @@ export default function ContractDeliveryItemFormDialog({
         if (mode === "edit" && value !== "" && !isNaN(Number(value))) {
           const fulfilledQuantity = Number(value);
           if (fulfilledQuantity < 0) {
-            newErrors[fieldName] = "Số lượng đã giao không được âm";
+            newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative");
           } else if (fulfilledQuantity > (formData.plannedQuantity || 0)) {
-            newErrors[fieldName] =
-              "Khối lượng đã giao không được vượt quá khối lượng cần giao";
+            newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned");
           } else {
             delete newErrors[fieldName];
           }
@@ -180,7 +180,7 @@ export default function ContractDeliveryItemFormDialog({
 
       case "note":
         if (value && value.length > 1000) {
-          newErrors[fieldName] = "Ghi chú không được vượt quá 1000 ký tự";
+          newErrors[fieldName] = t("contractDeliveryBatches.itemFormDialog.validation.noteMaxLength");
         } else {
           delete newErrors[fieldName];
         }
@@ -210,11 +210,11 @@ export default function ContractDeliveryItemFormDialog({
 
     // Validate tất cả fields
     if (!formData.contractItemId || formData.contractItemId === "") {
-      clientErrors.contractItemId = "Vui lòng chọn loại cà phê";
+      clientErrors.contractItemId = t("contractDeliveryBatches.itemFormDialog.validation.selectCoffeeType");
     }
 
     if (!formData.plannedQuantity || formData.plannedQuantity <= 0) {
-      clientErrors.plannedQuantity = "Số lượng dự kiến phải lớn hơn 0";
+      clientErrors.plannedQuantity = t("contractDeliveryBatches.itemFormDialog.validation.plannedQuantityGreaterThanZero");
     }
 
     // Kiểm tra fulfilledQuantity không vượt quá plannedQuantity (chỉ khi ở mode edit)
@@ -224,12 +224,11 @@ export default function ContractDeliveryItemFormDialog({
       (formData as any).fulfilledQuantity !== null
     ) {
       if ((formData as any).fulfilledQuantity < 0) {
-        clientErrors.fulfilledQuantity = "Số lượng đã giao không được âm";
+        clientErrors.fulfilledQuantity = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotNegative");
       } else if (
         (formData as any).fulfilledQuantity > (formData.plannedQuantity || 0)
       ) {
-        clientErrors.fulfilledQuantity =
-          "Khối lượng đã giao không được vượt quá khối lượng cần giao";
+        clientErrors.fulfilledQuantity = t("contractDeliveryBatches.itemFormDialog.validation.fulfilledQuantityNotExceedPlanned");
       }
     }
 
@@ -248,19 +247,19 @@ export default function ContractDeliveryItemFormDialog({
       }
 
       if (currentTotalPlanned > batchTotalQuantity) {
-        clientErrors.plannedQuantity = `Tổng khối lượng (${currentTotalPlanned} kg) vượt quá giới hạn của đợt giao (${batchTotalQuantity} kg)`;
+        clientErrors.plannedQuantity = `${t("contractDeliveryBatches.itemFormDialog.validation.totalQuantityExceedLimit")} (${currentTotalPlanned} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")}) vượt quá giới hạn của đợt giao (${batchTotalQuantity} ${t("contractDeliveryBatches.itemFormDialog.labels.kg")})`;
       }
     }
 
     if (formData.note && formData.note.length > 1000) {
-      clientErrors.note = "Ghi chú không được vượt quá 1000 ký tự";
+      clientErrors.note = t("contractDeliveryBatches.itemFormDialog.validation.noteMaxLength");
     }
 
     // Nếu có lỗi client-side, hiển thị và dừng
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
       setLoading(false);
-      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      toast.error(t("contractDeliveryBatches.itemFormDialog.messages.checkFormErrors"));
       return;
     }
 
@@ -269,12 +268,12 @@ export default function ContractDeliveryItemFormDialog({
         await createContractDeliveryItem(
           formData as ContractDeliveryItemCreateDto
         );
-        toast.success("Đã thêm mặt hàng vào đợt giao thành công!");
+        toast.success(t("contractDeliveryBatches.itemFormDialog.messages.addSuccess"));
       } else {
         await updateContractDeliveryItem(
           formData as ContractDeliveryItemUpdateDto
         );
-        toast.success("Cập nhật mặt hàng thành công!");
+        toast.success(t("contractDeliveryBatches.itemFormDialog.messages.updateSuccess"));
       }
 
       onSuccess?.();
@@ -477,7 +476,7 @@ export default function ContractDeliveryItemFormDialog({
             toast.error(errorMessage);
           }
         } else {
-          toast.error("Đã xảy ra lỗi khi lưu mặt hàng đợt giao.");
+          toast.error(t("contractDeliveryBatches.itemFormDialog.messages.saveError"));
         }
       }
     } finally {
@@ -491,8 +490,8 @@ export default function ContractDeliveryItemFormDialog({
         <BaseDialog.DialogHeader className="px-5 pt-5 pb-0">
           <BaseDialog.DialogTitle>
             {mode === "create"
-              ? "Thêm mặt hàng đợt giao"
-              : "Cập nhật mặt hàng đợt giao"}
+              ? t("contractDeliveryBatches.itemFormDialog.title.create")
+              : t("contractDeliveryBatches.itemFormDialog.title.edit")}
           </BaseDialog.DialogTitle>
         </BaseDialog.DialogHeader>
 
@@ -502,10 +501,10 @@ export default function ContractDeliveryItemFormDialog({
             <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-orange-800 font-medium">
-                  Cần tuân thủ quy tắc nghiệp vụ:
+                  {t("contractDeliveryBatches.itemFormDialog.businessRules.title")}
                 </h3>
                 <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-                  {businessErrors.length} quy tắc
+                  {businessErrors.length} {t("contractDeliveryBatches.itemFormDialog.businessRules.rules")}
                 </span>
               </div>
 
@@ -521,7 +520,7 @@ export default function ContractDeliveryItemFormDialog({
           )}
 
           <div className="grid gap-1">
-            <Label htmlFor="contractItemId">Loại cà phê</Label>
+            <Label htmlFor="contractItemId">{t("contractDeliveryBatches.itemFormDialog.fields.coffeeType")}</Label>
             <Select
               value={formData.contractItemId || undefined} // Khi rỗng -> undefined để hiện placeholder
               onValueChange={(value) => {
@@ -540,7 +539,7 @@ export default function ContractDeliveryItemFormDialog({
                   hasFieldError("contractItemId") ? "border-red-500" : ""
                 }`}
               >
-                <SelectValue placeholder="-- Chọn loại cà phê --" />
+                <SelectValue placeholder={t("contractDeliveryBatches.itemFormDialog.placeholders.selectCoffeeType")} />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {contractItems.map((item) => (
@@ -562,10 +561,10 @@ export default function ContractDeliveryItemFormDialog({
 
           <div className="grid gap-1">
             <Label htmlFor="plannedQuantity">
-              Khối lượng cần giao (kg)
+              {t("contractDeliveryBatches.itemFormDialog.fields.plannedQuantity")}
               {batchTotalQuantity && (
                 <span className="text-gray-500 text-sm ml-2">
-                  (Giới hạn: {batchTotalQuantity} kg)
+                  ({t("contractDeliveryBatches.itemFormDialog.labels.limit")} {batchTotalQuantity} {t("contractDeliveryBatches.itemFormDialog.labels.kg")})
                 </span>
               )}
             </Label>
@@ -590,7 +589,7 @@ export default function ContractDeliveryItemFormDialog({
 
           {mode === "edit" && "fulfilledQuantity" in formData && (
             <div className="grid gap-1">
-              <Label htmlFor="fulfilledQuantity">Khối lượng đã giao (kg)</Label>
+              <Label htmlFor="fulfilledQuantity">{t("contractDeliveryBatches.itemFormDialog.fields.fulfilledQuantity")}</Label>
               <Input
                 id="fulfilledQuantity"
                 name="fulfilledQuantity"
@@ -614,13 +613,13 @@ export default function ContractDeliveryItemFormDialog({
           )}
 
           <div className="grid gap-1">
-            <Label htmlFor="note">Ghi chú</Label>
+            <Label htmlFor="note">{t("contractDeliveryBatches.itemFormDialog.fields.note")}</Label>
             <Textarea
               id="note"
               name="note"
               value={formData.note}
               onChange={handleChange}
-              placeholder="Nhập ghi chú (tuỳ chọn)"
+              placeholder={t("contractDeliveryBatches.itemFormDialog.placeholders.note")}
               className={hasFieldError("note") ? "border-red-500" : ""}
             />
             {hasFieldError("note") && (
@@ -637,14 +636,14 @@ export default function ContractDeliveryItemFormDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Huỷ
+            {t("contractDeliveryBatches.itemFormDialog.actions.cancel")}
           </Button>
           <Button
             className="bg-orange-500 hover:bg-orange-600 text-white"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Đang lưu..." : mode === "create" ? "Thêm" : "Cập nhật"}
+            {loading ? t("contractDeliveryBatches.itemFormDialog.actions.saving") : mode === "create" ? t("contractDeliveryBatches.itemFormDialog.actions.add") : t("contractDeliveryBatches.itemFormDialog.actions.update")}
           </Button>
         </div>
       </FormDialog.Content>

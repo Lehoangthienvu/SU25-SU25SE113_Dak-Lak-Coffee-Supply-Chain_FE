@@ -5924,5 +5924,266 @@
       "noStaffDesc": "Bắt đầu thêm nhân viên đầu tiên",
       "noResultsDesc": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm"
     }
+  },
+  "contractDeliveryBatches": {
+    "title": "Lô giao",
+    "subtitle": "Quản lý và theo dõi các lô giao",
+    "stats": {
+      "totalBatches": "Tổng lô",
+      "pendingBatches": "Lô chờ",
+      "completedBatches": "Lô đã giao",
+      "totalQuantity": "Tổng số lượng"
+    },
+    "search": {
+      "title": "Tìm kiếm đợt giao",
+      "placeholder": "Tìm kiếm..."
+    },
+    "filters": {
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày"
+    },
+    "actions": {
+      "createNew": "+ Tạo đợt giao hàng mới"
+    },
+    "table": {
+      "headers": {
+        "deliveryBatchCode": "Mã đợt giao",
+        "contractNumber": "Số hợp đồng",
+        "deliveryRound": "Đợt",
+        "expectedDeliveryDate": "Ngày dự kiến",
+        "quantity": "Khối lượng",
+        "status": "Trạng thái",
+        "actions": "Hành động"
+      },
+      "quantityTooltip": "Khối lượng cà phê cần giao trong đợt này, đã được xác định theo hợp đồng.",
+      "loading": "Đang tải dữ liệu...",
+      "noData": "Không có đợt giao hàng phù hợp."
+    },
+    "status": {
+      "all": "Tất cả trạng thái",
+      "planned": "Chuẩn bị giao",
+      "inProgress": "Đang thực hiện",
+      "fulfilled": "Hoàn thành",
+      "cancelled": "Đã huỷ"
+    },
+    "pagination": {
+      "showing": "Đang hiển thị",
+      "to": "–",
+      "of": "/",
+      "deliveryBatches": "đợt giao hàng",
+      "page": "Trang",
+      "previous": "← Trước",
+      "next": "Sau →"
+    },
+    "delete": {
+      "title": "Xoá đợt giao hàng?",
+      "description": "Bạn có chắc chắn muốn xoá đợt giao hàng {deliveryBatchCode} không? Hành động này sẽ ẩn đợt giao khỏi danh sách và không thể hoàn tác.",
+      "confirm": "Xoá",
+      "cancel": "Huỷ",
+      "success": "Xóa đợt giao hàng thành công!",
+      "error": "Xóa đợt giao hàng thất bại!"
+    },
+    "errors": {
+      "loadBatches": "Không thể lấy được lô hàng:",
+      "reloadBatches": "Không thể làm mới danh sách đợt giao hàng:",
+      "deleteFailed": "Xoá thất bại:"
+    },
+    "filterPanel": {
+      "title": "Lọc theo trạng thái"
+    },
+    "create": {
+      "loading": "Đang tải...",
+      "errors": {
+        "loadContracts": "Không thể tải danh sách hợp đồng."
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Tạo đợt giao mới",
+        "edit": "Chỉnh sửa đợt giao"
+      },
+      "loading": "Đang khởi tạo biểu mẫu đợt giao...",
+      "fields": {
+        "contract": "Hợp đồng",
+        "deliveryRound": "Đợt giao",
+        "expectedDeliveryDate": "Ngày dự kiến",
+        "totalPlannedQuantity": "Khối lượng dự kiến (kg)",
+        "status": "Trạng thái",
+        "note": "Ghi chú",
+        "deliveryItems": "Danh sách mặt hàng đợt giao"
+      },
+      "placeholders": {
+        "selectContract": "-- Chọn hợp đồng --",
+        "selectCoffeeType": "-- Chọn loại cà phê --",
+        "note": "Nhập ghi chú (tuỳ chọn)",
+        "itemNote": "Ghi chú"
+      },
+      "validation": {
+        "selectContract": "Vui lòng chọn hợp đồng.",
+        "selectExpectedDate": "Vui lòng chọn ngày dự kiến.",
+        "pastDate": "Ngày giao dự kiến không được ở quá khứ.",
+        "deliveryRoundMin": "Số đợt phải ≥ 1.",
+        "atLeastOneItem": "Phải có ít nhất 1 dòng sản phẩm giao hàng.",
+        "selectCoffeeType": "Vui lòng chọn loại cà phê",
+        "quantityGreaterThanZero": "Số lượng phải lớn hơn 0",
+        "totalQuantityGreaterThanZero": "Tổng khối lượng dự kiến phải > 0."
+      },
+      "actions": {
+        "addRow": "+ Thêm dòng",
+        "remove": "Xoá",
+        "save": "Lưu thay đổi",
+        "create": "Tạo đợt giao",
+        "back": "Quay lại",
+        "autoUpdateTotal": "Tự động cập nhật tổng"
+      },
+      "messages": {
+        "formNotReady": "Biểu mẫu chưa sẵn sàng, vui lòng thử lại.",
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+        "updateSuccess": "Cập nhật đợt giao thành công!",
+        "createSuccess": "Tạo đợt giao thành công!",
+        "saveError": "Đã xảy ra lỗi khi lưu đợt giao.",
+        "loadItemsError": "Không tải được danh sách mặt hàng của đợt giao.",
+        "loadContractItemsError": "Không thể tải danh sách mặt hàng của hợp đồng.",
+        "autoUpdateTotalSuccess": "Đã cập nhật tổng từ mặt hàng"
+      },
+      "businessRules": {
+        "title": "Cần tuân thủ quy tắc nghiệp vụ:",
+        "summary": "📋 Tóm tắt:",
+        "guidance": "💡 Hướng dẫn:",
+        "adjustQuantity": "Cần điều chỉnh tổng khối lượng/giá trị đợt giao",
+        "removeDuplicate": "Cần loại bỏ mặt hàng trùng loại",
+        "changeInfo": "Cần đổi thông tin đợt giao",
+        "contactAdmin": "Cần liên hệ admin",
+        "checkQuantity": "• Kiểm tra lại tổng khối lượng của các mặt hàng",
+        "ensureNotExceed": "• Đảm bảo tổng từ các mặt hàng không vượt quá tổng đã khai báo",
+        "increaseTotal": "• Hoặc tăng tổng khối lượng đợt giao lên",
+        "noDuplicateCoffee": "• Không được có 2 dòng đợt giao cùng loại cà phê",
+        "changeDeliveryInfo": "• Thông tin đợt giao đã tồn tại, hãy đổi thông tin khác",
+        "contactAdminForPermission": "• Liên hệ admin để được cấp quyền phù hợp",
+        "checkNegativeValues": "• Kiểm tra các giá trị số không được âm",
+        "checkMinMaxConditions": "• Kiểm tra các điều kiện về giá trị min/max"
+      },
+      "table": {
+        "headers": {
+          "coffeeType": "Loại cà phê",
+          "quantity": "Số lượng (kg)",
+          "fulfilled": "Đã giao (kg)",
+          "note": "Ghi chú",
+          "actions": ""
+        }
+      },
+      "summary": {
+        "totalQuantity": "Tổng khối lượng dòng:",
+        "totalFulfilled": "Tổng đã giao:",
+        "completed": " Hoàn thành"
+      },
+      "status": {
+        "defaultNote": " Đợt giao mới sẽ có trạng thái \"Đang thực hiện\" mặc định"
+      }
+    },
+    "detail": {
+      "loading": "Đang tải dữ liệu...",
+      "notFound": "Không tìm thấy đợt giao hàng.",
+      "title": "Đợt giao:",
+      "actions": {
+        "edit": " Chỉnh sửa",
+        "addItem": "+ Thêm mặt hàng",
+        "back": "← Quay lại"
+      },
+      "info": {
+        "title": "Thông tin đợt giao",
+        "contractNumber": "Số hợp đồng:",
+        "contractTitle": "Tên hợp đồng:",
+        "deliveryRound": "Đợt giao:",
+        "expectedDate": "Ngày dự kiến:",
+        "quantity": "Khối lượng:",
+        "status": "Trạng thái:",
+        "createdAt": "Ngày tạo:",
+        "updatedAt": "Ngày cập nhật:"
+      },
+      "items": {
+        "title": "Danh sách mặt hàng giao",
+        "noItems": "Không có mặt hàng nào.",
+        "table": {
+          "headers": {
+            "coffeeType": "Tên loại cà phê",
+            "plannedQuantity": "Khối lượng cần giao",
+            "fulfilledQuantity": "Khối lượng đã giao",
+            "note": "Ghi chú",
+            "actions": "Hành động"
+          }
+        },
+        "tooltips": {
+          "edit": "Chỉnh sửa",
+          "delete": "Xoá"
+        }
+      },
+      "pagination": {
+        "showing": "Đang hiển thị",
+        "of": "/",
+        "items": "mặt hàng",
+        "page": "Trang",
+        "previous": "← Trước",
+        "next": "Sau →"
+      },
+      "deleteDialog": {
+        "title": "Xoá mặt hàng?",
+        "description": "Bạn có chắc chắn muốn xoá mặt hàng",
+        "fromDelivery": "khỏi đợt giao không? Hành động này không thể hoàn tác.",
+        "confirm": "Xoá",
+        "cancel": "Huỷ"
+      },
+      "errors": {
+        "loadData": "Lỗi khi tải dữ liệu:",
+        "deleteFailed": "Xoá thất bại:",
+        "deleteError": "Không thể xoá mặt hàng. Vui lòng thử lại."
+      }
+    },
+    "itemFormDialog": {
+      "title": {
+        "create": "Thêm mặt hàng đợt giao",
+        "edit": "Cập nhật mặt hàng đợt giao"
+      },
+      "fields": {
+        "coffeeType": "Loại cà phê",
+        "plannedQuantity": "Khối lượng cần giao (kg)",
+        "fulfilledQuantity": "Khối lượng đã giao (kg)",
+        "note": "Ghi chú"
+      },
+      "placeholders": {
+        "selectCoffeeType": "-- Chọn loại cà phê --",
+        "note": "Nhập ghi chú (tuỳ chọn)"
+      },
+      "validation": {
+        "selectCoffeeType": "Vui lòng chọn loại cà phê",
+        "plannedQuantityRequired": "Số lượng dự kiến là bắt buộc",
+        "plannedQuantityGreaterThanZero": "Số lượng dự kiến phải lớn hơn 0",
+        "plannedQuantityExceedLimit": "Số lượng dự kiến không được vượt quá giới hạn của đợt giao",
+        "fulfilledQuantityNotNegative": "Số lượng đã giao không được âm",
+        "fulfilledQuantityNotExceedPlanned": "Khối lượng đã giao không được vượt quá khối lượng cần giao",
+        "noteMaxLength": "Ghi chú không được vượt quá 1000 ký tự",
+        "totalQuantityExceedLimit": "Tổng khối lượng vượt quá giới hạn của đợt giao"
+      },
+      "businessRules": {
+        "title": "Cần tuân thủ quy tắc nghiệp vụ:",
+        "rules": "quy tắc"
+      },
+      "actions": {
+        "cancel": "Huỷ",
+        "add": "Thêm",
+        "update": "Cập nhật",
+        "saving": "Đang lưu..."
+      },
+      "messages": {
+        "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+        "addSuccess": "Đã thêm mặt hàng vào đợt giao thành công!",
+        "updateSuccess": "Cập nhật mặt hàng thành công!",
+        "saveError": "Đã xảy ra lỗi khi lưu mặt hàng đợt giao."
+      },
+      "labels": {
+        "limit": "Giới hạn:",
+        "kg": "kg"
+      }
+    }
   }
 }
