@@ -1,6 +1,6 @@
-import { ContractDeliveryBatchStatus } from "@/lib/constants/contractDeliveryBatchStatus";
-import { deliveryBatchDisplayMap } from "@/lib/constants/contractDeliveryBatchStatus";
+import { ContractDeliveryBatchStatus, getDeliveryBatchDisplayMap } from "@/lib/constants/contractDeliveryBatchStatus";
 import FilterBadge from "../crop-seasons/FilterBadge";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   selectedStatus: ContractDeliveryBatchStatus | "ALL";
@@ -15,17 +15,23 @@ export default function FilterDeliveryBatchStatusPanel({
   statusCounts,
   displayMap,
 }: Props) {
+  const { t } = useTranslation();
+  
+  // Sử dụng function mới để lấy display map theo ngôn ngữ
+  const i18nDisplayMap = getDeliveryBatchDisplayMap(t);
+  const currentDisplayMap = displayMap || i18nDisplayMap;
+  
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
-      <h2 className="text-sm font-medium text-gray-700">Lọc theo trạng thái</h2>
+      <h2 className="text-sm font-medium text-gray-700">{t("contractDeliveryBatches.filterPanel.title")}</h2>
 
       {/* Tất cả */}
       <FilterBadge
-        icon={(displayMap || deliveryBatchDisplayMap)["ALL"].icon}
-        label={(displayMap || deliveryBatchDisplayMap)["ALL"].label}
+        icon={currentDisplayMap["ALL"].icon}
+        label={currentDisplayMap["ALL"].label}
         color="orange"
         count={
-          (displayMap || deliveryBatchDisplayMap)["ALL"].count ||
+          currentDisplayMap["ALL"].count ||
           Object.values(statusCounts).reduce((sum, val) => sum + val, 0)
         }
         active={selectedStatus === "ALL"}
@@ -33,7 +39,7 @@ export default function FilterDeliveryBatchStatusPanel({
       />
 
       {/* Các trạng thái cụ thể */}
-      {Object.entries(displayMap || deliveryBatchDisplayMap).map(
+      {Object.entries(currentDisplayMap).map(
         ([key, { label, color, icon }]) => {
           if (key === "ALL") return null;
           const count = statusCounts[key] || 0;

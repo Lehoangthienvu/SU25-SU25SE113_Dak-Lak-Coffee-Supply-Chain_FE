@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   ContractDeliveryBatchStatus,
-  ContractDeliveryBatchStatusLabel,
+  getDeliveryBatchDisplayMap,
 } from "@/lib/constants/contractDeliveryBatchStatus";
 import { formatDate, cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -27,43 +27,44 @@ import {
   softDeleteContractDeliveryBatch,
 } from "@/lib/api/contractDeliveryBatches";
 import FilterDeliveryBatchStatusPanel from "@/components/contract-delivery-batches/FilterDeliveryBatchStatusPanel";
-import { deliveryBatchDisplayMap } from "@/lib/constants/contractDeliveryBatchStatus";
 import { Tooltip } from "@/components/ui/tooltip";
 import { formatQuantity } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
+import { useTranslation } from "react-i18next";
 
 function getDeliveryBatchStatusDisplay(
-  status: ContractDeliveryBatchStatus | "ALL"
+  status: ContractDeliveryBatchStatus | "ALL",
+  t: any
 ) {
   switch (status) {
     case "ALL":
       return {
-        label: "Tất cả trạng thái",
+        label: t("contractDeliveryBatches.status.all"),
         icon: <FileText className="w-4 h-4 text-gray-500" />,
         className: "bg-gray-100 text-gray-600",
       };
     case ContractDeliveryBatchStatus.Planned:
       return {
-        label: "Chuẩn bị giao",
+        label: t("contractDeliveryBatches.status.planned"),
         icon: <Package className="w-4 h-4 text-purple-500" />,
         className: "bg-purple-100 text-purple-700",
       };
     case ContractDeliveryBatchStatus.InProgress:
       return {
-        label: "Đang thực hiện",
+        label: t("contractDeliveryBatches.status.inProgress"),
         icon: <Truck className="w-4 h-4 text-green-500" />,
         className: "bg-green-100 text-green-700",
       };
     case ContractDeliveryBatchStatus.Fulfilled:
       return {
-        label: "Hoàn thành",
+        label: t("contractDeliveryBatches.status.fulfilled"),
         icon: <CheckCircle className="w-4 h-4 text-blue-500" />,
         className: "bg-blue-100 text-blue-700",
       };
     case ContractDeliveryBatchStatus.Cancelled:
       return {
-        label: "Đã huỷ",
+        label: t("contractDeliveryBatches.status.cancelled"),
         icon: <XCircle className="w-4 h-4 text-red-500" />,
         className: "bg-red-100 text-red-700",
       };
@@ -77,10 +78,11 @@ function getDeliveryBatchStatusDisplay(
 }
 
 export default function ContractDeliveryBatchesPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<
     "ALL" | ContractDeliveryBatchStatus
-  >("ALL");
+>("ALL");
   const [data, setData] = useState<ContractDeliveryBatchViewAllDto[]>([]);
   const [loading, setLoading] = useState(true);
   const ITEMS_PER_PAGE = 6;
@@ -100,7 +102,7 @@ export default function ContractDeliveryBatchesPage() {
         const result = await getAllContractDeliveryBatches();
         setData(result);
       } catch (err) {
-        console.error("Không thể lấy được lô hàng:", err);
+        console.error(t("contractDeliveryBatches.errors.loadBatches"), err);
       } finally {
         setLoading(false);
       }
@@ -164,14 +166,15 @@ export default function ContractDeliveryBatchesPage() {
   );
 
   // Tạo displayMap đã lọc, bỏ trạng thái "Chuẩn bị giao" (Planned)
+  const i18nDisplayMap = getDeliveryBatchDisplayMap(t);
   const filteredDisplayMap: Record<string, any> = {
-    ALL: { ...deliveryBatchDisplayMap.ALL, count: totalFilteredCount },
+    ALL: { ...i18nDisplayMap.ALL, count: totalFilteredCount },
     [ContractDeliveryBatchStatus.InProgress]:
-      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.InProgress],
+      i18nDisplayMap[ContractDeliveryBatchStatus.InProgress],
     [ContractDeliveryBatchStatus.Fulfilled]:
-      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.Fulfilled],
+      i18nDisplayMap[ContractDeliveryBatchStatus.Fulfilled],
     [ContractDeliveryBatchStatus.Cancelled]:
-      deliveryBatchDisplayMap[ContractDeliveryBatchStatus.Cancelled],
+      i18nDisplayMap[ContractDeliveryBatchStatus.Cancelled],
   };
 
   useEffect(() => {
@@ -184,7 +187,7 @@ export default function ContractDeliveryBatchesPage() {
       const result = await getAllContractDeliveryBatches();
       setData(result);
     } catch (err) {
-      console.error("Không thể làm mới danh sách đợt giao hàng:", err);
+      console.error(t("contractDeliveryBatches.errors.reloadBatches"), err);
     } finally {
       setLoading(false);
     }
@@ -197,10 +200,10 @@ export default function ContractDeliveryBatchesPage() {
       setShowDeleteDialog(false);
       setBatchToDelete(null);
       reloadData(); // hoặc fetch lại danh sách
-      toast.success("Xóa đợt giao hàng thành công!");
+      toast.success(t("contractDeliveryBatches.delete.success"));
     } catch (error) {
-      console.error("Xoá thất bại:", error);
-      toast.error("Xóa đợt giao hàng thất bại!");
+      console.error(t("contractDeliveryBatches.errors.deleteFailed"), error);
+      toast.error(t("contractDeliveryBatches.delete.error"));
     }
   };
 
@@ -211,11 +214,11 @@ export default function ContractDeliveryBatchesPage() {
         {/* Tìm kiếm */}
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            Tìm kiếm đợt giao
+            {t("contractDeliveryBatches.search.title")}
           </h2>
           <div className="relative">
             <Input
-              placeholder="Tìm kiếm..."
+              placeholder={t("contractDeliveryBatches.search.placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
@@ -242,7 +245,7 @@ export default function ContractDeliveryBatchesPage() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Từ ngày
+                  {t("contractDeliveryBatches.filters.fromDate")}
                 </label>
                 <Input
                   type="date"
@@ -257,7 +260,7 @@ export default function ContractDeliveryBatchesPage() {
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  Đến ngày
+                  {t("contractDeliveryBatches.filters.toDate")}
                 </label>
                 <Input
                   type="date"
@@ -279,7 +282,7 @@ export default function ContractDeliveryBatchesPage() {
                 )
               }
             >
-              + Tạo đợt giao hàng mới
+              {t("contractDeliveryBatches.actions.createNew")}
             </Button>
           </div>
 
@@ -288,33 +291,33 @@ export default function ContractDeliveryBatchesPage() {
             <table className="min-w-full table-auto text-sm border border-gray-200">
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <th className="px-4 py-2 text-left">Mã đợt giao</th>
-                  <th className="px-4 py-2 text-left">Số hợp đồng</th>
-                  <th className="px-4 py-2 text-center">Đợt</th>
+                  <th className="px-4 py-2 text-left">{t("contractDeliveryBatches.table.headers.deliveryBatchCode")}</th>
+                  <th className="px-4 py-2 text-left">{t("contractDeliveryBatches.table.headers.contractNumber")}</th>
+                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.deliveryRound")}</th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Ngày dự kiến
+                    {t("contractDeliveryBatches.table.headers.expectedDeliveryDate")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    Khối lượng
-                    <Tooltip content="Khối lượng cà phê cần giao trong đợt này, đã được xác định theo hợp đồng.">
+                    {t("contractDeliveryBatches.table.headers.quantity")}
+                    <Tooltip content={t("contractDeliveryBatches.table.quantityTooltip")}>
                       <Info className="inline ml-1 w-3 h-3 text-gray-400" />
                     </Tooltip>
                   </th>
-                  <th className="px-4 py-2 text-center">Trạng thái</th>
-                  <th className="px-4 py-2 text-center">Hành động</th>
+                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.status")}</th>
+                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.actions")}</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="text-center py-6 text-gray-500">
-                      Đang tải dữ liệu...
+                      {t("contractDeliveryBatches.table.loading")}
                     </td>
                   </tr>
                 ) : filteredData.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-center py-6 text-gray-500">
-                      Không có đợt giao hàng phù hợp.
+                      {t("contractDeliveryBatches.table.noData")}
                     </td>
                   </tr>
                 ) : (
@@ -341,7 +344,8 @@ export default function ContractDeliveryBatchesPage() {
                       <td className="px-4 py-2 text-center whitespace-nowrap">
                         {(() => {
                           const statusDisplay = getDeliveryBatchStatusDisplay(
-                            batch.status
+                            batch.status,
+                            t
                           );
                           return (
                             <span
@@ -401,15 +405,15 @@ export default function ContractDeliveryBatchesPage() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
             {/* Thông tin số lượng hiển thị */}
             <div className="text-sm text-gray-600">
-              Đang hiển thị{" "}
+              {t("contractDeliveryBatches.pagination.showing")}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * ITEMS_PER_PAGE + 1}
               </span>
-              –
+              {t("contractDeliveryBatches.pagination.to")}
               <span className="font-medium">
                 {Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}
               </span>{" "}
-              / {filteredData.length} đợt giao hàng
+              {t("contractDeliveryBatches.pagination.of")} {filteredData.length} {t("contractDeliveryBatches.pagination.deliveryBatches")}
             </div>
 
             {/* Điều khiển phân trang */}
@@ -421,11 +425,11 @@ export default function ContractDeliveryBatchesPage() {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               >
-                ← Trước
+                {t("contractDeliveryBatches.pagination.previous")}
               </Button>
               <span className="flex items-center px-2">
-                Trang <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                / {totalPages}
+                {t("contractDeliveryBatches.pagination.page")} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t("contractDeliveryBatches.pagination.of")} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -436,7 +440,7 @@ export default function ContractDeliveryBatchesPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
               >
-                Sau →
+                {t("contractDeliveryBatches.pagination.next")}
               </Button>
             </div>
           </div>
@@ -445,16 +449,14 @@ export default function ContractDeliveryBatchesPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Xoá đợt giao hàng?"
+        title={t("contractDeliveryBatches.delete.title")}
         description={
           <span>
-            Bạn có chắc chắn muốn xoá đợt giao hàng{" "}
-            <strong>{batchToDelete?.deliveryBatchCode}</strong> không? Hành động
-            này sẽ ẩn đợt giao khỏi danh sách và không thể hoàn tác.
+            {t("contractDeliveryBatches.delete.description", { deliveryBatchCode: batchToDelete?.deliveryBatchCode })}
           </span>
         }
-        confirmText="Xoá"
-        cancelText="Huỷ"
+        confirmText={t("contractDeliveryBatches.delete.confirm")}
+        cancelText={t("contractDeliveryBatches.delete.cancel")}
         onConfirm={handleDeleteBatch}
       />
     </div>

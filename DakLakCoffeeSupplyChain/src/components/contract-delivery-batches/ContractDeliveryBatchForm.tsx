@@ -19,8 +19,10 @@ import {
 import {
   ContractDeliveryBatchStatus,
   ContractDeliveryBatchStatusLabel,
+  getContractDeliveryBatchStatusLabel,
 } from "@/lib/constants/contractDeliveryBatchStatus";
 import { toDateOnly, fromDateOnly, getErrorMessage } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export type ContractOption = { contractId: string; contractNumber: string };
 
@@ -54,6 +56,7 @@ export default function ContractDeliveryBatchForm({
   contractId,
   contractOptions = [],
 }: Props) {
+  const { t } = useTranslation();
   const isEdit = !!initialData;
   const router = useRouter();
 
@@ -149,7 +152,7 @@ export default function ContractDeliveryBatchForm({
           }, 200);
         } catch (e) {
           console.error(e);
-          toast.error("Không tải được danh sách mặt hàng của đợt giao.");
+          toast.error(t("contractDeliveryBatches.form.messages.loadItemsError"));
         }
       })();
     } else {
@@ -186,7 +189,7 @@ export default function ContractDeliveryBatchForm({
         );
       } catch (e) {
         console.error(e);
-        toast.error("Không thể tải danh sách mặt hàng của hợp đồng.");
+        toast.error(t("contractDeliveryBatches.form.messages.loadContractItemsError"));
       } finally {
         setLoadingItems(false);
       }
@@ -224,7 +227,7 @@ export default function ContractDeliveryBatchForm({
   if (!formData) {
     return (
       <div className="text-gray-500 text-center py-10">
-        Đang khởi tạo biểu mẫu đợt giao...
+        {t("contractDeliveryBatches.form.loading")}
       </div>
     );
   }
@@ -313,13 +316,13 @@ export default function ContractDeliveryBatchForm({
       setFieldErrors((prev) => ({
         ...prev,
         [`contractDeliveryItems.${index}.plannedQuantity`]:
-          "Số lượng phải lớn hơn 0",
+          t("contractDeliveryBatches.form.validation.quantityGreaterThanZero"),
       }));
     } else if (field === "contractItemId" && !value) {
       setFieldErrors((prev) => ({
         ...prev,
         [`contractDeliveryItems.${index}.contractItemId`]:
-          "Vui lòng chọn loại cà phê",
+          t("contractDeliveryBatches.form.validation.selectCoffeeType"),
       }));
     }
   };
@@ -355,7 +358,7 @@ export default function ContractDeliveryBatchForm({
 
     const data = formData;
     if (!data) {
-      toast.error("Biểu mẫu chưa sẵn sàng, vui lòng thử lại.");
+      toast.error(t("contractDeliveryBatches.form.messages.formNotReady"));
       return;
     }
 
@@ -363,11 +366,11 @@ export default function ContractDeliveryBatchForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.contractId) {
-      clientErrors.contractId = "Vui lòng chọn hợp đồng.";
+      clientErrors.contractId = t("contractDeliveryBatches.form.validation.selectContract");
     }
 
     if (!data.expectedDeliveryDate) {
-      clientErrors.expectedDeliveryDate = "Vui lòng chọn ngày dự kiến.";
+      clientErrors.expectedDeliveryDate = t("contractDeliveryBatches.form.validation.selectExpectedDate");
     } else {
       const picked = new Date(data.expectedDeliveryDate as any);
       picked.setHours(0, 0, 0, 0);
@@ -375,27 +378,27 @@ export default function ContractDeliveryBatchForm({
       today.setHours(0, 0, 0, 0);
       if (picked < today) {
         clientErrors.expectedDeliveryDate =
-          "Ngày giao dự kiến không được ở quá khứ.";
+          t("contractDeliveryBatches.form.validation.pastDate");
       }
     }
 
     if (data.deliveryRound < 1) {
-      clientErrors.deliveryRound = "Số đợt phải ≥ 1.";
+      clientErrors.deliveryRound = t("contractDeliveryBatches.form.validation.deliveryRoundMin");
     }
 
     const items = data.contractDeliveryItems || [];
     if (!items.length) {
       clientErrors.contractDeliveryItems =
-        "Phải có ít nhất 1 dòng sản phẩm giao hàng.";
+        t("contractDeliveryBatches.form.validation.atLeastOneItem");
     } else {
       items.forEach((item, index) => {
         if (!item.contractItemId) {
           clientErrors[`contractDeliveryItems.${index}.contractItemId`] =
-            "Vui lòng chọn loại cà phê";
+            t("contractDeliveryBatches.form.validation.selectCoffeeType");
         }
         if (!(Number(item.plannedQuantity) > 0)) {
           clientErrors[`contractDeliveryItems.${index}.plannedQuantity`] =
-            "Số lượng phải lớn hơn 0";
+            t("contractDeliveryBatches.form.validation.quantityGreaterThanZero");
         }
       });
     }
@@ -405,13 +408,13 @@ export default function ContractDeliveryBatchForm({
       0
     );
     if (!(total > 0)) {
-      clientErrors.totalPlannedQuantity = "Tổng khối lượng dự kiến phải > 0.";
+      clientErrors.totalPlannedQuantity = t("contractDeliveryBatches.form.validation.totalQuantityGreaterThanZero");
     }
 
     // If there are client-side errors, display them and stop
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
-      toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+      toast.error(t("contractDeliveryBatches.form.messages.checkFormErrors"));
       return;
     }
 
@@ -438,7 +441,7 @@ export default function ContractDeliveryBatchForm({
         };
 
         await updateContractDeliveryBatch(payload.deliveryBatchId, payload);
-        toast.success("Cập nhật đợt giao thành công!");
+        toast.success(t("contractDeliveryBatches.form.messages.updateSuccess"));
         router.back();
       } else {
         // Tạo payload riêng cho create để tránh vấn đề deliveryBatchId
@@ -456,7 +459,7 @@ export default function ContractDeliveryBatchForm({
         };
 
         await createContractDeliveryBatch(createPayload as any);
-        toast.success("Tạo đợt giao thành công!");
+        toast.success(t("contractDeliveryBatches.form.messages.createSuccess"));
         onSuccess();
       }
     } catch (err) {
@@ -581,12 +584,12 @@ export default function ContractDeliveryBatchForm({
           Object.keys(newFieldErrors).length > 0 ||
           newBusinessErrors.length > 0
         ) {
-          toast.error("Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu");
+          toast.error(t("contractDeliveryBatches.form.messages.checkFormErrors"));
         }
       } else {
         // Xử lý lỗi khác
         const errorMessage = getErrorMessage(err);
-        toast.error(errorMessage || "Đã xảy ra lỗi khi lưu đợt giao.");
+        toast.error(errorMessage || t("contractDeliveryBatches.form.messages.saveError"));
       }
     }
   }
@@ -597,7 +600,7 @@ export default function ContractDeliveryBatchForm({
   return (
     <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
       <h2 className="text-2xl font-semibold text-center mb-6">
-        {isEdit ? "Chỉnh sửa đợt giao" : "Tạo đợt giao mới"}
+        {isEdit ? t("contractDeliveryBatches.form.title.edit") : t("contractDeliveryBatches.form.title.create")}
       </h2>
 
       {/* Hiển thị lỗi nghiệp vụ */}
@@ -605,7 +608,7 @@ export default function ContractDeliveryBatchForm({
         <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-orange-800 font-medium">
-              Cần tuân thủ quy tắc nghiệp vụ:
+              {t("contractDeliveryBatches.form.businessRules.title")}
             </h3>
             <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
               {businessErrors.length} quy tắc
@@ -656,11 +659,11 @@ export default function ContractDeliveryBatchForm({
                             onClick={() => {
                               const total = sumPlannedQuantity();
                               handleChange("totalPlannedQuantity", total);
-                              toast.success("Đã cập nhật tổng từ mặt hàng");
+                              toast.success(t("contractDeliveryBatches.form.messages.autoUpdateTotalSuccess"));
                             }}
                             className="text-xs h-6 px-2"
                           >
-                            Tự động cập nhật tổng
+                            {t("contractDeliveryBatches.form.actions.autoUpdateTotal")}
                           </Button>
                         </li>
                       </>
@@ -692,12 +695,12 @@ export default function ContractDeliveryBatchForm({
       {/* Hợp đồng */}
       {contractId ? (
         <div>
-          <label className="block mb-1 text-sm font-medium">Hợp đồng</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.contract")}</label>
           <Input value={contractId} disabled />
         </div>
       ) : (
         <div>
-          <label className="block mb-1 text-sm font-medium">Hợp đồng</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.contract")}</label>
           <select
             value={formData.contractId}
             onChange={(e) => handleChange("contractId", e.target.value)}
@@ -706,7 +709,7 @@ export default function ContractDeliveryBatchForm({
             }`}
             required
           >
-            <option value="">-- Chọn hợp đồng --</option>
+            <option value="">{t("contractDeliveryBatches.form.placeholders.selectContract")}</option>
             {contractOptions.map((c) => (
               <option key={c.contractId} value={c.contractId}>
                 {c.contractNumber}
@@ -724,7 +727,7 @@ export default function ContractDeliveryBatchForm({
       {/* Fields chính */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block mb-1 text-sm font-medium">Đợt giao</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.deliveryRound")}</label>
           <Input
             type="number"
             min={1}
@@ -748,7 +751,7 @@ export default function ContractDeliveryBatchForm({
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">Ngày dự kiến</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.expectedDeliveryDate")}</label>
           <DatePicker
             value={dateString}
             onChange={(d) =>
@@ -761,7 +764,7 @@ export default function ContractDeliveryBatchForm({
 
         <div>
           <label className="block mb-1 text-sm font-medium">
-            Khối lượng dự kiến (kg)
+            {t("contractDeliveryBatches.form.fields.totalPlannedQuantity")}
           </label>
           <Input
             type="number"
@@ -790,7 +793,7 @@ export default function ContractDeliveryBatchForm({
       {/* Trạng thái */}
       {isEdit ? (
         <div>
-          <label className="block mb-1 text-sm font-medium">Trạng thái</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.status")}</label>
           <select
             className="w-full p-2 border rounded"
             value={formData.status}
@@ -807,21 +810,17 @@ export default function ContractDeliveryBatchForm({
               )
               .map((s) => (
                 <option key={s} value={s}>
-                  {ContractDeliveryBatchStatusLabel[s]}
+                  {getContractDeliveryBatchStatusLabel(s, t)}
                 </option>
               ))}
           </select>
         </div>
       ) : (
         <div>
-          <label className="block mb-1 text-sm font-medium">Trạng thái</label>
+          <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.status")}</label>
           <div className="p-2 border rounded bg-gray-50">
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-              {
-                ContractDeliveryBatchStatusLabel[
-                  ContractDeliveryBatchStatus.InProgress
-                ]
-              }
+              {getContractDeliveryBatchStatusLabel(ContractDeliveryBatchStatus.InProgress, t)}
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-2">
@@ -832,9 +831,9 @@ export default function ContractDeliveryBatchForm({
 
       {/* Ghi chú */}
       <div>
-        <label className="block mb-1 text-sm font-medium">Ghi chú</label>
+        <label className="block mb-1 text-sm font-medium">{t("contractDeliveryBatches.form.fields.note")}</label>
         <Textarea
-          placeholder="Nhập ghi chú (tuỳ chọn)"
+          placeholder={t("contractDeliveryBatches.form.placeholders.note")}
           value={formData.note || ""}
           onChange={(e) => handleChange("note", e.target.value)}
         />
@@ -843,7 +842,7 @@ export default function ContractDeliveryBatchForm({
       {/* Danh sách mặt hàng */}
       <div>
         <label className="block mb-1 text-sm font-medium">
-          Danh sách mặt hàng đợt giao
+          {t("contractDeliveryBatches.form.fields.deliveryItems")}
         </label>
 
         {/* Hiển thị lỗi tổng quát cho contract delivery items */}
@@ -861,11 +860,11 @@ export default function ContractDeliveryBatchForm({
               isEdit ? "md:grid-cols-7" : "md:grid-cols-6"
             }`}
           >
-            <span>Loại cà phê</span>
-            <span className="text-left">Số lượng (kg)</span>
-            {isEdit && <span className="text-left">Đã giao (kg)</span>}
+            <span>{t("contractDeliveryBatches.form.table.headers.coffeeType")}</span>
+            <span className="text-left">{t("contractDeliveryBatches.form.table.headers.quantity")}</span>
+            {isEdit && <span className="text-left">{t("contractDeliveryBatches.form.table.headers.fulfilled")}</span>}
             <span className={isEdit ? "col-span-3" : "col-span-3"}>
-              Ghi chú
+              {t("contractDeliveryBatches.form.table.headers.note")}
             </span>
             <span></span>
           </div>
@@ -888,7 +887,7 @@ export default function ContractDeliveryBatchForm({
               }`}
               disabled={loadingItems || !itemOptions.length}
             >
-              <option value="">-- Chọn loại cà phê --</option>
+              <option value="">{t("contractDeliveryBatches.form.placeholders.selectCoffeeType")}</option>
               {itemOptions.map((opt) => (
                 <option key={opt.contractItemId} value={opt.contractItemId}>
                   {opt.coffeeTypeName}
@@ -936,12 +935,12 @@ export default function ContractDeliveryBatchForm({
                   updateRow(idx, "fulfilledQuantity", Number(e.target.value));
                 }}
                 className="no-spinner text-left"
-                title="Khối lượng đã giao"
+                title={t("contractDeliveryBatches.form.table.headers.fulfilled")}
               />
             )}
 
             <Input
-              placeholder="Ghi chú"
+              placeholder={t("contractDeliveryBatches.form.placeholders.itemNote")}
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
               className={isEdit ? "md:col-span-3" : "md:col-span-3"}
@@ -953,7 +952,7 @@ export default function ContractDeliveryBatchForm({
               onClick={() => removeRow(idx)}
               className="whitespace-nowrap"
             >
-              Xoá
+              {t("contractDeliveryBatches.form.actions.remove")}
             </Button>
           </div>
         ))}
@@ -965,16 +964,16 @@ export default function ContractDeliveryBatchForm({
             onClick={addRow}
             disabled={!formData.contractId || loadingItems}
           >
-            + Thêm dòng
+            {t("contractDeliveryBatches.form.actions.addRow")}
           </Button>
 
           <div className="text-sm text-gray-600">
-            Tổng khối lượng dòng:{" "}
+            {t("contractDeliveryBatches.form.summary.totalQuantity")}{" "}
             <strong>{sumPlannedQuantity().toLocaleString()}</strong> kg
             {isEdit && (
               <>
                 <br />
-                Tổng đã giao:{" "}
+                {t("contractDeliveryBatches.form.summary.totalFulfilled")}{" "}
                 <strong
                   className={
                     sumFulfilledQuantity() >= sumPlannedQuantity()
@@ -986,7 +985,7 @@ export default function ContractDeliveryBatchForm({
                 </strong>{" "}
                 kg
                 {sumFulfilledQuantity() >= sumPlannedQuantity() && (
-                  <span className="ml-2 text-green-600">✅ Hoàn thành</span>
+                  <span className="ml-2 text-green-600">{t("contractDeliveryBatches.form.summary.completed")}</span>
                 )}
               </>
             )}
@@ -996,10 +995,10 @@ export default function ContractDeliveryBatchForm({
 
       <DialogFooter className="flex justify-between pt-4">
         <Button type="submit" onClick={handleSubmit}>
-          <h2>{isEdit ? "Lưu thay đổi" : "Tạo đợt giao"}</h2>
+          <h2>{isEdit ? t("contractDeliveryBatches.form.actions.save") : t("contractDeliveryBatches.form.actions.create")}</h2>
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Quay lại
+          {t("contractDeliveryBatches.form.actions.back")}
         </Button>
       </DialogFooter>
     </form>
