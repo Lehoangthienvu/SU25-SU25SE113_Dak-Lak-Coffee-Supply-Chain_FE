@@ -5815,5 +5815,114 @@
     "read": "Đã đọc",
     "justNow": "Vừa xong",
     "viewAll": "Xem tất cả thông báo"
+  },
+  "businessStaffs": {
+    "title": "Quản lý nhân viên",
+    "subtitle": "Quản lý thông tin và phân quyền nhân viên trong hệ thống",
+    "page": {
+      "title": "Quản lý nhân viên",
+      "subtitle": "Quản lý thông tin và phân quyền nhân viên trong hệ thống",
+      "addStaff": "Thêm nhân viên",
+      "staffCount": "{{filtered}}/{{total}} nhân viên",
+      "searchPlaceholder": "Tìm kiếm nhân viên theo tên, mã, email, vị trí...",
+      "filterButton": "Bộ lọc",
+      "clearFilters": "Xóa bộ lọc",
+      "department": "Phòng ban",
+      "allDepartments": "Tất cả phòng ban",
+      "statistics": "Thống kê",
+      "total": "Tổng số",
+      "filtered": "Đã lọc",
+      "searchFilter": "🔍 Tìm kiếm: \"{{term}}\"",
+      "departmentFilter": "🏢 Phòng ban: {{department}}",
+      "clearAllFilters": "Xóa tất cả bộ lọc"
+    },
+    "table": {
+      "headers": {
+        "staffCode": "Mã NV",
+        "fullName": "Họ tên",
+        "email": "Email",
+        "department": "Phòng ban",
+        "position": "Vị trí",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa"
+      }
+    },
+    "detail": {
+      "title": "🧾 Thông tin nhân viên",
+      "staffCode": "Mã nhân viên:",
+      "fullName": "Họ tên:",
+      "email": "Email:",
+      "phoneNumber": "Số điện thoại:",
+      "department": "Phòng ban:",
+      "position": "Vị trí:",
+      "assignedWarehouse": "Kho phụ trách:",
+      "createdAt": "Ngày tạo:",
+      "noPhone": "Không có",
+      "notAssigned": "Chưa gán",
+      "unknown": "Không xác định",
+      "back": "Quay lại",
+      "edit": "✏️ Chỉnh sửa"
+    },
+    "create": {
+      "title": "Tạo nhân viên mới",
+      "fullName": "Họ tên *",
+      "email": "Email *",
+      "phoneNumber": "Số điện thoại",
+      "password": "Mật khẩu *",
+      "position": "Vị trí *",
+      "department": "Phòng ban",
+      "assignedWarehouse": "Kho phụ trách",
+      "noSelection": "-- Không chọn --",
+      "cancel": "Huỷ",
+      "create": "Tạo nhân viên",
+      "creating": "Đang tạo...",
+      "success": "Tạo nhân viên thành công!",
+      "error": "Tạo nhân viên thất bại.",
+      "warehouseError": "Không thể tải danh sách kho."
+    },
+    "edit": {
+      "title": "✏️ Chỉnh sửa nhân viên",
+      "staffCode": "Mã nhân viên",
+      "fullName": "Họ tên",
+      "email": "Email",
+      "phoneNumber": "Số điện thoại",
+      "department": "Phòng ban",
+      "position": "Vị trí",
+      "assignedWarehouse": "Kho phụ trách (nếu có)",
+      "noSelection": "-- Không chọn --",
+      "back": "Quay lại",
+      "saveChanges": "Lưu thay đổi",
+      "success": "Cập nhật thành công.",
+      "error": "Cập nhật thất bại.",
+      "notFound": "Không tìm thấy nhân viên.",
+      "warehouseError": "Không tải được danh sách kho.",
+      "loadError": "Lỗi khi tải dữ liệu."
+    },
+    "delete": {
+      "confirm": "Bạn có chắc muốn xoá nhân viên này?",
+      "success": "Xoá thành công.",
+      "error": "Xoá thất bại.",
+      "deleteError": "Lỗi khi xoá nhân viên."
+    },
+    "loading": {
+      "list": "Đang tải danh sách nhân viên...",
+      "detail": "Đang tải thông tin nhân viên...",
+      "data": "Đang tải dữ liệu..."
+    },
+    "error": {
+      "loadList": "Không thể tải danh sách nhân viên.",
+      "loadDetail": "Lỗi khi tải dữ liệu nhân viên.",
+      "noData": "Không có dữ liệu."
+    },
+    "empty": {
+      "noStaff": "Chưa có nhân viên nào",
+      "noResults": "Không tìm thấy nhân viên phù hợp",
+      "noStaffDesc": "Bắt đầu thêm nhân viên đầu tiên",
+      "noResultsDesc": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm"
+    }
   }
 }
