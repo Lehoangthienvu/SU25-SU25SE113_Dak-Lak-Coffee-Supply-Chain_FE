@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { getBusinessStaffById } from "@/lib/api/businessStaffs";
 import { getWarehouseById } from "@/lib/api/warehouses";
 import { Card } from "@/components/ui/card";
@@ -22,6 +23,7 @@ interface BusinessStaffDetailDto {
 }
 
 export default function BusinessStaffDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useParams();
   const [staff, setStaff] = useState<BusinessStaffDetailDto | null>(null);
@@ -40,68 +42,68 @@ export default function BusinessStaffDetailPage() {
             if (warehouseRes.status === 1 && warehouseRes.data?.name) {
               setWarehouseName(warehouseRes.data.name);
             } else {
-              setWarehouseName("Không xác định");
+              setWarehouseName(t('businessStaffs.detail.unknown'));
             }
           } else {
-            setWarehouseName("Chưa gán");
+            setWarehouseName(t('businessStaffs.detail.notAssigned'));
           }
         } else {
-          toast.error("Không tìm thấy nhân viên.");
+          toast.error(t('businessStaffs.edit.notFound'));
         }
       } catch (err) {
-        toast.error("Lỗi khi tải dữ liệu nhân viên.");
+        toast.error(t('businessStaffs.error.loadDetail'));
       } finally {
         setLoading(false);
       }
     }
 
     if (id) fetchDetail();
-  }, [id]);
+  }, [id, t]);
 
-  if (loading) return <p className="text-gray-500 px-6">Đang tải thông tin nhân viên...</p>;
-  if (!staff) return <p className="text-red-500 px-6">Không có dữ liệu.</p>;
+  if (loading) return <p className="text-gray-500 px-6">{t('businessStaffs.loading.detail')}</p>;
+  if (!staff) return <p className="text-red-500 px-6">{t('businessStaffs.error.noData')}</p>;
 
   return (
     <Card className="p-8 max-w-3xl mx-auto space-y-6 shadow-md">
       <h1 className="text-3xl font-semibold text-orange-600 border-b pb-4">
-        🧾 Thông tin nhân viên
+        {t('businessStaffs.detail.title')}
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5 text-[15px]">
         <div>
-          <span className="font-medium text-gray-600">Mã nhân viên:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.staffCode')}</span>
           <div className="text-gray-800">{staff.staffCode}</div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Họ tên:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.fullName')}</span>
           <div className="text-gray-800">{staff.fullName}</div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Email:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.email')}</span>
           <div className="text-gray-800">{staff.email}</div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Số điện thoại:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.phoneNumber')}</span>
           <div>
             {staff.phoneNumber ? (
               <span className="text-gray-800">{staff.phoneNumber}</span>
             ) : (
-              <Badge variant="outline" className="text-gray-500">Không có</Badge>
+              <Badge variant="outline" className="text-gray-500">{t('businessStaffs.detail.noPhone')}</Badge>
             )}
           </div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Phòng ban:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.department')}</span>
           <div className="text-gray-800">{staff.department}</div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Vị trí:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.position')}</span>
           <div className="text-gray-800">{staff.position}</div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Kho phụ trách:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.assignedWarehouse')}</span>
           <div>
-            {warehouseName === "Chưa gán" ? (
+            {warehouseName === t('businessStaffs.detail.notAssigned') ? (
               <Badge variant="secondary" className="text-gray-600">{warehouseName}</Badge>
             ) : (
               <span className="text-gray-800">{warehouseName}</span>
@@ -109,7 +111,7 @@ export default function BusinessStaffDetailPage() {
           </div>
         </div>
         <div>
-          <span className="font-medium text-gray-600">Ngày tạo:</span>
+          <span className="font-medium text-gray-600">{t('businessStaffs.detail.createdAt')}</span>
           <div className="text-gray-800">
             {new Date(staff.createdAt).toLocaleString("vi-VN")}
           </div>
@@ -118,7 +120,7 @@ export default function BusinessStaffDetailPage() {
 
       <div className="flex justify-end gap-2 pt-6">
         <Button variant="outline" onClick={() => router.back()}>
-          Quay lại
+          {t('businessStaffs.detail.back')}
         </Button>
         <Button
           className="bg-orange-600 hover:bg-orange-700 text-white"
@@ -126,7 +128,7 @@ export default function BusinessStaffDetailPage() {
             router.push(`/dashboard/manager/business-staffs/${staff.staffId}/edit`)
           }
         >
-          ✏️ Chỉnh sửa
+          {t('businessStaffs.detail.edit')}
         </Button>
       </div>
     </Card>
