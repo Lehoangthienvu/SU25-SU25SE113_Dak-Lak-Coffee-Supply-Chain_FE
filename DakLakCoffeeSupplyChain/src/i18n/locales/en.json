@@ -4122,10 +4122,7 @@
     }
   },
   "contracts": {
-    "contract": {
-      "title": "Contracts",
-      "description": "Manage coffee supply contracts"
-    },
+   
     "page": {
       "list": {
         "title": "Contract List",
@@ -4261,9 +4258,6 @@
       "Completed": "Completed",
       "Cancelled": "Cancelled",
       "Expired": "Expired"
-    },
-    "form": {
-      "status": "Status"
     },
     "managerContract": {
       "status": {
@@ -4406,6 +4400,7 @@
       }
     },
     "contract": {
+      "title": "Contract",
       "edit": "Edit Contract",
       "new": "Create New Contract",
       "buyerId": "Business Buyer",
