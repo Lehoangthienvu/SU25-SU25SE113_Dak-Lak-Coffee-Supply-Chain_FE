@@ -3265,6 +3265,201 @@
       "loadFailed": "Có lỗi xảy ra khi tải dữ liệu"
     }
   },
+
+"expertAnomalies" :{
+  "page": {
+    "title": "Báo cáo cần phản hồi",
+    "subtitle": "Quản lý và phản hồi các báo cáo từ nông dân",
+    "noReports": {
+      "title": "Chưa có báo cáo nào",
+      "description": "Tất cả báo cáo đã được xử lý hoặc chưa có báo cáo mới"
+    },
+    "filters": {
+      "title": "Lọc theo trạng thái:",
+      "all": "Tất cả",
+      "resolved": "Đã phản hồi",
+      "unresolved": "Chưa phản hồi"
+    },
+    "noFilteredReports": {
+      "title": "Không có báo cáo nào",
+      "all": "Không có báo cáo nào",
+      "resolved": "Không có báo cáo nào đã được phản hồi",
+      "unresolved": "Không có báo cáo nào chưa được phản hồi",
+      "viewAll": "Xem tất cả báo cáo"
+    },
+    "reportCard": {
+      "viewDetails": "Xem chi tiết",
+      "responseHistory": "Lịch sử phản hồi",
+      "respond": "Phản hồi",
+      "status": {
+        "resolved": "Đã phản hồi",
+        "unresolved": "Chưa phản hồi"
+      }
+    },
+    "mediaViewer": {
+      "title": "Chi tiết báo cáo:",
+      "close": "Đóng",
+      "description": "Mô tả",
+      "otherInfo": "Thông tin khác",
+      "reporter": "Người báo cáo:",
+      "reportDate": "Ngày báo cáo:",
+      "status": "Trạng thái:",
+      "statusResolved": "Đã xử lý",
+      "statusUnresolved": "Chưa xử lý",
+      "attachments": "Tài liệu đính kèm",
+      "image": "Hình ảnh",
+      "video": "Video",
+      "imageAlt": "Hình ảnh báo cáo",
+      "fullscreenImageAlt": "Hình ảnh phóng to"
+    },
+    "errors": {
+      "loadReports": "Không thể tải danh sách báo cáo",
+      "loadAdvices": "Không thể tải phản hồi",
+      "loadReportDetail": "Không thể tải chi tiết báo cáo"
+    }
+  },
+  "adviceHistoryDialog": {
+    "title": "Lịch sử phản hồi",
+    "loading": "Đang tải chi tiết phản hồi...",
+    "noAdvices": {
+      "title": "Chưa có phản hồi nào",
+      "description": "Chưa có phản hồi nào cho báo cáo này"
+    },
+    "responseTypes": {
+      "corrective": "Khắc phục",
+      "preventive": "Phòng ngừa",
+      "observation": "Nhận xét",
+      "advisory": "Tư vấn",
+      "emergency": "Khẩn cấp",
+      "routine": "Thường xuyên"
+    },
+    "form": {
+      "responseType": "Loại phản hồi",
+      "adviceSource": "Nguồn tư vấn",
+      "content": "Nội dung",
+      "attachedFile": "Tệp đính kèm (URL)",
+      "attachedFilePlaceholder": "https://example.com/file.pdf",
+      "noContent": "(Không có nội dung)"
+    },
+    "actions": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "save": "Lưu thay đổi",
+      "cancel": "Hủy",
+      "viewAttachment": "Xem tệp đính kèm"
+    },
+    "labels": {
+      "type": "Loại:",
+      "source": "Nguồn:"
+    },
+    "messages": {
+      "loadDetailsError": "Không thể tải đầy đủ chi tiết phản hồi.",
+      "updateSuccess": "Cập nhật thành công.",
+      "updateError": "Cập nhật thất bại.",
+      "deleteConfirm": "Bạn có chắc muốn xoá phản hồi này?",
+      "deleteSuccess": "Đã xoá phản hồi.",
+      "deleteError": "Xoá thất bại."
+    }
+  },
+  "editAnomalyPage": {
+    "title": "Chỉnh sửa phản hồi chuyên gia",
+    "subtitle": "Cập nhật thông tin và nội dung phản hồi",
+    "loading": "Đang tải dữ liệu...",
+    "notFound": {
+      "title": "Không tìm thấy phản hồi",
+      "description": "Vui lòng quay lại trang danh sách để chọn phản hồi cần chỉnh sửa",
+      "backToList": "Quay lại danh sách"
+    },
+    "form": {
+      "title": "Thông tin phản hồi",
+      "responseType": {
+        "label": "Loại phản hồi *",
+        "placeholder": "Chọn loại phản hồi",
+        "options": {
+          "preventive": "Phòng ngừa",
+          "corrective": "Khắc phục",
+          "observation": "Nhận xét"
+        }
+      },
+      "adviceSource": {
+        "label": "Nguồn tham khảo (tùy chọn)",
+        "placeholder": "Ví dụ: Thực tế đồng ruộng, báo cáo nghiên cứu, kinh nghiệm chuyên môn..."
+      },
+      "adviceText": {
+        "label": "Nội dung phản hồi *",
+        "placeholder": "Nhập nội dung phản hồi chi tiết..."
+      },
+      "attachedFileUrl": {
+        "label": "URL file đính kèm (tùy chọn)",
+        "placeholder": "https://example.com/file.pdf"
+      }
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "update": "Cập nhật phản hồi",
+      "updating": "Đang cập nhật..."
+    },
+    "errors": {
+      "loadAdvice": "Không thể tải thông tin phản hồi",
+      "loadData": "Lỗi khi tải dữ liệu",
+      "noAdviceId": "Không tìm thấy ID phản hồi",
+      "contentRequired": "Vui lòng nhập nội dung phản hồi",
+      "updateFailed": "Cập nhật thất bại",
+      "systemError": "Lỗi hệ thống khi cập nhật"
+    },
+    "success": {
+      "updateSuccess": "Cập nhật phản hồi thành công!"
+    }
+  },
+  "createAnomalyPage": {
+    "title": "Gửi phản hồi chuyên gia",
+    "subtitle": "Đưa ra lời khuyên và hướng dẫn cho báo cáo bất thường",
+    "notFound": {
+      "title": "Không tìm thấy báo cáo",
+      "description": "Vui lòng quay lại trang danh sách để chọn báo cáo cần phản hồi",
+      "backToList": "Quay lại danh sách"
+    },
+    "form": {
+      "title": "Thông tin phản hồi",
+      "responseType": {
+        "label": "Loại phản hồi *",
+        "placeholder": "Chọn loại phản hồi",
+        "options": {
+          "preventive": "Phòng ngừa",
+          "corrective": "Khắc phục",
+          "observation": "Nhận xét"
+        }
+      },
+      "adviceSource": {
+        "label": "Nguồn tham khảo (tùy chọn)",
+        "placeholder": "Ví dụ: Thực tế đồng ruộng, báo cáo nghiên cứu, kinh nghiệm chuyên môn..."
+      },
+      "adviceText": {
+        "label": "Nội dung phản hồi *",
+        "placeholder": "Nhập nội dung phản hồi chi tiết..."
+      },
+      "attachedFiles": {
+        "label": "📎 Tải lên file đính kèm (tùy chọn)",
+        "selectedFiles": "Đã chọn {count} file(s)",
+        "supportedFormats": "💡 Hỗ trợ: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), ảnh, video"
+      }
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "submit": "Gửi phản hồi",
+      "submitting": "Đang gửi..."
+    },
+    "errors": {
+      "noReportId": "Không tìm thấy ID báo cáo",
+      "contentRequired": "Vui lòng nhập nội dung phản hồi",
+      "submitFailed": "Gửi phản hồi thất bại ❌",
+      "apiError": "Lỗi: {message}"
+    },
+    "success": {
+      "submitSuccess": "Phản hồi đã được gửi thành công 🎉"
+    }
+  }
+},
   "inventoryLogs": {
     "title": "Nhật ký tồn kho",
     "subtitle": "Theo dõi mọi thay đổi trong hệ thống kho hàng",
@@ -4038,6 +4233,141 @@
       "staffManagement": "Quản lý nhân viên",
       "staffList": "Danh sách nhân viên"
     }
+      "warehouseOperations": "Vận hành kho",
+      "warehouseManagement": "Quản lý kho",
+      "inboundRequests": "Yêu cầu nhập kho",
+      "inboundReceipts": "Phiếu nhập kho",
+      "outboundRequests": "Yêu cầu xuất kho",
+      "outboundReceipts": "Phiếu xuất kho",
+      "inventories": "Tồn kho",
+      "inventoryLogs": "Nhật ký tồn kho",
+      "warehouses": "Kho hàng",
+      "warehouseRequest": "Yêu cầu giao hàng",
+      "cropSeasons": "Mùa vụ",
+      "reports": "Báo cáo",
+      "expertAdvice": "Tư vấn chuyên gia",
+      "contractsAndDelivery": "Hợp đồng & Giao hàng",
+      "supplyContracts": "Hợp đồng cung ứng",
+      "deliverySchedule": "Lịch giao hàng",
+      "procurementPlans": "Kế hoạch thu mua",
+      "procurementCommitments": "Cam kết kế hoạch thu mua",
+      "ordersAndDelivery": "Đơn hàng & Giao hàng",
+      "orders": "Đơn hàng",
+      "deliveryBatches": "Lô giao hàng",
+      "customersAndProducts": "Khách hàng & Sản phẩm",
+      "businessCustomers": "Khách hàng doanh nghiệp",
+      "products": "Sản phẩm",
+      "farmers": "Nông dân",
+      "reportsAndProcessing": "Báo cáo & Chế biến",
+      "processingBatches": "Danh sách lô chế biến",
+      "farmerProcessingBatches": "Lô chế biến theo nông dân",
+      "processingProgress": "Tiến trình lô chế biến",
+      "processingWaste": "Chất thải lô chế biến",
+      "processingMethods": "Phương pháp chế biến",
+      "processingParameters": "Tham số chế biến",
+      "processingStages": "Công đoạn chế biến",
+      "wasteDisposal": "Xử lý chất thải lô chế biến",
+      "staffManagement": "Quản lý nhân viên",
+      "staffList": "Danh sách nhân viên",
+      "warehouseInventory": "Tồn kho",
+      "inventoryHistory": "Lịch sử tồn kho",
+      "outboundRequests": "Yêu cầu xuất kho",
+      "farmer": {
+        "dashboard": "Bảng điều khiển",
+        "cropSeasons": "Mùa vụ",
+        "cropStages": "Giai đoạn sinh trưởng",
+        "cropProgress": "Tiến độ mùa vụ",
+        "consultation": "Tư vấn",
+        "warehouseRequest": "Yêu cầu giao hàng",
+        "marketPlace": "Chợ nông sản",
+        "farmingCommitments": "Cam kết trồng trọt",
+        "coffeeProcurementFloor": "Sàn thu mua cà phê",
+        "procurementPlanCommitment": "Cam kết kế hoạch thu mua",
+        "sendDeliveryRequest": "Gửi yêu cầu giao hàng",
+        "processing": "Sơ chế",
+        "processingBatches": "Danh sách lô sơ chế",
+        "processingProgress": "Tiến trình lô sơ chế",
+        "processingWaste": "Chất thải lô sơ chế"
+      },
+      "manager": {
+        "dashboard": "Tổng quan",
+        "cropSeasons": "Mùa vụ",
+        "reports": "Báo cáo",
+        "expertAdvice": "Tư vấn chuyên gia",
+        "notifications": "Thông báo",
+        "contractsAndDelivery": "Hợp đồng & Giao hàng",
+        "supplyContracts": "Hợp đồng cung ứng",
+        "deliverySchedule": "Lịch giao hàng",
+        "procurementPlans": "Kế hoạch thu mua",
+        "procurementCommitments": "Cam kết kế hoạch thu mua",
+        "ordersAndDelivery": "Đơn hàng & Giao hàng",
+        "orders": "Đơn hàng",
+        "deliveryBatches": "Lô giao hàng",
+        "customersAndProducts": "Khách hàng & Sản phẩm",
+        "businessCustomers": "Khách hàng doanh nghiệp",
+        "products": "Sản phẩm",
+        "farmers": "Nông dân",
+        "reportsAndProcessing": "Báo cáo & Chế biến",
+        "processingBatches": "Danh sách lô chế biến",
+        "farmerProcessingBatches": "Lô chế biến theo nông dân",
+        "processingProgress": "Tiến trình lô chế biến",
+        "processingWaste": "Chất thải lô chế biến",
+        "processingMethods": "Phương pháp chế biến",
+        "processingParameters": "Tham số chế biến",
+        "processingStages": "Công đoạn chế biến",
+        "wasteDisposal": "Xử lý chất thải lô chế biến",
+        "staffManagement": "Quản lý nhân viên",
+        "staffList": "Danh sách nhân viên",
+        "warehouseManagement": "Quản lý kho",
+        "warehouses": "Kho hàng",
+        "inventories": "Tồn kho",
+        "inventoryHistory": "Lịch sử tồn kho",
+        "outboundRequests": "Yêu cầu xuất kho"
+      }
+    },
+            "user": {
+          "greeting": "Xin chào:",
+          "anonymous": "Ẩn danh",
+          "logout": "Đăng xuất",
+          "logoutTitle": "Đăng xuất và về trang chính"
+        },
+        "profile": "Hồ sơ cá nhân",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất",
+            "staffDashboard": {
+          "title": "Bảng điều khiển Nhân viên",
+          "subtitle": "Quản lý vận hành kho và theo dõi hoạt động",
+          "waitingInbound": "Yêu cầu nhập kho đang chờ",
+          "waitingOutbound": "Yêu cầu xuất kho đang chờ",
+          "monthlyStats": "Thống kê theo tháng",
+          "quickAccess": "Truy cập nhanh",
+          "months": ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"],
+          "chartLabels": {
+            "inbound": "Nhập kho",
+            "outbound": "Xuất kho"
+          },
+          "inv": "Tồn kho",
+          "inventory": "Quản lý tồn kho",
+          "inventoryDesc": "Quản lý tồn kho",
+          "inb": "Nhập kho",
+          "inbound": "Yêu cầu nhập kho",
+          "inboundRequests": "Yêu cầu nhập kho",
+          "inboundRequestsDesc": "Yêu cầu nhập kho",
+          "out": "Xuất kho",
+          "outbound": "Phiếu xuất kho",
+          "outboundRequests": "Yêu cầu xuất kho",
+          "outboundRequestsDesc": "Yêu cầu xuất kho",
+          "outboundReceipts": "Phiếu xuất kho",
+          "outboundReceiptsDesc": "Phiếu xuất kho",
+          "wa": "Kho hàng",
+          "warehou": "Quản lý kho hàng",
+          "warehouses": "Kho hàng",
+          "warehousesDesc": "Quản lý kho hàng",
+          "rec": "Phiếu nhập",
+          "receipts": "Phiếu nhập kho",
+          "receiptsDesc": "Phiếu nhập kho"
+        }
+
   },
   "warehouseDetail": {
     "title": "Chi tiết kho hàng",
@@ -4610,7 +4940,9 @@
       "save": "Lưu hợp đồng",
       "back": "Quay lại",
       "format": "💡 Định dạng",
+      "formatText": "CT001-2024, HD001, CONTRACT-001, v.v.",
       "example": "💡 VD",
+      "exampleText": "Hợp đồng cung cấp cà phê Robusta Dak Lak 2024",
               "statusAutoUpdate": "💡 Trạng thái sẽ tự động cập nhật: \"Đang thực hiện\" nếu ngày bắt đầu ở quá khứ hoặc hiện tại, \"Chưa bắt đầu\" nếu ngày bắt đầu ở tương lai",
       "updateSuccess": "Cập nhật hợp đồng thành công!",
       "createSuccess": "Tạo hợp đồng thành công!",
@@ -4653,22 +4985,48 @@
       "unitPrice": "Đơn giá phải lớn hơn 0",
       "discountAmount": "Chiết khấu không được âm",
       "contractNumberRequired": "Số hợp đồng là bắt buộc",
-      "contractNumberLength": "Số hợp đồng phải có ít nhất 3 ký tự",
+      "contractNumberMinLength": "Số hợp đồng phải có ít nhất 3 ký tự",
       "contractTitleRequired": "Tên hợp đồng là bắt buộc",
-      "contractTitleLength": "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng",
+      "contractTitleMinLength": "Tên hợp đồng phải có ít nhất 10 ký tự để mô tả rõ ràng",
       "contractTitleMaxLength": "Tên hợp đồng không được quá 200 ký tự",
       "buyerIdRequired": "Vui lòng chọn bên mua",
       "startDateRequired": "Ngày bắt đầu là bắt buộc",
       "endDateRequired": "Ngày kết thúc là bắt buộc",
       "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
-      "signedAtAfterStartDate": "Ngày ký hợp đồng không được sau ngày bắt đầu",
-              "contractFileSize": "File không được quá lớn",
+      "signedAtBeforeStartDate": "Ngày ký hợp đồng không được sau ngày bắt đầu",
+      "contractFileSize": "File không được quá lớn (tối đa 10MB)",
       "contractFileType": "Chỉ hỗ trợ file ảnh (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)",
       "cancelReasonRequired": "Lý do hủy là bắt buộc khi trạng thái là 'Đã hủy'",
       "contractItemsRequired": "Vui lòng thêm ít nhất 1 mặt hàng vào hợp đồng",
-      "coffeeTypeIdRequired": "Vui lòng chọn loại cà phê",
-      "formErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+      "coffeeTypeRequired": "Vui lòng chọn loại cà phê",
+      "quantityGreaterThanZero": "Số lượng phải lớn hơn 0",
+      "unitPriceGreaterThanZero": "Đơn giá phải lớn hơn 0",
+      "discountAmountNonNegative": "Chiết khấu không được âm",
+      "totalQuantityNonNegative": "Tổng khối lượng không được âm",
+      "totalValueNonNegative": "Tổng giá trị không được âm",
+      "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
       "dateError": "Lỗi ngày tháng: Ngày ký hợp đồng phải ≤ Ngày bắt đầu"
+    },
+    "messages": {
+      "createSuccess": "Tạo hợp đồng thành công!",
+      "updateSuccess": "Cập nhật hợp đồng thành công!",
+      "createError": "Tạo hợp đồng thất bại!",
+      "updateError": "Cập nhật hợp đồng thất bại!",
+      "loadError": "Không thể tải dữ liệu hợp đồng!",
+      "saveError": "Lưu hợp đồng thất bại!",
+      "deleteSuccess": "Xóa hợp đồng thành công!",
+      "deleteError": "Xóa hợp đồng thất bại!",
+      "validationError": "Vui lòng kiểm tra và sửa các lỗi trong biểu mẫu",
+      "networkError": "Lỗi kết nối mạng. Vui lòng thử lại!",
+      "unauthorizedError": "Bạn không có quyền thực hiện hành động này!",
+      "serverError": "Lỗi máy chủ. Vui lòng thử lại sau!",
+      "loading": "Đang khởi tạo biểu mẫu hợp đồng...",
+      "fileSelected": "Đã chọn file mới: {{fileName}}",
+      "fileInfo": "File: {{fileName}}\nĐể xem nội dung, hãy upload file lên server hoặc cung cấp URL.",
+      "loadPreviewError": "Không thể tải ảnh preview",
+      "deleteNewFile": "Đã xóa file mới",
+      "deleteCurrentFile": "Đã xóa file hiện tại",
+      "updateTotal": "Đã cập nhật tổng khối lượng và giá trị từ các mặt hàng!"
     },
     "error": {
       "loadPreview": "Không thể tải ảnh preview"

@@ -143,32 +143,37 @@ export function SidebarGroup() {
   > = {
     farmer: [
       {
-        title: t('sidebar.navigation.overview'),
+        title: t('sidebar.navigation.farmer.dashboard'),
         href: "/dashboard/farmer",
         icon: iconMap.dashboard,
       },
       {
         title: t('sidebar.farmer.coffeeMarket'),
+        title: t('sidebar.navigation.farmer.coffeeProcurementFloor'),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
       },
       {
         title: t('sidebar.farmer.commitment'),
+        title: t('sidebar.navigation.farmer.procurementPlanCommitment'),
         href: "/dashboard/farmer/farming-commitments",
         icon: iconMap.contracts,
       },
       {
         title: t('sidebar.farmer.cropSeasons'),
+        title: t('sidebar.navigation.farmer.cropSeasons'),
         href: "/dashboard/farmer/crop-seasons",
         icon: iconMap.crops,
       },
       {
         title: t('sidebar.farmer.consultation'),
+        title: t('sidebar.navigation.farmer.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },
       {
         title: t('sidebar.farmer.deliveryRequest'),
+        title: t('sidebar.navigation.farmer.sendDeliveryRequest'),
         href: "/dashboard/farmer/warehouse-request",
         icon: <FiTruck />,
       },
@@ -263,26 +268,32 @@ export function SidebarGroup() {
     manager: [
       {
         title: t('sidebar.manager.overview'),
+        title: t('sidebar.navigation.manager.dashboard'),
         href: "/dashboard/manager",
         icon: iconMap.dashboard,
       },
       {
         title: t('sidebar.manager.cropSeasons'),
+        title: t('sidebar.navigation.manager.cropSeasons'),
         href: "/dashboard/manager/crop-seasons",
         icon: <FiClipboard />,
       },
       {
         title: t('sidebar.manager.reports'),
+        title: t('sidebar.navigation.manager.reports'),
         href: "/dashboard/manager/reports",
         icon: <FiFileText />,
       },
       {
         title: t('sidebar.manager.expertAdvice'),
+
+        title: t('sidebar.navigation.manager.expertAdvice'),
         href: "/dashboard/manager/expert-advice",
         icon: <FiMessageCircle />,
       },
       {
         title: t('sidebar.manager.notifications'),
+        title: t('sidebar.navigation.manager.notifications'),
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
@@ -324,18 +335,28 @@ export function SidebarGroup() {
             )}
             onClick={() => setProcessingOpen((v) => !v)}
           >
+
             <div className="flex items-center gap-2 overflow-hidden">
               <span className="shrink-0 w-5 text-center">
                 {iconMap.articles}
               </span>
               <span className="truncate">{t('sidebar.farmer.processing')}</span>
             </div>
+
+                         <div className="flex items-center gap-2 overflow-hidden">
+               <span className="shrink-0 w-5 text-center">
+                 {iconMap.articles}
+               </span>
+               <span className="truncate">{t('sidebar.navigation.farmer.processing')}</span>
+             </div>
+
             <FiChevronDown
               className={cn("transition-transform duration-200", processingOpen && "rotate-180")}
             />
           </button>
           {processingOpen && (
             <div className="pl-8 space-y-1">
+
               <Link
                 href="/dashboard/farmer/processing/batches"
                 className={cn(
@@ -369,6 +390,39 @@ export function SidebarGroup() {
               >
                 {t('sidebar.farmer.processingWastes')}
               </Link>
+                             <Link
+                 href="/dashboard/farmer/processing/batches"
+                 className={cn(
+                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                   pathname.startsWith("/dashboard/farmer/processing/batches")
+                     ? "bg-orange-100 text-orange-700 shadow-sm"
+                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                 )}
+               >
+                 {t('sidebar.navigation.farmer.processingBatches')}
+               </Link>
+               <Link
+                 href="/dashboard/farmer/processing/progresses"
+                 className={cn(
+                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                   pathname.startsWith("/dashboard/farmer/processing/progresses")
+                     ? "bg-orange-100 text-orange-700 shadow-sm"
+                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                 )}
+               >
+                 {t('sidebar.navigation.farmer.processingProgress')}
+               </Link>
+               <Link
+                 href="/dashboard/farmer/processing/wastes"
+                 className={cn(
+                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                   pathname.startsWith("/dashboard/farmer/processing/wastes")
+                     ? "bg-orange-100 text-orange-700 shadow-sm"
+                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                 )}
+               >
+                 {t('sidebar.navigation.farmer.processingWaste')}
+               </Link>
             </div>
           )}
         </div>
@@ -395,6 +449,7 @@ export function SidebarGroup() {
                 <FiFileText />
               </span>
               <span className="truncate">{t('sidebar.manager.contractsDelivery')}</span>
+              <span className="truncate">{t('sidebar.navigation.manager.contractsAndDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", contractOpen && "rotate-180")}
@@ -412,6 +467,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.supplyContracts')}
+                {t('sidebar.navigation.manager.supplyContracts')}
               </Link>
               <Link
                 href="/dashboard/manager/contract-delivery-batches"
@@ -423,6 +479,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.deliverySchedule')}
+                {t('sidebar.navigation.manager.deliverySchedule')}
               </Link>
               <Link
                 href="/dashboard/manager/procurement-plans"
@@ -434,6 +491,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.procurementPlans')}
+                {t('sidebar.navigation.manager.procurementPlans')}
               </Link>
               <Link
                 href="/dashboard/manager/farming-commitments"
@@ -445,6 +503,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.farmingCommitments')}
+                {t('sidebar.navigation.manager.procurementCommitments')}
               </Link>
             </div>
           )}
@@ -469,6 +528,7 @@ export function SidebarGroup() {
                 <FiShoppingCart />
               </span>
               <span className="truncate">{t('sidebar.manager.ordersDelivery')}</span>
+              <span className="truncate">{t('sidebar.navigation.manager.ordersAndDelivery')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", orderOpen && "rotate-180")}
@@ -486,6 +546,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.orders')}
+                {t('sidebar.navigation.manager.orders')}
               </Link>
               <Link
                 href="/dashboard/manager/shipments"
@@ -497,6 +558,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.deliveryBatches')}
+                {t('sidebar.navigation.manager.deliveryBatches')}
               </Link>
             </div>
           )}
@@ -522,6 +584,7 @@ export function SidebarGroup() {
                 <FiUsers />
               </span>
               <span className="truncate">{t('sidebar.manager.customersProducts')}</span>
+              <span className="truncate">{t('sidebar.navigation.manager.customersAndProducts')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", customerOpen && "rotate-180")}
@@ -539,6 +602,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.businessCustomers')}
+                {t('sidebar.navigation.manager.businessCustomers')}
               </Link>
               <Link
                 href="/dashboard/manager/products"
@@ -550,6 +614,8 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.products')}
+
+                {t('sidebar.navigation.manager.products')}
               </Link>
               <Link
                 href="/dashboard/manager/farmers"
@@ -561,6 +627,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.farmers')}
+                {t('sidebar.navigation.manager.farmers')}
               </Link>
             </div>
           )}
@@ -586,6 +653,8 @@ export function SidebarGroup() {
                 <FiBarChart2 />
               </span>
               <span className="truncate">{t('sidebar.manager.reportsProcessing')}</span>
+
+              <span className="truncate">{t('sidebar.navigation.manager.reportsAndProcessing')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", reportOpen && "rotate-180")}
@@ -603,6 +672,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.reports')}
+                {t('sidebar.navigation.manager.reports')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/batches"
@@ -614,6 +684,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.processingBatches')}
+                {t('sidebar.navigation.manager.processingBatches')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/farmer-batches"
@@ -625,6 +696,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.farmerProcessingBatches')}
+                {t('sidebar.navigation.manager.farmerProcessingBatches')}
               </Link>
 
               <Link
@@ -636,7 +708,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tiến trình lô chế biến
+                {t('sidebar.navigation.manager.processingProgress')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/wastes"
@@ -647,7 +719,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Chất thải lô chế biến
+                {t('sidebar.navigation.manager.processingWaste')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/methods"
@@ -658,7 +730,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Phương pháp chế biến
+                {t('sidebar.navigation.manager.processingMethods')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/parameters"
@@ -669,7 +741,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Tham số chế biến
+                {t('sidebar.navigation.manager.processingParameters')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/stages"
@@ -680,7 +752,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Công đoạn chế biến
+                {t('sidebar.navigation.manager.processingStages')}
               </Link>
               <Link
                 href="/dashboard/manager/processing/waste-disposals"
@@ -691,7 +763,7 @@ export function SidebarGroup() {
                     : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                 )}
               >
-                Xử lý chất thải lô chế biến
+                {t('sidebar.navigation.manager.wasteDisposal')}
               </Link>
             </div>
           )}
@@ -715,6 +787,8 @@ export function SidebarGroup() {
                 <FiUsers />
               </span>
               <span className="truncate">{t('sidebar.manager.staffManagement')}</span>
+
+              <span className="truncate">{t('sidebar.navigation.manager.staffManagement')}</span>
             </div>
             <FiChevronDown
               className={cn("transition-transform duration-200", staffOpen && "rotate-180")}
@@ -732,6 +806,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.manager.staffList')}
+                {t('sidebar.navigation.manager.staffList')}
               </Link>
             </div>
           )}
@@ -744,25 +819,25 @@ export function SidebarGroup() {
           {(() => {
             const warehouseLinks = [
               {
-                label: "Kho hàng",
+                label: t('sidebar.navigation.manager.warehouses'),
                 href: "/dashboard/manager/warehouses",
                 activeMatch: (path: string) =>
                   path === "/dashboard/manager/warehouses",
               },
               {
-                label: "Tồn kho",
+                label: t('sidebar.navigation.manager.inventories'),
                 href: "/dashboard/manager/inventories",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/manager/inventories"),
               },
               {
-                label: "Lịch sử tồn kho",
+                label: t('sidebar.navigation.manager.inventoryHistory'),
                 href: "/dashboard/manager/inventory-logs",
                 activeMatch: (path: string) =>
                   path.startsWith("/dashboard/manager/inventory-logs"),
               },
               {
-                label: "Yêu cầu xuất kho",
+                label: t('sidebar.navigation.manager.outboundRequests'),
                 href: "/dashboard/manager/warehouse-request",
                 activeMatch: (path: string) =>
                   path === "/dashboard/manager/warehouse-request",

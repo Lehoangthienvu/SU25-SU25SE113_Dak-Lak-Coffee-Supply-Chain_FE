@@ -1014,7 +1014,7 @@
             },
             "actions": {
               "cancel": "Cancel",
-              "creating": "Creating...",
+              "creating": "Creating..."
               "create": "Create Processing Batch"
             },
             "loading": {
@@ -3234,6 +3234,200 @@
       "loadFailed": "Error loading data"
     }
   },
+  "expertAnomalies" :{
+  "page": {
+    "title": "Reports Requiring Response",
+    "subtitle": "Manage and respond to reports from farmers",
+    "noReports": {
+      "title": "No reports yet",
+      "description": "All reports have been processed or no new reports available"
+    },
+    "filters": {
+      "title": "Filter by status:",
+      "all": "All",
+      "resolved": "Responded",
+      "unresolved": "Not responded"
+    },
+    "noFilteredReports": {
+      "title": "No reports found",
+      "all": "No reports found",
+      "resolved": "No reports have been responded to",
+      "unresolved": "No reports are pending response",
+      "viewAll": "View all reports"
+    },
+    "reportCard": {
+      "viewDetails": "View details",
+      "responseHistory": "Response history",
+      "respond": "Respond",
+      "status": {
+        "resolved": "Responded",
+        "unresolved": "Not responded"
+      }
+    },
+    "mediaViewer": {
+      "title": "Report details:",
+      "close": "Close",
+      "description": "Description",
+      "otherInfo": "Other information",
+      "reporter": "Reporter:",
+      "reportDate": "Report date:",
+      "status": "Status:",
+      "statusResolved": "Processed",
+      "statusUnresolved": "Not processed",
+      "attachments": "Attachments",
+      "image": "Image",
+      "video": "Video",
+      "imageAlt": "Report image",
+      "fullscreenImageAlt": "Fullscreen image"
+    },
+    "errors": {
+      "loadReports": "Unable to load reports list",
+      "loadAdvices": "Unable to load responses",
+      "loadReportDetail": "Unable to load report details"
+    }
+  },
+  "adviceHistoryDialog": {
+    "title": "Response History",
+    "loading": "Loading response details...",
+    "noAdvices": {
+      "title": "No responses yet",
+      "description": "No responses have been provided for this report"
+    },
+    "responseTypes": {
+      "corrective": "Corrective",
+      "preventive": "Preventive",
+      "observation": "Observation",
+      "advisory": "Advisory",
+      "emergency": "Emergency",
+      "routine": "Routine"
+    },
+    "form": {
+      "responseType": "Response type",
+      "adviceSource": "Advice source",
+      "content": "Content",
+      "attachedFile": "Attached file (URL)",
+      "attachedFilePlaceholder": "https://example.com/file.pdf",
+      "noContent": "(No content)"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "viewAttachment": "View attachment"
+    },
+    "labels": {
+      "type": "Type:",
+      "source": "Source:"
+    },
+    "messages": {
+      "loadDetailsError": "Unable to load full response details.",
+      "updateSuccess": "Updated successfully.",
+      "updateError": "Update failed.",
+      "deleteConfirm": "Are you sure you want to delete this response?",
+      "deleteSuccess": "Response deleted.",
+      "deleteError": "Delete failed."
+    }
+  },
+  "editAnomalyPage": {
+    "title": "Edit Expert Response",
+    "subtitle": "Update response information and content",
+    "loading": "Loading data...",
+    "notFound": {
+      "title": "Response not found",
+      "description": "Please return to the list page to select a response to edit",
+      "backToList": "Back to list"
+    },
+    "form": {
+      "title": "Response Information",
+      "responseType": {
+        "label": "Response type *",
+        "placeholder": "Select response type",
+        "options": {
+          "preventive": "Preventive",
+          "corrective": "Corrective",
+          "observation": "Observation"
+        }
+      },
+      "adviceSource": {
+        "label": "Reference source (optional)",
+        "placeholder": "Example: Field experience, research report, professional expertise..."
+      },
+      "adviceText": {
+        "label": "Response content *",
+        "placeholder": "Enter detailed response content..."
+      },
+      "attachedFileUrl": {
+        "label": "Attached file URL (optional)",
+        "placeholder": "https://example.com/file.pdf"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "update": "Update response",
+      "updating": "Updating..."
+    },
+    "errors": {
+      "loadAdvice": "Unable to load response information",
+      "loadData": "Error loading data",
+      "noAdviceId": "Response ID not found",
+      "contentRequired": "Please enter response content",
+      "updateFailed": "Update failed",
+      "systemError": "System error during update"
+    },
+    "success": {
+      "updateSuccess": "Response updated successfully!"
+    }
+  },
+  "createAnomalyPage": {
+    "title": "Send Expert Response",
+    "subtitle": "Provide advice and guidance for anomaly reports",
+    "notFound": {
+      "title": "Report not found",
+      "description": "Please return to the list page to select a report to respond to",
+      "backToList": "Back to list"
+    },
+    "form": {
+      "title": "Response Information",
+      "responseType": {
+        "label": "Response type *",
+        "placeholder": "Select response type",
+        "options": {
+          "preventive": "Preventive",
+          "corrective": "Corrective",
+          "observation": "Observation"
+        }
+      },
+      "adviceSource": {
+        "label": "Reference source (optional)",
+        "placeholder": "Example: Field experience, research report, professional expertise..."
+      },
+      "adviceText": {
+        "label": "Response content *",
+        "placeholder": "Enter detailed response content..."
+      },
+      "attachedFiles": {
+        "label": "📎 Upload attached files (optional)",
+        "selectedFiles": "Selected {count} file(s)",
+        "supportedFormats": "💡 Supported: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), images, videos"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Send response",
+      "submitting": "Sending..."
+    },
+    "errors": {
+      "noReportId": "Report ID not found",
+      "contentRequired": "Please enter response content",
+      "submitFailed": "Failed to send response ❌",
+      "apiError": "Error: {message}"
+    },
+    "success": {
+      "submitSuccess": "Response sent successfully 🎉"
+    }
+  }
+},
   "inventoryLogs": {
     "title": "Inventory Logs",
     "subtitle": "Track all changes in the warehouse system",
@@ -4007,6 +4201,140 @@
       "staffManagement": "Staff Management",
       "staffList": "Staff List"
     }
+      "warehouseOperations": "Warehouse Operations",
+      "warehouseManagement": "Warehouse Management",
+      "inboundRequests": "Inbound Requests",
+      "inboundReceipts": "Inbound Receipts",
+      "outboundRequests": "Outbound Requests",
+      "outboundReceipts": "Outbound Receipts",
+      "inventories": "Inventories",
+      "inventoryLogs": "Inventory Logs",
+      "warehouses": "Warehouses",
+      "warehouseRequest": "Delivery Requests",
+      "cropSeasons": "Crop Seasons",
+      "reports": "Reports",
+      "expertAdvice": "Expert Advice",
+      "contractsAndDelivery": "Contracts & Delivery",
+      "supplyContracts": "Supply Contracts",
+      "deliverySchedule": "Delivery Schedule",
+      "procurementPlans": "Procurement Plans",
+      "procurementCommitments": "Procurement Commitments",
+      "ordersAndDelivery": "Orders & Delivery",
+      "orders": "Orders",
+      "deliveryBatches": "Delivery Batches",
+      "customersAndProducts": "Customers & Products",
+      "businessCustomers": "Business Customers",
+      "products": "Products",
+      "farmers": "Farmers",
+      "reportsAndProcessing": "Reports & Processing",
+      "processingBatches": "Processing Batches",
+      "farmerProcessingBatches": "Farmer Processing Batches",
+      "processingProgress": "Processing Progress",
+      "processingWaste": "Processing Waste",
+      "processingMethods": "Processing Methods",
+      "processingParameters": "Processing Parameters",
+      "processingStages": "Processing Stages",
+      "wasteDisposal": "Waste Disposal",
+      "staffManagement": "Staff Management",
+      "staffList": "Staff List",
+      "warehouseInventory": "Warehouse Inventory",
+      "inventoryHistory": "Inventory History",
+      "outboundRequests": "Outbound Requests",
+      "farmer": {
+        "dashboard": "Dashboard",
+        "cropSeasons": "Crop Seasons",
+        "cropStages": "Growth Stages",
+        "cropProgress": "Crop Progress",
+        "consultation": "Consultation",
+        "warehouseRequest": "Delivery Requests",
+        "marketPlace": "Marketplace",
+        "farmingCommitments": "Farming Commitments",
+        "coffeeProcurementFloor": "Coffee Procurement Floor",
+        "procurementPlanCommitment": "Procurement Plan Commitment",
+        "sendDeliveryRequest": "Send Delivery Request",
+        "processing": "Processing",
+        "processingBatches": "Processing Batches List",
+        "processingProgress": "Processing Progress",
+        "processingWaste": "Processing Waste"
+      },
+      "manager": {
+        "dashboard": "Overview",
+        "cropSeasons": "Crop Seasons",
+        "reports": "Reports",
+        "expertAdvice": "Expert Advice",
+        "notifications": "Notifications",
+        "contractsAndDelivery": "Contracts & Delivery",
+        "supplyContracts": "Supply Contracts",
+        "deliverySchedule": "Delivery Schedule",
+        "procurementPlans": "Procurement Plans",
+        "procurementCommitments": "Procurement Commitments",
+        "ordersAndDelivery": "Orders & Delivery",
+        "orders": "Orders",
+        "deliveryBatches": "Delivery Batches",
+        "customersAndProducts": "Customers & Products",
+        "businessCustomers": "Business Customers",
+        "products": "Products",
+        "farmers": "Farmers",
+        "reportsAndProcessing": "Reports & Processing",
+        "processingBatches": "Processing Batches",
+        "farmerProcessingBatches": "Farmer Processing Batches",
+        "processingProgress": "Processing Progress",
+        "processingWaste": "Processing Waste",
+        "processingMethods": "Processing Methods",
+        "processingParameters": "Processing Parameters",
+        "processingStages": "Processing Stages",
+        "wasteDisposal": "Waste Disposal",
+        "staffManagement": "Staff Management",
+        "staffList": "Staff List",
+        "warehouseManagement": "Warehouse Management",
+        "warehouses": "Warehouses",
+        "inventories": "Inventories",
+        "inventoryHistory": "Inventory History",
+        "outboundRequests": "Outbound Requests"
+      }
+    },
+            "user": {
+          "greeting": "Hello:",
+          "anonymous": "Anonymous",
+          "logout": "Logout",
+          "logoutTitle": "Logout and return to main page"
+        },
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+            "staffDashboard": {
+          "title": "Staff Dashboard",
+          "subtitle": "Manage warehouse operations and track activities",
+          "waitingInbound": "Pending Inbound Requests",
+          "waitingOutbound": "Pending Outbound Requests",
+          "monthlyStats": "Monthly Statistics",
+          "quickAccess": "Quick Access",
+          "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          "chartLabels": {
+            "inbound": "Inbound",
+            "outbound": "Outbound"
+          },
+          "inv": "Inventory",
+          "inventory": "Manage Inventory",
+          "inventoryDesc": "Manage Inventory",
+          "inb": "Inbound",
+          "inbound": "Inbound Requests",
+          "inboundRequests": "Inbound Requests",
+          "inboundRequestsDesc": "Inbound Requests",
+          "out": "Outbound",
+          "outbound": "Outbound Receipts",
+          "outboundRequests": "Outbound Requests",
+          "outboundRequestsDesc": "Outbound Requests",
+          "outboundReceipts": "Outbound Receipts",
+          "outboundReceiptsDesc": "Outbound Receipts",
+          "wa": "Warehouses",
+          "warehou": "Manage Warehouses",
+          "warehouses": "Warehouses",
+          "warehousesDesc": "Manage Warehouses",
+          "rec": "Receipts",
+          "receipts": "Inbound Receipts",
+          "receiptsDesc": "Inbound Receipts"
+        }
   },
   "warehouseDetail": {
     "title": "Warehouse Details",
@@ -4577,6 +4905,7 @@
       "back": "Back",
       "format": "💡 Format",
       "example": "💡 Example",
+      "exampleText": "Coffee supply contract for Robusta Dak Lak 2024",
               "statusAutoUpdate": "💡 Status will automatically update: \"In Progress\" if start date is in the past or present, \"Not Started\" if start date is in the future",
       "updateSuccess": "Contract updated successfully!",
       "createSuccess": "Contract created successfully!",
@@ -4619,22 +4948,48 @@
       "unitPrice": "Unit price must be greater than 0",
       "discountAmount": "Discount cannot be negative",
       "contractNumberRequired": "Contract number is required",
-      "contractNumberLength": "Contract number must have at least 3 characters",
+      "contractNumberMinLength": "Contract number must have at least 3 characters",
       "contractTitleRequired": "Contract title is required",
-      "contractTitleLength": "Contract title must have at least 10 characters to describe clearly",
+      "contractTitleMinLength": "Contract title must have at least 10 characters to describe clearly",
       "contractTitleMaxLength": "Contract title cannot exceed 200 characters",
       "buyerIdRequired": "Please select a business buyer",
       "startDateRequired": "Start date is required",
       "endDateRequired": "End date is required",
       "endDateAfterStartDate": "End date must be after start date",
-      "signedAtAfterStartDate": "Contract signed date cannot be after start date",
-              "contractFileSize": "File cannot be too large",
+      "signedAtBeforeStartDate": "Contract signed date cannot be after start date",
+      "contractFileSize": "File cannot be too large (max 10MB)",
       "contractFileType": "Only supports image files (JPG, PNG, GIF, WebP), PDF, Word (DOC, DOCX)",
       "cancelReasonRequired": "Cancel reason is required when status is 'Cancelled'",
       "contractItemsRequired": "Please add at least 1 item to the contract",
-      "coffeeTypeIdRequired": "Please select a coffee type",
-      "formErrors": "Please check and fix errors in the form",
+      "coffeeTypeRequired": "Please select a coffee type",
+      "quantityGreaterThanZero": "Quantity must be greater than 0",
+      "unitPriceGreaterThanZero": "Unit price must be greater than 0",
+      "discountAmountNonNegative": "Discount cannot be negative",
+      "totalQuantityNonNegative": "Total quantity cannot be negative",
+      "totalValueNonNegative": "Total value cannot be negative",
+      "checkFormErrors": "Please check and fix errors in the form",
       "dateError": "Date error: Contract signed date must be ≤ Start date"
+    },
+    "messages": {
+      "createSuccess": "Contract created successfully!",
+      "updateSuccess": "Contract updated successfully!",
+      "createError": "Failed to create contract!",
+      "updateError": "Failed to update contract!",
+      "loadError": "Cannot load contract data!",
+      "saveError": "Failed to save contract!",
+      "deleteSuccess": "Contract deleted successfully!",
+      "deleteError": "Failed to delete contract!",
+      "validationError": "Please check and fix errors in the form",
+      "networkError": "Network error. Please try again!",
+      "unauthorizedError": "You don't have permission to perform this action!",
+      "serverError": "Server error. Please try again later!",
+      "loading": "Initializing contract form...",
+      "fileSelected": "New file selected: {{fileName}}",
+      "fileInfo": "File: {{fileName}}\nTo view content, please upload file to server or provide URL.",
+      "loadPreviewError": "Cannot load image preview",
+      "deleteNewFile": "New file deleted",
+      "deleteCurrentFile": "Current file deleted",
+      "updateTotal": "Updated total quantity and value from items!"
     },
     "error": {
       "loadPreview": "Cannot load image preview"

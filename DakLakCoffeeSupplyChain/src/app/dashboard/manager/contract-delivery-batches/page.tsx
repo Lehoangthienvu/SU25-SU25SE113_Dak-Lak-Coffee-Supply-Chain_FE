@@ -82,7 +82,7 @@ export default function ContractDeliveryBatchesPage() {
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<
     "ALL" | ContractDeliveryBatchStatus
->("ALL");
+  >("ALL");
   const [data, setData] = useState<ContractDeliveryBatchViewAllDto[]>([]);
   const [loading, setLoading] = useState(true);
   const ITEMS_PER_PAGE = 6;
@@ -291,20 +291,38 @@ export default function ContractDeliveryBatchesPage() {
             <table className="min-w-full table-auto text-sm border border-gray-200">
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <th className="px-4 py-2 text-left">{t("contractDeliveryBatches.table.headers.deliveryBatchCode")}</th>
-                  <th className="px-4 py-2 text-left">{t("contractDeliveryBatches.table.headers.contractNumber")}</th>
-                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.deliveryRound")}</th>
+                  <th className="px-4 py-2 text-left">
+                    {t(
+                      "contractDeliveryBatches.table.headers.deliveryBatchCode"
+                    )}
+                  </th>
+                  <th className="px-4 py-2 text-left">
+                    {t("contractDeliveryBatches.table.headers.contractNumber")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contractDeliveryBatches.table.headers.deliveryRound")}
+                  </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    {t("contractDeliveryBatches.table.headers.expectedDeliveryDate")}
+                    {t(
+                      "contractDeliveryBatches.table.headers.expectedDeliveryDate"
+                    )}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
                     {t("contractDeliveryBatches.table.headers.quantity")}
-                    <Tooltip content={t("contractDeliveryBatches.table.quantityTooltip")}>
+                    <Tooltip
+                      content={t(
+                        "contractDeliveryBatches.table.quantityTooltip"
+                      )}
+                    >
                       <Info className="inline ml-1 w-3 h-3 text-gray-400" />
                     </Tooltip>
                   </th>
-                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.status")}</th>
-                  <th className="px-4 py-2 text-center">{t("contractDeliveryBatches.table.headers.actions")}</th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contractDeliveryBatches.table.headers.status")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("contractDeliveryBatches.table.headers.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -409,11 +427,12 @@ export default function ContractDeliveryBatchesPage() {
               <span className="font-medium">
                 {(currentPage - 1) * ITEMS_PER_PAGE + 1}
               </span>
-              {t("contractDeliveryBatches.pagination.to")}
+              {" – "}
               <span className="font-medium">
                 {Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}
               </span>{" "}
-              {t("contractDeliveryBatches.pagination.of")} {filteredData.length} {t("contractDeliveryBatches.pagination.deliveryBatches")}
+              {t("contractDeliveryBatches.pagination.of")} {filteredData.length}{" "}
+              {t("contractDeliveryBatches.pagination.deliveryBatches")}
             </div>
 
             {/* Điều khiển phân trang */}
@@ -428,7 +447,8 @@ export default function ContractDeliveryBatchesPage() {
                 {t("contractDeliveryBatches.pagination.previous")}
               </Button>
               <span className="flex items-center px-2">
-                {t("contractDeliveryBatches.pagination.page")} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t("contractDeliveryBatches.pagination.page")}{" "}
+                <span className="mx-1 font-semibold">{currentPage}</span>{" "}
                 {t("contractDeliveryBatches.pagination.of")} {totalPages}
               </span>
               <Button
@@ -452,7 +472,9 @@ export default function ContractDeliveryBatchesPage() {
         title={t("contractDeliveryBatches.delete.title")}
         description={
           <span>
-            {t("contractDeliveryBatches.delete.description", { deliveryBatchCode: batchToDelete?.deliveryBatchCode })}
+            {t("contractDeliveryBatches.delete.description", {
+              deliveryBatchCode: batchToDelete?.deliveryBatchCode,
+            })}
           </span>
         }
         confirmText={t("contractDeliveryBatches.delete.confirm")}

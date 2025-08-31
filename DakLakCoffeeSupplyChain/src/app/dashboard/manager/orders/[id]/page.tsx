@@ -487,7 +487,7 @@ export default function OrderDetailPage() {
                               className="h-7 w-7 p-[2px]"
                               onClick={() => openEditDialog(it)}
                             >
-                              <span className="text-sm text-gray-600">Sửa</span>
+                              <span className="text-sm text-gray-600">{t('managerOrders.detail.actions.edit')}</span>
                             </Button>
                           </Tooltip>
                         </div>
