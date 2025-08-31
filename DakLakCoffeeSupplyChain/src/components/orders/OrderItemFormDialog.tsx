@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+
 
 interface ContractDeliveryItemOption {
   contractDeliveryItemId: string;
@@ -56,6 +58,8 @@ export default function OrderItemFormDialog({
   initialData,
   onSuccess,
 }: OrderItemFormDialogProps) {
+  const { t } = useTranslation();
+  
   const [formData, setFormData] = useState<
     OrderItemCreateForOrder | OrderItemUpdateDto
   >({
@@ -147,7 +151,7 @@ export default function OrderItemFormDialog({
     if (id && !map.has(id)) {
       map.set(id, {
         contractDeliveryItemId: id,
-        label: "Mặt hàng đợt giao (hiện tại)",
+        label: t("managerOrders.detail.addOrderItem.labels.currentDeliveryItem"),
       });
     }
     return Array.from(map.values());
@@ -156,22 +160,22 @@ export default function OrderItemFormDialog({
   const handleSubmit = async () => {
     // Kiểm tra client-side
     if (!formData.contractDeliveryItemId) {
-      toast.error("Vui lòng chọn mặt hàng đợt giao (ContractDeliveryItem).");
+      toast.error(t("managerOrders.detail.addOrderItem.validation.selectContractDeliveryItem"));
       return;
     }
 
     if (!formData.productId) {
-      toast.error("Vui lòng chọn sản phẩm (Product).");
+      toast.error(t("managerOrders.detail.addOrderItem.validation.selectProduct"));
       return;
     }
 
     if ((formData.quantity ?? 0) <= 0) {
-      toast.error("Số lượng phải lớn hơn 0.");
+      toast.error(t("managerOrders.detail.addOrderItem.validation.quantityRequired"));
       return;
     }
 
     if ((formData.unitPrice ?? 0) < 0) {
-      toast.error("Đơn giá không hợp lệ.");
+      toast.error(t("managerOrders.detail.addOrderItem.validation.unitPriceInvalid"));
       return;
     }
 
@@ -179,7 +183,7 @@ export default function OrderItemFormDialog({
       (formData.discountAmount ?? 0) < 0 ||
       (formData.discountAmount ?? 0) > 100
     ) {
-      toast.error("Chiết khấu phải nằm trong khoảng 0–100%.");
+      toast.error(t("managerOrders.detail.addOrderItem.validation.discountRange"));
       return;
     }
 
@@ -187,21 +191,21 @@ export default function OrderItemFormDialog({
     try {
       if (mode === "create") {
         await createOrderItem(formData as OrderItemCreateForOrder);
-        toast.success("Đã thêm mặt hàng đơn hàng thành công!");
+        toast.success(t("managerOrders.detail.addOrderItem.messages.addSuccess"));
       } else {
         await updateOrderItem(formData as OrderItemUpdateDto);
-        toast.success("Cập nhật mặt hàng đơn hàng thành công!");
+        toast.success(t("managerOrders.detail.addOrderItem.messages.updateSuccess"));
       }
 
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
-      let message = "Đã xảy ra lỗi không xác định.";
+      let message = t("managerOrders.detail.addOrderItem.messages.unknownError");
 
       if (axios.isAxiosError(error)) {
         message =
           error.response?.data?.message ??
-          `Lỗi từ máy chủ: ${error.response?.status}`;
+          t("managerOrders.detail.addOrderItem.messages.serverError", { status: error.response?.status });
       } else if (error instanceof Error) {
         message = error.message;
       }
@@ -218,21 +222,21 @@ export default function OrderItemFormDialog({
         <BaseDialog.DialogHeader className="px-5 pt-5 pb-0">
           <BaseDialog.DialogTitle>
             {mode === "create"
-              ? "Thêm mặt hàng đơn hàng"
-              : "Cập nhật mặt hàng đơn hàng"}
+              ? t("managerOrders.detail.addOrderItem.title.create")
+              : t("managerOrders.detail.addOrderItem.title.edit")}
           </BaseDialog.DialogTitle>
         </BaseDialog.DialogHeader>
 
         <div className="grid gap-2 px-5 py-4">
           {/* OrderCode: có thể ẩn hoặc hiển thị read-only để người dùng biết họ đang ở đơn hàng nào */}
           <div className="grid gap-1">
-            <Label htmlFor="orderCode">Mã đơn hàng</Label>
+            <Label htmlFor="orderCode">{t("managerOrders.detail.addOrderItem.fields.orderCode")}</Label>
             <Input id="orderCode" value={orderCode ?? ""} disabled />
           </div>
 
           {/* Mặt hàng đợt giao */}
           <div className="grid gap-1">
-            <Label htmlFor="contractDeliveryItemId">Mặt hàng đợt giao</Label>
+            <Label htmlFor="contractDeliveryItemId">{t("managerOrders.detail.addOrderItem.fields.contractDeliveryItem")}</Label>
             <Select
               value={(formData.contractDeliveryItemId as string) || undefined}
               onValueChange={(value) => {
@@ -243,7 +247,7 @@ export default function OrderItemFormDialog({
               }}
             >
               <SelectTrigger id="contractDeliveryItemId" className="w-full">
-                <SelectValue placeholder="-- Chọn mặt hàng đợt giao --" />
+                <SelectValue placeholder={t("managerOrders.detail.addOrderItem.placeholders.selectContractDeliveryItem")} />
               </SelectTrigger>
               <SelectContent>
                 {mergedCdiOptions.map((it) => (
@@ -260,7 +264,7 @@ export default function OrderItemFormDialog({
 
           {/* Sản phẩm */}
           <div className="grid gap-1">
-            <Label htmlFor="productId">Sản phẩm</Label>
+            <Label htmlFor="productId">{t("managerOrders.detail.addOrderItem.fields.product")}</Label>
             <Select
               value={formData.productId || undefined}
               onValueChange={(value) =>
@@ -268,7 +272,7 @@ export default function OrderItemFormDialog({
               }
             >
               <SelectTrigger id="productId" className="w-full">
-                <SelectValue placeholder="-- Chọn sản phẩm --" />
+                <SelectValue placeholder={t("managerOrders.detail.addOrderItem.placeholders.selectProduct")} />
               </SelectTrigger>
               <SelectContent>
                 {productOptions.map((p) => (
@@ -285,7 +289,7 @@ export default function OrderItemFormDialog({
 
           {/* Số lượng (kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="quantity">Số lượng (kg)</Label>
+            <Label htmlFor="quantity">{t("managerOrders.detail.addOrderItem.fields.quantity")}</Label>
             <div className="relative">
               <Input
                 id="quantity"
@@ -295,18 +299,18 @@ export default function OrderItemFormDialog({
                 onChange={handleChange}
                 min={0}
                 step={1}
-                placeholder="vd: 500"
+                placeholder={t("managerOrders.detail.addOrderItem.placeholders.quantity")}
                 className="pr-14"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-                kg
+                {t("managerOrders.detail.addOrderItem.units.kg")}
               </span>
             </div>
           </div>
 
           {/* Đơn giá (VNĐ/kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="unitPrice">Đơn giá (VNĐ/kg)</Label>
+            <Label htmlFor="unitPrice">{t("managerOrders.detail.addOrderItem.fields.unitPrice")}</Label>
             <div className="relative">
               <Input
                 id="unitPrice"
@@ -316,18 +320,18 @@ export default function OrderItemFormDialog({
                 onChange={handleChange}
                 min={0}
                 step={100} // hoặc 1000 tuỳ quy định
-                placeholder="vd: 95000"
+                placeholder={t("managerOrders.detail.addOrderItem.placeholders.unitPrice")}
                 className="pr-24"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-                VNĐ/kg
+                {t("managerOrders.detail.addOrderItem.units.vndPerKg")}
               </span>
             </div>
           </div>
 
           {/* Chiết khấu (%) */}
           <div className="grid gap-1">
-            <Label htmlFor="discountAmount">Chiết khấu (%)</Label>
+            <Label htmlFor="discountAmount">{t("managerOrders.detail.addOrderItem.fields.discountAmount")}</Label>
             <div className="relative">
               <Input
                 id="discountAmount"
@@ -338,23 +342,23 @@ export default function OrderItemFormDialog({
                 min={0}
                 max={100}
                 step={1}
-                placeholder="vd: 10"
+                placeholder={t("managerOrders.detail.addOrderItem.placeholders.discountAmount")}
                 className="pr-10"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-                %
+                {t("managerOrders.detail.addOrderItem.units.percent")}
               </span>
             </div>
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="note">Ghi chú</Label>
+            <Label htmlFor="note">{t("managerOrders.detail.addOrderItem.fields.note")}</Label>
             <Textarea
               id="note"
               name="note"
               value={formData.note ?? ""}
               onChange={handleChange}
-              placeholder="Nhập ghi chú (tuỳ chọn)"
+              placeholder={t("managerOrders.detail.addOrderItem.placeholders.note")}
             />
           </div>
         </div>
@@ -365,14 +369,14 @@ export default function OrderItemFormDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Huỷ
+            {t("managerOrders.detail.addOrderItem.actions.cancel")}
           </Button>
           <Button
             className="bg-orange-500 hover:bg-orange-600 text-white"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Đang lưu..." : mode === "create" ? "Thêm" : "Cập nhật"}
+            {loading ? t("managerOrders.detail.addOrderItem.actions.saving") : mode === "create" ? t("managerOrders.detail.addOrderItem.actions.add") : t("managerOrders.detail.addOrderItem.actions.update")}
           </Button>
         </div>
       </FormDialog.Content>
