@@ -203,9 +203,6 @@ function StaffOutboundRequestListContent() {
         <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg">
-                <TrendingDown className="w-6 h-6 text-white" />
-              </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
                   📤 {t('warehouseOutboundRequests.title')}

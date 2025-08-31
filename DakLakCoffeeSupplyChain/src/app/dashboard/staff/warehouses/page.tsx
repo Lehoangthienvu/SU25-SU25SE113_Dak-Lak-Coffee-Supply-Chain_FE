@@ -82,7 +82,6 @@ export default function StaffWarehouseListPage() {
       {/* Header với gradient xanh lá */}
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
-          <Warehouse className="w-6 h-6" />
           <h1 className="text-2xl font-bold">📦 {t('warehouses.title')}</h1>
         </div>
         <p className="text-green-100 text-base">{t('warehouses.subtitle')}</p>

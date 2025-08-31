@@ -99,7 +99,6 @@ export default function WarehouseListPage() {
       {/* Header với gradient */}
       <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
-          <Warehouse className="w-6 h-6" />
           <h1 className="text-2xl font-bold">{t('managerWarehouses.title')}</h1>
         </div>
         <p className="text-amber-100 text-base">{t('managerWarehouses.subtitle')}</p>
@@ -295,7 +294,6 @@ export default function WarehouseListPage() {
                       
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <MapPin className="w-3 h-3 text-amber-500" />
                           <span className="truncate">{warehouse.location}</span>
                         </div>
 

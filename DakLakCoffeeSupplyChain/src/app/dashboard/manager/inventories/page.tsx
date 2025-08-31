@@ -146,7 +146,6 @@ export default function ManagerInventoryListPage() {
       {/* Header với gradient */}
       <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-4 text-white shadow-lg">
         <div className="flex items-center gap-3 mb-2">
-          <Package className="w-6 h-6" />
           <h1 className="text-2xl font-bold">{t('managerInventories.title')}</h1>
         </div>
         <p className="text-blue-100 text-base">{t('managerInventories.subtitle')}</p>
