@@ -6148,5 +6148,15 @@
         "kg": "kg"
       }
     }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Manage and track products",
+    "stats": {
+      "totalProducts": "Total Products",
+      "pendingProducts": "Pending Products",
+      "completedProducts": "Completed Products",
+      "totalQuantity": "Total Quantity"
+    }
   }
 }
