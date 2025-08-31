@@ -16,8 +16,10 @@ import { EditProgressDialog } from "../components/EditProgressDialog";
 import { CropSeasonDetail, getCropSeasonDetailById } from "@/lib/api/cropSeasonDetail";
 import { CropStage, getCropStages } from "@/lib/api/cropStage";
 import { ArrowLeft, CalendarDays, FileText, Play, MessageSquare } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function CropProgressPage() {
+    const { t } = useTranslation();
     const router = useRouter();
     const params = useParams();
     const cropSeasonDetailId = params?.id as string;
@@ -66,7 +68,7 @@ export default function CropProgressPage() {
         loadSeasonDetail();
     }, [reloadData, loadSeasonDetail]);
 
-    const handleSeasonDetailUpdate = useCallback((newYield: number | null) => {
+    const handleSeasonDetailUpdate = useCallback(() => {
         // Reload season detail to get updated data
         loadSeasonDetail();
     }, [loadSeasonDetail]);
@@ -102,7 +104,7 @@ export default function CropProgressPage() {
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex justify-center items-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Đang tải...</p>
+                    <p className="text-gray-600">{t('cropProgress.page.loading')}</p>
                 </div>
             </div>
         );
@@ -115,10 +117,10 @@ export default function CropProgressPage() {
                     <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <div className="w-8 h-8 text-red-500">⚠️</div>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Không tìm thấy vùng trồng</h3>
-                    <p className="text-gray-600 mb-4">Vùng trồng không tồn tại hoặc đã bị xóa</p>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('cropProgress.page.notFound')}</h3>
+                    <p className="text-gray-600 mb-4">{t('cropProgress.page.notFoundDesc')}</p>
                     <Button onClick={() => router.push('/dashboard/farmer/crop-seasons')}>
-                        Quay lại danh sách
+                        {t('cropProgress.page.backToList')}
                     </Button>
                 </div>
             </div>
@@ -143,10 +145,10 @@ export default function CropProgressPage() {
                                 <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full"></div>
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-800 line-clamp-2">
-                                        Tiến độ mùa vụ - {seasonDetail.typeName}
+                                        {t('cropProgress.page.title', { coffeeType: seasonDetail.typeName })}
                                     </h1>
                                     <p className="text-gray-600 text-sm">
-                                        Theo dõi và ghi nhận tiến độ phát triển
+                                        {t('cropProgress.page.subtitle')}
                                     </p>
                                 </div>
                             </div>
@@ -154,7 +156,7 @@ export default function CropProgressPage() {
 
                         <div className="flex items-center gap-4">
                             <div className="text-right">
-                                <p className="text-sm text-gray-500">Sản lượng thu hoạch</p>
+                                <p className="text-sm text-gray-500">{t('cropProgress.header.harvestYield')}</p>
                                 {seasonDetail?.actualYield && seasonDetail.actualYield > 0 ? (
                                     <p className="text-lg font-bold text-green-600">{seasonDetail.actualYield} kg</p>
                                 ) : (
@@ -162,7 +164,7 @@ export default function CropProgressPage() {
                                         <div className="w-4 h-4 bg-yellow-100 rounded-full flex items-center justify-center">
                                             <span className="text-yellow-600 text-xs">⚠️</span>
                                         </div>
-                                        <p className="text-sm text-yellow-600 font-medium">Chưa cập nhật</p>
+                                        <p className="text-sm text-yellow-600 font-medium">{t('cropProgress.header.notUpdated')}</p>
                                     </div>
                                 )}
                             </div>
@@ -171,7 +173,7 @@ export default function CropProgressPage() {
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
                             >
                                 <MessageSquare className="w-4 h-4 mr-2" />
-                                Gửi tư vấn
+                                {t('cropProgress.header.requestConsultation')}
                             </Button>
                         </div>
                     </div>
@@ -184,7 +186,7 @@ export default function CropProgressPage() {
                             <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
                                 <div className="w-3 h-3 text-white">📊</div>
                             </div>
-                            Bảng tiến độ
+                            {t('cropProgress.progressTable.title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -192,12 +194,12 @@ export default function CropProgressPage() {
                             <table className="w-full text-sm">
                                 <thead className="bg-gradient-to-r from-orange-50 to-amber-50 text-gray-700 font-semibold">
                                     <tr>
-                                        <th className="px-3 py-3 text-left">Giai đoạn</th>
-                                        <th className="px-3 py-3 text-center">Trạng thái</th>
-                                        <th className="px-3 py-3 text-center">Ngày ghi nhận</th>
-                                        <th className="px-3 py-3 text-left">Ghi chú</th>
-                                        <th className="px-3 py-3 text-center">Tài liệu</th>
-                                        <th className="px-3 py-3 text-center">Hành động</th>
+                                        <th className="px-3 py-3 text-left">{t('cropProgress.progressTable.headers.stage')}</th>
+                                        <th className="px-3 py-3 text-center">{t('cropProgress.progressTable.headers.status')}</th>
+                                        <th className="px-3 py-3 text-center">{t('cropProgress.progressTable.headers.recordedDate')}</th>
+                                        <th className="px-3 py-3 text-left">{t('cropProgress.progressTable.headers.notes')}</th>
+                                        <th className="px-3 py-3 text-center">{t('cropProgress.progressTable.headers.documents')}</th>
+                                        <th className="px-3 py-3 text-center">{t('cropProgress.progressTable.headers.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-orange-100">
@@ -225,15 +227,15 @@ export default function CropProgressPage() {
                                                 <td className="px-3 py-2 align-top text-center">
                                                     {isCompleted ? (
                                                         <Badge variant="success" className="text-xs">
-                                                            Hoàn thành
+                                                            {t('cropProgress.progressTable.status.completed')}
                                                         </Badge>
                                                     ) : ready ? (
                                                         <Badge variant="outline" className="text-xs">
-                                                            Đang tiến hành
+                                                            {t('cropProgress.progressTable.status.inProgress')}
                                                         </Badge>
                                                     ) : (
                                                         <Badge variant="secondary" className="text-xs">
-                                                            Chưa mở
+                                                            {t('cropProgress.progressTable.status.notOpen')}
                                                         </Badge>
                                                     )}
                                                 </td>
@@ -309,7 +311,7 @@ export default function CropProgressPage() {
                                                                 onSuccess={handleEditSuccess}
                                                                 onSeasonDetailUpdate={handleSeasonDetailUpdate}
                                                                 triggerButton={
-                                                                    <Button variant="outline" size="sm" className="border-neutral-300">Sửa</Button>
+                                                                    <Button variant="outline" size="sm" className="border-neutral-300">{t('cropProgress.progressTable.actions.edit')}</Button>
                                                                 }
                                                             />
                                                         </div>
@@ -320,11 +322,11 @@ export default function CropProgressPage() {
                                                             onSuccess={handleCreateSuccess}
                                                             onSeasonDetailUpdate={handleSeasonDetailUpdate}
                                                             triggerButton={
-                                                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Ghi nhận</Button>
+                                                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">{t('cropProgress.progressTable.actions.record')}</Button>
                                                             }
                                                         />
                                                     ) : (
-                                                        <span className="text-xs text-neutral-500">—</span>
+                                                        <span className="text-xs text-neutral-500">{t('cropProgress.progressTable.actions.noAction')}</span>
                                                     )}
                                                 </td>
                                             </tr>
