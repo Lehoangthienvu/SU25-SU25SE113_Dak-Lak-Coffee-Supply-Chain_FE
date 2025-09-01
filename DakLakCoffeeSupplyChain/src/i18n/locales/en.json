@@ -5319,9 +5319,9 @@
           "deliveryDateNotBeforeOrder": "Actual delivery date cannot be before order date",
           "discountNotExceedTotal": "Discount cannot exceed total amount",
           "discountNotNegative": "Discount cannot be negative",
-          "dataNotExists": "Data does not exist or has been deleted"
-        },
-        "fields": {
+          "dataNotExists": "Data does not exist or has been deleted",
+          "quantityExceedsDeliveryItemGuidance": "Quantity exceeds the planned quantity for the selected delivery item (max {{max}} kg).",
+          "quantityExceedsProductGuidance": "Quantity exceeds the available stock for the selected product (max {{max}} kg)."
         },
         "table": {
           "headers": {
