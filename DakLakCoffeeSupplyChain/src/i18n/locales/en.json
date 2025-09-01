@@ -2512,7 +2512,8 @@
        "notFoundDesc": "The crop area you are looking for does not exist or has been deleted.",
        "backToList": "Back to list",
        "title": "Crop Progress - {{coffeeType}}",
-       "subtitle": "Track and manage crop progress by stage"
+       "subtitle": "Track and manage crop progress by stage",
+       "unknownType": "Loading..."
      },
      "header": {
        "harvestYield": "Harvest Yield",

@@ -2551,7 +2551,8 @@
        "notFoundDesc": "Vùng trồng bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
        "backToList": "Quay lại danh sách",
        "title": "Tiến độ canh tác - {{coffeeType}}",
-       "subtitle": "Theo dõi và quản lý tiến độ canh tác theo từng giai đoạn"
+       "subtitle": "Theo dõi và quản lý tiến độ canh tác theo từng giai đoạn",
+       "unknownType": "Đang tải..."
      },
      "header": {
        "harvestYield": "Năng suất thu hoạch",
