@@ -166,7 +166,7 @@ export default function ProductDetailsPage() {
               <InfoRow
                 icon={<UserCheck className="w-4 h-4" />}
                 label="Nông dân"
-                value={(product as any).farmerName || "—"}
+                value={product.farmerName || "—"}
               />
               <InfoRow
                 icon={<CheckCircle className="w-4 h-4" />}
