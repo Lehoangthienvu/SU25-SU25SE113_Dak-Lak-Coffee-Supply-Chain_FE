@@ -357,7 +357,7 @@ export default function CropProgressPage() {
                                                                     progress={progress!}
                                                                     onSuccess={handleEditSuccess}
                                                                     onSeasonDetailUpdate={handleSeasonDetailUpdate}
-                                                                    existingProgress={progressList.map((p) => ({ progressId: p.progressId, progressDate: p.progressDate }))}
+                                                                    existingProgress={progressList.filter(p => p.progressDate).map((p) => ({ progressId: p.progressId, progressDate: p.progressDate! }))}
                                                                     triggerButton={
                                                                         <Button variant="outline" size="sm" className="border-neutral-300">{t('cropProgress.progressTable.actions.edit')}</Button>
                                                                     }
