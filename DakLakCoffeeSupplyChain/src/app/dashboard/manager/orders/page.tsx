@@ -79,12 +79,8 @@ export default function OrdersPage() {
     const matchesStatus =
       selectedStatus === "ALL" || o.status === selectedStatus;
 
-    // Ưu tiên ngày giao thực tế (ActualDeliveryDate) nếu có, không thì OrderDate
-    const orderDate = o.actualDeliveryDate
-      ? new Date(o.actualDeliveryDate)
-      : o.orderDate
-      ? new Date(o.orderDate)
-      : null;
+    // Sử dụng ngày tạo đơn hàng (OrderDate)
+    const orderDate = o.orderDate ? new Date(o.orderDate) : null;
 
     const matchesDate =
       (!fromDate || (orderDate && orderDate >= fromDate)) &&
@@ -93,8 +89,15 @@ export default function OrdersPage() {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
-  const paginated = filtered.slice(
+  // Sắp xếp theo ngày tạo đơn hàng mới nhất trước
+  const sorted = filtered.sort((a, b) => {
+    const dateA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
+    const dateB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
+    return dateB - dateA; // Mới nhất trước
+  });
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE) || 1;
+  const paginated = sorted.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -317,11 +320,7 @@ export default function OrdersPage() {
                         {o.deliveryBatchCode ?? "—"}
                       </td>
                       <td className="px-4 py-2 text-center">
-                        {o.actualDeliveryDate
-                          ? formatDate(o.actualDeliveryDate)
-                          : o.orderDate
-                          ? formatDate(o.orderDate)
-                          : "—"}
+                        {o.orderDate ? formatDate(o.orderDate) : "—"}
                       </td>
                       <td className="px-4 py-2 text-center">
                         {o.totalAmount != null
@@ -411,7 +410,7 @@ export default function OrdersPage() {
               <span className="font-medium">
                 {(currentPage - 1) * ITEMS_PER_PAGE + 1}
               </span>
-              –
+              {" – "}
               <span className="font-medium">
                 {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}
               </span>{" "}

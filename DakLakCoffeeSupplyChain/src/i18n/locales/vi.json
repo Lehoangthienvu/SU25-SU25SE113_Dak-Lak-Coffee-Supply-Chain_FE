@@ -5433,7 +5433,7 @@
            "orderCode": "Mã đơn hàng",
            "contractNumber": "Số hợp đồng",
            "deliveryBatchCode": "Mã đợt giao",
-           "deliveryDate": "Ngày giao",
+           "deliveryDate": "Ngày tạo",
            "totalAmount": "Tổng giá trị (VNĐ)",
            "status": "Trạng thái",
            "actions": "Hành động"
@@ -5447,7 +5447,7 @@
            "failed": "Giao thất bại"
          },
         "tooltips": {
-          "deliveryDate": "Ngày giao thực tế nếu có, không thì ngày đặt.",
+          "deliveryDate": "Ngày tạo đơn hàng.",
           "totalAmount": "Tổng giá trị tiền của đơn hàng (sau đối soát).",
           "viewDetails": "Xem chi tiết",
           "edit": "Chỉnh sửa",
@@ -5635,6 +5635,7 @@
           "orderCode": "Mã đơn hàng:",
           "contractNumber": "Số hợp đồng:",
           "deliveryRound": "Đợt giao:",
+          "orderDate": "Ngày tạo:",
           "deliveryDate": "Ngày giao:",
           "totalAmount": "Tổng giá trị (VNĐ):",
           "status": "Trạng thái:",
@@ -5642,7 +5643,8 @@
           "cancelReason": "Lý do huỷ:"
         },
         "tooltips": {
-          "deliveryDate": "Ngày giao thực tế nếu có, không thì ngày đặt.",
+          "orderDate": "Ngày tạo đơn hàng.",
+          "deliveryDate": "Ngày giao thực tế.",
           "totalAmount": "Tổng giá trị tiền của đơn hàng."
         }
       },

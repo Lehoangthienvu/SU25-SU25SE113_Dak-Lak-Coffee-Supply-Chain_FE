@@ -499,13 +499,14 @@ export default function OrderForm({
       });
     }
 
-    // Validate ngày giao thực tế không được trước ngày tạo đơn hàng
-    if (data.actualDeliveryDate && data.orderDate) {
+    // Validate ngày giao thực tế không được trước ngày hiện tại (chỉ khi EDIT)
+    if (isEdit && data.actualDeliveryDate) {
       const actualDate = new Date(data.actualDeliveryDate);
-      const orderDate = new Date(data.orderDate);
-      if (actualDate < orderDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to start of day
+      if (actualDate < today) {
         clientErrors.actualDeliveryDate = t(
-          "managerOrders.form.validation.actualDeliveryDateBeforeOrderDate"
+          "managerOrders.form.validation.actualDeliveryDateBeforeToday"
         );
       }
     }
@@ -897,8 +898,12 @@ export default function OrderForm({
         </div>
       )}
 
-      {/* DeliveryBatch */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* DeliveryBatch + DeliveryRound + ActualDeliveryDate */}
+      <div
+        className={`grid grid-cols-1 gap-4 ${
+          isEdit ? "md:grid-cols-3" : "md:grid-cols-2"
+        }`}
+      >
         {/* Đợt giao (create = select, edit = read-only) */}
         <div>
           <label className="block mb-1 text-sm font-medium">
@@ -970,91 +975,71 @@ export default function OrderForm({
           />
         </div>
 
-        {/* Ngày tạo đơn hàng */}
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.orderDate")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <DatePicker
-            value={form.orderDate}
-            onChange={(v) => setField("orderDate", v)}
-            placeholder="yyyy-MM-dd"
-            disabled={isEdit} // Disable khi edit vì ngày tạo không được thay đổi
-          />
-          {isEdit && (
-            <p className="text-xs text-gray-500 mt-1">
-              {t("managerOrders.form.fields.orderDateCannotChange")}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* ActualDeliveryDate + Status */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.actualDeliveryDate")}
-          </label>
-          <DatePicker
-            value={form.actualDeliveryDate}
-            onChange={(v) => setField("actualDeliveryDate", v)}
-            placeholder="yyyy-MM-dd"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.status")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          {!isEdit ? (
-            // CREATE: cứng "Đang chuẩn bị", không thể thay đổi
-            <Input
-              value={t(`managerOrders.status.${form.status.toLowerCase()}`)}
-              readOnly
-              className="bg-muted/40 cursor-not-allowed"
-            />
-          ) : (
-            // EDIT: có thể chọn trạng thái
-            <select
-              className="w-full p-2 border rounded"
-              value={form.status}
-              onChange={(e) =>
-                setField("status", e.target.value as OrderStatus)
-              }
-            >
-              {Object.values(OrderStatus)
-                .filter((s) => s !== OrderStatus.Pending)
-                .map((s) => (
-                  <option key={s} value={s}>
-                    {t(`managerOrders.status.${s.toLowerCase()}`)}
-                  </option>
-                ))}
-            </select>
-          )}
-          {!isEdit && (
-            <p className="text-xs text-gray-500 mt-1">
-              {t("managerOrders.form.fields.statusCannotChange")}
-            </p>
-          )}
-        </div>
-
+        {/* Ngày giao thực tế - chỉ hiển thị khi EDIT */}
         {isEdit && (
           <div>
             <label className="block mb-1 text-sm font-medium">
-              {t("managerOrders.form.fields.cancelReason")}{" "}
-              {t("managerOrders.form.common.optional")}
+              {t("managerOrders.form.fields.actualDeliveryDate")}
             </label>
-            <Input
-              value={form.cancelReason ?? ""}
-              onChange={(e) => setField("cancelReason", e.target.value)}
-              placeholder={t("managerOrders.form.placeholders.cancelReason")}
-              disabled={form.status !== OrderStatus.Cancelled}
+            <DatePicker
+              value={form.actualDeliveryDate}
+              onChange={(v) => setField("actualDeliveryDate", v)}
+              placeholder="yyyy-MM-dd"
             />
           </div>
         )}
       </div>
+
+      {/* Status */}
+      <div>
+        <label className="block mb-1 text-sm font-medium">
+          {t("managerOrders.form.fields.status")}{" "}
+          <span className="text-red-500">*</span>
+        </label>
+        {!isEdit ? (
+          // CREATE: cứng "Đang chuẩn bị", không thể thay đổi
+          <Input
+            value={t(`managerOrders.status.${form.status.toLowerCase()}`)}
+            readOnly
+            className="bg-muted/40 cursor-not-allowed"
+          />
+        ) : (
+          // EDIT: có thể chọn trạng thái
+          <select
+            className="w-full p-2 border rounded"
+            value={form.status}
+            onChange={(e) => setField("status", e.target.value as OrderStatus)}
+          >
+            {Object.values(OrderStatus)
+              .filter((s) => s !== OrderStatus.Pending)
+              .map((s) => (
+                <option key={s} value={s}>
+                  {t(`managerOrders.status.${s.toLowerCase()}`)}
+                </option>
+              ))}
+          </select>
+        )}
+        {!isEdit && (
+          <p className="text-xs text-gray-500 mt-1">
+            {t("managerOrders.form.fields.statusCannotChange")}
+          </p>
+        )}
+      </div>
+
+      {/* Cancel Reason - chỉ hiển thị khi EDIT và status là Cancelled */}
+      {isEdit && form.status === OrderStatus.Cancelled && (
+        <div>
+          <label className="block mb-1 text-sm font-medium">
+            {t("managerOrders.form.fields.cancelReason")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
+          <Input
+            value={form.cancelReason ?? ""}
+            onChange={(e) => setField("cancelReason", e.target.value)}
+            placeholder={t("managerOrders.form.placeholders.cancelReason")}
+          />
+        </div>
+      )}
 
       {/* Note */}
       <div>
@@ -1100,10 +1085,7 @@ export default function OrderForm({
                 {t("managerOrders.form.table.headers.quantity")}{" "}
                 <span className="text-red-500">*</span>
               </span>
-              <span>
-                {t("managerOrders.form.table.headers.unitPrice")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
+              <span>{t("managerOrders.form.table.headers.unitPrice")}</span>
               <span>{t("managerOrders.form.table.headers.discount")}</span>
               <span>{t("managerOrders.form.table.headers.note")}</span>
               <span></span>
@@ -1222,52 +1204,25 @@ export default function OrderForm({
                   </p>
                 )}
 
-                {/* Đơn giá */}
+                {/* Đơn giá - tự động từ mặt hàng đợt giao */}
                 <Input
                   type="number"
                   min={0}
                   step={1000}
                   value={row.unitPrice}
-                  onChange={(e) =>
-                    updateRow(
-                      idx,
-                      "unitPrice",
-                      e.target.value === "" ? "" : Number(e.target.value)
-                    )
-                  }
-                  className={`no-spinner ${
-                    hasOrderItemError(idx, "unitPrice") ? "border-red-500" : ""
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === "-" || e.key.toLowerCase() === "e")
-                      e.preventDefault();
-                  }}
+                  readOnly
+                  className="bg-muted/40 cursor-not-allowed"
                 />
-                {hasOrderItemError(idx, "unitPrice") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "unitPrice")}
-                  </p>
-                )}
 
-                {/* Giảm trừ (%) */}
+                {/* Giảm trừ (%) - tự động từ mặt hàng đợt giao */}
                 <Input
                   type="number"
                   min={0}
                   max={100}
                   step={0.1}
                   value={row.discountAmount ?? 0}
-                  onChange={(e) =>
-                    updateRow(
-                      idx,
-                      "discountAmount",
-                      e.target.value === "" ? "" : Number(e.target.value)
-                    )
-                  }
-                  className="no-spinner"
-                  onKeyDown={(e) => {
-                    if (e.key === "-" || e.key.toLowerCase() === "e")
-                      e.preventDefault();
-                  }}
+                  readOnly
+                  className="bg-muted/40 cursor-not-allowed"
                 />
 
                 {/* Ghi chú */}

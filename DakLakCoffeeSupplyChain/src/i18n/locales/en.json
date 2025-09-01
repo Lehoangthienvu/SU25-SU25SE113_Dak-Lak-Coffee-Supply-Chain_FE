@@ -5377,7 +5377,7 @@
           "orderCode": "Order Code",
           "contractNumber": "Contract Number",
           "deliveryBatchCode": "Delivery Batch Code",
-          "deliveryDate": "Delivery Date",
+          "deliveryDate": "Creation Date",
           "totalAmount": "Total Amount (VND)",
           "status": "Status",
           "actions": "Actions"
@@ -5391,7 +5391,7 @@
           "failed": "Failed"
         },
         "tooltips": {
-          "deliveryDate": "Actual delivery date if available, otherwise order date.",
+          "deliveryDate": "The date when the order was created.",
           "totalAmount": "Total monetary value of the order (after reconciliation).",
           "viewDetails": "View Details",
           "edit": "Edit",
@@ -5579,6 +5579,7 @@
           "orderCode": "Order Code:",
           "contractNumber": "Contract Number:",
           "deliveryRound": "Delivery Round:",
+          "orderDate": "Creation Date:",
           "deliveryDate": "Delivery Date:",
           "totalAmount": "Total Amount (VND):",
           "status": "Status:",
@@ -5586,6 +5587,7 @@
           "cancelReason": "Cancel Reason:"
         },
         "tooltips": {
+          "orderDate": "The date when the order was created.",
           "deliveryDate": "Actual delivery date if available, otherwise order date.",
           "totalAmount": "Total monetary value of the order."
         }
