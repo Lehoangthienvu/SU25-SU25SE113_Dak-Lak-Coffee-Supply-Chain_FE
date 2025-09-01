@@ -5364,7 +5364,7 @@
           "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa"
         },
         "fields": {
-          "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+          
         },
         "table": {
           "headers": {
@@ -5513,7 +5513,8 @@
         "note": "Ghi chú",
         "status": "Trạng thái",
         "cancelReason": "Lý do hủy",
-        "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+        "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi",
+        "statusCannotChange": "Trạng thái không thể thay đổi"
       },
       "common": {
         "optional": "(tùy chọn)"
