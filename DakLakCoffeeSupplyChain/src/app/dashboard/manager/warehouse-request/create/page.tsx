@@ -297,7 +297,7 @@ export default function CreateOutboundRequestPage() {
             <Button 
               variant="outline" 
               onClick={() => router.push('/dashboard/manager/warehouse-request')}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="bg-white/90 text-orange-600 border-white hover:bg-white hover:text-orange-700 font-medium shadow-md"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               {t('managerWarehouseRequest.create.back')}

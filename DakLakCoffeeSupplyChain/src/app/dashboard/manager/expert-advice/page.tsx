@@ -111,14 +111,19 @@ export default function ManagerExpertAdvicePage() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-6 space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Quản lý Tư vấn Chuyên gia</h1>
-                    <p className="text-gray-600 mt-2">
-                        Theo dõi và quản lý tất cả tư vấn từ chuyên gia nông nghiệp
-                    </p>
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <FiMessageSquare className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2 text-gray-900">Quản lý Tư vấn Chuyên gia</h1>
+                        <p className="text-gray-600 text-lg">
+                            Theo dõi và quản lý tất cả tư vấn từ chuyên gia nông nghiệp
+                        </p>
+                    </div>
                 </div>
             </div>
 

@@ -93,7 +93,7 @@ export default function InventoryLogsPage() {
             <Link href={`/dashboard/manager/inventories/${id}`}>
               <Button 
                 variant="outline" 
-                className="border-white/20 text-white hover:bg-white/10"
+                className="bg-white/90 text-blue-600 border-white hover:bg-white hover:text-blue-700 font-medium shadow-md"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 {t('managerInventories.logs.backToDetail')}
