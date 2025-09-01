@@ -18,6 +18,9 @@
         "placeholder": "Reject reason...",
         "loadingButton": "Processing..."
       }
-    }    
+    },
+    "navigation": {
+      "cultivationRegistration": "Cultivation Registration"
+    }
   }
 }

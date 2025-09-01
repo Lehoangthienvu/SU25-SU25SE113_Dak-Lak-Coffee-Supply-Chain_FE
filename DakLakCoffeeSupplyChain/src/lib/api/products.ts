@@ -331,3 +331,26 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
     }
   }
 }
+
+// API: Test function để lấy inventory detail với thông tin mới
+export async function getInventoryDetailTest(id: string): Promise<any> {
+  try {
+    console.log("🧪 Testing inventory detail endpoint with id:", id);
+    const { data } = await api.get(`/Inventories/${id}`);
+    console.log("🧪 Inventory detail response:", data);
+    console.log("🧪 All properties:", Object.keys(data));
+    console.log("🧪 Farmer info:", {
+      farmerId: data.farmerId,
+      farmerName: data.farmerName,
+      farmLocation: data.farmLocation
+    });
+    console.log("🧪 Evaluation info:", {
+      evaluationResult: data.evaluationResult,
+      totalScore: data.totalScore
+    });
+    return data;
+  } catch (error) {
+    console.error("🧪 Error testing inventory detail:", error);
+    return null;
+  }
+}

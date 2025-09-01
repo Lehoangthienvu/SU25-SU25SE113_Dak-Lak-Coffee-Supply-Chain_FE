@@ -11,6 +11,7 @@ import {
     FiCoffee,
 } from "react-icons/fi";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 import {
     Chart as ChartJS,
@@ -59,9 +60,9 @@ interface DoughnutData {
     }[];
 }
 
-// Default data for when no progress exists
-const DEFAULT_PROGRESS_DATA: DoughnutData = {
-    labels: ["Hoàn thành", "Còn lại"],
+// Default data for when no progress exists - will be updated with translations
+const getDefaultProgressData = (t: (key: string) => string): DoughnutData => ({
+    labels: [t("farmerDashboard.defaultProgress.completed"), t("farmerDashboard.defaultProgress.remaining")],
     datasets: [
         {
             data: [0, 100],
@@ -69,7 +70,7 @@ const DEFAULT_PROGRESS_DATA: DoughnutData = {
             borderWidth: 1,
         },
     ],
-};
+});
 
 // Tối ưu: Tách biệt loading states để UX tốt hơn
 interface LoadingStates {
@@ -80,6 +81,7 @@ interface LoadingStates {
 
 export default function FarmerDashboard() {
     useAuthGuard(["farmer"]);
+    const { t } = useTranslation();
 
     const [stats, setStats] = useState<{
         activeSeasons: number;
@@ -90,7 +92,7 @@ export default function FarmerDashboard() {
 
     // Bỏ alerts state vì không còn sử dụng
     const [chartData, setChartData] = useState<ChartData | null>(null);
-    const [overallProgressData, setOverallProgressData] = useState<DoughnutData>(DEFAULT_PROGRESS_DATA);
+    const [overallProgressData, setOverallProgressData] = useState<DoughnutData>(getDefaultProgressData(t));
 
     // Tối ưu: Loading states riêng biệt thay vì một loading chung
     const [loadingStates, setLoadingStates] = useState<LoadingStates>({
@@ -152,7 +154,7 @@ export default function FarmerDashboard() {
                 labels: ["T1", "T2", "T3", "T4", "T5"],
                 datasets: [
                     {
-                        label: "Thực tế (kg)",
+                        label: t("farmerDashboard.charts.monthlyYield.actual"),
                         data: [400, 450, 380, 520, 610],
                         borderColor: "#FD7622",
                         backgroundColor: "rgba(253, 118, 34, 0.2)",
@@ -160,7 +162,7 @@ export default function FarmerDashboard() {
                         fill: false,
                     },
                     {
-                        label: "Kế hoạch (kg)",
+                        label: t("farmerDashboard.charts.monthlyYield.planned"),
                         data: [500, 500, 500, 500, 500],
                         borderColor: "#8884d8",
                         borderDash: [5, 5],
@@ -175,7 +177,7 @@ export default function FarmerDashboard() {
         } finally {
             setLoadingStates(prev => ({ ...prev, chart: false }));
         }
-    }, []);
+    }, [t]);
 
     // Tối ưu: Tách biệt việc fetch progress data
     const fetchProgressData = useCallback(async () => {
@@ -210,7 +212,7 @@ export default function FarmerDashboard() {
                 : 0;
 
             setOverallProgressData({
-                labels: ["Hoàn thành", "Còn lại"],
+                labels: [t("farmerDashboard.defaultProgress.completed"), t("farmerDashboard.defaultProgress.remaining")],
                 datasets: [
                     {
                         data: [average, 100 - average],
@@ -221,11 +223,11 @@ export default function FarmerDashboard() {
             });
         } catch (progressError) {
             console.log("Không có dữ liệu tiến trình, sử dụng giá trị mặc định:", progressError);
-            setOverallProgressData(DEFAULT_PROGRESS_DATA);
+            setOverallProgressData(getDefaultProgressData(t));
         } finally {
             setLoadingStates(prev => ({ ...prev, progress: false }));
         }
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         // Tối ưu: Fetch song song các data để load nhanh hơn
@@ -247,7 +249,7 @@ export default function FarmerDashboard() {
                     <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
                         <FiCoffee className="w-6 h-6 text-orange-600 animate-pulse" />
                     </div>
-                    <p className="text-gray-600 font-medium text-sm">Đang tải dữ liệu...</p>
+                    <p className="text-gray-600 font-medium text-sm">{t("farmerDashboard.loading.data")}</p>
                 </div>
             </div>
         );
@@ -261,10 +263,10 @@ export default function FarmerDashboard() {
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                                Nông dân
+                                {t("farmerDashboard.title")}
                             </h1>
                             <p className="text-gray-600 text-sm">
-                                Chào mừng bạn trở lại! Theo dõi hoạt động canh tác của bạn
+                                {t("farmerDashboard.welcomeMessage")}
                             </p>
                         </div>
                         <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
@@ -278,28 +280,28 @@ export default function FarmerDashboard() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <StatCard
                                 icon={<FiClipboard className="w-5 h-5" />}
-                                label="Mùa vụ đang hoạt động"
+                                label={t("farmerDashboard.stats.activeSeasons")}
                                 value={stats.activeSeasons}
                                 color="orange"
                                 loading={loadingStates.stats}
                             />
                             <StatCard
                                 icon={<FiBookOpen className="w-5 h-5" />}
-                                label="Vùng sắp thu hoạch"
+                                label={t("farmerDashboard.stats.upcomingHarvests")}
                                 value={stats.upcomingHarvests}
                                 color="green"
                                 loading={loadingStates.stats}
                             />
                             <StatCard
                                 icon={<FiPackage className="w-5 h-5" />}
-                                label="Yêu cầu giao hàng"
+                                label={t("farmerDashboard.stats.pendingWarehouseRequests")}
                                 value={stats.pendingWarehouseRequests}
                                 color="blue"
                                 loading={loadingStates.stats}
                             />
                             <StatCard
                                 icon={<FiFeather className="w-5 h-5" />}
-                                label="Phản hồi kỹ thuật chưa đọc"
+                                label={t("farmerDashboard.stats.unreadAdvice")}
                                 value={stats.unreadAdvice}
                                 color="purple"
                                 loading={loadingStates.stats}
@@ -311,7 +313,7 @@ export default function FarmerDashboard() {
                 <section>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
-                            <DashboardSectionTitle title="Sản lượng theo tháng" />
+                            <DashboardSectionTitle title={t("farmerDashboard.charts.monthlyYield.title")} />
                             {chartData && !loadingStates.chart ? (
                                 <div className="h-[250px]">
                                     <Line data={chartData} options={chartOptions} />
@@ -321,14 +323,14 @@ export default function FarmerDashboard() {
                                     <div className="text-center">
                                         <FiTrendingUp className="w-10 h-10 text-orange-300 mx-auto mb-2" />
                                         <p className="text-sm">
-                                            {loadingStates.chart ? "Đang tải dữ liệu biểu đồ..." : "Không có dữ liệu"}
+                                            {loadingStates.chart ? t("farmerDashboard.loading.chart") : t("farmerDashboard.charts.monthlyYield.noData")}
                                         </p>
                                     </div>
                                 </div>
                             )}
                         </div>
                         <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
-                            <DashboardSectionTitle title="Tiến độ mùa vụ tổng thể" />
+                            <DashboardSectionTitle title={t("farmerDashboard.charts.overallProgress.title")} />
                             <div className="flex items-center justify-center">
                                 {!loadingStates.progress ? (
                                     <div className="relative h-[200px] w-[200px]">
@@ -338,7 +340,7 @@ export default function FarmerDashboard() {
                                                 <span className="text-2xl font-bold text-green-700">
                                                     {overallProgressData.datasets[0].data[0]}%
                                                 </span>
-                                                <p className="text-xs text-gray-500">Hoàn thành</p>
+                                                <p className="text-xs text-gray-500">{t("farmerDashboard.defaultProgress.completed")}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -348,7 +350,7 @@ export default function FarmerDashboard() {
                                             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
                                                 <FiCoffee className="w-4 h-4 text-orange-600 animate-pulse" />
                                             </div>
-                                            <p className="text-sm text-gray-500">Đang tải...</p>
+                                            <p className="text-sm text-gray-500">{t("farmerDashboard.loading.progress")}</p>
                                         </div>
                                     </div>
                                 )}
@@ -360,26 +362,26 @@ export default function FarmerDashboard() {
                 {/* Bỏ phần cảnh báo để dashboard đơn giản hơn */}
 
                 <section>
-                    <DashboardSectionTitle title="Hành động nhanh" />
+                    <DashboardSectionTitle title={t("farmerDashboard.quickActions.title")} />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <ActionCard
                             icon={<FiClipboard className="w-5 h-5" />}
-                            title="Quản lý mùa vụ"
-                            description="Theo dõi và cập nhật thông tin mùa vụ canh tác."
+                            title={t("farmerDashboard.quickActions.cropSeasons.title")}
+                            description={t("farmerDashboard.quickActions.cropSeasons.description")}
                             href="/dashboard/farmer/crop-seasons"
                             color="orange"
                         />
                         <ActionCard
                             icon={<FiPackage className="w-5 h-5" />}
-                            title="Gửi yêu cầu giao hàng"
-                            description="Danh sách yêu cầu giao hàng."
+                            title={t("farmerDashboard.quickActions.warehouseRequest.title")}
+                            description={t("farmerDashboard.quickActions.warehouseRequest.description")}
                             href="/dashboard/farmer/warehouse-request"
                             color="blue"
                         />
                         <ActionCard
                             icon={<FiFeather className="w-5 h-5" />}
-                            title="Phản hồi kỹ thuật"
-                            description="Xem và trả lời phản hồi từ chuyên gia."
+                            title={t("farmerDashboard.quickActions.technicalFeedback.title")}
+                            description={t("farmerDashboard.quickActions.technicalFeedback.description")}
                             href="/dashboard/farmer/request-feedback"
                             color="green"
                         />

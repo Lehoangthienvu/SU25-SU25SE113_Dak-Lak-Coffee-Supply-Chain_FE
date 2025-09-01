@@ -1,0 +1,49 @@
+{
+  "farmerDashboard": {
+    "title": "Farmer",
+    "welcomeMessage": "Welcome back! Track your farming activities",
+    "loading": {
+      "data": "Loading data...",
+      "chart": "Loading chart data...",
+      "progress": "Loading..."
+    },
+    "stats": {
+      "activeSeasons": "Active Seasons",
+      "upcomingHarvests": "Upcoming Harvests",
+      "pendingWarehouseRequests": "Pending Delivery Requests",
+      "unreadAdvice": "Unread Technical Feedback"
+    },
+    "charts": {
+      "monthlyYield": {
+        "title": "Monthly Yield",
+        "actual": "Actual (kg)",
+        "planned": "Planned (kg)",
+        "noData": "No data available"
+      },
+      "overallProgress": {
+        "title": "Overall Season Progress",
+        "completed": "Completed",
+        "remaining": "Remaining"
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "cropSeasons": {
+        "title": "Manage Seasons",
+        "description": "Track and update your farming season information."
+      },
+      "warehouseRequest": {
+        "title": "Send Delivery Request",
+        "description": "List of delivery requests."
+      },
+      "technicalFeedback": {
+        "title": "Technical Feedback",
+        "description": "View and respond to feedback from experts."
+      }
+    },
+    "defaultProgress": {
+      "completed": "Completed",
+      "remaining": "Remaining"
+    }
+  }
+}

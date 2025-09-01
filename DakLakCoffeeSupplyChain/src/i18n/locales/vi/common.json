@@ -18,6 +18,9 @@
         "placeholder": "Lý do từ chối...",
         "loadingButton": "Đang xử lý..."
       }
+    },
+    "navigation": {
+      "cultivationRegistration": "Các đơn đã đăng ký kế hoạch"
     }    
   }
 }
