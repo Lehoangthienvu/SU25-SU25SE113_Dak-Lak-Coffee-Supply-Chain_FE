@@ -13,7 +13,7 @@ import {
 } from "@/lib/api/cropProgress";
 import { CreateProgressDialog } from "../components/CreateProgressDialog";
 import { EditProgressDialog } from "../components/EditProgressDialog";
-import { CropSeasonDetail, getCropSeasonDetailById } from "@/lib/api/cropSeasonDetail";
+import { CropSeasonDetail, getCropSeasonDetailById, getCommitmentDetailInfo } from "@/lib/api/cropSeasonDetail";
 import { CropStage, getCropStages } from "@/lib/api/cropStage";
 import { ArrowLeft, CalendarDays, FileText, Play, MessageSquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,8 @@ export default function CropProgressPage() {
 
     const [progressList, setProgressList] = useState<CropProgressViewAllDto[]>([]);
     const [seasonDetail, setSeasonDetail] = useState<CropSeasonDetail | null>(null);
+    const [coffeeTypeName, setCoffeeTypeName] = useState<string | null>(null);
+
     const [allStages, setAllStages] = useState<CropStage[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -53,6 +55,18 @@ export default function CropProgressPage() {
         try {
             const detail = await getCropSeasonDetailById(cropSeasonDetailId);
             setSeasonDetail(detail);
+
+            // Lấy thông tin coffeeTypeName từ commitment detail
+            if (detail?.commitmentDetailId) {
+                try {
+                    const coffeeInfo = await getCommitmentDetailInfo(detail.commitmentDetailId);
+                    if (coffeeInfo?.coffeeTypeName) {
+                        setCoffeeTypeName(coffeeInfo.coffeeTypeName);
+                    }
+                } catch (coffeeError) {
+                    console.error('Error loading coffee type info:', coffeeError);
+                }
+            }
         } catch {
             AppToast.error(t('cropProgress.errors.loadSeasonDetailError'));
         }
@@ -85,7 +99,7 @@ export default function CropProgressPage() {
             try {
                 const stages = await getCropStages();
                 setAllStages(stages);
-                        } catch {
+            } catch {
                 AppToast.error(t('cropProgress.errors.loadStagesError'));
             }
         };
@@ -127,6 +141,8 @@ export default function CropProgressPage() {
         );
     }
 
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4">
             <div className="max-w-7xl mx-auto py-8">
@@ -134,18 +150,17 @@ export default function CropProgressPage() {
                 <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-6 mb-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-4">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => router.push('/dashboard/farmer/crop-seasons')}
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                            </Button>
+
                             <div className="flex items-center gap-3">
                                 <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full"></div>
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-800 line-clamp-2">
-                                        {t('cropProgress.page.title', { coffeeType: seasonDetail.typeName })}
+                                        {t('cropProgress.page.title', {
+                                            coffeeType: coffeeTypeName ||
+                                                seasonDetail?.typeName ||
+                                                seasonDetail?.commitmentDetailCode ||
+                                                t('cropProgress.page.unknownType')
+                                        })}
                                     </h1>
                                     <p className="text-gray-600 text-sm">
                                         {t('cropProgress.page.subtitle')}

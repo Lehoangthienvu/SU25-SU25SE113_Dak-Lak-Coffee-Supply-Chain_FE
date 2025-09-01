@@ -40,7 +40,7 @@ export default function AdminLayout({
           <SidebarContent>
             <DynamicSidebarGroup />
           </SidebarContent>
-          <DynamicSidebarFooter role={role} />
+          <DynamicSidebarFooter role={role} isCollapsed={isCollapsed} />
         </Sidebar>
 
         <div
