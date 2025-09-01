@@ -896,11 +896,13 @@ export default function OrderForm({
                 setField("status", e.target.value as OrderStatus)
               }
             >
-              {Object.values(OrderStatus).map((s) => (
-                <option key={s} value={s}>
-                  {t(`managerOrders.status.${s.toLowerCase()}`)}
-                </option>
-              ))}
+              {Object.values(OrderStatus)
+                .filter((s) => s !== OrderStatus.Pending)
+                .map((s) => (
+                  <option key={s} value={s}>
+                    {t(`managerOrders.status.${s.toLowerCase()}`)}
+                  </option>
+                ))}
             </select>
           )}
           {!isEdit && (
