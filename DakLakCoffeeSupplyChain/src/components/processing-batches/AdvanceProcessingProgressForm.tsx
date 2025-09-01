@@ -9,6 +9,7 @@ import { ValidationErrorHandler } from "@/utils/errorHandler";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
 import { ProcessedError } from "@/types/processing";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { ProcessingErrorDisplay, FieldValidationError } from "@/components/shared/ProcessingErrorDisplay";
 
 import imageCompression from "browser-image-compression";
 import { advanceToNextProcessingProgress } from "@/lib/api/processingBatchProgress";
@@ -56,7 +57,7 @@ export default function AdvanceProcessingProgressForm({
     { wasteType: "", quantity: 0, unit: "kg", note: "", recordedAt: new Date().toISOString().split("T")[0] }
   ]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any>(null);
   const [processedError, setProcessedError] = useState<ProcessedError | null>(null);
   
   // State cho stage selection
@@ -237,39 +238,20 @@ export default function AdvanceProcessingProgressForm({
 
       onSuccess?.();
          } catch (err: any) {
-         
-       let errorMessage = t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.description');
-       
-       if (err?.response?.data?.message) {
-         // Parse backend error và xử lý với i18n
-         const validationError = ValidationErrorHandler.parseBackendError(err.response.data.message);
-         if (validationError) {
-           const processedError = ValidationErrorHandler.processError(validationError, t);
-           setProcessedError(processedError);
-         } else {
-           errorMessage = err.response.data.message;
-         }
-       } else if (err?.response?.data?.error) {
-         errorMessage = err.response.data.error;
-       } else if (err?.message === "Network Error") {
-         errorMessage = t('common.networkError');
-       } else if (err?.message) {
-         errorMessage = err.message;
-       }
+           console.error("❌ Submit error:", err);
+           console.error("❌ Error type:", typeof err);
 
-               // Thêm thông tin về stage hiện tại và stage được chọn
-        const selectedStage = availableStages.find(s => s.stageId === selectedStageId);
-        const currentStage = latestProgress ? availableStages.find(s => s.stageId === latestProgress.stageId) : null;
-        
-        if (selectedStage && currentStage) {
-          errorMessage += `\n\nThông tin chi tiết:`;
-          errorMessage += `\n• Stage hiện tại: ${currentStage.stageName} (ID: ${currentStage.stageId})`;
-          errorMessage += `\n• Stage được chọn: ${selectedStage.stageName} (ID: ${selectedStage.stageId})`;
-          errorMessage += `\n• Thứ tự hiện tại: Bước ${currentStage.orderIndex}`;
-          errorMessage += `\n• Thứ tự được chọn: Bước ${selectedStage.orderIndex}`;
-        }
-       
-       setError(errorMessage);
+           const error = err as Error & { response?: { data?: any } };
+           console.error("❌ Error message:", error?.message);
+           console.error("❌ Error response:", error?.response);
+           console.error("❌ Error stack:", error?.stack);
+
+           if (error.message === "Network Error" || (error.message && error.message.includes("Không nhận được phản hồi"))) {
+             setError({ message: t("common.networkError") });
+           } else {
+             // Sử dụng ProcessingErrorDisplay để xử lý error từ backend
+             setError(error?.response?.data || error);
+           }
      } finally {
       setLoading(false);
     }
@@ -437,6 +419,7 @@ export default function AdvanceProcessingProgressForm({
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
                   placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.outputQuantity.placeholder')}
                 />
+                <FieldValidationError error={error} fieldName="outputQuantity" />
               </div>
 
               <div>
@@ -648,6 +631,7 @@ export default function AdvanceProcessingProgressForm({
                   placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.quantity.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
+                <FieldValidationError error={error} fieldName="wasteQuantity" />
               </div>
               
               <div>
@@ -790,21 +774,7 @@ export default function AdvanceProcessingProgressForm({
           </div>
         </div>
 
-        {error && (
-          <div className="mt-6 p-6 bg-red-50 border-2 border-red-200 rounded-xl text-sm text-red-600">
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div className="flex-1">
-                <div className="font-bold mb-3 text-red-800">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.title')}:</div>
-                                  <div className="whitespace-pre-line text-sm leading-relaxed bg-white p-4 rounded-lg border border-red-100">
-                    {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.error.description')}
-                  </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <ProcessingErrorDisplay error={error} />
       </div>
     </form>
   );

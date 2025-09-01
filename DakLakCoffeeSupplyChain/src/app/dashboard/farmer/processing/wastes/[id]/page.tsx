@@ -9,6 +9,7 @@ import { ArrowLeft, Trash2, Package, Calendar, Info, FileText, TrendingUp, Eye, 
 
 // Import các component chung
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 export default function ProcessingWasteDetailPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function ProcessingWasteDetailPage() {
 
   const [waste, setWaste] = useState<ProcessingWaste | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
 
       // Load chi tiết chất thải
   useEffect(() => {
@@ -32,8 +34,7 @@ export default function ProcessingWasteDetailPage() {
         }
       } catch (err) {
         console.error("Lỗi tải chi tiết chất thải:", err);
-        AppToast.error("Không thể tải thông tin chất thải");
-        router.push("/dashboard/farmer/processing/wastes");
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -106,6 +107,9 @@ export default function ProcessingWasteDetailPage() {
           description="Xem thông tin chi tiết về chất thải sơ chế"
           showCreateButton={false}
         />
+        
+        {/* Error Display */}
+        {error && <ProcessingErrorDisplay error={error} />}
         
         <div className="flex justify-end">
           <Button 

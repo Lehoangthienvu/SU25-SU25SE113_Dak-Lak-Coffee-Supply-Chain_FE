@@ -13,6 +13,7 @@ import ProcessingHeader from "@/components/processing/ProcessingHeader";
 import SearchBox from "@/components/processing/SearchBox";
 import ProcessingTable from "@/components/processing/ProcessingTable";
 import { Pagination } from "@/components/processing/Pagination";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 export default function ProcessingWastesPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function ProcessingWastesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [error, setError] = useState<any>(null);
 
       // Load danh sách chất thải
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function ProcessingWastesPage() {
         }
       } catch (err) {
         console.error("Lỗi tải danh sách chất thải:", err);
-        AppToast.error(t("processing.pages.farmerWastes.error.title"));
+        setError(err);
         setWastes([]);
         setTotalPages(1);
       } finally {
@@ -206,6 +208,9 @@ export default function ProcessingWastesPage() {
           showCreateButton={true}
           onCreateClick={() => router.push("/dashboard/farmer/processing/wastes/create")}
         />
+
+        {/* Error Display */}
+        {error && <ProcessingErrorDisplay error={error} />}
 
         {/* Search */}
         <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 p-4">

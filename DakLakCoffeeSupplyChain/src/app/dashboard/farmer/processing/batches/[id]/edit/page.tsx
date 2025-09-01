@@ -26,6 +26,7 @@ import { ArrowLeft, Package, Coffee, Calendar, Info, Loader2, CheckCircle, Save,
 
 // Import các component chung
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 export default function EditProcessingBatchPage() {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ export default function EditProcessingBatchPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingCoffeeTypes, setLoadingCoffeeTypes] = useState(false);
+  const [error, setError] = useState<any>(null);
 
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
   const [coffeeTypes, setCoffeeTypes] = useState<any[]>([]);
@@ -66,8 +68,7 @@ export default function EditProcessingBatchPage() {
         }
       } catch (err) {
         console.error("Lỗi tải dữ liệu lô:", err);
-        AppToast.error(t('processing.pages.farmerBatches.batchDetail.edit.error.loadFailed'));
-        router.push("/dashboard/farmer/processing/batches");
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -124,24 +125,7 @@ export default function EditProcessingBatchPage() {
       router.push(`/dashboard/farmer/processing/batches/${batchId}`);
     } catch (err: any) {
       console.error("Lỗi cập nhật batch:", err);
-
-      let errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.updateFailed');
-
-      if (err?.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err?.message) {
-        errorMessage = err.message;
-      } else if (err?.response?.status === 400) {
-        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.invalidData');
-      } else if (err?.response?.status === 404) {
-        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.notFound');
-      } else if (err?.response?.status === 409) {
-        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.duplicate');
-      } else if (err?.response?.status >= 500) {
-        errorMessage = t('processing.pages.farmerBatches.batchDetail.edit.error.systemError');
-      }
-
-      AppToast.error(errorMessage);
+      setError(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -212,6 +196,9 @@ export default function EditProcessingBatchPage() {
           description={t('processing.pages.farmerBatches.batchDetail.edit.description')}
           showCreateButton={false}
         />
+
+        {/* Error Display */}
+        {error && <ProcessingErrorDisplay error={error} />}
 
         <div className="flex justify-end">
           <Button
