@@ -2502,7 +2502,11 @@
         "status": "Status",
         "noDate": "No date",
         "cannotAutoCalculate": "❌ Cannot automatically calculate season time. Please select an approved commitment.",
-        "creating": "Creating..."
+        "creating": "Creating...",
+        "validation": {
+          "errors": "Validation errors"
+        },
+        "error": "Error"
       }
     },
     "cropProgress": {
@@ -2607,7 +2611,9 @@
          "loadStagesError": "Unable to load stage list.",
          "loadSeasonDetailError": "Unable to load season details.",
          "createProgressError": "Failed to create progress.",
-         "createProgressSuccess": "Progress created successfully!"
+         "createProgressSuccess": "Progress created successfully!",
+         "dateBeforeSeasonStart": "Execution date cannot be before season start date.",
+         "dateAfterSeasonEnd": "Execution date cannot be after season end date."
        },
        "yieldValidation": {
          "noData": "No expected data to compare",
@@ -2652,7 +2658,29 @@
        "keepCurrentMedia": "📷 Current photos/videos will be preserved",
        "cancel": "Cancel",
        "updating": "Updating...",
-       "updateProgress": "Update Progress"
+       "updateProgress": "Update Progress",
+       "validation": {
+         "selectDate": "Please select an execution date.",
+         "dateNotFuture": "Execution date cannot be later than today.",
+         "dateTooPast": "Execution date cannot be too far in the past (maximum 1 year ago).",
+         "yieldRequired": "Please enter a valid harvest yield (> 0).",
+         "duplicateDate": "This date already exists in another progress entry. Please select a different date."
+       },
+       "yieldValidation": {
+         "noData": "No estimated yield data available for comparison",
+         "overflowError": "Yield {{actual}}kg exceeds {{max}}% of expected ({{estimated}}kg). Please verify.",
+         "overflowRecommendation": "Contact management to confirm actual yield.",
+         "underflowError": "Yield {{actual}}kg only reaches {{percent}}% of expected ({{estimated}}kg). Too low to accept.",
+         "underflowRecommendation": "Need to review cultivation process and contact management.",
+         "commitmentFailed": "Yield {{actual}}kg only reaches {{percent}}% of expected ({{estimated}}kg). Commitment not met.",
+         "commitmentFailedRecommendation": "Note specific reasons and contact management for discussion.",
+         "warningLow": "Yield {{actual}}kg only reaches {{percent}}% of expected ({{estimated}}kg). Need attention.",
+         "warningLowRecommendation": "Consider improving cultivation process for next season.",
+         "success": "Yield meets acceptable level.",
+         "commitmentNotAchieved": "YIELD COMMITMENT NOT MET",
+         "confirmLowYield": "{{commitmentMessage}}Reason: {{reason}}\n\nRecommendation: {{recommendation}}\n\n{{confirmMessage}}"
+       },
+       "confirmMessage": "Are you sure you want to update with this low yield?"
      },
      "detailStatus": {
       "planned": "Planned",

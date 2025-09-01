@@ -2541,7 +2541,11 @@
         "status": "Trạng thái",
         "noDate": "Không có",
         "cannotAutoCalculate": "❌ Không thể tự động tính thời gian mùa vụ. Vui lòng chọn cam kết đã được duyệt.",
-        "creating": "Đang tạo..."
+        "creating": "Đang tạo...",
+        "validation": {
+          "errors": "Lỗi validation"
+        },
+        "error": "Lỗi"
       }
     },
     "cropProgress": {
@@ -2646,7 +2650,9 @@
          "loadStagesError": "Không thể tải danh sách giai đoạn.",
          "loadSeasonDetailError": "Không thể tải chi tiết mùa vụ.",
          "createProgressError": "Tạo tiến độ thất bại.",
-         "createProgressSuccess": "Tạo tiến độ thành công!"
+         "createProgressSuccess": "Tạo tiến độ thành công!",
+         "dateBeforeSeasonStart": "Ngày thực hiện không được trước ngày bắt đầu mùa vụ.",
+         "dateAfterSeasonEnd": "Ngày thực hiện không được sau ngày kết thúc mùa vụ."
        },
        "yieldValidation": {
          "noData": "Không có dữ liệu dự kiến để so sánh",
@@ -2691,7 +2697,29 @@
        "keepCurrentMedia": "📷 Ảnh/video hiện tại được giữ nguyên",
        "cancel": "Hủy",
        "updating": "Đang cập nhật...",
-       "updateProgress": "Cập nhật tiến độ"
+       "updateProgress": "Cập nhật tiến độ",
+       "validation": {
+         "selectDate": "Vui lòng chọn ngày thực hiện.",
+         "dateNotFuture": "Ngày thực hiện không được lớn hơn hôm nay.",
+         "dateTooPast": "Ngày thực hiện không được quá xa trong quá khứ (tối đa 1 năm trước).",
+         "yieldRequired": "Vui lòng nhập sản lượng thu hoạch hợp lệ (> 0).",
+         "duplicateDate": "Ngày này đã tồn tại trong tiến độ khác. Vui lòng chọn ngày khác."
+       },
+       "yieldValidation": {
+         "noData": "Không có dữ liệu sản lượng dự kiến để so sánh",
+         "overflowError": "Sản lượng {{actual}}kg vượt quá {{max}}% dự kiến ({{estimated}}kg). Vui lòng kiểm tra lại.",
+         "overflowRecommendation": "Liên hệ quản lý để xác nhận sản lượng thực tế.",
+         "underflowError": "Sản lượng {{actual}}kg chỉ đạt {{percent}}% dự kiến ({{estimated}}kg). Quá thấp để chấp nhận.",
+         "underflowRecommendation": "Cần xem xét lại quy trình canh tác và liên hệ quản lý.",
+         "commitmentFailed": "Sản lượng {{actual}}kg chỉ đạt {{percent}}% dự kiến ({{estimated}}kg). Không đạt cam kết.",
+         "commitmentFailedRecommendation": "Ghi chú lý do cụ thể và liên hệ quản lý để thảo luận.",
+         "warningLow": "Sản lượng {{actual}}kg chỉ đạt {{percent}}% dự kiến ({{estimated}}kg). Cần chú ý.",
+         "warningLowRecommendation": "Xem xét cải thiện quy trình canh tác cho vụ mùa tiếp theo.",
+         "success": "Sản lượng đạt mức chấp nhận được.",
+         "commitmentNotAchieved": "KHÔNG ĐẠT CAM KẾT SẢN LƯỢNG",
+         "confirmLowYield": "{{commitmentMessage}}Lý do: {{reason}}\n\nKhuyến nghị: {{recommendation}}\n\n{{confirmMessage}}"
+       },
+       "confirmMessage": "Bạn có chắc chắn muốn cập nhật với sản lượng thấp này không?"
           },
           "detailStatus": {
             "planned": "Dự kiến",

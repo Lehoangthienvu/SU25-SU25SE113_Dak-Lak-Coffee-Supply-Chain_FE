@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { AppToast } from "@/components/ui/AppToast";
 import { Upload, X, Leaf, Camera, Play, AlertTriangle, Target } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 import { createCropProgress, CropProgressCreateRequest } from "@/lib/api/cropProgress";
 import { getCropStages, CropStage } from "@/lib/api/cropStage";
@@ -60,6 +61,9 @@ export function CreateProgressDialog({
     const [yieldValidationError, setYieldValidationError] = useState<string>("");
     const [yieldValidationSeverity, setYieldValidationSeverity] = useState<'error' | 'warning' | 'info'>('info');
     const [error, setError] = useState<string | null>(null);
+
+    // Thêm state cho field errors
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     const [stageOrder, setStageOrder] = useState<string[]>([]);
     const [localExistingProgress, setLocalExistingProgress] = useState(existingProgress || []);
@@ -140,6 +144,13 @@ export function CreateProgressDialog({
         try {
             setError(null);
             const detail = await getCropSeasonDetailById(detailId);
+            console.log('Loaded crop season detail:', detail);
+            console.log('Expected harvest dates:', {
+                start: detail.expectedHarvestStart,
+                end: detail.expectedHarvestEnd,
+                startType: typeof detail.expectedHarvestStart,
+                endType: typeof detail.expectedHarvestEnd
+            });
             setCropSeasonDetail(detail);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : t('cropProgress.createDialog.validation.loadSeasonDetailError');
@@ -206,10 +217,10 @@ export function CreateProgressDialog({
         // Trường hợp vượt quá giới hạn trên - KHÔNG CHO PHÉP
         if (percentage > MAX_YIELD_OVERFLOW_PERCENT) {
             return {
-                error: t('cropProgress.createDialog.yieldValidation.overflowError', { 
-                    actual: yieldValue, 
-                    max: MAX_YIELD_OVERFLOW_PERCENT, 
-                    estimated: estimatedYield 
+                error: t('cropProgress.createDialog.yieldValidation.overflowError', {
+                    actual: yieldValue,
+                    max: MAX_YIELD_OVERFLOW_PERCENT,
+                    estimated: estimatedYield
                 }),
                 severity: 'error',
                 canComplete: false,
@@ -221,10 +232,10 @@ export function CreateProgressDialog({
         // Trường hợp dưới mức tối thiểu - KHÔNG CHO PHÉP
         if (percentage < MIN_YIELD_PERCENT) {
             return {
-                error: t('cropProgress.createDialog.yieldValidation.underflowError', { 
-                    actual: yieldValue, 
-                    percent: percentage.toFixed(1), 
-                    estimated: estimatedYield 
+                error: t('cropProgress.createDialog.yieldValidation.underflowError', {
+                    actual: yieldValue,
+                    percent: percentage.toFixed(1),
+                    estimated: estimatedYield
                 }),
                 severity: 'error',
                 canComplete: false,
@@ -236,10 +247,10 @@ export function CreateProgressDialog({
         // Trường hợp dưới ngưỡng cam kết - CẢNH BÁO MẠNH
         if (percentage < COMMITMENT_THRESHOLD) {
             return {
-                error: t('cropProgress.createDialog.yieldValidation.commitmentFailed', { 
-                    actual: yieldValue, 
-                    percent: percentage.toFixed(1), 
-                    estimated: estimatedYield 
+                error: t('cropProgress.createDialog.yieldValidation.commitmentFailed', {
+                    actual: yieldValue,
+                    percent: percentage.toFixed(1),
+                    estimated: estimatedYield
                 }),
                 severity: 'warning',
                 canComplete: true, // Vẫn cho phép hoàn thành nhưng cảnh báo
@@ -251,10 +262,10 @@ export function CreateProgressDialog({
         // Trường hợp dưới mức cảnh báo - CẢNH BÁO NHẸ
         if (percentage < WARNING_YIELD_PERCENT) {
             return {
-                error: t('cropProgress.createDialog.yieldValidation.warningLow', { 
-                    actual: yieldValue, 
-                    percent: percentage.toFixed(1), 
-                    estimated: estimatedYield 
+                error: t('cropProgress.createDialog.yieldValidation.warningLow', {
+                    actual: yieldValue,
+                    percent: percentage.toFixed(1),
+                    estimated: estimatedYield
                 }),
                 severity: 'warning',
                 canComplete: true,
@@ -290,42 +301,59 @@ export function CreateProgressDialog({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!stageId) {
-            AppToast.error(t('cropProgress.createDialog.validation.selectStage'));
-            return;
+
+        // Clear previous field errors
+        setFieldErrors({});
+
+        // Validate tất cả fields
+        const newFieldErrors: Record<string, string> = {};
+        const fieldsToValidate = ['stageId', 'progressDate', 'actualYield'];
+
+        fieldsToValidate.forEach(fieldName => {
+            const value = fieldName === 'stageId' ? stageId :
+                fieldName === 'progressDate' ? progressDate :
+                    actualYield;
+            const error = validateField(fieldName, value);
+            if (error) {
+                newFieldErrors[fieldName] = error;
+            }
+        });
+
+        // Additional validation for date range
+        if (progressDate) {
+            const selectedDate = new Date(progressDate);
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+
+            if (selectedDate > today) {
+                newFieldErrors.progressDate = t('cropProgress.createDialog.validation.dateNotFuture');
+            }
+
+            // Không cho phép ngày quá xa trong quá khứ (1 năm)
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            if (selectedDate < oneYearAgo) {
+                newFieldErrors.progressDate = t('cropProgress.createDialog.validation.dateTooPast');
+            }
+
+            // Note: Validation ngày theo mùa vụ sẽ được handle bởi backend
+            // Backend sẽ kiểm tra ngày progress không được trước startDate của mùa vụ
+            // Frontend chỉ validate ngày tương lai và quá khứ để UX tốt hơn
         }
 
-        // Validate progress date
-        if (!progressDate) {
-            AppToast.error(t('cropProgress.createDialog.validation.selectDate'));
+        // Set field errors
+        setFieldErrors(newFieldErrors);
+
+        // Nếu có lỗi validation, không submit
+        if (Object.keys(newFieldErrors).length > 0) {
+            // Chỉ hiển thị inline errors, không cần toast
             return;
         }
-
-        const selectedDate = new Date(progressDate);
-        const today = new Date();
-        today.setHours(23, 59, 59, 999); // Set to end of today
-
-        // Check if date is in the future
-        if (selectedDate > today) {
-            AppToast.error(t('cropProgress.createDialog.validation.dateNotFuture'));
-            return;
-        }
-
-        // Check if date is too far in the past (1 year)
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        if (selectedDate < oneYearAgo) {
-            AppToast.error(t('cropProgress.createDialog.validation.dateTooPast'));
-            return;
-        }
-
-        // Note: Date order validation will be handled by backend
-        // Frontend can't validate this properly since we only have stageCode in existingProgress
 
         // Validate actual yield if it's harvesting stage
         if (stageId && stageOptions.find(s => s.stageId === stageId)?.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE) {
             if (!actualYield || actualYield <= 0) {
-                AppToast.error(t('cropProgress.createDialog.validation.yieldRequired'));
+                setFieldErrors(prev => ({ ...prev, actualYield: t('cropProgress.createDialog.validation.yieldRequired') }));
                 return;
             }
 
@@ -367,7 +395,7 @@ export function CreateProgressDialog({
 
             const createData: CropProgressCreateRequest = {
                 cropSeasonDetailId: detailId,
-                stageId: stageId,
+                stageId: stageId!, // stageId đã được validate trước đó
                 progressDate: progressDate,
                 notes: note,
                 // Chỉ gửi sản lượng khi là giai đoạn thu hoạch
@@ -387,14 +415,42 @@ export function CreateProgressDialog({
             }
         } catch (error: unknown) {
             let errorMessage = t('cropProgress.createDialog.validation.createProgressError');
+            const backendFieldErrors: Record<string, string> = {};
+
             if (typeof error === 'object' && error !== null && 'response' in error) {
-                const response = (error as { response?: { data?: { message?: string } } }).response;
-                if (response?.data?.message) {
-                    errorMessage = response.data.message;
+                const response = (error as { response?: { data?: { message?: string; errors?: Record<string, string[]>; title?: string } } }).response;
+
+                if (response?.data) {
+                    // Handle validation errors from backend
+                    if (response.data.errors && typeof response.data.errors === 'object') {
+                        Object.entries(response.data.errors).forEach(([field, messages]) => {
+                            if (Array.isArray(messages) && messages.length > 0) {
+                                // Map backend field names to frontend field names
+                                const frontendField = field === 'ProgressDate' ? 'progressDate' :
+                                    field === 'ActualYield' ? 'actualYield' :
+                                        field === 'StageId' ? 'stageId' : field;
+                                backendFieldErrors[frontendField] = messages[0]; // Take first error message
+                            }
+                        });
+                    }
+
+                    // Handle general error message
+                    if (response.data.message) {
+                        errorMessage = response.data.message;
+                    } else if (response.data.title) {
+                        errorMessage = response.data.title;
+                    }
                 }
             }
-            setError(errorMessage);
-            AppToast.error(errorMessage);
+
+            // Nếu có backend field errors, hiển thị inline
+            if (Object.keys(backendFieldErrors).length > 0) {
+                setFieldErrors(backendFieldErrors);
+                // Không cần hiển thị toast nếu có field errors cụ thể
+            } else {
+                setError(errorMessage);
+                AppToast.error(errorMessage);
+            }
         } finally {
             setLoading(false);
         }
@@ -408,6 +464,46 @@ export function CreateProgressDialog({
         setMediaFiles([]);
         setYieldValidationError("");
         setYieldValidationSeverity('info');
+        setFieldErrors({}); // Reset field errors
+    };
+
+    // Thêm function validate từng field
+    const validateField = (fieldName: string, value: string | number | null | undefined): string | null => {
+        switch (fieldName) {
+            case 'stageId':
+                return !value ? t('cropProgress.createDialog.validation.selectStage') : null;
+            case 'progressDate':
+                if (!value) return t('cropProgress.createDialog.validation.selectDate');
+
+                const selectedDate = new Date(value);
+                const today = new Date();
+                today.setHours(23, 59, 59, 999);
+
+                // Không cho phép ngày trong tương lai
+                if (selectedDate > today) {
+                    return t('cropProgress.createDialog.validation.dateNotFuture');
+                }
+
+                // Không cho phép ngày quá xa trong quá khứ (1 năm)
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                if (selectedDate < oneYearAgo) {
+                    return t('cropProgress.createDialog.validation.dateTooPast');
+                }
+
+                // Note: Validation ngày theo mùa vụ sẽ được handle bởi backend
+                // Backend sẽ kiểm tra ngày progress không được trước startDate của mùa vụ
+                // Frontend chỉ validate ngày tương lai và quá khứ để UX tốt hơn
+
+                return null;
+            case 'actualYield':
+                if (stageId && stageOptions.find(s => s.stageId === stageId)?.stageCode?.toLowerCase() === HARVESTING_STAGE_CODE) {
+                    if (!value || (typeof value === 'number' && value <= 0)) return t('cropProgress.createDialog.validation.yieldRequired');
+                }
+                return null;
+            default:
+                return null;
+        }
     };
 
     const validateFile = (file: File): string | null => {
@@ -523,6 +619,24 @@ export function CreateProgressDialog({
                             </div>
                         )}
 
+                        {/* Field Errors Summary Box */}
+                        {Object.keys(fieldErrors).length > 0 && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-center gap-2 text-red-800 mb-2">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    <span className="text-sm font-medium">{t('common.validation.errors')}</span>
+                                </div>
+                                <ul className="text-red-700 text-sm space-y-1">
+                                    {Object.values(fieldErrors).map((error, index) => (
+                                        <li key={index} className="flex items-center gap-2">
+                                            <AlertTriangle className="w-3 h-3" />
+                                            {error}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
                         {/* Main form - 2 columns horizontal layout */}
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
 
@@ -634,11 +748,36 @@ export function CreateProgressDialog({
                                             <Input
                                                 type="date"
                                                 value={progressDate}
-                                                onChange={(e) => setProgressDate(e.target.value)}
+                                                onChange={(e) => {
+                                                    setProgressDate(e.target.value);
+                                                    // Clear field error when user starts typing
+                                                    if (fieldErrors.progressDate) {
+                                                        setFieldErrors(prev => ({ ...prev, progressDate: '' }));
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    // Validate on blur
+                                                    if (progressDate) {
+                                                        const error = validateField('progressDate', progressDate);
+                                                        if (error) {
+                                                            setFieldErrors(prev => ({ ...prev, progressDate: error }));
+                                                        }
+                                                    }
+                                                }}
                                                 required
                                                 max={new Date().toISOString().split('T')[0]} // Không cho phép chọn ngày trong tương lai
-                                                className="w-full h-10 text-sm"
+                                                // min attribute được bỏ vì validation ngày mùa vụ sẽ được handle bởi backend
+                                                className={cn(
+                                                    "w-full h-10 text-sm",
+                                                    fieldErrors.progressDate && "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                                )}
                                             />
+                                            {fieldErrors.progressDate && (
+                                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                                    <AlertTriangle className="w-4 h-4" />
+                                                    {fieldErrors.progressDate}
+                                                </p>
+                                            )}
                                             <p className="text-xs text-gray-500 mt-1">
                                                 {t('cropProgress.createDialog.executionDateDesc')}
                                             </p>
@@ -682,12 +821,21 @@ export function CreateProgressDialog({
                                                     onChange={(e) => handleActualYieldChange(e.target.value)}
                                                     min={0}
                                                     step="any"
-                                                    className={`w-full h-10 text-sm ${yieldValidationError ?
-                                                        (yieldValidationSeverity === 'error' ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-yellow-300 focus:border-yellow-500 focus:ring-yellow-200')
-                                                        : ''
-                                                        }`}
+                                                    className={cn(
+                                                        "w-full h-10 text-sm",
+                                                        fieldErrors.actualYield && "border-red-300 focus:border-red-500 focus:ring-red-200",
+                                                        yieldValidationError && !fieldErrors.actualYield && (
+                                                            yieldValidationSeverity === 'error' ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-yellow-300 focus:border-yellow-500 focus:ring-yellow-200'
+                                                        )
+                                                    )}
                                                     placeholder={t('cropProgress.createDialog.actualYieldPlaceholder')}
                                                 />
+                                                {fieldErrors.actualYield && (
+                                                    <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                                        <AlertTriangle className="w-4 h-4" />
+                                                        {fieldErrors.actualYield}
+                                                    </p>
+                                                )}
                                                 {yieldValidationError && (
                                                     <div className={`flex items-start gap-2 mt-2 p-2 rounded-md ${yieldValidationSeverity === 'error'
                                                         ? 'bg-red-50 border border-red-200'

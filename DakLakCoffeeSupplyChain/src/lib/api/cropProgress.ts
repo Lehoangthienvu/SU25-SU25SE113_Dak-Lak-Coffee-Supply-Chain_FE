@@ -147,31 +147,66 @@ export async function getCropProgressById(id: string): Promise<CropProgressViewD
 // =====================
 
 export async function createCropProgress(data: CropProgressCreateRequest): Promise<CropProgressViewDetailsDto> {
-  const formData = new FormData();
-  formData.append("cropSeasonDetailId", data.cropSeasonDetailId);
-  formData.append("stageId", data.stageId.toString());
-  formData.append("progressDate", data.progressDate);
-  
-  if (data.actualYield !== undefined) {
-    formData.append("actualYield", data.actualYield.toString());
-  }
-  
-  if (data.notes) {
-    formData.append("notes", data.notes);
-  }
-  
-  if (data.mediaFiles && data.mediaFiles.length > 0) {
-    data.mediaFiles.forEach((file) => {
-      formData.append(`mediaFiles`, file);
-    });
-  }
+  try {
+    console.log('Creating crop progress:', data);
+    
+    const formData = new FormData();
+    formData.append("cropSeasonDetailId", data.cropSeasonDetailId);
+    formData.append("stageId", data.stageId.toString());
+    formData.append("progressDate", data.progressDate);
+    
+    if (data.actualYield !== undefined) {
+      formData.append("actualYield", data.actualYield.toString());
+    }
+    
+    if (data.notes) {
+      formData.append("notes", data.notes);
+    }
+    
+    if (data.mediaFiles && data.mediaFiles.length > 0) {
+      data.mediaFiles.forEach((file) => {
+        formData.append(`mediaFiles`, file);
+      });
+    }
 
-  const response = await api.post("/CropProgresses", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data;
+    const response = await api.post("/CropProgresses", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    
+    console.log('Create response:', response.data);
+    return response.data;
+  } catch (error: unknown) {
+    console.error('Create crop progress error:', error);
+    
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const response = (error as { response?: { status?: number; data?: { message?: string; errors?: Record<string, string[]>; title?: string } } }).response;
+      console.error('Error response:', response);
+      
+      if (response?.data) {
+        // Handle validation errors from backend
+        if (response.data.errors && typeof response.data.errors === 'object') {
+          const errorMessages = Object.values(response.data.errors).flat();
+          if (errorMessages.length > 0) {
+            throw new Error(errorMessages.join(', '));
+          }
+        }
+        
+        // Handle general error message
+        if (response.data.message) {
+          throw new Error(response.data.message);
+        }
+        
+        // Handle title if available
+        if (response.data.title) {
+          throw new Error(response.data.title);
+        }
+      }
+    }
+    
+    throw error;
+  }
 }
 
 // =====================
