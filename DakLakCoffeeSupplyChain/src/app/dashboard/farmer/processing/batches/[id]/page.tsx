@@ -53,6 +53,7 @@ import ProgressGuidanceCard from "@/components/processing-batches/ProgressGuidan
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { StageFailureParser, StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 import { getProcessingStagesByMethodId } from "@/lib/api/processingStages";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 export default function ViewProcessingBatch() {
   const { t } = useTranslation();
@@ -60,7 +61,7 @@ export default function ViewProcessingBatch() {
   const router = useRouter();
   const [batch, setBatch] = useState<ProcessingBatch | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any>(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openAdvanceModal, setOpenAdvanceModal] = useState(false);
   const [openUpdateAfterEvaluationModal, setOpenUpdateAfterEvaluationModal] = useState(false);
@@ -201,8 +202,7 @@ export default function ViewProcessingBatch() {
 
         } catch (err: unknown) {
           console.error('Error fetching batch:', err);
-          const errorMessage = err instanceof Error ? err.message : t('processing.pages.farmerBatches.batchDetail.error.title');
-          setError(errorMessage);
+          setError(err);
         } finally {
           setLoading(false);
         }
@@ -237,8 +237,7 @@ export default function ViewProcessingBatch() {
           }
         } catch (err: unknown) {
           console.error('Error fetching evaluations:', err);
-          const errorMessage = err instanceof Error ? err.message : t('processing.pages.farmerBatches.batchDetail.error.title');
-          setError(errorMessage);
+          setError(err);
         }
       }
     };
@@ -407,13 +406,7 @@ export default function ViewProcessingBatch() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
         <div className="text-center space-y-6 max-w-md mx-auto p-6">
-          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
-            <AlertCircle className="w-8 h-8 text-orange-600" />
-          </div>
-          <div className="space-y-2">
-                                            <h2 className="text-xl font-semibold text-gray-900">{t('processing.pages.farmerBatches.batchDetail.error.title')}</h2>
-            <p className="text-gray-600">{error}</p>
-          </div>
+          <ProcessingErrorDisplay error={error} />
           <Button
             variant="outline"
             onClick={() => router.back()}

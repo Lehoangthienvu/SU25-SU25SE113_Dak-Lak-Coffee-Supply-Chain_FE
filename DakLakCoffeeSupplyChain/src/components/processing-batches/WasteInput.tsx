@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Trash2, AlertCircle } from "lucide-react";
+import { FieldValidationError } from "@/components/shared/ProcessingErrorDisplay";
 
 export interface WasteInputData {
   wasteType: string;
@@ -18,9 +19,10 @@ interface WasteInputProps {
   wastes: WasteInputData[];
   onWastesChange: (wastes: WasteInputData[]) => void;
   className?: string;
+  error?: any; // Thêm error prop để nhận validation error từ parent
 }
 
-export default function WasteInput({ wastes, onWastesChange, className = "" }: WasteInputProps) {
+export default function WasteInput({ wastes, onWastesChange, className = "", error }: WasteInputProps) {
   const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
   
@@ -181,6 +183,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "" }: W
                     errors[index] && (waste.quantity <= 0 || waste.quantity > 100000) ? 'border-red-300' : ''
                   }`}
                 />
+                <FieldValidationError error={error} fieldName="wasteQuantity" />
               </div>
 
               {/* Đơn vị */}

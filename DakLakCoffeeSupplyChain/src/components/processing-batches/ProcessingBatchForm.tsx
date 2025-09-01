@@ -9,6 +9,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { createProcessingBatch, getAvailableProcessingData, ProcessingBatch, ProcessingDataResponse, ProcessingInfo, CoffeeType } from "@/lib/api/processingBatches";
 import { getAllProcessingMethods, ProcessingMethod } from "@/lib/api/processingMethods";
 import { getAllCropSeasons, CropSeasonListItem } from "@/lib/api/cropSeasons";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 interface Props {
   onSuccess?: () => void;
@@ -18,7 +19,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState("");
   const [cropSeasons, setCropSeasons] = useState<CropSeasonListItem[]>([]);
   const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
@@ -105,18 +106,18 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError(null);
     setSuccess("");
 
     // Validation
     if (!form.cropSeasonId) {
-      setError(t('processing.batch.validation.selectCropSeason'));
+      setError({ message: t('processing.batch.validation.selectCropSeason') });
       setLoading(false);
       return;
     }
 
     if (!form.coffeeTypeId) {
-      setError(t('processing.batch.validation.selectCoffeeType'));
+      setError({ message: t('processing.batch.validation.selectCoffeeType') });
       setLoading(false);
       return;
     }
@@ -124,13 +125,13 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
     // Kiểm tra xem plan có định nghĩa phương pháp sơ chế không
     const info = processingInfo.find(p => p.coffeeTypeId === form.coffeeTypeId);
     if (!info || !info.hasPlanProcessingMethod || !info.planProcessingMethodId) {
-      setError(t('processing.batch.validation.noPlanProcessingMethod'));
+      setError({ message: t('processing.batch.validation.noPlanProcessingMethod') });
       setLoading(false);
       return;
     }
 
     if (!form.batchCode.trim()) {
-      setError(t('processing.batch.validation.enterBatchCode'));
+      setError({ message: t('processing.batch.validation.enterBatchCode') });
       setLoading(false);
       return;
     }
@@ -151,8 +152,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
       setTimeout(() => router.push("/dashboard/farmer/processing/batches"), 1200);
     } catch (err: any) {
       console.error("❌ Create batch error:", err);
-      const errorMessage = err?.response?.data?.message || err?.message || t('processing.batch.createError');
-      setError(errorMessage);
+      setError(err);
     }
     setLoading(false);
   };
@@ -249,7 +249,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
         <p className="text-sm text-gray-500 mt-1">{t('processing.batch.batchCodeDescription')}</p>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <ProcessingErrorDisplay error={error} />}
       {success && <p className="text-green-600 text-sm">{success}</p>}
 
       <div className="flex justify-end gap-3">

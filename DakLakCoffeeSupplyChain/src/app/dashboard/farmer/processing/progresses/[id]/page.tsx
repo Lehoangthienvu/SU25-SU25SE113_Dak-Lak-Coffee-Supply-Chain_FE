@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { ArrowLeft, Calendar, User, Package, TrendingUp, FileImage, FileVideo, Scale, Info, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import PageTitle from '@/components/ui/PageTitle';
 import AdvanceProcessingProgressForm from '@/components/processing-batches/AdvanceProcessingProgressForm';
+import { ProcessingErrorDisplay } from '@/components/shared/ProcessingErrorDisplay';
 
 export default function ProgressDetailPage() {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ export default function ProgressDetailPage() {
   const [progresses, setProgresses] = useState<ProcessingBatchProgress[]>([]);
   const [totalStages, setTotalStages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any>(null);
   const [retryCount, setRetryCount] = useState(0);
   
   // State cho dialog cập nhật progress
@@ -233,12 +234,8 @@ export default function ProgressDetailPage() {
           </div>
           
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 overflow-hidden">
+            <ProcessingErrorDisplay error={error} />
             <div className="p-8 text-center">
-              <div className="flex justify-center mb-4">
-                <Info className="w-16 h-16 text-orange-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('processing.pages.farmerProgresses.progressDetail.error.title')}</h3>
-              <p className="text-gray-600 mb-6">{error}</p>
               <Button 
                 onClick={handleRetry}
                 className="bg-orange-600 hover:bg-orange-700"

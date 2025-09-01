@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Pagination from "@/components/ui/pagination";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -50,6 +51,7 @@ export default function ProcessingProgressesPage() {
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [error, setError] = useState<any>(null);
 
   useEffect(() => {
   const fetchData = async () => {
@@ -63,6 +65,7 @@ export default function ProcessingProgressesPage() {
         setBatches(batchRes || []);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(error);
         setProgresses([]);
         setBatches([]);
       } finally {
@@ -347,6 +350,9 @@ export default function ProcessingProgressesPage() {
             </Button>
           </div>
         </div>
+
+        {/* Error Display */}
+        {error && <ProcessingErrorDisplay error={error} />}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

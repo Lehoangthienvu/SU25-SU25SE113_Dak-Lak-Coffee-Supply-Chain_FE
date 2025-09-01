@@ -12,6 +12,7 @@ import imageCompression from "browser-image-compression";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import MediaUploadSection from "./MediaUploadSection";
 import WasteInput, { WasteInputData } from "./WasteInput";
+import { ProcessingErrorDisplay, FieldValidationError } from "@/components/shared/ProcessingErrorDisplay";
 import { AlertCircle, Plus, X, Calendar, Scale, Settings, Package, PlayCircle } from "lucide-react";
 
 type Props = {
@@ -42,7 +43,7 @@ export default function CreateProcessingProgressForm({
     recordedAt: new Date().toISOString(),
     wastes: [{ wasteType: "", quantity: 0, unit: "kg", note: "", recordedAt: new Date().toISOString().split("T")[0] }] as WasteInputData[],
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState("");
   const { t } = useTranslation();
 
@@ -86,9 +87,9 @@ export default function CreateProcessingProgressForm({
             }
           }
         }
-              } catch (error) {
+                             } catch (error) {
           console.error("❌ Error fetching batches:", error);
-          setError(t("common.loadingBatches"));
+          setError({ message: t("common.loadingBatches") });
         }
       };
       fetchBatches();
@@ -122,11 +123,11 @@ export default function CreateProcessingProgressForm({
       setLoadingStages(true);
       const stagesData = await getProcessingStagesByMethodId(methodId);
       setStages(stagesData || []);
-          } catch (error) {
-        console.error("❌ Error fetching stages:", error);
-        setError(t("common.loadingStages"));
-        setStages([]);
-      } finally {
+                     } catch (error) {
+         console.error("❌ Error fetching stages:", error);
+         setError({ message: t("common.loadingStages") });
+         setStages([]);
+       } finally {
       setLoadingStages(false);
     }
   };
@@ -174,83 +175,83 @@ export default function CreateProcessingProgressForm({
       outputUnit: form.outputUnit
     });
     
-    if (!form.batchId) {
-      console.log("❌ Validation failed: No batchId");
-      setError(t("common.noBatchSelected"));
-      setLoading(false);
-      return;
-    }
+         if (!form.batchId) {
+       console.log("❌ Validation failed: No batchId");
+       setError({ message: t("common.noBatchSelected") });
+       setLoading(false);
+       return;
+     }
 
-    if (!form.progressDate) {
-      console.log("❌ Validation failed: No progressDate");
-      setError(t("common.noProgressDate"));
-      setLoading(false);
-      return;
-    }
+     if (!form.progressDate) {
+       console.log("❌ Validation failed: No progressDate");
+       setError({ message: t("common.noProgressDate") });
+       setLoading(false);
+       return;
+     }
 
-    // Validate date không được trong tương lai
-    const selectedDate = new Date(form.progressDate);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999); // Set to end of today
-    if (selectedDate > today) {
-      setError(t("common.futureDate"));
-      setLoading(false);
-      return;
-    }
+     // Validate date không được trong tương lai
+     const selectedDate = new Date(form.progressDate);
+     const today = new Date();
+     today.setHours(23, 59, 59, 999); // Set to end of today
+     if (selectedDate > today) {
+       setError({ message: t("common.futureDate") });
+       setLoading(false);
+       return;
+     }
 
-    if (form.outputQuantity <= 0) {
-      console.log("❌ Validation failed: outputQuantity <= 0");
-      setError(t("common.outputQuantity"));
-      setLoading(false);
-      return;
-    }
+     if (form.outputQuantity <= 0) {
+       console.log("❌ Validation failed: outputQuantity <= 0");
+       setError({ message: t("common.outputQuantity") });
+       setLoading(false);
+       return;
+     }
 
-    // Validate khối lượng không được quá lớn (ví dụ: 100,000 kg)
-    if (form.outputQuantity > 100000) {
-      setError(t("common.outputQuantityLimit"));
-      setLoading(false);
-      return;
-    }
+     // Validate khối lượng không được quá lớn (ví dụ: 100,000 kg)
+     if (form.outputQuantity > 100000) {
+       setError({ message: t("common.outputQuantityLimit") });
+       setLoading(false);
+       return;
+     }
 
-    if (!form.outputUnit.trim()) {
-      setError(t("common.outputUnit"));
-      setLoading(false);
-      return;
-    }
+     if (!form.outputUnit.trim()) {
+       setError({ message: t("common.outputUnit") });
+       setLoading(false);
+       return;
+     }
 
-    // File validation
-    if (form.photoFiles.some(file => file.size > 10 * 1024 * 1024)) { // 10MB
-      setError(t("common.photoSizeLimit"));
-      setLoading(false);
-      return;
-    }
+     // File validation
+     if (form.photoFiles.some(file => file.size > 10 * 1024 * 1024)) { // 10MB
+       setError({ message: t("common.photoSizeLimit") });
+       setLoading(false);
+       return;
+     }
 
-    if (form.videoFiles.some(file => file.size > 100 * 1024 * 1024)) { // 100MB
-      setError(t("common.videoSizeLimit"));
-      setLoading(false);
-      return;
-    }
+     if (form.videoFiles.some(file => file.size > 100 * 1024 * 1024)) { // 100MB
+       setError({ message: t("common.videoSizeLimit") });
+       setLoading(false);
+       return;
+     }
 
-    // Tính tổng kích thước
-    const totalPhotoSize = form.photoFiles.reduce((sum, file) => sum + file.size, 0);
-    const totalVideoSize = form.videoFiles.reduce((sum, file) => sum + file.size, 0);
-    const totalSize = totalPhotoSize + totalVideoSize;
-    const totalSizeMB = totalSize / 1024 / 1024;
+     // Tính tổng kích thước
+     const totalPhotoSize = form.photoFiles.reduce((sum, file) => sum + file.size, 0);
+     const totalVideoSize = form.videoFiles.reduce((sum, file) => sum + file.size, 0);
+     const totalSize = totalPhotoSize + totalVideoSize;
+     const totalSizeMB = totalSize / 1024 / 1024;
 
-    // Giới hạn tổng kích thước (50MB)
-    if (totalSizeMB > 50) {
-      setError(t("common.totalSizeLimit", { totalSizeMB: totalSizeMB.toFixed(2) }));
-      setLoading(false);
-      return;
-    }
+     // Giới hạn tổng kích thước (50MB)
+     if (totalSizeMB > 50) {
+       setError({ message: t("common.totalSizeLimit", { totalSizeMB: totalSizeMB.toFixed(2) }) });
+       setLoading(false);
+       return;
+     }
 
-    // Giới hạn số lượng files (10 files)
-    const totalFiles = form.photoFiles.length + form.videoFiles.length;
-    if (totalFiles > 10) {
-      setError(t("common.totalFilesLimit", { totalFiles }));
-      setLoading(false);
-      return;
-    }
+     // Giới hạn số lượng files (10 files)
+     const totalFiles = form.photoFiles.length + form.videoFiles.length;
+     if (totalFiles > 10) {
+       setError({ message: t("common.totalFilesLimit", { totalFiles }) });
+       setLoading(false);
+       return;
+     }
 
     try {
       let compressedPhotos: File[] = [];
@@ -316,22 +317,22 @@ export default function CreateProcessingProgressForm({
       setSuccess(t("common.createProgressSuccess"));
       onSuccess?.();
       setTimeout(() => router.push("/dashboard/farmer/processing/progresses"), 1200);
-    } catch (err: unknown) {
-      console.error("❌ Submit error:", err);
-      console.error("❌ Error type:", typeof err);
+         } catch (err: unknown) {
+       console.error("❌ Submit error:", err);
+       console.error("❌ Error type:", typeof err);
 
-      const error = err as Error & { response?: { data?: { message?: string } } };
-      console.error("❌ Error message:", error?.message);
-      console.error("❌ Error response:", error?.response);
-      console.error("❌ Error stack:", error?.stack);
+       const error = err as Error & { response?: { data?: any } };
+       console.error("❌ Error message:", error?.message);
+       console.error("❌ Error response:", error?.response);
+       console.error("❌ Error stack:", error?.stack);
 
-      if (error.message === "Network Error" || (error.message && error.message.includes("Không nhận được phản hồi"))) {
-        setError(t("common.networkError"));
-      } else {
-        const errorMessage = error?.response?.data?.message || error?.message || t("common.createProgressFailed");
-        setError(errorMessage);
-      }
-    }
+       if (error.message === "Network Error" || (error.message && error.message.includes("Không nhận được phản hồi"))) {
+         setError({ message: t("common.networkError") });
+       } else {
+         // Sử dụng ProcessingErrorDisplay để xử lý error từ backend
+         setError(error?.response?.data || error);
+       }
+     }
     setLoading(false);
   };
 
@@ -389,6 +390,7 @@ export default function CreateProcessingProgressForm({
                     </option>
                   ))}
                 </select>
+                <FieldValidationError error={error} fieldName="batchId" />
               </div>
             )}
           </div>
@@ -491,6 +493,7 @@ export default function CreateProcessingProgressForm({
                   <span className="text-gray-500 text-sm font-medium">{form.outputUnit}</span>
                 </div>
               </div>
+              <FieldValidationError error={error} fieldName="outputQuantity" />
             </div>
           </div>
         </div>
@@ -583,6 +586,7 @@ export default function CreateProcessingProgressForm({
             onWastesChange={(wastes) => {
               setForm(prev => ({ ...prev, wastes }));
             }}
+            error={error}
           />
         </div>
 
@@ -595,14 +599,7 @@ export default function CreateProcessingProgressForm({
         />
 
         {/* Error and Success Messages */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              <p className="text-red-700 text-sm font-medium">{error}</p>
-            </div>
-          </div>
-        )}
+        <ProcessingErrorDisplay error={error} />
 
         {success && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
