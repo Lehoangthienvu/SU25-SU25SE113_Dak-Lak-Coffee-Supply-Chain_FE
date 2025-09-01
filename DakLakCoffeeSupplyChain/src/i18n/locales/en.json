@@ -3,10 +3,10 @@
     "title": "Coffee Processing Recording",
     "batch": {
       "title": "Processing Batch",
-      "create": "Create New Batch",
-      "createDescription": "Create processing batch for coffee from completed harvests (only those requiring processing)",
-      "createError": "Failed to create processing batch!",
-      "createSuccess": "Processing batch created successfully!",
+      "create": "Record New Batch",
+      "createDescription": "Record processing batch for coffee from completed harvests (only those requiring processing)",
+      "createError": "Failed to record processing batch!",
+      "createSuccess": "Processing batch recorded successfully!",
       "edit": "Edit Batch",
       "delete": "Delete Batch",
       "status": "Status",
@@ -19,8 +19,8 @@
       "coffeeType": "Coffee Type",
       "batchCode": "Batch Code",
       "cancel": "Cancel",
-      "creating": "Creating...",
-      "createBatch": "Create Processing Batch",
+      "creating": "Recording...",
+      "createBatch": "Record Processing Batch",
       "selectCropSeason": "-- Select Crop Season --",
       "selectCoffeeType": "-- Select Coffee Type --",
       "selectCropSeasonFirst": "-- Please select crop season first --",
@@ -28,7 +28,7 @@
       "loadingCoffeeTypes": "Loading coffee types list...",
       "planInformation": "Plan Information",
       "processingMethod": "Processing Method",
-      "methodAppliedAutomatically": "This method will be applied automatically when creating the processing batch",
+      "methodAppliedAutomatically": "This method will be applied automatically when recording the processing batch",
       "note": "Note",
       "onlyCoffeeTypesWithPlanRequirements": "Only coffee types with processing requirements from the plan are displayed here.",
       "batchCodePlaceholder": "E.g: BATCH-2024-001",
@@ -171,22 +171,22 @@
       "firstProgress": "Create first progress"
     },
     "validation": {
-      "BusinessManagerCannotCreateBatch": "Business Manager cannot create processing batches.",
-      "OnlyFarmerCanCreateBatch": "Only farmers can create processing batches.",
+      "BusinessManagerCannotCreateBatch": "Business Manager cannot record processing batches.",
+      "OnlyFarmerCanCreateBatch": "Only farmers can record processing batches.",
       "InvalidCropSeason": "Invalid crop season.",
       "CoffeeTypeNotInCompletedPlan": "Coffee type does not belong to any completed plan.",
       "CommitmentRequiresFreshDelivery": "Commitment with business requires fresh delivery. Please perform fresh delivery.",
       "InvalidProcessingMethodFromPlan": "Processing method from plan is invalid.",
       "NoActualYieldForCoffeeType": "This coffee type has no actual yield.",
       "CoffeeTypeQuantityExhausted": "The quantity of this coffee type has been exhausted.",
-      "CreateBatchFailed": "Failed to create processing batch.",
-      "CannotRetrieveCreatedBatch": "Cannot retrieve the created processing batch.",
+      "CreateBatchFailed": "Failed to record processing batch.",
+      "CannotRetrieveCreatedBatch": "Cannot retrieve the recorded processing batch.",
       "FarmerNotFound": "Farmer not found.",
       "BusinessManagerNotFound": "Business Manager not found.",
       "NoAccessToProcessingBatches": "You do not have access to any processing batches.",
       "NoProcessingBatchesForEvaluation": "No processing batches available for evaluation.",
       "FarmerInfoNotFound": "Farmer information not found.",
-      "NoProcessingBatchesCreated": "You have not created any processing batches.",
+      "NoProcessingBatchesCreated": "You have not recorded any processing batches.",
       "ProcessingBatchNotFound": "Processing batch not found.",
       "NoPermissionToUpdateBatch": "You do not have permission to update this processing batch.",
       "UpdateBatchFailed": "Update failed.",
@@ -208,7 +208,7 @@
       "FarmerNoProcessingBatchesInCommittedSeasons": "Farmer {{farmerName}} has no processing batches in committed seasons.",
       "FarmerNotFoundForWarehouseRequest": "Farmer not found.",
       "ProcessingMethodCodeExists": "Processing method code '{{methodCode}}' already exists.",
-      "CreateProcessingMethodFailed": "Failed to create processing method.",
+      "CreateProcessingMethodFailed": "Failed to record processing method.",
       "BatchNotFound": "Processing batch not found with ID {{BatchId}}.",
       "NoPermissionToCreateProgress": "You do not have permission to create progress for this processing batch.",
       "NoStagesForMethod": "No stages available for this processing method.",
@@ -366,7 +366,7 @@
     },
     "pages": {
       "managerBatches": {
-        "title": "Processing Batches Management (Manager)",
+        "title": "Manage the Processing Batch records (Manager)",
         "subtitle": "Track and manage all coffee processing batches in the system",
         "totalBatches": "Total Batches",
         "active": "Active",
@@ -898,7 +898,7 @@
         "editWaste": "Edit Waste"
       },
       "farmerBatches": {
-        "title": "Processing Batches Management (Farmer)",
+        "title": "Record the processed batch (Farmer)",
         "subtitle": "Track and manage your coffee processing batches",
         "totalBatches": "Total Batches",
         "active": "Active",
@@ -1107,8 +1107,8 @@
                "coffeeType": {
                  "label": "Coffee Type *",
                  "unknown": "Unknown",
-                 "cannotChange": "Coffee type cannot be changed after creation",
-                 "help": "Coffee type cannot be changed after creation"
+                 "cannotChange": "Coffee type cannot be changed after recording",
+                 "help": "Coffee type cannot be changed after recording"
                },
                "cropSeason": {
                  "label": "Crop Season *",
@@ -1116,7 +1116,7 @@
                },
                "batchCode": {
                  "label": "Processing Batch Code *",
-                 "help": "Processing batch code cannot be changed after creation"
+                 "help": "Processing batch code cannot be changed after recording"
                }
              },
              "loading": {
@@ -1126,7 +1126,7 @@
              "back": "Back",
              "info": {
                "title": "Edit Instructions",
-               "description": "Edit basic information of the processing batch. Some information may not be allowed to change after creation."
+               "description": "Edit basic information of the processing batch. Some information may not be allowed to change after recording."
              },
              "error": {
                "title": "Cannot load data",

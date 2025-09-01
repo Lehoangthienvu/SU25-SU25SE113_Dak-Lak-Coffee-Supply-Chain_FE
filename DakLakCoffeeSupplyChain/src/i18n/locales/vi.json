@@ -3,10 +3,10 @@
     "title": "Ghi nhận xử lý cà phê",
     "batch": {
       "title": "Lô xử lý",
-      "create": "Tạo lô mới",
-      "createDescription": "Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
-      "createError": "Tạo lô sơ chế thất bại!",
-      "createSuccess": "Tạo lô sơ chế thành công!",
+      "create": "Ghi nhận lô mới",
+      "createDescription": "Ghi nhận lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
+      "createError": "Ghi nhận lô sơ chế thất bại!",
+      "createSuccess": "Ghi nhận lô sơ chế thành công!",
       "edit": "Chỉnh sửa lô",
       "delete": "Xóa lô",
       "status": "Trạng thái",
@@ -19,8 +19,8 @@
       "coffeeType": "Loại cà phê",
       "batchCode": "Mã lô sơ chế",
       "cancel": "Huỷ",
-      "creating": "Đang tạo...",
-      "createBatch": "Tạo lô sơ chế",
+      "creating": "Đang ghi nhận...",
+      "createBatch": "Ghi nhận lô sơ chế",
       "selectCropSeason": "-- Chọn vụ mùa --",
       "selectCoffeeType": "-- Chọn loại cà phê --",
       "selectCropSeasonFirst": "-- Vui lòng chọn vụ mùa trước --",
@@ -28,7 +28,7 @@
       "loadingCoffeeTypes": "Đang tải danh sách loại cà phê...",
       "planInformation": "Thông tin từ kế hoạch",
       "processingMethod": "Phương pháp sơ chế",
-      "methodAppliedAutomatically": "Phương pháp này sẽ được áp dụng tự động khi tạo lô sơ chế",
+      "methodAppliedAutomatically": "Phương pháp này sẽ được áp dụng tự động khi ghi nhận lô sơ chế",
       "note": "Lưu ý",
       "onlyCoffeeTypesWithPlanRequirements": "Chỉ những loại cà phê có yêu cầu sơ chế từ kế hoạch mới được hiển thị ở đây.",
       "batchCodePlaceholder": "VD: BATCH-2024-001",
@@ -160,22 +160,22 @@
       "selectStage": "Chọn bước xử lý"
     },
           "validation":{
-        "BusinessManagerCannotCreateBatch": "Business Manager không được tạo lô sơ chế.",
-        "OnlyFarmerCanCreateBatch": "Chỉ nông hộ mới được tạo lô sơ chế.",
+        "BusinessManagerCannotCreateBatch": "Business Manager không được ghi nhận lô sơ chế.",
+        "OnlyFarmerCanCreateBatch": "Chỉ nông hộ mới được ghi nhận lô sơ chế.",
         "InvalidCropSeason": "Mùa vụ không hợp lệ.",
         "CoffeeTypeNotInCompletedPlan": "Loại cà phê không thuộc kế hoạch nào đã hoàn thành.",
         "CommitmentRequiresFreshDelivery": "Cam kết với doanh nghiệp yêu cầu giao hàng tươi. Hãy thực hiện giao hàng tươi.",
         "InvalidProcessingMethodFromPlan": "Phương pháp sơ chế từ kế hoạch không hợp lệ.",
         "NoActualYieldForCoffeeType": "Loại cà phê này chưa có khối lượng đầu ra.",
         "CoffeeTypeQuantityExhausted": "Khối lượng của loại cà phê này đã được sử dụng hết.",
-        "CreateBatchFailed": "Tạo lô sơ chế thất bại.",
-        "CannotRetrieveCreatedBatch": "Không thể truy xuất lô sơ chế vừa tạo.",
+        "CreateBatchFailed": "Ghi nhận lô sơ chế thất bại.",
+        "CannotRetrieveCreatedBatch": "Không thể truy xuất lô sơ chế vừa ghi nhận.",
         "FarmerNotFound": "Không tìm thấy nông hộ.",
         "BusinessManagerNotFound": "Không tìm thấy Business Manager tương ứng.",
         "NoAccessToProcessingBatches": "Bạn không có quyền truy cập bất kỳ lô sơ chế nào.",
         "NoProcessingBatchesForEvaluation": "Không có lô sơ chế nào để đánh giá.",
         "FarmerInfoNotFound": "Không tìm thấy thông tin nông hộ.",
-        "NoProcessingBatchesCreated": "Bạn chưa tạo lô sơ chế nào.",
+        "NoProcessingBatchesCreated": "Bạn chưa ghi nhận lô sơ chế nào.",
         "ProcessingBatchNotFound": "Không tìm thấy lô sơ chế.",
         
         "UpdateBatchFailed": "Cập nhật thất bại.",
@@ -197,7 +197,7 @@
         "FarmerNoProcessingBatchesInCommittedSeasons": "Farmer {{farmerName}} chưa có lô sơ chế nào trong các mùa vụ đã cam kết.",
         "FarmerNotFoundForWarehouseRequest": "Không tìm thấy nông dân.",
         "ProcessingMethodCodeExists": "Mã phương pháp '{{methodCode}}' đã tồn tại.",
-        "CreateProcessingMethodFailed": "Tạo phương pháp sơ chế thất bại.",
+        "CreateProcessingMethodFailed": "Ghi nhận phương pháp sơ chế thất bại.",
         "BatchNotFound": "Không tìm thấy lô sơ chế với ID {{BatchId}}.",
         "NoPermissionToCreateProgress": "Bạn không có quyền tạo tiến trình cho lô sơ chế này.",
         "NoStagesForMethod": "Chưa có công đoạn nào cho phương pháp chế biến này.",
@@ -259,7 +259,7 @@
       "ProcessingParameterNotFoundOrDeleted": "Parameter not found or already deleted",
       "ProcessingParameterNotFoundForHardDelete": "Parameter not found",
       "ProcessingStageNotFound": "Không tìm thấy giai đoạn sơ chế",
-      "CreateProcessingStageFailed": "Tạo giai đoạn sơ chế thất bại",
+              "CreateProcessingStageFailed": "Ghi nhận giai đoạn sơ chế thất bại",
       "ProcessingStageNotFoundOrDeleted": "Giai đoạn sơ chế không tồn tại hoặc đã bị xóa",
       "DeleteProcessingStageFailed": "Xóa giai đoạn sơ chế thất bại",
       "ProcessingStageNotFoundForUpdate": "Không tìm thấy giai đoạn sơ chế",
@@ -355,8 +355,8 @@
     },
     "pages": {
       "managerBatches": {
-        "title": "Quản lý lô sơ chế (Manager)",
-        "subtitle": "Theo dõi và quản lý tất cả các lô sơ chế cà phê trong hệ thống",
+        "title": "Quản lý các ghi nhận lô sơ chế (Manager)",
+        "subtitle": "Theo dõi và quản lý tất cả các ghi nhận lô sơ chế cà phê trong hệ thống",
         "totalBatches": "Tổng lô",
         "active": "Đang hoạt động",
         "totalOutput": "Tổng sản lượng",
@@ -710,8 +710,8 @@
         }
       },
       "farmerBatches": {
-        "title": "Quản lý lô sơ chế (Farmer)",
-        "subtitle": "Theo dõi và quản lý lô sơ chế cà phê của bạn",
+        "title": "Ghi nhận lô sơ chế (Farmer)",
+        "subtitle": "Theo dõi và ghi nhận lô sơ chế cà phê của bạn",
         "totalBatches": "Tổng lô",
         "active": "Đang hoạt động",
         "totalOutput": "Tổng sản lượng",
@@ -1080,9 +1080,9 @@
               }
             },
           "create": {
-            "title": "Tạo lô sơ chế mới",
-            "subtitle": "Tạo lô sơ chế cà phê mới",
-            "description": "Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
+            "title": "Ghi nhận lô sơ chế mới",
+            "subtitle": "Ghi nhận lô sơ chế cà phê mới",
+            "description": "Ghi nhận lô sơ chế cho cà phê từ vụ mùa đã hoàn thành (chỉ những loại có yêu cầu sơ chế)",
             "backToList": "Quay lại",
             "basicInfo": {
               "title": "Thông tin cơ bản",
@@ -1091,7 +1091,7 @@
               "coffeeType": {
                 "label": "Loại cà phê *",
                 "unknown": "Không xác định",
-                "cannotChange": "Loại cà phê không thể thay đổi sau khi đã tạo"
+                "cannotChange": "Loại cà phê không thể thay đổi sau khi đã ghi nhận"
               },
               "cropSeason": "Mùa vụ",
               "notes": "Ghi chú",
@@ -1099,8 +1099,8 @@
             },
             "actions": {
               "cancel": "Hủy",
-              "creating": "Đang tạo...",
-              "create": "Tạo lô sơ chế"
+              "creating": "Đang ghi nhận...",
+              "create": "Ghi nhận lô sơ chế"
             },
             "loading": {
               "title": "Đang tải dữ liệu...",
@@ -1238,7 +1238,7 @@
         }
       },
         "expertBatches": {
-          "title": "Quản lý lô sơ chế (Expert)",
+          "title": "Đánh giá ghi nhận lô sơ chế (Expert)",
           "subtitle": "Đánh giá và kiểm soát chất lượng lô sơ chế cà phê",
           "batchDetail": {
             "title": "Chi tiết lô sơ chế (Expert)",
