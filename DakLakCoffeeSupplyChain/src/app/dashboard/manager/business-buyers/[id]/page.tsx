@@ -49,7 +49,6 @@ export default function BusinessBuyerDetailsPage() {
         const data = await getBusinessBuyerById(id as string);
         setBuyer(data);
       } catch (e) {
-        console.error(e);
       } finally {
         setLoading(false);
       }

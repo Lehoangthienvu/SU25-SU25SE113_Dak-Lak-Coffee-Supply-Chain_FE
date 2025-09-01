@@ -5322,7 +5322,6 @@
           "dataNotExists": "Data does not exist or has been deleted"
         },
         "fields": {
-          "orderDateCannotChange": "Order creation date cannot be changed"
         },
         "table": {
           "headers": {
@@ -5471,7 +5470,8 @@
         "note": "Note",
         "status": "Status",
         "cancelReason": "Cancel reason",
-        "orderDateCannotChange": "Order creation date cannot be changed"
+        "orderDateCannotChange": "Order creation date cannot be changed",
+        "statusCannotChange": "Status cannot be changed"
       },
       "common": {
         "optional": "(optional)"

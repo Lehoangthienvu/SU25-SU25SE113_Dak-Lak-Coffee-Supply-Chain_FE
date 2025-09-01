@@ -24,7 +24,6 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-
 interface ContractDeliveryItemOption {
   contractDeliveryItemId: string;
   label: string;
@@ -59,7 +58,7 @@ export default function OrderItemFormDialog({
   onSuccess,
 }: OrderItemFormDialogProps) {
   const { t } = useTranslation();
-  
+
   const [formData, setFormData] = useState<
     OrderItemCreateForOrder | OrderItemUpdateDto
   >({
@@ -151,7 +150,9 @@ export default function OrderItemFormDialog({
     if (id && !map.has(id)) {
       map.set(id, {
         contractDeliveryItemId: id,
-        label: t("managerOrders.detail.addOrderItem.labels.currentDeliveryItem"),
+        label: t(
+          "managerOrders.detail.addOrderItem.labels.currentDeliveryItem"
+        ),
       });
     }
     return Array.from(map.values());
@@ -160,22 +161,32 @@ export default function OrderItemFormDialog({
   const handleSubmit = async () => {
     // Kiểm tra client-side
     if (!formData.contractDeliveryItemId) {
-      toast.error(t("managerOrders.detail.addOrderItem.validation.selectContractDeliveryItem"));
+      toast.error(
+        t(
+          "managerOrders.detail.addOrderItem.validation.selectContractDeliveryItem"
+        )
+      );
       return;
     }
 
     if (!formData.productId) {
-      toast.error(t("managerOrders.detail.addOrderItem.validation.selectProduct"));
+      toast.error(
+        t("managerOrders.detail.addOrderItem.validation.selectProduct")
+      );
       return;
     }
 
     if ((formData.quantity ?? 0) <= 0) {
-      toast.error(t("managerOrders.detail.addOrderItem.validation.quantityRequired"));
+      toast.error(
+        t("managerOrders.detail.addOrderItem.validation.quantityRequired")
+      );
       return;
     }
 
     if ((formData.unitPrice ?? 0) < 0) {
-      toast.error(t("managerOrders.detail.addOrderItem.validation.unitPriceInvalid"));
+      toast.error(
+        t("managerOrders.detail.addOrderItem.validation.unitPriceInvalid")
+      );
       return;
     }
 
@@ -183,7 +194,9 @@ export default function OrderItemFormDialog({
       (formData.discountAmount ?? 0) < 0 ||
       (formData.discountAmount ?? 0) > 100
     ) {
-      toast.error(t("managerOrders.detail.addOrderItem.validation.discountRange"));
+      toast.error(
+        t("managerOrders.detail.addOrderItem.validation.discountRange")
+      );
       return;
     }
 
@@ -191,21 +204,29 @@ export default function OrderItemFormDialog({
     try {
       if (mode === "create") {
         await createOrderItem(formData as OrderItemCreateForOrder);
-        toast.success(t("managerOrders.detail.addOrderItem.messages.addSuccess"));
+        toast.success(
+          t("managerOrders.detail.addOrderItem.messages.addSuccess")
+        );
       } else {
         await updateOrderItem(formData as OrderItemUpdateDto);
-        toast.success(t("managerOrders.detail.addOrderItem.messages.updateSuccess"));
+        toast.success(
+          t("managerOrders.detail.addOrderItem.messages.updateSuccess")
+        );
       }
 
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
-      let message = t("managerOrders.detail.addOrderItem.messages.unknownError");
+      let message = t(
+        "managerOrders.detail.addOrderItem.messages.unknownError"
+      );
 
       if (axios.isAxiosError(error)) {
         message =
           error.response?.data?.message ??
-          t("managerOrders.detail.addOrderItem.messages.serverError", { status: error.response?.status });
+          t("managerOrders.detail.addOrderItem.messages.serverError", {
+            status: error.response?.status,
+          });
       } else if (error instanceof Error) {
         message = error.message;
       }
@@ -230,13 +251,20 @@ export default function OrderItemFormDialog({
         <div className="grid gap-2 px-5 py-4">
           {/* OrderCode: có thể ẩn hoặc hiển thị read-only để người dùng biết họ đang ở đơn hàng nào */}
           <div className="grid gap-1">
-            <Label htmlFor="orderCode">{t("managerOrders.detail.addOrderItem.fields.orderCode")}</Label>
+            <Label htmlFor="orderCode">
+              {t("managerOrders.detail.addOrderItem.fields.orderCode")}
+            </Label>
             <Input id="orderCode" value={orderCode ?? ""} disabled />
           </div>
 
           {/* Mặt hàng đợt giao */}
           <div className="grid gap-1">
-            <Label htmlFor="contractDeliveryItemId">{t("managerOrders.detail.addOrderItem.fields.contractDeliveryItem")}</Label>
+            <Label htmlFor="contractDeliveryItemId">
+              {t(
+                "managerOrders.detail.addOrderItem.fields.contractDeliveryItem"
+              )}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={(formData.contractDeliveryItemId as string) || undefined}
               onValueChange={(value) => {
@@ -247,7 +275,11 @@ export default function OrderItemFormDialog({
               }}
             >
               <SelectTrigger id="contractDeliveryItemId" className="w-full">
-                <SelectValue placeholder={t("managerOrders.detail.addOrderItem.placeholders.selectContractDeliveryItem")} />
+                <SelectValue
+                  placeholder={t(
+                    "managerOrders.detail.addOrderItem.placeholders.selectContractDeliveryItem"
+                  )}
+                />
               </SelectTrigger>
               <SelectContent>
                 {mergedCdiOptions.map((it) => (
@@ -264,7 +296,10 @@ export default function OrderItemFormDialog({
 
           {/* Sản phẩm */}
           <div className="grid gap-1">
-            <Label htmlFor="productId">{t("managerOrders.detail.addOrderItem.fields.product")}</Label>
+            <Label htmlFor="productId">
+              {t("managerOrders.detail.addOrderItem.fields.product")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={formData.productId || undefined}
               onValueChange={(value) =>
@@ -272,7 +307,11 @@ export default function OrderItemFormDialog({
               }
             >
               <SelectTrigger id="productId" className="w-full">
-                <SelectValue placeholder={t("managerOrders.detail.addOrderItem.placeholders.selectProduct")} />
+                <SelectValue
+                  placeholder={t(
+                    "managerOrders.detail.addOrderItem.placeholders.selectProduct"
+                  )}
+                />
               </SelectTrigger>
               <SelectContent>
                 {productOptions.map((p) => (
@@ -289,7 +328,10 @@ export default function OrderItemFormDialog({
 
           {/* Số lượng (kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="quantity">{t("managerOrders.detail.addOrderItem.fields.quantity")}</Label>
+            <Label htmlFor="quantity">
+              {t("managerOrders.detail.addOrderItem.fields.quantity")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <div className="relative">
               <Input
                 id="quantity"
@@ -299,7 +341,9 @@ export default function OrderItemFormDialog({
                 onChange={handleChange}
                 min={0}
                 step={1}
-                placeholder={t("managerOrders.detail.addOrderItem.placeholders.quantity")}
+                placeholder={t(
+                  "managerOrders.detail.addOrderItem.placeholders.quantity"
+                )}
                 className="pr-14"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
@@ -310,7 +354,10 @@ export default function OrderItemFormDialog({
 
           {/* Đơn giá (VNĐ/kg) */}
           <div className="grid gap-1">
-            <Label htmlFor="unitPrice">{t("managerOrders.detail.addOrderItem.fields.unitPrice")}</Label>
+            <Label htmlFor="unitPrice">
+              {t("managerOrders.detail.addOrderItem.fields.unitPrice")}{" "}
+              <span className="text-red-500">*</span>
+            </Label>
             <div className="relative">
               <Input
                 id="unitPrice"
@@ -320,7 +367,9 @@ export default function OrderItemFormDialog({
                 onChange={handleChange}
                 min={0}
                 step={100} // hoặc 1000 tuỳ quy định
-                placeholder={t("managerOrders.detail.addOrderItem.placeholders.unitPrice")}
+                placeholder={t(
+                  "managerOrders.detail.addOrderItem.placeholders.unitPrice"
+                )}
                 className="pr-24"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
@@ -331,7 +380,9 @@ export default function OrderItemFormDialog({
 
           {/* Chiết khấu (%) */}
           <div className="grid gap-1">
-            <Label htmlFor="discountAmount">{t("managerOrders.detail.addOrderItem.fields.discountAmount")}</Label>
+            <Label htmlFor="discountAmount">
+              {t("managerOrders.detail.addOrderItem.fields.discountAmount")}
+            </Label>
             <div className="relative">
               <Input
                 id="discountAmount"
@@ -342,7 +393,9 @@ export default function OrderItemFormDialog({
                 min={0}
                 max={100}
                 step={1}
-                placeholder={t("managerOrders.detail.addOrderItem.placeholders.discountAmount")}
+                placeholder={t(
+                  "managerOrders.detail.addOrderItem.placeholders.discountAmount"
+                )}
                 className="pr-10"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
@@ -352,13 +405,17 @@ export default function OrderItemFormDialog({
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="note">{t("managerOrders.detail.addOrderItem.fields.note")}</Label>
+            <Label htmlFor="note">
+              {t("managerOrders.detail.addOrderItem.fields.note")}
+            </Label>
             <Textarea
               id="note"
               name="note"
               value={formData.note ?? ""}
               onChange={handleChange}
-              placeholder={t("managerOrders.detail.addOrderItem.placeholders.note")}
+              placeholder={t(
+                "managerOrders.detail.addOrderItem.placeholders.note"
+              )}
             />
           </div>
         </div>
@@ -376,7 +433,11 @@ export default function OrderItemFormDialog({
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? t("managerOrders.detail.addOrderItem.actions.saving") : mode === "create" ? t("managerOrders.detail.addOrderItem.actions.add") : t("managerOrders.detail.addOrderItem.actions.update")}
+            {loading
+              ? t("managerOrders.detail.addOrderItem.actions.saving")
+              : mode === "create"
+              ? t("managerOrders.detail.addOrderItem.actions.add")
+              : t("managerOrders.detail.addOrderItem.actions.update")}
           </Button>
         </div>
       </FormDialog.Content>
