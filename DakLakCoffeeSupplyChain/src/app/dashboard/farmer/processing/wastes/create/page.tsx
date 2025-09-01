@@ -24,6 +24,7 @@ import { ArrowLeft, Trash2, Package, Calendar, Info, Loader2, CheckCircle, FileT
 
 // Import các component chung
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 export default function CreateProcessingWastePage() {
   const router = useRouter();
@@ -40,6 +41,7 @@ export default function CreateProcessingWastePage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
 
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
 
@@ -61,7 +63,7 @@ export default function CreateProcessingWastePage() {
         }
       } catch (err) {
         console.error("Lỗi tải danh sách lô:", err);
-        AppToast.error("Không thể tải danh sách lô sơ chế");
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -106,26 +108,9 @@ export default function CreateProcessingWastePage() {
 
       AppToast.success("Thêm xử lý chất thải thành công!");
       router.push("/dashboard/farmer/processing/wastes");
-    } catch (err: any) {
-              console.error("Lỗi tạo waste:", err);
-      
-      let errorMessage = "Thêm xử lý chất thải thất bại!";
-      
-      if (err?.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err?.message) {
-        errorMessage = err.message;
-      } else if (err?.response?.status === 400) {
-        errorMessage = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin.";
-      } else if (err?.response?.status === 404) {
-        errorMessage = "Không tìm thấy lô sơ chế. Vui lòng thử lại.";
-      } else if (err?.response?.status === 409) {
-        errorMessage = "Xử lý chất thải đã tồn tại hoặc thông tin bị trùng lặp.";
-      } else if (err?.response?.status >= 500) {
-        errorMessage = "Lỗi hệ thống. Vui lòng thử lại sau.";
-      }
-      
-      AppToast.error(errorMessage);
+        } catch (err: any) {
+      console.error("Lỗi tạo waste:", err);
+      setError(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -179,6 +164,9 @@ export default function CreateProcessingWastePage() {
           description="Ghi nhận chất thải từ quá trình sơ chế cà phê"
           showCreateButton={false}
         />
+        
+        {/* Error Display */}
+        {error && <ProcessingErrorDisplay error={error} />}
         
         <div className="flex justify-end">
           <Button 

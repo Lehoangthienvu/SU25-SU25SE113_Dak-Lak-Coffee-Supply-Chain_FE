@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
 
 import { cn } from "@/lib/utils";
+import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -40,7 +41,7 @@ export default function ProcessingBatchesPage() {
   const [batches, setBatches] = useState<ProcessingBatch[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,8 +57,7 @@ export default function ProcessingBatchesPage() {
         setBatches(batchesData || []);
       } catch (err: unknown) {
         console.error('Error fetching data:', err);
-        const errorMessage = err instanceof Error ? err.message : t('common.networkError');
-        setError(errorMessage);
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -211,14 +211,8 @@ export default function ProcessingBatchesPage() {
       <div className="min-h-screen bg-amber-50 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="text-center space-y-4 py-8">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
-                <AlertTriangle className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="space-y-2">
-                <h2 className="text-lg font-semibold text-gray-900">{t('common.error')}</h2>
-                <p className="text-sm text-gray-600">{error}</p>
-              </div>
+            <ProcessingErrorDisplay error={error} />
+            <div className="text-center mt-4">
               <Button
                 onClick={() => window.location.reload()}
                 className="bg-orange-600 hover:bg-orange-700 text-white"

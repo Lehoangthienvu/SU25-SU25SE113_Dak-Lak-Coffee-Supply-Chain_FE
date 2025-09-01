@@ -3,6 +3,7 @@ export interface ValidationError {
   parameters: Record<string, any>;
   timestamp: string;
   errorType: string;
+  fieldName?: string; // Thêm field name để xác định field nào bị lỗi
 }
 
 export interface ProcessedError {
