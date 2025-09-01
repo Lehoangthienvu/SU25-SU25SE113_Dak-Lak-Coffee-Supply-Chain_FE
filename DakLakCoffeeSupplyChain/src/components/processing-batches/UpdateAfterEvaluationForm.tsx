@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getFailedStagesForBatch, type FailedStagesInfo } from '@/lib/api/processingBatchEvaluations';
 
 interface UpdateAfterEvaluationFormProps {
   batchId: string;
@@ -31,6 +32,8 @@ export default function UpdateAfterEvaluationForm({
   onSuccess
 }: UpdateAfterEvaluationFormProps) {
   const { t } = useTranslation();
+  const [failedStagesInfo, setFailedStagesInfo] = useState<FailedStagesInfo | null>(null);
+  const [loadingFailedStages, setLoadingFailedStages] = useState(false);
   const [form, setForm] = useState({
     progressDate: new Date().toISOString().split('T')[0],
     outputQuantity: 0,
@@ -49,6 +52,25 @@ export default function UpdateAfterEvaluationForm({
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Fetch failed stages when component mounts
+  useEffect(() => {
+    const loadFailedStages = async () => {
+      try {
+        setLoadingFailedStages(true);
+        const info = await getFailedStagesForBatch(batchId);
+        setFailedStagesInfo(info);
+      } catch (err: any) {
+        console.error('❌ Lỗi loadFailedStages:', err);
+      } finally {
+        setLoadingFailedStages(false);
+      }
+    };
+
+    if (isOpen && batchId) {
+      loadFailedStages();
+    }
+  }, [isOpen, batchId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -82,6 +104,12 @@ export default function UpdateAfterEvaluationForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Kiểm tra xem có thông tin failed stages không
+    if (!failedStagesInfo || !failedStagesInfo.failedStages || failedStagesInfo.failedStages.length === 0) {
+      console.error('❌ Không có thông tin stages cần cập nhật');
+      return;
+    }
     
     if (form.outputQuantity <= 0) {
       // AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
@@ -149,15 +177,45 @@ export default function UpdateAfterEvaluationForm({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-white/70 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Info className="h-4 w-4 text-blue-600" />
-              <h4 className="font-medium text-blue-800">{t('updateAfterEvaluation.instruction')}</h4>
+          {/* Failed Stages Information */}
+          {loadingFailedStages ? (
+            <div className="bg-white/70 rounded-lg p-4">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
+                <span className="ml-2 text-orange-700">{t('evaluation.failedStages.loading')}</span>
+              </div>
             </div>
-            <p className="text-sm text-blue-700">
-              {t('updateAfterEvaluation.description')}
-            </p>
-          </div>
+          ) : failedStagesInfo && failedStagesInfo.failedStages && failedStagesInfo.failedStages.length > 0 ? (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                <h4 className="font-medium text-yellow-800">{t('evaluation.failedStages.title')}</h4>
+              </div>
+              <p className="text-sm text-yellow-700 mb-3">
+                {t('evaluation.failedStages.description')}
+              </p>
+              <div className="space-y-2">
+                {failedStagesInfo.failedStages.map((stage, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-2 border border-yellow-300 rounded-lg bg-white">
+                    <div className="flex items-center justify-center w-5 h-5 bg-yellow-500 text-white rounded-full text-xs font-bold">
+                      {index + 1}
+                    </div>
+                    <span className="font-medium text-gray-900">{stage}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white/70 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Info className="h-4 w-4 text-blue-600" />
+                <h4 className="font-medium text-blue-800">{t('updateAfterEvaluation.instruction')}</h4>
+              </div>
+              <p className="text-sm text-blue-700">
+                {t('updateAfterEvaluation.description')}
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -376,15 +434,28 @@ export default function UpdateAfterEvaluationForm({
             )}
           </div>
 
+          {/* Warning about specific stages */}
+          {failedStagesInfo && failedStagesInfo.failedStages && failedStagesInfo.failedStages.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-blue-600" />
+                <span className="text-sm text-blue-800">
+                  {t('evaluation.failedStages.updateInstructions')}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Buttons */}
           <div className="flex justify-end space-x-3 pt-4">
-                         <Button
-               type="button"
-               variant="outline"
-               disabled={loading}
-             >
-               {t('updateAfterEvaluation.cancel')}
-             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={loading}
+              onClick={onClose}
+            >
+              {t('updateAfterEvaluation.cancel')}
+            </Button>
             <Button
               type="submit"
               disabled={loading}

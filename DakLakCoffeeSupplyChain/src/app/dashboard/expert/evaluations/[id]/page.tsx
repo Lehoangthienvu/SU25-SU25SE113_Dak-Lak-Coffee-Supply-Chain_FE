@@ -12,6 +12,8 @@ import StageFailureDisplay from "@/components/processing-batches/StageFailureDis
 import FarmerRetryStatus from "@/components/processing-batches/FarmerRetryStatus";
 import RetryGuidanceInfo from "@/components/processing-batches/RetryGuidanceInfo";
 import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
+import EvaluationRetryInfo from "@/components/processing-batches/EvaluationRetryInfo";
+import EvaluationCriteriaDisplay from "@/components/processing-batches/EvaluationCriteriaDisplay";
 import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +29,7 @@ export default function ExpertEvaluationDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showEvaluationForm, setShowEvaluationForm] = useState(false);
+  const [showRetryInfo, setShowRetryInfo] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -514,6 +517,10 @@ export default function ExpertEvaluationDetailPage() {
                       <div className="space-y-4">
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                           <p className="text-sm text-red-800 font-medium mb-3">{t("expertEvaluationDetail.evaluationStatus.comments")}</p>
+                          
+                          {/* 🔥 MỚI: Hiển thị từng tiêu chí đánh giá chi tiết */}
+                          <EvaluationCriteriaDisplay comment={latestEvaluation.comments} />
+                          
                           <StageFailureDisplay comments={latestEvaluation.comments} batch={{
                             ...batch,
                             progresses: batch.progresses
@@ -536,6 +543,17 @@ export default function ExpertEvaluationDetailPage() {
                               progresses: batch.progresses
                             }}
                           />
+
+                          {/* 🔥 MỚI: Nút xem thông tin retry chi tiết */}
+                          <div className="mt-4 pt-4 border-t border-red-200">
+                            <button
+                              onClick={() => setShowRetryInfo(true)}
+                              className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 font-medium"
+                            >
+                              <FiAlertCircle className="w-4 h-4" />
+                              {t("expertEvaluations.retryStage.button")}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -544,7 +562,14 @@ export default function ExpertEvaluationDetailPage() {
                     {latestEvaluation.comments && latestEvaluation.evaluationResult !== EVALUATION_RESULTS.FAIL && (
                       <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                         <p className="text-sm text-green-800 font-medium mb-2">{t("expertEvaluationDetail.evaluationStatus.comments")}</p>
-                        <p className="text-sm text-green-800">{latestEvaluation.comments}</p>
+                        
+                        {/* 🔥 MỚI: Hiển thị từng tiêu chí đánh giá chi tiết */}
+                        <EvaluationCriteriaDisplay comment={latestEvaluation.comments} />
+                        
+                        {/* Hiển thị comments gốc nếu không có format đánh giá */}
+                        {!latestEvaluation.comments.includes('EVALUATION_TYPE:') && (
+                          <p className="text-sm text-green-800 mt-3">{latestEvaluation.comments}</p>
+                        )}
                       </div>
                     )}
 
@@ -647,6 +672,19 @@ export default function ExpertEvaluationDetailPage() {
             setShowEvaluationForm(false);
             fetchData(); // Refresh data
             AppToast.success(t("expertEvaluations.success.evaluationUpdated"));
+          }}
+        />
+
+        {/* Retry Info Modal */}
+        <EvaluationRetryInfo
+          batchId={batchId}
+          isOpen={showRetryInfo}
+          onClose={() => setShowRetryInfo(false)}
+          onRetry={(stageId) => {
+            console.log("Retry stage:", stageId);
+            setShowRetryInfo(false);
+            // Có thể chuyển hướng đến trang progress để retry
+            router.push(`/dashboard/farmer/processing-batches/${batchId}/progress?retryStage=${stageId}`);
           }}
         />
       </div>

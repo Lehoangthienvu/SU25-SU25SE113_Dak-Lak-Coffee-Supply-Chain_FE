@@ -1869,7 +1869,7 @@
     "criteria": {
       "title": "Criteria List",
       "loading": "Loading evaluation criteria...",
-      "range": "Range: {{min}} - {{max}} {{unit}}",
+      "range": "Range: {{MIN}} - {{MAX}} {{unit}}",
       "actualValue": "Actual Value"
     },
     "failureReasons": {
@@ -1885,6 +1885,7 @@
     "actions": {
       "submitting": "Submitting...",
       "evaluateStage": "Evaluate Stage",
+        "evaluateBatch": "Evaluate Batch",
       "passBatch": "Pass Batch"
     },
     "batchPassConfirm": {
@@ -1896,15 +1897,16 @@
     },
     "warning": {
       "noStageSelected": "Please select a stage to evaluate",
-      "noCriteria": "No evaluation criteria for stage \"{{stageName}}\". Please contact admin to configure."
+      "noCriteria": "No evaluation criteria for batch. Please contact admin to configure."
     },
     "error": {
       "loadingStages": "Cannot load stage list from server",
-      "loadingCriteria": "Cannot load evaluation criteria",
-      "noCriteriaForStage": "No evaluation criteria for stage \"{{stageName}}\". Please contact admin to configure.",
+      "loadingCriteria": "Cannot load evaluation criteria for batch",
+      "noCriteriaForStage": "No evaluation criteria for stage {{stageName}}. Please contact admin to configure.",
       "noStageSelected": "Please select a stage to evaluate",
       "noCriteria": "Please enter values for all evaluation criteria",
       "incompleteCriteria": "Please enter values for all evaluation criteria",
+      "noFailedStagesSelected": "Please select at least one stage that needs updating when evaluation fails",
       "submitFailed": "Failed to create evaluation",
       "noMethodId": "Missing processing method information. Please check again.",
       "batchPassFailed": "Failed to create batch pass evaluation"
@@ -1922,6 +1924,16 @@
       "failureSubmitted": "Evaluation has been submitted. Please check the results.",
       "batchComment": "BATCH evaluation successful: All stages met standards. Overall score: 100/100",
       "batchPassed": "Batch evaluation passed and status updated!"
+    },
+      "failedStages": {
+    "title": "Stages to Update",
+    "description": "Select stages that need farmer to update when evaluation fails",
+    "loading": "Loading stage list...",
+    "order": "Order",
+    "selectedCount": "Selected {{count}} stages to update",
+    "noFailedStages": "No stages need to be updated",
+    "needsUpdate": "Needs Update",
+    "updateInstructions": "Please update the above stages to meet quality standards"
     },
     "comments": "Comments"
   },
@@ -2377,6 +2389,46 @@
             "date": "Date",
             "expert": "Expert",
             "comments": "Comments"
+          },
+          "actions": {
+            "evaluateBatch": "Evaluate Batch",
+            "submitting": "Submitting...",
+            "passBatch": "Pass Batch"
+          },
+          "criteria": {
+            "title": "Evaluation Criteria",
+            "loading": "Loading criteria...",
+            "actualValue": "Actual Value",
+            "range": "Range: {{min}} - {{max}} {{unit}}"
+          },
+          "results": {
+            "title": "Evaluation Results",
+            "passedCriteria": "Passed Criteria",
+            "overallScore": "Overall Score",
+            "additionalComments": "Additional Comments",
+            "commentsPlaceholder": "Enter additional comments..."
+          },
+          "warning": {
+            "noCriteria": "No evaluation criteria available"
+          },
+          "error": {
+            "noCriteria": "No criteria to evaluate",
+            "incompleteCriteria": "Please enter values for all criteria",
+            "submitFailed": "Failed to submit evaluation",
+            "batchPassFailed": "Failed to pass batch evaluation"
+          },
+          "success": {
+            "submitted": "Evaluation submitted successfully",
+            "failureSubmitted": "Failed evaluation submitted",
+            "batchPassed": "Batch evaluated as passed",
+            "batchComment": "Batch meets quality standards"
+          },
+          "batchPassConfirm": {
+            "title": "Confirm Batch Pass",
+            "message": "Are you sure you want to evaluate this batch as passed?",
+            "cancel": "Cancel",
+            "confirm": "Confirm",
+            "processing": "Processing..."
           }
         },
         "evaluations.failure": {
@@ -2393,6 +2445,29 @@
             "description": "Please improve the stage {{stageName}} according to expert recommendations",
             "update": "Update Progress"
           }
+        },
+        "evaluations.retry": {
+          "title": "Retry Information",
+          "batchFailed": "Batch evaluated as FAIL",
+          "retryStage": "Stage to retry",
+          "completedStages": "Completed stages",
+          "stageInfo": {
+            "name": "Stage name",
+            "orderIndex": "Order",
+            "stepIndex": "Step index",
+            "outputQuantity": "Output quantity",
+            "progressDate": "Progress date"
+          },
+          "retryGuidance": {
+            "title": "Retry guidance",
+            "description": "Batch failed - need to retry the last completed stage",
+            "retryButton": "Retry Stage",
+            "retryHint": "Click to retry stage {{stageName}}"
+          },
+          "noRetryNeeded": "This batch is not evaluated as FAIL",
+          "noRetryInfo": "Retry information is only shown when batch is FAIL",
+          "loadingFailureInfo": "Loading failure information...",
+          "errorLoadingFailureInfo": "Error loading failure information"
         },
         "mediaViewer": {
           "navigation": "Navigate Images",
@@ -3464,7 +3539,13 @@
       "evaluationsList": "Unable to load evaluation list",
       "batchIdNotFound": "Error: Batch ID not found"
     },
-    "retry": "Retry"
+    "retry": "Retry",
+    "retryStage": {
+      "title": "Retry Stage",
+      "description": "Batch failed - need to retry the last stage",
+      "button": "Retry Stage",
+      "hint": "Click to retry stage {{stageName}}"
+    }
   },
   "expertEvaluationDetail": {
     "title": "Processing Batch Evaluation",
@@ -7298,5 +7379,118 @@
         "description": "Track and manage shipping orders."
       }
     }
+  },
+  "systemConfiguration": {
+    "title": "System Configuration",
+    "subtitle": "Manage system configurations",
+    "loading": "Loading configurations...",
+    "error": {
+      "fetchData": "Error loading configuration data",
+      "create": "Error creating configuration",
+      "update": "Error updating configuration",
+      "delete": "Error deleting configuration",
+      "toggleActive": "Error changing status"
+    },
+    "success": {
+      "created": "Configuration created successfully",
+      "updated": "Configuration updated successfully",
+      "deleted": "Configuration deleted successfully",
+      "activated": "Configuration activated successfully",
+      "deactivated": "Configuration deactivated successfully"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete this configuration?"
+    },
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "criteria": {
+      "title": "Quality Evaluation Criteria",
+      "subtitle": "Manage quality evaluation criteria for processing batches",
+      "create": "Create New Criteria",
+      "edit": "Edit Criteria",
+      "update": "Update Criteria",
+      "list": "Criteria List",
+      "noData": "No criteria created yet",
+      "name": "Criteria Name",
+      "description": "Description",
+      "descriptionPlaceholder": "Detailed description of evaluation criteria...",
+      "minValue": "Minimum Value",
+      "maxValue": "Maximum Value",
+      "unit": "Unit",
+      "operator": "Operator",
+      "severity": "Severity",
+      "ruleGroup": "Rule Group",
+      "range": "Value Range",
+      "status": "Status",
+      "actions": "Actions",
+      "isActive": "Active",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+   "evaluation": {
+     "title": "Quality Evaluation",
+     "criteria": {
+       "title": "Criteria List",
+       "subtitle": "Detailed evaluation criteria",
+       "range": "Range:",
+       "operator": "Condition:",
+       "actual": "Actual Value:",
+       "severity": "Severity:",
+       "group": "Group:",
+       "code": "Code:",
+       "reason": "Reason:",
+       "total": "Total Criteria:",
+       "passed": "Passed",
+       "failed": "Failed",
+       "notApplicable": "Not Applicable",
+       "loading": "Loading criteria...",
+       "actualValue": "Actual Value"
+     },
+     "expertNotes": "Expert Notes:",
+     "warning": {
+       "noCriteria": "No evaluation criteria found"
+     },
+     "error": {
+       "loadingCriteria": "Error loading evaluation criteria",
+       "loadingStages": "Error loading stages list",
+       "noCriteria": "No criteria to evaluate",
+       "incompleteCriteria": "Please enter values for all criteria",
+       "noFailedStagesSelected": "Please select at least one stage to update when evaluation fails",
+       "submitFailed": "Error submitting evaluation",
+       "batchPassFailed": "Error passing batch evaluation"
+     },
+     "success": {
+       "submitted": "Evaluation submitted successfully",
+       "failureSubmitted": "Failed evaluation submitted successfully",
+       "batchPassed": "Batch passed evaluation successfully",
+       "batchComment": "Batch passed evaluation by expert"
+     },
+     "results": {
+       "title": "Evaluation Results",
+       "passedCriteria": "Passed Criteria",
+       "overallScore": "Overall Score",
+       "additionalComments": "Additional Comments",
+       "commentsPlaceholder": "Enter additional comments about the evaluation..."
+     },
+     "failedStages": {
+       "title": "Select Stages to Update",
+       "description": "Select the stages that farmers need to update when evaluation fails",
+       "loading": "Loading stages list...",
+       "order": "Order",
+       "selectedCount": "Selected {{count}} stages to update"
+     },
+     "actions": {
+       "submitting": "Submitting...",
+       "evaluateBatch": "Evaluate Batch",
+       "passBatch": "Pass Batch"
+     },
+     "batchPassConfirm": {
+       "title": "Confirm Batch Pass",
+       "message": "Are you sure you want to pass this batch without detailed criteria evaluation?",
+       "cancel": "Cancel",
+       "confirm": "Confirm Pass",
+       "processing": "Processing..."
+     }
+   }
   }
 }
