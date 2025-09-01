@@ -22,8 +22,10 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getAllProcessingBatches } from "@/lib/api/processingBatches";
+import { useTranslation } from "react-i18next";
 
 export default function ManagerDashboard() {
+  const { t } = useTranslation();
   const [processingStats, setProcessingStats] = useState({
     total: 0,
     pending: 0,
@@ -66,10 +68,10 @@ export default function ManagerDashboard() {
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-                Business Manager Dashboard
+                {t('managerDashboard.title')}
               </h1>
               <p className="text-gray-600 text-lg">
-                Quản lý và theo dõi toàn bộ hoạt động kinh doanh
+                {t('managerDashboard.subtitle')}
               </p>
             </div>
           </div>
@@ -83,42 +85,42 @@ export default function ManagerDashboard() {
                 <FiCoffee className="text-white text-xl" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800">
-                Thống kê sơ chế cà phê
+                {t('managerDashboard.processingStats.title')}
               </h2>
             </div>
             <Link
               href="/dashboard/manager/processing/batches"
               className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              Xem chi tiết
+              {t('managerDashboard.processingStats.viewDetails')}
             </Link>
           </div>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <StatsCard
-              title="Tổng lô"
+              title={t('managerDashboard.processingStats.totalBatches')}
               value={processingStats.total}
               icon={<FiPackage className="w-6 h-6" />}
               color="blue"
               loading={loading}
             />
             <StatsCard
-              title="Chờ xử lý"
+              title={t('managerDashboard.processingStats.pending')}
               value={processingStats.pending}
               icon={<FiPending className="w-6 h-6" />}
               color="yellow"
               loading={loading}
             />
             <StatsCard
-              title="Đang xử lý"
+              title={t('managerDashboard.processingStats.inProgress')}
               value={processingStats.processing}
               icon={<FiTrendingUp className="w-6 h-6" />}
               color="blue"
               loading={loading}
             />
             <StatsCard
-              title="Hoàn thành"
+              title={t('managerDashboard.processingStats.completed')}
               value={processingStats.completed}
               icon={<FiCheckCircle className="w-6 h-6" />}
               color="green"
@@ -130,7 +132,7 @@ export default function ManagerDashboard() {
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-200 p-8">
             <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
               <FiBarChart2 className="text-orange-500" />
-              Biểu đồ tiến độ sơ chế
+              {t('managerDashboard.processingStats.chart.title')}
             </h3>
             <div className="h-64 flex items-end justify-center gap-6">
               {loading ? (
@@ -140,19 +142,19 @@ export default function ManagerDashboard() {
               ) : (
                 <>
                   <ChartBar
-                    label="Chờ xử lý"
+                    label={t('managerDashboard.processingStats.chart.pending')}
                     value={processingStats.pending}
                     max={processingStats.total}
                     color="bg-yellow-400"
                   />
                   <ChartBar
-                    label="Đang xử lý"
+                    label={t('managerDashboard.processingStats.chart.inProgress')}
                     value={processingStats.processing}
                     max={processingStats.total}
                     color="bg-blue-500"
                   />
                   <ChartBar
-                    label="Hoàn thành"
+                    label={t('managerDashboard.processingStats.chart.completed')}
                     value={processingStats.completed}
                     max={processingStats.total}
                     color="bg-green-500"
@@ -163,15 +165,15 @@ export default function ManagerDashboard() {
             <div className="mt-4 flex justify-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                <span>Chờ xử lý</span>
+                <span>{t('managerDashboard.processingStats.chart.pending')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                <span>Đang xử lý</span>
+                <span>{t('managerDashboard.processingStats.chart.inProgress')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-500 rounded"></div>
-                <span>Hoàn thành</span>
+                <span>{t('managerDashboard.processingStats.chart.completed')}</span>
               </div>
             </div>
           </div>
@@ -184,7 +186,7 @@ export default function ManagerDashboard() {
               <FiBriefcase className="text-white text-xl" />
             </div>
             <h2 className="text-2xl font-bold text-gray-800">
-              Quản lý nghiệp vụ
+              {t('managerDashboard.quickActions.title')}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -192,8 +194,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/contracts">
               <DashboardCard
                 icon={<FiFileText className="text-orange-500 text-xl" />}
-                title="Hợp đồng cung ứng"
-                description="Quản lý các hợp đồng bán hàng ký kết với doanh nghiệp."
+                title={t('managerDashboard.quickActions.contracts.title')}
+                description={t('managerDashboard.quickActions.contracts.description')}
                 isLink
               />
             </Link>
@@ -202,8 +204,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/contract-delivery-batches">
               <DashboardCard
                 icon={<FiCalendar className="text-orange-500 text-xl" />}
-                title="Lịch giao hàng"
-                description="Xem và quản lý các đợt giao hàng từ hợp đồng cung ứng."
+                title={t('managerDashboard.quickActions.deliverySchedule.title')}
+                description={t('managerDashboard.quickActions.deliverySchedule.description')}
                 isLink
               />
             </Link>
@@ -212,36 +214,36 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/procurement-plans">
               <DashboardCard
                 icon={<FiClipboard className="text-orange-500 text-xl" />}
-                title="Kế hoạch thu mua"
-                description="Tạo và theo dõi kế hoạch thu mua từ nông dân để đáp ứng hợp đồng cung ứng."
+                title={t('managerDashboard.quickActions.procurementPlans.title')}
+                description={t('managerDashboard.quickActions.procurementPlans.description')}
                 isLink
               />
             </Link>
 
             <DashboardCard
               icon={<FiUsers className="text-orange-500 text-xl" />}
-              title="Danh sách nông dân"
-              description="Xem và tương tác với các nông hộ đang hợp tác."
+              title={t('managerDashboard.quickActions.farmers.title')}
+              description={t('managerDashboard.quickActions.farmers.description')}
             />
 
             <DashboardCard
               icon={<FiPackage className="text-orange-500 text-xl" />}
-              title="Mẻ sơ chế"
-              description="Quản lý và theo dõi các mẻ sơ chế theo mùa vụ."
+              title={t('managerDashboard.quickActions.processingBatches.title')}
+              description={t('managerDashboard.quickActions.processingBatches.description')}
             />
 
             <DashboardCard
               icon={<FiBarChart2 className="text-orange-500 text-xl" />}
-              title="Báo cáo sản lượng"
-              description="Thống kê về sản lượng, chất lượng và tiến độ."
+              title={t('managerDashboard.quickActions.reports.title')}
+              description={t('managerDashboard.quickActions.reports.description')}
             />
 
             {/* Kho hàng */}
             <Link href="/dashboard/manager/warehouses">
               <DashboardCard
                 icon={<FiHome className="text-orange-500 text-xl" />}
-                title="Kho hàng"
-                description="Quản lý danh sách kho, thêm và xoá kho mới."
+                title={t('managerDashboard.quickActions.warehouses.title')}
+                description={t('managerDashboard.quickActions.warehouses.description')}
                 isLink
               />
             </Link>
@@ -250,8 +252,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/warehouse-request">
               <DashboardCard
                 icon={<FiTruck className="text-orange-500 text-xl" />}
-                title="Yêu cầu xuất kho"
-                description="Gửi yêu cầu và theo dõi các yêu cầu xuất hàng từ kho."
+                title={t('managerDashboard.quickActions.outboundRequests.title')}
+                description={t('managerDashboard.quickActions.outboundRequests.description')}
                 isLink
               />
             </Link>
@@ -260,8 +262,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/inventories">
               <DashboardCard
                 icon={<FiPackage className="text-orange-500 text-xl" />}
-                title="Tồn kho"
-                description="Xem danh sách hàng tồn trong các kho do bạn quản lý."
+                title={t('managerDashboard.quickActions.inventories.title')}
+                description={t('managerDashboard.quickActions.inventories.description')}
                 isLink
               />
             </Link>
@@ -270,8 +272,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/inventory-logs">
               <DashboardCard
                 icon={<FiClock className="text-orange-500 text-xl" />}
-                title="Lịch sử tồn kho"
-                description="Xem toàn bộ lịch sử thay đổi tồn kho theo công ty bạn."
+                title={t('managerDashboard.quickActions.inventoryLogs.title')}
+                description={t('managerDashboard.quickActions.inventoryLogs.description')}
                 isLink
               />
             </Link>
@@ -280,8 +282,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/orders">
               <DashboardCard
                 icon={<FiShoppingCart className="text-orange-500 text-xl" />}
-                title="Đơn hàng"
-                description="Quản lý các đơn hàng từ khách hàng."
+                title={t('managerDashboard.quickActions.orders.title')}
+                description={t('managerDashboard.quickActions.orders.description')}
                 isLink
               />
             </Link>
@@ -290,8 +292,8 @@ export default function ManagerDashboard() {
             <Link href="/dashboard/manager/shipments">
               <DashboardCard
                 icon={<FiSend className="text-orange-500 text-xl" />}
-                title="Vận chuyển"
-                description="Theo dõi và quản lý các đơn vận chuyển."
+                title={t('managerDashboard.quickActions.shipments.title')}
+                description={t('managerDashboard.quickActions.shipments.description')}
                 isLink
               />
             </Link>
