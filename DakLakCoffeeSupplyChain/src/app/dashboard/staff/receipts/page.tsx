@@ -186,17 +186,19 @@ export default function ReceiptListPage() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-2 items-center relative">
-              <Input
-                placeholder={t('warehouseReceipts.page.searchPlaceholder')}
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="w-72 pr-10 border-blue-200 focus:ring-blue-400 focus:border-blue-400"
-              />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 w-4 h-4" />
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Input
+                  placeholder={t('warehouseReceipts.page.searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-72 pr-10 border-blue-200 focus:ring-blue-400 focus:border-blue-400"
+                />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 w-4 h-4" />
+              </div>
               <Link href="/dashboard/staff/receipts/create">
                 <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-sm">
                   <Plus className="w-4 h-4 mr-2" />

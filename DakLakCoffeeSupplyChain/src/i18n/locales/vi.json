@@ -2745,7 +2745,8 @@
        "notFoundDesc": "Vùng trồng bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
        "backToList": "Quay lại danh sách",
        "title": "Tiến độ canh tác - {{coffeeType}}",
-       "subtitle": "Theo dõi và quản lý tiến độ canh tác theo từng giai đoạn"
+       "subtitle": "Theo dõi và quản lý tiến độ canh tác theo từng giai đoạn",
+       "unknownType": "Đang tải..."
      },
      "header": {
        "harvestYield": "Năng suất thu hoạch",
@@ -5557,7 +5558,7 @@
           "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa"
         },
         "fields": {
-          "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+          
         },
         "table": {
           "headers": {
@@ -5706,7 +5707,8 @@
         "note": "Ghi chú",
         "status": "Trạng thái",
         "cancelReason": "Lý do hủy",
-        "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi"
+        "orderDateCannotChange": "Ngày tạo đơn hàng không thể thay đổi",
+        "statusCannotChange": "Trạng thái không thể thay đổi"
       },
       "common": {
         "optional": "(tùy chọn)"
@@ -7269,5 +7271,74 @@
     "inStock": "Còn hàng",
     "outOfStock": "Hết hàng",
     "archived": "Ngừng kinh doanh"
+  },
+  "managerDashboard": {
+    "title": "Business Manager Dashboard",
+    "subtitle": "Quản lý và theo dõi toàn bộ hoạt động kinh doanh",
+    "processingStats": {
+      "title": "Thống kê sơ chế cà phê",
+      "viewDetails": "Xem chi tiết",
+      "totalBatches": "Tổng lô",
+      "pending": "Chờ xử lý",
+      "inProgress": "Đang xử lý",
+      "completed": "Hoàn thành",
+      "chart": {
+        "title": "Biểu đồ tiến độ sơ chế",
+        "pending": "Chờ xử lý",
+        "inProgress": "Đang xử lý",
+        "completed": "Hoàn thành"
+      }
+    },
+    "quickActions": {
+      "title": "Quản lý nghiệp vụ",
+      "contracts": {
+        "title": "Hợp đồng cung ứng",
+        "description": "Quản lý các hợp đồng bán hàng ký kết với doanh nghiệp."
+      },
+      "deliverySchedule": {
+        "title": "Lịch giao hàng",
+        "description": "Xem và quản lý các đợt giao hàng từ hợp đồng cung ứng."
+      },
+      "procurementPlans": {
+        "title": "Kế hoạch thu mua",
+        "description": "Tạo và theo dõi kế hoạch thu mua từ nông dân để đáp ứng hợp đồng cung ứng."
+      },
+      "farmers": {
+        "title": "Danh sách nông dân",
+        "description": "Xem và tương tác với các nông hộ đang hợp tác."
+      },
+      "processingBatches": {
+        "title": "Mẻ sơ chế",
+        "description": "Quản lý và theo dõi các mẻ sơ chế theo mùa vụ."
+      },
+      "reports": {
+        "title": "Báo cáo sản lượng",
+        "description": "Thống kê về sản lượng, chất lượng và tiến độ."
+      },
+      "warehouses": {
+        "title": "Kho hàng",
+        "description": "Quản lý danh sách kho, thêm và xoá kho mới."
+      },
+      "outboundRequests": {
+        "title": "Yêu cầu xuất kho",
+        "description": "Gửi yêu cầu và theo dõi các yêu cầu xuất hàng từ kho."
+      },
+      "inventories": {
+        "title": "Tồn kho",
+        "description": "Xem danh sách hàng tồn trong các kho do bạn quản lý."
+      },
+      "inventoryLogs": {
+        "title": "Lịch sử tồn kho",
+        "description": "Xem toàn bộ lịch sử thay đổi tồn kho theo công ty bạn."
+      },
+      "orders": {
+        "title": "Đơn hàng",
+        "description": "Quản lý các đơn hàng từ khách hàng."
+      },
+      "shipments": {
+        "title": "Vận chuyển",
+        "description": "Theo dõi và quản lý các đơn vận chuyển."
+      }
+    }
   }
 }

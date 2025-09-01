@@ -4,8 +4,8 @@ import { getErrorMessage } from '@/lib/utils';
 // ================== TYPES ==================
 
 export type CropSeasonDetail = {
-  stages: any;
-  success: any;
+  stages: unknown;
+  success: unknown;
   error: string;
   detailId: string;
   cropSeasonId: string;
@@ -24,6 +24,8 @@ export type CropSeasonDetail = {
   farmerName: string;
   committedQuantity?: number; // ✅ Thêm committedQuantity từ commitmentDetail
 };
+
+
 
 // ✅ Tạo vùng trồng – sử dụng commitmentDetailId thay cho coffeeTypeId
 export type CropSeasonDetailCreatePayload = {
@@ -122,9 +124,37 @@ export async function getCropSeasonDetailsForCurrentFarmer(): Promise<CropSeason
     } else {
       return [];
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Thay vì log ra console, throw error để UI có thể hiển thị
     const errorMessage = getErrorMessage(err) || 'Không thể lấy danh sách vùng trồng';
     throw new Error(errorMessage);
   }
 }
+
+// Thêm function để lấy commitment detail information từ commitment chính
+export async function getCommitmentDetailInfo(commitmentDetailId: string): Promise<{ coffeeTypeName: string } | null> {
+  try {
+    // Lấy tất cả commitments để tìm commitment detail
+    const response = await api.get('/FarmingCommitment/Farmer');
+    const commitments = response.data;
+    
+    // Tìm commitment detail trong tất cả commitments
+    for (const commitment of commitments) {
+      if (commitment.farmingCommitmentDetails) {
+        const detail = commitment.farmingCommitmentDetails.find(
+          (d: { commitmentDetailId?: string; coffeeTypeName?: string }) => d.commitmentDetailId === commitmentDetailId
+        );
+        if (detail && detail.coffeeTypeName) {
+          return { coffeeTypeName: detail.coffeeTypeName };
+        }
+      }
+    }
+    
+    return null;
+  } catch (err) {
+    console.error('Lỗi getCommitmentDetailInfo:', err);
+    return null;
+  }
+}
+
+

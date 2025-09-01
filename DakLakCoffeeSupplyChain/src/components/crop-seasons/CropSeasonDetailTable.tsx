@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,12 @@ import {
   getCropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { CropSeasonDetail } from "@/lib/api/cropSeasons";
-import { Edit, Coffee, MapPin, Calendar, Target, Trash2 } from "lucide-react";
+import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
-import { softDeleteCropSeasonDetail } from "@/lib/api/cropSeasonDetail";
-import { AppToast } from "@/components/ui/AppToast";
+// import { softDeleteCropSeasonDetail } from "@/lib/api/cropSeasonDetail"; // Comment lại - Không sử dụng delete
+// import { AppToast } from "@/components/ui/AppToast"; // Comment lại - Không sử dụng delete
+import { formatDate } from "@/lib/utils";
 
 interface Props {
   details: CropSeasonDetail[];
@@ -26,13 +27,12 @@ export default function CropSeasonDetailTable({
   onReload,
 }: Props) {
   const { t } = useTranslation();
-  const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
-  const [deletingDetailId, setDeletingDetailId] = useState<string | null>(null);
-  const [isClosingDialog, setIsClosingDialog] = useState(false);
   const router = useRouter();
+  const [editingDetailId, setEditingDetailId] = useState<string | null>(null);
+  const [isClosingDialog, setIsClosingDialog] = useState(false);
 
   // Prevent body scroll and handle dialog backdrop clicks
-  useEffect(() => {
+  React.useEffect(() => {
     if (editingDetailId) {
       document.body.style.overflow = 'hidden';
 
@@ -82,12 +82,6 @@ export default function CropSeasonDetailTable({
     }
   }, [editingDetailId, isClosingDialog]);
 
-  const formatDate = (date?: string) => {
-    if (!date) return t('cropSeasons.details.notUpdated');
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? t('cropSeasons.details.notUpdated') : d.toLocaleDateString("vi-VN");
-  };
-
   const calculateYieldPercentage = (
     actual?: number | null,
     estimated?: number | null
@@ -134,6 +128,8 @@ export default function CropSeasonDetailTable({
     router.push(`/dashboard/farmer/crop-progress/${detailId}`);
   };
 
+  // Comment lại chức năng delete - Farmer không có quyền xóa vùng trồng đã có tiến độ
+  /*
   const handleDelete = async (detailId: string) => {
     if (!confirm(t('cropSeasons.detailTable.confirmDelete'))) {
       return;
@@ -151,6 +147,7 @@ export default function CropSeasonDetailTable({
       setDeletingDetailId(null);
     }
   };
+  */
 
   if (details.length === 0)
     return (
@@ -283,6 +280,8 @@ export default function CropSeasonDetailTable({
                         />
                       </DialogContent>
                     </Dialog>
+                    {/* Comment lại delete button - Farmer không có quyền xóa vùng trồng */}
+                    {/*
                     <Button
                       size="sm"
                       variant="ghost"
@@ -296,6 +295,7 @@ export default function CropSeasonDetailTable({
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
+                    */}
                   </div>
                 </td>
               </tr>

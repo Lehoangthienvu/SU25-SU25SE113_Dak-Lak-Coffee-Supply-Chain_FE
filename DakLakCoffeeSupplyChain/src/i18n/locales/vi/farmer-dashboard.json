@@ -1,0 +1,49 @@
+{
+  "farmerDashboard": {
+    "title": "Nông dân",
+    "welcomeMessage": "Chào mừng bạn trở lại! Theo dõi hoạt động canh tác của bạn",
+    "loading": {
+      "data": "Đang tải dữ liệu...",
+      "chart": "Đang tải dữ liệu biểu đồ...",
+      "progress": "Đang tải..."
+    },
+    "stats": {
+      "activeSeasons": "Mùa vụ đang hoạt động",
+      "upcomingHarvests": "Vùng sắp thu hoạch",
+      "pendingWarehouseRequests": "Yêu cầu giao hàng",
+      "unreadAdvice": "Phản hồi kỹ thuật chưa đọc"
+    },
+    "charts": {
+      "monthlyYield": {
+        "title": "Sản lượng theo tháng",
+        "actual": "Thực tế (kg)",
+        "planned": "Kế hoạch (kg)",
+        "noData": "Không có dữ liệu"
+      },
+      "overallProgress": {
+        "title": "Tiến độ mùa vụ tổng thể",
+        "completed": "Hoàn thành",
+        "remaining": "Còn lại"
+      }
+    },
+    "quickActions": {
+      "title": "Hành động nhanh",
+      "cropSeasons": {
+        "title": "Quản lý mùa vụ",
+        "description": "Theo dõi và cập nhật thông tin mùa vụ canh tác."
+      },
+      "warehouseRequest": {
+        "title": "Gửi yêu cầu giao hàng",
+        "description": "Danh sách yêu cầu giao hàng."
+      },
+      "technicalFeedback": {
+        "title": "Phản hồi kỹ thuật",
+        "description": "Xem và trả lời phản hồi từ chuyên gia."
+      }
+    },
+    "defaultProgress": {
+      "completed": "Hoàn thành",
+      "remaining": "Còn lại"
+    }
+  }
+}

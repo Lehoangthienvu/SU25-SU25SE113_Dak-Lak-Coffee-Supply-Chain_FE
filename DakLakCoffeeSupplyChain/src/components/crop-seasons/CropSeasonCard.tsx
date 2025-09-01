@@ -8,7 +8,7 @@ import StatusBadge from './StatusBadge';
 import { CropSeasonStatusMap } from '@/lib/constants/cropSeasonStatus';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { deleteCropSeasonById } from '@/lib/api/cropSeasons';
+// import { deleteCropSeasonById } from '@/lib/api/cropSeasons'; // Comment lại - Farmer không có quyền xóa mùa vụ
 import { AppToast } from '@/components/ui/AppToast';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 export default function CropSeasonCard({ season, onReload }: Props) {
     const router = useRouter();
     const { t } = useTranslation();
-    const [deleting, setDeleting] = useState(false);
+    // const [deleting, setDeleting] = useState(false); // Comment lại - Không cần state delete
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('vi-VN');
@@ -33,6 +33,8 @@ export default function CropSeasonCard({ season, onReload }: Props) {
         router.push(`/dashboard/farmer/crop-seasons/${season.cropSeasonId}`);
     };
 
+    // Comment lại chức năng delete - Farmer không có quyền xóa mùa vụ
+    /*
     const handleDelete = async (event: React.MouseEvent) => {
         event.stopPropagation();
 
@@ -57,6 +59,7 @@ export default function CropSeasonCard({ season, onReload }: Props) {
             setDeleting(false);
         }
     };
+    */
 
     return (
         <tr
@@ -118,6 +121,8 @@ export default function CropSeasonCard({ season, onReload }: Props) {
                     >
                         <FaEdit className="w-3 h-3" />
                     </Button>
+                    {/* Comment lại delete button - Farmer không có quyền xóa mùa vụ */}
+                    {/*
                     <Button
                         size="sm"
                         variant="ghost"
@@ -128,6 +133,7 @@ export default function CropSeasonCard({ season, onReload }: Props) {
                     >
                         <FaTrash className="w-3 h-3" />
                     </Button>
+                    */}
                 </div>
             </td>
         </tr>

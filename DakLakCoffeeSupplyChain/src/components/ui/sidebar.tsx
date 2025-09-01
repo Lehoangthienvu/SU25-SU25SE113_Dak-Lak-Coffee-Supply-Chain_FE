@@ -54,18 +54,6 @@ export function Sidebar({
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
-  const childrenWithProps = React.Children.map(children, (child) => {
-    if (
-      React.isValidElement(child) &&
-      (child.type as unknown as { displayName?: string })?.displayName === "SidebarFooter"
-    ) {
-      return React.cloneElement(child as React.ReactElement<{ isCollapsed?: boolean }>, {
-        isCollapsed,
-      });
-    }
-    return child;
-  });
-
   return (
     <aside
       className={cn(
@@ -98,7 +86,7 @@ export function Sidebar({
           <Menu size={20} />
         </button>
       </div>
-      <div className="flex-1 overflow-auto">{childrenWithProps}</div>
+      <div className="flex-1 overflow-auto">{children}</div>
     </aside>
   );
 }
@@ -149,6 +137,11 @@ export function SidebarGroup() {
         title: t('sidebar.navigation.coffeeMarketplace'),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
+      },
+      {
+        title: t('common.navigation.cultivationRegistration'),
+        href: "/dashboard/farmer/cultivation-registration",
+        icon: iconMap.contracts,
       },
       {
         title: t('sidebar.navigation.farmingCommitments'),
@@ -989,7 +982,9 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
     }
   }, []);
 
-  if (isCollapsed) return null;
+  if (isCollapsed) {
+    return null;
+  }
 
   return (
     <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600">

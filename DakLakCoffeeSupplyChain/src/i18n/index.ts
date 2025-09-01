@@ -12,6 +12,10 @@ import cultivationRegistrationVi from './locales/vi/cultivation-registration.jso
 import cultivationRegistrationEn from './locales/en/cultivation-registration.json';
 import marketplaceVi from './locales/vi/marketplace.json';
 import marketplaceEn from './locales/en/marketplace.json';
+import farmerDashboardVi from './locales/vi/farmer-dashboard.json';
+import farmerDashboardEn from './locales/en/farmer-dashboard.json';
+import profileVi from './locales/vi/profile.json';
+import profileEn from './locales/en/profile.json';
 import commonVi from './locales/vi/common.json';
 import commonEn from './locales/en/common.json';
 
@@ -28,7 +32,9 @@ i18n
           ...procurementPlanVi,
           ...farmingcommitmentVi,
           ...cultivationRegistrationVi,
-          ...marketplaceVi
+          ...marketplaceVi,
+          ...farmerDashboardVi,
+          ...profileVi
         }
       },
       en: {
@@ -38,7 +44,9 @@ i18n
           ...procurementPlanEn,
           ...farmingcommitmentEn,
           ...cultivationRegistrationEn,
-          ...marketplaceEn
+          ...marketplaceEn,
+          ...farmerDashboardEn,
+          ...profileEn
         }
       }
     },

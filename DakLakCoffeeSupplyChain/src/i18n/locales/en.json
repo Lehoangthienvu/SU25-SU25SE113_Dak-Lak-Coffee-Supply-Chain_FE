@@ -2698,7 +2698,8 @@
        "notFoundDesc": "The crop area you are looking for does not exist or has been deleted.",
        "backToList": "Back to list",
        "title": "Crop Progress - {{coffeeType}}",
-       "subtitle": "Track and manage crop progress by stage"
+       "subtitle": "Track and manage crop progress by stage",
+       "unknownType": "Loading..."
      },
      "header": {
        "harvestYield": "Harvest Yield",
@@ -5489,7 +5490,6 @@
           "dataNotExists": "Data does not exist or has been deleted"
         },
         "fields": {
-          "orderDateCannotChange": "Order creation date cannot be changed"
         },
         "table": {
           "headers": {
@@ -5638,7 +5638,8 @@
         "note": "Note",
         "status": "Status",
         "cancelReason": "Cancel reason",
-        "orderDateCannotChange": "Order creation date cannot be changed"
+        "orderDateCannotChange": "Order creation date cannot be changed",
+        "statusCannotChange": "Status cannot be changed"
       },
       "common": {
         "optional": "(optional)"
@@ -7200,5 +7201,74 @@
     "inStock": "In Stock",
     "outOfStock": "Out of Stock",
     "archived": "Archived"
+  },
+  "managerDashboard": {
+    "title": "Business Manager Dashboard",
+    "subtitle": "Manage and monitor all business operations",
+    "processingStats": {
+      "title": "Coffee Processing Statistics",
+      "viewDetails": "View Details",
+      "totalBatches": "Total Batches",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "chart": {
+        "title": "Processing Progress Chart",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      }
+    },
+    "quickActions": {
+      "title": "Business Management",
+      "contracts": {
+        "title": "Supply Contracts",
+        "description": "Manage sales contracts signed with businesses."
+      },
+      "deliverySchedule": {
+        "title": "Delivery Schedule",
+        "description": "View and manage delivery batches from supply contracts."
+      },
+      "procurementPlans": {
+        "title": "Procurement Plans",
+        "description": "Create and track procurement plans from farmers to fulfill supply contracts."
+      },
+      "farmers": {
+        "title": "Farmer List",
+        "description": "View and interact with cooperating farming households."
+      },
+      "processingBatches": {
+        "title": "Processing Batches",
+        "description": "Manage and track processing batches by crop season."
+      },
+      "reports": {
+        "title": "Production Reports",
+        "description": "Statistics on production, quality and progress."
+      },
+      "warehouses": {
+        "title": "Warehouses",
+        "description": "Manage warehouse list, add and delete new warehouses."
+      },
+      "outboundRequests": {
+        "title": "Outbound Requests",
+        "description": "Send requests and track outbound requests from warehouses."
+      },
+      "inventories": {
+        "title": "Inventory",
+        "description": "View inventory list in warehouses you manage."
+      },
+      "inventoryLogs": {
+        "title": "Inventory History",
+        "description": "View complete inventory change history for your company."
+      },
+      "orders": {
+        "title": "Orders",
+        "description": "Manage customer orders."
+      },
+      "shipments": {
+        "title": "Shipments",
+        "description": "Track and manage shipping orders."
+      }
+    }
   }
 }

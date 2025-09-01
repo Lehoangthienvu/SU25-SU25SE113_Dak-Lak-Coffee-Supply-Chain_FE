@@ -66,3 +66,8 @@ export async function updateCultivationRegistrationDetailStatus(
   const response = await api.patch(`/CultivationRegistration/Detail/UpdateStatus/${registrationDetailId}`, data);
   return response.data;
 }
+
+export async function getAllCultivationRegistrationsForCurrentUser(): Promise<CultivationRegistration[]> {
+  const response = await api.get(`/CultivationRegistration/GetByUser`);
+  return response.data;
+}

@@ -20,10 +20,10 @@ import {
     User,
     Edit,
     Plus,
-    Trash2,
     AlertTriangle
 } from "lucide-react";
-import { CropProgressViewAllDto, deleteCropProgress } from "@/lib/api/cropProgress";
+import { CropProgressViewAllDto } from "@/lib/api/cropProgress";
+// import { deleteCropProgress } from "@/lib/api/cropProgress"; // Comment lại - Không sử dụng delete
 import { CropStage } from "@/lib/api/cropStage";
 import { CreateProgressDialog } from "@/app/dashboard/farmer/crop-progress/components/CreateProgressDialog";
 import { EditProgressDialog } from "@/app/dashboard/farmer/crop-progress/components/EditProgressDialog";
@@ -153,13 +153,16 @@ export default function TimelineProgress({
         });
     };
 
+    // Comment lại function delete - Farmer không có quyền xóa tiến độ
+    /*
     const openDeleteDialog = (progressId: string, progressName: string) => {
         setDeleteDialog({
             isOpen: true,
             progressId,
-            progressName
+            progressName,
         });
     };
+    */
 
     const closeDeleteDialog = () => {
         setDeleteDialog({
@@ -174,7 +177,7 @@ export default function TimelineProgress({
 
         try {
             setDeleting(true);
-            await deleteCropProgress(deleteDialog.progressId);
+            // await deleteCropProgress(deleteDialog.progressId); // Comment lại - Không sử dụng delete
             AppToast.success("Đã xóa tiến độ thành công!");
             closeDeleteDialog();
             onReload();
@@ -306,6 +309,8 @@ export default function TimelineProgress({
                                                 </Button>
                                             }
                                         />
+                                        {/* Comment lại delete button - Farmer không có quyền xóa tiến độ đã ghi nhận */}
+                                        {/*
                                         <Button
                                             size="sm"
                                             variant="ghost"
@@ -316,6 +321,7 @@ export default function TimelineProgress({
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
+                                        */}
                                     </div>
                                 </div>
 
