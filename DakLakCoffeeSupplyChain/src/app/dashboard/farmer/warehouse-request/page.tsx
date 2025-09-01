@@ -452,15 +452,6 @@ export default function FarmerDeliveryRequestListPage() {
                         {totalPages > 1 ? `${t('farmerDeliveryRequest.pagination.page')} ${currentPage} / ${totalPages}` : t('farmerDeliveryRequest.pagination.allRequests')}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push("/dashboard/farmer/warehouse-request/create")}
-                      className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
-                    >
-                      <PackagePlus className="w-4 h-4 mr-2" />
-                      {t('farmerDeliveryRequest.actions.createRequest')}
-                    </Button>
                   </div>
                 </div>
               </div>
