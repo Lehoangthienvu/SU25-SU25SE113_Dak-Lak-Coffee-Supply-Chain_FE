@@ -453,13 +453,15 @@ export default function OrdersPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t("managerOrders.list.delete.confirm")}
+        title={t("managerOrders.detail.actions.deleteOrderConfirm")}
         description={
-          <span>
-            {t("managerOrders.list.delete.message", {
-              orderCode: orderToDelete?.orderCode || "—",
-            })}
-          </span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t("managerOrders.detail.actions.deleteOrderMessage", {
+                orderCode: orderToDelete?.orderCode || "—",
+              }),
+            }}
+          />
         }
         confirmText={t("managerOrders.list.table.tooltips.delete")}
         cancelText="Huỷ"

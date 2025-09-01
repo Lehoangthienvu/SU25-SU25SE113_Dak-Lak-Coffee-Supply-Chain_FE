@@ -2152,7 +2152,10 @@
     "filterByStatus": "Lọc theo trạng thái",
     "allStatuses": "Tất cả trạng thái",
     "notAvailable": "N/A",
-    "currency": "VNĐ"
+    "currency": "VNĐ",
+    "navigation": {
+      "cultivationRegistration": "Đăng ký canh tác"
+    }
   },
 
   "notifications": {
@@ -4521,7 +4524,6 @@
       "coffeeMarketplace": "Sàn thu mua cà phê",
       "farmingCommitments": "Cam kết kế hoạch thu mua",
       "cropSeasons": "Mùa vụ",
-      "consultation": "Tư vấn",
       "deliveryRequests": "Gửi yêu cầu giao hàng",
       "processing": "Sơ chế",
       "processingBatches": "Danh sách lô sơ chế",
@@ -4530,11 +4532,14 @@
       "userManagement": "Quản lý người dùng",
       "expertManagement": "Quản lý chuyên gia",
       "farmerManagement": "Quản lý nông dân",
+      "consultation": "Tư vấn",
       "contracts": "Hợp đồng",
       "settings": "Cài đặt",
-      "consultation": "Tư vấn",
       "evaluations": "Đánh giá",
-      "articles": "Bài viết"
+      "articles": "Bài viết",
+      "farmer": {
+        "consultation": "Tư vấn"
+      }
     },
             "user": {
           "greeting": "Xin chào:",
@@ -5669,10 +5674,15 @@
         "edit": "✏️ Chỉnh sửa",
         "delete": "Xoá",
         "deleteConfirm": "Xoá mặt hàng?",
-        "deleteMessage": "Bạn có chắc chắn muốn xoá mặt hàng {productName} khỏi đơn hàng không? Hành động này sẽ ẩn khỏi danh sách và không thể hoàn tác.",
+        "deleteMessage": "Bạn có chắc chắn muốn xoá mặt hàng <strong>{{productName}}</strong> khỏi đơn hàng không? Hành động này sẽ ẩn khỏi danh sách và không thể hoàn tác.",
         "deleteSuccess": "Xoá mặt hàng thành công",
         "deleteError": "Xoá mặt hàng thất bại.",
-        "loading": "Đang xoá..."
+        "loading": "Đang xoá...",
+        "deleteOrder": "Xoá đơn hàng",
+        "deleteOrderConfirm": "Xoá đơn hàng?",
+        "deleteOrderMessage": "Bạn có chắc chắn muốn xoá đơn hàng <strong>{{orderCode}}</strong> không? Hành động này sẽ ẩn đơn hàng khỏi danh sách và không thể hoàn tác.",
+        "deleteOrderSuccess": "Xoá đơn hàng thành công",
+        "deleteOrderError": "Xoá đơn hàng thất bại"
       },
              "addOrderItem": {
          "title": {

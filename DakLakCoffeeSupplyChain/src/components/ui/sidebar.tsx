@@ -154,7 +154,7 @@ export function SidebarGroup() {
         icon: iconMap.crops,
       },
       {
-        title: t('sidebar.navigation.consultation'),
+        title: t('sidebar.navigation.farmer.consultation'),
         href: "/dashboard/farmer/request-feedback",
         icon: iconMap.feedback,
       },

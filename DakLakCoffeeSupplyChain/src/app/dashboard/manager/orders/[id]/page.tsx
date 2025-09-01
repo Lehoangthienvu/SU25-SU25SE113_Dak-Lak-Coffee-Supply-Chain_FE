@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
-import { Info, Package } from "lucide-react";
+import { Info, Package, Trash2, Pencil } from "lucide-react";
 import { formatDate, formatQuantity, formatDiscount } from "@/lib/utils";
 import { OrderViewDetailsDto, getOrderDetails } from "@/lib/api/orders";
 import {
@@ -487,7 +487,19 @@ export default function OrderDetailPage() {
                               className="h-7 w-7 p-[2px]"
                               onClick={() => openEditDialog(it)}
                             >
-                              <span className="text-sm text-gray-600">{t('managerOrders.detail.actions.edit')}</span>
+                              <Pencil className="w-4 h-4 text-[#f59e0b]" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip content={t('managerOrders.detail.actions.delete')}>
+                            <Button
+                              variant="ghost"
+                              className="h-7 w-7 p-[2px]"
+                              onClick={() => {
+                                setItemToDelete(it);
+                                setShowDeleteDialog(true);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
                             </Button>
                           </Tooltip>
                         </div>
@@ -574,9 +586,13 @@ export default function OrderDetailPage() {
           onOpenChange={setShowDeleteDialog}
           title={t('managerOrders.detail.actions.deleteConfirm')}
           description={
-            <span>
-              {t('managerOrders.detail.actions.deleteMessage', { productName: itemToDelete?.productName })}
-            </span>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t('managerOrders.detail.actions.deleteMessage', {
+                  productName: itemToDelete?.productName || '—',
+                }),
+              }}
+            />
           }
           confirmText={deleting ? t('managerOrders.detail.actions.loading') : t('managerOrders.detail.actions.delete')}
           cancelText="Huỷ"
