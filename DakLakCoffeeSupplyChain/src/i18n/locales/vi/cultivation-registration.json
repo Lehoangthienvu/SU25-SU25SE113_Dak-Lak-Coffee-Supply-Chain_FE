@@ -4,7 +4,7 @@
       "approved": "Đã có cam kết",
       "rejected": "Đã từ chối",
       "pending": "Đang chờ duyệt",
-      "cancelled": "Đã hủy hợp đồng",
+      "cancelled": "Đã hủy cam kết",
       "detailApproved": "Đã duyệt",
       "detailRejected": "Đã từ chối",
       "detailPending": "Đang chờ duyệt"
@@ -17,9 +17,9 @@
           "registrationDate": "Ngày đăng ký:",
           "description": "Mô tả:",
           "coffeeType": "Loại cà phê:",
-          "estimatedYield": "Sản lượng ước tính:",
+          "estimatedYield": "Sản lượng đăng ký:",
           "wantedPrice": "Giá mong muốn:",
-          "harvestTime": "Thời gian thu hoạch:",
+          "harvestTime": "Thời gian thu hoạch dự kiến:",
           "note": "Ghi chú:"
         },
         "buttons": {
@@ -134,6 +134,54 @@
           "title": "Thông tin liên hệ",
           "description": "Nếu bạn gặp vấn đề hoặc cần hỗ trợ, vui lòng liên hệ với chúng tôi."
         }
+      }
+    },
+    "pages": {
+      "list": {
+        "title": "Đơn đăng ký canh tác của tôi",
+        "search": {
+          "title": "Tìm kiếm",
+          "placeholder": "Tìm kiếm theo mã đơn hoặc ghi chú..."
+        },
+        "actions": {
+          "browsePlans": "Duyệt kế hoạch"
+        },
+        "table": {
+          "headers": {
+            "registrationCode": "Mã đơn",
+            "registeredArea": "Diện tích đăng ký",
+            "details": "Chi tiết",
+            "status": "Trạng thái",
+            "totalPrice": "Tổng giá trị",
+            "actions": "Hành động",
+            "viewDetails": "Xem chi tiết"
+          },
+          "noData": "Không tìm thấy đơn đăng ký canh tác nào"
+        },
+        "pagination": {
+          "showing": "Hiển thị",
+          "of": "trong tổng số",
+          "registrations": "đơn đăng ký"
+        }
+      },
+      "detail": {
+        "title": "Chi tiết đơn đăng ký canh tác",
+        "notFound": "Không tìm thấy đơn đăng ký",
+        "registrationInfo": "Thông tin đăng ký",
+        "registrationDetails": "Chi tiết đăng ký",
+        "planInfo": "Thông tin kế hoạch",
+        "farmerInfo": "Thông tin nông dân",
+        "totalPrice": "Tổng giá trị",
+        "expectedYieldPerHectare": "Sản lượng dự kiến/ha",
+        "detailNumber": "Chi tiết #{{number}}",
+        "planTitle": "Tiêu đề kế hoạch",
+        "planCode": "Mã kế hoạch",
+        "companyName": "Tên công ty",
+        "planPeriod": "Thời gian kế hoạch",
+        "totalQuantity": "Tổng số lượng",
+        "progress": "Tiến độ",
+        "farmerName": "Tên nông dân",
+        "farmerLocation": "Địa điểm"
       }
     },
     "dialogs": {

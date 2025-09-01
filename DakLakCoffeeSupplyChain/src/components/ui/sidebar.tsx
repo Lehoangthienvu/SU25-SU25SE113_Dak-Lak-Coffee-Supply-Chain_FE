@@ -151,6 +151,11 @@ export function SidebarGroup() {
         icon: iconMap.market,
       },
       {
+        title: t('common.navigation.cultivationRegistration'),
+        href: "/dashboard/farmer/cultivation-registration",
+        icon: iconMap.contracts,
+      },
+      {
         title: t('sidebar.navigation.farmingCommitments'),
         href: "/dashboard/farmer/farming-commitments",
         icon: iconMap.contracts,
