@@ -1945,7 +1945,7 @@
       "criteria": {
         "title": "Danh sách tiêu chí",
         "loading": "Đang tải tiêu chí đánh giá...",
-        "range": "Phạm vi: {{min}} - {{max}} {{unit}}",
+        "range": "Phạm vi: {{MinValue}} - {{MaxValue}} {{unit}}",
         "actualValue": "Giá trị thực tế"
       },
       "failureReasons": {
@@ -1961,6 +1961,7 @@
       "actions": {
         "submitting": "Đang gửi...",
         "evaluateStage": "Đánh giá giai đoạn",
+        "evaluateBatch": "Đánh giá Batch",
         "passBatch": "Đạt cả Batch"
       },
       "batchPassConfirm": {
@@ -1972,15 +1973,16 @@
       },
       "warning": {
         "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
-        "noCriteria": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình."
+        "noCriteria": "Chưa có tiêu chí đánh giá cho batch. Vui lòng liên hệ admin để cấu hình."
       },
       "error": {
         "loadingStages": "Không thể tải danh sách giai đoạn từ máy chủ",
-        "loadingCriteria": "Không thể tải tiêu chí đánh giá",
+        "loadingCriteria": "Không thể tải tiêu chí đánh giá cho batch",
         "noCriteriaForStage": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình.",
         "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
         "noCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
         "incompleteCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+        "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá không đạt",
         "submitFailed": "Tạo đánh giá thất bại",
         "noMethodId": "Thiếu thông tin phương pháp sơ chế. Vui lòng kiểm tra lại.",
         "batchPassFailed": "Tạo đánh giá đạt thất bại"
@@ -1998,6 +2000,16 @@
         "failureSubmitted": "Đánh giá đã được gửi. Vui lòng kiểm tra kết quả.",
         "batchComment": "Đánh giá BATCH thành công: Tất cả giai đoạn đạt chuẩn. Điểm tổng: 100/100",
         "batchPassed": "Đã đánh giá đạt BATCH và cập nhật trạng thái!"
+      },
+        "failedStages": {
+    "title": "Giai đoạn cần cập nhật",
+    "description": "Chọn các giai đoạn cần farmer cập nhật lại khi đánh giá không đạt",
+    "loading": "Đang tải danh sách giai đoạn...",
+    "order": "Thứ tự",
+    "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật",
+    "noFailedStages": "Không có giai đoạn nào cần cập nhật",
+    "needsUpdate": "Cần cập nhật",
+    "updateInstructions": "Vui lòng cập nhật lại các giai đoạn trên để đạt tiêu chuẩn chất lượng"
       },
       "comments": "Ghi chú"
     },
@@ -2456,6 +2468,46 @@
             "date": "Ngày",
             "expert": "Chuyên gia",
             "comments": "Nhận xét"
+          },
+          "actions": {
+            "evaluateBatch": "Đánh giá Batch",
+            "submitting": "Đang gửi...",
+            "passBatch": "Đạt Batch"
+          },
+          "criteria": {
+            "title": "Tiêu chí đánh giá",
+            "loading": "Đang tải tiêu chí...",
+            "actualValue": "Giá trị thực tế",
+            "range": "Phạm vi: {{min}} - {{max}} {{unit}}"
+          },
+          "results": {
+            "title": "Kết quả đánh giá",
+            "passedCriteria": "Tiêu chí đạt",
+            "overallScore": "Điểm tổng",
+            "additionalComments": "Ghi chú bổ sung",
+            "commentsPlaceholder": "Nhập ghi chú bổ sung..."
+          },
+          "warning": {
+            "noCriteria": "Không có tiêu chí đánh giá nào"
+          },
+          "error": {
+            "noCriteria": "Không có tiêu chí để đánh giá",
+            "incompleteCriteria": "Vui lòng nhập đầy đủ giá trị cho tất cả tiêu chí",
+            "submitFailed": "Gửi đánh giá thất bại",
+            "batchPassFailed": "Đánh giá đạt batch thất bại"
+          },
+          "success": {
+            "submitted": "Đánh giá đã được gửi thành công",
+            "failureSubmitted": "Đánh giá không đạt đã được gửi",
+            "batchPassed": "Batch đã được đánh giá đạt",
+            "batchComment": "Batch đạt tiêu chuẩn chất lượng"
+          },
+          "batchPassConfirm": {
+            "title": "Xác nhận đạt batch",
+            "message": "Bạn có chắc chắn muốn đánh giá batch này là đạt?",
+            "cancel": "Hủy",
+            "confirm": "Xác nhận",
+            "processing": "Đang xử lý..."
           }
         },
         "evaluations.failure": {
@@ -2472,6 +2524,29 @@
             "description": "Vui lòng cải thiện công đoạn {{stageName}} theo khuyến nghị của chuyên gia",
             "update": "Cập nhật tiến trình"
           }
+        },
+        "evaluations.retry": {
+          "title": "Thông tin retry",
+          "batchFailed": "Batch bị đánh giá FAIL",
+          "retryStage": "Stage cần retry",
+          "completedStages": "Các stage đã thực hiện",
+          "stageInfo": {
+            "name": "Tên stage",
+            "orderIndex": "Thứ tự",
+            "stepIndex": "Bước thực hiện",
+            "outputQuantity": "Khối lượng đầu ra",
+            "progressDate": "Ngày thực hiện"
+          },
+          "retryGuidance": {
+            "title": "Hướng dẫn retry",
+            "description": "Batch bị fail - cần retry stage cuối cùng đã thực hiện",
+            "retryButton": "Retry Stage",
+            "retryHint": "Nhấn để retry stage {{stageName}}"
+          },
+                  "noRetryNeeded": "Batch này không bị đánh giá FAIL",
+        "noRetryInfo": "Chỉ hiển thị thông tin retry khi batch bị FAIL",
+        "loadingFailureInfo": "Đang tải thông tin lỗi...",
+        "errorLoadingFailureInfo": "Lỗi khi tải thông tin lỗi"
         },
         "mediaViewer": {
           "navigation": "Chuyển ảnh",
@@ -3514,7 +3589,13 @@
       "evaluationsList": "Không thể tải danh sách đánh giá",
       "batchIdNotFound": "Lỗi: Không tìm thấy ID của lô"
     },
-    "retry": "Thử lại"
+    "retry": "Thử lại",
+    "retryStage": {
+      "title": "Retry Stage",
+      "description": "Batch bị fail - cần retry stage cuối cùng",
+      "button": "Retry Stage",
+      "hint": "Nhấn để retry stage {{stageName}}"
+    }
   },
   "expertEvaluationDetail": {
     "title": "Đánh giá lô sơ chế",
@@ -7379,5 +7460,125 @@
         "description": "Theo dõi và quản lý các đơn vận chuyển."
       }
     }
+  },
+  "systemConfiguration": {
+    "title": "Cấu hình hệ thống",
+    "subtitle": "Quản lý các cấu hình hệ thống",
+    "loading": "Đang tải cấu hình...",
+    "error": {
+      "fetchData": "Lỗi khi tải dữ liệu cấu hình",
+      "create": "Lỗi khi tạo cấu hình",
+      "update": "Lỗi khi cập nhật cấu hình",
+      "delete": "Lỗi khi xóa cấu hình",
+      "toggleActive": "Lỗi khi thay đổi trạng thái"
+    },
+    "success": {
+      "created": "Tạo cấu hình thành công",
+      "updated": "Cập nhật cấu hình thành công",
+      "deleted": "Xóa cấu hình thành công",
+      "activated": "Kích hoạt cấu hình thành công",
+      "deactivated": "Vô hiệu hóa cấu hình thành công"
+    },
+    "confirm": {
+      "delete": "Bạn có chắc chắn muốn xóa cấu hình này?"
+    },
+    "retry": "Thử lại",
+    "cancel": "Hủy",
+                "criteria": {
+        "title": "Tiêu chí đánh giá chất lượng",
+        "subtitle": "Quản lý các tiêu chí đánh giá chất lượng cho lô sơ chế",
+        "create": "Tạo tiêu chí mới",
+        "edit": "Chỉnh sửa tiêu chí",
+        "update": "Cập nhật tiêu chí",
+        "list": "Danh sách tiêu chí",
+        "noData": "Chưa có tiêu chí nào được tạo",
+        "name": "Tên tiêu chí",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Mô tả chi tiết về tiêu chí đánh giá...",
+        "minValue": "Giá trị tối thiểu",
+        "maxValue": "Giá trị tối đa",
+        "unit": "Đơn vị",
+        "operator": "Toán tử",
+        "severity": "Mức độ nghiêm trọng",
+        "ruleGroup": "Nhóm quy tắc",
+        "range": "Khoảng giá trị",
+        "status": "Trạng thái",
+        "actions": "Hành động",
+        "isActive": "Kích hoạt",
+        "active": "Đang hoạt động",
+        "inactive": "Không hoạt động"
+      },
+      "evaluation": {
+        "title": "Đánh giá chất lượng",
+        "criteria": {
+          "title": "Danh sách tiêu chí",
+          "subtitle": "Chi tiết từng tiêu chí đánh giá",
+          "range": "Phạm vi:",
+          "operator": "Điều kiện:",
+          "actual": "Giá trị thực tế:",
+          "severity": "Mức độ:",
+          "group": "Nhóm:",
+          "code": "Mã:",
+          "reason": "Lý do:",
+          "total": "Tổng số tiêu chí:",
+          "passed": "Đạt",
+          "failed": "Không đạt",
+                  "notApplicable": "Không áp dụng",
+        "loading": "Đang tải tiêu chí...",
+        "actualValue": "Giá trị thực tế",
+        "failureReason": {
+          "exceedsLimit": "vượt quá giới hạn",
+          "belowLimit": "thấp hơn giới hạn",
+          "incorrectValue": "không đúng giá trị yêu cầu",
+          "notSatisfied": "không thỏa mãn điều kiện"
+        }
+        },
+        "expertNotes": "Ghi chú của chuyên gia:",
+        "warning": {
+          "noCriteria": "Không có tiêu chí đánh giá nào được tìm thấy"
+        },
+        "error": {
+          "loadingCriteria": "Lỗi khi tải tiêu chí đánh giá",
+          "loadingStages": "Lỗi khi tải danh sách giai đoạn",
+          "noCriteria": "Không có tiêu chí nào để đánh giá",
+          "incompleteCriteria": "Vui lòng nhập đầy đủ giá trị cho tất cả tiêu chí",
+          "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá không đạt",
+          "submitFailed": "Lỗi khi gửi đánh giá",
+          "batchPassFailed": "Lỗi khi đánh giá đạt lô"
+        },
+        "success": {
+          "submitted": "Đánh giá đã được gửi thành công",
+          "failureSubmitted": "Đánh giá không đạt đã được gửi thành công",
+          "batchPassed": "Lô đã được đánh giá đạt thành công",
+          "batchComment": "Lô đã được đánh giá đạt bởi chuyên gia"
+        },
+        "results": {
+          "title": "Kết quả đánh giá",
+          "passedCriteria": "Tiêu chí đạt",
+          "overallScore": "Điểm tổng thể",
+          "additionalComments": "Ghi chú bổ sung",
+          "commentsPlaceholder": "Nhập ghi chú bổ sung về đánh giá..."
+        },
+        "failedStages": {
+          "title": "Chọn giai đoạn cần cập nhật",
+          "description": "Chọn các giai đoạn mà nông dân cần cập nhật lại khi đánh giá không đạt",
+          "loading": "Đang tải danh sách giai đoạn...",
+          "order": "Thứ tự",
+          "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật"
+        },
+        "actions": {
+          "submitting": "Đang gửi...",
+          "evaluateBatch": "Đánh giá lô",
+          "passBatch": "Đánh giá đạt lô"
+        },
+        "batchPassConfirm": {
+          "title": "Xác nhận đánh giá đạt",
+          "message": "Bạn có chắc chắn muốn đánh giá đạt lô này mà không cần kiểm tra tiêu chí chi tiết?",
+          "cancel": "Hủy",
+          "confirm": "Xác nhận đạt",
+          "processing": "Đang xử lý..."
+        }
+      }
+  
   }
 }

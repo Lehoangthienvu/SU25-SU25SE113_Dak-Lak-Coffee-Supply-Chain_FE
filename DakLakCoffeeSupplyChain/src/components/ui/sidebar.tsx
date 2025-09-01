@@ -206,6 +206,11 @@ export function SidebarGroup() {
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
+      {
+        title: t('sidebar.navigation.T'),
+        href: "/dashboard/admin/system-configuration/criteria",
+        icon: <FiBell />,
+      },
     ],
     expert: [
       {

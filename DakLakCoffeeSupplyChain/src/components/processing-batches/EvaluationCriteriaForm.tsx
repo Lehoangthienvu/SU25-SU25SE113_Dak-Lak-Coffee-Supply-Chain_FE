@@ -11,18 +11,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  getEvaluationCriteriaForStage, 
-  getEvaluationCriteriaForStageById,
-  getFailureReasonsForStage,
   createProcessingBatchEvaluation,
-  EvaluationCriteria,
-  FailureReason,
   EVALUATION_RESULTS
 } from '@/lib/api/processingBatchEvaluations';
-import { getProcessingStagesByMethodId, ProcessingStage } from '@/lib/api/processingStages';
+import { 
+  getProcessingBatchCriteria,
+  ProcessingBatchCriteria
+} from '@/lib/api/systemConfiguration';
+import { 
+  getProcessingStagesByMethodId,
+  ProcessingStage
+} from '@/lib/api/processingStages';
 import { AppToast } from '@/components/ui/AppToast';
 import { Loader2, CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
+import { FiSettings } from 'react-icons/fi';
 
 interface EvaluationCriteriaFormProps {
   batchId: string;
@@ -36,16 +39,10 @@ interface EvaluationCriteriaFormProps {
 }
 
 interface CriteriaResult {
-  criteria: EvaluationCriteria;
+  criteria: ProcessingBatchCriteria;
   actualValue: number;
   result: string;
   isPass: boolean;
-}
-
-interface AvailableStage {
-  code: number;
-  name: string;
-  orderIndex: number;
 }
 
 export default function EvaluationCriteriaForm({
@@ -65,112 +62,53 @@ export default function EvaluationCriteriaForm({
   
   const [loading, setLoading] = useState(false);
   const [loadingCriteria, setLoadingCriteria] = useState(false);
-  const [criteria, setCriteria] = useState<EvaluationCriteria[]>([]);
-  const [failureReasons, setFailureReasons] = useState<FailureReason[]>([]);
+  const [criteria, setCriteria] = useState<ProcessingBatchCriteria[]>([]);
   const [criteriaResults, setCriteriaResults] = useState<CriteriaResult[]>([]);
-  const [selectedFailureReasons, setSelectedFailureReasons] = useState<string[]>([]);
-  const [selectedFailedCriteria, setSelectedFailedCriteria] = useState<string[]>([]);
   const [overallScore, setOverallScore] = useState<number>(0);
   const [evaluationResult, setEvaluationResult] = useState<string>(EVALUATION_RESULTS.PASS);
   const [comments, setComments] = useState<string>('');
   const [showBatchPassConfirm, setShowBatchPassConfirm] = useState<boolean>(false);
+  
+  // 🔧 MỚI: State cho việc chọn stage khi fail
+  const [stages, setStages] = useState<ProcessingStage[]>([]);
+  const [loadingStages, setLoadingStages] = useState<boolean>(false);
+  const [selectedFailedStages, setSelectedFailedStages] = useState<string[]>([]);
 
-  const urlStageCode = searchParams.get('stage');
-  const [selectedStageCode, setSelectedStageCode] = useState<number>(0); // 🔧 CẢI THIỆN: Luôn bắt đầu với 0
-  const [selectedStageName, setSelectedStageName] = useState<string>(''); // 🔧 CẢI THIỆN: Luôn bắt đầu với empty string
-  const [selectedOrderIndex, setSelectedOrderIndex] = useState<number>(0); // 🔧 CẢI THIỆN: Luôn bắt đầu với 0
-  const [availableStages, setAvailableStages] = useState<AvailableStage[]>([]);
-
+  // 🔧 CẢI THIỆN: Tự động load tiêu chí và stages khi form mở
   useEffect(() => {
-    loadAvailableStages();
-  }, []);
-
-  // 🔧 CẢI THIỆN: KHÔNG auto-set stage - để expert chọn stage nào có lỗi
-  // useEffect(() => {
-  //   if (availableStages.length > 0 && selectedStageCode === 0) {
-  //     // Nếu chưa có stage nào được chọn, thử set từ URL hoặc initial values
-  //     if (urlStageCode) {
-  //       const stageFromUrl = availableStages.find(s => s.code === Number(urlStageCode));
-  //       if (stageFromUrl) {
-  //         setSelectedStageCode(stageFromUrl.code);
-  //         setSelectedStageName(stageFromUrl.name);
-  //         setSelectedOrderIndex(stageFromUrl.orderIndex);
-  //         console.log('🔧 AUTO-SET: Stage set from URL:', stageFromUrl);
-  //       }
-  //     } else if (initialStageCode) {
-  //       const stageFromInitial = availableStages.find(s => s.code === Number(initialStageCode));
-  //       if (stageFromInitial) {
-  //         setSelectedStageCode(stageFromInitial.code);
-  //         setSelectedStageName(stageFromInitial.name);
-  //         setSelectedOrderIndex(stageFromInitial.orderIndex);
-  //         console.log('🔧 AUTO-SET: Stage set from initial:', stageFromInitial);
-  //       }
-  //     }
-  //   }
-  // }, [availableStages, urlStageCode, initialStageCode, initialStageName, initialOrderIndex]);
-
-  const loadAvailableStages = async () => {
-    if (!methodId) {
-      console.log('❌ No methodId provided');
-      return;
+    if (isOpen) {
+      loadCriteria();
+      if (methodId) {
+        loadStages();
+      }
     }
-
-    try {
-      const stages = await getProcessingStagesByMethodId(Number(methodId));
-             const availableStages = stages
-         .filter(stage => !stage.isDeleted)
-         .map(stage => ({
-           code: stage.stageId,
-           name: stage.stageName,
-           orderIndex: stage.orderIndex
-         }))
-         .sort((a, b) => a.orderIndex - b.orderIndex);
-
-      setAvailableStages(availableStages);
-      console.log('🔧 Available stages loaded:', availableStages);
-    } catch (error) {
-      console.error('❌ Error loading stages:', error);
-      AppToast.error(t('evaluation.error.loadingStages'));
-    }
-  };
+  }, [isOpen, methodId]);
 
   const loadCriteria = async () => {
-    if (!selectedStageCode) {
-      AppToast.warning(t('evaluation.warning.noStageSelected'));
-      return;
-    }
-
     try {
       setLoadingCriteria(true);
-             const criteriaData = await getEvaluationCriteriaForStage(selectedStageCode.toString());
-       const failureReasonsData = await getFailureReasonsForStage(selectedStageCode.toString());
+      const criteriaData = await getProcessingBatchCriteria();
 
       if (criteriaData && criteriaData.length > 0) {
         setCriteria(criteriaData);
-        setFailureReasons(failureReasonsData || []);
         
         // Khởi tạo criteria results
-        const initialResults = criteriaData.map(criteria => ({
+        const initialResults = criteriaData.map((criteria: ProcessingBatchCriteria) => ({
           criteria,
           actualValue: 0,
           result: '',
           isPass: false
         }));
         setCriteriaResults(initialResults);
+        console.log('✅ Loaded criteria:', criteriaData.length, 'items');
       } else {
-        AppToast.warning(t('evaluation.warning.noCriteria', { stageName: selectedStageName }));
+        AppToast.warning(t('evaluation.warning.noCriteria'));
         setCriteria([]);
         setCriteriaResults([]);
       }
     } catch (error: any) {
       console.error('❌ Error loading criteria:', error);
-      let errorMessage = t('evaluation.error.loadingCriteria');
-      
-      if (error.message?.includes('Không tìm thấy tiêu chí')) {
-        errorMessage = t('evaluation.error.noCriteriaForStage', { stageName: selectedStageName });
-      }
-      
-      AppToast.error(errorMessage);
+      AppToast.error(t('evaluation.error.loadingCriteria'));
       setCriteria([]);
       setCriteriaResults([]);
     } finally {
@@ -178,25 +116,27 @@ export default function EvaluationCriteriaForm({
     }
   };
 
-  const handleStageChange = (stageCode: string) => {
-    const stageCodeNum = Number(stageCode);
-    const selectedStage = availableStages.find(s => s.code === stageCodeNum);
+  // 🔧 MỚI: Load danh sách stages của batch
+  const loadStages = async () => {
+    if (!methodId) return;
     
-    if (selectedStage) {
-      setSelectedStageCode(selectedStage.code);
-      setSelectedStageName(selectedStage.name);
-      setSelectedOrderIndex(selectedStage.orderIndex);
-      
-      // Reset criteria khi thay đổi stage
-      setCriteria([]);
-      setCriteriaResults([]);
-      setSelectedFailureReasons([]);
-      setSelectedFailedCriteria([]);
-      setOverallScore(0);
-      setEvaluationResult(EVALUATION_RESULTS.PASS);
-      setComments('');
-      
-      console.log('🔧 Stage changed to:', selectedStage);
+    try {
+      setLoadingStages(true);
+      const stagesData = await getProcessingStagesByMethodId(Number(methodId));
+
+      if (stagesData && stagesData.length > 0) {
+        setStages(stagesData);
+        console.log('✅ Loaded stages:', stagesData.length, 'items');
+      } else {
+        console.log('⚠️ No stages found for method:', methodId);
+        setStages([]);
+      }
+    } catch (error: any) {
+      console.error('❌ Error loading stages:', error);
+      AppToast.error(t('evaluation.error.loadingStages'));
+      setStages([]);
+    } finally {
+      setLoadingStages(false);
     }
   };
 
@@ -206,15 +146,51 @@ export default function EvaluationCriteriaForm({
     
     criteria.actualValue = value;
     
-         // Kiểm tra pass/fail
-     if (criteria.criteria.minValue !== undefined && criteria.criteria.maxValue !== undefined &&
-         value >= criteria.criteria.minValue && value <= criteria.criteria.maxValue) {
-       criteria.result = 'PASS';
-       criteria.isPass = true;
-     } else {
-       criteria.result = 'FAIL';
-       criteria.isPass = false;
-     }
+    // Kiểm tra pass/fail dựa trên operator và giá trị min/max
+    let isPass = false;
+    const { minValue, maxValue, operator } = criteria.criteria;
+    
+    switch (operator) {
+      case '<=':
+        if (maxValue !== null) {
+          isPass = value <= maxValue;
+        }
+        break;
+      case '>=':
+        if (minValue !== null) {
+          isPass = value >= minValue;
+        }
+        break;
+      case '=':
+        if (minValue !== null && maxValue !== null) {
+          isPass = value === minValue && value === maxValue;
+        } else if (minValue !== null) {
+          isPass = value === minValue;
+        } else if (maxValue !== null) {
+          isPass = value === maxValue;
+        }
+        break;
+      case '<':
+        if (maxValue !== null) {
+          isPass = value < maxValue;
+        }
+        break;
+      case '>':
+        if (minValue !== null) {
+          isPass = value > minValue;
+        }
+        break;
+      case 'between':
+        if (minValue !== null && maxValue !== null) {
+          isPass = value >= minValue && value <= maxValue;
+        }
+        break;
+      default:
+        isPass = false;
+    }
+    
+    criteria.result = isPass ? 'PASS' : 'FAIL';
+    criteria.isPass = isPass;
     
     setCriteriaResults(newResults);
     
@@ -231,23 +207,12 @@ export default function EvaluationCriteriaForm({
     } else {
       setEvaluationResult(EVALUATION_RESULTS.FAIL);
     }
-    
-    // Cập nhật danh sách tiêu chí không đạt
-    const failedCriteria = newResults.filter(r => !r.isPass).map(r => r.criteria.criteriaName);
-    setSelectedFailedCriteria(failedCriteria);
-  };
-
-  const handleFailureReasonChange = (reasonId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedFailureReasons(prev => [...prev, reasonId]);
-    } else {
-      setSelectedFailureReasons(prev => prev.filter(id => id !== reasonId));
-    }
   };
 
   const handleSubmit = async () => {
-    if (!selectedStageCode) {
-      AppToast.error(t('evaluation.error.noStageSelected'));
+    // 🔧 CẢI THIỆN: Ngăn chặn submit nhiều lần
+    if (loading) {
+      console.log('⚠️ Đang submit, bỏ qua request mới');
       return;
     }
 
@@ -256,100 +221,87 @@ export default function EvaluationCriteriaForm({
       return;
     }
 
-    // Kiểm tra xem tất cả tiêu chí đã được nhập chưa
-    const hasEmptyValues = criteriaResults.some(result => result.actualValue === 0);
-    if (hasEmptyValues) {
-      AppToast.error(t('evaluation.error.incompleteCriteria'));
-      return;
-    }
+         // Kiểm tra xem tất cả tiêu chí đã được nhập chưa
+     const hasEmptyValues = criteriaResults.some(result => result.actualValue === null || result.actualValue === undefined);
+     if (hasEmptyValues) {
+       AppToast.error(t('evaluation.error.incompleteCriteria'));
+       return;
+     }
+
+     // 🔧 MỚI: Kiểm tra chọn stage khi đánh giá fail
+     if (evaluationResult === EVALUATION_RESULTS.FAIL && selectedFailedStages.length === 0) {
+       AppToast.error(t('evaluation.error.noFailedStagesSelected'));
+       return;
+     }
 
     try {
       setLoading(true);
       
-      let finalComments = '';
-      
-      if (evaluationResult === EVALUATION_RESULTS.FAIL) {
-        const failedCriteria = criteriaResults.filter(r => !r.isPass);
-        const stageName = selectedStageName;
-        
-        const failureDetails = t('evaluation.failure.details', { 
-          failedCount: failedCriteria.length, 
-          totalCount: criteriaResults.length 
-        });
-        const recommendations = t('evaluation.failure.recommendations');
-        
-        // Tạo comment cho stage fail
-        finalComments = t('evaluation.failure.stageComment', {
-          stageName,
-          failedCount: failedCriteria.length,
-          totalCount: criteriaResults.length,
-          failureDetails,
-          recommendations
-        });
-        
-        // Thêm thông tin về tiêu chí không đạt
-        const failedCriteriaNames = failedCriteria.map(r => r.criteria.criteriaName).join(', ');
-        finalComments += ` | ${t('evaluation.failure.failedCriteria')}: ${failedCriteriaNames}`;
-        
-        // Thêm lý do thất bại nếu có
-        if (selectedFailureReasons.length > 0) {
-          const failureReasonNames = failureReasons
-            .filter(r => selectedFailureReasons.includes(r.reasonId))
-            .map(r => r.reasonName)
-            .join(', ');
-          finalComments += ` | ${t('evaluation.failure.reasons')}: ${failureReasonNames}`;
-        }
-      } else {
-        // 🔧 CẢI THIỆN: Comment rõ ràng về việc đánh giá theo stage
-        const passedCriteria = criteriaResults.filter(r => r.isPass).length;
-        const criteriaDetails = criteriaResults
-          .map(r => `${r.criteria.criteriaName}: ${r.actualValue}`)
-          .join(', ');
-        
-        finalComments = t('evaluation.success.stageComment', {
-          stageName: selectedStageName,
-          passedCount: passedCriteria,
-          totalCount: criteriaResults.length,
-          criteriaDetails,
-          score: overallScore
-        });
-        
-        if (comments.trim()) {
-          finalComments += ` | ${t('evaluation.comments')}: ${comments.trim()}`;
-        }
-      }
+             // 🔧 MỚI: Tạo comment chi tiết bao gồm thông tin stages bị fail
+       let detailedComments = comments;
+       if (evaluationResult === EVALUATION_RESULTS.FAIL && selectedFailedStages.length > 0) {
+         const failedStageNames = stages
+           .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
+           .map(stage => `${stage.stageName} (${t('evaluation.failedStages.order')}: ${stage.orderIndex})`)
+           .join(', ');
+         
+         detailedComments = `${comments}\n\n🔧 ${t('evaluation.failedStages.title')}:\n${failedStageNames}\n\n📋 ${t('evaluation.failedStages.description')}`;
+       }
 
-      const evaluationData = {
-        BatchId: batchId,
-        StageId: selectedStageCode,        // 🔧 CẢI THIỆN: Thêm StageId để đánh giá theo stage
-        EvaluationResult: evaluationResult,
-        OverallScore: overallScore,
-        Comments: finalComments,
-                 CriteriaResults: criteriaResults.map(result => ({
-           CriteriaId: result.criteria.criteriaId,
+       // Tạo evaluation data với format mới
+       const evaluationData = {
+         BatchId: batchId,
+         EvaluationResult: evaluationResult,
+         OverallScore: overallScore,
+         Comments: detailedComments,
+         QualityCriteriaEvaluations: criteriaResults.map(result => ({
+           CriteriaId: result.criteria.id,
+           CriteriaName: result.criteria.name,
+           Description: result.criteria.description,
+           MinValue: result.criteria.minValue,
+           MaxValue: result.criteria.maxValue,
+           Unit: result.criteria.unit,
+           Operator: result.criteria.operator,
+           Severity: result.criteria.severity,
+           RuleGroup: result.criteria.ruleGroup,
            ActualValue: result.actualValue,
-           Result: result.result,
-           IsPass: result.isPass
+           IsPassed: result.isPass,
+           FailureReason: result.isPass ? null : generateFailureReason(result),
+           Notes: ''
          })),
-        FailureReasons: selectedFailureReasons,
-        FailedCriteria: selectedFailedCriteria
-      };
+         ExpertNotes: comments,
+         // 🔧 MỚI: Thêm thông tin về stages bị fail - chuyển đổi stageId thành tên stage
+         ProblematicSteps: evaluationResult === EVALUATION_RESULTS.FAIL 
+           ? (() => {
+               const problematicSteps = stages
+                 .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
+                 .map(stage => `${stage.stageName} (${t('evaluation.failedStages.order')}: ${stage.orderIndex})`);
+               console.log('🔧 Selected failed stages:', selectedFailedStages);
+               console.log('🔧 Problematic steps:', problematicSteps);
+               return problematicSteps;
+             })()
+           : []
+       };
 
       console.log('🔧 Submitting evaluation data:', evaluationData);
       
       await createProcessingBatchEvaluation(evaluationData);
       
-      // 🔧 CẢI THIỆN: Kiểm tra xem response có chứa thông tin thành công không
       console.log('✅ Evaluation submitted successfully');
       
-      if (evaluationResult === EVALUATION_RESULTS.PASS) {
-        AppToast.success(t('evaluation.success.submitted'));
-      } else {
-        AppToast.success(t('evaluation.success.failureSubmitted'));
-      }
-      
-      onSuccess();
-      onClose();
+             if (evaluationResult === EVALUATION_RESULTS.PASS) {
+         AppToast.success(t('evaluation.success.submitted'));
+         onSuccess();
+         onClose();
+       } else {
+         AppToast.success(t('evaluation.success.failureSubmitted'));
+         onSuccess();
+         onClose();
+         
+         // 🔧 MỚI: Chuyển về màn hình view ID khi đánh giá fail
+         const viewIdUrl = `/dashboard/expert/evaluations/${batchId}`;
+         router.push(viewIdUrl);
+       }
       
     } catch (error: any) {
       console.error('❌ Lỗi tạo đánh giá:', error);
@@ -365,24 +317,22 @@ export default function EvaluationCriteriaForm({
   };
 
   const confirmBatchPass = async () => {
-    if (!methodId) {
-      AppToast.error(t('evaluation.error.noMethodId'));
+    // 🔧 CẢI THIỆN: Ngăn chặn submit nhiều lần
+    if (loading) {
+      console.log('⚠️ Đang submit batch pass, bỏ qua request mới');
       return;
     }
 
     try {
       setLoading(true);
       
-      const finalComments = t('evaluation.success.batchComment');
-      
       const evaluationData = {
         BatchId: batchId,
         EvaluationResult: EVALUATION_RESULTS.PASS,
         OverallScore: 100,
-        Comments: finalComments,
-        CriteriaResults: [],
-        FailureReasons: [],
-        FailedCriteria: []
+        Comments: t('evaluation.success.batchComment'),
+        QualityCriteriaEvaluations: [],
+        ExpertNotes: ''
       };
 
       await createProcessingBatchEvaluation(evaluationData);
@@ -405,183 +355,289 @@ export default function EvaluationCriteriaForm({
     setShowBatchPassConfirm(false);
   };
 
+  // 🔧 MỚI: Handle chọn stage khi fail
+  const handleStageSelection = (stageId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedFailedStages(prev => {
+        // Kiểm tra xem stageId đã có trong mảng chưa để tránh duplicate
+        if (prev.includes(stageId)) {
+          return prev;
+        }
+        return [...prev, stageId];
+      });
+    } else {
+      setSelectedFailedStages(prev => prev.filter(id => id !== stageId));
+    }
+  };
+
+  // Function để format phạm vi tiêu chí
+  const formatCriteriaRange = (criteria: ProcessingBatchCriteria) => {
+    const { minValue, maxValue, operator, unit } = criteria;
+    
+    switch (operator) {
+      case '<=':
+        if (maxValue !== null) {
+          return `≤ ${maxValue} ${unit}`;
+        }
+        break;
+      case '>=':
+        if (minValue !== null) {
+          return `≥ ${minValue} ${unit}`;
+        }
+        break;
+      case '=':
+        if (minValue !== null && maxValue !== null && minValue === maxValue) {
+          return `= ${minValue} ${unit}`;
+        } else if (minValue !== null) {
+          return `= ${minValue} ${unit}`;
+        } else if (maxValue !== null) {
+          return `= ${maxValue} ${unit}`;
+        }
+        break;
+      case '<':
+        if (maxValue !== null) {
+          return `< ${maxValue} ${unit}`;
+        }
+        break;
+      case '>':
+        if (minValue !== null) {
+          return `> ${minValue} ${unit}`;
+        }
+        break;
+      case 'between':
+        if (minValue !== null && maxValue !== null) {
+          return `${minValue} - ${maxValue} ${unit}`;
+        }
+        break;
+      default:
+        return `${minValue || 0} - ${maxValue || 0} ${unit}`;
+    }
+    
+    return `${minValue || 0} - ${maxValue || 0} ${unit}`;
+  };
+
+  // Function để tạo lý do thất bại
+  const generateFailureReason = (result: CriteriaResult) => {
+    const { actualValue, criteria } = result;
+    const { minValue, maxValue, operator, unit, description } = criteria;
+    
+    switch (operator) {
+      case '<=':
+        if (maxValue !== null && actualValue > maxValue) {
+          return `${description}: ${actualValue} ${unit} > ${maxValue} ${unit} (${t('evaluation.criteria.reason.exceedLimit')})`;
+        }
+        break;
+      case '>=':
+        if (minValue !== null && actualValue < minValue) {
+          return `${description}: ${actualValue} ${unit} < ${minValue} ${unit} (${t('evaluation.criteria.reason.belowLimit')})`;
+        }
+        break;
+      case '=':
+        if (minValue !== null && maxValue !== null && minValue === maxValue) {
+          if (actualValue !== minValue) {
+            return `${description}: ${actualValue} ${unit} ≠ ${minValue} ${unit} (${t('evaluation.criteria.reason.notMatchRequired')})`;
+          }
+        } else if (minValue !== null && actualValue !== minValue) {
+          return `${description}: ${actualValue} ${unit} ≠ ${minValue} ${unit} (${t('evaluation.criteria.reason.notMatchRequired')})`;
+        } else if (maxValue !== null && actualValue !== maxValue) {
+          return `${description}: ${actualValue} ${unit} ≠ ${maxValue} ${unit} (${t('evaluation.criteria.reason.notMatchRequired')})`;
+        }
+        break;
+      case '<':
+        if (maxValue !== null && actualValue >= maxValue) {
+          return `${description}: ${actualValue} ${unit} >= ${maxValue} ${unit} (${t('evaluation.criteria.reason.notSatisfyCondition')})`;
+        }
+        break;
+      case '>':
+        if (minValue !== null && actualValue <= minValue) {
+          return `${description}: ${actualValue} ${unit} <= ${minValue} ${unit} (${t('evaluation.criteria.reason.notSatisfyCondition')})`;
+        }
+        break;
+      case 'between':
+        if (minValue !== null && maxValue !== null) {
+          if (actualValue < minValue) {
+            return `${description}: ${actualValue} ${unit} < ${minValue} ${unit} (${t('evaluation.criteria.reason.belowLimit')})`;
+          } else if (actualValue > maxValue) {
+            return `${description}: ${actualValue} ${unit} > ${maxValue} ${unit} (${t('evaluation.criteria.reason.exceedLimit')})`;
+          }
+        }
+        break;
+    }
+    
+    return `${t('evaluation.criteria.actual')} ${actualValue} ${unit} ${t('evaluation.criteria.failed')}`;
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-semibold text-gray-900">{t('evaluation.title')} - {selectedStageName || t('evaluation.selectStage')}</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">{t('evaluation.title')} - Batch #{batchId}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Stage Selection */}
+          {/* Criteria Evaluation */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg text-gray-900">{t('evaluation.stageSelection.title')}</CardTitle>
+              <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
+                <FiSettings className="w-5 h-5" />
+                {t('evaluation.criteria.title')} ({criteria.length})
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700">{t('evaluation.stageSelection.label')}</Label>
-                  <Select value={selectedStageCode.toString()} onValueChange={handleStageChange}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('evaluation.stageSelection.placeholder')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableStages.map((stage) => (
-                        <SelectItem key={stage.code} value={stage.code.toString()}>
-                          {t('evaluation.stageSelection.option', { 
-                            order: stage.orderIndex, 
-                            name: stage.name 
-                          })}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              {loadingCriteria ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                  <span className="text-gray-600">{t('evaluation.criteria.loading')}</span>
                 </div>
-                
-                {selectedStageCode > 0 && (
-                  <Button 
-                    onClick={loadCriteria} 
-                    disabled={loadingCriteria}
-                    className="w-full"
-                  >
-                    {loadingCriteria ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('evaluation.stageSelection.loading')}
-                      </>
-                    ) : (
-                      t('evaluation.stageSelection.loadCriteria')
-                    )}
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Criteria Evaluation */}
-          {criteria.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-900">{t('evaluation.criteria.title')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loadingCriteria ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                    <span className="text-gray-600">{t('evaluation.criteria.loading')}</span>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {criteriaResults.map((result, index) => (
-                      <div key={index} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <h4 className="font-medium text-gray-900">{result.criteria.criteriaName}</h4>
-                            <p className="text-sm text-gray-600">
-                              {t('evaluation.criteria.range', { 
-                                min: result.criteria.minValue, 
-                                max: result.criteria.maxValue,
-                                unit: result.criteria.unit 
-                              })}
-                            </p>
-                          </div>
-                          <Badge variant={result.isPass ? "default" : "destructive"}>
-                            {result.result}
-                          </Badge>
+              ) : criteria.length === 0 ? (
+                <div className="text-center py-8">
+                  <AlertTriangle className="text-gray-400 text-4xl mx-auto mb-4" />
+                  <p className="text-gray-500">{t('evaluation.warning.noCriteria')}</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {criteriaResults.map((result, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {result.criteria.name.replace('PB.', '')}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            {result.criteria.description}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {t('evaluation.criteria.range')} {formatCriteriaRange(result.criteria)}
+                          </p>
                         </div>
-                        
-                        <div className="flex items-center space-x-4">
-                          <div className="flex-1">
-                            <Label className="text-sm font-medium text-gray-700">{t('evaluation.criteria.actualValue')}</Label>
-                            <Input
-                              type="number"
-                              value={result.actualValue}
-                              onChange={(e) => handleCriteriaChange(index, Number(e.target.value))}
-                              className="mt-1"
-                              min={0}
-                              step={0.01}
-                            />
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {result.criteria.unit}
-                          </div>
+                        <Badge variant={result.isPass ? "default" : "destructive"}>
+                          {result.result}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-1">
+                          <Label className="text-sm font-medium text-gray-700">{t('evaluation.criteria.actualValue')}</Label>
+                          <Input
+                            type="number"
+                            value={result.actualValue}
+                            onChange={(e) => handleCriteriaChange(index, Number(e.target.value))}
+                            className="mt-1"
+                            min={0}
+                            step={0.01}
+                            placeholder={t('evaluation.criteria.actualValue') + ` ${result.criteria.unit}`}
+                          />
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {result.criteria.unit}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Failure Reasons */}
-          {evaluationResult === EVALUATION_RESULTS.FAIL && failureReasons.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-900">{t('evaluation.failureReasons.title')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {failureReasons.map((reason) => (
-                                         <div key={reason.reasonId} className="flex items-center space-x-3">
-                                             <Checkbox
-                         id={reason.reasonId}
-                         checked={selectedFailureReasons.includes(reason.reasonId)}
-                         onCheckedChange={(checked) => 
-                           handleFailureReasonChange(reason.reasonId, checked as boolean)
-                         }
-                       />
-                       <Label htmlFor={reason.reasonId} className="text-sm text-gray-700">
-                         {reason.reasonName}
-                       </Label>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              )}
+            </CardContent>
+          </Card>
 
-          {/* Evaluation Results */}
-          {criteriaResults.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-900">{t('evaluation.results.title')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.passedCriteria')}</Label>
-                    <div className="text-2xl font-bold text-green-600">
-                      {criteriaResults.filter(r => r.isPass).length}/{criteriaResults.length}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.overallScore')}</Label>
-                    <div className="text-2xl font-bold text-blue-600">
-                      {overallScore}/100
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-4">
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.additionalComments')}</Label>
-                  <Textarea
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                    placeholder={t('evaluation.results.commentsPlaceholder')}
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                     {/* Evaluation Results */}
+           {criteriaResults.length > 0 && (
+             <Card>
+               <CardHeader>
+                 <CardTitle className="text-lg text-gray-900">{t('evaluation.results.title')}</CardTitle>
+               </CardHeader>
+               <CardContent>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div>
+                     <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.passedCriteria')}</Label>
+                     <div className="text-2xl font-bold text-green-600">
+                       {criteriaResults.filter(r => r.isPass).length}/{criteriaResults.length}
+                     </div>
+                   </div>
+                   
+                   <div>
+                     <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.overallScore')}</Label>
+                     <div className="text-2xl font-bold text-blue-600">
+                       {overallScore}/100
+                     </div>
+                   </div>
+                 </div>
+                 
+                 <div className="mt-4">
+                   <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('evaluation.results.additionalComments')}</Label>
+                   <Textarea
+                     value={comments}
+                     onChange={(e) => setComments(e.target.value)}
+                     placeholder={t('evaluation.results.commentsPlaceholder')}
+                     rows={3}
+                   />
+                 </div>
+               </CardContent>
+             </Card>
+           )}
+
+           {/* 🔧 MỚI: Stage Selection khi Fail */}
+           {evaluationResult === EVALUATION_RESULTS.FAIL && stages.length > 0 && (
+             <Card>
+               <CardHeader>
+                 <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
+                   <AlertTriangle className="w-5 h-5 text-red-500" />
+                   {t('evaluation.failedStages.title')}
+                 </CardTitle>
+                 <p className="text-sm text-gray-600">
+                   {t('evaluation.failedStages.description')}
+                 </p>
+               </CardHeader>
+               <CardContent>
+                 {loadingStages ? (
+                   <div className="flex items-center justify-center py-4">
+                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                     <span className="text-gray-600">{t('evaluation.failedStages.loading')}</span>
+                   </div>
+                 ) : (
+                   <div className="space-y-3">
+                     {stages.map((stage) => (
+                       <div key={stage.stageId} className="flex items-center space-x-3 p-3 border rounded-lg">
+                         <Checkbox
+                           id={`stage-${stage.stageId}`}
+                           checked={selectedFailedStages.includes(stage.stageId.toString())}
+                           onCheckedChange={(checked) => 
+                             handleStageSelection(stage.stageId.toString(), checked as boolean)
+                           }
+                         />
+                         <Label 
+                           htmlFor={`stage-${stage.stageId}`}
+                           className="flex-1 cursor-pointer"
+                         >
+                           <div className="flex items-center justify-between">
+                             <span className="font-medium">{stage.stageName}</span>
+                             <Badge variant="outline" className="text-xs">
+                               {t('evaluation.failedStages.order')} {stage.orderIndex}
+                             </Badge>
+                           </div>
+                         </Label>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+                 
+                 {selectedFailedStages.length > 0 && (
+                   <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                     <div className="flex items-center gap-2">
+                       <Info className="w-4 h-4 text-yellow-600" />
+                       <span className="text-sm text-yellow-800">
+                         {t('evaluation.failedStages.selectedCount', { count: selectedFailedStages.length })}
+                       </span>
+                     </div>
+                   </div>
+                 )}
+               </CardContent>
+             </Card>
+           )}
 
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3 pt-6 border-t">
@@ -601,7 +657,7 @@ export default function EvaluationCriteriaForm({
                     {t('evaluation.actions.submitting')}
                   </>
                 ) : (
-                  criteria.length === 0 ? 'Đang tải tiêu chí...' : t('evaluation.actions.evaluateStage')
+                  t('evaluation.actions.evaluateBatch')
                 )}
               </Button>
             )}
@@ -617,47 +673,47 @@ export default function EvaluationCriteriaForm({
         </div>
       </div>
 
-             {/* Batch Pass Confirmation Popup */}
-               {showBatchPassConfirm && (
-          <div className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-             <div className="flex items-center space-x-3 mb-4">
-               <CheckCircle className="h-8 w-8 text-green-600" />
-               <h3 className="text-lg font-semibold text-gray-900">
-                 {t('evaluation.batchPassConfirm.title')}
-               </h3>
-             </div>
-             
-             <p className="text-gray-600 mb-6">
-               {t('evaluation.batchPassConfirm.message')}
-             </p>
-             
-             <div className="flex justify-end space-x-3">
-               <Button 
-                 variant="outline" 
-                 onClick={cancelBatchPass}
-                 disabled={loading}
-               >
-                 {t('evaluation.batchPassConfirm.cancel')}
-               </Button>
-               <Button 
-                 onClick={confirmBatchPass}
-                 disabled={loading}
-                 className="bg-green-600 hover:bg-green-700"
-               >
-                 {loading ? (
-                   <>
-                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                     {t('evaluation.batchPassConfirm.processing')}
-                   </>
-                 ) : (
-                   t('evaluation.batchPassConfirm.confirm')
-                 )}
-               </Button>
-             </div>
-           </div>
-         </div>
-       )}
+      {/* Batch Pass Confirmation Popup */}
+      {showBatchPassConfirm && (
+        <div className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+              <h3 className="text-lg font-semibold text-gray-900">
+                {t('evaluation.batchPassConfirm.title')}
+              </h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              {t('evaluation.batchPassConfirm.message')}
+            </p>
+            
+            <div className="flex justify-end space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={cancelBatchPass}
+                disabled={loading}
+              >
+                {t('evaluation.batchPassConfirm.cancel')}
+              </Button>
+              <Button 
+                onClick={confirmBatchPass}
+                disabled={loading}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('evaluation.batchPassConfirm.processing')}
+                  </>
+                ) : (
+                  t('evaluation.batchPassConfirm.confirm')
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

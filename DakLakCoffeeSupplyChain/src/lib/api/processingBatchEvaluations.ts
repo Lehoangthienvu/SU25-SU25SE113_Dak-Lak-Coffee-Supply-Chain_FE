@@ -99,6 +99,11 @@ export interface CalculateScoreResponse {
   failedCriteria: number;
 }
 
+// 🔧 MỚI: Interface cho thông tin retry
+export interface FailedStagesInfo {
+  failedStages: string[];
+}
+
 export interface CreateFailureCommentRequest {
   orderIndex: number;
   stageName: string;
@@ -115,6 +120,31 @@ export interface CreateFailureCommentResponse {
   stageName: string;
   totalCriteria: number;
   failedCriteria: number;
+}
+
+// ================== RETRY FAILURE INFO INTERFACES ==================
+
+export interface EvaluationFailureInfo {
+  batchId: string;
+  evaluationId: string;
+  failedAt: string;
+  comments: string;
+  failedStage?: {
+    stageId: number;
+    stageName: string;
+    orderIndex: number;
+    lastStepIndex: number;
+  };
+  completedStages: Array<{
+    stageId: number;
+    stageName: string;
+    orderIndex: number;
+    stepIndex: number;
+    outputQuantity: number;
+    outputUnit: string;
+    progressDate: string;
+  }>;
+  note: string;
 }
 
 // ================== GET ALL EVALUATIONS ==================
@@ -152,6 +182,17 @@ export async function getEvaluationSummaryByBatch(batchId: string): Promise<any>
   } catch (err) {
     console.error("❌ Lỗi getEvaluationSummaryByBatch:", err);
     return null;
+  }
+}
+
+// 🔧 MỚI: API để lấy thông tin về các stage cần cập nhật khi retry
+export async function getFailedStagesForBatch(batchId: string): Promise<FailedStagesInfo> {
+  try {
+    const res = await api.get(`/Evaluations/failed-stages/${batchId}`);
+    return res.data || { failedStages: [] };
+  } catch (err) {
+    console.error("❌ Lỗi getFailedStagesForBatch:", err);
+    return { failedStages: [] };
   }
 }
 
@@ -471,6 +512,31 @@ export async function createFailureComment(request: CreateFailureCommentRequest)
     return res.data?.data || null;
   } catch (err) {
     console.error("❌ Lỗi createFailureComment:", err);
+    return null;
+  }
+}
+
+// ================== RETRY FAILURE INFO APIs ==================
+
+/**
+ * Lấy thông tin failure và stages cần retry khi batch bị đánh giá FAIL
+ */
+export async function getFailureInfo(batchId: string): Promise<EvaluationFailureInfo | null> {
+  try {
+    const res = await api.get(`/evaluations/failure-info/${batchId}`);
+    console.log('🔍 DEBUG: Failure info response:', res.data);
+    
+    if (res.data?.status === 'SUCCESS') {
+      return res.data.data;
+    } else if (res.data?.status === 'WARNING_NO_DATA') {
+      console.log('⚠️ No failure info found for batch:', batchId);
+      return null;
+    } else {
+      console.error('❌ Error response from failure info API:', res.data);
+      return null;
+    }
+  } catch (err) {
+    console.error("❌ Lỗi getFailureInfo:", err);
     return null;
   }
 }

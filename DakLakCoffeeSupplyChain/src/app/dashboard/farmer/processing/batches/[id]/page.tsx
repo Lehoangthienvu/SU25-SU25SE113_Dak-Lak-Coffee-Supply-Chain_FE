@@ -54,6 +54,8 @@ import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { StageFailureParser, StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 import { getProcessingStagesByMethodId } from "@/lib/api/processingStages";
 import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
+import FailedStagesInfo from "@/components/processing-batches/FailedStagesInfo";
+import EvaluationCriteriaDisplay from "@/components/processing-batches/EvaluationCriteriaDisplay";
 
 export default function ViewProcessingBatch() {
   const { t } = useTranslation();
@@ -1108,6 +1110,13 @@ export default function ViewProcessingBatch() {
           </div>
 
           <div className="p-6">
+            {/* Failed Stages Info - Hiển thị khi có đánh giá fail */}
+            {hasFailedEvaluation && (
+              <div className="mb-6">
+                <FailedStagesInfo batchId={id as string} />
+              </div>
+            )}
+            
             {evaluations.length > 0 ? (
               <div className="space-y-4">
                 {/* Thông báo đánh giá mới - chỉ hiển thị khi đánh giá mới nhất là Fail */}
@@ -1258,7 +1267,13 @@ export default function ViewProcessingBatch() {
                       <div className="mb-4">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.comments')}:</h4>
                         <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-sm text-gray-800 whitespace-pre-wrap">{evaluation.comments}</p>
+                          {/* 🔥 MỚI: Hiển thị từng tiêu chí đánh giá chi tiết */}
+                          <EvaluationCriteriaDisplay comment={evaluation.comments} />
+                          
+                          {/* Hiển thị comments gốc nếu không có format đánh giá */}
+                          {!evaluation.comments.includes('EVALUATION_TYPE:') && (
+                            <p className="text-sm text-gray-800 whitespace-pre-wrap">{evaluation.comments}</p>
+                          )}
                         </div>
                       </div>
                     )}
