@@ -93,6 +93,7 @@ export interface ProductViewDetailsDto {
   // Các trường mới từ API
   inventoryCode?: string;
   warehouseName?: string;
+  farmerName?: string;
 }
 
 // DTO: ProductCreateDto tương ứng backend
@@ -195,8 +196,7 @@ export async function getProcessingBatchOptions(): Promise<ProcessingBatchOption
       batchCode: b.batchCode,
     }));
   } catch (error) {
-    console.error("Error fetching processing batches from /ProcessingBatch:", error);
-    
+
     // Thử endpoint fallback
     try {
       const { data } = await api.get<{ batchId: string; batchCode: string }[]>("/processing-batch");
@@ -205,7 +205,6 @@ export async function getProcessingBatchOptions(): Promise<ProcessingBatchOption
         batchCode: b.batchCode,
       }));
     } catch (fallbackError) {
-      console.error("Error fetching processing batches from /processing-batch:", fallbackError);
       
       // Thử endpoint khác có thể có
       try {
@@ -215,7 +214,6 @@ export async function getProcessingBatchOptions(): Promise<ProcessingBatchOption
           batchCode: b.batchCode,
         }));
       } catch (finalError) {
-        console.error("Error fetching processing batches from /ProcessingBatches:", finalError);
         return [];
       }
     }
@@ -226,7 +224,6 @@ export async function getProcessingBatchOptions(): Promise<ProcessingBatchOption
 export async function getInventoryOptions(): Promise<InventoryOption[]> {
   try {
     // Thử endpoint chính trước - lấy inventory với warehouse info
-    console.log("Fetching inventories from /Inventories...");
     const { data } = await api.get<{
       inventoryId: string;
       inventoryCode: string;
@@ -239,9 +236,6 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
       quantity: number;
       unit: string;
     }[]>("/Inventories");
-    
-    console.log("Raw API response:", data);
-    console.log("Response length:", data?.length);
     
     const mappedData = data.map((i) => ({
       inventoryId: i.inventoryId,
@@ -258,10 +252,8 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
       unit: i.unit
     }));
     
-    console.log("Mapped inventory options:", mappedData);
     return mappedData;
   } catch (error) {
-    console.error("Error fetching inventories from /Inventories:", error);
     
     // Thử endpoint fallback
     try {
@@ -293,7 +285,6 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
         unit: i.unit
       }));
     } catch (fallbackError) {
-      console.error("Error fetching inventories from /inventories:", fallbackError);
       
       // Thử endpoint khác có thể có
       try {
@@ -325,7 +316,6 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
           unit: i.unit
         }));
       } catch (finalError) {
-        console.error("Error fetching inventories from /Inventory:", finalError);
         return [];
       }
     }
@@ -335,22 +325,9 @@ export async function getInventoryOptions(): Promise<InventoryOption[]> {
 // API: Test function để lấy inventory detail với thông tin mới
 export async function getInventoryDetailTest(id: string): Promise<any> {
   try {
-    console.log("🧪 Testing inventory detail endpoint with id:", id);
     const { data } = await api.get(`/Inventories/${id}`);
-    console.log("🧪 Inventory detail response:", data);
-    console.log("🧪 All properties:", Object.keys(data));
-    console.log("🧪 Farmer info:", {
-      farmerId: data.farmerId,
-      farmerName: data.farmerName,
-      farmLocation: data.farmLocation
-    });
-    console.log("🧪 Evaluation info:", {
-      evaluationResult: data.evaluationResult,
-      totalScore: data.totalScore
-    });
     return data;
   } catch (error) {
-    console.error("🧪 Error testing inventory detail:", error);
     return null;
   }
 }
