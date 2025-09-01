@@ -5,8 +5,10 @@ import { roleRawToDisplayName } from "@/lib/constants/role";
 import { User, Mail, Phone, Shield, Edit3, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authService } from "@/lib/auth/authService";
+import { useTranslation } from "react-i18next";
 
 export default function UserInfoPage() {
+    const { t } = useTranslation();
     const [userInfo, setUserInfo] = useState({
         name: "",
         email: "",
@@ -19,20 +21,20 @@ export default function UserInfoPage() {
         const user = authService.getUser();
         if (user) {
             const rawAvatar = user.avatar?.trim();
-            const name = user.name || "Ẩn danh";
+            const name = user.name || t("profile.placeholders.anonymous");
 
             setUserInfo({
                 name,
                 email: user.email || "",
-                phone: localStorage.getItem("phone") || "Chưa cập nhật",
-                role: roleRawToDisplayName[user.roleRaw] || "Không xác định",
+                phone: localStorage.getItem("phone") || t("profile.placeholders.notUpdated"),
+                role: roleRawToDisplayName[user.roleRaw] || t("profile.placeholders.unknown"),
                 avatar:
                     rawAvatar && rawAvatar !== ""
                         ? rawAvatar
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FD7622&color=fff`,
             });
         }
-    }, []);
+    }, [t]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4">
@@ -42,11 +44,11 @@ export default function UserInfoPage() {
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full"></div>
                         <h1 className="text-2xl font-bold text-gray-800">
-                            Thông tin cá nhân
+                            {t("profile.title")}
                         </h1>
                     </div>
                     <p className="text-gray-600 text-sm">
-                        Quản lý thông tin hồ sơ và tài khoản của bạn
+                        {t("profile.subtitle")}
                     </p>
                 </div>
 
@@ -88,7 +90,7 @@ export default function UserInfoPage() {
                                     </div>
                                     <Button className="w-fit">
                                         <Edit3 className="w-4 h-4 mr-2" />
-                                        Chỉnh sửa hồ sơ
+                                        {t("profile.editProfile")}
                                     </Button>
                                 </div>
                             </div>
@@ -100,7 +102,7 @@ export default function UserInfoPage() {
                             <div className="space-y-6">
                                 <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                                     <User className="w-5 h-5 text-orange-500" />
-                                    Thông tin cá nhân
+                                    {t("profile.sections.personalInfo")}
                                 </h3>
 
                                 <div className="space-y-4">
@@ -110,7 +112,7 @@ export default function UserInfoPage() {
                                                 <User className="w-4 h-4 text-orange-600" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-medium">Họ tên</p>
+                                                <p className="text-xs text-gray-500 uppercase font-medium">{t("profile.fields.fullName")}</p>
                                                 <p className="text-sm font-medium text-gray-800">{userInfo.name}</p>
                                             </div>
                                         </div>
@@ -122,8 +124,8 @@ export default function UserInfoPage() {
                                                 <Mail className="w-4 h-4 text-blue-600" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-medium">Email</p>
-                                                <p className="text-sm font-medium text-gray-800">{userInfo.email || "Chưa cập nhật"}</p>
+                                                <p className="text-xs text-gray-500 uppercase font-medium">{t("profile.fields.email")}</p>
+                                                <p className="text-sm font-medium text-gray-800">{userInfo.email || t("profile.placeholders.notUpdated")}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +136,7 @@ export default function UserInfoPage() {
                                                 <Phone className="w-4 h-4 text-green-600" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-medium">Số điện thoại</p>
+                                                <p className="text-xs text-gray-500 uppercase font-medium">{t("profile.fields.phone")}</p>
                                                 <p className="text-sm font-medium text-gray-800">{userInfo.phone}</p>
                                             </div>
                                         </div>
@@ -146,7 +148,7 @@ export default function UserInfoPage() {
                             <div className="space-y-6">
                                 <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-orange-500" />
-                                    Thông tin tài khoản
+                                    {t("profile.sections.accountInfo")}
                                 </h3>
 
                                 <div className="space-y-4">
@@ -156,7 +158,7 @@ export default function UserInfoPage() {
                                                 <Shield className="w-4 h-4 text-purple-600" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-medium">Vai trò</p>
+                                                <p className="text-xs text-gray-500 uppercase font-medium">{t("profile.fields.role")}</p>
                                                 <p className="text-sm font-medium text-gray-800">{userInfo.role}</p>
                                             </div>
                                         </div>
@@ -166,16 +168,16 @@ export default function UserInfoPage() {
                                         <div className="flex items-center gap-3">
                                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                                             <div>
-                                                <p className="text-xs text-green-600 uppercase font-medium">Trạng thái</p>
-                                                <p className="text-sm font-medium text-green-700">Tài khoản hoạt động</p>
+                                                <p className="text-xs text-green-600 uppercase font-medium">{t("profile.fields.status")}</p>
+                                                <p className="text-sm font-medium text-green-700">{t("profile.status.active")}</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                                        <p className="text-xs text-orange-600 font-medium mb-1">Lưu ý bảo mật</p>
+                                        <p className="text-xs text-orange-600 font-medium mb-1">{t("profile.security.note")}</p>
                                         <p className="text-sm text-orange-700">
-                                            Để đảm bảo an toàn, hãy thường xuyên cập nhật mật khẩu và không chia sẻ thông tin đăng nhập.
+                                            {t("profile.security.message")}
                                         </p>
                                     </div>
                                 </div>
@@ -186,13 +188,13 @@ export default function UserInfoPage() {
                         <div className="mt-8 pt-6 border-t border-gray-200">
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <Button variant="outline" className="flex-1">
-                                    Đổi mật khẩu
+                                    {t("profile.actions.changePassword")}
                                 </Button>
                                 <Button variant="outline" className="flex-1">
-                                    Cài đặt bảo mật
+                                    {t("profile.actions.securitySettings")}
                                 </Button>
                                 <Button className="flex-1">
-                                    Lưu thay đổi
+                                    {t("profile.actions.saveChanges")}
                                 </Button>
                             </div>
                         </div>
