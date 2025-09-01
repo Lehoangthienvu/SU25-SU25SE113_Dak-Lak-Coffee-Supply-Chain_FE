@@ -197,7 +197,9 @@ export default function ProductsPage() {
 
           <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
             <div className="flex items-center justify-end gap-2 pb-2">
-              <span className="text-sm text-gray-600">{t("products.page.table.displayOptions.show")}</span>
+              <span className="text-sm text-gray-600">
+                {t("products.page.table.displayOptions.show")}
+              </span>
               <select
                 className="border rounded px-2 py-1 text-sm"
                 value={pageSize}
@@ -212,17 +214,27 @@ export default function ProductsPage() {
                 <option value={20}>20</option>
                 <option value={50}>50</option>
               </select>
-              <span className="text-sm text-gray-600">{t("products.page.table.displayOptions.rows")}</span>
+              <span className="text-sm text-gray-600">
+                {t("products.page.table.displayOptions.rows")}
+              </span>
             </div>
             <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
               <table className="min-w-full table-auto text-sm border border-gray-200">
                 <thead className="bg-gray-100 text-sm text-gray-600">
                   <tr>
                     <th className="px-2 py-2 w-8"></th>
-                    <th className="px-4 py-2 text-left">{t("products.page.table.headers.productCode")}</th>
-                    <th className="px-4 py-2 text-left">{t("products.page.table.headers.productName")}</th>
-                    <th className="px-4 py-2 text-left">{t("products.page.table.headers.coffeeType")}</th>
-                    <th className="px-4 py-2 text-left">{t("products.page.table.headers.warehouse")}</th>
+                    <th className="px-4 py-2 text-left">
+                      {t("products.page.table.headers.productCode")}
+                    </th>
+                    <th className="px-4 py-2 text-left">
+                      {t("products.page.table.headers.productName")}
+                    </th>
+                    <th className="px-4 py-2 text-left">
+                      {t("products.page.table.headers.coffeeType")}
+                    </th>
+                    <th className="px-4 py-2 text-left">
+                      {t("products.page.table.headers.warehouse")}
+                    </th>
                     <th className="px-4 py-2 text-center whitespace-nowrap">
                       {t("products.page.table.headers.availableQuantity")}
                     </th>
@@ -232,7 +244,9 @@ export default function ProductsPage() {
                     <th className="px-4 py-2 text-center whitespace-nowrap">
                       {t("products.page.table.headers.createdAt")}
                     </th>
-                    <th className="px-4 py-2 text-center">{t("products.page.table.headers.actions")}</th>
+                    <th className="px-4 py-2 text-center">
+                      {t("products.page.table.headers.actions")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -272,7 +286,9 @@ export default function ProductsPage() {
                               )
                             }
                             aria-label={
-                              expandedId === p.productId ? t("products.page.table.tooltips.collapse") : t("products.page.table.tooltips.expand")
+                              expandedId === p.productId
+                                ? t("products.page.table.tooltips.collapse")
+                                : t("products.page.table.tooltips.expand")
                             }
                           >
                             {expandedId === p.productId ? (
@@ -322,7 +338,11 @@ export default function ProductsPage() {
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-[2px] justify-center">
-                            <Tooltip content={t("products.page.table.tooltips.viewDetails")}>
+                            <Tooltip
+                              content={t(
+                                "products.page.table.tooltips.viewDetails"
+                              )}
+                            >
                               <Button
                                 variant="ghost"
                                 className="p-[2px] w-7 h-7"
@@ -335,7 +355,9 @@ export default function ProductsPage() {
                                 <Eye className="w-4 h-4 text-blue-500" />
                               </Button>
                             </Tooltip>
-                            <Tooltip content={t("products.page.table.tooltips.edit")}>
+                            <Tooltip
+                              content={t("products.page.table.tooltips.edit")}
+                            >
                               <Button
                                 variant="ghost"
                                 className="p-[2px] w-7 h-7"
@@ -348,7 +370,9 @@ export default function ProductsPage() {
                                 <Pencil className="w-4 h-4 text-yellow-500" />
                               </Button>
                             </Tooltip>
-                            <Tooltip content={t("products.page.table.tooltips.delete")}>
+                            <Tooltip
+                              content={t("products.page.table.tooltips.delete")}
+                            >
                               <Button
                                 variant="ghost"
                                 className="p-[2px] w-7 h-7"
@@ -371,7 +395,11 @@ export default function ProductsPage() {
                           <td colSpan={9} className="px-6 py-3">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
                               <div>
-                                <div className="text-gray-500">{t("products.page.table.expandedInfo.unitPrice")}</div>
+                                <div className="text-gray-500">
+                                  {t(
+                                    "products.page.table.expandedInfo.unitPrice"
+                                  )}
+                                </div>
                                 <div className="font-medium">
                                   {p.unitPrice != null
                                     ? `${p.unitPrice.toLocaleString()} VND/kg`
@@ -379,14 +407,20 @@ export default function ProductsPage() {
                                 </div>
                               </div>
                               <div>
-                                <div className="text-gray-500">{t("products.page.table.expandedInfo.quality")}</div>
+                                <div className="text-gray-500">
+                                  {t(
+                                    "products.page.table.expandedInfo.quality"
+                                  )}
+                                </div>
                                 <div className="font-medium">
                                   {p.evaluatedQuality || "—"}
                                 </div>
                               </div>
                               <div>
                                 <div className="text-gray-500">
-                                  {t("products.page.table.expandedInfo.evaluationScore")}
+                                  {t(
+                                    "products.page.table.expandedInfo.evaluationScore"
+                                  )}
                                 </div>
                                 <div className="font-medium">
                                   {p.evaluationScore != null
@@ -395,19 +429,27 @@ export default function ProductsPage() {
                                 </div>
                               </div>
                               <div>
-                                <div className="text-gray-500">{t("products.page.table.expandedInfo.origin")}</div>
+                                <div className="text-gray-500">
+                                  {t("products.page.table.expandedInfo.origin")}
+                                </div>
                                 <div className="font-medium">
                                   {p.originRegion || "—"}
                                 </div>
                               </div>
                               <div>
-                                <div className="text-gray-500">{t("products.page.table.expandedInfo.batchCode")}</div>
+                                <div className="text-gray-500">
+                                  {t(
+                                    "products.page.table.expandedInfo.batchCode"
+                                  )}
+                                </div>
                                 <div className="font-medium">
                                   {p.batchCode || "—"}
                                 </div>
                               </div>
                               <div>
-                                <div className="text-gray-500">{t("products.page.table.expandedInfo.unit")}</div>
+                                <div className="text-gray-500">
+                                  {t("products.page.table.expandedInfo.unit")}
+                                </div>
                                 <div className="font-medium">
                                   {p.unit || "—"}
                                 </div>
@@ -435,7 +477,8 @@ export default function ProductsPage() {
               <span className="font-medium">
                 {Math.min(currentPage * pageSize, filtered.length)}
               </span>{" "}
-              {t("products.page.pagination.of")} {filtered.length} {t("products.page.pagination.products")}
+              {t("products.page.pagination.of")} {filtered.length}{" "}
+              {t("products.page.pagination.products")}
             </div>
             <div className="flex gap-2 justify-end mt-2 sm:mt-0">
               <Button
@@ -448,8 +491,9 @@ export default function ProductsPage() {
                 {t("products.page.pagination.previous")}
               </Button>
               <span className="flex items-center px-2">
-                {t("products.page.pagination.page")} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                / {totalPages}
+                {t("products.page.pagination.page")}{" "}
+                <span className="mx-1 font-semibold">{currentPage}</span> /{" "}
+                {totalPages}
               </span>
               <Button
                 variant="outline"

@@ -1,5 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { OrderStatus, orderStatusDisplayMap } from "@/lib/constants/orderStatus";
+import {
+  OrderStatus,
+  orderStatusDisplayMap,
+} from "@/lib/constants/orderStatus";
 import FilterBadge from "../crop-seasons/FilterBadge";
 
 interface Props {
@@ -17,21 +20,23 @@ export default function FilterOrderStatusPanel({
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
-      <h2 className="text-sm font-medium text-gray-700">{t('managerOrders.list.filters.status')}</h2>
+      <h2 className="text-sm font-medium text-gray-700">
+        {t("managerOrders.list.filters.status")}
+      </h2>
 
       {/* Tất cả */}
       <FilterBadge
         icon={orderStatusDisplayMap["ALL"].icon}
-        label={t('managerOrders.list.filters.allStatuses')}
+        label={t("managerOrders.list.filters.allStatuses")}
         color="orange"
         count={Object.values(statusCounts).reduce((sum, val) => sum + val, 0)}
         active={selectedStatus === "ALL"}
         onClick={() => setSelectedStatus("ALL")}
       />
 
-      {/* Các trạng thái cụ thể */}
+      {/* Các trạng thái cụ thể (ẩn Pending) */}
       {Object.entries(orderStatusDisplayMap).map(([key, { color, icon }]) => {
-        if (key === "ALL") return null;
+        if (key === "ALL" || key === OrderStatus.Pending) return null;
         const count = statusCounts[key] || 0;
         return (
           <FilterBadge
