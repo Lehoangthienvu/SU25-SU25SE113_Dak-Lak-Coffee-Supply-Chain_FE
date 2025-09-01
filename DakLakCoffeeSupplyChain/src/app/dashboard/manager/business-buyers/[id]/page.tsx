@@ -56,9 +56,14 @@ export default function BusinessBuyerDetailsPage() {
     })();
   }, [id]);
 
-  if (loading) return <div className="p-6">{t('businessBuyers.detail.loading')}</div>;
+  if (loading)
+    return <div className="p-6">{t("businessBuyers.detail.loading")}</div>;
   if (!buyer)
-    return <div className="p-6 text-red-500">{t('businessBuyers.detail.notFound')}</div>;
+    return (
+      <div className="p-6 text-red-500">
+        {t("businessBuyers.detail.notFound")}
+      </div>
+    );
 
   return (
     <div className="w-full min-h-screen bg-orange-50 px-4 py-6 lg:px-20 flex justify-center">
@@ -78,10 +83,12 @@ export default function BusinessBuyerDetailsPage() {
               <div className="text-xs text-gray-500 mt-1 flex items-center gap-4">
                 <span className="inline-flex items-center gap-1">
                   <CalendarDays className="w-3 h-3" />
-                  {t('businessBuyers.detail.fields.createdAt')}: {formatDate(buyer.createdAt)}
+                  {t("businessBuyers.detail.fields.createdAt")}:{" "}
+                  {formatDate(buyer.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  {t('businessBuyers.detail.fields.updatedAt')}: {formatDate(buyer.updatedAt)}
+                  {t("businessBuyers.detail.fields.updatedAt")}:{" "}
+                  {formatDate(buyer.updatedAt)}
                 </span>
               </div>
             </div>
@@ -99,7 +106,7 @@ export default function BusinessBuyerDetailsPage() {
                   )
                 }
               >
-                {t('businessBuyers.detail.fields.website')}
+                {t("businessBuyers.detail.fields.website")}
               </Button>
             )}
             <Button
@@ -110,7 +117,7 @@ export default function BusinessBuyerDetailsPage() {
                 )
               }
             >
-              <Pencil className="w-4 h-4" /> {t('businessBuyers.detail.edit')}
+              <Pencil className="w-4 h-4" /> {t("businessBuyers.detail.edit")}
             </Button>
           </div>
         </div>
@@ -119,38 +126,40 @@ export default function BusinessBuyerDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('businessBuyers.detail.sections.basicInfo')}</CardTitle>
+              <CardTitle>
+                {t("businessBuyers.detail.sections.basicInfo")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<Hash className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.buyerCode')}
+                label={t("businessBuyers.detail.fields.buyerCode")}
                 value={buyer.buyerCode}
               />
               <InfoRow
                 icon={<Building2 className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.companyName')}
+                label={t("businessBuyers.detail.fields.companyName")}
                 value={buyer.companyName}
               />
               <InfoRow
                 icon={<User className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.contactPerson')}
+                label={t("businessBuyers.detail.fields.contactPerson")}
                 value={buyer.contactPerson}
               />
               <InfoRow
                 icon={<BadgeInfo className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.position')}
+                label={t("businessBuyers.detail.fields.position")}
                 value={buyer.position}
               />
               <InfoRow
                 icon={<MapPin className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.address')}
+                label={t("businessBuyers.detail.fields.address")}
                 value={buyer.companyAddress}
                 multiline
               />
               <InfoRow
                 icon={<BadgePercent className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.taxCode')}
+                label={t("businessBuyers.detail.fields.taxCode")}
                 value={buyer.taxId || "—"}
               />
             </CardContent>
@@ -158,51 +167,34 @@ export default function BusinessBuyerDetailsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('businessBuyers.detail.sections.contactInfo')}</CardTitle>
+              <CardTitle>
+                {t("businessBuyers.detail.sections.contactInfo")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-3 text-sm">
               <InfoRow
                 icon={<Mail className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.email')}
+                label={t("businessBuyers.detail.fields.email")}
                 value={buyer.email || "—"}
-                actionLabel={buyer.email ? t('businessBuyers.detail.actions.sendEmail') : undefined}
-                onAction={() =>
-                  buyer.email &&
-                  (window.location.href = `mailto:${buyer.email}`)
-                }
               />
               <InfoRow
                 icon={<Phone className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.phone')}
+                label={t("businessBuyers.detail.fields.phone")}
                 value={buyer.phone || "—"}
-                actionLabel={buyer.phone ? t('businessBuyers.detail.actions.call') : undefined}
-                onAction={() =>
-                  buyer.phone && (window.location.href = `tel:${buyer.phone}`)
-                }
               />
               <InfoRow
                 icon={<Globe className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.website')}
+                label={t("businessBuyers.detail.fields.website")}
                 value={buyer.website || "—"}
-                actionLabel={buyer.website ? t('businessBuyers.detail.actions.open') : undefined}
-                onAction={() =>
-                  buyer.website &&
-                  window.open(
-                    buyer.website.startsWith("http")
-                      ? buyer.website
-                      : `https://${buyer.website}`,
-                    "_blank"
-                  )
-                }
               />
               <InfoRow
                 icon={<CalendarDays className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.createdAt')}
+                label={t("businessBuyers.detail.fields.createdAt")}
                 value={formatDate(buyer.createdAt)}
               />
               <InfoRow
                 icon={<CalendarDays className="w-4 h-4" />}
-                label={t('businessBuyers.detail.fields.updatedAt')}
+                label={t("businessBuyers.detail.fields.updatedAt")}
                 value={formatDate(buyer.updatedAt)}
               />
             </CardContent>
@@ -215,7 +207,7 @@ export default function BusinessBuyerDetailsPage() {
             variant="outline"
             onClick={() => router.push(`/dashboard/manager/business-buyers`)}
           >
-            ← {t('businessBuyers.detail.backToList')}
+            ← {t("businessBuyers.detail.backToList")}
           </Button>
         </div>
       </div>
