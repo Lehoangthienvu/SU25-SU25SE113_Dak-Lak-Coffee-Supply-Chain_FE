@@ -2088,7 +2088,10 @@
     "filterByStatus": "Filter by Status",
     "allStatuses": "All Statuses",
     "notAvailable": "N/A",
-    "currency": "VND"
+    "currency": "VND",
+    "navigation": {
+      "cultivationRegistration": "Cultivation Registration"
+    }
   },
 
   "notifications": {
@@ -4551,7 +4554,21 @@
       "staffList": "Staff List",
       "warehouseInventory": "Warehouse Inventory",
       "inventoryHistory": "Inventory History",
-      "outboundRequests": "Outbound Requests"
+      "outboundRequests": "Outbound Requests",
+      "coffeeMarketplace": "Coffee Marketplace",
+      "farmingCommitments": "Farming Commitments",
+      "deliveryRequests": "Delivery Requests",
+      "processing": "Processing",
+      "processingBatches": "Processing Batches",
+      "processingProgresses": "Processing Progress",
+      "processingWastes": "Processing Waste",
+      "userManagement": "User Management",
+      "expertManagement": "Expert Management",
+      "farmerManagement": "Farmer Management",
+      "consultation": "Consultation",
+      "farmer": {
+        "consultation": "Consultation"
+      }
     },
             "user": {
           "greeting": "Hello:",
@@ -5441,7 +5458,7 @@
           "orderCode": "Order Code",
           "contractNumber": "Contract Number",
           "deliveryBatchCode": "Delivery Batch Code",
-          "deliveryDate": "Delivery Date",
+          "deliveryDate": "Creation Date",
           "totalAmount": "Total Amount (VND)",
           "status": "Status",
           "actions": "Actions"
@@ -5455,7 +5472,7 @@
           "failed": "Failed"
         },
         "tooltips": {
-          "deliveryDate": "Actual delivery date if available, otherwise order date.",
+          "deliveryDate": "The date when the order was created.",
           "totalAmount": "Total monetary value of the order (after reconciliation).",
           "viewDetails": "View Details",
           "edit": "Edit",
@@ -5643,6 +5660,7 @@
           "orderCode": "Order Code:",
           "contractNumber": "Contract Number:",
           "deliveryRound": "Delivery Round:",
+          "orderDate": "Creation Date:",
           "deliveryDate": "Delivery Date:",
           "totalAmount": "Total Amount (VND):",
           "status": "Status:",
@@ -5650,6 +5668,7 @@
           "cancelReason": "Cancel Reason:"
         },
         "tooltips": {
+          "orderDate": "The date when the order was created.",
           "deliveryDate": "Actual delivery date if available, otherwise order date.",
           "totalAmount": "Total monetary value of the order."
         }
@@ -5682,10 +5701,15 @@
         "edit": "✏️ Edit",
         "delete": "Delete",
         "deleteConfirm": "Delete Item?",
-        "deleteMessage": "Are you sure you want to delete item {productName} from the order? This action will hide it from the list and cannot be undone.",
+        "deleteMessage": "Are you sure you want to delete item <strong>{{productName}}</strong> from the order? This action will hide it from the list and cannot be undone.",
         "deleteSuccess": "Item deleted successfully",
         "deleteError": "Failed to delete item.",
-        "loading": "Deleting..."
+        "loading": "Deleting...",
+        "deleteOrder": "Delete Order",
+        "deleteOrderConfirm": "Delete Order?",
+        "deleteOrderMessage": "Are you sure you want to delete order <strong>{{orderCode}}</strong>? This action will hide the order from the list and cannot be undone.",
+        "deleteOrderSuccess": "Order deleted successfully",
+        "deleteOrderError": "Failed to delete order"
       },
       "addOrderItem": {
     "title": {
