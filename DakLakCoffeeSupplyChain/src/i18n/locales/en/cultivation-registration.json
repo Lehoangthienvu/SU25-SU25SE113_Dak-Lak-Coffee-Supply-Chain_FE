@@ -17,9 +17,9 @@
           "registrationDate": "Registration Date:",
           "description": "Description:",
           "coffeeType": "Coffee Type:",
-          "estimatedYield": "Estimated Yield:",
+          "estimatedYield": "Registered Yield:",
           "wantedPrice": "Desired Price:",
-          "harvestTime": "Harvest Time:",
+          "harvestTime": "Expected Harvest Time:",
           "note": "Note:"
         },
         "buttons": {
@@ -134,6 +134,54 @@
           "title": "Contact Information",
           "description": "If you encounter issues or need support, please contact us."
         }
+      }
+    },
+    "pages": {
+      "list": {
+        "title": "My Cultivation Registrations",
+        "search": {
+          "title": "Search",
+          "placeholder": "Search by registration code or note..."
+        },
+        "actions": {
+          "browsePlans": "Browse Plans"
+        },
+        "table": {
+          "headers": {
+            "registrationCode": "Registration Code",
+            "registeredArea": "Registered Area",
+            "details": "Details",
+            "status": "Status",
+            "totalPrice": "Total Price",
+            "actions": "Actions",
+            "viewDetails": "View Details"
+          },
+          "noData": "No cultivation registrations found"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "of": "of",
+          "registrations": "registrations"
+        }
+      },
+      "detail": {
+        "title": "Cultivation Registration Details",
+        "notFound": "Registration not found",
+        "registrationInfo": "Registration Information",
+        "registrationDetails": "Registration Details",
+        "planInfo": "Plan Information",
+        "farmerInfo": "Farmer Information",
+        "totalPrice": "Total Price",
+        "expectedYieldPerHectare": "Expected Yield per Hectare",
+        "detailNumber": "Detail #{{number}}",
+        "planTitle": "Plan Title",
+        "planCode": "Plan Code",
+        "companyName": "Company Name",
+        "planPeriod": "Plan Period",
+        "totalQuantity": "Total Quantity",
+        "progress": "Progress",
+        "farmerName": "Farmer Name",
+        "farmerLocation": "Location"
       }
     },
     "dialogs": {
