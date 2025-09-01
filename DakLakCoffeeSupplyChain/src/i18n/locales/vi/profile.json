@@ -1,0 +1,35 @@
+{
+  "profile": {
+    "title": "Thông tin cá nhân",
+    "subtitle": "Quản lý thông tin hồ sơ và tài khoản của bạn",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "sections": {
+      "personalInfo": "Thông tin cá nhân",
+      "accountInfo": "Thông tin tài khoản"
+    },
+    "fields": {
+      "fullName": "Họ tên",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "role": "Vai trò",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "active": "Tài khoản hoạt động"
+    },
+    "security": {
+      "note": "Lưu ý bảo mật",
+      "message": "Để đảm bảo an toàn, hãy thường xuyên cập nhật mật khẩu và không chia sẻ thông tin đăng nhập."
+    },
+    "actions": {
+      "changePassword": "Đổi mật khẩu",
+      "securitySettings": "Cài đặt bảo mật",
+      "saveChanges": "Lưu thay đổi"
+    },
+    "placeholders": {
+      "notUpdated": "Chưa cập nhật",
+      "anonymous": "Ẩn danh",
+      "unknown": "Không xác định"
+    }
+  }
+}

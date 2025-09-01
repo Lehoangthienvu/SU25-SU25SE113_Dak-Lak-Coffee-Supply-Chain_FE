@@ -1,0 +1,35 @@
+{
+  "profile": {
+    "title": "Personal Information",
+    "subtitle": "Manage your profile and account information",
+    "editProfile": "Edit Profile",
+    "sections": {
+      "personalInfo": "Personal Information",
+      "accountInfo": "Account Information"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "role": "Role",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Account Active"
+    },
+    "security": {
+      "note": "Security Note",
+      "message": "For security, please regularly update your password and do not share login information."
+    },
+    "actions": {
+      "changePassword": "Change Password",
+      "securitySettings": "Security Settings",
+      "saveChanges": "Save Changes"
+    },
+    "placeholders": {
+      "notUpdated": "Not updated",
+      "anonymous": "Anonymous",
+      "unknown": "Unknown"
+    }
+  }
+}
