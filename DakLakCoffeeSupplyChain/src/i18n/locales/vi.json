@@ -5583,10 +5583,9 @@
           "deliveryDateNotBeforeOrder": "Ngày giao thực tế không được trước ngày đặt hàng",
           "discountNotExceedTotal": "Giảm giá không được vượt quá tổng thành tiền",
           "discountNotNegative": "Giảm giá không được âm",
-          "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa"
-        },
-        "fields": {
-          
+          "dataNotExists": "Dữ liệu không tồn tại hoặc đã bị xóa",
+          "quantityExceedsDeliveryItemGuidance": "Số lượng vượt quá kế hoạch của mặt hàng đợt giao (tối đa {{max}} kg).",
+          "quantityExceedsProductGuidance": "Số lượng vượt quá tồn kho có sẵn của sản phẩm (tối đa {{max}} kg)."
         },
         "table": {
           "headers": {

@@ -19,6 +19,8 @@ export const ProductUnitLabel: Record<ProductUnit, string> = {
 export interface ProductOption {
   productId: string;
   name: string;
+  coffeeTypeName?: string;
+  quantityAvailable?: number;
 }
 
 // DTO: Option cho processing batch dropdown
@@ -177,13 +179,27 @@ export async function softDeleteProduct(id: string): Promise<void> {
 
 // API: Lấy danh sách sản phẩm từ backend và map sang dạng ProductOption cho UI
 export async function getProductOptions(): Promise<ProductOption[]> {
-  const { data } = await api.get<
-    { productId: string; productName: string }[]
-  >("/products");
-  return data.map((p) => ({
-    productId: p.productId,
-    name: p.productName,
-  }));
+  // Prefer full products endpoint to include coffeeTypeName for filtering by type
+  try {
+    const { data } = await api.get<ProductViewAllDto[]>("/Products");
+    return (data ?? []).map((p) => ({
+      productId: p.productId,
+      name: p.productName,
+      coffeeTypeName: p.coffeeTypeName,
+      quantityAvailable: p.quantityAvailable ?? undefined,
+    }));
+  } catch (err) {
+    // Fallback to lowercase route if needed (may not include coffeeTypeName)
+    const { data } = await api.get<
+      { productId: string; productName: string; coffeeTypeName?: string; quantityAvailable?: number }[]
+    >("/products");
+    return (data ?? []).map((p) => ({
+      productId: p.productId,
+      name: p.productName,
+      coffeeTypeName: (p as any).coffeeTypeName,
+      quantityAvailable: (p as any).quantityAvailable,
+    }));
+  }
 }
 
 // API: Lấy danh sách processing batches cho dropdown

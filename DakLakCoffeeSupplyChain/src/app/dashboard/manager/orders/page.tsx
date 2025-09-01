@@ -61,7 +61,7 @@ export default function OrdersPage() {
         const res = await getAllOrders();
         setData(res);
       } catch (e) {
-        console.error(t('managerOrders.list.error.loadOrders'), e);
+        console.error(t("managerOrders.list.error.loadOrders"), e);
       } finally {
         setLoading(false);
       }
@@ -144,8 +144,10 @@ export default function OrdersPage() {
       setDeleting(true);
       await softDeleteOrder(id);
 
-      toast.success(t('managerOrders.list.delete.success'), {
-        description: `${t('managerOrders.list.table.headers.orderCode')} ${code} ${t('managerOrders.list.delete.success')}.`,
+      toast.success(t("managerOrders.list.delete.success"), {
+        description: `${t(
+          "managerOrders.list.table.headers.orderCode"
+        )} ${code} ${t("managerOrders.list.delete.success")}.`,
       });
 
       // close + optimistic update để biến mất ngay
@@ -159,9 +161,9 @@ export default function OrdersPage() {
       const msg =
         e?.response?.data?.message ||
         e?.message ||
-        t('managerOrders.list.delete.error');
-      console.error(t('managerOrders.list.delete.error'), e);
-      toast.error(t('managerOrders.list.delete.error'), { description: msg });
+        t("managerOrders.list.delete.error");
+      console.error(t("managerOrders.list.delete.error"), e);
+      toast.error(t("managerOrders.list.delete.error"), { description: msg });
     } finally {
       setDeleting(false);
     }
@@ -174,11 +176,11 @@ export default function OrdersPage() {
         {/* Tìm kiếm */}
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            {t('managerOrders.list.search.title')}
+            {t("managerOrders.list.search.title")}
           </h2>
           <div className="relative">
             <Input
-              placeholder={t('managerOrders.list.search.placeholder')}
+              placeholder={t("managerOrders.list.search.placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
@@ -204,7 +206,7 @@ export default function OrdersPage() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  {t('managerOrders.list.filters.fromDate')}
+                  {t("managerOrders.list.filters.fromDate")}
                 </label>
                 <Input
                   type="date"
@@ -219,7 +221,7 @@ export default function OrdersPage() {
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  {t('managerOrders.list.filters.toDate')}
+                  {t("managerOrders.list.filters.toDate")}
                 </label>
                 <Input
                   type="date"
@@ -237,7 +239,7 @@ export default function OrdersPage() {
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => router.push("/dashboard/manager/orders/create")}
             >
-              {t('managerOrders.list.actions.createNew')}
+              {t("managerOrders.list.actions.createNew")}
             </Button>
           </div>
 
@@ -247,35 +249,47 @@ export default function OrdersPage() {
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    {t('managerOrders.list.table.headers.orderCode')}
+                    {t("managerOrders.list.table.headers.orderCode")}
                   </th>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    {t('managerOrders.list.table.headers.contractNumber')}
+                    {t("managerOrders.list.table.headers.contractNumber")}
                   </th>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
-                    {t('managerOrders.list.table.headers.deliveryBatchCode')}
+                    {t("managerOrders.list.table.headers.deliveryBatchCode")}
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    {t('managerOrders.list.table.headers.deliveryDate')}
-                    <Tooltip content={t('managerOrders.list.table.tooltips.deliveryDate')}>
+                    {t("managerOrders.list.table.headers.deliveryDate")}
+                    <Tooltip
+                      content={t(
+                        "managerOrders.list.table.tooltips.deliveryDate"
+                      )}
+                    >
                       <Info className="inline ml-1 w-3 h-3 text-gray-400" />
                     </Tooltip>
                   </th>
                   <th className="px-4 py-2 text-center whitespace-nowrap">
-                    {t('managerOrders.list.table.headers.totalAmount')}
-                    <Tooltip content={t('managerOrders.list.table.tooltips.totalAmount')}>
+                    {t("managerOrders.list.table.headers.totalAmount")}
+                    <Tooltip
+                      content={t(
+                        "managerOrders.list.table.tooltips.totalAmount"
+                      )}
+                    >
                       <Info className="inline ml-1 w-3 h-3 text-gray-400" />
                     </Tooltip>
                   </th>
-                  <th className="px-4 py-2 text-center">{t('managerOrders.list.table.headers.status')}</th>
-                  <th className="px-4 py-2 text-center">{t('managerOrders.list.table.headers.actions')}</th>
+                  <th className="px-4 py-2 text-center">
+                    {t("managerOrders.list.table.headers.status")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("managerOrders.list.table.headers.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="text-center py-6 text-gray-500">
-                      {t('managerOrders.list.loading.loadingData')}
+                      {t("managerOrders.list.loading.loadingData")}
                     </td>
                   </tr>
                 ) : isNoData ? (
@@ -283,7 +297,7 @@ export default function OrdersPage() {
                     <td colSpan={7} className="py-10">
                       <div className="flex flex-col items-center gap-3 text-gray-600">
                         <div className="text-lg font-medium">
-                          {t('managerOrders.list.empty.noOrders')}
+                          {t("managerOrders.list.empty.noOrders")}
                         </div>
                       </div>
                     </td>
@@ -291,7 +305,7 @@ export default function OrdersPage() {
                 ) : noResult ? (
                   <tr>
                     <td colSpan={7} className="text-center py-6 text-gray-500">
-                      {t('managerOrders.list.empty.noResults')}
+                      {t("managerOrders.list.empty.noResults")}
                     </td>
                   </tr>
                 ) : (
@@ -320,12 +334,18 @@ export default function OrdersPage() {
                             OrderStatusBadgeClass[o.status]
                           }`}
                         >
-                          {t(`managerOrders.list.table.status.${o.status.toLowerCase()}`)}
+                          {t(
+                            `managerOrders.list.table.status.${o.status.toLowerCase()}`
+                          )}
                         </span>
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex justify-center gap-[2px]">
-                          <Tooltip content={t('managerOrders.list.table.tooltips.viewDetails')}>
+                          <Tooltip
+                            content={t(
+                              "managerOrders.list.table.tooltips.viewDetails"
+                            )}
+                          >
                             <Button
                               variant="ghost"
                               className="w-7 h-7 p-[2px]"
@@ -339,7 +359,11 @@ export default function OrdersPage() {
                             </Button>
                           </Tooltip>
 
-                          <Tooltip content={t('managerOrders.list.table.tooltips.edit')}>
+                          <Tooltip
+                            content={t(
+                              "managerOrders.list.table.tooltips.edit"
+                            )}
+                          >
                             <Button
                               variant="ghost"
                               className="w-7 h-7 p-[2px]"
@@ -353,7 +377,11 @@ export default function OrdersPage() {
                             </Button>
                           </Tooltip>
 
-                          <Tooltip content={t('managerOrders.list.table.tooltips.delete')}>
+                          <Tooltip
+                            content={t(
+                              "managerOrders.list.table.tooltips.delete"
+                            )}
+                          >
                             <Button
                               variant="ghost"
                               className="w-7 h-7 p-[2px]"
@@ -379,7 +407,7 @@ export default function OrdersPage() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
             <div className="text-sm text-gray-600">
-              {t('managerOrders.list.pagination.showing')}{" "}
+              {t("managerOrders.list.pagination.showing")}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * ITEMS_PER_PAGE + 1}
               </span>
@@ -387,7 +415,8 @@ export default function OrdersPage() {
               <span className="font-medium">
                 {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}
               </span>{" "}
-              {t('managerOrders.list.pagination.of')} {filtered.length} {t('managerOrders.list.pagination.orders')}
+              {t("managerOrders.list.pagination.of")} {filtered.length}{" "}
+              {t("managerOrders.list.pagination.orders")}
             </div>
             <div className="flex gap-2 justify-end mt-2 sm:mt-0">
               <Button
@@ -397,11 +426,12 @@ export default function OrdersPage() {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               >
-                {t('managerOrders.list.pagination.previous')}
+                {t("managerOrders.list.pagination.previous")}
               </Button>
               <span className="flex items-center px-2">
-                {t('managerOrders.list.pagination.page')} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                {t('managerOrders.list.pagination.of')} {totalPages}
+                {t("managerOrders.list.pagination.page")}{" "}
+                <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t("managerOrders.list.pagination.of")} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -412,7 +442,7 @@ export default function OrdersPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
               >
-                {t('managerOrders.list.pagination.next')}
+                {t("managerOrders.list.pagination.next")}
               </Button>
             </div>
           </div>
@@ -423,14 +453,16 @@ export default function OrdersPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t('managerOrders.list.delete.confirm')}
+        title={t("managerOrders.list.delete.confirm")}
         description={
           <span>
-            {t('managerOrders.list.delete.message', { orderCode: orderToDelete?.orderCode })}
+            {t("managerOrders.list.delete.message", {
+              orderCode: orderToDelete?.orderCode || "—",
+            })}
           </span>
         }
-        confirmText={t('managerOrders.list.table.tooltips.delete')}
-        cancelText={"Huỷ"}
+        confirmText={t("managerOrders.list.table.tooltips.delete")}
+        cancelText="Huỷ"
         onConfirm={handleDelete}
         loading={deleting}
       />

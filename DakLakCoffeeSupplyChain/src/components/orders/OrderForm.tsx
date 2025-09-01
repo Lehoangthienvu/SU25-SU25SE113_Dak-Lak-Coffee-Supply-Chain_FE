@@ -25,6 +25,10 @@ import {
   type ContractDeliveryBatchViewDetailsDto,
   getAllContractDeliveryBatches,
 } from "@/lib/api/contractDeliveryBatches";
+import {
+  getContractDetails,
+  type ContractViewDetailsDto,
+} from "@/lib/api/contracts";
 
 import { getProductOptions, type ProductOption } from "@/lib/api/products";
 import { OrderStatus } from "@/lib/constants/orderStatus";
@@ -78,6 +82,22 @@ export default function OrderForm({
   const [batchOptions, setBatchOptions] = useState<
     { id: string; label: string }[]
   >([]);
+  // Map deliveryItemId -> unitPrice from related contract item
+  const [deliveryItemUnitPriceMap, setDeliveryItemUnitPriceMap] = useState<
+    Record<string, number>
+  >({});
+  // Map deliveryItemId -> discount (%) from related contract item
+  const [deliveryItemDiscountMap, setDeliveryItemDiscountMap] = useState<
+    Record<string, number>
+  >({});
+  // Map deliveryItemId -> coffeeTypeName to filter products by type
+  const [deliveryItemCoffeeTypeMap, setDeliveryItemCoffeeTypeMap] = useState<
+    Record<string, string>
+  >({});
+  // Map deliveryItemId -> plannedQuantity for quantity validation
+  const [deliveryItemQuantityMap, setDeliveryItemQuantityMap] = useState<
+    Record<string, number>
+  >({});
 
   // UI giảm theo %
   const DISCOUNT_IS_PERCENT = true;
@@ -163,6 +183,58 @@ export default function OrderForm({
         }));
         setDeliveryItemOptions(opts);
 
+        // Build coffee type mapping for each delivery item
+        const typeMap: Record<string, string> = {};
+        const quantityMap: Record<string, number> = {};
+        for (const it of details.contractDeliveryItems ?? []) {
+          if (it.deliveryItemId && it.coffeeTypeName) {
+            typeMap[it.deliveryItemId] = it.coffeeTypeName;
+          }
+          if (it.deliveryItemId && it.plannedQuantity) {
+            quantityMap[it.deliveryItemId] = it.plannedQuantity;
+          }
+        }
+        setDeliveryItemCoffeeTypeMap(typeMap);
+        setDeliveryItemQuantityMap(quantityMap);
+
+        // Fetch contract details to derive unit price per delivery item
+        try {
+          const contract = (await getContractDetails(
+            details.contractId
+          )) as ContractViewDetailsDto;
+          const priceByContractItem = new Map(
+            (contract.contractItems ?? []).map((ci) => [
+              ci.contractItemId,
+              Number(ci.unitPrice ?? 0),
+            ])
+          );
+          const discountByContractItem = new Map(
+            (contract.contractItems ?? []).map((ci) => [
+              ci.contractItemId,
+              Number(ci.discountAmount ?? 0),
+            ])
+          );
+          const map: Record<string, number> = {};
+          const discMap: Record<string, number> = {};
+          for (const di of details.contractDeliveryItems ?? []) {
+            const price = priceByContractItem.get(di.contractItemId);
+            if (price !== undefined) {
+              map[di.deliveryItemId] = price;
+            }
+            const disc = discountByContractItem.get(di.contractItemId);
+            if (disc !== undefined) {
+              discMap[di.deliveryItemId] = disc;
+            }
+          }
+          setDeliveryItemUnitPriceMap(map);
+          setDeliveryItemDiscountMap(discMap);
+        } catch (err) {
+          // Không chặn UX nếu lỗi lấy chi tiết hợp đồng
+          console.warn("Failed to load contract details for unit prices", err);
+          setDeliveryItemUnitPriceMap({});
+          setDeliveryItemDiscountMap({});
+        }
+
         // 4) Product options
         const products = await getProductOptions();
         setProductOptions(products ?? []);
@@ -195,6 +267,45 @@ export default function OrderForm({
     })();
   }, [form.deliveryBatchId]);
 
+  // Real-time validation for business rules
+  useEffect(() => {
+    if (!form.orderItems.length) {
+      setBusinessErrors([]);
+      return;
+    }
+
+    const newBusiness: string[] = [];
+
+    form.orderItems.forEach((item) => {
+      if (!item.contractDeliveryItemId || !item.productId || !item.quantity)
+        return;
+
+      // Validate quantity against delivery item planned quantity
+      const deliveryItemLimit =
+        deliveryItemQuantityMap[item.contractDeliveryItemId];
+      if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
+        newBusiness.push(
+          `Số lượng vượt quá kế hoạch của mặt hàng đợt giao (tối đa ${deliveryItemLimit} kg).`
+        );
+      }
+
+      // Validate quantity against product available quantity
+      const selectedProduct = productOptions.find(
+        (p) => p.productId === item.productId
+      );
+      if (selectedProduct && selectedProduct.quantityAvailable) {
+        const productLimit = Number(selectedProduct.quantityAvailable);
+        if (Number(item.quantity) > productLimit) {
+          newBusiness.push(
+            `Số lượng vượt quá tồn kho có sẵn của sản phẩm (tối đa ${productLimit} kg).`
+          );
+        }
+      }
+    });
+
+    setBusinessErrors(newBusiness);
+  }, [form.orderItems, deliveryItemQuantityMap, productOptions]);
+
   // Helpers
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...(prev as FormState), [key]: value }));
@@ -208,10 +319,7 @@ export default function OrderForm({
       });
     }
 
-    // Clear business errors when user makes any change
-    if (businessErrors.length > 0) {
-      setBusinessErrors([]);
-    }
+    // Note: Business errors are now handled by useEffect for real-time validation
   };
 
   const ensureItems = () =>
@@ -267,10 +375,7 @@ export default function OrderForm({
       });
     }
 
-    // Clear business errors when user makes any change
-    if (businessErrors.length > 0) {
-      setBusinessErrors([]);
-    }
+    // Note: Business errors are now handled by useEffect for real-time validation
   };
 
   const removeRow = (idx: number) =>
@@ -342,6 +447,7 @@ export default function OrderForm({
 
     // Validate
     const clientErrors: Record<string, string> = {};
+    const newBusiness: string[] = [];
 
     if (!data.deliveryBatchId) {
       clientErrors.deliveryBatchId = t(
@@ -374,6 +480,22 @@ export default function OrderForm({
             "managerOrders.form.validation.unitPriceRequired"
           );
         }
+
+        // Validate quantity against delivery item planned quantity
+        const deliveryItemLimit =
+          deliveryItemQuantityMap[item.contractDeliveryItemId];
+        if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
+        }
+
+        // Validate quantity against product available quantity
+        const selectedProduct = productOptions.find(
+          (p) => p.productId === item.productId
+        );
+        if (selectedProduct && selectedProduct.quantityAvailable) {
+          const productLimit = Number(selectedProduct.quantityAvailable);
+          if (Number(item.quantity) > productLimit) {
+          }
+        }
       });
     }
 
@@ -388,9 +510,10 @@ export default function OrderForm({
       }
     }
 
-    // If there are client-side errors, display them and stop
-    if (Object.keys(clientErrors).length > 0) {
+    // If there are client-side errors or business rule violations, display them and stop
+    if (Object.keys(clientErrors).length > 0 || newBusiness.length > 0) {
       setFieldErrors(clientErrors);
+      setBusinessErrors(newBusiness);
       toast.error(t("managerOrders.form.validation.checkFormErrors"));
       return;
     }
@@ -673,21 +796,15 @@ export default function OrderForm({
           {/* Tóm tắt nhanh */}
           <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
             <strong> {t("managerOrders.form.businessRules.summary")}:</strong>
-            {businessErrors.some((err) => err.includes("vượt quá")) &&
-              ` ${t("managerOrders.form.businessRules.adjustOrderInfo")}`}
-            {businessErrors.some((err) => err.includes("cùng loại")) &&
-              ` ${t(
-                "managerOrders.form.businessRules.removeDuplicateProducts"
-              )}`}
-            {businessErrors.some((err) => err.includes("đã tồn tại")) &&
-              ` ${t("managerOrders.form.businessRules.changeOrderInfo")}`}
-            {businessErrors.some((err) => err.includes("không có quyền")) &&
-              ` ${t("managerOrders.form.businessRules.contactAdmin")}`}
-            {businessErrors.some((err) =>
-              err.includes("Lô giao hàng này đã có đơn hàng")
-            ) && ` ${t("managerOrders.form.businessRules.deliveryBatchUsed")}`}
-            {businessErrors.some((err) => err.includes("Không tìm thấy")) &&
-              ` ${t("managerOrders.form.businessRules.dataNotFound")}`}
+            {businessErrors.length > 0 && (
+              <div className="mt-2">
+                {businessErrors.map((error, index) => (
+                  <div key={index} className="text-sm">
+                    • {error}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Hướng dẫn giải quyết */}
@@ -696,9 +813,20 @@ export default function OrderForm({
               💡 {t("managerOrders.form.businessRules.guidance")}:
             </p>
             <ul className="text-orange-600 text-xs space-y-1">
-              {businessErrors.some((err) => err.includes("vượt quá")) && (
+              {businessErrors.some((err) =>
+                err.includes("vượt quá kế hoạch")
+              ) && (
                 <li>
-                  • {t("managerOrders.form.businessRules.checkOrderInfo")}
+                  • Giảm số lượng xuống dưới giới hạn kế hoạch của mặt hàng đợt
+                  giao
+                </li>
+              )}
+              {businessErrors.some((err) =>
+                err.includes("vượt quá tồn kho")
+              ) && (
+                <li>
+                  • Giảm số lượng xuống dưới số lượng tồn kho có sẵn của sản
+                  phẩm
                 </li>
               )}
               {businessErrors.some((err) => err.includes("cùng loại")) && (
@@ -990,9 +1118,18 @@ export default function OrderForm({
                 {/* Mặt hàng đợt giao */}
                 <select
                   value={row.contractDeliveryItemId}
-                  onChange={(e) =>
-                    updateRow(idx, "contractDeliveryItemId", e.target.value)
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    updateRow(idx, "contractDeliveryItemId", value);
+                    const autoPrice = deliveryItemUnitPriceMap[value];
+                    if (autoPrice !== undefined) {
+                      updateRow(idx, "unitPrice", autoPrice as any);
+                    }
+                    const autoDisc = deliveryItemDiscountMap[value];
+                    if (autoDisc !== undefined) {
+                      updateRow(idx, "discountAmount", autoDisc as any);
+                    }
+                  }}
                   className={`p-2 border rounded ${
                     hasOrderItemError(idx, "contractDeliveryItemId")
                       ? "border-red-500"
@@ -1031,11 +1168,26 @@ export default function OrderForm({
                   <option value="">
                     -- {t("managerOrders.form.placeholders.selectProduct")} --
                   </option>
-                  {(productOptions ?? []).map((p) => (
-                    <option key={p.productId} value={p.productId}>
-                      {p.name}
-                    </option>
-                  ))}
+                  {(productOptions ?? [])
+                    .filter((p) => {
+                      const currentDeliveryId = String(
+                        row.contractDeliveryItemId || ""
+                      );
+                      if (!currentDeliveryId) return true; // until user chooses a delivery item
+                      const neededType = (
+                        deliveryItemCoffeeTypeMap[currentDeliveryId] || ""
+                      ).toLowerCase();
+                      if (!neededType) return true;
+                      const productType = (
+                        p.coffeeTypeName || ""
+                      ).toLowerCase();
+                      return productType === neededType;
+                    })
+                    .map((p) => (
+                      <option key={p.productId} value={p.productId}>
+                        {p.name}
+                      </option>
+                    ))}
                 </select>
                 {hasOrderItemError(idx, "productId") && (
                   <p className="text-red-500 text-xs mt-1 md:col-span-7">
