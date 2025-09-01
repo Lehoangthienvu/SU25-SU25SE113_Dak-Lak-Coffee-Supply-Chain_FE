@@ -77,6 +77,10 @@ export async function getAllSytemConfiguration(): Promise<SystemConfiguration[]>
   const response = await api.get("/SystemConfiguration");
   return response.data;
 }
+export async function getSytemConfigurationByName(name: string): Promise<SystemConfiguration> {
+  const response = await api.get(`/SystemConfiguration/${name}`);
+  return response.data;
+}
 
 // ========== PROCESSING BATCH CRITERIA APIs ==========
 
