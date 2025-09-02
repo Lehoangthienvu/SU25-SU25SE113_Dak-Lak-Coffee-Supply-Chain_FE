@@ -15,6 +15,7 @@ import {
   ContractDeliveryBatchCreateDto,
   ContractDeliveryBatchUpdateDto,
   getContractDeliveryBatchById,
+  getContractDeliveryBatchesByContractId,
 } from "@/lib/api/contractDeliveryBatches";
 import {
   ContractDeliveryBatchStatus,
@@ -24,7 +25,13 @@ import {
 import { toDateOnly, fromDateOnly, getErrorMessage } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
-export type ContractOption = { contractId: string; contractNumber: string };
+export type ContractOption = {
+  contractId: string;
+  contractNumber: string;
+  remainingQuantity?: number;
+  totalQuantity?: number;
+  existingBatches?: number;
+};
 
 // Form State
 type DeliveryBatchFormState = {
@@ -199,6 +206,47 @@ export default function ContractDeliveryBatchForm({
       }
     })();
   }, [formData?.contractId]);
+
+  // useEffect để kiểm tra và cập nhật deliveryRound dựa trên số đợt giao hiện có
+  useEffect(() => {
+    const cid = formData?.contractId;
+    if (!cid || isEdit) return; // Chỉ áp dụng cho create mode
+
+    (async () => {
+      try {
+        // Lấy danh sách đợt giao hàng của hợp đồng này
+        const existingBatches = await getContractDeliveryBatchesByContractId(
+          cid
+        );
+
+        // Tìm deliveryRound lớn nhất hiện có
+        const maxRound = existingBatches.reduce((max, batch) => {
+          return Math.max(max, batch.deliveryRound || 0);
+        }, 0);
+
+        // Cập nhật deliveryRound thành round tiếp theo
+        setFormData((prev) =>
+          prev
+            ? {
+                ...prev,
+                deliveryRound: maxRound + 1,
+              }
+            : null
+        );
+      } catch (e) {
+        console.error("Không thể kiểm tra đợt giao hàng hiện có:", e);
+        // Nếu lỗi, giữ nguyên deliveryRound = 1
+        setFormData((prev) =>
+          prev
+            ? {
+                ...prev,
+                deliveryRound: 1,
+              }
+            : null
+        );
+      }
+    })();
+  }, [formData?.contractId, isEdit]);
 
   // useEffect tự động cập nhật trạng thái khi khối lượng đã giao thay đổi
   useEffect(() => {
@@ -750,6 +798,14 @@ export default function ContractDeliveryBatchForm({
             {contractOptions.map((c) => (
               <option key={c.contractId} value={c.contractId}>
                 {c.contractNumber}
+                {c.remainingQuantity !== undefined &&
+                  c.totalQuantity !== undefined &&
+                  c.remainingQuantity > 0 &&
+                  ` - Còn lại: ${c.remainingQuantity.toLocaleString()} kg / ${c.totalQuantity.toLocaleString()} kg`}
+                {c.existingBatches !== undefined &&
+                  c.existingBatches > 0 &&
+                  ` (${c.existingBatches} đợt giao)`}
+                {c.remainingQuantity === 0 && ` - Đã đủ đợt giao`}
               </option>
             ))}
           </select>
@@ -758,6 +814,40 @@ export default function ContractDeliveryBatchForm({
               {getFieldError("contractId")}
             </p>
           )}
+
+          {/* Thông báo hướng dẫn */}
+          <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="flex items-start gap-2">
+              <div className="text-blue-600 mt-0.5">ℹ️</div>
+              <div className="text-blue-800 text-sm">
+                <p className="font-medium mb-1">
+                  {t("contractDeliveryBatches.form.contractSelection.title")}
+                </p>
+                <ul className="text-xs space-y-1">
+                  <li>
+                    {t(
+                      "contractDeliveryBatches.form.contractSelection.onlyAvailableContracts"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "contractDeliveryBatches.form.contractSelection.displayFormat"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "contractDeliveryBatches.form.contractSelection.autoDeliveryRound"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "contractDeliveryBatches.form.contractSelection.completedContractsHidden"
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
