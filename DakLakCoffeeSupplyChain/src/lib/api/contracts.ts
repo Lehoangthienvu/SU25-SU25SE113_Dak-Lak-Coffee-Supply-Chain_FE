@@ -3,6 +3,11 @@ import { ContractStatus, normalizeStatusForApi } from "@/lib/constants/contractS
 import { ContractItemCreateDto } from "@/lib/api/contractItems";
 import { ContractItemUpdateDto } from "@/lib/api/contractItems";
 
+export interface SettlementFileDto {
+  roundName: number;
+  settlementFileURL: string;
+}
+
 // DTO: Hợp đồng (mock dùng cho demo)
 export interface Contract {
   id: string;
@@ -70,6 +75,12 @@ export interface ContractViewDetailsDto {
   signedAt?: string;
   status: string;
   cancelReason: string;
+  contractType?: string;
+  parentContractId?: string;
+  paymentRounds?: number;
+  settlementFilesJson?: string;
+  settlementFiles: SettlementFileDto[];
+  settlementNote?: string;
   createdAt: string;
   updatedAt: string;
   contractItems: ContractItemViewDto[];
@@ -90,6 +101,13 @@ export interface ContractCreateDto {
   signedAt?: string;
   status: ContractStatus;
   cancelReason: string;
+  contractType: string; // Có 2 loại là hợp đồng hoặc phụ lục hợp đồng, nếu chọn phụ lục hợp đồng thì phải chọn hợp đồng cha
+  parentContractId: string;
+  settlementFiles?: File[]; // Thêm field cho nhiều settlement files
+  paymentRounds: number;
+  settlementFileURL?: string;
+  settlementFilesJson?: string;
+  settlementNote?: string;
   contractItems: ContractItemCreateDto[];
 }
 
@@ -244,19 +262,19 @@ export async function softDeleteContract(contractId: string): Promise<void> {
 } 
 
 // Helper: ép về yyyy-MM-dd
-const toISODate = (d: string) => {
-  // d có thể là '08/19/2025' hoặc '2025-08-19'
-  const parts = d.includes('/') ? d.split('/') : d.split('-');
-  let yyyy: number, mm: number, dd: number;
+// const toISODate = (d: string) => {
+//   // d có thể là '08/19/2025' hoặc '2025-08-19'
+//   const parts = d.includes('/') ? d.split('/') : d.split('-');
+//   let yyyy: number, mm: number, dd: number;
 
-  if (d.includes('/')) { // mm/dd/yyyy
-    [mm, dd, yyyy] = parts.map(Number);
-  } else {               // yyyy-mm-dd
-    [yyyy, mm, dd] = parts.map(Number);
-  }
-  const date = new Date(Date.UTC(yyyy, mm - 1, dd));
-  return date.toISOString().slice(0, 10); // 'yyyy-MM-dd'
-};
+//   if (d.includes('/')) { // mm/dd/yyyy
+//     [mm, dd, yyyy] = parts.map(Number);
+//   } else {               // yyyy-mm-dd
+//     [yyyy, mm, dd] = parts.map(Number);
+//   }
+//   const date = new Date(Date.UTC(yyyy, mm - 1, dd));
+//   return date.toISOString().slice(0, 10); // 'yyyy-MM-dd'
+// };
 
 // API: Tạo mới hợp đồng
 export async function createContract(data: ContractCreateDto): Promise<void> {
@@ -285,11 +303,33 @@ export async function createContract(data: ContractCreateDto): Promise<void> {
   const signed = only(data.signedAt);
   if (signed) fd.append('signedAt', signed);
 
-  const statusForApi = normalizeStatusForApi((data as any).statusLabel ?? data.status);
+  const statusForApi = normalizeStatusForApi((data as ContractCreateDto & { statusLabel?: string }).statusLabel ?? data.status);
   fd.append('status', statusForApi);
   fd.append('cancelReason', (data.cancelReason ?? '').trim());
+  
+  // Thêm các field mới
+  if (data.contractType) fd.append('contractType', data.contractType);
+  if (data.parentContractId) fd.append('parentContractId', data.parentContractId);
+  if (data.paymentRounds !== undefined) fd.append('paymentRounds', String(data.paymentRounds));
+  if (data.settlementFileURL) fd.append('settlementFileURL', data.settlementFileURL);
+  if (data.settlementFilesJson) fd.append('settlementFilesJson', data.settlementFilesJson);
+  if (data.settlementNote) fd.append('settlementNote', data.settlementNote);
 
   if (data.contractFile) fd.append('contractFile', data.contractFile);
+
+  // Thêm settlement files nếu có (create)
+  if ((data as ContractCreateDto & { settlementFiles?: File[] }).settlementFiles) {
+    const settlementFiles = (data as ContractCreateDto & { settlementFiles?: File[] }).settlementFiles as File[];
+    console.log('Settlement files to send:', settlementFiles);
+    settlementFiles.forEach((file, index) => {
+      if (file) {
+        // Use simple field name for ICollection<IFormFile>
+        const fieldName = 'settlementFiles';
+        fd.append(fieldName, file);
+        console.log(`Appending settlement file ${index + 1}: ${fieldName}`, file.name, file.size);
+      }
+    });
+  }
 
   data.contractItems.forEach((it, i) => {
     fd.append(`contractItems[${i}].coffeeTypeId`, it.coffeeTypeId);
@@ -299,6 +339,24 @@ export async function createContract(data: ContractCreateDto): Promise<void> {
     if (it.note)                         fd.append(`contractItems[${i}].note`, it.note);
   });
 
+  // Debug: Log FormData contents
+  console.log('FormData contents:');
+  for (const [key, value] of fd.entries()) {
+    if (value instanceof File) {
+      console.log(`${key}: File(${value.name}, ${value.size} bytes)`);
+    } else {
+      console.log(`${key}: ${value}`);
+    }
+  }
+  
+  // Debug: Log specific settlement files
+  console.log('Settlement files in FormData:');
+  for (const [key, value] of fd.entries()) {
+    if (key.startsWith('settlementFiles') && value instanceof File) {
+      console.log(`Found settlement file: ${key} = ${value.name} (${value.size} bytes)`);
+    }
+  }
+  
   await api.post('/Contracts', fd); // KHÔNG set Content-Type
 }
 
@@ -330,11 +388,33 @@ export async function updateContract(contractId: string, data: ContractUpdateDto
   const signed = only(data.signedAt);
   if (signed) fd.append('signedAt', signed);
 
-  const statusForApi = normalizeStatusForApi((data as any).statusLabel ?? data.status);
+  const statusForApi = normalizeStatusForApi((data as ContractUpdateDto & { statusLabel?: string }).statusLabel ?? data.status);
   fd.append('status', statusForApi);
   fd.append('cancelReason', (data.cancelReason ?? '').trim());
+  
+  // Thêm các field mới
+  if (data.contractType) fd.append('contractType', data.contractType);
+  if (data.parentContractId) fd.append('parentContractId', data.parentContractId);
+  if (data.paymentRounds !== undefined) fd.append('paymentRounds', String(data.paymentRounds));
+  if (data.settlementFileURL) fd.append('settlementFileURL', data.settlementFileURL);
+  if (data.settlementFilesJson) fd.append('settlementFilesJson', data.settlementFilesJson);
+  if (data.settlementNote) fd.append('settlementNote', data.settlementNote);
 
   if (data.contractFile) fd.append('contractFile', data.contractFile);
+
+  // Thêm settlement files nếu có (update)
+  if ((data as ContractUpdateDto & { settlementFiles?: File[] }).settlementFiles) {
+    const settlementFiles = (data as ContractUpdateDto & { settlementFiles?: File[] }).settlementFiles as File[];
+    console.log('Settlement files to send (update):', settlementFiles);
+    settlementFiles.forEach((file, index) => {
+      if (file) {
+        // Use simple field name for ICollection<IFormFile>
+        const fieldName = 'settlementFiles';
+        fd.append(fieldName, file);
+        console.log(`Appending settlement file ${index + 1} (update): ${fieldName}`, file.name, file.size);
+      }
+    });
+  }
 
   data.contractItems.forEach((it, i) => {
     fd.append(`contractItems[${i}].contractItemId`, it.contractItemId);
@@ -346,5 +426,23 @@ export async function updateContract(contractId: string, data: ContractUpdateDto
     if (it.note)                         fd.append(`contractItems[${i}].note`, it.note);
   });
 
+  // Debug: Log FormData contents
+  console.log('FormData contents (update):');
+  for (const [key, value] of fd.entries()) {
+    if (value instanceof File) {
+      console.log(`${key}: File(${value.name}, ${value.size} bytes)`);
+    } else {
+      console.log(`${key}: ${value}`);
+    }
+  }
+  
+  // Debug: Log specific settlement files
+  console.log('Settlement files in FormData (update):');
+  for (const [key, value] of fd.entries()) {
+    if (key.startsWith('settlementFiles') && value instanceof File) {
+      console.log(`Found settlement file: ${key} = ${value.name} (${value.size} bytes)`);
+    }
+  }
+  
   await api.put(`/Contracts/${contractId}`, fd); // KHÔNG set Content-Type
 }

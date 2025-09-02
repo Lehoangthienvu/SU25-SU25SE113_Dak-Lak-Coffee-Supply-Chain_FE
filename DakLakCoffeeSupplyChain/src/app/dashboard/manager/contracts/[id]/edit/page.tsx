@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getContractDetails } from "@/lib/api/contracts";
-import { ContractViewDetailsDto, ContractUpdateDto } from "@/lib/api/contracts";
+import { ContractUpdateDto } from "@/lib/api/contracts";
 import ContractForm from "@/components/contracts/ContractForm";
 import { Loader } from "lucide-react";
 import {
@@ -11,6 +11,7 @@ import {
   BusinessBuyerDto,
 } from "@/lib/api/businessBuyers";
 import { ContractStatus } from "@/lib/constants/contractStatus";
+import { SettlementFileDto } from "@/lib/api/contracts";
 
 export default function EditContractPage() {
   const params = useParams();
@@ -45,7 +46,8 @@ export default function EditContractPage() {
 
         setBuyers(buyerList);
 
-        const updateDto: ContractUpdateDto = {
+        // Convert ContractViewDetailsDto to ContractUpdateDto
+        const updateDto: ContractUpdateDto & { apiSettlementFiles?: SettlementFileDto[] } = {
           contractId: contract.contractId,
           contractNumber: contract.contractNumber,
           contractTitle: contract.contractTitle,
@@ -59,9 +61,18 @@ export default function EditContractPage() {
           signedAt: contract.signedAt,
           status: contract.status as ContractStatus,
           cancelReason: contract.cancelReason,
+          contractType: contract.contractType ?? "",
+          parentContractId: contract.parentContractId ?? "",
+          paymentRounds: contract.paymentRounds ?? 1,
+          settlementFileURL: "",
+          settlementFilesJson: "",
+          settlementNote: contract.settlementNote,
+          // Add settlementFiles from API response with different name
+          apiSettlementFiles: contract.settlementFiles,
+          // Convert ContractItemViewDto[] to ContractItemUpdateDto[]
           contractItems: contract.contractItems.map((item) => ({
             contractItemId: item.contractItemId,
-            contractId: contract.contractId,
+            contractId: contract.contractId, // Add the missing contractId
             coffeeTypeId: item.coffeeTypeId,
             quantity: item.quantity ?? 0,
             unitPrice: item.unitPrice ?? 0,

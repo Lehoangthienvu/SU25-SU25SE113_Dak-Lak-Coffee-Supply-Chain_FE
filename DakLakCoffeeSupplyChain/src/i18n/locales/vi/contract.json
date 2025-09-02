@@ -1,0 +1,38 @@
+{
+"contract": {
+    "components": {
+      "form": {
+        "fields": {
+          "contractType": "Loại hợp đồng",
+          "contractTypes": {
+            "contract": "Hợp đồng",
+            "parentContract": "Phụ lục hợp đồng"
+          },
+          "parentContractId": "Phụ lục hợp đồng",
+          "settlementFile": "File thanh toán",
+          "paymentRounds": "Số đợt thanh toán",
+          "settlementNote": "Ghi chú thanh toán",
+          "settlementNotePlaceholder": "Nhập ghi chú thanh toán",
+          "settlementFiles":{
+            "round": "File thanh toán đợt {{round}}",
+            "placeholder": "URL file thanh toán",
+            "selectedFile": "File mới được chọn",
+            "removeFile": "🗑️ Xóa file mới",
+            "existingFile": "File đã tồn tại"
+          }
+        },
+        "validation": {
+          "contractTypeRequired": "Loại hợp đồng là bắt buộc",
+          "parentContractIdRequired": "Phụ lục hợp đồng là bắt buộc nếu bạn chọn phụ lục hợp đồng",
+          "paymentRoundsPositiveInteger": "Số đợt thanh toán phải lớn hơn 0"
+        },
+        "messages":{
+          "success": "Lưu hợp đồng thành công",
+          "error": "Lưu hợp đồng thất bại",
+          "fileRemoved": "Xóa file thành công",
+          "fileSelected": "Chọn file thành công"
+        }
+      }
+    }
+  }
+}

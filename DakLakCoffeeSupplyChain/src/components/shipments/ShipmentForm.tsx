@@ -344,40 +344,60 @@ export default function ShipmentForm({
 
       {/* Thông tin giao hàng */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            {t("shipments.form.shippedQuantity")}
-          </label>
-          <Input
-            type="number"
-            min={0}
-            step={0.1}
-            value={formData.shippedQuantity ?? 0}
-            onChange={(e) =>
-              handleChange("shippedQuantity", Number(e.target.value))
-            }
-            className="h-10"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
+        {/* Số lượng đã giao - chỉ hiển thị khi EDIT */}
+        {isEdit && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">
+              {t("shipments.form.shippedQuantity")}
+            </label>
+            <Input
+              type="number"
+              min={0}
+              step={0.1}
+              value={formData.shippedQuantity ?? 0}
+              onChange={(e) =>
+                handleChange("shippedQuantity", Number(e.target.value))
+              }
+              className="h-10"
+            />
+          </div>
+        )}
+
+        <div
+          className={`flex flex-col gap-2 ${!isEdit ? "md:col-span-2" : ""}`}
+        >
           <label className="text-sm font-medium">
             {t("shipments.form.status")}
           </label>
-          <select
-            className="w-full p-2 border rounded h-10"
-            value={formData.deliveryStatus}
-            onChange={(e) =>
-              handleChange(
-                "deliveryStatus",
-                e.target.value as ShipmentDeliveryStatusValue
-              )
-            }
-          >
-            {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
-            <option value="Pending">{t("shipments.status.pending")}</option>
-            <option value="InTransit">{t("shipments.status.inTransit")}</option>
-            <option value="Delivered">{t("shipments.status.delivered")}</option>
-          </select>
+          {!isEdit ? (
+            // CREATE: cứng "Đang chờ", không thể thay đổi
+            <Input
+              value={t("shipments.status.pending")}
+              readOnly
+              className="h-10 bg-muted/40 cursor-not-allowed"
+            />
+          ) : (
+            // EDIT: có thể chọn trạng thái
+            <select
+              className="w-full p-2 border rounded h-10"
+              value={formData.deliveryStatus}
+              onChange={(e) =>
+                handleChange(
+                  "deliveryStatus",
+                  e.target.value as ShipmentDeliveryStatusValue
+                )
+              }
+            >
+              {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
+              <option value="Pending">{t("shipments.status.pending")}</option>
+              <option value="InTransit">
+                {t("shipments.status.inTransit")}
+              </option>
+              <option value="Delivered">
+                {t("shipments.status.delivered")}
+              </option>
+            </select>
+          )}
         </div>
       </div>
 
@@ -423,7 +443,6 @@ export default function ShipmentForm({
             </span>
             <span>{t("shipments.form.table.unit")}</span>
             <span className="col-span-3">{t("shipments.form.table.note")}</span>
-            <span></span>
           </div>
         )}
 
@@ -465,13 +484,14 @@ export default function ShipmentForm({
               placeholder={t("shipments.form.notePlaceholder")}
               value={row.note || ""}
               onChange={(e) => updateRow(idx, "note", e.target.value)}
-              className="md:col-span-3 h-10"
+              className="md:col-span-2 h-10"
             />
 
             <Button
               type="button"
               variant="destructive"
               onClick={() => removeRow(idx)}
+              className="h-10"
             >
               {t("shipments.form.delete")}
             </Button>
