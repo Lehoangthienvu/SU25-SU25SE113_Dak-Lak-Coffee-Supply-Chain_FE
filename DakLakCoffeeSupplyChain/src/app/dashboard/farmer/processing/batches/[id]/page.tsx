@@ -32,7 +32,8 @@ import {
   AlertTriangle,
   Pencil,
   Target,
-  TrendingDown
+  TrendingDown,
+  Eye
 } from "lucide-react";
 import {
   Dialog,
@@ -537,52 +538,44 @@ export default function ViewProcessingBatch() {
           </div>
         </div>
 
-        {/* 🔧 ALERT: Chỉ hiện khi có đánh giá fail và batch status là InProgress */}
-        {hasFailedEvaluation && failedStageInfo && batch.status === ProcessingStatus.InProgress && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-4 h-4 text-red-600" />
-                  </div>
-                  <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                    <XCircle className="w-4 h-4 text-red-600" />
-                  </div>
-                </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <h3 className="text-lg font-semibold text-red-800 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
-                </h3>
-                <p className="text-red-700 mb-4">
-                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')} <strong>{failedStageInfo.stageName}</strong>.
-                  {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
-                </p>
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => {
-                      // Hiện chi tiết đánh giá
-                      setSelectedEvaluation(evaluations.find(e => e.evaluationId === failedStageInfo.evaluationId) || null);
-                    }}
-                    className="px-4 py-2 border border-red-300 text-red-700 bg-white rounded-md hover:bg-red-50 transition-colors"
-                  >
-                    {t('processing.pages.farmerBatches.batchDetail.quickActions.evaluateStage')}
-                  </button>
-                  {/* <Button
-                    onClick={() => {
-                      // Mở form cập nhật progress cho stage bị fail
-                      setOpenUpdateAfterEvaluationModal(true);
-                    }}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                  >
-                    {t('processing.pages.farmerBatches.batchDetail.quickActions.advanceProgress')}
-                  </Button> */}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                 {/* 🔧 ALERT: Chỉ hiện khi có đánh giá fail và batch status là InProgress */}
+         {hasFailedEvaluation && failedStageInfo && batch.status === ProcessingStatus.InProgress && (
+           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+             <div className="flex items-start">
+               <div className="flex-shrink-0">
+                 <div className="flex items-center space-x-2">
+                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                     <AlertTriangle className="w-4 h-4 text-red-600" />
+                   </div>
+                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                     <XCircle className="w-4 h-4 text-red-600" />
+                   </div>
+                 </div>
+               </div>
+               <div className="ml-3 flex-1">
+                 <h3 className="text-lg font-semibold text-red-800 mb-2">
+                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
+                 </h3>
+                 <p className="text-red-700 mb-4">
+                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')} <strong>{failedStageInfo.stageName}</strong>.
+                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
+                 </p>
+                 <div className="flex space-x-3">
+                   <Button
+                     onClick={() => {
+                       // Mở form cập nhật progress cho stage bị fail
+                       setOpenUpdateAfterEvaluationModal(true);
+                     }}
+                     className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                   >
+                     <Edit className="w-4 h-4" />
+                     Cập nhật sau đánh giá
+                   </Button>
+                 </div>
+               </div>
+             </div>
+           </div>
+         )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1088,26 +1081,27 @@ export default function ViewProcessingBatch() {
 
         {/* Evaluations Section */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <ClipboardCheck className="w-5 h-5" />
-                  {t('processing.pages.farmerBatches.batchDetail.evaluations.title')}
-                </h2>
-                <p className="text-blue-100 mt-1">{t('processing.pages.farmerBatches.batchDetail.evaluations.subtitle')}</p>
+                     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
+                          <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <ClipboardCheck className="w-5 h-5" />
+                    {t('processing.pages.farmerBatches.batchDetail.evaluations.title')}
+                  </h2>
+                  <p className="text-blue-100 mt-1">{t('processing.pages.farmerBatches.batchDetail.evaluations.subtitle')}</p>
+                </div>
+                {evaluations.length > 0 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push(`/dashboard/farmer/evaluations/${batch.batchId}`)}
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/40"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Xem chi tiết đánh giá
+                  </Button>
+                )}
               </div>
-              {evaluations.length > 0 && (
-                <button
-                  onClick={() => router.push(`/dashboard/farmer/evaluations/${batch.batchId}`)}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                >
-                  <ClipboardCheck className="w-4 h-4" />
-                  {t('processing.pages.farmerBatches.batchDetail.evaluations.viewDetails')}
-                </button>
-              )}
-            </div>
-          </div>
+           </div>
 
           <div className="p-6">
             {/* Failed Stages Info - Hiển thị khi có đánh giá fail */}
@@ -1119,29 +1113,35 @@ export default function ViewProcessingBatch() {
             
             {evaluations.length > 0 ? (
               <div className="space-y-4">
-                {/* Thông báo đánh giá mới - chỉ hiển thị khi đánh giá mới nhất là Fail */}
-                {evaluations.length > 0 && evaluations[0].evaluationResult === 'Fail' && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-5 h-5 text-red-600" />
-                        <div>
-                          <h4 className="text-sm font-medium text-red-900">{t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.title')}</h4>
-                          <p className="text-sm text-red-700">
-                            {t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.description')}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={() => setOpenUpdateAfterEvaluationModal(true)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                      >
-                        <Edit className="w-4 h-4" />
-                        {t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.updateProgress')}
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                                         {/* Thông báo đánh giá mới - chỉ hiển thị khi đánh giá mới nhất là Fail */}
+             {evaluations.length > 0 && evaluations[0].evaluationResult === 'Fail' && (
+               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                 <div className="flex items-center gap-2">
+                   <AlertTriangle className="w-5 h-5 text-red-600" />
+                   <div>
+                     <h4 className="text-sm font-medium text-red-900">{t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.title')}</h4>
+                     <p className="text-sm text-red-700">
+                       {t('processing.pages.farmerBatches.batchDetail.evaluations.failAlert.description')}
+                     </p>
+                   </div>
+                 </div>
+               </div>
+             )}
+
+                         {/* Thông báo đánh giá đạt - chỉ hiển thị khi đánh giá mới nhất là Pass */}
+             {evaluations.length > 0 && evaluations[0].evaluationResult === 'Pass' && (
+               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                 <div className="flex items-center gap-2">
+                   <CheckCircle className="w-5 h-5 text-green-600" />
+                   <div>
+                     <h4 className="text-sm font-medium text-green-900">Đánh giá đạt tiêu chuẩn</h4>
+                     <p className="text-sm text-green-700">
+                       Lô sơ chế của bạn đã đạt tiêu chuẩn chất lượng.
+                     </p>
+                   </div>
+                 </div>
+               </div>
+             )}
 
                 {evaluations.map((evaluation, idx) => (
                   <div
@@ -1159,11 +1159,11 @@ export default function ViewProcessingBatch() {
                           <p className="text-sm text-gray-500">{t('processing.pages.farmerBatches.batchDetail.evaluations.item.code')}: {evaluation.evaluationCode}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
-                          {getEvaluationResultDisplayName(evaluation.evaluationResult)}
-                        </span>
-                      </div>
+                                             <div className="flex items-center gap-2">
+                         <span className={`px-3 py-1 text-sm font-medium rounded-full ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
+                           {getEvaluationResultDisplayName(evaluation.evaluationResult)}
+                         </span>
+                       </div>
                     </div>
 
                     {/* Thông tin chi tiết */}
@@ -1232,32 +1232,20 @@ export default function ViewProcessingBatch() {
                             )}
                           </div>
 
-                          {/* Action guidance */}
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-start gap-2 flex-1">
-                                <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                                <div>
-                                  <h5 className="text-sm font-medium text-blue-900 mb-1">
-                                    {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.title')}:
-                                  </h5>
-                                  <p className="text-sm text-blue-800">
-                                    {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.description', { stageName: failureInfo.failedStageName })}
-                                  </p>
-                                </div>
-                              </div>
-                              <Button
-                                onClick={() => {
-                                  setOpenUpdateAfterEvaluationModal(true);
-                                }}
-                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ml-4 cursor-pointer z-10 relative"
-                                style={{ pointerEvents: 'auto' }}
-                              >
-                                <Edit className="w-4 h-4" />
-                                {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.update')}
-                              </Button>
-                            </div>
-                          </div>
+                                                     {/* Action guidance */}
+                           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                             <div className="flex items-start gap-2">
+                               <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                               <div>
+                                 <h5 className="text-sm font-medium text-blue-900 mb-1">
+                                   {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.title')}:
+                                 </h5>
+                                 <p className="text-sm text-blue-800">
+                                   {t('processing.pages.farmerBatches.batchDetail.evaluations.failure.guidance.description', { stageName: failureInfo.failedStageName })}
+                                 </p>
+                               </div>
+                             </div>
+                           </div>
                         </div>
                       </div>
                     )}

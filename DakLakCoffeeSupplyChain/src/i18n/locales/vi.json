@@ -1,4 +1,47 @@
 {
+  "evaluationHistory": {
+    "title": "Lịch sử đánh giá",
+    "subtitle": "Tất cả các lần đánh giá của lô {{batchCode}}",
+    "latest": "Mới nhất",
+    "evaluationNumber": "Đánh giá lần {{number}}",
+    "evaluator": "Người đánh giá",
+    "comments": "Nhận xét đánh giá",
+    "detailedFeedback": "Phản hồi chi tiết",
+    "recommendations": "Khuyến nghị",
+    "pageTitle": "Lịch sử đánh giá",
+    "pageTitleBatch": "Lịch sử đánh giá lô",
+    "pageDescription": "Xem lại tất cả các lần đánh giá đã thực hiện",
+    "pageDescriptionBatch": "Xem lại tất cả các lần đánh giá của lô {{batchCode}}",
+    "back": "Quay lại",
+    "loading": "Đang tải lịch sử đánh giá...",
+    "error": "Không thể tải lịch sử đánh giá",
+    "stats": {
+      "total": "{{count}} đánh giá",
+      "passed": "{{count}} đạt",
+      "failed": "{{count}} không đạt"
+    },
+    "filters": {
+      "search": "Tìm kiếm theo mã lô, nông dân...",
+      "allStatus": "Tất cả trạng thái",
+      "allTime": "Tất cả thời gian",
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua",
+      "lastWeek": "Tuần trước",
+      "lastMonth": "Tháng trước"
+    },
+    "batchInfo": {
+      "title": "Thông tin lô",
+      "batchCode": "Mã lô",
+      "farmer": "Nông dân",
+      "yield": "Sản lượng",
+      "status": "Trạng thái",
+      "viewDetails": "Xem chi tiết"
+    },
+    "noResults": {
+      "title": "Không tìm thấy đánh giá",
+      "description": "Thử thay đổi bộ lọc hoặc tìm kiếm khác"
+    }
+  },
   "processing": {
     "title": "Ghi nhận xử lý cà phê",
     "batch": {
