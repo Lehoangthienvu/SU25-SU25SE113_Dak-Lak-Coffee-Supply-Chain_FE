@@ -1,0 +1,38 @@
+{
+  "contract": {
+    "components": {
+      "form": {
+        "fields": {
+          "contractType": "Contract Type",
+          "contractTypes": {
+            "contract": "Hợp đồng",
+            "parentContract": "Phụ lục hợp đồng"
+          },
+          "parentContractId": "Parent Contract",
+          "settlementFile": "Settlement File",
+          "paymentRounds": "Payment Round",
+          "settlementNote": "Settlement Note",
+          "settlementNotePlaceholder": "Enter settlement note",
+          "settlementFiles": {
+            "round": "Settlement file for round {{round}}",
+            "placeholder": "Settlement file URL",
+            "selectedFile": "Newly selected file",
+            "removeFile": "🗑️ Remove new file",
+            "existingFile": "Existing file"
+          }
+        },
+        "validation": {
+          "contractTypeRequired": "Contract type is required",
+          "parentContractIdRequired": "Parent contract is required if you select a parent contract",
+          "paymentRoundsPositiveInteger": "Payment rounds must be a positive integer"
+        },
+        "messages": {
+          "success": "Contract saved successfully",
+          "error": "Failed to save contract",
+          "fileRemoved": "File removed successfully",
+          "fileSelected": "File selected successfully"
+        }
+      }
+    }
+  }
+}

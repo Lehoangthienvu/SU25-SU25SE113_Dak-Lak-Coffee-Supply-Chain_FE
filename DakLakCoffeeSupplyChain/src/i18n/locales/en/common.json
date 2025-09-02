@@ -21,6 +21,9 @@
     },
     "navigation": {
       "cultivationRegistration": "Cultivation Registration"
+    },
+    "unit": {
+      "currency": "VND"
     }
   }
 }

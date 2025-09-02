@@ -6,8 +6,6 @@ import { format } from "date-fns";
 import { ArrowLeft, Calendar, MapPin, User, FileText, Coffee, DollarSign, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -155,7 +153,7 @@ export default function CultivationRegistrationDetailPage() {
                     {t("cultivationRegistration.pages.detail.totalPrice")}
                   </label>
                   <p className="text-gray-900 font-semibold">
-                    {registration.totalWantedPrice.toLocaleString()} VND
+                    {registration.totalWantedPrice != null ? registration.totalWantedPrice.toLocaleString() + " VND" : ""}
                   </p>
                 </div>
               </div>
