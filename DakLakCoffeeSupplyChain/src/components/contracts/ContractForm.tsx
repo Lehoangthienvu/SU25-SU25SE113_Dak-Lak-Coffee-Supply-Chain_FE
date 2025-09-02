@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getCoffeeTypes, CoffeeType } from "@/lib/api/coffeeType";
+import { getAllContracts, ContractViewAllDto } from "@/lib/api/contracts";
 import {
   ContractItemCreateDto,
   ContractItemUpdateDto,
@@ -44,22 +45,22 @@ function parseDateLocal(d?: string | Date | null) {
 }
 
 // Helper: input có suffix đơn vị bên phải
-function InputWithSuffix({
-  unit,
-  className,
-  ...props
-}: React.ComponentProps<typeof Input> & { unit?: string }) {
-  return (
-    <div className="relative">
-      <Input {...props} className={`pr-14 ${className ?? ""}`} />
-      {unit ? (
-        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
-          {unit}
-        </span>
-      ) : null}
-    </div>
-  );
-}
+// function InputWithSuffix({
+//   unit,
+//   className,
+//   ...props
+// }: React.ComponentProps<typeof Input> & { unit?: string }) {
+//   return (
+//     <div className="relative">
+//       <Input {...props} className={`pr-14 ${className ?? ""}`} />
+//       {unit ? (
+//         <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+//           {unit}
+//         </span>
+//       ) : null}
+//     </div>
+//   );
+// }
 
 type Props = {
   initialData?: ContractUpdateDto;
@@ -75,6 +76,7 @@ export default function ContractForm({
   const isEdit = !!initialData;
   const [buyers, setBuyers] = useState<BusinessBuyerDto[]>([]);
   const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
+  const [contracts, setContracts] = useState<ContractViewAllDto[]>([]);
   const [formData, setFormData] = useState<
     ContractCreateDto | ContractUpdateDto | null
   >(null);
@@ -84,6 +86,14 @@ export default function ContractForm({
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
+
+  // Settlement files state
+  const [settlementFiles, setSettlementFiles] = useState<{
+    [roundNumber: number]: File | null;
+  }>({});
+  const [settlementFilePreviewUrls, setSettlementFilePreviewUrls] = useState<{
+    [roundNumber: number]: string | null;
+  }>({});
   const router = useRouter();
   const lastStatusRef = useRef<ContractStatus | null>(null);
   const { t } = useTranslation();
@@ -141,6 +151,7 @@ export default function ContractForm({
 
   useEffect(() => {
     getCoffeeTypes().then(setCoffeeTypes);
+    getAllContracts().then(setContracts);
   }, []);
 
   // Helper function để format date cho DatePicker (yyyy-MM-dd)
@@ -182,17 +193,81 @@ export default function ContractForm({
         setFilePreviewUrl(initialData.contractFileUrl);
       }
 
+      // Khởi tạo settlement files từ settlementFilesJson nếu có
+      if (initialData.settlementFilesJson) {
+        try {
+          const settlementData = JSON.parse(initialData.settlementFilesJson);
+          if (
+            settlementData.settlementRounds &&
+            Array.isArray(settlementData.settlementRounds)
+          ) {
+            const newSettlementFilePreviewUrls: {
+              [roundNumber: number]: string | null;
+            } = {};
+
+            settlementData.settlementRounds.forEach(
+              (round: { roundName: number; settlementFileURL: string }) => {
+                if (round.roundName && round.settlementFileURL) {
+                  newSettlementFilePreviewUrls[round.roundName] =
+                    round.settlementFileURL;
+                }
+              }
+            );
+
+            setSettlementFilePreviewUrls(newSettlementFilePreviewUrls);
+            console.log(
+              "Loaded settlement file URLs:",
+              newSettlementFilePreviewUrls
+            );
+          }
+        } catch (error) {
+          console.error("Error parsing settlementFilesJson:", error);
+        }
+      }
+
+      // Khởi tạo settlement files từ apiSettlementFiles nếu có (từ API response)
+      const extendedInitialData = initialData as ContractUpdateDto & {
+        apiSettlementFiles?: { roundName: number; settlementFileURL: string }[];
+      };
+      if (
+        extendedInitialData.apiSettlementFiles &&
+        Array.isArray(extendedInitialData.apiSettlementFiles)
+      ) {
+        const newSettlementFilePreviewUrls: {
+          [roundNumber: number]: string | null;
+        } = {};
+
+        extendedInitialData.apiSettlementFiles.forEach(
+          (round: { roundName: number; settlementFileURL: string }) => {
+            if (round.roundName && round.settlementFileURL) {
+              newSettlementFilePreviewUrls[round.roundName] =
+                round.settlementFileURL;
+            }
+          }
+        );
+
+        setSettlementFilePreviewUrls(newSettlementFilePreviewUrls);
+        console.log(
+          "Loaded settlement file URLs from API:",
+          newSettlementFilePreviewUrls
+        );
+      }
+
       // Log để debug
       console.log("InitialData gốc:", initialData);
       console.log("InitialData đã format:", formattedData);
       console.log("signedAt gốc:", initialData.signedAt);
       console.log("signedAt đã format:", formattedData.signedAt);
+      console.log("contractType:", initialData.contractType);
+      console.log("parentContractId:", initialData.parentContractId);
+      console.log("paymentRounds:", initialData.paymentRounds);
+      console.log("settlementFilesJson:", initialData.settlementFilesJson);
     } else {
       setFormData({
         contractNumber: "",
         contractTitle: "",
         contractFileUrl: "",
-        buyerId: "" as any,
+        buyerId: "",
         deliveryRounds: 1,
         totalQuantity: 0,
         totalValue: 0,
@@ -201,11 +276,20 @@ export default function ContractForm({
         signedAt: undefined,
         status: ContractStatus.NotStarted,
         cancelReason: "",
+        contractType: "",
+        parentContractId: "",
+        paymentRounds: 1,
+        settlementFileURL: "",
+        settlementFilesJson: "",
+        settlementNote: "",
         contractItems: [],
-      });
+      } as ContractCreateDto);
       // Reset file preview khi tạo mới
       setFilePreviewUrl(null);
       setSelectedFile(null);
+      // Reset settlement files khi tạo mới
+      setSettlementFiles({});
+      setSettlementFilePreviewUrls({});
     }
   }, [initialData]);
 
@@ -214,6 +298,30 @@ export default function ContractForm({
     setFieldErrors({});
     setBusinessErrors([]);
   }, [formData]);
+
+  // Auto-update paymentRounds when settlement files are loaded from API
+  useEffect(() => {
+    if (isEdit && Object.keys(settlementFilePreviewUrls).length > 0) {
+      const maxRoundNumber = Math.max(
+        ...Object.keys(settlementFilePreviewUrls).map(Number)
+      );
+      if (
+        maxRoundNumber > 0 &&
+        formData &&
+        (!formData.paymentRounds || formData.paymentRounds < maxRoundNumber)
+      ) {
+        setFormData((prev) => {
+          if (!prev) return prev;
+          return { ...prev, paymentRounds: maxRoundNumber };
+        });
+        console.log(
+          "Auto-updated paymentRounds to:",
+          maxRoundNumber,
+          "based on settlement files"
+        );
+      }
+    }
+  }, [settlementFilePreviewUrls, isEdit]);
 
   useEffect(() => {
     if (!formData) return;
@@ -251,13 +359,20 @@ export default function ContractForm({
       if (filePreviewUrl) {
         URL.revokeObjectURL(filePreviewUrl);
       }
+
+      // Cleanup settlement file preview URLs
+      Object.values(settlementFilePreviewUrls).forEach((url) => {
+        if (url) {
+          URL.revokeObjectURL(url);
+        }
+      });
     };
-  }, [filePreviewUrl]);
+  }, [filePreviewUrl, settlementFilePreviewUrls]);
 
   // Guard for null formData
   if (!formData) {
     return (
-      <div className="text-gray-500 text-center py-10">
+      <div className='text-gray-500 text-center py-10'>
         {t("contracts.messages.loading")}
       </div>
     );
@@ -275,8 +390,8 @@ export default function ContractForm({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const startDate = parseDateLocal(data.startDate as any);
-    const endDate = parseDateLocal(data.endDate as any);
+    const startDate = parseDateLocal(data.startDate);
+    const endDate = parseDateLocal(data.endDate);
 
     if (
       data.status === ContractStatus.Completed ||
@@ -290,12 +405,14 @@ export default function ContractForm({
     return data.status;
   }
 
-  function handleChange(field: string, value: any) {
+  function handleChange(field: string, value: string | number | undefined) {
     setFormData((prev) => {
-      const newData = { ...prev!, [field]: value } as ContractFormDataNN;
+      if (!prev) return prev;
+
+      const newData = { ...prev, [field]: value };
 
       if (field === "startDate" || field === "endDate") {
-        const nextStatus = deriveStatus(newData);
+        const nextStatus = deriveStatus(newData as ContractFormDataNN);
         if (nextStatus !== newData.status) newData.status = nextStatus;
       }
       return newData;
@@ -311,12 +428,20 @@ export default function ContractForm({
   }
 
   // Client-side validation for numeric fields
-  const validateNumericField = (field: string, value: any): string | null => {
+  const validateNumericField = (
+    field: string,
+    value: number
+  ): string | null => {
     if (
       field === "deliveryRounds" &&
       (value <= 0 || !Number.isInteger(value))
     ) {
       return t("contracts.validation.deliveryRoundsPositiveInteger");
+    }
+    if (field === "paymentRounds" && (value <= 0 || !Number.isInteger(value))) {
+      return t(
+        "contract.components.form.validation.paymentRoundsPositiveInteger"
+      );
     }
     if (field === "totalQuantity" && value < 0) {
       return t("contracts.validation.totalQuantityNonNegative");
@@ -327,7 +452,16 @@ export default function ContractForm({
     return null;
   };
 
-  const handleNumericChange = (field: string, value: any) => {
+  const handleNumericChange = (field: string, value: number) => {
+    // Special handling for paymentRounds - prevent 0 or negative values
+    if (field === "paymentRounds" && (value <= 0 || isNaN(value))) {
+      setFieldErrors((prev) => ({ 
+        ...prev, 
+        [field]: t("contract.components.form.validation.paymentRoundsPositiveInteger")
+      }));
+      return; // Don't update the value if it's invalid
+    }
+
     // Validate before updating
     const error = validateNumericField(field, value);
     if (error) {
@@ -370,7 +504,11 @@ export default function ContractForm({
     });
   }
 
-  function updateContractItem(index: number, field: string, value: any) {
+  function updateContractItem(
+    index: number,
+    field: string,
+    value: string | number
+  ) {
     setFormData((prev) => {
       const updatedItems = [...prev!.contractItems];
       updatedItems[index] = { ...updatedItems[index], [field]: value };
@@ -391,20 +529,34 @@ export default function ContractForm({
     }
 
     // Client-side validation for contract item fields
-    if (field === "quantity" && value <= 0) {
+    if (field === "quantity" && typeof value === "number" && value <= 0) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.quantity`]: t("contracts.validation.quantityGreaterThanZero"),
+        [`contractItems.${index}.quantity`]: t(
+          "contracts.validation.quantityGreaterThanZero"
+        ),
       }));
-    } else if (field === "unitPrice" && value <= 0) {
+    } else if (
+      field === "unitPrice" &&
+      typeof value === "number" &&
+      value <= 0
+    ) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.unitPrice`]: t("contracts.validation.unitPriceGreaterThanZero"),
+        [`contractItems.${index}.unitPrice`]: t(
+          "contracts.validation.unitPriceGreaterThanZero"
+        ),
       }));
-    } else if (field === "discountAmount" && value < 0) {
+    } else if (
+      field === "discountAmount" &&
+      typeof value === "number" &&
+      value < 0
+    ) {
       setFieldErrors((prev) => ({
         ...prev,
-        [`contractItems.${index}.discountAmount`]: t("contracts.validation.discountAmountNonNegative"),
+        [`contractItems.${index}.discountAmount`]: t(
+          "contracts.validation.discountAmountNonNegative"
+        ),
       }));
     }
   }
@@ -431,21 +583,43 @@ export default function ContractForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.contractNumber?.trim()) {
-      clientErrors.contractNumber = t("contracts.validation.contractNumberRequired");
+      clientErrors.contractNumber = t(
+        "contracts.validation.contractNumberRequired"
+      );
     } else if (data.contractNumber.trim().length < 3) {
-      clientErrors.contractNumber = t("contracts.validation.contractNumberMinLength");
+      clientErrors.contractNumber = t(
+        "contracts.validation.contractNumberMinLength"
+      );
     }
 
     if (!data.contractTitle?.trim()) {
-      clientErrors.contractTitle = t("contracts.validation.contractTitleRequired");
+      clientErrors.contractTitle = t(
+        "contracts.validation.contractTitleRequired"
+      );
     } else if (data.contractTitle.trim().length < 10) {
-      clientErrors.contractTitle = t("contracts.validation.contractTitleMinLength");
+      clientErrors.contractTitle = t(
+        "contracts.validation.contractTitleMinLength"
+      );
     } else if (data.contractTitle.trim().length > 200) {
-      clientErrors.contractTitle = t("contracts.validation.contractTitleMaxLength");
+      clientErrors.contractTitle = t(
+        "contracts.validation.contractTitleMaxLength"
+      );
     }
 
     if (!data.buyerId) {
       clientErrors.buyerId = t("contracts.validation.buyerIdRequired");
+    }
+
+    if (!data.contractType?.trim()) {
+      clientErrors.contractType = t(
+        "contract.components.form.validation.contractTypeRequired"
+      );
+    }
+
+    if (data.contractType === "amendment" && !data.parentContractId?.trim()) {
+      clientErrors.parentContractId = t(
+        "contract.components.form.validation.parentContractIdRequired"
+      );
     }
 
     if (!data.startDate) {
@@ -487,13 +661,53 @@ export default function ContractForm({
       }
     }
 
+    // Validate settlement files (nếu có)
+    Object.entries(settlementFiles).forEach(([roundNumber, file]) => {
+      if (file) {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+          clientErrors[`settlementFile_${roundNumber}`] = t(
+            "contracts.validation.settlementFileSize",
+            { round: roundNumber }
+          );
+        }
+
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+          clientErrors[`settlementFile_${roundNumber}`] = t(
+            "contracts.validation.settlementFileType",
+            { round: roundNumber }
+          );
+        }
+      }
+    });
+
     // Validate tổng khối lượng và giá trị không được âm (phù hợp với backend)
     if (data.totalQuantity !== undefined && data.totalQuantity < 0) {
-      clientErrors.totalQuantity = t("contracts.validation.totalQuantityNonNegative");
+      clientErrors.totalQuantity = t(
+        "contracts.validation.totalQuantityNonNegative"
+      );
     }
 
     if (data.totalValue !== undefined && data.totalValue < 0) {
       clientErrors.totalValue = t("contracts.validation.totalValueNonNegative");
+    }
+
+    // Validate paymentRounds - must be at least 1
+    if (!data.paymentRounds || data.paymentRounds <= 0 || !Number.isInteger(data.paymentRounds)) {
+      clientErrors.paymentRounds = t(
+        "contract.components.form.validation.paymentRoundsPositiveInteger"
+      );
     }
 
     // Validate lý do hủy khi trạng thái = "Đã hủy"
@@ -501,25 +715,37 @@ export default function ContractForm({
       data.status === ContractStatus.Cancelled &&
       !data.cancelReason?.trim()
     ) {
-      clientErrors.cancelReason = t("contracts.validation.cancelReasonRequired");
+      clientErrors.cancelReason = t(
+        "contracts.validation.cancelReasonRequired"
+      );
     }
 
     // Validate contract items
     if (!data.contractItems || data.contractItems.length === 0) {
-      clientErrors.contractItems = t("contracts.validation.contractItemsRequired");
+      clientErrors.contractItems = t(
+        "contracts.validation.contractItemsRequired"
+      );
     } else {
       data.contractItems.forEach((item, index) => {
         if (!item.coffeeTypeId) {
-          clientErrors[`contractItems.${index}.coffeeTypeId`] = t("contracts.validation.coffeeTypeRequired");
+          clientErrors[`contractItems.${index}.coffeeTypeId`] = t(
+            "contracts.validation.coffeeTypeRequired"
+          );
         }
         if (!item.quantity || item.quantity <= 0) {
-          clientErrors[`contractItems.${index}.quantity`] = t("contracts.validation.quantityGreaterThanZero");
+          clientErrors[`contractItems.${index}.quantity`] = t(
+            "contracts.validation.quantityGreaterThanZero"
+          );
         }
         if (!item.unitPrice || item.unitPrice <= 0) {
-          clientErrors[`contractItems.${index}.unitPrice`] = t("contracts.validation.unitPriceGreaterThanZero");
+          clientErrors[`contractItems.${index}.unitPrice`] = t(
+            "contracts.validation.unitPriceGreaterThanZero"
+          );
         }
         if (item.discountAmount && item.discountAmount < 0) {
-          clientErrors[`contractItems.${index}.discountAmount`] = t("contracts.validation.discountAmountNonNegative");
+          clientErrors[`contractItems.${index}.discountAmount`] = t(
+            "contracts.validation.discountAmountNonNegative"
+          );
         }
       });
     }
@@ -546,7 +772,9 @@ export default function ContractForm({
           if (endDate < today) {
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
-            toast.info("Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'");
+            toast.info(
+              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
+            );
           }
         }
 
@@ -575,12 +803,23 @@ export default function ContractForm({
 
         // Nếu có file mới được chọn, thêm vào data
         if (selectedFile) {
-          (updateData as any).contractFile = selectedFile;
+          (
+            updateData as ContractUpdateDto & { contractFile?: File }
+          ).contractFile = selectedFile;
+        }
+
+        // Thêm settlement files nếu có
+        if (Object.keys(settlementFiles).length > 0) {
+          (
+            updateData as ContractUpdateDto & { settlementFiles?: File[] }
+          ).settlementFiles = Object.values(settlementFiles).filter(
+            (file) => file !== null
+          );
         }
 
         await updateContract(dto.contractId, updateData);
 
-        toast.success(t("contracts.messages.updateSuccess"));
+        toast.success(t("contract.components.form.messages.success"));
       } else {
         const dto = data as ContractCreateDto;
 
@@ -595,7 +834,9 @@ export default function ContractForm({
           if (endDate < today) {
             // Ngày kết thúc trong quá khứ và không phải "Hoàn thành" → tự động chuyển thành "Quá hạn"
             finalStatus = ContractStatus.Expired;
-            toast.info("Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'");
+            toast.info(
+              "Ngày kết thúc trong quá khứ, trạng thái đã tự động cập nhật thành 'Quá hạn'"
+            );
           }
         }
 
@@ -617,8 +858,12 @@ export default function ContractForm({
               ? undefined
               : dto.contractFileUrl,
           contractFile: selectedFile || undefined, // Thêm file đã chọn
+          settlementFiles:
+            Object.keys(settlementFiles).length > 0
+              ? Object.values(settlementFiles).filter((file) => file !== null)
+              : undefined, // Thêm settlement files (chỉ những file không null)
           contractItems: normalizedItems,
-        });
+        } as ContractCreateDto);
 
         toast.success(t("contracts.messages.createSuccess"));
       }
@@ -1068,98 +1313,148 @@ export default function ContractForm({
     return !!fieldErrors[fieldName];
   };
 
-  // Helper function to get display name for a field
-  const getFieldDisplayName = (fieldName: string): string => {
-    if (fieldName.startsWith("contractItems.")) {
-      const match = fieldName.match(/contractItems\.(\d+)\.(.*)/);
-      if (match) {
-        const index = parseInt(match[1]) + 1;
-        const itemField = match[2];
-        const fieldMap: Record<string, string> = {
-          coffeetypeid: t("contracts.contractItems.coffeeTypeId"),
-          quantity: t("contracts.contractItems.quantity"),
-          unitprice: t("contracts.contractItems.unitPrice"),
-          discountamount: t("contracts.contractItems.discountAmount"),
-          note: t("contracts.contractItems.note"),
-        };
-        return `${t("contracts.contractItems.item", { index })} - ${
-          fieldMap[itemField] || itemField
-        }`;
-      }
+  // Settlement files helper functions
+  const handleSettlementFileSelect = (roundNumber: number, file: File) => {
+    setSettlementFiles((prev) => ({
+      ...prev,
+      [roundNumber]: file,
+    }));
+
+    // Create preview for images
+    if (file.type.startsWith("image/")) {
+      const url = URL.createObjectURL(file);
+      setSettlementFilePreviewUrls((prev) => ({
+        ...prev,
+        [roundNumber]: url,
+      }));
+    } else {
+      setSettlementFilePreviewUrls((prev) => ({
+        ...prev,
+        [roundNumber]: null,
+      }));
     }
 
-    // Map cho các field chính
-    const fieldMap: Record<string, string> = {
-      buyerid: t("contracts.contract.buyerId"),
-      contractnumber: t("contracts.contract.contractNumber"),
-      contracttitle: t("contracts.contract.contractTitle"),
-      contractfileurl: t("contracts.contract.contractFileUrl"),
-      deliveryrounds: t("contracts.contract.deliveryRounds"),
-      totalquantity: t("contracts.contract.totalQuantity"),
-      totalvalue: t("contracts.contract.totalValue"),
-      startdate: t("contracts.contract.startDate"),
-      enddate: t("contracts.contract.endDate"),
-      signedat: t("contracts.contract.signedAt"),
-      status: t("contracts.contract.status"),
-      cancelreason: t("contracts.contract.cancelReason"),
-      contractitems: t("contracts.contract.contractItems"),
-    };
-
-    return (
-      fieldMap[fieldName.toLowerCase()] ||
-      fieldName.replace(/([A-Z])/g, " $1").trim()
+    toast.success(
+      t("contract.components.form.messages.fileSelected", {
+        round: roundNumber,
+        fileName: file.name,
+      })
     );
   };
+
+  const removeSettlementFile = (roundNumber: number) => {
+    setSettlementFiles((prev) => {
+      const newFiles = { ...prev };
+      delete newFiles[roundNumber];
+      return newFiles;
+    });
+
+    // Cleanup preview URL
+    if (settlementFilePreviewUrls[roundNumber]) {
+      URL.revokeObjectURL(settlementFilePreviewUrls[roundNumber]!);
+      setSettlementFilePreviewUrls((prev) => {
+        const newUrls = { ...prev };
+        delete newUrls[roundNumber];
+        return newUrls;
+      });
+    }
+
+    toast.info(
+      t("contract.components.form.messages.fileRemoved", { round: roundNumber })
+    );
+  };
+
+  // Helper function to get display name for a field
+  // const getFieldDisplayName = (fieldName: string): string => {
+  //   if (fieldName.startsWith("contractItems.")) {
+  //     const match = fieldName.match(/contractItems\.(\d+)\.(.*)/);
+  //     if (match) {
+  //       const index = parseInt(match[1]) + 1;
+  //       const itemField = match[2];
+  //       const fieldMap: Record<string, string> = {
+  //         coffeetypeid: t("contracts.contractItems.coffeeTypeId"),
+  //         quantity: t("contracts.contractItems.quantity"),
+  //         unitprice: t("contracts.contractItems.unitPrice"),
+  //         discountamount: t("contracts.contractItems.discountAmount"),
+  //         note: t("contracts.contractItems.note"),
+  //       };
+  //       return `${t("contracts.contractItems.item", { index })} - ${
+  //         fieldMap[itemField] || itemField
+  //       }`;
+  //     }
+  //   }
+
+  //   // Map cho các field chính
+  //   const fieldMap: Record<string, string> = {
+  //     buyerid: t("contracts.contract.buyerId"),
+  //     contractnumber: t("contracts.contract.contractNumber"),
+  //     contracttitle: t("contracts.contract.contractTitle"),
+  //     contractfileurl: t("contracts.contract.contractFileUrl"),
+  //     deliveryrounds: t("contracts.contract.deliveryRounds"),
+  //     totalquantity: t("contracts.contract.totalQuantity"),
+  //     totalvalue: t("contracts.contract.totalValue"),
+  //     startdate: t("contracts.contract.startDate"),
+  //     enddate: t("contracts.contract.endDate"),
+  //     signedat: t("contracts.contract.signedAt"),
+  //     status: t("contracts.contract.status"),
+  //     cancelreason: t("contracts.contract.cancelReason"),
+  //     contractitems: t("contracts.contract.contractItems"),
+  //   };
+
+  //   return (
+  //     fieldMap[fieldName.toLowerCase()] ||
+  //     fieldName.replace(/([A-Z])/g, " $1").trim()
+  //   );
+  // };
 
   return (
     <>
       {/* Modal xem ảnh zoom */}
       {showImageModal && modalImageUrl && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 z-50 overflow-auto"
+          className='fixed inset-0 bg-black bg-opacity-75 z-50 overflow-auto'
           onClick={() => setShowImageModal(false)}
         >
-          <div className="min-h-full flex items-center justify-center p-4">
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
+          <div className='min-h-full flex items-center justify-center p-4'>
+            <div className='relative' onClick={(e) => e.stopPropagation()}>
               {/* Nút đóng */}
               <button
                 onClick={() => setShowImageModal(false)}
-                className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 z-10"
+                className='absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 z-10'
               >
                 ✕
               </button>
 
-              {/* Ảnh zoom */}
               <img
                 src={modalImageUrl}
-                alt="Preview zoom"
-                className="max-w-none rounded-lg shadow-2xl"
-                style={{ maxHeight: "90vh" }}
+                alt='Preview zoom'
+                className='max-w-none rounded-lg shadow-2xl'
+                style={{ maxHeight: "90vh", width: "auto", height: "auto" }}
               />
             </div>
           </div>
         </div>
       )}
 
-      <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
-        <h2 className="text-2xl font-semibold text-center mb-6">
+      <form className='max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6'>
+        <h2 className='text-2xl font-semibold text-center mb-6'>
           {isEdit ? t("contracts.contract.edit") : t("contracts.contract.new")}
         </h2>
 
         {/* Hiển thị lỗi nghiệp vụ */}
         {businessErrors.length > 0 && (
-          <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-orange-800 font-medium">
+          <div className='p-4 bg-orange-50 border border-orange-200 rounded-lg'>
+            <div className='flex items-center justify-between mb-2'>
+              <h3 className='text-orange-800 font-medium'>
                 {t("contracts.contract.businessRules")}:
               </h3>
-              <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
+              <span className='bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full'>
                 {businessErrors.length} {t("contracts.contract.rules")}
               </span>
             </div>
 
             {/* Tóm tắt nhanh */}
-            <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
+            <div className='mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm'>
               <strong>{t("contracts.contract.summary")}:</strong>
               {businessErrors.some((err) => err.includes("vượt quá")) &&
                 t("contracts.contract.adjustTotal")}
@@ -1172,11 +1467,11 @@ export default function ContractForm({
             </div>
 
             {/* Hướng dẫn giải quyết */}
-            <div className="mt-3 pt-3 border-t border-orange-200">
-              <p className="text-orange-600 text-sm font-medium mb-2">
+            <div className='mt-3 pt-3 border-t border-orange-200'>
+              <p className='text-orange-600 text-sm font-medium mb-2'>
                 {t("contracts.contract.instructions")}:
               </p>
-              <ul className="text-orange-600 text-xs space-y-1">
+              <ul className='text-orange-600 text-xs space-y-1'>
                 {businessErrors.some((err) => err.includes("vượt quá")) && (
                   <>
                     <li>• {t("contracts.contract.checkTotal")}</li>
@@ -1200,11 +1495,11 @@ export default function ContractForm({
                               totalValue: data.totalValue || 0,
                             })}
                           </li>
-                          <li className="mt-2">
+                          <li className='mt-2'>
                             <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
+                              type='button'
+                              variant='outline'
+                              size='sm'
                               onClick={() => {
                                 const { totalQuantity, totalValue } =
                                   calculateTotals();
@@ -1214,7 +1509,7 @@ export default function ContractForm({
                                   t("contracts.messages.updateTotal")
                                 );
                               }}
-                              className="text-xs h-6 px-2"
+                              className='text-xs h-6 px-2'
                             >
                               {t("contracts.contract.autoUpdateTotal")}
                             </Button>
@@ -1247,14 +1542,98 @@ export default function ContractForm({
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
+              {t("contract.components.form.fields.contractType")}{" "}
+              <span className='text-red-500'>*</span>
+            </label>
+            <select
+              value={data.contractType || ""}
+              onChange={(e) => {
+                handleChange("contractType", e.target.value);
+                // Reset parentContractId khi thay đổi contract type
+                if (e.target.value !== "amendment") {
+                  handleChange("parentContractId", "");
+                }
+              }}
+              className={`w-full p-2 border rounded ${
+                hasFieldError("contractType") ? "border-red-500" : ""
+              }`}
+              required
+            >
+              <option value=''>
+                -- {t("contract.components.form.fields.contractType")} --
+              </option>
+              <option value='contract'>
+                {t("contract.components.form.fields.contractTypes.contract")}
+              </option>
+              <option value='amendment'>
+                {t(
+                  "contract.components.form.fields.contractTypes.parentContract"
+                )}
+              </option>
+            </select>
+            {hasFieldError("contractType") && (
+              <p className='text-red-500 text-xs mt-1'>
+                {getFieldError("contractType")}
+              </p>
+            )}
+          </div>
+
+          {data.contractType === "amendment" && (
+            <div>
+              <label className='block mb-1 text-sm font-medium'>
+                {t("contract.components.form.fields.parentContractId")}{" "}
+                <span className='text-red-500'>*</span>
+              </label>
+              <select
+                value={data.parentContractId || ""}
+                onChange={(e) =>
+                  handleChange("parentContractId", e.target.value)
+                }
+                className={`w-full p-2 border rounded ${
+                  hasFieldError("parentContractId") ? "border-red-500" : ""
+                }`}
+                required
+              >
+                <option value=''>
+                  -- {t("contract.components.form.fields.parentContractId")} --
+                </option>
+                {contracts
+                  .filter((contract) =>
+                    // Loại trừ contract hiện tại khi edit
+                    isEdit
+                      ? contract.contractId !==
+                        (initialData as ContractUpdateDto)?.contractId
+                      : true
+                  )
+                  .map((contract) => (
+                    <option
+                      key={contract.contractId}
+                      value={contract.contractId}
+                    >
+                      {contract.contractNumber} - {contract.contractTitle}
+                    </option>
+                  ))}
+              </select>
+              {hasFieldError("parentContractId") && (
+                <p className='text-red-500 text-xs mt-1'>
+                  {getFieldError("parentContractId")}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div>
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.contractNumber")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Input
-              placeholder="VD: CT001-2024, HD001, CONTRACT-001"
+              placeholder='VD: CT001-2024, HD001, CONTRACT-001'
               value={data.contractNumber}
               onChange={(e) => handleChange("contractNumber", e.target.value)}
               required
@@ -1263,45 +1642,47 @@ export default function ContractForm({
               }
             />
             {hasFieldError("contractNumber") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("contractNumber")}
               </p>
             )}
-            <p className="text-xs text-gray-500 mt-1">
-              {t("contracts.contract.format")}: {t("contracts.contract.formatText")}
+            <p className='text-xs text-gray-500 mt-1'>
+              {t("contracts.contract.format")}:{" "}
+              {t("contracts.contract.formatText")}
             </p>
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.contractTitle")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Input
-              placeholder="VD: Hợp đồng cung cấp cà phê Robusta 2024"
+              placeholder='VD: Hợp đồng cung cấp cà phê Robusta 2024'
               value={data.contractTitle}
               onChange={(e) => handleChange("contractTitle", e.target.value)}
               required
               className={hasFieldError("contractTitle") ? "border-red-500" : ""}
             />
             {hasFieldError("contractTitle") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("contractTitle")}
               </p>
             )}
-            <p className="text-xs text-gray-500 mt-1">
-              {t("contracts.contract.example")}: {t("contracts.contract.exampleText")}
+            <p className='text-xs text-gray-500 mt-1'>
+              {t("contracts.contract.example")}:{" "}
+              {t("contracts.contract.exampleText")}
             </p>
           </div>
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">
+          <label className='block mb-1 text-sm font-medium'>
             {t("contracts.contract.contractFile")}
           </label>
-          <div className="flex items-center gap-3">
+          <div className='flex items-center gap-3'>
             <Input
-              placeholder="URL file hoặc chọn file từ máy"
+              placeholder='URL file hoặc chọn file từ máy'
               value={data.contractFileUrl || ""}
               onChange={(e) => handleChange("contractFileUrl", e.target.value)}
               className={
@@ -1309,8 +1690,8 @@ export default function ContractForm({
               }
             />
             <Button
-              type="button"
-              variant="outline"
+              type='button'
+              variant='outline'
               onClick={() => {
                 // Tạo input file ẩn
                 const input = document.createElement("input");
@@ -1332,67 +1713,75 @@ export default function ContractForm({
 
                     // Khi chọn file mới, xóa URL cũ và hiển thị tên file
                     handleChange("contractFileUrl", "");
-                    toast.success(t("contracts.messages.fileSelected", { fileName: file.name }));
+                    toast.success(
+                      t("contract.components.form.messages.fileSelected", {
+                        fileName: file.name,
+                      })
+                    );
                   }
                 };
                 input.click();
               }}
-              className="whitespace-nowrap"
+              className='whitespace-nowrap'
             >
               {t("contracts.contract.selectFile")}
             </Button>
             {data.contractFileUrl && (
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={() => {
                   // Nếu là URL, mở trong tab mới
                   if (data.contractFileUrl?.startsWith("http")) {
                     window.open(data.contractFileUrl, "_blank");
                   } else {
                     // Nếu là tên file local, hiển thị thông tin
-                    toast.info(t("contracts.messages.fileInfo", { fileName: data.contractFileUrl }));
+                    toast.info(
+                      t("contracts.messages.fileInfo", {
+                        fileName: data.contractFileUrl,
+                      })
+                    );
                   }
                 }}
-                className="whitespace-nowrap"
+                className='whitespace-nowrap'
               >
                 {t("contracts.contract.viewFile")}
               </Button>
             )}
           </div>
           {hasFieldError("contractFileUrl") && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className='text-red-500 text-xs mt-1'>
               {getFieldError("contractFileUrl")}
             </p>
           )}
           {hasFieldError("contractFile") && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className='text-red-500 text-xs mt-1'>
               {getFieldError("contractFile")}
             </p>
           )}
-          <p className="text-xs text-gray-500 mt-1">
+          <p className='text-xs text-gray-500 mt-1'>
             {t("contracts.contract.support")}: Ảnh (JPG, PNG, GIF, WebP), Word
             (DOC, DOCX)
           </p>
 
           {/* Preview file đã chọn hoặc file hiện tại */}
           {(data.contractFileUrl || selectedFile) && (
-            <div className="mt-3 p-3 bg-gray-50 border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">
+            <div className='mt-3 p-3 bg-gray-50 border rounded-lg'>
+              <div className='flex items-center justify-between mb-2'>
+                <span className='text-sm font-medium text-gray-700'>
                   {selectedFile
                     ? t("contracts.contract.newFile")
                     : t("contracts.contract.currentFile")}
                   :
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className='text-xs text-gray-500'>
                   {selectedFile ? selectedFile.name : data.contractFileUrl}
                 </span>
               </div>
 
               {/* Thông báo trạng thái */}
               {selectedFile && (
-                <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700 text-xs">
+                <div className='mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700 text-xs'>
                   ℹ️ {t("contracts.contract.newFileWillReplace")}
                 </div>
               )}
@@ -1400,12 +1789,14 @@ export default function ContractForm({
               {/* Preview cho ảnh */}
               {(data.contractFileUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
                 selectedFile?.type.startsWith("image/")) && (
-                <div className="mt-2">
+                <div className='mt-2'>
                   {filePreviewUrl ? (
                     <img
                       src={filePreviewUrl}
-                      alt="Preview"
-                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      alt='Preview'
+                      width={200}
+                      height={150}
+                      className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
                       onError={() => toast.error("Không thể tải ảnh preview")}
                       onClick={() => {
                         if (filePreviewUrl) {
@@ -1418,8 +1809,10 @@ export default function ContractForm({
                   ) : data.contractFileUrl?.startsWith("http") ? (
                     <img
                       src={data.contractFileUrl}
-                      alt="Preview"
-                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      alt='Preview'
+                      width={200}
+                      height={150}
+                      className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
                       onError={() => toast.error("Không thể tải ảnh preview")}
                       onClick={() => {
                         if (data.contractFileUrl) {
@@ -1430,8 +1823,8 @@ export default function ContractForm({
                       title={t("contracts.contract.clickToViewFull")}
                     />
                   ) : (
-                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">
+                    <div className='h-32 bg-gray-100 border rounded flex items-center justify-center'>
+                      <span className='text-gray-500 text-sm'>
                         {t("contracts.contract.imagePreview", {
                           name: selectedFile
                             ? selectedFile.name
@@ -1446,14 +1839,14 @@ export default function ContractForm({
               {/* Preview cho PDF */}
               {(data.contractFileUrl?.match(/\.pdf$/i) ||
                 selectedFile?.name?.match(/\.pdf$/i)) && (
-                <div className="mt-2">
+                <div className='mt-2'>
                   {data.contractFileUrl?.startsWith("http") ? (
-                    <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
+                    <div className='h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
                       <a
                         href={data.contractFileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-red-600 hover:text-red-800 text-sm font-medium'
                       >
                         {t("contracts.contract.viewPdf", {
                           fileName: data.contractFileUrl.split("/").pop(),
@@ -1461,8 +1854,8 @@ export default function ContractForm({
                       </a>
                     </div>
                   ) : (
-                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">
+                    <div className='h-32 bg-gray-100 border rounded flex items-center justify-center'>
+                      <span className='text-gray-500 text-sm'>
                         {t("contracts.contract.pdfPreview", {
                           name: selectedFile
                             ? selectedFile.name
@@ -1477,9 +1870,9 @@ export default function ContractForm({
               {/* Preview cho Word */}
               {(data.contractFileUrl?.match(/\.(doc|docx)$/i) ||
                 selectedFile?.name?.match(/\.(doc|docx)$/i)) && (
-                <div className="mt-2">
-                  <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
-                    <span className="text-blue-600 text-sm font-medium">
+                <div className='mt-2'>
+                  <div className='h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
+                    <span className='text-blue-600 text-sm font-medium'>
                       {t("contracts.contract.wordPreview", {
                         name: selectedFile
                           ? selectedFile.name
@@ -1491,19 +1884,19 @@ export default function ContractForm({
               )}
 
               {/* Remove file buttons */}
-              <div className="mt-3 flex gap-2">
+              <div className='mt-3 flex gap-2'>
                 {selectedFile && (
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
+                    type='button'
+                    variant='outline'
+                    size='sm'
                     onClick={() => {
                       setSelectedFile(null);
                       setFilePreviewUrl(null);
                       handleChange("contractFileUrl", "");
                       toast.info(t("contracts.messages.deleteNewFile"));
                     }}
-                    className="text-red-600 border-red-200 hover:bg-red-50"
+                    className='text-red-600 border-red-200 hover:bg-red-50'
                   >
                     {t("contracts.contract.deleteNewFile")}
                   </Button>
@@ -1511,15 +1904,15 @@ export default function ContractForm({
 
                 {data.contractFileUrl && !selectedFile && (
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
+                    type='button'
+                    variant='outline'
+                    size='sm'
                     onClick={() => {
                       handleChange("contractFileUrl", "");
                       setFilePreviewUrl(null);
                       toast.info(t("contracts.messages.deleteCurrentFile"));
                     }}
-                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                    className='text-orange-600 border-orange-200 hover:bg-orange-50'
                   >
                     {t("contracts.contract.deleteCurrentFile")}
                   </Button>
@@ -1530,9 +1923,9 @@ export default function ContractForm({
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium">
+          <label className='block mb-1 text-sm font-medium'>
             {t("contracts.contract.buyer")}{" "}
-            <span className="text-red-500">*</span>
+            <span className='text-red-500'>*</span>
           </label>
           <select
             value={data.buyerId}
@@ -1542,7 +1935,7 @@ export default function ContractForm({
             }`}
             required
           >
-            <option value="">
+            <option value=''>
               -- {t("contracts.contract.selectBuyer")} --
             </option>
             {buyers.map((buyer) => (
@@ -1552,20 +1945,20 @@ export default function ContractForm({
             ))}
           </select>
           {hasFieldError("buyerId") && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className='text-red-500 text-xs mt-1'>
               {getFieldError("buyerId")}
             </p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.deliveryRounds")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Input
-              type="number"
+              type='number'
               min={1}
               value={data.deliveryRounds || ""}
               onChange={(e) =>
@@ -1576,19 +1969,19 @@ export default function ContractForm({
               }
             />
             {hasFieldError("deliveryRounds") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("deliveryRounds")}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.totalQuantity")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Input
-              type="number"
+              type='number'
               step={0.1}
               min={0}
               value={data.totalQuantity || ""}
@@ -1598,19 +1991,19 @@ export default function ContractForm({
               className={hasFieldError("totalQuantity") ? "border-red-500" : ""}
             />
             {hasFieldError("totalQuantity") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("totalQuantity")}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.totalValue")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Input
-              type="number"
+              type='number'
               min={0}
               value={data.totalValue || ""}
               onChange={(e) =>
@@ -1619,21 +2012,329 @@ export default function ContractForm({
               className={hasFieldError("totalValue") ? "border-red-500" : ""}
             />
             {hasFieldError("totalValue") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("totalValue")}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
+              {t("contract.components.form.fields.paymentRounds")}{" "}
+              <span className='text-red-500'>*</span>
+            </label>
+            <Input
+              type='number'
+              min={1}
+              step={1}
+              value={data.paymentRounds || ""}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                // Prevent negative values and 0
+                if (value <= 0 && e.target.value !== "") {
+                  return; // Don't update if value is 0 or negative
+                }
+                handleNumericChange("paymentRounds", value);
+              }}
+              onKeyDown={(e) => {
+                // Prevent typing negative sign or 0 as first character
+                if (e.key === '-' || (e.key === '0' && e.currentTarget.value === '')) {
+                  e.preventDefault();
+                }
+              }}
+              className={hasFieldError("paymentRounds") ? "border-red-500" : ""}
+            />
+            {hasFieldError("paymentRounds") && (
+              <p className='text-red-500 text-xs mt-1'>
+                {getFieldError("paymentRounds")}
+              </p>
+            )}
+          </div>
+
+          <div className='md:col-span-2'>
+            <label className='block mb-1 text-sm font-medium'>
+              {t("contract.components.form.fields.settlementNote")}
+            </label>
+            <Textarea
+              placeholder={t("contract.components.form.fields.settlementNotePlaceholder")}
+              value={data.settlementNote || ""}
+              onChange={(e) => handleChange("settlementNote", e.target.value)}
+              className={hasFieldError("settlementNote") ? "border-red-500" : ""}
+              rows={3}
+            />
+            {hasFieldError("settlementNote") && (
+              <p className='text-red-500 text-xs mt-1'>
+                {getFieldError("settlementNote")}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Settlement Files Section */}
+        {data.paymentRounds && data.paymentRounds > 0 && (
+          <div>
+            <label className='block mb-3 text-sm font-medium'>
+              {t("contract.components.form.fields.settlementFile")}
+            </label>
+            <div className='space-y-4'>
+              {Array.from({ length: data.paymentRounds }, (_, index) => {
+                const roundNumber = index + 1;
+                const hasFile = settlementFiles[roundNumber];
+                const previewUrl = settlementFilePreviewUrls[roundNumber];
+
+                return (
+                  <div
+                    key={roundNumber}
+                    className='border rounded-lg p-4 bg-gray-50'
+                  >
+                    <div className='flex items-center justify-between mb-3'>
+                      <h4 className='font-medium text-sm'>
+                        {t(
+                          "contract.components.form.fields.settlementFiles.round",
+                          { round: roundNumber }
+                        )}
+                      </h4>
+                      {/* {hasFile && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                          {t("contracts.contract.fileSelected")}
+                        </span>
+                      )} */}
+                    </div>
+
+                    <div className='flex items-center gap-3'>
+                      <Input
+                        placeholder={t(
+                          "contract.components.form.fields.settlementFiles.placeholder"
+                        )}
+                        value={settlementFilePreviewUrls[roundNumber] || ""} // Hiển thị URL từ API hoặc để trống
+                        onChange={(e) => {
+                          // Cập nhật URL khi người dùng chỉnh sửa
+                          const newUrls = { ...settlementFilePreviewUrls };
+                          if (e.target.value.trim()) {
+                            newUrls[roundNumber] = e.target.value.trim();
+                          } else {
+                            delete newUrls[roundNumber];
+                          }
+                          setSettlementFilePreviewUrls(newUrls);
+                        }}
+                        className='flex-1'
+                      />
+                      <Button
+                        type='button'
+                        variant='outline'
+                        onClick={() => {
+                          const input = document.createElement("input");
+                          input.type = "file";
+                          input.accept = "image/*,.pdf,.doc,.docx";
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement)
+                              .files?.[0];
+                            if (file) {
+                              handleSettlementFileSelect(roundNumber, file);
+                            }
+                          };
+                          input.click();
+                        }}
+                        className='whitespace-nowrap'
+                      >
+                        {t("contracts.contract.selectFile")}
+                      </Button>
+                    </div>
+
+                    {/* File Preview */}
+                    {(hasFile || settlementFilePreviewUrls[roundNumber]) && (
+                      <div className='mt-3 p-3 bg-white border rounded-lg'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <span className='text-sm font-medium text-gray-700'>
+                            {hasFile
+                              ? t(
+                                  "contract.components.form.fields.settlementFiles.selectedFile"
+                                )
+                              : t(
+                                  "contract.components.form.fields.settlementFiles.existingFile"
+                                )}
+                            :
+                          </span>
+                          <span className='text-xs text-gray-500'>
+                            {hasFile
+                              ? hasFile.name
+                              : settlementFilePreviewUrls[roundNumber]}
+                          </span>
+                        </div>
+
+                        {/* Preview cho ảnh từ file mới */}
+                        {hasFile &&
+                          hasFile.type.startsWith("image/") &&
+                          previewUrl && (
+                            <div className='mt-2'>
+                              <img
+                                src={previewUrl}
+                                alt={`Settlement Round ${roundNumber} Preview`}
+                                width={200}
+                                height={150}
+                                className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                                onClick={() => {
+                                  setModalImageUrl(previewUrl);
+                                  setShowImageModal(true);
+                                }}
+                                title={t("contracts.contract.clickToViewFull")}
+                              />
+                            </div>
+                          )}
+
+                        {/* Preview cho URL từ API (ảnh) */}
+                        {!hasFile &&
+                          settlementFilePreviewUrls[roundNumber] &&
+                          settlementFilePreviewUrls[roundNumber]?.match(
+                            /\.(jpg|jpeg|png|gif|webp)$/i
+                          ) && (
+                            <div className='mt-2'>
+                              <img
+                                src={settlementFilePreviewUrls[roundNumber]!}
+                                alt={`Settlement Round ${roundNumber} Preview`}
+                                width={200}
+                                height={150}
+                                className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                                onClick={() => {
+                                  setModalImageUrl(
+                                    settlementFilePreviewUrls[roundNumber]!
+                                  );
+                                  setShowImageModal(true);
+                                }}
+                                title={t("contracts.contract.clickToViewFull")}
+                              />
+                            </div>
+                          )}
+
+                        {/* Preview cho PDF từ file mới */}
+                        {hasFile && hasFile.name?.match(/\.pdf$/i) && (
+                          <div className='mt-2'>
+                            <div className='h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
+                              <span className='text-red-600 text-sm font-medium'>
+                                📄 PDF: {hasFile.name}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Preview cho URL từ API (PDF) */}
+                        {!hasFile &&
+                          settlementFilePreviewUrls[roundNumber] &&
+                          settlementFilePreviewUrls[roundNumber]?.match(
+                            /\.pdf$/i
+                          ) && (
+                            <div className='mt-2'>
+                              <div className='h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
+                                <a
+                                  href={settlementFilePreviewUrls[roundNumber]!}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-red-600 hover:text-red-800 text-sm font-medium'
+                                >
+                                  📄 PDF:{" "}
+                                  {settlementFilePreviewUrls[
+                                    roundNumber
+                                  ]!.split("/").pop()}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+
+                        {/* Preview cho Word từ file mới */}
+                        {hasFile && hasFile.name?.match(/\.(doc|docx)$/i) && (
+                          <div className='mt-2'>
+                            <div className='h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
+                              <span className='text-blue-600 text-sm font-medium'>
+                                📝 Word: {hasFile.name}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Preview cho URL từ API (Word) */}
+                        {!hasFile &&
+                          settlementFilePreviewUrls[roundNumber] &&
+                          settlementFilePreviewUrls[roundNumber]?.match(
+                            /\.(doc|docx)$/i
+                          ) && (
+                            <div className='mt-2'>
+                              <div className='h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
+                                <a
+                                  href={settlementFilePreviewUrls[roundNumber]!}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+                                >
+                                  📝 Word:{" "}
+                                  {settlementFilePreviewUrls[
+                                    roundNumber
+                                  ]!.split("/").pop()}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+
+                        {/* Remove button */}
+                        <div className='mt-3 flex gap-2'>
+                          {hasFile && (
+                            <Button
+                              type='button'
+                              variant='outline'
+                              size='sm'
+                              onClick={() => removeSettlementFile(roundNumber)}
+                              className='text-red-600 border-red-200 hover:bg-red-50'
+                            >
+                              {t(
+                                "contract.components.form.fields.settlementFiles.removeFile"
+                              )}
+                            </Button>
+                          )}
+                          {!hasFile &&
+                            settlementFilePreviewUrls[roundNumber] && (
+                              <Button
+                                type='button'
+                                variant='outline'
+                                size='sm'
+                                onClick={() => {
+                                  const newUrls = {
+                                    ...settlementFilePreviewUrls,
+                                  };
+                                  delete newUrls[roundNumber];
+                                  setSettlementFilePreviewUrls(newUrls);
+                                  toast.info(
+                                    t(
+                                      "contract.components.form.messages.fileRemoved",
+                                      { round: roundNumber }
+                                    )
+                                  );
+                                }}
+                                className='text-orange-600 border-orange-200 hover:bg-orange-50'
+                              >
+                                {t(
+                                  "contract.components.form.fields.settlementFiles.removeFile"
+                                )}
+                              </Button>
+                            )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div>
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.startDate")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <DatePicker
-              value={data.startDate as any}
+              value={data.startDate || undefined}
               onChange={(date) => handleChange("startDate", date)}
               required
               error={hasFieldError("startDate")}
@@ -1641,12 +2342,12 @@ export default function ContractForm({
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.endDate")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <DatePicker
-              value={data.endDate as any}
+              value={data.endDate || undefined}
               onChange={(date) => handleChange("endDate", date)}
               required
               error={hasFieldError("endDate")}
@@ -1654,11 +2355,11 @@ export default function ContractForm({
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.signedAt")}
             </label>
             <DatePicker
-              value={data.signedAt as any}
+              value={data.signedAt || undefined}
               onChange={(date) => {
                 handleChange("signedAt", date);
               }}
@@ -1671,7 +2372,7 @@ export default function ContractForm({
         {/* Chỉ hiển thị trạng thái khi edit */}
         {isEdit && (
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.status")}
             </label>
             <select
@@ -1744,7 +2445,7 @@ export default function ContractForm({
               )}
             </select>
             {hasFieldError("status") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("status")}
               </p>
             )}
@@ -1754,10 +2455,10 @@ export default function ContractForm({
         {/* Hiển thị trạng thái hiện tại khi create */}
         {!isEdit && (
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.status")}
             </label>
-            <div className="p-2 border rounded bg-gray-50">
+            <div className='p-2 border rounded bg-gray-50'>
               <span
                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   getStatusDisplay(data.status).className
@@ -1766,7 +2467,7 @@ export default function ContractForm({
                 {getStatusDisplay(data.status).label}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className='text-xs text-gray-500 mt-2'>
               {t("contracts.contract.statusAutoUpdate")}
             </p>
           </div>
@@ -1775,9 +2476,9 @@ export default function ContractForm({
         {/* Chỉ hiển thị lý do hủy khi edit và trạng thái = "Đã hủy" */}
         {isEdit && data.status === ContractStatus.Cancelled && (
           <div>
-            <label className="block mb-1 text-sm font-medium">
+            <label className='block mb-1 text-sm font-medium'>
               {t("contracts.contract.cancelReason")}{" "}
-              <span className="text-red-500">*</span>
+              <span className='text-red-500'>*</span>
             </label>
             <Textarea
               placeholder={t("contracts.contract.enterCancelReason")}
@@ -1787,7 +2488,7 @@ export default function ContractForm({
               required
             />
             {hasFieldError("cancelReason") && (
-              <p className="text-red-500 text-xs mt-1">
+              <p className='text-red-500 text-xs mt-1'>
                 {getFieldError("cancelReason")}
               </p>
             )}
@@ -1795,15 +2496,15 @@ export default function ContractForm({
         )}
 
         <div>
-          <label className="block mb-1 text-sm font-medium">
+          <label className='block mb-1 text-sm font-medium'>
             {t("contracts.contract.contractItems")}{" "}
-            <span className="text-red-500">*</span>
+            <span className='text-red-500'>*</span>
           </label>
 
           {/* Hiển thị lỗi tổng quát cho contract items */}
           {hasFieldError("contractItems") && (
-            <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm font-medium">
+            <div className='mb-3 p-3 bg-red-50 border border-red-200 rounded-md'>
+              <p className='text-red-600 text-sm font-medium'>
                 {getFieldError("contractItems")}
               </p>
             </div>
@@ -1812,7 +2513,7 @@ export default function ContractForm({
           {data.contractItems.length > 0 && (
             <>
               {/* Header */}
-              <div className="hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground">
+              <div className='hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground'>
                 <span>{t("contracts.contractItems.coffeeTypeId")}</span>
                 <span>{t("contracts.contractItems.quantity")}</span>
                 <span>{t("contracts.contractItems.unitPrice")}</span>
@@ -1825,7 +2526,7 @@ export default function ContractForm({
               {data.contractItems.map((item, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2"
+                  className='grid grid-cols-1 md:grid-cols-6 gap-2 mb-2'
                 >
                   {/* Loại cà phê */}
                   <select
@@ -1839,7 +2540,7 @@ export default function ContractForm({
                         : ""
                     }`}
                   >
-                    <option value="">
+                    <option value=''>
                       -- {t("contracts.contractItems.selectCoffeeType")} --
                     </option>
                     {coffeeTypes.map((type) => (
@@ -1849,14 +2550,14 @@ export default function ContractForm({
                     ))}
                   </select>
                   {hasFieldError(`contractItems.${index}.coffeeTypeId`) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className='text-red-500 text-xs mt-1'>
                       {getFieldError(`contractItems.${index}.coffeeTypeId`)}
                     </p>
                   )}
 
                   {/* Số lượng */}
                   <Input
-                    type="number"
+                    type='number'
                     min={0}
                     step={0.1}
                     value={item.quantity}
@@ -1874,14 +2575,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.quantity`) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className='text-red-500 text-xs mt-1'>
                       {getFieldError(`contractItems.${index}.quantity`)}
                     </p>
                   )}
 
                   {/* Đơn giá */}
                   <Input
-                    type="number"
+                    type='number'
                     min={0}
                     value={item.unitPrice}
                     onChange={(e) =>
@@ -1898,14 +2599,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.unitPrice`) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className='text-red-500 text-xs mt-1'>
                       {getFieldError(`contractItems.${index}.unitPrice`)}
                     </p>
                   )}
 
                   {/* Chiết khấu */}
                   <Input
-                    type="number"
+                    type='number'
                     step={0.1}
                     min={0}
                     value={item.discountAmount || ""}
@@ -1923,7 +2624,7 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.discountAmount`) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className='text-red-500 text-xs mt-1'>
                       {getFieldError(`contractItems.${index}.discountAmount`)}
                     </p>
                   )}
@@ -1942,14 +2643,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.note`) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className='text-red-500 text-xs mt-1'>
                       {getFieldError(`contractItems.${index}.note`)}
                     </p>
                   )}
 
                   <Button
-                    type="button"
-                    variant="destructive"
+                    type='button'
+                    variant='destructive'
                     onClick={() => removeContractItem(index)}
                   >
                     {t("contracts.contract.delete")}
@@ -1960,22 +2661,22 @@ export default function ContractForm({
           )}
 
           <Button
-            type="button"
-            variant="outline"
+            type='button'
+            variant='outline'
             onClick={addContractItem}
-            className="mt-2"
+            className='mt-2'
           >
             + {t("contracts.contract.addItem")}
           </Button>
         </div>
 
-        <DialogFooter className="flex justify-between pt-4">
-          <Button type="submit" onClick={handleSubmit}>
+        <DialogFooter className='flex justify-between pt-4'>
+          <Button type='submit' onClick={handleSubmit}>
             <h2>{t("contracts.contract.save")}</h2>
           </Button>
           <Button
-            type="button"
-            variant="outline"
+            type='button'
+            variant='outline'
             onClick={() => router.push("/dashboard/manager/contracts")}
           >
             {t("contracts.contract.back")}
