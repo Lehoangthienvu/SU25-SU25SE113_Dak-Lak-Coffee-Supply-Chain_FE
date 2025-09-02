@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getFailedStagesForBatch, type FailedStagesInfo } from '@/lib/api/processingBatchEvaluations';
+import { updateProgressAfterEvaluation } from '@/lib/api/processingBatchProgress';
+import { AppToast } from '@/components/ui/AppToast';
 
 interface UpdateAfterEvaluationFormProps {
   batchId: string;
@@ -105,46 +107,41 @@ export default function UpdateAfterEvaluationForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Kiểm tra xem có thông tin failed stages không
-    if (!failedStagesInfo || !failedStagesInfo.failedStages || failedStagesInfo.failedStages.length === 0) {
-      console.error('❌ Không có thông tin stages cần cập nhật');
+    if (form.outputQuantity <= 0) {
+      AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
       return;
     }
+
+    // Kiểm tra xem có ít nhất một thông tin cần thiết không
+    const hasParameter = form.parameterName && form.parameterValue;
+    const hasPhotos = photoFiles.length > 0;
+    const hasVideos = videoFiles.length > 0;
     
-    if (form.outputQuantity <= 0) {
-      // AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
+    if (!hasParameter && !hasPhotos && !hasVideos) {
+      AppToast.error('Vui lòng nhập ít nhất một thông số kỹ thuật hoặc upload hình ảnh/video');
       return;
     }
 
     setLoading(true);
     try {
-      // Tạo parameters array từ form và parameters state
-      const allParameters = [];
-      
-      // Thêm single parameter nếu có
-      if (form.parameterName && form.parameterValue) {
-        allParameters.push({
-          parameterName: form.parameterName,
-          parameterValue: form.parameterValue,
-          unit: form.unit,
-          recordedAt: form.recordedAt,
-        });
-      }
-      
-      // Thêm multiple parameters
-      allParameters.push(...parameters);
-      
       const payload = {
-        ...form,
-        parametersJson: allParameters.length > 0 ? JSON.stringify(allParameters) : undefined,
-        photoFiles,
-        videoFiles,
+        progressDate: form.progressDate,
+        outputQuantity: form.outputQuantity,
+        outputUnit: form.outputUnit,
+        parameterName: form.parameterName || undefined,
+        parameterValue: form.parameterValue || undefined,
+        unit: form.unit || undefined,
+        recordedAt: form.recordedAt || undefined,
+        photoFiles: photoFiles.length > 0 ? photoFiles : undefined,
+        videoFiles: videoFiles.length > 0 ? videoFiles : undefined,
       };
 
-      // await updateProgressAfterEvaluation(batchId, payload);
+      console.log('🚀 Gửi payload:', payload);
+      await updateProgressAfterEvaluation(batchId, payload);
       
-      // AppToast.success('Cập nhật tiến trình thành công!');
-      // Reset form
+      AppToast.success('Cập nhật tiến trình thành công!');
+      onSuccess();
+      onClose();
       
       // Reset form
       setForm({
@@ -161,22 +158,35 @@ export default function UpdateAfterEvaluationForm({
       setVideoFiles([]);
     } catch (error: any) {
       console.error('Error updating progress after evaluation:', error);
-      // AppToast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiến trình');
+      AppToast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiến trình');
     } finally {
       setLoading(false);
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="mt-6">
-      <Card className="border-orange-200 bg-orange-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-800">
-            <AlertTriangle className="h-5 w-5" />
-            {t('updateAfterEvaluation.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">{t('updateAfterEvaluation.title')}</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <Card className="border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-orange-800">
+                <AlertTriangle className="h-5 w-5" />
+                {t('updateAfterEvaluation.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
           {/* Failed Stages Information */}
           {loadingFailedStages ? (
             <div className="bg-white/70 rounded-lg p-4">
@@ -456,16 +466,18 @@ export default function UpdateAfterEvaluationForm({
             >
               {t('updateAfterEvaluation.cancel')}
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {loading ? t('updateAfterEvaluation.updating') : t('updateAfterEvaluation.updateProgress')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+                         <Button
+               type="submit"
+               disabled={loading}
+               className="bg-green-600 hover:bg-green-700 text-white"
+             >
+               {loading ? 'Đang cập nhật...' : 'Cập nhật sau đánh giá'}
+             </Button>
+                     </div>
+         </CardContent>
+       </Card>
+     </form>
+       </div>
+     </div>
+   );
+ }

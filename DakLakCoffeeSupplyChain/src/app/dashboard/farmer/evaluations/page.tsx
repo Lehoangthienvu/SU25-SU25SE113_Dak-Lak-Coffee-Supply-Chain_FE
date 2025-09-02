@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getAllProcessingBatchEvaluations, ProcessingBatchEvaluation, getEvaluationResultDisplayNameI18n, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
-import { FiEye, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiSearch, FiFilter } from "react-icons/fi";
+import { FiEye, FiAlertCircle, FiCheckCircle, FiClock, FiUser, FiCalendar, FiPackage, FiSearch, FiFilter, FiAward } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 export default function FarmerEvaluationsPage() {
@@ -16,7 +16,7 @@ export default function FarmerEvaluationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("fail");
 
   const fetchData = async () => {
     try {
@@ -90,9 +90,56 @@ export default function FarmerEvaluationsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("processing.pages.farmerEvaluation.title")}</h1>
-          <p className="text-gray-600">{t("processing.pages.farmerEvaluation.subtitle")}</p>
-        </div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("processing.pages.farmerEvaluation.title")}</h1>
+              <p className="text-gray-600">{t("processing.pages.farmerEvaluation.subtitle")}</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push('/dashboard/expert/evaluation-history')}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              >
+                <FiAward className="w-4 h-4" />
+                <span>Xem lịch sử đánh giá</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Thông báo số lượng evaluation fail */}
+          {filterStatus === "fail" && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <FiAlertCircle className="text-red-500" />
+                <span className="text-sm text-red-700 font-medium">
+                  Đang hiển thị {filteredEvaluations.length} đánh giá không đạt
+                  {evaluations.length > 0 && (
+                    <span className="text-red-600 ml-2">
+                      (Tổng cộng {evaluations.filter(e => e.evaluationResult.toLowerCase() === 'fail').length} đánh giá không đạt trong {evaluations.length} đánh giá)
+                    </span>
+                  )}
+                </span>
+              </div>
+                      </div>
+        )}
+        
+        {/* Thống kê nhanh cho fail evaluations */}
+        {evaluations.length > 0 && filterStatus === "fail" && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FiAlertCircle className="text-red-500" />
+                <span className="text-sm font-medium text-red-700">
+                  Tập trung vào đánh giá không đạt
+                </span>
+              </div>
+              <div className="text-sm text-red-600">
+                {evaluations.filter(e => e.evaluationResult === 'Fail').length} / {evaluations.length} đánh giá
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
         {/* Search and Filter */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -112,20 +159,37 @@ export default function FarmerEvaluationsPage() {
             </div>
 
             {/* Filter */}
-            <div className="flex items-center gap-2">
-              <FiFilter className="text-gray-400" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              >
-                <option value="all">{t("processing.pages.farmerEvaluation.filter.all")}</option>
-                <option value="pass">{t("processing.pages.farmerEvaluation.filter.pass")}</option>
-                <option value="fail">{t("processing.pages.farmerEvaluation.filter.fail")}</option>
-                <option value="needsimprovement">{t("processing.pages.farmerEvaluation.filter.needsImprovement")}</option>
-                <option value="temporary">{t("processing.pages.farmerEvaluation.filter.temporary")}</option>
-                <option value="pending">{t("processing.pages.farmerEvaluation.filter.pending")}</option>
-              </select>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <FiFilter className="text-gray-400" />
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                >
+                  <option value="all">{t("processing.pages.farmerEvaluation.filter.all")}</option>
+                  <option value="fail">{t("processing.pages.farmerEvaluation.filter.fail")}</option>
+                  <option value="pass">{t("processing.pages.farmerEvaluation.filter.pass")}</option>
+                  <option value="needsimprovement">{t("processing.pages.farmerEvaluation.filter.needsImprovement")}</option>
+                  <option value="temporary">{t("processing.pages.farmerEvaluation.filter.temporary")}</option>
+                  <option value="pending">{t("processing.pages.farmerEvaluation.filter.pending")}</option>
+                </select>
+              </div>
+              
+              {/* Toggle để chỉ hiển thị fail */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Chỉ hiển thị fail:</span>
+                <button
+                  onClick={() => setFilterStatus(filterStatus === "fail" ? "all" : "fail")}
+                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                    filterStatus === "fail" 
+                      ? "bg-red-500 text-white" 
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {filterStatus === "fail" ? "Bật" : "Tắt"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -149,9 +213,7 @@ export default function FarmerEvaluationsPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("processing.pages.farmerEvaluation.table.evaluatedAt")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t("processing.pages.farmerEvaluation.table.actions")}
-                    </th>
+
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -171,9 +233,18 @@ export default function FarmerEvaluationsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
-                          {getEvaluationResultDisplayNameI18n(evaluation.evaluationResult, t)}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
+                            {getEvaluationResultDisplayNameI18n(evaluation.evaluationResult, t)}
+                          </span>
+                          <button
+                            onClick={() => router.push(`/dashboard/farmer/evaluations/${evaluation.batchId}`)}
+                            className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                          >
+                            <FiEye className="w-3 h-3 mr-1" />
+                            {t("processing.pages.farmerEvaluation.table.viewDetails")}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -186,15 +257,7 @@ export default function FarmerEvaluationsPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => router.push(`/dashboard/farmer/evaluations/${evaluation.batchId}`)}
-                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                        >
-                          <FiEye className="mr-1" />
-                          {t("processing.pages.farmerEvaluation.table.viewDetails")}
-                        </button>
-                      </td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -204,17 +267,109 @@ export default function FarmerEvaluationsPage() {
             <div className="text-center py-12">
               <FiAlertCircle className="text-gray-400 text-4xl mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm || filterStatus !== "all" ? t("processing.pages.farmerEvaluation.emptyState.noResults") : t("processing.pages.farmerEvaluation.emptyState.noEvaluations")}
+                {filterStatus === "fail" 
+                  ? "Không có đánh giá nào không đạt"
+                  : searchTerm || filterStatus !== "all" 
+                    ? t("processing.pages.farmerEvaluation.emptyState.noResults") 
+                    : t("processing.pages.farmerEvaluation.emptyState.noEvaluations")
+                }
               </h3>
               <p className="text-gray-500">
-                {searchTerm || filterStatus !== "all" 
-                  ? t("processing.pages.farmerEvaluation.emptyState.noResultsHint")
-                  : t("processing.pages.farmerEvaluation.emptyState.noEvaluationsHint")
+                {filterStatus === "fail"
+                  ? "Tất cả đánh giá của bạn đều đạt tiêu chuẩn chất lượng!"
+                  : searchTerm || filterStatus !== "all" 
+                    ? t("processing.pages.farmerEvaluation.emptyState.noResultsHint")
+                    : t("processing.pages.farmerEvaluation.emptyState.noEvaluationsHint")
                 }
               </p>
+              
+              {filterStatus === "fail" && (
+                <button
+                  onClick={() => setFilterStatus("all")}
+                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  Xem tất cả đánh giá
+                </button>
+              )}
             </div>
           )}
         </div>
+
+        {/* Summary Stats */}
+        {evaluations.length > 0 && (
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FiCheckCircle className="h-8 w-8 text-green-500" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-500">{t("processing.pages.farmerEvaluation.stats.total")}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{evaluations.length}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FiCheckCircle className="h-8 w-8 text-green-500" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-500">{t("processing.pages.farmerEvaluation.stats.pass")}</p>
+                  <p className="text-2xl font-semibold text-green-600">
+                    {evaluations.filter(e => e.evaluationResult === 'Pass').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FiAlertCircle className="h-8 w-8 text-red-500" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-500">{t("processing.pages.farmerEvaluation.stats.fail")}</p>
+                  <p className="text-2xl font-semibold text-red-600">
+                    {evaluations.filter(e => e.evaluationResult === 'Fail').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FiClock className="h-8 w-8 text-yellow-500" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-500">{t("processing.pages.farmerEvaluation.stats.pending")}</p>
+                  <p className="text-2xl font-semibold text-yellow-600">
+                    {evaluations.filter(e => e.evaluationResult === 'Pending').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Thống kê nhanh cho fail evaluations */}
+        {evaluations.length > 0 && filterStatus === "fail" && (
+          <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FiAlertCircle className="text-red-500" />
+                <span className="text-sm font-medium text-red-700">
+                  Tập trung vào đánh giá không đạt
+                </span>
+              </div>
+              <div className="text-sm text-red-600">
+                {evaluations.filter(e => e.evaluationResult === 'Fail').length} / {evaluations.length} đánh giá
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Summary Stats */}
         {evaluations.length > 0 && (
