@@ -54,13 +54,13 @@
         "subtitle": "Điền thông tin để đăng ký tham gia kế hoạch thu mua",
         "labels": {
           "registeredArea": "Diện tích đăng ký (ha)",
-          "note": "Ghi chú",
+          "note": "Giới thiệu bản thân",
           "planDetail": "Chi tiết kế hoạch",
-          "estimatedYield": "Sản lượng ước tính (kg)",
+          "estimatedYield": "Sản lượng đăng ký (kg)",
           "wantedPrice": "Giá mong muốn (VNĐ/kg)",
-          "expectedHarvestStart": "Ngày bắt đầu thu hoạch",
-          "expectedHarvestEnd": "Ngày kết thúc thu hoạch",
-          "detailNote": "Ghi chú chi tiết"
+          "expectedHarvestStart": "Ngày bắt đầu thu hoạch dự kiến",
+          "expectedHarvestEnd": "Ngày kết thúc thu hoạch dự kiến",
+          "detailNote": "Ghi chú nếu có"
         },
         "placeholders": {
           "planDetail": "Chi tiết kế hoạch",

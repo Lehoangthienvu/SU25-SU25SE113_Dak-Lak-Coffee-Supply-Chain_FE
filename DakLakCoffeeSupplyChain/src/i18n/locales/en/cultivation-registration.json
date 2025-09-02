@@ -54,13 +54,13 @@
         "subtitle": "Fill in information to register for the procurement plan",
         "labels": {
           "registeredArea": "Registered Area (ha)",
-          "note": "Note",
+          "note": "Self Introduction",
           "planDetail": "Plan Detail",
-          "estimatedYield": "Estimated Yield (kg)",
+          "estimatedYield": "Registered Yield (kg)",
           "wantedPrice": "Desired Price (VND/kg)",
           "expectedHarvestStart": "Expected Harvest Start Date",
           "expectedHarvestEnd": "Expected Harvest End Date",
-          "detailNote": "Detail Note"
+          "detailNote": "Note (optional)"
         },
         "placeholders": {
           "planDetail": "Plan Detail",
@@ -86,8 +86,8 @@
           "wantedPrice": "Please enter a valid desired price.",
           "wantedPriceTooLow": "Desired price must be at least {{minPrice}} VND/kg.",
           "wantedPriceTooHigh": "Desired price must not exceed {{maxPrice}} VND/kg.",
-          "expectedHarvestStart": "Please select a start date.",
-          "expectedHarvestEnd": "Please select an end date.",
+          "expectedHarvestStart": "Please select an expected harvest start date.",
+          "expectedHarvestEnd": "Please select an expected harvest end date.",
           "harvestEndAfterStart": "End date must be after start date.",
           "harvestStartInThePast": "Start date must not be in the past."
         },

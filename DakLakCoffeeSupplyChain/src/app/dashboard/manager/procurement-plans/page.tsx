@@ -51,7 +51,7 @@ export default function BusinessProcurementPlansPage() {
   const fetchData = async () => {
     setIsLoading(true);
     const data = await getAllProcurementPlans().catch((error) => {
-      AppToast.error(getErrorMessage(error));
+      console.error(getErrorMessage(error));
       return [];
     });
     setProcurementPlans(data);

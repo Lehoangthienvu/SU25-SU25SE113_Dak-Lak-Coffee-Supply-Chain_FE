@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Mail, Lock, Eye, EyeOff, User, Phone, Building, FileText, Loader2, CheckCircle, RefreshCw, AlertCircle } from "lucide-react";
 import { resendVerificationEmail, signUp } from "@/lib/api/auth";
+import { getBusinessAndFarmerRole, Role } from "@/lib/api/role";
 import { getErrorMessage } from "@/lib/utils";
 import { AppToast } from "@/components/ui/AppToast";
 
@@ -18,6 +19,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,7 +28,7 @@ export default function RegisterPage() {
     confirmPassword: "",
     name: "",
     phone: "",
-    roleId: 1, // 1 = Farmer, 2 = Business
+    roleId: 0, // Sẽ được set từ API
     companyName: "",
     taxId: "",
     businessLicenseURl: "",
@@ -34,6 +37,41 @@ export default function RegisterPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState("");
+
+  // Function để chuyển đổi tên role sang tiếng Việt
+  const getRoleDisplayName = (roleName: string) => {
+    const lowerRoleName = roleName.toLowerCase();
+    if (lowerRoleName.includes('farmer')) {
+      return 'Nông hộ';
+    } else if (lowerRoleName.includes('business') || lowerRoleName.includes('manager')) {
+      return 'Doanh nghiệp';
+    }
+    return roleName; // Fallback về tên gốc nếu không match
+  };
+
+  // Fetch roles khi component mount
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const rolesData = await getBusinessAndFarmerRole();
+        setRoles(rolesData);
+        // Set roleId mặc định là Farmer (tìm role có tên chứa "farmer" hoặc role đầu tiên)
+        if (rolesData.length > 0) {
+          const farmerRole = rolesData.find(role => 
+            role.roleName.toLowerCase().includes('farmer')
+          ) || rolesData[0];
+          setFormData(prev => ({ ...prev, roleId: farmerRole.roleId }));
+        }
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+        AppToast.error("Không thể tải danh sách vai trò. Vui lòng thử lại.");
+      } finally {
+        setRolesLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -64,7 +102,16 @@ export default function RegisterPage() {
       newErrors.phone = "Số điện thoại không hợp lệ";
     }
 
-    if (formData.roleId === 2) {
+    if (!formData.roleId || formData.roleId === 0) {
+      newErrors.roleId = "Vui lòng chọn vai trò";
+    }
+
+    // Kiểm tra nếu role là Doanh nghiệp
+    const selectedRole = roles.find(role => role.roleId === formData.roleId);
+    const isBusinessRole = selectedRole?.roleName.toLowerCase().includes('business') || 
+                          selectedRole?.roleName.toLowerCase().includes('manager');
+    
+    if (isBusinessRole) {
       if (!formData.companyName) {
         newErrors.companyName = "Vui lòng nhập tên công ty";
       }
@@ -91,15 +138,20 @@ export default function RegisterPage() {
 
     if (!validateForm()) return;
 
+    // Xác định role có phải là Business không
+    const selectedRole = roles.find(role => role.roleId === formData.roleId);
+    const isBusinessRole = selectedRole?.roleName.toLowerCase().includes('business') || 
+                          selectedRole?.roleName.toLowerCase().includes('manager');
+
     const payload = {
       email: formData.email,
       password: formData.password,
       name: formData.name,
       roleId: formData.roleId,
       phone: formData.phone,
-      companyName: formData.roleId === 2 ? formData.companyName : "",
-      taxId: formData.roleId === 2 ? formData.taxId : "",
-      businessLicenseURl: formData.roleId === 2 ? formData.businessLicenseURl : "",
+      companyName: isBusinessRole ? formData.companyName : "",
+      taxId: isBusinessRole ? formData.taxId : "",
+      businessLicenseURl: isBusinessRole ? formData.businessLicenseURl : "",
     };
 
     setLoading(true);
@@ -197,17 +249,29 @@ export default function RegisterPage() {
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Vai trò</Label>
                   <Select
-                    value={formData.roleId.toString()}
+                    value={formData.roleId > 0 ? formData.roleId.toString() : ""}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, roleId: parseInt(value) }))}
+                    disabled={rolesLoading}
                   >
                     <SelectTrigger className="border-gray-200 focus:border-orange-500 focus:ring-orange-500">
-                      <SelectValue />
+                      <SelectValue placeholder={rolesLoading ? "Đang tải vai trò..." : "Chọn vai trò của bạn"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">🌾 Nông dân</SelectItem>
-                      <SelectItem value="2">🏢 Doanh nghiệp</SelectItem>
+                      {roles.map((role) => (
+                        <SelectItem key={role.roleId} value={role.roleId.toString()}>
+                          {role.roleName.toLowerCase().includes('farmer') ? '🌾 ' : '🏢 '}
+                          {getRoleDisplayName(role.roleName)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  {rolesLoading && (
+                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Đang tải danh sách vai trò...
+                    </p>
+                  )}
+                  {errors.roleId && <p className="text-red-500 text-xs">{errors.roleId}</p>}
                 </div>
 
                 {/* Email Field */}
@@ -294,8 +358,13 @@ export default function RegisterPage() {
                   />
                 </div>
 
-                {/* Business Info (if role is Business) */}
-                {formData.roleId === 2 && (
+                {/* Business Info (if role is Doanh nghiệp) */}
+                {(() => {
+                  const selectedRole = roles.find(role => role.roleId === formData.roleId);
+                  const isBusinessRole = selectedRole?.roleName.toLowerCase().includes('business') || 
+                                        selectedRole?.roleName.toLowerCase().includes('manager');
+                  return isBusinessRole;
+                })() && (
                   <div className="space-y-4 p-4 bg-orange-50 rounded-lg border border-orange-100">
                     <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                       <Building className="w-4 h-4 text-orange-600" />
