@@ -6837,6 +6837,13 @@
       },
       "status": {
         "defaultNote": " New delivery batch will have \"In Progress\" status by default"
+      },
+      "contractSelection": {
+        "title": "Contract Selection Guide:",
+        "onlyAvailableContracts": "• Only shows contracts that don't have enough delivery batches",
+        "displayFormat": "• Display format: Contract Number - Remaining: X kg / Total: Y kg (Z batches)",
+        "autoDeliveryRound": "• Delivery Round will automatically be updated to the next round",
+        "completedContractsHidden": "• Contracts with sufficient delivery batches will not appear in the list"
       }
     },
     "detail": {

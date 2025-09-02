@@ -6894,6 +6894,13 @@
       },
       "status": {
         "defaultNote": " Đợt giao mới sẽ có trạng thái \"Đang thực hiện\" mặc định"
+      },
+      "contractSelection": {
+        "title": "Hướng dẫn chọn hợp đồng:",
+        "onlyAvailableContracts": "• Chỉ hiển thị hợp đồng chưa đủ đợt giao hàng",
+        "displayFormat": "• Thông tin hiển thị: Số hợp đồng - Còn lại: X kg / Tổng: Y kg (Z đợt giao)",
+        "autoDeliveryRound": "• Delivery Round sẽ tự động được cập nhật thành round tiếp theo",
+        "completedContractsHidden": "• Hợp đồng đã đủ đợt giao sẽ không xuất hiện trong danh sách"
       }
     },
     "detail": {

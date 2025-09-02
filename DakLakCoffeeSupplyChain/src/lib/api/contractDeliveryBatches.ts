@@ -82,6 +82,21 @@ export async function getContractDeliveryBatchById(
   return response.data;
 }
 
+// API: Lấy danh sách đợt giao hàng theo contractId
+// Sử dụng API getAllContractDeliveryBatches và lọc theo contractId
+export async function getContractDeliveryBatchesByContractId(
+  contractId: string
+): Promise<ContractDeliveryBatchViewAllDto[]> {
+  try {
+    const allBatches = await getAllContractDeliveryBatches();
+    // Lọc theo contractId
+    return allBatches.filter(batch => batch.contractId === contractId);
+  } catch (error) {
+    console.error("Lỗi khi lấy đợt giao hàng theo contractId:", error);
+    return [];
+  }
+}
+
 // API: Tạo mới một đợt giao hàng
 export async function createContractDeliveryBatch(dto: ContractDeliveryBatchCreateDto) {
   return api.post("/ContractDeliveryBatchs", {
