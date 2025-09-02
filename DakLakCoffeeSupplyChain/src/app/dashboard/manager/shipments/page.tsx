@@ -72,8 +72,17 @@ export default function ShipmentsPage() {
     });
   }, [shipments, search, selectedStatus, startDate, endDate]);
 
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  const pagedShipments = filtered.slice(
+  // Sort shipments by shippedAt (newest first)
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const dateA = a.shippedAt ? new Date(a.shippedAt).getTime() : 0;
+      const dateB = b.shippedAt ? new Date(b.shippedAt).getTime() : 0;
+      return dateB - dateA; // Mới nhất trước
+    });
+  }, [filtered]);
+
+  const totalPages = Math.ceil(sorted.length / pageSize) || 1;
+  const pagedShipments = sorted.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -99,7 +108,7 @@ export default function ShipmentsPage() {
   const formatDateTime = (iso?: string | null) => {
     if (!iso) return "";
     const date = new Date(iso);
-    return new Intl.DateTimeFormat(i18n.language === 'en' ? "en-US" : "vi-VN", {
+    return new Intl.DateTimeFormat(i18n.language === "en" ? "en-US" : "vi-VN", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -111,11 +120,11 @@ export default function ShipmentsPage() {
       <aside className="w-64 space-y-4">
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
           <h2 className="text-sm font-medium text-gray-700">
-            {t('shipments.search.title')}
+            {t("shipments.search.title")}
           </h2>
           <div className="relative">
             <Input
-              placeholder={t('shipments.search.placeholder')}
+              placeholder={t("shipments.search.placeholder")}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -141,7 +150,7 @@ export default function ShipmentsPage() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  {t('shipments.search.fromDate')}
+                  {t("shipments.search.fromDate")}
                 </label>
                 <Input
                   type="date"
@@ -156,7 +165,7 @@ export default function ShipmentsPage() {
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">
-                  {t('shipments.search.toDate')}
+                  {t("shipments.search.toDate")}
                 </label>
                 <Input
                   type="date"
@@ -172,7 +181,7 @@ export default function ShipmentsPage() {
               className="bg-black text-white hover:bg-gray-800"
               onClick={() => router.push("/dashboard/manager/shipments/create")}
             >
-              {t('shipments.actions.createNew')}
+              {t("shipments.actions.createNew")}
             </Button>
           </div>
 
@@ -180,14 +189,24 @@ export default function ShipmentsPage() {
             <table className="min-w-full table-auto">
               <thead className="bg-gray-100 text-sm text-gray-600">
                 <tr>
-                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.shipmentCode')}</th>
-                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.orderCode')}</th>
-                  <th className="px-4 py-2 text-left">{t('shipments.table.headers.deliveryStaff')}</th>
-                  <th className="px-4 py-2 text-center">{t('shipments.table.headers.status')}</th>
-                  <th className="px-4 py-2 text-center">
-                    {t('shipments.table.headers.timeRange')}
+                  <th className="px-4 py-2 text-left">
+                    {t("shipments.table.headers.shipmentCode")}
                   </th>
-                  <th className="px-4 py-2 text-center">{t('shipments.table.headers.actions')}</th>
+                  <th className="px-4 py-2 text-left">
+                    {t("shipments.table.headers.orderCode")}
+                  </th>
+                  <th className="px-4 py-2 text-left">
+                    {t("shipments.table.headers.deliveryStaff")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("shipments.table.headers.status")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("shipments.table.headers.timeRange")}
+                  </th>
+                  <th className="px-4 py-2 text-center">
+                    {t("shipments.table.headers.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -197,7 +216,7 @@ export default function ShipmentsPage() {
                       colSpan={6}
                       className="text-center py-8 text-sm text-muted-foreground"
                     >
-                      {t('shipments.table.noData')}
+                      {t("shipments.table.noData")}
                     </td>
                   </tr>
                 ) : (
@@ -217,8 +236,7 @@ export default function ShipmentsPage() {
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-center">
                         {(() => {
-                          const meta =
-                            statusMap[s.deliveryStatus];
+                          const meta = statusMap[s.deliveryStatus];
                           return (
                             <span
                               className={cn(
@@ -246,7 +264,7 @@ export default function ShipmentsPage() {
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-[2px] justify-center">
-                          <Tooltip content={t('shipments.actions.view')}>
+                          <Tooltip content={t("shipments.actions.view")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -259,7 +277,7 @@ export default function ShipmentsPage() {
                               <Eye className="w-4 h-4 text-blue-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content={t('shipments.actions.edit')}>
+                          <Tooltip content={t("shipments.actions.edit")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -272,7 +290,7 @@ export default function ShipmentsPage() {
                               <Pencil className="w-4 h-4 text-yellow-500" />
                             </Button>
                           </Tooltip>
-                          <Tooltip content={t('shipments.actions.delete')}>
+                          <Tooltip content={t("shipments.actions.delete")}>
                             <Button
                               variant="ghost"
                               className="p-[2px] w-7 h-7"
@@ -297,15 +315,16 @@ export default function ShipmentsPage() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 px-4 py-2 bg-gray-50 border rounded-md text-sm text-gray-700">
             <div className="text-sm text-gray-600">
-              {t('shipments.table.pagination.showing')}{" "}
+              {t("shipments.table.pagination.showing")}{" "}
               <span className="font-medium">
                 {(currentPage - 1) * pageSize + 1}
               </span>
               –
               <span className="font-medium">
-                {Math.min(currentPage * pageSize, filtered.length)}
+                {Math.min(currentPage * pageSize, sorted.length)}
               </span>{" "}
-              {t('shipments.table.pagination.of')} {filtered.length} {t('shipments.table.pagination.shipments')}
+              {t("shipments.table.pagination.of")} {sorted.length}{" "}
+              {t("shipments.table.pagination.shipments")}
             </div>
             <div className="flex gap-2 justify-end mt-2 sm:mt-0">
               <Button
@@ -315,11 +334,12 @@ export default function ShipmentsPage() {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               >
-                {t('shipments.actions.previous')}
+                {t("shipments.actions.previous")}
               </Button>
               <span className="flex items-center px-2">
-                {t('shipments.table.pagination.page')} <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                {t('shipments.table.pagination.of')} {totalPages}
+                {t("shipments.table.pagination.page")}{" "}
+                <span className="mx-1 font-semibold">{currentPage}</span>{" "}
+                {t("shipments.table.pagination.of")} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -330,7 +350,7 @@ export default function ShipmentsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
               >
-                {t('shipments.actions.next')}
+                {t("shipments.actions.next")}
               </Button>
             </div>
           </div>
@@ -338,16 +358,16 @@ export default function ShipmentsPage() {
         <ConfirmDialog
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
-          title={t('shipments.deleteDialog.title')}
+          title={t("shipments.deleteDialog.title")}
           description={
             <span>
-              {t('shipments.deleteDialog.description', { 
-                shipmentCode: shipmentToDelete?.shipmentCode 
+              {t("shipments.deleteDialog.description", {
+                shipmentCode: shipmentToDelete?.shipmentCode,
               })}
             </span>
           }
-          confirmText={t('shipments.deleteDialog.confirm')}
-          cancelText={t('shipments.deleteDialog.cancel')}
+          confirmText={t("shipments.deleteDialog.confirm")}
+          cancelText={t("shipments.deleteDialog.cancel")}
           onConfirm={async () => {
             if (!shipmentToDelete) return;
             try {
