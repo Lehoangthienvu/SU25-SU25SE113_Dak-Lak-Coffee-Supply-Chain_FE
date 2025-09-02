@@ -21,6 +21,9 @@
     },
     "navigation": {
       "cultivationRegistration": "Các đơn đã đăng ký kế hoạch"
-    }    
+    },
+    "unit": {
+      "currency": "VNĐ"
+    }
   }
 }

@@ -11,13 +11,13 @@ import {
 } from "@/lib/api/farmingCommitments";
 import { toast } from "sonner";
 import {
-  FarmingCommitmentStatusMap,
   FarmingCommitmentStatusValue,
   getFarmingCommitmentStatusMap,
 } from "@/lib/constants/FarmingCommitmentStatus";
 import FilterStatusPanel from "@/components/ui/filterStatusPanel";
 import FarmingCommitmentCardForFarmer from "@/components/farming-commitments/FarmingCommitmentCardForFarmer";
 import { useTranslation } from "react-i18next";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function FarmerFarmingCommitmentPage() {
   const { t } = useTranslation();
@@ -78,18 +78,19 @@ export default function FarmerFarmingCommitmentPage() {
   );
 
   return (
-    <div className='flex bg-amber-200-50 p-6 gap-6'>     
-      
+    <div className='flex bg-amber-200-50 p-6 gap-6'>
       {/* Sidebar */}
       <aside className='w-64 space-y-4'>
         {/* Search block */}
         <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
           <h2 className='text-sm font-medium text-gray-700'>
-            {t('farmingCommitment.pages.farmer.search.title')}
+            {t("farmingCommitment.pages.farmer.search.title")}
           </h2>
           <div className='relative'>
             <Input
-              placeholder={t('farmingCommitment.pages.farmer.search.placeholder')}
+              placeholder={t(
+                "farmingCommitment.pages.farmer.search.placeholder"
+              )}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className='pr-10'
@@ -109,36 +110,77 @@ export default function FarmerFarmingCommitmentPage() {
       {/* Main content */}
       <main className='flex-1 space-y-6'>
         <div className='bg-white rounded-xl shadow-sm p-4'>
-          <table className='w-full text-sm table-auto'>
-            <thead className='bg-gray-100 text-gray-700 font-medium'>
-              <tr>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.commitmentName')}</th>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.businessName')}</th>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.totalAmount')}</th>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.status')}</th>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.commitmentDate')}</th>
-                <th className='px-4 py-3 text-left'>{t('farmingCommitment.pages.farmer.table.headers.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pagedCommitments.map((commitment) => (
-                <FarmingCommitmentCardForFarmer
-                  key={commitment.commitmentId}
-                  commitment={commitment}
-                  statusMap={statusMap}
-                />
-              ))}
-            </tbody>
-          </table>
+          <div className='flex justify-between items-center mb-4'>
+            <h1 className='text-xl font-semibold text-gray-900'>
+              {t("farmingCommitment.pages.list.title")}
+            </h1>
+          </div>
+
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : pagedCommitments.length === 0 ? (
+            <p className='text-center py-8 text-sm text-muted-foreground'>
+              {t("farmingCommitment.pages.list.table.noData")}
+            </p>
+          ) : (
+            <table className='w-full text-sm table-auto'>
+              <thead className='bg-gray-100 text-gray-700 font-medium'>
+                <tr>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.farmer.table.headers.commitmentName"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.farmer.table.headers.businessName"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.farmer.table.headers.totalAmount"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.farmer.table.headers.status")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.farmer.table.headers.commitmentDate"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.farmer.table.headers.actions")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagedCommitments.map((commitment) => (
+                  <FarmingCommitmentCardForFarmer
+                    key={commitment.commitmentId}
+                    commitment={commitment}
+                    statusMap={statusMap}
+                  />
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
           <div className='flex justify-between items-center'>
             <span className='text-sm text-muted-foreground'>
-              {t('farmingCommitment.pages.farmer.pagination.showing')} {(currentPage - 1) * pageSize + 1}{t('farmingCommitment.pages.farmer.pagination.to')}
-              {Math.min(currentPage * pageSize, filteredCommitments.length)} {t('farmingCommitment.pages.farmer.pagination.of')}{" "}
-              {filteredCommitments.length} {t('farmingCommitment.pages.farmer.pagination.commitments')}
+              {t("farmingCommitment.pages.farmer.pagination.showing")}{" "}
+              {(currentPage - 1) * pageSize + 1}
+              {t("farmingCommitment.pages.farmer.pagination.to")}
+              {Math.min(
+                currentPage * pageSize,
+                filteredCommitments.length
+              )}{" "}
+              {t("farmingCommitment.pages.farmer.pagination.of")}{" "}
+              {filteredCommitments.length}{" "}
+              {t("farmingCommitment.pages.farmer.pagination.commitments")}
             </span>
             <div className='flex items-center gap-2'>
               <Button

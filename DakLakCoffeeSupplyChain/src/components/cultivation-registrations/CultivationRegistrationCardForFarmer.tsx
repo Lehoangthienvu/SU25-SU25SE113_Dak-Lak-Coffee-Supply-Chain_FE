@@ -55,7 +55,7 @@ export default function CultivationRegistrationCardForFarmer({
       </td>
       <td className="px-4 py-3">
         <div className="text-sm text-gray-900">
-          {registration.totalWantedPrice.toLocaleString()} VND
+            {registration.totalWantedPrice != null ? registration.totalWantedPrice.toLocaleString() + " VND" : ""}
         </div>
       </td>
       <td className="px-4 py-3">

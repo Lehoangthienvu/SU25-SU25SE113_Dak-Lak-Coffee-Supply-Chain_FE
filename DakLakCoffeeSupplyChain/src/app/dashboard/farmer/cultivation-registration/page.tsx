@@ -17,7 +17,6 @@ import CultivationRegistrationCardForFarmer from "@/components/cultivation-regis
 import FilterStatusPanel from "@/components/ui/filterStatusPanel";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
 
 export default function FarmerCultivationRegistrationPage() {
@@ -40,7 +39,7 @@ export default function FarmerCultivationRegistrationPage() {
       const data = await getAllCultivationRegistrationsForCurrentUser();
       setCultivationRegistrations(data);
     } catch (error) {
-      AppToast.error(getErrorMessage(error));
+      console.error(getErrorMessage(error));
       setCultivationRegistrations([]);
     } finally {
       setIsLoading(false);
@@ -122,12 +121,12 @@ export default function FarmerCultivationRegistrationPage() {
             <h1 className='text-xl font-semibold text-gray-900'>
               {t("cultivationRegistration.pages.list.title")}
             </h1>
-            <Button
+            {/* <Button
               onClick={() => router.push("/dashboard/farmer/market-place")}
               variant='default'
             >
               {t("cultivationRegistration.pages.list.actions.browsePlans")}
-            </Button>
+            </Button> */}
           </div>
           
           {isLoading ? (

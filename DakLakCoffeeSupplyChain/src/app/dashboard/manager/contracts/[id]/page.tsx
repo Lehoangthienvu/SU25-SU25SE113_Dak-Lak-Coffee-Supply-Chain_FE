@@ -548,7 +548,7 @@ export default function ContractDetailPage() {
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.unitPrice?.toLocaleString()}{" "}
-                        <span className="text-gray-500 text-xs">{t('common.currency')}/kg</span>
+                        <span className="text-gray-500 text-xs">{t('common.unit.currency')}/kg</span>
                       </td>
                       <td className="px-4 py-2 text-center">
                         {item.discountAmount !== undefined
