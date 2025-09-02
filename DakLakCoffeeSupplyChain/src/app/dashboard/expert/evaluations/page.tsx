@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getAllProcessingBatchEvaluations, ProcessingBatchEvaluation, EVALUATION_RESULTS, getEvaluationResultDisplayNameI18n, getEvaluationResultColor } from "@/lib/api/processingBatchEvaluations";
 import { ProcessingStatus } from "@/lib/constants/batchStatus";
-import { FiEye, FiPlus, FiRefreshCw, FiAlertCircle, FiCheckCircle, FiClock, FiXCircle } from "react-icons/fi";
+import { FiEye, FiPlus, FiRefreshCw, FiAlertCircle, FiCheckCircle, FiClock, FiXCircle, FiAward } from "react-icons/fi";
 import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "@/components/processing/Pagination";
@@ -194,8 +194,21 @@ export default function ExpertEvaluationsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("expertEvaluations.title")}</h1>
-          <p className="text-gray-600">{t("expertEvaluations.subtitle")}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("expertEvaluations.title")}</h1>
+              <p className="text-gray-600">{t("expertEvaluations.subtitle")}</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push('/dashboard/expert/evaluation-history')}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              >
+                <FiAward className="w-4 h-4" />
+                <span>Xem lịch sử đánh giá</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Stats */}

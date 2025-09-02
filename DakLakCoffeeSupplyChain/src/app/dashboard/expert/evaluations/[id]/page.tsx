@@ -14,6 +14,7 @@ import RetryGuidanceInfo from "@/components/processing-batches/RetryGuidanceInfo
 import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
 import EvaluationRetryInfo from "@/components/processing-batches/EvaluationRetryInfo";
 import EvaluationCriteriaDisplay from "@/components/processing-batches/EvaluationCriteriaDisplay";
+import EvaluationCommentsDisplay from "@/components/processing-batches/EvaluationCommentsDisplay";
 import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
 
@@ -174,81 +175,122 @@ export default function ExpertEvaluationDetailPage() {
   const latestEvaluation = evaluations.length > 0 ? evaluations[0] : null;
   const overallEval = calculateOverallEvaluation();
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
+    return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        {/* Enhanced Header */}
         <div className="mb-8">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 mb-6 transition-colors"
-          >
-            <FiArrowLeft />
-            {t("expertEvaluationDetail.backButton")}
-          </button>
-
-          <div className="flex items-center justify-between">
-                      <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              {t("expertEvaluationDetail.title")}
-            </h1>
-            <p className="text-gray-600">{t("expertEvaluationDetail.subtitle", { batchCode: batch.batchCode, farmerName: batch.farmerName })}</p>
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm text-indigo-600 hover:text-indigo-700 hover:bg-white/90 transition-all duration-200 rounded-lg border border-indigo-200 shadow-sm hover:shadow-md"
+            >
+              <FiArrowLeft className="w-4 h-4" />
+              <span className="font-medium">{t("expertEvaluationDetail.backButton")}</span>
+            </button>
+            
+            {/* Status Badge */}
+            <div className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 ${
+              batch.status === ProcessingStatus.AwaitingEvaluation 
+                ? 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                : batch.status === ProcessingStatus.Completed
+                ? 'bg-green-100 text-green-800 border border-green-200'
+                : 'bg-blue-100 text-blue-800 border border-blue-200'
+            }`}>
+              {batch.status === ProcessingStatus.AwaitingEvaluation && <FiAlertCircle className="w-4 h-4" />}
+              {batch.status === ProcessingStatus.Completed && <FiCheckCircle className="w-4 h-4" />}
+              {batch.status === ProcessingStatus.InProgress && <FiClock className="w-4 h-4" />}
+              {statusInfo.text}
+            </div>
           </div>
 
-            {/* Chỉ hiển thị nút Update Evaluation khi có thể đánh giá lại */}
-            {(() => {
-              // Kiểm tra xem có thể đánh giá lại không
-              const canEvaluate = 
-                // Status phải là awaiting evaluation
-                batch.status === ProcessingStatus.AwaitingEvaluation ||
-                // Hoặc có evaluation fail gần nhất
-                (latestEvaluation && latestEvaluation.evaluationResult === EVALUATION_RESULTS.FAIL);
-              
-                       if (!canEvaluate) {
-           const isPassed = latestEvaluation?.evaluationResult === EVALUATION_RESULTS.PASS;
-           return (
-             <div className={`px-6 py-3 rounded-xl border flex items-center gap-2 font-medium ${
-               isPassed 
-                 ? 'bg-green-50 text-green-700 border-green-200' 
-                 : 'bg-red-50 text-red-700 border-red-200'
-             }`}>
-               {isPassed ? (
-                 <FiCheckCircle className="text-green-500" />
-               ) : (
-                 <FiXCircle className="text-red-500" />
-               )}
-               {isPassed
-                 ? t("expertEvaluationDetail.batchAlreadyPassed")
-                 : t("expertEvaluationDetail.batchNotReadyForEvaluation")
-               }
-             </div>
-           );
-         }
-              
-              return (
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  {t("expertEvaluationDetail.title")}
+                </h1>
+                <p className="text-gray-600 text-sm lg:text-base">
+                  {t("expertEvaluationDetail.subtitle", { batchCode: batch.batchCode, farmerName: batch.farmerName })}
+                </p>
+                
+                {/* Quick Stats */}
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium border border-blue-200">
+                    {evaluations.length} đánh giá
+                  </div>
+                  <div className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium border border-green-200">
+                    {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length} đạt
+                  </div>
+                  <div className="px-3 py-1 bg-red-50 text-red-700 rounded-full text-xs font-medium border border-red-200">
+                    {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length} không đạt
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex-shrink-0 flex gap-3">
+                {/* Xem lịch sử đánh giá */}
                 <button
-                  onClick={() => setShowEvaluationForm(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
+                  onClick={() => router.push(`/dashboard/expert/evaluation-history?batchId=${batchId}`)}
+                  className="px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
                 >
-                  <FiSave />
-                  {t("expertEvaluationDetail.updateEvaluationButton")}
+                  <FiAward className="w-4 h-4" />
+                  Xem lịch sử đánh giá
                 </button>
-              );
-            })()}
+
+                {/* Update Evaluation Button */}
+                {(() => {
+                  const canEvaluate = 
+                    batch.status === ProcessingStatus.AwaitingEvaluation ||
+                    (latestEvaluation && latestEvaluation.evaluationResult === EVALUATION_RESULTS.FAIL);
+                  
+                  if (!canEvaluate) {
+                    const isPassed = latestEvaluation?.evaluationResult === EVALUATION_RESULTS.PASS;
+                    return (
+                      <div className={`px-6 py-3 rounded-xl border flex items-center gap-2 font-medium ${
+                        isPassed 
+                          ? 'bg-green-50 text-green-700 border-green-200' 
+                          : 'bg-red-50 text-red-700 border-red-200'
+                      }`}>
+                        {isPassed ? (
+                          <FiCheckCircle className="text-green-500" />
+                        ) : (
+                          <FiXCircle className="text-red-500" />
+                        )}
+                        {isPassed
+                          ? t("expertEvaluationDetail.batchAlreadyPassed")
+                          : t("expertEvaluationDetail.batchNotReadyForEvaluation")
+                        }
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <button
+                      onClick={() => setShowEvaluationForm(true)}
+                      className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <FiSave className="w-4 h-4" />
+                      {t("expertEvaluationDetail.updateEvaluationButton")}
+                    </button>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* 🔥 CẢI THIỆN: UI mới - Layout 2 cột cân đối */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Cột trái: Thông tin cơ bản và tiến trình */}
-          <div className="space-y-6">
+        {/* Layout 1 cột */}
+        <div className="space-y-6">
             {/* Batch Information Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6 text-white">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white">
                 <h2 className="text-xl font-semibold flex items-center gap-3">
                   <FiPackage className="w-6 h-6" />
                   {t("expertEvaluationDetail.batchInformation.title")}
                 </h2>
+                <p className="text-indigo-100 mt-1 text-sm">Thông tin chi tiết về lô sơ chế</p>
               </div>
 
               <div className="p-6">
@@ -323,12 +365,13 @@ export default function ExpertEvaluationDetailPage() {
             </div>
 
             {/* Progresses Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-6 text-white">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 p-6 text-white">
                 <h2 className="text-xl font-semibold flex items-center gap-3">
                   <FiActivity className="w-6 h-6" />
                   {t("expertEvaluationDetail.processingProgress.title")}
                 </h2>
+                <p className="text-blue-100 mt-1 text-sm">Tiến trình sơ chế từng bước</p>
               </div>
 
               <div className="p-6">
@@ -405,102 +448,16 @@ export default function ExpertEvaluationDetailPage() {
             </div>
           </div>
 
-          {/* Cột phải: Đánh giá và thống kê */}
-          <div className="space-y-6">
-            {/* 🔥 CẢI THIỆN: Overall Evaluation Card - UI mới đẹp */}
-            {overallEval && (
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
-                  <h2 className="text-xl font-semibold flex items-center gap-3">
-                    <FiAward className="w-6 h-6" />
-                    {t("expertEvaluationDetail.overallEvaluation.title")}
-                  </h2>
-                  <p className="text-emerald-100 mt-2">{t("expertEvaluationDetail.overallEvaluation.subtitle")}</p>
-                </div>
 
-                <div className="p-6">
-                  {/* Kết quả tổng hợp */}
-                  <div className="text-center mb-6">
-                    <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-xl border-2 ${overallEval.overallResult === 'Pass'
-                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-                      : 'border-red-200 bg-red-50 text-red-800'
-                      }`}>
-                      <div className={`p-2 rounded-lg ${overallEval.overallResult === 'Pass' ? 'bg-emerald-100' : 'bg-red-100'
-                        }`}>
-                        {overallEval.overallResult === 'Pass' ? (
-                          <FiCheckCircle className="w-6 h-6 text-emerald-600" />
-                        ) : (
-                          <FiX className="w-6 h-6 text-red-600" />
-                        )}
-                      </div>
-                      <span className="font-bold text-lg">
-                        {overallEval.overallResult === 'Pass' ? t("expertEvaluationDetail.overallEvaluation.pass") : t("expertEvaluationDetail.overallEvaluation.fail")}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Thống kê 3 cột */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    {/* Điểm trung bình */}
-                    <div className="text-center">
-                      <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-xl shadow-lg">
-                        <div className="text-2xl font-bold mb-1">
-                          {overallEval.averageScore}
-                        </div>
-                        <div className="text-sm opacity-90">/100</div>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                        <div
-                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500"
-                          style={{ width: `${overallEval.averageScore}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2 font-medium">{t("expertEvaluationDetail.overallEvaluation.averageScore")}</p>
-                    </div>
-
-                    {/* Giai đoạn đạt */}
-                    <div className="text-center">
-                      <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-xl shadow-lg">
-                        <div className="text-2xl font-bold mb-1">
-                          {overallEval.passedEvaluations}
-                        </div>
-                        <div className="text-sm opacity-90">/{overallEval.totalEvaluations}</div>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2 font-medium">{t("expertEvaluationDetail.overallEvaluation.passedStages")}</p>
-                    </div>
-
-                    {/* Tỷ lệ đạt */}
-                    <div className="text-center">
-                      <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-lg">
-                        <div className="text-2xl font-bold mb-1">
-                          {overallEval.passPercentage}%
-                        </div>
-                        <div className="text-sm opacity-90">Tỷ lệ</div>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2 font-medium">{t("expertEvaluationDetail.overallEvaluation.passRate")}</p>
-                    </div>
-                  </div>
-
-                  {/* Logic đánh giá */}
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-4 text-center">
-                                      <div className="text-sm text-blue-800 font-medium">
-                    {t("expertEvaluationDetail.overallEvaluation.evaluationLogic", { 
-                      minStages: Math.ceil(overallEval.totalEvaluations * 0.67), 
-                      totalStages: overallEval.totalEvaluations 
-                    })}
-                  </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Evaluation Status Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 p-6 text-white">
                 <h2 className="text-xl font-semibold flex items-center gap-3">
                   <FiTarget className="w-6 h-6" />
                   {t("expertEvaluationDetail.evaluationStatus.title")}
                 </h2>
+                <p className="text-purple-100 mt-1 text-sm">Kết quả đánh giá hiện tại</p>
               </div>
 
               <div className="p-6">
@@ -618,48 +575,138 @@ export default function ExpertEvaluationDetailPage() {
               </div>
             </div>
 
-            {/* Quick Statistics Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-6 text-white">
-                <h2 className="text-xl font-semibold flex items-center gap-3">
-                  <FiBarChart2 className="w-6 h-6" />
-                  {t("expertEvaluationDetail.quickStats.title")}
-                </h2>
-              </div>
+                         {/* Quick Statistics Card */}
+             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+               <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-6 text-white">
+                 <h2 className="text-xl font-semibold flex items-center gap-3">
+                   <FiBarChart2 className="w-6 h-6" />
+                   {t("expertEvaluationDetail.quickStats.title")}
+                 </h2>
+               </div>
 
-              <div className="p-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-xl">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {evaluations.length}
-                    </div>
-                    <div className="text-xs text-blue-700">{t("expertEvaluationDetail.quickStats.evaluations")}</div>
-                  </div>
+               <div className="p-6">
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="text-center p-4 bg-blue-50 rounded-xl">
+                     <div className="text-2xl font-bold text-blue-600">
+                       {evaluations.length}
+                     </div>
+                     <div className="text-xs text-blue-700">{t("expertEvaluationDetail.quickStats.evaluations")}</div>
+                   </div>
 
-                  <div className="text-center p-4 bg-green-50 rounded-xl">
-                    <div className="text-2xl font-bold text-green-600">
-                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length}
-                    </div>
-                    <div className="text-xs text-green-700">{t("expertEvaluationDetail.quickStats.passed")}</div>
-                  </div>
+                   <div className="text-center p-4 bg-green-50 rounded-xl">
+                     <div className="text-2xl font-bold text-green-600">
+                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.PASS).length}
+                     </div>
+                     <div className="text-xs text-green-700">{t("expertEvaluationDetail.quickStats.passed")}</div>
+                   </div>
 
-                  <div className="text-center p-4 bg-yellow-50 rounded-xl">
-                    <div className="text-2xl font-bold text-yellow-600">
-                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.NEEDS_IMPROVEMENT).length}
-                    </div>
-                    <div className="text-xs text-yellow-700">{t("expertEvaluationDetail.quickStats.needsImprovement")}</div>
-                  </div>
+                   <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                     <div className="text-2xl font-bold text-yellow-600">
+                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.NEEDS_IMPROVEMENT).length}
+                     </div>
+                     <div className="text-xs text-yellow-700">{t("expertEvaluationDetail.quickStats.needsImprovement")}</div>
+                   </div>
 
-                  <div className="text-center p-4 bg-red-50 rounded-xl">
-                    <div className="text-2xl font-bold text-red-600">
-                      {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length}
-                    </div>
-                    <div className="text-xs text-red-700">{t("expertEvaluationDetail.quickStats.failed")}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                   <div className="text-center p-4 bg-red-50 rounded-xl">
+                     <div className="text-2xl font-bold text-red-600">
+                       {evaluations.filter(e => e.evaluationResult === EVALUATION_RESULTS.FAIL).length}
+                     </div>
+                     <div className="text-xs text-red-700">{t("expertEvaluationDetail.quickStats.failed")}</div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             {/* Evaluation History Card */}
+             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+               <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
+                 <h2 className="text-xl font-semibold flex items-center gap-3">
+                   <FiAward className="w-6 h-6" />
+                   Lịch sử đánh giá
+                 </h2>
+                 <p className="text-emerald-100 mt-1">Xem lại tất cả các lần đánh giá đã thực hiện</p>
+               </div>
+
+               <div className="p-6">
+                 {evaluations && evaluations.length > 0 ? (
+                   <div className="space-y-4">
+                     {evaluations.map((evaluation, index) => (
+                       <div
+                         key={evaluation.evaluationId}
+                         className={`bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-lg p-6 ${
+                           index === 0 ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 to-teal-50' : ''
+                         }`}
+                       >
+                         <div className="flex items-start justify-between mb-4">
+                           <div className="flex-1">
+                             <div className="flex items-center gap-3 mb-2">
+                               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getEvaluationResultColor(evaluation.evaluationResult)}`}>
+                                 {getEvaluationResultDisplayNameI18n(evaluation.evaluationResult, t)}
+                               </span>
+                               {index === 0 && (
+                                 <span className="px-2 py-1 text-xs bg-emerald-200 text-emerald-800 rounded-full">
+                                   Mới nhất
+                                 </span>
+                               )}
+                               <span className="text-sm text-gray-500">
+                                 #{evaluations.length - index}
+                               </span>
+                             </div>
+                             <h3 className="font-semibold text-gray-900 text-lg">
+                               Đánh giá lần {evaluations.length - index}
+                             </h3>
+                           </div>
+                         </div>
+                         
+                         <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                           <div className="flex items-center gap-2">
+                             <FiCalendar className="w-4 h-4 text-blue-600" />
+                             <span className="text-gray-500">Ngày đánh giá:</span>
+                             <span className="font-medium text-gray-900">
+                               {evaluation.evaluatedAt ? new Date(evaluation.evaluatedAt).toLocaleDateString('vi-VN') : 'N/A'}
+                             </span>
+                           </div>
+                           <div className="flex items-center gap-2">
+                             <FiUser className="w-4 h-4 text-green-600" />
+                             <span className="text-gray-500">Người đánh giá:</span>
+                             <span className="font-medium text-gray-900">
+                               {evaluation.expertName || evaluation.evaluatedBy || 'N/A'}
+                             </span>
+                           </div>
+                         </div>
+
+                                                   {evaluation.comments && (
+                            <div className="space-y-2">
+                              <p className="text-sm text-gray-800 font-medium">Nhận xét:</p>
+                              <EvaluationCommentsDisplay 
+                                comments={evaluation.comments} 
+                                evaluationResult={evaluation.evaluationResult} 
+                              />
+                            </div>
+                          )}
+
+                         {evaluation.detailedFeedback && (
+                           <div className="bg-blue-50 rounded-lg p-4 mt-3">
+                             <p className="text-sm text-blue-800 font-medium mb-2">Phản hồi chi tiết:</p>
+                             <p className="text-sm text-blue-700 line-clamp-2">
+                               {evaluation.detailedFeedback.length > 150 
+                                 ? `${evaluation.detailedFeedback.substring(0, 150)}...` 
+                                 : evaluation.detailedFeedback
+                               }
+                             </p>
+                           </div>
+                         )}
+                       </div>
+                     ))}
+                   </div>
+                 ) : (
+                   <div className="text-center py-8 bg-gray-50 rounded-xl">
+                     <FiAward className="text-gray-400 text-3xl mx-auto mb-3" />
+                     <p className="text-gray-500 text-sm">Chưa có lịch sử đánh giá nào</p>
+                   </div>
+                 )}
+               </div>
+             </div>
         </div>
 
         {/* Evaluation Criteria Form Modal */}
@@ -688,6 +735,6 @@ export default function ExpertEvaluationDetailPage() {
           }}
         />
       </div>
-    </div>
+    
   );
 }

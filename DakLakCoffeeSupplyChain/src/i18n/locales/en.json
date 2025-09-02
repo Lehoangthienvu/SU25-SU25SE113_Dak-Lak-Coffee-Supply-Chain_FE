@@ -1,4 +1,47 @@
 {
+  "evaluationHistory": {
+    "title": "Evaluation History",
+    "subtitle": "All evaluations for batch {{batchCode}}",
+    "latest": "Latest",
+    "evaluationNumber": "Evaluation #{{number}}",
+    "evaluator": "Evaluator",
+    "comments": "Evaluation Comments",
+    "detailedFeedback": "Detailed Feedback",
+    "recommendations": "Recommendations",
+    "pageTitle": "Evaluation History",
+    "pageTitleBatch": "Batch Evaluation History",
+    "pageDescription": "View all evaluations performed",
+    "pageDescriptionBatch": "View all evaluations for batch {{batchCode}}",
+    "back": "Back",
+    "loading": "Loading evaluation history...",
+    "error": "Cannot load evaluation history",
+    "stats": {
+      "total": "{{count}} evaluations",
+      "passed": "{{count}} passed",
+      "failed": "{{count}} failed"
+    },  
+    "filters": {
+      "search": "Search by batch code, farmer...",
+      "allStatus": "All status",
+      "allTime": "All time",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last week",
+      "lastMonth": "Last month"
+    },
+    "batchInfo": {
+      "title": "Batch Information",
+      "batchCode": "Batch Code",
+      "farmer": "Farmer",
+      "yield": "Yield",
+      "status": "Status",
+      "viewDetails": "View Details"
+    },
+    "noResults": {
+      "title": "No evaluations found",
+      "description": "Try changing filters or search terms"
+    }
+  },
   "processing": {
     "title": "Coffee Processing Recording",
     "batch": {
