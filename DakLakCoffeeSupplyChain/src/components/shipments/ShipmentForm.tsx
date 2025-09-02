@@ -59,7 +59,7 @@ export default function ShipmentForm({
 
   const [formData, setFormData] = useState<FormState | null>(null);
   const [orderItems, setOrderItems] = useState<
-    { orderItemId: string; productName: string }[]
+    { orderItemId: string; productName: string; quantity: number }[]
   >([]);
   const [orderOptions, setOrderOptions] = useState<
     { orderId: string; orderCode: string }[]
@@ -109,7 +109,13 @@ export default function ShipmentForm({
     (async () => {
       try {
         const detail = await getOrderDetails(oid);
-        setOrderItems(detail.orderItems || []);
+        setOrderItems(
+          (detail.orderItems || []).map((item: any) => ({
+            orderItemId: item.orderItemId,
+            productName: item.productName,
+            quantity: item.quantity || 0,
+          }))
+        );
       } catch (e) {
         console.error(e);
         toast.error(t("shipments.form.validation.loadOrderItemsFailed"));
@@ -207,6 +213,8 @@ export default function ShipmentForm({
       return toast.error(t("shipments.form.validation.selectOrder"));
     if (!data.deliveryStaffId)
       return toast.error(t("shipments.form.validation.selectStaff"));
+    if (!data.shippedAt)
+      return toast.error(t("shipments.form.validation.selectShippedAt"));
 
     const shippedAtStr = data.shippedAt
       ? toDateOnly(data.shippedAt)
@@ -405,7 +413,8 @@ export default function ShipmentForm({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">
-            {t("shipments.form.shippedAt")}
+            {t("shipments.form.shippedAt")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <DatePicker
             className="h-10"
@@ -450,7 +459,20 @@ export default function ShipmentForm({
           <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-2">
             <select
               value={row.orderItemId}
-              onChange={(e) => updateRow(idx, "orderItemId", e.target.value)}
+              onChange={(e) => {
+                const orderItemId = e.target.value;
+                updateRow(idx, "orderItemId", orderItemId);
+
+                // Tự động cập nhật số lượng từ orderItem tương ứng
+                if (orderItemId) {
+                  const selectedItem = orderItems.find(
+                    (item) => item.orderItemId === orderItemId
+                  );
+                  if (selectedItem) {
+                    updateRow(idx, "quantity", selectedItem.quantity);
+                  }
+                }
+              }}
               className="p-2 border rounded h-10"
             >
               <option value="">{t("shipments.form.selectOrderItem")}</option>

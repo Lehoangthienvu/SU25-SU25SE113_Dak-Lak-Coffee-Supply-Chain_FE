@@ -4919,7 +4919,8 @@
         "selectOrder": "Vui lòng chọn đơn hàng.",
         "selectStaff": "Vui lòng chọn nhân viên giao.",
         "loadOrderItemsFailed": "Không thể tải danh sách mặt hàng đơn hàng.",
-        "saveFailed": "Đã xảy ra lỗi khi lưu chuyến giao."
+        "saveFailed": "Đã xảy ra lỗi khi lưu chuyến giao.",
+        "selectShippedAt": "Vui lòng chọn ngày bắt đầu giao"
       },
       "success": {
         "update": "Cập nhật lô giao thành công!",

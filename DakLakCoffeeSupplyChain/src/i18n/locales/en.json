@@ -4867,7 +4867,8 @@
         "selectOrder": "Please select an order.",
         "selectStaff": "Please select delivery staff.",
         "loadOrderItemsFailed": "Cannot load order items list.",
-        "saveFailed": "An error occurred while saving the shipment."
+        "saveFailed": "An error occurred while saving the shipment.",
+        "selectShippedAt": "Please select the shipment start date"
       },
       "success": {
         "update": "Shipment updated successfully!",
