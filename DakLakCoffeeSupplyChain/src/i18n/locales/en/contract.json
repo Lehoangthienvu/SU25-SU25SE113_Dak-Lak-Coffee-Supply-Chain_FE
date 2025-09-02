@@ -4,9 +4,9 @@
       "form": {
         "fields": {
           "contractType": "Contract Type",
-          "contractTypes": {
-            "contract": "Hợp đồng",
-            "parentContract": "Phụ lục hợp đồng"
+            "contractTypes": {
+            "contract": "Contract",
+            "parentContract": "Contract Appendix"
           },
           "parentContractId": "Parent Contract",
           "settlementFile": "Settlement File",
