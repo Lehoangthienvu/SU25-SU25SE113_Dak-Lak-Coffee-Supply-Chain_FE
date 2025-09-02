@@ -9,15 +9,14 @@ import {
   FarmingCommitment,
   getBusinessCommitments,
 } from "@/lib/api/farmingCommitments";
-import { toast } from "sonner";
 import {
-  FarmingCommitmentStatusMap,
   FarmingCommitmentStatusValue,
   getFarmingCommitmentStatusMap,
 } from "@/lib/constants/FarmingCommitmentStatus";
 import FilterStatusPanel from "@/components/ui/filterStatusPanel";
 import FarmingCommitmentCard from "@/components/farming-commitments/FarmingCommitmentCard";
 import { useTranslation } from "react-i18next";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function BusinessFarmingCommitmentPage() {
   const { t } = useTranslation();
@@ -108,36 +107,69 @@ export default function BusinessFarmingCommitmentPage() {
       {/* Main content */}
       <main className='flex-1 space-y-6'>
         <div className='bg-white rounded-xl shadow-sm p-4'>
-          <table className='w-full text-sm table-auto'>
-            <thead className='bg-gray-100 text-gray-700 font-medium'>
-              <tr>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.commitmentName")}</th>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.farmerName")}</th>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.totalPrice")}</th>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.status")}</th>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.commitmentDate")}</th>
-                <th className='px-4 py-3 text-left'>{t("farmingCommitment.pages.list.table.headers.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pagedCommitments.map((commitment) => (
-                <FarmingCommitmentCard
-                  key={commitment.commitmentId}
-                  commitment={commitment}
-                  statusMap={statusMap}
-                />
-              ))}
-            </tbody>
-          </table>
+          <div className='flex justify-between items-center mb-4'>
+            <h1 className='text-xl font-semibold text-gray-900'>
+              {t("farmingCommitment.pages.list.title")}
+            </h1>
+          </div>
+
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : pagedCommitments.length === 0 ? (
+            <p className='text-center py-8 text-sm text-muted-foreground'>
+              {t("farmingCommitment.pages.list.table.noData")}
+            </p>
+          ) : (
+            <table className='w-full text-sm table-auto'>
+              <thead className='bg-gray-100 text-gray-700 font-medium'>
+                <tr>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.list.table.headers.commitmentName"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.list.table.headers.farmerName")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.list.table.headers.totalPrice")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.list.table.headers.status")}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t(
+                      "farmingCommitment.pages.list.table.headers.commitmentDate"
+                    )}
+                  </th>
+                  <th className='px-4 py-3 text-left'>
+                    {t("farmingCommitment.pages.list.table.headers.actions")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagedCommitments.map((commitment) => (
+                  <FarmingCommitmentCard
+                    key={commitment.commitmentId}
+                    commitment={commitment}
+                    statusMap={statusMap}
+                  />
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
           <div className='flex justify-between items-center'>
             <span className='text-sm text-muted-foreground'>
-              {t("farmingCommitment.pages.list.pagination.showing")} {(currentPage - 1) * pageSize + 1}–
-              {Math.min(currentPage * pageSize, filteredCommitments.length)} {t("farmingCommitment.pages.list.pagination.of")}{" "}
-              {filteredCommitments.length} {t("farmingCommitment.pages.list.pagination.commitments")}
+              {t("farmingCommitment.pages.list.pagination.showing")}{" "}
+              {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filteredCommitments.length)}{" "}
+              {t("farmingCommitment.pages.list.pagination.of")}{" "}
+              {filteredCommitments.length}{" "}
+              {t("farmingCommitment.pages.list.pagination.commitments")}
             </span>
             <div className='flex items-center gap-2'>
               <Button

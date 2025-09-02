@@ -1,8 +1,11 @@
 export const TARGET_REGIONS = [
   "Buôn Ma Thuột",
-  "Buôn Hồ", 
+  "Buôn Hồ",
+  "Cư Kuin",
+  "Cư M'gar", 
   "Ea H'leo",
   "Ea Súp",
+  "Ea Kar",
   "Krông Ana",
   "Krông Bông",
   "Krông Búk",
@@ -11,9 +14,7 @@ export const TARGET_REGIONS = [
   "Krông Pơ",
   "Lắk",
   "M'Đrắk",
-  "Cư Kuin",
-  "Cư M'gar",
-  "Ea Kar"
+  "Tây Nguyên"
 ] as const;
 
 export type TargetRegion = typeof TARGET_REGIONS[number];
