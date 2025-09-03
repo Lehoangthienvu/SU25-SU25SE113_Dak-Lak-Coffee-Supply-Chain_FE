@@ -93,7 +93,7 @@ export default function ShipmentForm({
           shipmentDetailId: d.shipmentDetailId,
           orderItemId: d.orderItemId,
           quantity: d.quantity ?? 0,
-          unit: String(d.unit ?? "Kg"),
+          unit: "Kg", // Mặc định là Kg
           note: d.note ?? "",
         })),
       });
@@ -249,18 +249,6 @@ export default function ShipmentForm({
           );
         }
 
-        if (!detail.quantity || detail.quantity <= 0) {
-          errors[`shipmentDetails.${index}.quantity`] = t(
-            "shipments.form.validation.quantityPositive"
-          );
-        }
-
-        if (!detail.unit) {
-          errors[`shipmentDetails.${index}.unit`] = t(
-            "shipments.form.validation.unitRequired"
-          );
-        }
-
         // Note length validation
         if (detail.note && detail.note.length > 1000) {
           errors[`shipmentDetails.${index}.note`] = t(
@@ -273,14 +261,23 @@ export default function ShipmentForm({
         const orderItem = orderItems.find(
           (item) => item.orderItemId === detail.orderItemId
         );
-        if (orderItem && detail.quantity > orderItem.quantity) {
-          errors[`shipmentDetails.${index}.quantity`] = t(
-            "shipments.form.validation.quantityExceedsAvailable",
-            {
-              available: orderItem.quantity,
-              productName: orderItem.productName,
-            }
-          );
+        if (orderItem) {
+          // Kiểm tra số lượng dương
+          if (!detail.quantity || detail.quantity <= 0) {
+            errors[`shipmentDetails.${index}.quantity`] = t(
+              "shipments.form.validation.quantityPositive"
+            );
+          }
+          // Kiểm tra số lượng không vượt quá số lượng có sẵn
+          else if (detail.quantity > orderItem.quantity) {
+            errors[`shipmentDetails.${index}.quantity`] = t(
+              "shipments.form.validation.quantityExceedsAvailable",
+              {
+                available: orderItem.quantity,
+                productName: orderItem.productName,
+              }
+            );
+          }
         }
       });
     }
@@ -345,6 +342,31 @@ export default function ShipmentForm({
         return newErrors;
       });
     }
+
+    // Real-time validation for quantity
+    if (field === "quantity") {
+      const newValue = Number(value);
+      const detail = formData?.shipmentDetails?.[index];
+
+      if (detail && detail.orderItemId) {
+        const orderItem = orderItems.find(
+          (item) => item.orderItemId === detail.orderItemId
+        );
+
+        if (orderItem && newValue > orderItem.quantity) {
+          setValidationErrors((prev) => ({
+            ...prev,
+            [`shipmentDetails.${index}.quantity`]: t(
+              "shipments.form.validation.quantityExceedsAvailable",
+              {
+                available: orderItem.quantity,
+                productName: orderItem.productName,
+              }
+            ),
+          }));
+        }
+      }
+    }
   };
 
   const removeRow = (index: number) =>
@@ -379,6 +401,18 @@ export default function ShipmentForm({
 
   const hasShipmentDetailError = (index: number, field: string): boolean => {
     return !!validationErrors[`shipmentDetails.${index}.${field}`];
+  };
+
+  // Helper function để lấy thông tin orderItem
+  const getOrderItemInfo = (orderItemId: string) => {
+    return orderItems.find((item) => item.orderItemId === orderItemId);
+  };
+
+  // Helper function để kiểm tra số lượng có hợp lệ không
+  const isQuantityValid = (orderItemId: string, quantity: number) => {
+    const orderItem = getOrderItemInfo(orderItemId);
+    if (!orderItem) return false;
+    return quantity <= orderItem.quantity;
   };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -423,7 +457,7 @@ export default function ShipmentForm({
             shipmentId: (initialData as any).shipmentId,
             orderItemId: d.orderItemId,
             quantity: d.quantity,
-            unit: d.unit,
+            unit: "Kg", // Mặc định là Kg
             note: d.note || "",
           })) as any,
         };
@@ -442,7 +476,7 @@ export default function ShipmentForm({
           shipmentDetails: (data.shipmentDetails || []).map((d) => ({
             orderItemId: d.orderItemId,
             quantity: d.quantity,
-            unit: d.unit,
+            unit: "Kg", // Mặc định là Kg
             note: d.note || "",
           })) as any,
         };
@@ -703,26 +737,24 @@ export default function ShipmentForm({
           )}
 
           {(formData.shipmentDetails?.length ?? 0) > 0 && (
-            <div className="hidden md:grid md:grid-cols-6 gap-3 mb-1 text-xs font-medium text-muted-foreground">
+            <div className="hidden md:grid md:grid-cols-4 gap-3 mb-1 text-xs font-medium text-muted-foreground">
               <span>
                 {t("shipments.form.table.orderItem")}{" "}
                 <span className="text-red-500">*</span>
               </span>
               <span className="text-left">
-                {t("shipments.form.table.quantity")}{" "}
+                {t("shipments.form.table.quantity")} (kg){" "}
                 <span className="text-red-500">*</span>
               </span>
-              <span>{t("shipments.form.table.unit")}</span>
-              <span className="col-span-3">
-                {t("shipments.form.table.note")}
-              </span>
+              <span>{t("shipments.form.table.note")}</span>
+              <span></span>
             </div>
           )}
 
           {(formData.shipmentDetails || []).map((row, idx) => (
             <div
               key={idx}
-              className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-2"
+              className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-2"
             >
               <select
                 value={row.orderItemId}
@@ -736,8 +768,19 @@ export default function ShipmentForm({
                       (item) => item.orderItemId === orderItemId
                     );
                     if (selectedItem) {
+                      // Set số lượng bằng số lượng có sẵn của orderItem
                       updateRow(idx, "quantity", selectedItem.quantity);
+
+                      // Clear validation error cho quantity khi chọn orderItem mới
+                      setValidationErrors((prev) => {
+                        const newErrors = { ...prev };
+                        delete newErrors[`shipmentDetails.${idx}.quantity`];
+                        return newErrors;
+                      });
                     }
+                  } else {
+                    // Clear quantity khi không chọn orderItem
+                    updateRow(idx, "quantity", 0);
                   }
                 }}
                 className={`p-2 border rounded h-10 ${
@@ -753,60 +796,39 @@ export default function ShipmentForm({
                   </option>
                 ))}
               </select>
-              {hasShipmentDetailError(idx, "orderItemId") && (
-                <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                  {getShipmentDetailError(idx, "orderItemId")}
-                </p>
-              )}
 
-              <Input
-                type="number"
-                min={0}
-                step={0.1}
-                value={row.quantity ?? 0}
-                onChange={(e) => updateRow(idx, "quantity", e.target.value)}
-                className={`no-spinner text-left h-10 ${
-                  hasShipmentDetailError(idx, "quantity")
-                    ? "border-red-500"
-                    : ""
-                }`}
-              />
-              {hasShipmentDetailError(idx, "quantity") && (
-                <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                  {getShipmentDetailError(idx, "quantity")}
-                </p>
-              )}
-
-              <select
-                value={row.unit}
-                onChange={(e) => updateRow(idx, "unit", e.target.value)}
-                className={`p-2 border rounded h-10 ${
-                  hasShipmentDetailError(idx, "unit") ? "border-red-500" : ""
-                }`}
-              >
-                <option value="Kg">Kg</option>
-                <option value="Ta">Tạ</option>
-                <option value="Tan">Tấn</option>
-              </select>
-              {hasShipmentDetailError(idx, "unit") && (
-                <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                  {getShipmentDetailError(idx, "unit")}
-                </p>
-              )}
+              <div className="flex flex-col gap-1">
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={row.quantity ?? 0}
+                  onChange={(e) => updateRow(idx, "quantity", e.target.value)}
+                  className={`no-spinner text-left h-10 ${
+                    hasShipmentDetailError(idx, "quantity")
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                />
+                {row.orderItemId && (
+                  <div className="text-xs text-gray-500">
+                    Có sẵn:{" "}
+                    {getOrderItemInfo(
+                      row.orderItemId
+                    )?.quantity?.toLocaleString() || 0}{" "}
+                    kg
+                  </div>
+                )}
+              </div>
 
               <Input
                 placeholder={t("shipments.form.notePlaceholder")}
                 value={row.note || ""}
                 onChange={(e) => updateRow(idx, "note", e.target.value)}
-                className={`md:col-span-2 h-10 ${
+                className={`h-10 ${
                   hasShipmentDetailError(idx, "note") ? "border-red-500" : ""
                 }`}
               />
-              {hasShipmentDetailError(idx, "note") && (
-                <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                  {getShipmentDetailError(idx, "note")}
-                </p>
-              )}
 
               <Button
                 type="button"
@@ -816,6 +838,23 @@ export default function ShipmentForm({
               >
                 {t("shipments.form.delete")}
               </Button>
+
+              {/* Error messages */}
+              {hasShipmentDetailError(idx, "orderItemId") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-4">
+                  {getShipmentDetailError(idx, "orderItemId")}
+                </p>
+              )}
+              {hasShipmentDetailError(idx, "quantity") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-4">
+                  {getShipmentDetailError(idx, "quantity")}
+                </p>
+              )}
+              {hasShipmentDetailError(idx, "note") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-4">
+                  {getShipmentDetailError(idx, "note")}
+                </p>
+              )}
             </div>
           ))}
 
