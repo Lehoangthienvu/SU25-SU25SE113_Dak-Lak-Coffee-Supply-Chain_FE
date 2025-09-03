@@ -55,6 +55,7 @@ export default function OutboundReceiptDetailPage() {
   }, [id]);
 
   const isConfirmed = detail?.note?.includes('[CONFIRMED:');
+  const isCompleted = detail?.note?.includes('[COMPLETED:');
 
   const handleConfirm = async () => {
     setError('');
@@ -129,11 +130,13 @@ export default function OutboundReceiptDetailPage() {
                 : '(Không rõ)'
             } />
             <DetailItem
-              icon={isConfirmed ? <CheckCircle className="text-green-600" /> : <Clock className="text-yellow-600" />}
+              icon={isCompleted ? <CheckCircle className="text-green-600" /> : isConfirmed ? <CheckCircle className="text-green-600" /> : <Clock className="text-yellow-600" />}
               label={t('warehouseOutboundReceipts.detail.headers.status')}
               value={
-                isConfirmed
-                  ? <span className="text-green-600 font-semibold">✅ {t('warehouseOutboundReceipts.detail.status.confirmed')}</span>
+                isCompleted
+                  ? <span className="text-green-600 font-semibold">✅ {t('warehouseOutboundReceipts.detail.status.completed')}</span>
+                  : isConfirmed
+                  ? <span className="text-blue-600 font-semibold">🚚 {t('warehouseOutboundReceipts.detail.status.readyForDelivery')}</span>
                   : <span className="text-yellow-600 font-semibold">⏳ {t('warehouseOutboundReceipts.detail.status.pending')}</span>
               }
             />

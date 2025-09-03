@@ -3498,7 +3498,8 @@
       "totalReceipts": "Tổng phiếu",
       "confirmedReceipts": "Phiếu đã xác nhận",
       "pendingReceipts": "Phiếu chưa xác nhận",
-      "totalQuantity": "Tổng số lượng"
+      "totalQuantity": "Tổng số lượng",
+      "readyForDelivery": "Sẵn sàng giao hàng"
     },
     "table": {
       "title": "Danh sách phiếu xuất kho",
@@ -3532,7 +3533,9 @@
       },
       "status": {
         "confirmed": "Đã xác nhận",
-        "pending": "Chưa xác nhận"
+        "pending": "Chưa xác nhận",
+        "readyForDelivery": "Chờ shipper lấy hàng",
+        "completed": "Hoàn thành"
       },
       "actions": {
         "view": "Xem",
