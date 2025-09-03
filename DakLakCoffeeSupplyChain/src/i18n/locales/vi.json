@@ -4573,6 +4573,54 @@
       "cropSeason": "Mùa vụ"
     }
   },
+  "inboundRequests": {
+    "title": "📥 Yêu cầu nhập kho",
+    "subtitle": "Theo dõi yêu cầu nông dân và trạng thái xử lý của nhân viên",
+    "filters": {
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "search": {
+      "placeholder": "Tìm theo nông dân, lô..."
+    },
+    "actions": {
+      "refresh": "Làm mới"
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng khối lượng"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu",
+      "loading": "Đang tải...",
+      "noData": "Không có dữ liệu",
+      "columns": {
+        "farmer": "Nông dân",
+        "batch": "Lô sơ chế",
+        "quantity": "Số lượng (kg)",
+        "status": "Trạng thái",
+        "updatedBy": "Người cập nhật",
+        "view": "Xem"
+      }
+    },
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "pagination": {
+      "info": "Hiển thị {{start}}–{{end}} trong {{total}} yêu cầu"
+    }
+  },
   "sidebar": {
     "loading": "Đang tải menu...",
     "dashboard": "Bảng điều khiển",
