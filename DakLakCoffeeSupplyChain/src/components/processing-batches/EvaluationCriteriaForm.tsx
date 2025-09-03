@@ -74,6 +74,10 @@ export default function EvaluationCriteriaForm({
   const [loadingStages, setLoadingStages] = useState<boolean>(false);
   const [selectedFailedStages, setSelectedFailedStages] = useState<string[]>([]);
 
+  // 🔧 MỚI: State cho trường hợp 50/50
+  const [fiftyFiftyScenario, setFiftyFiftyScenario] = useState<boolean>(false);
+  const [fiftyFiftyDecision, setFiftyFiftyDecision] = useState<'pass' | 'fail' | null>(null);
+
   // 🔧 CẢI THIỆN: Tự động load tiêu chí và stages khi form mở
   useEffect(() => {
     if (isOpen) {
@@ -81,6 +85,11 @@ export default function EvaluationCriteriaForm({
       if (methodId) {
         loadStages();
       }
+    } else {
+      // 🔧 MỚI: Reset các state khi form đóng
+      setFiftyFiftyScenario(false);
+      setFiftyFiftyDecision(null);
+      setSelectedFailedStages([]);
     }
   }, [isOpen, methodId]);
 
@@ -102,13 +111,13 @@ export default function EvaluationCriteriaForm({
         setCriteriaResults(initialResults);
         console.log('✅ Loaded criteria:', criteriaData.length, 'items');
       } else {
-        AppToast.warning(t('evaluation.warning.noCriteria'));
+        AppToast.warning('Không có tiêu chí đánh giá nào được cấu hình');
         setCriteria([]);
         setCriteriaResults([]);
       }
     } catch (error: any) {
       console.error('❌ Error loading criteria:', error);
-      AppToast.error(t('evaluation.error.loadingCriteria'));
+      AppToast.error('Không thể tải danh sách tiêu chí đánh giá');
       setCriteria([]);
       setCriteriaResults([]);
     } finally {
@@ -133,7 +142,7 @@ export default function EvaluationCriteriaForm({
       }
     } catch (error: any) {
       console.error('❌ Error loading stages:', error);
-      AppToast.error(t('evaluation.error.loadingStages'));
+      AppToast.error('Không thể tải danh sách các bước xử lý');
       setStages([]);
     } finally {
       setLoadingStages(false);
@@ -202,10 +211,23 @@ export default function EvaluationCriteriaForm({
     setOverallScore(score);
     
     // Cập nhật kết quả đánh giá
-    if (score >= 80) {
-      setEvaluationResult(EVALUATION_RESULTS.PASS);
+    const passCount = newResults.filter(r => r.isPass).length;
+    const failCount = newResults.filter(r => !r.isPass).length;
+    
+    // 🔧 MỚI: Xử lý trường hợp 50/50
+    if (passCount === failCount && passCount > 0) {
+      setFiftyFiftyScenario(true);
+      setFiftyFiftyDecision(null); // Reset decision khi có thay đổi
+      setEvaluationResult(EVALUATION_RESULTS.PASS); // Tạm thời set PASS, sẽ được cập nhật khi expert chọn
     } else {
-      setEvaluationResult(EVALUATION_RESULTS.FAIL);
+      setFiftyFiftyScenario(false);
+      setFiftyFiftyDecision(null);
+      
+      if (score >= 80) {
+        setEvaluationResult(EVALUATION_RESULTS.PASS);
+      } else {
+        setEvaluationResult(EVALUATION_RESULTS.FAIL);
+      }
     }
   };
 
@@ -217,7 +239,7 @@ export default function EvaluationCriteriaForm({
     }
 
     if (criteriaResults.length === 0) {
-      AppToast.error(t('evaluation.error.noCriteria'));
+      AppToast.error('Không có tiêu chí đánh giá nào');
       return;
     }
 
@@ -228,62 +250,121 @@ export default function EvaluationCriteriaForm({
        return;
      }
 
-     // 🔧 MỚI: Kiểm tra chọn stage khi đánh giá fail
-     if (evaluationResult === EVALUATION_RESULTS.FAIL && selectedFailedStages.length === 0) {
-       AppToast.error(t('evaluation.error.noFailedStagesSelected'));
+     // 🔧 CẢI THIỆN: Kiểm tra chọn stage chỉ khi cần thiết
+     if (evaluationResult === EVALUATION_RESULTS.FAIL) {
+       const passCount = criteriaResults.filter(r => r.isPass).length;
+       const failCount = criteriaResults.filter(r => !r.isPass).length;
+       const shouldRequireStageSelection = failCount > passCount || 
+         (passCount === failCount && passCount > 0) || 
+         (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
+       
+       if (shouldRequireStageSelection && selectedFailedStages.length === 0) {
+         AppToast.error(t('evaluation.error.noFailedStagesSelected'));
+         return;
+       }
+     }
+
+     // 🔧 MỚI: Kiểm tra quyết định 50/50
+     if (fiftyFiftyScenario && fiftyFiftyDecision === null) {
+       AppToast.error(t('evaluation.error.fiftyFiftyDecisionRequired'));
        return;
      }
 
     try {
       setLoading(true);
       
-             // 🔧 MỚI: Tạo comment chi tiết bao gồm thông tin stages bị fail
+             // 🔧 CẢI THIỆN: Tạo comment chi tiết chỉ khi cần thiết
        let detailedComments = comments;
        if (evaluationResult === EVALUATION_RESULTS.FAIL && selectedFailedStages.length > 0) {
-         const failedStageNames = stages
-           .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
-           .map(stage => `${stage.stageName} (${t('evaluation.failedStages.order')}: ${stage.orderIndex})`)
-           .join(', ');
+         const passCount = criteriaResults.filter(r => r.isPass).length;
+         const failCount = criteriaResults.filter(r => !r.isPass).length;
+         const shouldIncludeStageInfo = failCount > passCount || 
+           (passCount === failCount && passCount > 0) || 
+           (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
          
-         detailedComments = `${comments}\n\n🔧 ${t('evaluation.failedStages.title')}:\n${failedStageNames}\n\n📋 ${t('evaluation.failedStages.description')}`;
+         if (shouldIncludeStageInfo) {
+           const failedStageNames = stages
+             .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
+             .map(stage => `${stage.stageName} (${t('componentsprocessing.failedStagesInfo.order')}: ${stage.orderIndex})`)
+             .join(', ');
+           
+           detailedComments = `${comments}\n\n🔧 ${t('componentsprocessing.failedStagesInfo.title')}:\n${failedStageNames}\n\n📋 ${t('componentsprocessing.failedStagesInfo.description')}`;
+         }
        }
 
        // Tạo evaluation data với format mới
        const evaluationData = {
          BatchId: batchId,
          EvaluationResult: evaluationResult,
-         OverallScore: overallScore,
+         // 🔧 MỚI: Thay OverallScore thành TotalScore để phù hợp với BE
+         TotalScore: overallScore,
          Comments: detailedComments,
          QualityCriteriaEvaluations: criteriaResults.map(result => ({
-           CriteriaId: result.criteria.id,
+           CriteriaId: result.criteria.id.toString(), // 🔧 FIX: Chuyển number thành string
            CriteriaName: result.criteria.name,
            Description: result.criteria.description,
-           MinValue: result.criteria.minValue,
-           MaxValue: result.criteria.maxValue,
-           Unit: result.criteria.unit,
-           Operator: result.criteria.operator,
-           Severity: result.criteria.severity,
-           RuleGroup: result.criteria.ruleGroup,
+           MinValue: result.criteria.minValue ?? undefined, // 🔧 FIX: null thành undefined
+           MaxValue: result.criteria.maxValue ?? undefined, // 🔧 FIX: null thành undefined
+           Unit: result.criteria.unit || '', // 🔧 FIX: Đảm bảo không null
+           Operator: result.criteria.operator || '', // 🔧 FIX: Đảm bảo không null
+           Severity: result.criteria.severity || 'Soft', // 🔧 FIX: Đảm bảo không null, default 'Soft'
+           RuleGroup: result.criteria.ruleGroup || '', // 🔧 FIX: Đảm bảo không null
            ActualValue: result.actualValue,
            IsPassed: result.isPass,
-           FailureReason: result.isPass ? null : generateFailureReason(result),
+           FailureReason: result.isPass ? undefined : generateFailureReason(result), // 🔧 FIX: null thành undefined
            Notes: ''
          })),
          ExpertNotes: comments,
-         // 🔧 MỚI: Thêm thông tin về stages bị fail - chuyển đổi stageId thành tên stage
-         ProblematicSteps: evaluationResult === EVALUATION_RESULTS.FAIL 
-           ? (() => {
-               const problematicSteps = stages
-                 .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
-                 .map(stage => `${stage.stageName} (${t('evaluation.failedStages.order')}: ${stage.orderIndex})`);
-               console.log('🔧 Selected failed stages:', selectedFailedStages);
-               console.log('🔧 Problematic steps:', problematicSteps);
-               return problematicSteps;
-             })()
-           : []
+         // 🔧 MỚI: Thêm ExpertSelectedStageId khi đánh giá fail
+         ExpertSelectedStageId: (() => {
+           if (evaluationResult !== EVALUATION_RESULTS.FAIL) return undefined;
+           
+           const passCount = criteriaResults.filter(r => r.isPass).length;
+           const failCount = criteriaResults.filter(r => !r.isPass).length;
+           const shouldIncludeStageId = failCount > passCount || 
+             (passCount === failCount && passCount > 0) || 
+             (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
+           
+           if (!shouldIncludeStageId || selectedFailedStages.length === 0) return undefined;
+           
+           // 🔧 MỚI: Chỉ lấy StageId đầu tiên được chọn (expert chỉ chọn 1 stage có vấn đề)
+           const firstSelectedStageId = parseInt(selectedFailedStages[0]);
+           console.log('🔧 Expert selected StageId:', firstSelectedStageId);
+           return firstSelectedStageId;
+         })(),
+         // 🔧 CẢI THIỆN: Thêm thông tin về stages bị fail chỉ khi cần thiết
+         ProblematicSteps: (() => {
+           if (evaluationResult !== EVALUATION_RESULTS.FAIL) return [];
+           
+           const passCount = criteriaResults.filter(r => r.isPass).length;
+           const failCount = criteriaResults.filter(r => !r.isPass).length;
+           const shouldIncludeProblematicSteps = failCount > passCount || 
+             (passCount === failCount && passCount > 0) || 
+             (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
+           
+           if (!shouldIncludeProblematicSteps) return [];
+           
+           const problematicSteps = stages
+             .filter(stage => selectedFailedStages.includes(stage.stageId.toString()))
+             .map(stage => `${stage.stageName} (${t('componentsprocessing.failedStagesInfo.order')}: ${stage.orderIndex})`);
+           console.log('🔧 Selected failed stages:', selectedFailedStages);
+           console.log('🔧 Problematic steps:', problematicSteps);
+           return problematicSteps;
+         })()
        };
 
       console.log('🔧 Submitting evaluation data:', evaluationData);
+      console.log('🔧 DEBUG: QualityCriteriaEvaluations details:');
+      evaluationData.QualityCriteriaEvaluations?.forEach((criteria, index) => {
+        console.log(`🔧 Criteria ${index}:`, {
+          CriteriaId: criteria.CriteriaId,
+          CriteriaName: criteria.CriteriaName,
+          Unit: criteria.Unit,
+          Operator: criteria.Operator,
+          Severity: criteria.Severity,
+          RuleGroup: criteria.RuleGroup
+        });
+      });
       
       await createProcessingBatchEvaluation(evaluationData);
       
@@ -329,11 +410,15 @@ export default function EvaluationCriteriaForm({
       const evaluationData = {
         BatchId: batchId,
         EvaluationResult: EVALUATION_RESULTS.PASS,
-        OverallScore: 100,
+        // 🔧 MỚI: Thêm field IsPassAllBatch và TotalScore
+        IsPassAllBatch: true,
+        TotalScore: 100,
         Comments: t('evaluation.success.batchComment'),
         QualityCriteriaEvaluations: [],
         ExpertNotes: ''
       };
+
+      console.log('🔧 DEBUG: Submitting batch pass with data:', evaluationData);
 
       await createProcessingBatchEvaluation(evaluationData);
       
@@ -353,6 +438,16 @@ export default function EvaluationCriteriaForm({
 
   const cancelBatchPass = () => {
     setShowBatchPassConfirm(false);
+  };
+
+  // 🔧 MỚI: Handle quyết định 50/50
+  const handleFiftyFiftyDecision = (decision: 'pass' | 'fail') => {
+    setFiftyFiftyDecision(decision);
+    if (decision === 'pass') {
+      setEvaluationResult(EVALUATION_RESULTS.PASS);
+    } else {
+      setEvaluationResult(EVALUATION_RESULTS.FAIL);
+    }
   };
 
   // 🔧 MỚI: Handle chọn stage khi fail
@@ -580,23 +675,71 @@ export default function EvaluationCriteriaForm({
              </Card>
            )}
 
-           {/* 🔧 MỚI: Stage Selection khi Fail */}
-           {evaluationResult === EVALUATION_RESULTS.FAIL && stages.length > 0 && (
+           {/* 🔧 MỚI: 50/50 Decision Section */}
+           {fiftyFiftyScenario && fiftyFiftyDecision === null && (
+             <Card>
+               <CardHeader>
+                 <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
+                   <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                   {t('evaluation.fiftyFifty.title')}
+                 </CardTitle>
+                 <p className="text-sm text-gray-600">
+                   {t('evaluation.fiftyFifty.description')}
+                 </p>
+               </CardHeader>
+               <CardContent>
+                 <div className="flex flex-col sm:flex-row gap-4">
+                   <Button
+                     onClick={() => handleFiftyFiftyDecision('pass')}
+                     className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                   >
+                     <CheckCircle className="w-4 h-4 mr-2" />
+                     {t('evaluation.fiftyFifty.passDecision')}
+                   </Button>
+                   <Button
+                     onClick={() => handleFiftyFiftyDecision('fail')}
+                     className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                   >
+                     <XCircle className="w-4 h-4 mr-2" />
+                     {t('evaluation.fiftyFifty.failDecision')}
+                   </Button>
+                 </div>
+               </CardContent>
+             </Card>
+           )}
+
+           {/* 🔧 CẢI THIỆN: Stage Selection chỉ khi cần thiết */}
+           {(() => {
+             // Chỉ hiển thị khi Fail và có stages
+             if (evaluationResult !== EVALUATION_RESULTS.FAIL || stages.length === 0) return null;
+             
+             // Tính toán số tiêu chí đạt/không đạt
+             const passCount = criteriaResults.filter(r => r.isPass).length;
+             const failCount = criteriaResults.filter(r => !r.isPass).length;
+             
+             // Chỉ hiển thị khi: Fail nhiều hơn Pass HOẶC bằng nhau (50/50) HOẶC 50/50 đã chọn fail
+             const shouldShowStageSelection = failCount > passCount || 
+               (passCount === failCount && passCount > 0) || 
+               (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
+             
+             if (!shouldShowStageSelection) return null;
+             
+             return (
              <Card>
                <CardHeader>
                  <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
                    <AlertTriangle className="w-5 h-5 text-red-500" />
-                   {t('evaluation.failedStages.title')}
+                   {t('componentsprocessing.failedStagesInfo.title')}
                  </CardTitle>
                  <p className="text-sm text-gray-600">
-                   {t('evaluation.failedStages.description')}
+                   {t('componentsprocessing.failedStagesInfo.description')}
                  </p>
                </CardHeader>
                <CardContent>
                  {loadingStages ? (
                    <div className="flex items-center justify-center py-4">
                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                     <span className="text-gray-600">{t('evaluation.failedStages.loading')}</span>
+                     <span className="text-gray-600">{t('componentsprocessing.failedStagesInfo.loading')}</span>
                    </div>
                  ) : (
                    <div className="space-y-3">
@@ -616,7 +759,7 @@ export default function EvaluationCriteriaForm({
                            <div className="flex items-center justify-between">
                              <span className="font-medium">{stage.stageName}</span>
                              <Badge variant="outline" className="text-xs">
-                               {t('evaluation.failedStages.order')} {stage.orderIndex}
+                               {t('componentsprocessing.failedStagesInfo.order')} {stage.orderIndex}
                              </Badge>
                            </div>
                          </Label>
@@ -630,14 +773,15 @@ export default function EvaluationCriteriaForm({
                      <div className="flex items-center gap-2">
                        <Info className="w-4 h-4 text-yellow-600" />
                        <span className="text-sm text-yellow-800">
-                         {t('evaluation.failedStages.selectedCount', { count: selectedFailedStages.length })}
+                         {t('componentsprocessing.failedStagesInfo.selectedCount', { count: selectedFailedStages.length })}
                        </span>
                      </div>
                    </div>
                  )}
                </CardContent>
              </Card>
-           )}
+           );
+           })()}
 
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3 pt-6 border-t">

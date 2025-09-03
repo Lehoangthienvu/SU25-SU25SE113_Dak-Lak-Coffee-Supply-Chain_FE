@@ -380,10 +380,8 @@ export default function ExpertEvaluationDetailPage() {
                     {batch.progresses
                       .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
                       .map((progress, index) => {
-                        // Kiểm tra xem có phải bước retry không
-                        const isRetryStep = progress.stepIndex > 1 && index > 0;
-                        const previousProgress = index > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
-                        const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                        // 🔧 FIX: Kiểm tra xem có phải bước retry không dựa vào StageDescription
+                        const isRetry = progress.stageDescription && progress.stageDescription.includes("Khắc phục (Retry)");
                         
                         return (
                           <div
@@ -433,6 +431,16 @@ export default function ExpertEvaluationDetailPage() {
                                 <span className="font-medium text-gray-900">{progress.updatedByName}</span>
                               </div>
                             </div>
+                            
+                            {/* 🔧 MỚI: Hiển thị StageDescription nếu có */}
+                            {progress.stageDescription && (
+                              <div className="mt-3 pt-3 border-t border-gray-200">
+                                <div className="flex items-start gap-2">
+                                  <span className="text-gray-500 text-sm">{t("expertEvaluationDetail.processingProgress.description")}:</span>
+                                  <span className="text-sm text-gray-700 font-medium">{progress.stageDescription}</span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}

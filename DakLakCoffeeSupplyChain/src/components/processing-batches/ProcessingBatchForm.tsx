@@ -111,13 +111,13 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
 
     // Validation
     if (!form.cropSeasonId) {
-      setError({ message: t('processing.batch.validation.selectCropSeason') });
+      setError({ message: t('componentsprocessing.processingBatchForm.validation.selectCropSeason') });
       setLoading(false);
       return;
     }
 
     if (!form.coffeeTypeId) {
-      setError({ message: t('processing.batch.validation.selectCoffeeType') });
+      setError({ message: t('componentsprocessing.processingBatchForm.validation.selectCoffeeType') });
       setLoading(false);
       return;
     }
@@ -125,13 +125,13 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
     // Kiểm tra xem plan có định nghĩa phương pháp sơ chế không
     const info = processingInfo.find(p => p.coffeeTypeId === form.coffeeTypeId);
     if (!info || !info.hasPlanProcessingMethod || !info.planProcessingMethodId) {
-      setError({ message: t('processing.batch.validation.noPlanProcessingMethod') });
+      setError({ message: t('componentsprocessing.processingBatchForm.validation.noPlanProcessingMethod') });
       setLoading(false);
       return;
     }
 
     if (!form.batchCode.trim()) {
-      setError({ message: t('processing.batch.validation.enterBatchCode') });
+      setError({ message: t('componentsprocessing.processingBatchForm.validation.enterBatchCode') });
       setLoading(false);
       return;
     }
@@ -147,7 +147,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
         inputUnit: "kg", // Đơn vị mặc định
       });
 
-      setSuccess(t('processing.batch.createSuccess'));
+      setSuccess(t('componentsprocessing.processingBatchForm.createSuccess'));
       onSuccess?.();
       setTimeout(() => router.push("/dashboard/farmer/processing/batches"), 1200);
     } catch (err: any) {
@@ -168,12 +168,12 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('processing.batch.create')}</h2>
-        <p className="text-gray-600">{t('processing.batch.createDescription')}</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('componentsprocessing.processingBatchForm.create')}</h2>
+        <p className="text-gray-600">{t('componentsprocessing.processingBatchForm.createDescription')}</p>
       </div>
 
       <div>
-        <label className="block font-medium mb-2">{t('processing.batch.cropSeason')} *</label>
+        <label className="block font-medium mb-2">{t('componentsprocessing.processingBatchForm.cropSeason')} *</label>
         {cropSeasons.length === 0 ? (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
@@ -200,7 +200,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">{t('processing.batch.selectCropSeason')}</option>
+            <option value="">{t('componentsprocessing.processingBatchForm.selectCropSeason')}</option>
             {cropSeasons.map((season) => (
               <option key={season.cropSeasonId} value={season.cropSeasonId}>
                 {season.seasonName} ({new Date(season.startDate).getFullYear()})
@@ -211,10 +211,10 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
       </div>
 
       <div>
-        <label className="block font-medium mb-2">{t('processing.batch.coffeeType')} *</label>
+        <label className="block font-medium mb-2">{t('componentsprocessing.processingBatchForm.coffeeType')} *</label>
         {!form.cropSeasonId ? (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <p className="text-sm text-gray-600">{t('processing.batch.selectCropSeasonToViewCoffeeTypes')}</p>
+            <p className="text-sm text-gray-600">{t('componentsprocessing.processingBatchForm.selectCropSeasonToViewCoffeeTypes')}</p>
           </div>
         ) : coffeeTypes.length === 0 ? (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -243,7 +243,7 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
             disabled={loading}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
           >
-            <option value="">{t('processing.batch.selectCoffeeType')}</option>
+            <option value="">{t('componentsprocessing.processingBatchForm.selectCoffeeType')}</option>
             {coffeeTypes.map((type) => (
               <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
                 {type.typeName} ({type.typeCode})
@@ -252,17 +252,17 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           </select>
         )}
         {loading && (
-          <p className="text-sm text-blue-500 mt-1">{t('processing.batch.loadingCoffeeTypes')}</p>
+                      <p className="text-sm text-blue-500 mt-1">{t('componentsprocessing.processingBatchForm.loadingCoffeeTypes')}</p>
         )}
       </div>
 
       {/* Hiển thị thông tin phương pháp sơ chế từ plan */}
       {selectedCoffeeTypeInfo && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">{t('processing.batch.planInformation')}:</h4>
+                     <h4 className="font-medium text-blue-900 mb-2">{t('componentsprocessing.processingBatchForm.planInformation')}:</h4>
           <div className="text-sm text-blue-800">
-            <p>✅ <strong>{t('processing.batch.processingMethod')}:</strong> {selectedCoffeeTypeInfo.planProcessingMethodName} ({selectedCoffeeTypeInfo.planProcessingMethodCode})</p>
-            <p className="text-xs text-blue-600 mt-1">{t('processing.batch.methodAppliedAutomatically')}</p>
+                         <p>✅ <strong>{t('componentsprocessing.processingBatchForm.processingMethod')}:</strong> {selectedCoffeeTypeInfo.planProcessingMethodName} ({selectedCoffeeTypeInfo.planProcessingMethodCode})</p>
+             <p className="text-xs text-blue-600 mt-1">{t('componentsprocessing.processingBatchForm.methodAppliedAutomatically')}</p>
           </div>
         </div>
       )}
@@ -276,11 +276,11 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-medium text-blue-800">
-              {t('processing.batch.note')}:
-            </p>
+                         <p className="text-sm font-medium text-blue-800">
+               {t('componentsprocessing.processingBatchForm.note')}:
+             </p>
                          <ul className="text-xs text-blue-700 mt-1 space-y-1">
-               <li>• {t('processing.batch.onlyCoffeeTypesWithPlanRequirements')}</li>
+                               <li>• {t('componentsprocessing.processingBatchForm.onlyCoffeeTypesWithPlanRequirements')}</li>
                <li>• Chỉ hiển thị những mùa vụ có ít nhất 1 loại cà phê chưa có lô sơ chế</li>
                <li>• Chỉ hiển thị những loại cà phê chưa có lô sơ chế</li>
              </ul>
@@ -289,17 +289,17 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
       </div>
 
       <div>
-        <label className="block font-medium mb-2">{t('processing.batch.batchCode')} *</label>
+                 <label className="block font-medium mb-2">{t('componentsprocessing.processingBatchForm.batchCode')} *</label>
         <Input
           type="text"
           name="batchCode"
           value={form.batchCode}
           onChange={handleChange}
-          placeholder={t('processing.batch.batchCodePlaceholder')}
+                     placeholder={t('componentsprocessing.processingBatchForm.batchCodePlaceholder')}
           required
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <p className="text-sm text-gray-500 mt-1">{t('processing.batch.batchCodeDescription')}</p>
+                 <p className="text-sm text-gray-500 mt-1">{t('componentsprocessing.processingBatchForm.batchCodeDescription')}</p>
       </div>
 
       {error && <ProcessingErrorDisplay error={error} />}
@@ -312,14 +312,14 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
           onClick={() => router.back()}
           disabled={loading}
         >
-          {t('processing.batch.cancel')}
+                     {t('componentsprocessing.processingBatchForm.cancel')}
         </Button>
         <Button
           type="submit"
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
-          {loading ? t('processing.batch.creating') : t('processing.batch.createBatch')}
+                     {loading ? t('componentsprocessing.processingBatchForm.creating') : t('componentsprocessing.processingBatchForm.createBatch')}
         </Button>
       </div>
     </form>

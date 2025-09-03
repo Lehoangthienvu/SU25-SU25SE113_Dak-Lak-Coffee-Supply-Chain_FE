@@ -65,11 +65,11 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
     const newErrors = { ...errors };
     
     if (field === 'wasteType' && !value.toString().trim()) {
-      newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.wasteTypeRequired");
+      newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteTypeRequired");
     } else if (field === 'quantity' && (typeof value === 'number' && (value <= 0 || value > 100000))) {
-      newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.quantityPositive");
+      newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteQuantityPositive");
     } else if (field === 'unit' && !value.toString().trim()) {
-      newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.unitRequired");
+      newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteTypeRequired");
     } else {
       // Xóa error nếu hợp lệ
       delete newErrors[index];
@@ -86,11 +86,11 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
     
     wastes.forEach((waste, index) => {
       if (!waste.wasteType.trim()) {
-        newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.wasteTypeRequired");
+        newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteTypeRequired");
       } else if (waste.quantity <= 0 || waste.quantity > 100000) {
-        newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.quantityPositive");
+        newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteQuantityPositive");
       } else if (!waste.unit.trim()) {
-        newErrors[index] = t("processing.pages.farmerProgresses.wasteInput.validation.unitRequired");
+        newErrors[index] = t("componentsprocessing.wasteInput.validation.wasteTypeRequired");
       }
     });
     
@@ -114,8 +114,8 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
             <Trash2 className="w-5 h-5 text-red-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("processing.pages.farmerProgresses.wasteInput.title")}</h3>
-            <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.wasteInput.description")}</p>
+                    <h3 className="text-lg font-semibold text-gray-900">{t("componentsprocessing.wasteInput.title")}</h3>
+        <p className="text-sm text-gray-600">{t("componentsprocessing.wasteInput.description")}</p>
           </div>
         </div>
         <Button
@@ -126,7 +126,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
           className="flex items-center gap-1 text-xs bg-white hover:bg-red-50 border-red-300 text-red-700"
         >
           <Plus className="w-3 h-3" />
-          {t("processing.pages.farmerProgresses.wasteInput.add")}
+                     {t("componentsprocessing.wasteInput.add")}
         </Button>
       </div>
 
@@ -134,7 +134,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
         {wastes.map((waste, index) => (
           <div key={`waste-${index}-${waste.recordedAt}`} className="bg-white rounded-lg p-4 border border-red-200 shadow-sm relative">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium text-gray-700">{t("processing.pages.farmerProgresses.wasteInput.itemNumber", { number: index + 1 })}</h4>
+                             <h4 className="text-sm font-medium text-gray-700">{t("componentsprocessing.wasteInput.itemNumber", { number: index + 1 })}</h4>
               {wastes.length > 1 && (
                 <Button
                   type="button"
@@ -153,13 +153,13 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
               {/* Loại Waste */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  {t("processing.pages.farmerProgresses.wasteInput.wasteType")} *
+                                     {t("componentsprocessing.wasteInput.wasteType")} *
                 </label>
                 <Input
                   type="text"
                   value={waste.wasteType}
                   onChange={(e) => updateWaste(index, 'wasteType', e.target.value)}
-                  placeholder={t("processing.pages.farmerProgresses.wasteInput.placeholder.wasteType")}
+                                     placeholder={t("componentsprocessing.wasteInput.placeholder.wasteType")}
                   className={`text-sm border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-red-300 transition-all duration-200 ${
                     errors[index] && !waste.wasteType.trim() ? 'border-red-300' : ''
                   }`}
@@ -169,7 +169,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
               {/* Khối lượng */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  {t("processing.pages.farmerProgresses.wasteInput.quantity")} *
+                                     {t("componentsprocessing.wasteInput.quantity")} *
                 </label>
                 <Input
                   type="number"
@@ -189,7 +189,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
               {/* Đơn vị */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  {t("processing.pages.farmerProgresses.wasteInput.unit")} *
+                                     {t("componentsprocessing.wasteInput.unit")} *
                 </label>
                 <select
                   value={waste.unit}
@@ -198,22 +198,22 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
                     errors[index] && !waste.unit.trim() ? 'border-red-300' : ''
                   }`}
                 >
-                  <option value="">{t("processing.pages.farmerProgresses.wasteInput.selectUnit")}</option>
-                  <option value="kg">{t("processing.pages.farmerProgresses.wasteInput.units.kg")}</option>
-                  <option value="g">{t("processing.pages.farmerProgresses.wasteInput.units.g")}</option>
-                  <option value="tấn">{t("processing.pages.farmerProgresses.wasteInput.units.ton")}</option>
-                  <option value="tạ">{t("processing.pages.farmerProgresses.wasteInput.units.quintal")}</option>
-                  <option value="yến">{t("processing.pages.farmerProgresses.wasteInput.units.yen")}</option>
-                  <option value="lạng">{t("processing.pages.farmerProgresses.wasteInput.units.lang")}</option>
-                  <option value="lb">{t("processing.pages.farmerProgresses.wasteInput.units.lb")}</option>
-                  <option value="oz">{t("processing.pages.farmerProgresses.wasteInput.units.oz")}</option>
+                                     <option value="">{t("componentsprocessing.wasteInput.selectUnit")}</option>
+                                     <option value="kg">{t("componentsprocessing.wasteInput.units.kg")}</option>
+                   <option value="g">{t("componentsprocessing.wasteInput.units.g")}</option>
+                   <option value="tấn">{t("componentsprocessing.wasteInput.units.ton")}</option>
+                   <option value="tạ">{t("componentsprocessing.wasteInput.units.quintal")}</option>
+                   <option value="yến">{t("componentsprocessing.wasteInput.units.yen")}</option>
+                   <option value="lạng">{t("componentsprocessing.wasteInput.units.lang")}</option>
+                   <option value="lb">{t("componentsprocessing.wasteInput.units.lb")}</option>
+                   <option value="oz">{t("componentsprocessing.wasteInput.units.oz")}</option>
                 </select>
               </div>
 
               {/* Ngày ghi nhận */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  {t("processing.pages.farmerProgresses.wasteInput.recordedAt")}
+                                     {t("componentsprocessing.wasteInput.recordedAt")}
                 </label>
                 <Input
                   type="date"
@@ -227,13 +227,13 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
             {/* Ghi chú */}
             <div className="mt-3">
               <label className="block text-xs font-medium text-gray-600 mb-1">
-                {t("processing.pages.farmerProgresses.wasteInput.note")}
+                                 {t("componentsprocessing.wasteInput.note")}
               </label>
               <Input
                 type="text"
                 value={waste.note}
                 onChange={(e) => updateWaste(index, 'note', e.target.value)}
-                placeholder={t("processing.pages.farmerProgresses.wasteInput.placeholder.note")}
+                                 placeholder={t("componentsprocessing.wasteInput.placeholder.note")}
                 className="text-sm border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-red-300 transition-all duration-200"
               />
             </div>
@@ -252,8 +252,8 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
         {wastes.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <Trash2 className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-            <p className="text-sm">{t("processing.pages.farmerProgresses.wasteInput.emptyState.noWaste")}</p>
-            <p className="text-xs text-gray-400 mt-1">{t("processing.pages.farmerProgresses.wasteInput.emptyState.addWasteHint")}</p>
+                         <p className="text-sm">{t("componentsprocessing.wasteInput.emptyState.noWaste")}</p>
+             <p className="text-xs text-gray-400 mt-1">{t("componentsprocessing.wasteInput.emptyState.addWasteHint")}</p>
           </div>
         )}
       </div>
@@ -263,7 +263,7 @@ export default function WasteInput({ wastes, onWastesChange, className = "", err
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center gap-2 text-red-700 text-sm">
             <AlertCircle className="w-4 h-4" />
-            <span className="font-medium">{t("processing.pages.farmerProgresses.wasteInput.validation.summary")}</span>
+                         <span className="font-medium">{t("componentsprocessing.wasteInput.validation.summary")}</span>
           </div>
         </div>
       )}

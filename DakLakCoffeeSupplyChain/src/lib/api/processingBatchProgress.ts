@@ -372,11 +372,43 @@ export async function advanceToNextProcessingProgress(
   }
 }
 
+export interface RetryValidationInfo {
+  finalOutputBeforeRetry: number;
+  finalOutputUnit: string;
+  maxAllowedRetryQuantity: number;
+  calculatedWaste: number;
+  wastePercentage: number;
+  maxWastePercentage: number;
+  isValid: boolean;
+  errorMessage?: string;
+}
+
+export async function getBatchInfoBeforeRetry(batchId: string): Promise<RetryValidationInfo> {
+  console.log("📤 API: getBatchInfoBeforeRetry");
+  console.log("📤 BatchId:", batchId);
+
+  try {
+    const response = await api.get(`/ProcessingBatchsProgress/${batchId}/retry-info`);
+    console.log("✅ Get batch info before retry API call successful");
+    return response.data;
+  } catch (err: any) {
+    console.error("❌ getBatchInfoBeforeRetry:", err);
+    console.error("❌ Error response data:", err?.response?.data);
+    console.error("❌ Error response status:", err?.response?.status);
+    throw err;
+  }
+}
+
 export async function updateProgressAfterEvaluation(
   batchId: string,
   payload: CreateProgressWithMediaPayload
 ): Promise<any> {
   const formData = new FormData();
+  
+  // 🔧 MỚI: Thêm StageId nếu có
+  if (payload.stageId) {
+    formData.append("stageId", payload.stageId.toString());
+  }
   
   formData.append("progressDate", payload.progressDate);
   formData.append("outputQuantity", payload.outputQuantity.toString());
@@ -421,6 +453,67 @@ export async function updateProgressAfterEvaluation(
     return response.data;
   } catch (err: any) {
     console.error("❌ updateProgressAfterEvaluation:", err);
+    console.error("❌ Error response data:", err?.response?.data);
+    console.error("❌ Error response status:", err?.response?.status);
+    throw err;
+  }
+}
+
+// 🔧 MỚI: API function cho update-next-stages
+export async function updateNextStages(
+  batchId: string,
+  payload: CreateProgressWithMediaPayload
+): Promise<any> {
+  const formData = new FormData();
+  
+  // Thêm StageId nếu có
+  if (payload.stageId) {
+    formData.append("stageId", payload.stageId.toString());
+  }
+  
+  formData.append("progressDate", payload.progressDate);
+  formData.append("outputQuantity", payload.outputQuantity.toString());
+  formData.append("outputUnit", payload.outputUnit);
+  
+  // Thêm parameters nếu có
+  if (payload.parameterName) {
+    formData.append("parameterName", payload.parameterName);
+  }
+  if (payload.parameterValue) {
+    formData.append("parameterValue", payload.parameterValue);
+  }
+  if (payload.unit) {
+    formData.append("unit", payload.unit);
+  }
+  if (payload.recordedAt) {
+    formData.append("recordedAt", payload.recordedAt);
+  }
+  
+  // Thêm photo files
+  if (payload.photoFiles) {
+    payload.photoFiles.forEach(file => formData.append("photoFiles", file));
+  }
+  
+  // Thêm video files
+  if (payload.videoFiles) {
+    payload.videoFiles.forEach(file => formData.append("videoFiles", file));
+  }
+
+  console.log("📤 API: updateNextStages");
+  console.log("📤 BatchId:", batchId);
+  console.log("📤 FormData entries:");
+  for (let [key, value] of formData.entries()) {
+    console.log(`  ${key}:`, value);
+  }
+
+  try {
+    const response = await api.post(`/ProcessingBatchsProgress/update-next-stages/${batchId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("✅ Update next stages API call successful");
+    return response.data;
+  } catch (err: any) {
+    console.error("❌ updateNextStages:", err);
     console.error("❌ Error response data:", err?.response?.data);
     console.error("❌ Error response status:", err?.response?.status);
     throw err;

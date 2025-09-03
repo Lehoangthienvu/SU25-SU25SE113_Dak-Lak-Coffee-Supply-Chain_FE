@@ -1904,6 +1904,7 @@
     },
     "evaluation": {
       "title": "Evaluation Criteria",
+      "subtitle": "Quality assessment for processing stages",
       "selectStage": "Select Stage",
       "stageSelection": {
         "title": "Select Evaluation Stage",
@@ -1917,23 +1918,47 @@
         "title": "Criteria List",
         "loading": "Loading evaluation criteria...",
         "range": "Range: {{MIN}} - {{MAX}} {{unit}}",
-        "actualValue": "Actual Value"
+        "actualValue": "Actual Value",
+        "expectedValue": "Expected Value",
+        "isPassed": "Passed",
+        "isFailed": "Failed",
+        "criteriaName": "Criteria Name",
+        "description": "Description",
+        "unit": "Unit",
+        "minValue": "Min Value",
+        "maxValue": "Max Value",
+        "targetValue": "Target Value"
       },
       "failureReasons": {
-        "title": "Failure Reasons"
+        "title": "Failure Reasons",
+        "selectReason": "Select failure reason",
+        "customReason": "Custom reason",
+        "addReason": "Add reason"
       },
       "results": {
         "title": "Evaluation Results",
         "passedCriteria": "Passed Criteria",
+        "failedCriteria": "Failed Criteria",
         "overallScore": "Overall Score",
         "additionalComments": "Additional Comments",
-        "commentsPlaceholder": "Enter additional comments (if any)..."
+        "commentsPlaceholder": "Enter additional comments (if any)...",
+        "evaluationDate": "Evaluation Date",
+        "evaluator": "Evaluator",
+        "result": "Result",
+        "pass": "Pass",
+        "fail": "Fail",
+        "needsImprovement": "Needs Improvement",
+        "temporary": "Temporary",
+        "pending": "Pending"
       },
       "actions": {
         "submitting": "Submitting...",
         "evaluateStage": "Evaluate Stage",
         "evaluateBatch": "Evaluate Batch",
-        "passBatch": "Pass Batch"
+        "passBatch": "Pass Batch",
+        "saveEvaluation": "Save Evaluation",
+        "cancelEvaluation": "Cancel Evaluation",
+        "retryEvaluation": "Retry Evaluation"
       },
       "batchPassConfirm": {
         "title": "Confirm Batch Pass",
@@ -1944,7 +1969,8 @@
       },
       "warning": {
         "noStageSelected": "Please select a stage to evaluate",
-        "noCriteria": "No evaluation criteria for batch. Please contact admin to configure."
+        "noCriteria": "No evaluation criteria for batch. Please contact admin to configure.",
+        "incompleteEvaluation": "Please complete all evaluation criteria before submitting"
       },
       "error": {
         "loadingStages": "Cannot load stage list from server",
@@ -1954,23 +1980,32 @@
         "noCriteria": "Please enter values for all evaluation criteria",
         "incompleteCriteria": "Please enter values for all evaluation criteria",
         "noFailedStagesSelected": "Please select at least one stage that needs updating when evaluation fails",
+        "fiftyFiftyDecisionRequired": "Please select evaluation decision for 50/50 case",
         "submitFailed": "Failed to create evaluation",
         "noMethodId": "Missing processing method information. Please check again.",
-        "batchPassFailed": "Failed to create batch pass evaluation"
+        "batchPassFailed": "Failed to create batch pass evaluation",
+        "evaluationNotFound": "Evaluation not found",
+        "cannotUpdateEvaluation": "Cannot update evaluation",
+        "cannotDeleteEvaluation": "Cannot delete evaluation"
       },
       "failure": {
         "details": "Evaluation failed: {{failedCount}}/{{totalCount}} criteria",
         "recommendations": "Need to improve failed criteria to ensure quality",
         "stageComment": "STAGE evaluation \"{{stageName}}\" failed: {{failedCount}}/{{totalCount}} criteria. {{failureDetails}}. {{recommendations}}",
         "failedCriteria": "Failed Criteria",
-        "reasons": "Failure Reasons"
+        "reasons": "Failure Reasons",
+        "improvementNeeded": "Improvement needed for stage {{stageName}}",
+        "retryRequired": "Stage needs to be retried"
       },
       "success": {
         "stageComment": "STAGE evaluation \"{{stageName}}\" successful: {{passedCount}}/{{totalCount}} criteria met standards. Details: {{criteriaDetails}}. Overall score: {{score}}/100",
         "submitted": "Evaluation submitted successfully!",
         "failureSubmitted": "Evaluation has been submitted. Please check the results.",
         "batchComment": "BATCH evaluation successful: All stages met standards. Overall score: 100/100",
-        "batchPassed": "Batch evaluation passed and status updated!"
+        "batchPassed": "Batch evaluation passed and status updated!",
+        "evaluationCreated": "Evaluation created successfully",
+        "evaluationUpdated": "Evaluation updated successfully",
+        "evaluationDeleted": "Evaluation deleted successfully"
       },
       "failedStages": {
         "title": "Stages to Update",
@@ -1980,9 +2015,46 @@
         "selectedCount": "Selected {{count}} stages to update",
         "noFailedStages": "No stages need to be updated",
         "needsUpdate": "Needs Update",
-        "updateInstructions": "Please update the above stages to meet quality standards"
+        "updateInstructions": "Please update the above stages to meet quality standards",
+        "stageName": "Stage Name",
+        "stageOrder": "Stage Order",
+        "failureReason": "Failure Reason"
       },
-      "comments": "Comments"
+      "comments": "Comments",
+      "evaluationHistory": {
+        "title": "Evaluation History",
+        "noEvaluations": "No evaluations yet",
+        "evaluationCode": "Evaluation Code",
+        "evaluationDate": "Evaluation Date",
+        "evaluatorName": "Evaluator",
+        "result": "Result",
+        "viewDetails": "View Details"
+      },
+      "qualityAssessment": {
+        "title": "Quality Assessment",
+        "overallQuality": "Overall Quality",
+        "qualityScore": "Quality Score",
+        "qualityLevel": "Quality Level",
+        "excellent": "Excellent",
+        "good": "Good",
+        "average": "Average",
+        "poor": "Poor",
+        "unacceptable": "Unacceptable"
+      },
+      "retryProcess": {
+        "title": "Retry Process",
+        "retryStage": "Retry Stage",
+        "retryInstructions": "Please improve the stage according to recommendations and retry",
+        "retryDate": "Retry Date",
+        "retryReason": "Retry Reason",
+        "improvementsMade": "Improvements Made"
+      },
+      "fiftyFifty": {
+        "title": "50/50 Evaluation Decision",
+        "description": "The number of passed and failed criteria are equal. Please select the final decision for this batch.",
+        "passDecision": "Evaluate Pass",
+        "failDecision": "Evaluate Fail"
+      }
     },
     "errors": {
       "WasteQuantityExceeded": {
@@ -7626,6 +7698,7 @@
     },
    "evaluation": {
      "title": "Quality Evaluation",
+     "subtitle": "Comprehensive quality assessment system",
      "criteria": {
        "title": "Criteria List",
        "subtitle": "Detailed evaluation criteria",
@@ -7641,11 +7714,28 @@
        "failed": "Failed",
        "notApplicable": "Not Applicable",
        "loading": "Loading criteria...",
-       "actualValue": "Actual Value"
+       "actualValue": "Actual Value",
+       "expectedValue": "Expected Value",
+       "criteriaName": "Criteria Name",
+       "description": "Description",
+       "unit": "Unit",
+       "minValue": "Min Value",
+       "maxValue": "Max Value",
+       "targetValue": "Target Value",
+       "isPassed": "Passed",
+       "isFailed": "Failed"
      },
      "expertNotes": "Expert Notes:",
+     "evaluationForm": {
+       "title": "Evaluation Form",
+       "stageSelection": "Stage Selection",
+       "criteriaInput": "Criteria Input",
+       "resultsSummary": "Results Summary",
+       "comments": "Comments"
+     },
      "warning": {
-       "noCriteria": "No evaluation criteria found"
+       "noCriteria": "No evaluation criteria found",
+       "incompleteForm": "Please complete all required fields"
      },
      "error": {
        "loadingCriteria": "Error loading evaluation criteria",
@@ -7654,7 +7744,9 @@
        "incompleteCriteria": "Please enter values for all criteria",
        "noFailedStagesSelected": "Please select at least one stage to update when evaluation fails",
        "submitFailed": "Error submitting evaluation",
-       "batchPassFailed": "Error passing batch evaluation"
+       "batchPassFailed": "Error passing batch evaluation",
+       "validationFailed": "Validation failed",
+       "networkError": "Network error occurred"
      },
      "success": {
        "submitted": "Evaluation submitted successfully",
@@ -7689,5 +7781,497 @@
        "processing": "Processing..."
      }
    }
+  },
+  "componentsprocessing":{
+    "evaluationCriteriaForm":{
+      "title": "Evaluation Criteria Form",
+      "stageSelection": "Stage Selection",
+      "criteriaInput": "Criteria Input",
+      "resultsSummary": "Results Summary",
+      "comments": "Comments"
+    },
+    "updateNextStagesForm":{
+      "title": "Update Next Stages",
+      "description": "Update information for stages after evaluation failure",
+      "outputQuantity": "Output Quantity",
+      "outputQuantityPlaceholder": "Enter output quantity",
+      "wasteQuantity": "Waste Quantity",
+      "wasteQuantityPlaceholder": "Enter waste quantity",
+      "parameters": "Parameters",
+      "parametersPlaceholder": "Enter technical parameters",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes about the stage",
+      "submit": "Update",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "validation": {
+        "outputQuantityRequired": "Please enter output quantity",
+        "outputQuantityPositive": "Output quantity must be greater than 0",
+        "wasteQuantityPositive": "Waste quantity must be greater than or equal to 0",
+        "wasteExceedsOutput": "Waste quantity cannot exceed output quantity"
+      }
+    },
+    "advanceProcessingProgressForm":{
+      "title": "Update Processing Progress",
+      "description": "Update progress information for current stage",
+      "stageInfo": {
+        "improvementStage": "Stage to Improve",
+        "errorStage": "Error Stage",
+        "currentStage": "Current Stage",
+        "nextStep": "Next Step",
+        "firstProgress": "First Progress",
+        "noProgress": "No Progress",
+        "stepNumber": "Step",
+        "previousDate": "Previous Date",
+        "failureReason": "Failure Reason"
+      },
+      "basicInfo": {
+        "title": "Basic Information"
+      },
+      "form": {
+        "title": "Update Processing Progress",
+        "progressDate": {
+          "label": "Progress Date",
+          "placeholder": "Select progress date"
+        },
+        "outputQuantity": {
+          "label": "Output Quantity",
+          "placeholder": "Enter output quantity"
+        },
+        "stageDescription": {
+          "label": "Stage Description",
+          "placeholder": "Enter stage description"
+        },
+        "unit": {
+          "label": "Unit",
+          "placeholder": "Select unit"
+        },
+        "technicalParameters": {
+          "title": "Technical Parameters",
+          "parameterName": {
+            "label": "Parameter Name",
+            "placeholder": "E.g.: Temperature, humidity..."
+          },
+          "parameterValue": {
+            "label": "Value",
+            "placeholder": "E.g.: 25°C, 60%..."
+          },
+          "parameterUnit": {
+            "label": "Unit",
+            "placeholder": "E.g.: °C, %, kg..."
+          }
+        },
+        "illustrativeDocuments": {
+          "title": "Illustrative Documents",
+          "image": {
+            "label": "Images",
+            "placeholder": "Select images"
+          },
+          "video": {
+            "label": "Videos",
+            "placeholder": "Select videos"
+          }
+        },
+        "wasteInformation": {
+          "title": "Waste Information",
+          "wasteType": {
+            "label": "Waste Type",
+            "placeholder": "E.g.: Husk, broken beans..."
+          },
+          "quantity": {
+            "label": "Quantity",
+            "placeholder": "Enter waste quantity"
+          },
+          "unit": {
+            "label": "Unit"
+          },
+          "notes": {
+            "label": "Notes",
+            "placeholder": "Notes about waste"
+          },
+          "recordDate": {
+            "label": "Record Date",
+            "placeholder": "Select record date"
+          }
+        },
+        "fileUpload": {
+          "previewTitle": "File Preview",
+          "maxFiles": "Maximum 10 files",
+          "imageCompression": "Images will be automatically compressed"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "saving": "Saving..."
+        }
+      },
+      "stage": "Stage",
+      "outputQuantity": "Output Quantity",
+      "outputQuantityPlaceholder": "Enter output quantity",
+      "wasteQuantity": "Waste Quantity",
+      "wasteQuantityPlaceholder": "Enter waste quantity",
+      "parameters": "Parameters",
+      "parametersPlaceholder": "Enter technical parameters",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes about progress",
+      "submit": "Update",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "validation": {
+        "progressDateRequired": "Please select progress date",
+        "outputQuantityRequired": "Please enter output quantity",
+        "outputUnitRequired": "Please select unit",
+        "outputQuantityPositive": "Output quantity must be greater than 0",
+        "wasteQuantityPositive": "Waste quantity must be greater than or equal to 0",
+        "wasteExceedsOutput": "Waste quantity cannot exceed output quantity"
+      }
+    },
+    "updateAfterEvaluationForm":{
+      "title": "Update After Evaluation",
+      "description": "Update information for stage after evaluation failure",
+      "progressDate": "Progress Date",
+      "outputQuantity": "Output Quantity",
+      "outputUnit": "Unit",
+      "selectUnit": "Select Unit",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Ton (ton)",
+        "quintal": "Quintal (quintal)",
+        "yen": "Yen (yen)",
+        "lang": "Lang"
+      },
+      "technicalParameters": "Technical Parameters",
+      "addParameter": "Add Parameter",
+      "parameterName": "Parameter Name",
+      "parameterNamePlaceholder": "E.g.: Temperature, humidity...",
+      "parameterValue": "Value",
+      "parameterValuePlaceholder": "E.g.: 25°C, 60%...",
+      "unit": "Unit",
+      "unitPlaceholder": "E.g.: °C, %, kg...",
+      "parameter": "Parameter",
+      "images": "Images",
+      "selectImages": "Select Images",
+      "videos": "Videos",
+      "selectVideos": "Select Videos",
+      "stage": "Stage",
+      "outputQuantityPlaceholder": "Enter output quantity",
+      "wasteQuantity": "Waste Quantity",
+      "wasteQuantityPlaceholder": "Enter waste quantity",
+      "parameters": "Parameters",
+      "parametersPlaceholder": "Enter technical parameters",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes about the stage",
+      "submit": "Update",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "validation": {
+        "outputQuantityRequired": "Please enter output quantity",
+        "outputQuantityPositive": "Output quantity must be greater than 0",
+        "wasteQuantityPositive": "Waste quantity must be greater than or equal to 0",
+        "wasteExceedsOutput": "Waste quantity cannot exceed output quantity"
+      }
+    },
+    "quantityValidationInfo":{
+      "title": "Quantity Validation Information",
+      "previousOutput": "Previous Output",
+      "currentOutput": "Current Output",
+      "wasteQuantity": "Waste Quantity",
+      "maxWastePercentage": "Maximum Allowed Waste Percentage",
+      "validation": {
+        "passed": "Quantity validation passed",
+        "failed": "Quantity validation failed",
+        "warning": "Quantity warning"
+      }
+    },
+    "failedStagesList":{
+      "title": "Failed Stages List",
+      "description": "Stages that need to be updated after evaluation failure",
+      "retryButton": "Retry",
+      "noFailedStages": "No failed stages"
+    },
+    "failedStagesInfo":{
+      "title": "Failed Stages Information",
+      "description": "Details about failed stages and how to fix them",
+      "retryInstructions": "Retry Instructions",
+      "contactExpert": "Contact Expert",
+      "order": "Order",
+      "loading": "Loading...",
+      "selectedCount": "{{count}} stages selected"
+    },
+    "failedStageUpdateButton":{
+      "title": "Update Failed Stage",
+      "description": "Update information for failed stage",
+      "update": "Update",
+      "updating": "Updating..."
+    },
+    "createProcessingProgressForm":{
+      "title": "Create New Processing Progress",
+      "description": "Create first progress for processing batch",
+      "batchSelectionTitle": "Select Processing Batch",
+      "batchSelectionDescription": "Select processing batch to create new progress",
+      "noAvailableBatches": "No available processing batches",
+      "showBatchesStatus": "All processing batches are completed or awaiting evaluation",
+      "selectBatchLabel": "Select processing batch",
+      "selectBatchPlaceholder": "-- Select Processing Batch --",
+      "stageInformationTitle": "Stage Information",
+      "stageInformationDescription": "Information about the first processing stage",
+      "loadingStages": "Loading stage information...",
+      "stageOrder": "Stage {{order}}",
+      "firstStep": "First step",
+      "methodInfo": "Method: {{methodName}}",
+      "processing": "Processing",
+      "stepOrder": "Step {{order}}",
+      "noStageInfo": "No stage information",
+      "progressInformationTitle": "Progress Information",
+      "progressInformationDescription": "Enter processing progress information",
+      "progressDateLabel": "Progress Date",
+      "outputQuantityLabel": "Output Quantity",
+      "technicalParametersTitle": "Technical Parameters",
+      "technicalParametersDescription": "Add technical parameters of the processing process",
+      "addParameter": "Add Parameter",
+      "parameterNameLabel": "Parameter Name",
+      "parameterNamePlaceholder": "E.g.: Temperature, humidity...",
+      "parameterValueLabel": "Value",
+      "parameterValuePlaceholder": "E.g.: 25°C, 60%...",
+      "parameterUnitLabel": "Unit",
+      "parameterUnitPlaceholder": "E.g.: °C, %, kg...",
+      "stage": "Stage",
+      "outputQuantity": "Output Quantity",
+      "outputQuantityPlaceholder": "Enter output quantity",
+      "wasteQuantity": "Waste Quantity",
+      "wasteQuantityPlaceholder": "Enter waste quantity",
+      "parameters": "Parameters",
+      "parametersPlaceholder": "Enter technical parameters",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes about progress",
+      "submit": "Create",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "validation": {
+        "outputQuantityRequired": "Please enter output quantity",
+        "outputQuantityPositive": "Output quantity must be greater than 0",
+        "wasteQuantityPositive": "Waste quantity must be greater than or equal to 0",
+        "wasteExceedsOutput": "Waste quantity cannot exceed output quantity"
+      }
+    },
+    "evaluationCommentsDisplay":{
+      "title": "Evaluation Comments Display",
+      "comments": "Comments",
+      "noComments": "No comments",
+      "loading": "Loading comments..."
+    },
+    "evaluationCriteriaDisplay":{
+      "title": "Evaluation Criteria Display",
+      "criteria": "Criteria",
+      "noCriteria": "No criteria",
+      "loading": "Loading criteria...",
+      "passed": "Passed",
+      "failed": "Failed"
+    },
+    "evaluationRetryInfo":{
+      "title": "Evaluation Retry Information",
+      "description": "Details about evaluation retry",
+      "retryCount": "Retry Count",
+      "lastRetry": "Last Retry",
+      "status": "Status"
+    },
+    "statusBadge":{
+      "inProgress": "In Progress",
+      "awaitingEvaluation": "Awaiting Evaluation",
+      "failed": "Failed",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "wasteSummary":{
+      "title": "Waste Summary",
+      "totalWaste": "Total Waste",
+      "wastePercentage": "Waste Percentage",
+      "wasteByType": "Waste by Type",
+      "noWaste": "No waste"
+    },
+    "progressGuidanceCard":{
+      "title": "Progress Guidance",
+      "description": "Guidance on how to update processing progress",
+      "instructions": "Instructions",
+      "tips": "Tips",
+      "examples": "Examples"
+    },
+    "retryGuidanceInfo":{
+      "title": "Retry Guidance",
+      "description": "Guidance on how to retry failed stages",
+      "instructions": "Instructions",
+      "tips": "Tips",
+      "examples": "Examples"
+    },
+    "stageFailureDisplay":{
+      "title": "Stage Failure Display",
+      "description": "Details about stage failure",
+      "failureReason": "Failure Reason",
+      "suggestedAction": "Suggested Action",
+      "retryInstructions": "Retry Instructions"
+    },
+    "farmerRetryStatus":{
+      "title": "Farmer Retry Status",
+      "description": "Information about farmer retry",
+      "retryCount": "Retry Count",
+      "lastRetry": "Last Retry",
+      "status": "Status",
+      "notes": "Notes"
+    },
+    "filterBadge":{
+      "title": "Filter Badge",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filterStatusPanel":{
+      "title": "Filter Status Panel",
+      "description": "Manage status filters",
+      "clearAll": "Clear All",
+      "apply": "Apply"
+    },
+    "mediaUploadSection":{
+      "title": "Media Upload",
+      "description": "Upload images and videos for progress",
+      "images": "Images",
+      "videos": "Videos",
+      "upload": "Upload",
+      "uploading": "Uploading...",
+      "remove": "Remove",
+      "multipleSelection": "Multiple Selection",
+      "dragDrop": "Drag and drop files here or click to select",
+      "selectPhoto": "Select Images",
+      "selectVideo": "Select Videos",
+      "selectedPhotos": "{{count}} images selected",
+      "selectedVideos": "{{count}} videos selected",
+      "files": "files",
+      "limits": {
+        "title": "File Limits",
+        "maxFiles": "Maximum",
+        "maxSize": "Maximum size",
+        "autoCompress": "Images will be automatically compressed for optimization."
+      },
+      "validation": {
+        "fileSize": "File size cannot exceed {{size}}MB",
+        "fileType": "Only accept {{types}} files",
+        "maxFiles": "Maximum {{count}} files"
+      }
+    },
+    "processingBatchCard":{
+      "title": "Processing Batch Card",
+      "batchCode": "Batch Code",
+      "status": "Status",
+      "viewDetails": "View Details"
+    },
+    "evaluationFailureInfo":{
+      "title": "Evaluation Failure Information",
+      "description": "Details about evaluation failure",
+      "failureReason": "Failure Reason",
+      "suggestedAction": "Suggested Action",
+      "retryInstructions": "Retry Instructions"
+    },
+    "failureInfoCard":{
+      "title": "Failure Information Card",
+      "description": "Display information about failure",
+      "failureReason": "Failure Reason",
+      "suggestedAction": "Suggested Action"
+    },
+    "farmerBatchSelector":{
+      "title": "Farmer Batch Selector",
+      "description": "Select farmer's processing batch",
+      "selectBatch": "Select Batch",
+      "noBatches": "No batches",
+      "loading": "Loading...",
+      "search": "Search",
+      "searchPlaceholder": "Search by batch code..."
+    },
+    "processingBatchForm":{
+      "title": "Processing Batch Form",
+      "description": "Create or edit coffee processing batch",
+      "create": "Create New Processing Batch",
+      "createDescription": "Create processing batch for coffee from completed harvest season",
+      "createSuccess": "Processing batch created successfully!",
+      "batchCode": "Batch Code",
+      "batchCodePlaceholder": "E.g.: BATCH-2024-001",
+      "batchCodeDescription": "Enter batch code for easy management and tracking",
+      "coffeeType": "Coffee Type",
+      "coffeeTypePlaceholder": "Select coffee type",
+      "selectCoffeeType": "-- Select Coffee Type --",
+      "cropSeason": "Crop Season",
+      "cropSeasonPlaceholder": "Select crop season",
+      "selectCropSeason": "-- Select Crop Season --",
+      "selectCropSeasonToViewCoffeeTypes": "Select crop season to view available coffee types",
+      "loadingCoffeeTypes": "Loading coffee types list...",
+      "planInformation": "Plan Information",
+      "processingMethod": "Processing Method",
+      "methodAppliedAutomatically": "This method will be applied automatically when creating processing batch",
+      "note": "Note",
+      "onlyCoffeeTypesWithPlanRequirements": "Only coffee types with processing requirements from the plan are displayed here.",
+      "inputQuantity": "Input Quantity",
+      "inputQuantityPlaceholder": "Enter input quantity",
+      "notes": "Notes",
+      "notesPlaceholder": "Enter notes about the batch",
+      "submit": "Save",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createBatch": "Create Processing Batch",
+      "validation": {
+        "selectCropSeason": "Please select crop season",
+        "selectCoffeeType": "Please select coffee type",
+        "noPlanProcessingMethod": "This coffee type has no processing requirements from the plan",
+        "enterBatchCode": "Please enter processing batch code",
+        "batchCodeRequired": "Please enter batch code",
+        "coffeeTypeRequired": "Please select coffee type",
+        "cropSeasonRequired": "Please select crop season",
+        "inputQuantityRequired": "Please enter input quantity",
+        "inputQuantityPositive": "Input quantity must be greater than 0"
+      }
+    },
+
+    "wasteInput":{
+      "title": "Waste Management",
+      "description": "Record waste types generated during processing",
+      "add": "Add Waste",
+      "itemNumber": "Waste {{number}}",
+      "wasteType": "Waste Type",
+      "placeholder": {
+        "wasteType": "E.g.: Husk, broken beans, impurities...",
+        "note": "Notes about waste..."
+      },
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "selectUnit": "-- Select Unit --",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Ton (ton)",
+        "quintal": "Quintal (quintal)",
+        "yen": "Yen (yen)",
+        "lang": "Lang",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      },
+      "recordedAt": "Record Date",
+      "note": "Notes",
+      "emptyState": {
+        "noWaste": "No waste recorded yet",
+        "addWasteHint": "Click 'Add Waste' to start recording"
+      },
+      "validation": {
+        "summary": "Please check waste information",
+        "wasteTypeRequired": "Please enter waste type",
+        "wasteQuantityPositive": "Waste quantity must be greater than 0 and not exceed 100,000"
+      },
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Ton (ton)",
+        "quintal": "Quintal (quintal)",
+        "yen": "Yen (yen)",
+        "lang": "Lang",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      }
+    }
   }
 }

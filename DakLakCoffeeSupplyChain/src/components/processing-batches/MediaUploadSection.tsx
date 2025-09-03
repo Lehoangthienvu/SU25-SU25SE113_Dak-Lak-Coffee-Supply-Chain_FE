@@ -73,7 +73,7 @@ export default function MediaUploadSection({
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
           <Image className="inline w-4 h-4 mr-1" />
-          {t("processing.pages.farmerProgresses.mediaUpload.photos")} ({t("processing.pages.farmerProgresses.mediaUpload.multipleSelection")})
+          {t("componentsprocessing.mediaUploadSection.images")} ({t("componentsprocessing.mediaUploadSection.multipleSelection")})
         </label>
         
         <div
@@ -87,7 +87,7 @@ export default function MediaUploadSection({
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
           <p className="text-sm text-gray-600 mb-2">
-            {t("processing.pages.farmerProgresses.mediaUpload.dragDrop")}
+            {t("componentsprocessing.mediaUploadSection.dragDrop")}
           </p>
           <Input
             type="file"
@@ -103,14 +103,14 @@ export default function MediaUploadSection({
             size="sm"
             onClick={() => document.getElementById('photo-upload')?.click()}
           >
-            {t("processing.pages.farmerProgresses.mediaUpload.selectPhoto")}
+            {t("componentsprocessing.mediaUploadSection.selectPhoto")}
           </Button>
         </div>
 
         {/* Photo Preview */}
         {photoFiles.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs text-gray-500 mb-2">{t("processing.pages.farmerProgresses.mediaUpload.selectedPhotos", { count: photoFiles.length })}:</p>
+            <p className="text-xs text-gray-500 mb-2">{t("componentsprocessing.mediaUploadSection.selectedPhotos", { count: photoFiles.length })}:</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {photoFiles.map((file, index) => (
                 <div key={index} className="relative group">
@@ -139,7 +139,7 @@ export default function MediaUploadSection({
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
           <Video className="inline w-4 h-4 mr-1" />
-          {t("processing.pages.farmerProgresses.mediaUpload.videos")} ({t("processing.pages.farmerProgresses.mediaUpload.multipleSelection")})
+          {t("componentsprocessing.mediaUploadSection.videos")} ({t("componentsprocessing.mediaUploadSection.multipleSelection")})
         </label>
         
         <div
@@ -153,7 +153,7 @@ export default function MediaUploadSection({
         >
           <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
           <p className="text-sm text-gray-600 mb-2">
-            {t("processing.pages.farmerProgresses.mediaUpload.dragDrop")}
+            {t("componentsprocessing.mediaUploadSection.dragDrop")}
           </p>
           <Input
             type="file"
@@ -169,14 +169,14 @@ export default function MediaUploadSection({
             size="sm"
             onClick={() => document.getElementById('video-upload')?.click()}
           >
-            {t("processing.pages.farmerProgresses.mediaUpload.selectVideo")}
+            {t("componentsprocessing.mediaUploadSection.selectVideo")}
           </Button>
         </div>
 
         {/* Video Preview */}
         {videoFiles.length > 0 && (
           <div className="mt-3">
-                         <p className="text-xs text-gray-500 mb-2">{t("processing.pages.farmerProgresses.mediaUpload.selectedVideos", { count: videoFiles.length })}:</p>
+            <p className="text-xs text-gray-500 mb-2">{t("componentsprocessing.mediaUploadSection.selectedVideos", { count: videoFiles.length })}:</p>
             <div className="space-y-2">
               {videoFiles.map((file, index) => (
                 <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
@@ -203,10 +203,10 @@ export default function MediaUploadSection({
 
       {/* File Limits Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                 <p className="text-xs text-blue-700">
-           <strong>{t("processing.pages.farmerProgresses.mediaUpload.limits.title")}:</strong> {t("processing.pages.farmerProgresses.mediaUpload.limits.maxFiles")} 10 {t("processing.pages.farmerProgresses.mediaUpload.files")}, {t("processing.pages.farmerProgresses.mediaUpload.limits.maxSize")} 50MB. 
-           {t("processing.pages.farmerProgresses.mediaUpload.limits.autoCompress")}
-         </p>
+        <p className="text-xs text-blue-700">
+          <strong>{t("componentsprocessing.mediaUploadSection.limits.title")}:</strong> {t("componentsprocessing.mediaUploadSection.limits.maxFiles")} 10 {t("componentsprocessing.mediaUploadSection.files")}, {t("componentsprocessing.mediaUploadSection.limits.maxSize")} 50MB. 
+          {t("componentsprocessing.mediaUploadSection.limits.autoCompress")}
+        </p>
       </div>
     </div>
   );

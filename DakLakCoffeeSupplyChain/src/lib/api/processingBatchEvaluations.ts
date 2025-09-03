@@ -28,6 +28,28 @@ export interface CreateEvaluationDto {
   EvaluatedAt?: string; // Backend expect PascalCase
   RequestReason?: string; // Lý do yêu cầu đánh giá
   AdditionalNotes?: string; // Ghi chú bổ sung
+  // 🔧 MỚI: Thêm field cho tính năng "Đạt cả Batch"
+  IsPassAllBatch?: boolean; // Backend expect PascalCase
+  TotalScore?: number; // Backend expect PascalCase
+  // 🔧 MỚI: Thêm field cho đánh giá tiêu chí chất lượng
+  QualityCriteriaEvaluations?: Array<{
+    CriteriaId: string;
+    CriteriaName: string;
+    Description: string;
+    MinValue?: number;
+    MaxValue?: number;
+    Unit: string;
+    Operator: string;
+    Severity: string;
+    RuleGroup: string;
+    ActualValue: number;
+    IsPassed: boolean;
+    FailureReason?: string;
+    Notes?: string;
+  }>;
+  ExpertNotes?: string;
+  // 🔧 MỚI: StageId được expert chọn khi đánh giá fail
+  ExpertSelectedStageId?: number;
 }
 
 // Interface dựa trên EvaluationUpdateDto từ BE

@@ -929,7 +929,152 @@
             "createdAt": "Ngày tạo"
           },
           "evaluation": {
-            "title": "Đánh giá chất lượng",
+            "title": "Tiêu chí đánh giá",
+            "subtitle": "Đánh giá chất lượng cho các giai đoạn sơ chế",
+            "selectStage": "Chọn giai đoạn",
+            "stageSelection": {
+              "title": "Chọn giai đoạn đánh giá",
+              "label": "Giai đoạn",
+              "placeholder": "Chọn giai đoạn để đánh giá",
+              "option": "Bước {{order}}: {{name}}",
+              "loading": "Đang tải tiêu chí...",
+              "loadCriteria": "Tải tiêu chí đánh giá"
+            },
+            "criteria": {
+              "title": "Danh sách tiêu chí",
+              "loading": "Đang tải tiêu chí đánh giá...",
+              "range": "Phạm vi: {{MIN}} - {{MAX}} {{unit}}",
+              "actualValue": "Giá trị thực tế",
+              "expectedValue": "Giá trị mong đợi",
+              "isPassed": "Đạt",
+              "isFailed": "Không đạt",
+              "criteriaName": "Tên tiêu chí",
+              "description": "Mô tả",
+              "unit": "Đơn vị",
+              "minValue": "Giá trị tối thiểu",
+              "maxValue": "Giá trị tối đa",
+              "targetValue": "Giá trị mục tiêu"
+            },
+            "failureReasons": {
+              "title": "Lý do không đạt",
+              "selectReason": "Chọn lý do không đạt",
+              "customReason": "Lý do tùy chỉnh",
+              "addReason": "Thêm lý do"
+            },
+            "results": {
+              "title": "Kết quả đánh giá",
+              "passedCriteria": "Tiêu chí đạt",
+              "failedCriteria": "Tiêu chí không đạt",
+              "overallScore": "Điểm tổng thể",
+              "additionalComments": "Nhận xét bổ sung",
+              "commentsPlaceholder": "Nhập nhận xét bổ sung (nếu có)...",
+              "evaluationDate": "Ngày đánh giá",
+              "evaluator": "Người đánh giá",
+              "result": "Kết quả",
+              "pass": "Đạt",
+              "fail": "Không đạt",
+              "needsImprovement": "Cần cải thiện",
+              "temporary": "Tạm thời",
+              "pending": "Chờ xử lý"
+            },
+            "actions": {
+              "submitting": "Đang gửi...",
+              "evaluateStage": "Đánh giá giai đoạn",
+              "evaluateBatch": "Đánh giá lô",
+              "passBatch": "Đạt lô",
+              "saveEvaluation": "Lưu đánh giá",
+              "cancelEvaluation": "Hủy đánh giá",
+              "retryEvaluation": "Làm lại đánh giá"
+            },
+            "batchPassConfirm": {
+              "title": "Xác nhận đạt lô",
+              "message": "Bạn có chắc chắn muốn đạt toàn bộ lô này? Hành động này sẽ đánh giá tất cả tiêu chí là \"Đạt\" và không thể hoàn tác.",
+              "cancel": "Hủy",
+              "confirm": "Xác nhận đạt lô",
+              "processing": "Đang xử lý..."
+            },
+            "warning": {
+              "noStageSelected": "Vui lòng chọn giai đoạn để đánh giá",
+              "noCriteria": "Không có tiêu chí đánh giá cho lô. Vui lòng liên hệ admin để cấu hình.",
+              "incompleteEvaluation": "Vui lòng hoàn thành tất cả tiêu chí đánh giá trước khi gửi"
+            },
+            "error": {
+              "loadingStages": "Không thể tải danh sách giai đoạn từ máy chủ",
+              "loadingCriteria": "Không thể tải tiêu chí đánh giá cho lô",
+              "noCriteriaForStage": "Không có tiêu chí đánh giá cho giai đoạn {{stageName}}. Vui lòng liên hệ admin để cấu hình.",
+              "noStageSelected": "Vui lòng chọn giai đoạn để đánh giá",
+              "noCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+              "incompleteCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+              "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá thất bại",
+              "fiftyFiftyDecisionRequired": "Vui lòng chọn quyết định đánh giá cho trường hợp 50/50",
+              "submitFailed": "Tạo đánh giá thất bại",
+              "noMethodId": "Thiếu thông tin phương pháp sơ chế. Vui lòng kiểm tra lại.",
+              "batchPassFailed": "Tạo đánh giá đạt lô thất bại",
+              "evaluationNotFound": "Không tìm thấy đánh giá",
+              "cannotUpdateEvaluation": "Không thể cập nhật đánh giá",
+              "cannotDeleteEvaluation": "Không thể xóa đánh giá"
+            },
+            "failure": {
+              "details": "Đánh giá thất bại: {{failedCount}}/{{totalCount}} tiêu chí",
+              "recommendations": "Cần cải thiện tiêu chí không đạt để đảm bảo chất lượng",
+              "stageComment": "Đánh giá GIAI ĐOẠN \"{{stageName}}\" thất bại: {{failedCount}}/{{totalCount}} tiêu chí. {{failureDetails}}. {{recommendations}}",
+              "failedCriteria": "Tiêu chí không đạt",
+              "reasons": "Lý do thất bại",
+              "improvementNeeded": "Cần cải thiện giai đoạn {{stageName}}",
+              "retryRequired": "Giai đoạn cần làm lại"
+            },
+            "success": {
+              "stageComment": "Đánh giá GIAI ĐOẠN \"{{stageName}}\" thành công: {{passedCount}}/{{totalCount}} tiêu chí đạt chuẩn. Chi tiết: {{criteriaDetails}}. Điểm tổng thể: {{score}}/100",
+              "submitted": "Gửi đánh giá thành công!",
+              "failureSubmitted": "Đánh giá đã được gửi. Vui lòng kiểm tra kết quả.",
+              "batchComment": "Đánh giá LÔ thành công: Tất cả giai đoạn đạt chuẩn. Điểm tổng thể: 100/100",
+              "batchPassed": "Đánh giá lô đạt và trạng thái đã cập nhật!",
+              "evaluationCreated": "Tạo đánh giá thành công",
+              "evaluationUpdated": "Cập nhật đánh giá thành công",
+              "evaluationDeleted": "Xóa đánh giá thành công"
+            },
+            "failedStages": {
+              "title": "Giai đoạn cần cập nhật",
+              "description": "Chọn các giai đoạn cần nông dân cập nhật khi đánh giá thất bại",
+              "loading": "Đang tải danh sách giai đoạn...",
+              "order": "Thứ tự",
+              "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật",
+              "noFailedStages": "Không có giai đoạn nào cần cập nhật",
+              "needsUpdate": "Cần cập nhật",
+              "updateInstructions": "Vui lòng cập nhật các giai đoạn trên để đạt chuẩn chất lượng",
+              "stageName": "Tên giai đoạn",
+              "stageOrder": "Thứ tự giai đoạn",
+              "failureReason": "Lý do thất bại"
+            },
+            "comments": "Nhận xét",
+            "evaluationHistory": {
+              "title": "Lịch sử đánh giá",
+              "noEvaluations": "Chưa có đánh giá nào",
+              "evaluationCode": "Mã đánh giá",
+              "evaluationDate": "Ngày đánh giá",
+              "evaluatorName": "Người đánh giá",
+              "result": "Kết quả",
+              "viewDetails": "Xem chi tiết"
+            },
+            "qualityAssessment": {
+              "title": "Đánh giá chất lượng",
+              "overallQuality": "Chất lượng tổng thể",
+              "qualityScore": "Điểm chất lượng",
+              "qualityLevel": "Mức chất lượng",
+              "excellent": "Xuất sắc",
+              "good": "Tốt",
+              "average": "Trung bình",
+              "poor": "Kém",
+              "unacceptable": "Không chấp nhận được"
+            },
+            "retryProcess": {
+              "title": "Quy trình làm lại",
+              "retryStage": "Làm lại giai đoạn",
+              "retryInstructions": "Vui lòng cải thiện giai đoạn theo khuyến nghị và làm lại",
+              "retryDate": "Ngày làm lại",
+              "retryReason": "Lý do làm lại",
+              "improvementsMade": "Cải thiện đã thực hiện"
+            },
             "evaluationCard": {
               "evaluationTitle": "Đánh giá #{{code}}",
               "code": "Mã: {{code}}",
@@ -939,6 +1084,12 @@
                 "passed": "Đạt",
                 "failed": "Không đạt"
               }
+            },
+            "fiftyFifty": {
+              "title": "Quyết định đánh giá 50/50",
+              "description": "Số lượng tiêu chí đạt và không đạt bằng nhau. Vui lòng chọn quyết định cuối cùng cho lô này.",
+              "passDecision": "Đánh giá Đạt",
+              "failDecision": "Đánh giá Không đạt"
             }
           },
           "mediaViewer": {
@@ -1979,87 +2130,152 @@
           }
         },
       "evaluation": {
-      "title": "Đánh giá tiêu chí",
-      "selectStage": "Chọn giai đoạn",
-      "stageSelection": {
-        "title": "Chọn giai đoạn đánh giá",
-        "label": "Giai đoạn",
-        "placeholder": "Chọn giai đoạn cần đánh giá",
-        "option": "Bước {{order}}: {{name}}",
-        "loading": "Đang tải tiêu chí...",
-        "loadCriteria": "Tải tiêu chí đánh giá"
-      },
-      "criteria": {
-        "title": "Danh sách tiêu chí",
-        "loading": "Đang tải tiêu chí đánh giá...",
-        "range": "Phạm vi: {{MinValue}} - {{MaxValue}} {{unit}}",
-        "actualValue": "Giá trị thực tế"
-      },
-      "failureReasons": {
-        "title": "Lý do không đạt"
-      },
-      "results": {
-        "title": "Kết quả đánh giá",
-        "passedCriteria": "Tiêu chí đạt",
-        "overallScore": "Điểm tổng",
-        "additionalComments": "Ghi chú bổ sung",
-        "commentsPlaceholder": "Nhập ghi chú bổ sung (nếu có)..."
-      },
-      "actions": {
-        "submitting": "Đang gửi...",
-        "evaluateStage": "Đánh giá giai đoạn",
-        "evaluateBatch": "Đánh giá Batch",
-        "passBatch": "Đạt cả Batch"
-      },
-      "batchPassConfirm": {
-        "title": "Xác nhận đạt cả batch",
-        "message": "Bạn có chắc chắn muốn cho đạt cả batch này không? Hành động này sẽ đánh giá tất cả tiêu chí là \"Đạt\" và không thể hoàn tác.",
-        "cancel": "Hủy",
-        "confirm": "Xác nhận đạt cả batch",
-        "processing": "Đang xử lý..."
-      },
-      "warning": {
-        "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
-        "noCriteria": "Chưa có tiêu chí đánh giá cho batch. Vui lòng liên hệ admin để cấu hình."
-      },
-      "error": {
-        "loadingStages": "Không thể tải danh sách giai đoạn từ máy chủ",
-        "loadingCriteria": "Không thể tải tiêu chí đánh giá cho batch",
-        "noCriteriaForStage": "Chưa có tiêu chí đánh giá cho giai đoạn \"{{stageName}}\". Vui lòng liên hệ admin để cấu hình.",
-        "noStageSelected": "Vui lòng chọn giai đoạn cần đánh giá",
-        "noCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
-        "incompleteCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
-        "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá không đạt",
-        "submitFailed": "Tạo đánh giá thất bại",
-        "noMethodId": "Thiếu thông tin phương pháp sơ chế. Vui lòng kiểm tra lại.",
-        "batchPassFailed": "Tạo đánh giá đạt thất bại"
-      },
-      "failure": {
-        "details": "Đánh giá không đạt: {{failedCount}}/{{totalCount}} tiêu chí",
-        "recommendations": "Cần cải thiện các tiêu chí không đạt để đảm bảo chất lượng",
-        "stageComment": "Đánh giá STAGE \"{{stageName}}\" không đạt: {{failedCount}}/{{totalCount}} tiêu chí. {{failureDetails}}. {{recommendations}}",
-        "failedCriteria": "Tiêu chí không đạt",
-        "reasons": "Lý do thất bại"
-      },
-      "success": {
-        "stageComment": "Đánh giá STAGE \"{{stageName}}\" thành công: {{passedCount}}/{{totalCount}} tiêu chí đạt chuẩn. Chi tiết: {{criteriaDetails}}. Điểm tổng: {{score}}/100",
-        "submitted": "Đánh giá thành công!",
-        "failureSubmitted": "Đánh giá đã được gửi. Vui lòng kiểm tra kết quả.",
-        "batchComment": "Đánh giá BATCH thành công: Tất cả giai đoạn đạt chuẩn. Điểm tổng: 100/100",
-        "batchPassed": "Đã đánh giá đạt BATCH và cập nhật trạng thái!"
-      },
+        "title": "Tiêu chí đánh giá",
+        "subtitle": "Đánh giá chất lượng cho các giai đoạn sơ chế",
+        "selectStage": "Chọn giai đoạn",
+        "stageSelection": {
+          "title": "Chọn giai đoạn đánh giá",
+          "label": "Giai đoạn",
+          "placeholder": "Chọn giai đoạn để đánh giá",
+          "option": "Bước {{order}}: {{name}}",
+          "loading": "Đang tải tiêu chí...",
+          "loadCriteria": "Tải tiêu chí đánh giá"
+        },
+        "criteria": {
+          "title": "Danh sách tiêu chí",
+          "loading": "Đang tải tiêu chí đánh giá...",
+          "range": "Phạm vi: {{MIN}} - {{MAX}} {{unit}}",
+          "actualValue": "Giá trị thực tế",
+          "expectedValue": "Giá trị mong đợi",
+          "isPassed": "Đạt",
+          "isFailed": "Không đạt",
+          "criteriaName": "Tên tiêu chí",
+          "description": "Mô tả",
+          "unit": "Đơn vị",
+          "minValue": "Giá trị tối thiểu",
+          "maxValue": "Giá trị tối đa",
+          "targetValue": "Giá trị mục tiêu"
+        },
+        "failureReasons": {
+          "title": "Lý do không đạt",
+          "selectReason": "Chọn lý do không đạt",
+          "customReason": "Lý do tùy chỉnh",
+          "addReason": "Thêm lý do"
+        },
+        "results": {
+          "title": "Kết quả đánh giá",
+          "passedCriteria": "Tiêu chí đạt",
+          "failedCriteria": "Tiêu chí không đạt",
+          "overallScore": "Điểm tổng thể",
+          "additionalComments": "Nhận xét bổ sung",
+          "commentsPlaceholder": "Nhập nhận xét bổ sung (nếu có)...",
+          "evaluationDate": "Ngày đánh giá",
+          "evaluator": "Người đánh giá",
+          "result": "Kết quả",
+          "pass": "Đạt",
+          "fail": "Không đạt",
+          "needsImprovement": "Cần cải thiện",
+          "temporary": "Tạm thời",
+          "pending": "Chờ xử lý"
+        },
+        "actions": {
+          "submitting": "Đang gửi...",
+          "evaluateStage": "Đánh giá giai đoạn",
+          "evaluateBatch": "Đánh giá lô",
+          "passBatch": "Đạt lô",
+          "saveEvaluation": "Lưu đánh giá",
+          "cancelEvaluation": "Hủy đánh giá",
+          "retryEvaluation": "Làm lại đánh giá"
+        },
+        "batchPassConfirm": {
+          "title": "Xác nhận đạt lô",
+          "message": "Bạn có chắc chắn muốn đạt toàn bộ lô này? Hành động này sẽ đánh giá tất cả tiêu chí là \"Đạt\" và không thể hoàn tác.",
+          "cancel": "Hủy",
+          "confirm": "Xác nhận đạt lô",
+          "processing": "Đang xử lý..."
+        },
+        "warning": {
+          "noStageSelected": "Vui lòng chọn giai đoạn để đánh giá",
+          "noCriteria": "Không có tiêu chí đánh giá cho lô. Vui lòng liên hệ admin để cấu hình.",
+          "incompleteEvaluation": "Vui lòng hoàn thành tất cả tiêu chí đánh giá trước khi gửi"
+        },
+        "error": {
+          "loadingStages": "Không thể tải danh sách giai đoạn từ máy chủ",
+          "loadingCriteria": "Không thể tải tiêu chí đánh giá cho lô",
+          "noCriteriaForStage": "Không có tiêu chí đánh giá cho giai đoạn {{stageName}}. Vui lòng liên hệ admin để cấu hình.",
+          "noStageSelected": "Vui lòng chọn giai đoạn để đánh giá",
+          "noCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+          "incompleteCriteria": "Vui lòng nhập giá trị cho tất cả tiêu chí đánh giá",
+          "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá thất bại",
+          "submitFailed": "Tạo đánh giá thất bại",
+          "noMethodId": "Thiếu thông tin phương pháp sơ chế. Vui lòng kiểm tra lại.",
+          "batchPassFailed": "Tạo đánh giá đạt lô thất bại",
+          "evaluationNotFound": "Không tìm thấy đánh giá",
+          "cannotUpdateEvaluation": "Không thể cập nhật đánh giá",
+          "cannotDeleteEvaluation": "Không thể xóa đánh giá"
+        },
+        "failure": {
+          "details": "Đánh giá thất bại: {{failedCount}}/{{totalCount}} tiêu chí",
+          "recommendations": "Cần cải thiện tiêu chí không đạt để đảm bảo chất lượng",
+          "stageComment": "Đánh giá GIAI ĐOẠN \"{{stageName}}\" thất bại: {{failedCount}}/{{totalCount}} tiêu chí. {{failureDetails}}. {{recommendations}}",
+          "failedCriteria": "Tiêu chí không đạt",
+          "reasons": "Lý do thất bại",
+          "improvementNeeded": "Cần cải thiện giai đoạn {{stageName}}",
+          "retryRequired": "Giai đoạn cần làm lại"
+        },
+        "success": {
+          "stageComment": "Đánh giá GIAI ĐOẠN \"{{stageName}}\" thành công: {{passedCount}}/{{totalCount}} tiêu chí đạt chuẩn. Chi tiết: {{criteriaDetails}}. Điểm tổng thể: {{score}}/100",
+          "submitted": "Gửi đánh giá thành công!",
+          "failureSubmitted": "Đánh giá đã được gửi. Vui lòng kiểm tra kết quả.",
+          "batchComment": "Đánh giá LÔ thành công: Tất cả giai đoạn đạt chuẩn. Điểm tổng thể: 100/100",
+          "batchPassed": "Đánh giá lô đạt và trạng thái đã cập nhật!",
+          "evaluationCreated": "Tạo đánh giá thành công",
+          "evaluationUpdated": "Cập nhật đánh giá thành công",
+          "evaluationDeleted": "Xóa đánh giá thành công"
+        },
         "failedStages": {
-    "title": "Giai đoạn cần cập nhật",
-    "description": "Chọn các giai đoạn cần farmer cập nhật lại khi đánh giá không đạt",
-    "loading": "Đang tải danh sách giai đoạn...",
-    "order": "Thứ tự",
-    "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật",
-    "noFailedStages": "Không có giai đoạn nào cần cập nhật",
-    "needsUpdate": "Cần cập nhật",
-    "updateInstructions": "Vui lòng cập nhật lại các giai đoạn trên để đạt tiêu chuẩn chất lượng"
+          "title": "Giai đoạn cần cập nhật",
+          "description": "Chọn các giai đoạn cần nông dân cập nhật khi đánh giá thất bại",
+          "loading": "Đang tải danh sách giai đoạn...",
+          "order": "Thứ tự",
+          "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật",
+          "noFailedStages": "Không có giai đoạn nào cần cập nhật",
+          "needsUpdate": "Cần cập nhật",
+          "updateInstructions": "Vui lòng cập nhật các giai đoạn trên để đạt chuẩn chất lượng",
+          "stageName": "Tên giai đoạn",
+          "stageOrder": "Thứ tự giai đoạn",
+          "failureReason": "Lý do thất bại"
+        },
+        "comments": "Nhận xét",
+        "evaluationHistory": {
+          "title": "Lịch sử đánh giá",
+          "noEvaluations": "Chưa có đánh giá nào",
+          "evaluationCode": "Mã đánh giá",
+          "evaluationDate": "Ngày đánh giá",
+          "evaluatorName": "Người đánh giá",
+          "result": "Kết quả",
+          "viewDetails": "Xem chi tiết"
+        },
+        "qualityAssessment": {
+          "title": "Đánh giá chất lượng",
+          "overallQuality": "Chất lượng tổng thể",
+          "qualityScore": "Điểm chất lượng",
+          "qualityLevel": "Mức chất lượng",
+          "excellent": "Xuất sắc",
+          "good": "Tốt",
+          "average": "Trung bình",
+          "poor": "Kém",
+          "unacceptable": "Không chấp nhận được"
+        },
+        "retryProcess": {
+          "title": "Quy trình làm lại",
+          "retryStage": "Làm lại giai đoạn",
+          "retryInstructions": "Vui lòng cải thiện giai đoạn theo khuyến nghị và làm lại",
+          "retryDate": "Ngày làm lại",
+          "retryReason": "Lý do làm lại",
+          "improvementsMade": "Cải thiện đã thực hiện"
+        }
       },
-      "comments": "Ghi chú"
-    },
     "errors": {
       "WasteQuantityExceeded": {
         "title": "Khối lượng waste vượt quá giới hạn cho phép",
@@ -3670,6 +3886,7 @@
       "retry": "Làm lại",
       "outputQuantity": "Sản lượng:",
       "updatedBy": "Cập nhật bởi:",
+      "description": "Mô tả",
       "noProgress": "Chưa có tiến trình nào được ghi nhận"
     },
     "overallEvaluation": {
@@ -7636,6 +7853,7 @@
       },
       "evaluation": {
         "title": "Đánh giá chất lượng",
+        "subtitle": "Hệ thống đánh giá chất lượng toàn diện",
         "criteria": {
           "title": "Danh sách tiêu chí",
           "subtitle": "Chi tiết từng tiêu chí đánh giá",
@@ -7649,19 +7867,36 @@
           "total": "Tổng số tiêu chí:",
           "passed": "Đạt",
           "failed": "Không đạt",
-                  "notApplicable": "Không áp dụng",
-        "loading": "Đang tải tiêu chí...",
-        "actualValue": "Giá trị thực tế",
-        "failureReason": {
-          "exceedsLimit": "vượt quá giới hạn",
-          "belowLimit": "thấp hơn giới hạn",
-          "incorrectValue": "không đúng giá trị yêu cầu",
-          "notSatisfied": "không thỏa mãn điều kiện"
-        }
+          "notApplicable": "Không áp dụng",
+          "loading": "Đang tải tiêu chí...",
+          "actualValue": "Giá trị thực tế",
+          "expectedValue": "Giá trị mong đợi",
+          "criteriaName": "Tên tiêu chí",
+          "description": "Mô tả",
+          "unit": "Đơn vị",
+          "minValue": "Giá trị tối thiểu",
+          "maxValue": "Giá trị tối đa",
+          "targetValue": "Giá trị mục tiêu",
+          "isPassed": "Đạt",
+          "isFailed": "Không đạt",
+          "failureReason": {
+            "exceedsLimit": "vượt quá giới hạn",
+            "belowLimit": "thấp hơn giới hạn",
+            "incorrectValue": "không đúng giá trị yêu cầu",
+            "notSatisfied": "không thỏa mãn điều kiện"
+          }
         },
         "expertNotes": "Ghi chú của chuyên gia:",
+        "evaluationForm": {
+          "title": "Biểu mẫu đánh giá",
+          "stageSelection": "Chọn giai đoạn",
+          "criteriaInput": "Nhập tiêu chí",
+          "resultsSummary": "Tóm tắt kết quả",
+          "comments": "Nhận xét"
+        },
         "warning": {
-          "noCriteria": "Không có tiêu chí đánh giá nào được tìm thấy"
+          "noCriteria": "Không có tiêu chí đánh giá nào được tìm thấy",
+          "incompleteForm": "Vui lòng hoàn thành tất cả các trường bắt buộc"
         },
         "error": {
           "loadingCriteria": "Lỗi khi tải tiêu chí đánh giá",
@@ -7670,32 +7905,51 @@
           "incompleteCriteria": "Vui lòng nhập đầy đủ giá trị cho tất cả tiêu chí",
           "noFailedStagesSelected": "Vui lòng chọn ít nhất một giai đoạn cần cập nhật khi đánh giá không đạt",
           "submitFailed": "Lỗi khi gửi đánh giá",
-          "batchPassFailed": "Lỗi khi đánh giá đạt lô"
+          "batchPassFailed": "Lỗi khi đánh giá đạt lô",
+          "validationFailed": "Xác thực thất bại",
+          "networkError": "Lỗi kết nối mạng"
         },
         "success": {
           "submitted": "Đánh giá đã được gửi thành công",
           "failureSubmitted": "Đánh giá không đạt đã được gửi thành công",
           "batchPassed": "Lô đã được đánh giá đạt thành công",
-          "batchComment": "Lô đã được đánh giá đạt bởi chuyên gia"
+          "batchComment": "Lô đã được đánh giá đạt bởi chuyên gia",
+          "evaluationCreated": "Tạo đánh giá thành công",
+          "evaluationUpdated": "Cập nhật đánh giá thành công",
+          "evaluationDeleted": "Xóa đánh giá thành công"
         },
         "results": {
           "title": "Kết quả đánh giá",
           "passedCriteria": "Tiêu chí đạt",
+          "failedCriteria": "Tiêu chí không đạt",
           "overallScore": "Điểm tổng thể",
           "additionalComments": "Ghi chú bổ sung",
-          "commentsPlaceholder": "Nhập ghi chú bổ sung về đánh giá..."
+          "commentsPlaceholder": "Nhập ghi chú bổ sung về đánh giá...",
+          "evaluationDate": "Ngày đánh giá",
+          "evaluator": "Người đánh giá",
+          "result": "Kết quả"
         },
         "failedStages": {
           "title": "Chọn giai đoạn cần cập nhật",
           "description": "Chọn các giai đoạn mà nông dân cần cập nhật lại khi đánh giá không đạt",
           "loading": "Đang tải danh sách giai đoạn...",
           "order": "Thứ tự",
-          "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật"
+          "selectedCount": "Đã chọn {{count}} giai đoạn cần cập nhật",
+          "noFailedStages": "Không có giai đoạn nào cần cập nhật",
+          "needsUpdate": "Cần cập nhật",
+          "updateInstructions": "Vui lòng cập nhật các giai đoạn trên để đạt chuẩn chất lượng",
+          "stageName": "Tên giai đoạn",
+          "stageOrder": "Thứ tự giai đoạn",
+          "failureReason": "Lý do thất bại"
         },
         "actions": {
           "submitting": "Đang gửi...",
+          "evaluateStage": "Đánh giá giai đoạn",
           "evaluateBatch": "Đánh giá lô",
-          "passBatch": "Đánh giá đạt lô"
+          "passBatch": "Đánh giá đạt lô",
+          "saveEvaluation": "Lưu đánh giá",
+          "cancelEvaluation": "Hủy đánh giá",
+          "retryEvaluation": "Làm lại đánh giá"
         },
         "batchPassConfirm": {
           "title": "Xác nhận đánh giá đạt",
@@ -7703,8 +7957,531 @@
           "cancel": "Hủy",
           "confirm": "Xác nhận đạt",
           "processing": "Đang xử lý..."
+        },
+        "evaluationHistory": {
+          "title": "Lịch sử đánh giá",
+          "noEvaluations": "Chưa có đánh giá nào",
+          "evaluationCode": "Mã đánh giá",
+          "evaluationDate": "Ngày đánh giá",
+          "evaluatorName": "Người đánh giá",
+          "result": "Kết quả",
+          "viewDetails": "Xem chi tiết"
+        },
+        "qualityAssessment": {
+          "title": "Đánh giá chất lượng",
+          "overallQuality": "Chất lượng tổng thể",
+          "qualityScore": "Điểm chất lượng",
+          "qualityLevel": "Mức chất lượng",
+          "excellent": "Xuất sắc",
+          "good": "Tốt",
+          "average": "Trung bình",
+          "poor": "Kém",
+          "unacceptable": "Không chấp nhận được"
+        },
+        "retryProcess": {
+          "title": "Quy trình làm lại",
+          "retryStage": "Làm lại giai đoạn",
+          "retryInstructions": "Vui lòng cải thiện giai đoạn theo khuyến nghị và làm lại",
+          "retryDate": "Ngày làm lại",
+          "retryReason": "Lý do làm lại",
+          "improvementsMade": "Cải thiện đã thực hiện"
         }
       }
   
+  },
+  "componentsprocessing":{
+    "evaluationCriteriaForm":{
+      "title": "Biểu mẫu đánh giá",
+      "stageSelection": "Chọn giai đoạn",
+      "criteriaInput": "Nhập tiêu chí",
+      "resultsSummary": "Tóm tắt kết quả",
+      "comments": "Nhận xét"
+    },
+    "updateNextStagesForm":{
+      "title": "Cập nhật các giai đoạn tiếp theo",
+      "description": "Cập nhật thông tin cho các giai đoạn sau khi đánh giá thất bại",
+      "outputQuantity": "Khối lượng đầu ra",
+      "outputQuantityPlaceholder": "Nhập khối lượng đầu ra",
+      "wasteQuantity": "Khối lượng phế phẩm",
+      "wasteQuantityPlaceholder": "Nhập khối lượng phế phẩm",
+      "parameters": "Thông số kỹ thuật",
+      "parametersPlaceholder": "Nhập thông số kỹ thuật",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nhập ghi chú về giai đoạn",
+      "submit": "Cập nhật",
+      "submitting": "Đang cập nhật...",
+      "cancel": "Hủy",
+      "validation": {
+        "outputQuantityRequired": "Vui lòng nhập khối lượng đầu ra",
+        "outputQuantityPositive": "Khối lượng đầu ra phải lớn hơn 0",
+        "wasteQuantityPositive": "Khối lượng phế phẩm phải lớn hơn hoặc bằng 0",
+        "wasteExceedsOutput": "Khối lượng phế phẩm không được vượt quá khối lượng đầu ra"
+      }
+    },
+    "advanceProcessingProgressForm":{
+      "title": "Cập nhật tiến trình xử lý",
+      "description": "Cập nhật thông tin tiến trình cho giai đoạn hiện tại",
+      "stageInfo": {
+        "improvementStage": "Giai đoạn cần cải thiện",
+        "errorStage": "Giai đoạn lỗi",
+        "currentStage": "Giai đoạn hiện tại",
+        "nextStep": "Bước tiếp theo",
+        "firstProgress": "Tiến trình đầu tiên",
+        "noProgress": "Chưa có tiến trình",
+        "stepNumber": "Bước",
+        "previousDate": "Ngày trước",
+        "failureReason": "Lý do thất bại"
+      },
+      "basicInfo": {
+        "title": "Thông tin cơ bản"
+      },
+      "form": {
+        "title": "Cập nhật tiến trình xử lý",
+        "progressDate": {
+          "label": "Ngày tiến trình",
+          "placeholder": "Chọn ngày tiến trình"
+        },
+        "outputQuantity": {
+          "label": "Khối lượng đầu ra",
+          "placeholder": "Nhập khối lượng đầu ra"
+        },
+        "stageDescription": {
+          "label": "Mô tả giai đoạn",
+          "placeholder": "Nhập mô tả về giai đoạn"
+        },
+        "unit": {
+          "label": "Đơn vị",
+          "placeholder": "Chọn đơn vị"
+        },
+        "technicalParameters": {
+          "title": "Thông số kỹ thuật",
+          "parameterName": {
+            "label": "Tên thông số",
+            "placeholder": "VD: Nhiệt độ, độ ẩm..."
+          },
+          "parameterValue": {
+            "label": "Giá trị",
+            "placeholder": "VD: 25°C, 60%..."
+          },
+          "parameterUnit": {
+            "label": "Đơn vị",
+            "placeholder": "VD: °C, %, kg..."
+          }
+        },
+        "illustrativeDocuments": {
+          "title": "Tài liệu minh họa",
+          "image": {
+            "label": "Hình ảnh",
+            "placeholder": "Chọn hình ảnh"
+          },
+          "video": {
+            "label": "Video",
+            "placeholder": "Chọn video"
+          }
+        },
+        "wasteInformation": {
+          "title": "Thông tin phế phẩm",
+          "wasteType": {
+            "label": "Loại phế phẩm",
+            "placeholder": "VD: Vỏ trấu, hạt vỡ..."
+          },
+          "quantity": {
+            "label": "Khối lượng",
+            "placeholder": "Nhập khối lượng phế phẩm"
+          },
+          "unit": {
+            "label": "Đơn vị"
+          },
+          "notes": {
+            "label": "Ghi chú",
+            "placeholder": "Ghi chú về phế phẩm"
+          },
+          "recordDate": {
+            "label": "Ngày ghi nhận",
+            "placeholder": "Chọn ngày ghi nhận"
+          }
+        },
+        "fileUpload": {
+          "previewTitle": "Xem trước file",
+          "maxFiles": "Tối đa 10 file",
+          "imageCompression": "Hình ảnh sẽ được nén tự động"
+        },
+        "actions": {
+          "cancel": "Hủy",
+          "saving": "Đang lưu..."
+        }
+      },
+      "stage": "Giai đoạn",
+      "outputQuantity": "Khối lượng đầu ra",
+      "outputQuantityPlaceholder": "Nhập khối lượng đầu ra",
+      "wasteQuantity": "Khối lượng phế phẩm",
+      "wasteQuantityPlaceholder": "Nhập khối lượng phế phẩm",
+      "parameters": "Thông số kỹ thuật",
+      "parametersPlaceholder": "Nhập thông số kỹ thuật",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nhập ghi chú về tiến trình",
+      "submit": "Cập nhật",
+      "submitting": "Đang cập nhật...",
+      "cancel": "Hủy",
+      "validation": {
+        "progressDateRequired": "Vui lòng chọn ngày tiến trình",
+        "outputQuantityRequired": "Vui lòng nhập khối lượng đầu ra",
+        "outputUnitRequired": "Vui lòng chọn đơn vị",
+        "outputQuantityPositive": "Khối lượng đầu ra phải lớn hơn 0",
+        "wasteQuantityPositive": "Khối lượng phế phẩm phải lớn hơn hoặc bằng 0",
+        "wasteExceedsOutput": "Khối lượng phế phẩm không được vượt quá khối lượng đầu ra"
+      }
+    },
+    "updateAfterEvaluationForm":{
+      "title": "Cập nhật sau đánh giá",
+      "description": "Cập nhật thông tin cho giai đoạn sau khi đánh giá thất bại",
+      "progressDate": "Ngày tiến trình",
+      "outputQuantity": "Khối lượng đầu ra",
+      "outputUnit": "Đơn vị",
+      "selectUnit": "Chọn đơn vị",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Tấn (ton)",
+        "quintal": "Tạ (quintal)",
+        "yen": "Yến (yên)",
+        "lang": "Lạng"
+      },
+      "technicalParameters": "Thông số kỹ thuật",
+      "addParameter": "Thêm thông số",
+      "parameterName": "Tên thông số",
+      "parameterNamePlaceholder": "VD: Nhiệt độ, độ ẩm...",
+      "parameterValue": "Giá trị",
+      "parameterValuePlaceholder": "VD: 25°C, 60%...",
+      "unit": "Đơn vị",
+      "unitPlaceholder": "VD: °C, %, kg...",
+      "parameter": "Thông số",
+      "images": "Hình ảnh",
+      "selectImages": "Chọn hình ảnh",
+      "videos": "Video",
+      "selectVideos": "Chọn video",
+      "stage": "Giai đoạn",
+      "outputQuantityPlaceholder": "Nhập khối lượng đầu ra",
+      "wasteQuantity": "Khối lượng phế phẩm",
+      "wasteQuantityPlaceholder": "Nhập khối lượng phế phẩm",
+      "parameters": "Thông số kỹ thuật",
+      "parametersPlaceholder": "Nhập thông số kỹ thuật",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nhập ghi chú về giai đoạn",
+      "submit": "Cập nhật",
+      "submitting": "Đang cập nhật...",
+      "cancel": "Hủy",
+      "validation": {
+        "outputQuantityRequired": "Vui lòng nhập khối lượng đầu ra",
+        "outputQuantityPositive": "Khối lượng đầu ra phải lớn hơn 0",
+        "wasteQuantityPositive": "Khối lượng phế phẩm phải lớn hơn hoặc bằng 0",
+        "wasteExceedsOutput": "Khối lượng phế phẩm không được vượt quá khối lượng đầu ra"
+      }
+    },
+    "quantityValidationInfo":{
+      "title": "Thông tin kiểm tra khối lượng",
+      "previousOutput": "Khối lượng đầu ra trước đó",
+      "currentOutput": "Khối lượng đầu ra hiện tại",
+      "wasteQuantity": "Khối lượng phế phẩm",
+      "maxWastePercentage": "Tỷ lệ phế phẩm tối đa cho phép",
+      "validation": {
+        "passed": "Kiểm tra khối lượng thành công",
+        "failed": "Kiểm tra khối lượng thất bại",
+        "warning": "Cảnh báo về khối lượng"
+      }
+    },
+    "failedStagesList":{
+      "title": "Giai đoạn cần cập nhật",
+      "description": "Chọn các giai đoạn cần farmer cập nhật lại khi đánh giá không đạt",
+      "retryButton": "Cần cập nhật",
+      "infoMessage": "Vui lòng cập nhật lại các giai đoạn trên để đạt tiêu chuẩn chất lượng",
+      "noFailedStages": "Không có giai đoạn thất bại nào"
+    },
+    "failedStagesInfo":{
+      "title": "Thông tin giai đoạn thất bại",
+      "description": "Chi tiết về các giai đoạn thất bại và cách khắc phục",
+      "retryInstructions": "Hướng dẫn làm lại",
+      "contactExpert": "Liên hệ chuyên gia",
+      "order": "Thứ tự",
+      "loading": "Đang tải...",
+      "selectedCount": "Đã chọn {{count}} giai đoạn"
+    },
+    "failedStageUpdateButton":{
+      "title": "Cập nhật giai đoạn thất bại",
+      "description": "Cập nhật thông tin cho giai đoạn thất bại",
+      "update": "Cập nhật",
+      "updating": "Đang cập nhật..."
+    },
+    "createProcessingProgressForm":{
+      "title": "Tạo tiến trình xử lý mới",
+      "description": "Tạo tiến trình đầu tiên cho lô xử lý",
+      "batchSelectionTitle": "Chọn lô xử lý",
+      "batchSelectionDescription": "Chọn lô xử lý để tạo tiến trình mới",
+      "noAvailableBatches": "Không có lô xử lý nào khả dụng",
+      "showBatchesStatus": "Tất cả lô xử lý đã hoàn thành hoặc đang chờ đánh giá",
+      "selectBatchLabel": "Chọn lô xử lý",
+      "selectBatchPlaceholder": "-- Chọn lô xử lý --",
+      "stageInformationTitle": "Thông tin giai đoạn",
+      "stageInformationDescription": "Thông tin về giai đoạn xử lý đầu tiên",
+      "loadingStages": "Đang tải thông tin giai đoạn...",
+      "stageOrder": "Giai đoạn {{order}}",
+      "firstStep": "Bước đầu tiên",
+      "methodInfo": "Phương pháp: {{methodName}}",
+      "processing": "Xử lý",
+      "stepOrder": "Bước {{order}}",
+      "noStageInfo": "Không có thông tin giai đoạn",
+      "progressInformationTitle": "Thông tin tiến trình",
+      "progressInformationDescription": "Nhập thông tin tiến trình xử lý",
+      "progressDateLabel": "Ngày tiến trình",
+      "outputQuantityLabel": "Khối lượng đầu ra",
+      "technicalParametersTitle": "Thông số kỹ thuật",
+      "technicalParametersDescription": "Thêm các thông số kỹ thuật của quá trình xử lý",
+      "addParameter": "Thêm thông số",
+      "parameterNameLabel": "Tên thông số",
+      "parameterNamePlaceholder": "VD: Nhiệt độ, độ ẩm...",
+      "parameterValueLabel": "Giá trị",
+      "parameterValuePlaceholder": "VD: 25°C, 60%...",
+      "parameterUnitLabel": "Đơn vị",
+      "parameterUnitPlaceholder": "VD: °C, %, kg...",
+      "stage": "Giai đoạn",
+      "outputQuantity": "Khối lượng đầu ra",
+      "outputQuantityPlaceholder": "Nhập khối lượng đầu ra",
+      "wasteQuantity": "Khối lượng phế phẩm",
+      "wasteQuantityPlaceholder": "Nhập khối lượng phế phẩm",
+      "parameters": "Thông số kỹ thuật",
+      "parametersPlaceholder": "Nhập thông số kỹ thuật",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nhập ghi chú về tiến trình",
+      "submit": "Tạo",
+      "submitting": "Đang tạo...",
+      "cancel": "Hủy",
+      "validation": {
+        "outputQuantityRequired": "Vui lòng nhập khối lượng đầu ra",
+        "outputQuantityPositive": "Khối lượng đầu ra phải lớn hơn 0",
+        "wasteQuantityPositive": "Khối lượng phế phẩm phải lớn hơn hoặc bằng 0",
+        "wasteExceedsOutput": "Khối lượng phế phẩm không được vượt quá khối lượng đầu ra"
+      }
+    },
+    "processingBatchForm":{
+      "title": "Biểu mẫu lô xử lý",
+      "description": "Tạo hoặc chỉnh sửa lô xử lý cà phê",
+      "create": "Tạo lô sơ chế mới",
+      "createDescription": "Tạo lô sơ chế cho cà phê từ vụ mùa đã hoàn thành",
+      "createSuccess": "Tạo lô sơ chế thành công!",
+      "batchCode": "Mã lô",
+      "batchCodePlaceholder": "VD: BATCH-2024-001",
+      "batchCodeDescription": "Nhập mã lô để dễ dàng quản lý và theo dõi",
+      "coffeeType": "Loại cà phê",
+      "coffeeTypePlaceholder": "Chọn loại cà phê",
+      "selectCoffeeType": "-- Chọn loại cà phê --",
+      "cropSeason": "Vụ mùa",
+      "cropSeasonPlaceholder": "Chọn vụ mùa",
+      "selectCropSeason": "-- Chọn vụ mùa --",
+      "selectCropSeasonToViewCoffeeTypes": "Chọn vụ mùa để xem các loại cà phê có sẵn",
+      "loadingCoffeeTypes": "Đang tải danh sách loại cà phê...",
+      "planInformation": "Thông tin từ kế hoạch",
+      "processingMethod": "Phương pháp sơ chế",
+      "methodAppliedAutomatically": "Phương pháp này sẽ được áp dụng tự động khi tạo lô sơ chế",
+      "note": "Lưu ý",
+      "onlyCoffeeTypesWithPlanRequirements": "Chỉ những loại cà phê có yêu cầu sơ chế từ kế hoạch mới được hiển thị ở đây.",
+      "inputQuantity": "Khối lượng đầu vào",
+      "inputQuantityPlaceholder": "Nhập khối lượng đầu vào",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nhập ghi chú về lô",
+      "submit": "Lưu",
+      "submitting": "Đang lưu...",
+      "cancel": "Hủy",
+      "creating": "Đang tạo...",
+      "createBatch": "Tạo lô sơ chế",
+      "validation": {
+        "selectCropSeason": "Vui lòng chọn vụ mùa",
+        "selectCoffeeType": "Vui lòng chọn loại cà phê",
+        "noPlanProcessingMethod": "Loại cà phê này không có yêu cầu sơ chế từ kế hoạch",
+        "enterBatchCode": "Vui lòng nhập mã lô sơ chế",
+        "batchCodeRequired": "Vui lòng nhập mã lô",
+        "coffeeTypeRequired": "Vui lòng chọn loại cà phê",
+        "cropSeasonRequired": "Vui lòng chọn vụ mùa",
+        "inputQuantityRequired": "Vui lòng nhập khối lượng đầu vào",
+        "inputQuantityPositive": "Khối lượng đầu vào phải lớn hơn 0"
+      }
+    },
+    "evaluationCommentsDisplay":{
+      "title": "Hiển thị nhận xét đánh giá",
+      "comments": "Nhận xét",
+      "noComments": "Không có nhận xét nào",
+      "loading": "Đang tải nhận xét..."
+    },
+    "evaluationCriteriaDisplay":{
+      "title": "Hiển thị tiêu chí đánh giá",
+      "criteria": "Tiêu chí",
+      "noCriteria": "Không có tiêu chí nào",
+      "loading": "Đang tải tiêu chí...",
+      "passed": "Đạt",
+      "failed": "Không đạt"
+    },
+    "evaluationRetryInfo":{
+      "title": "Thông tin làm lại đánh giá",
+      "description": "Chi tiết về việc làm lại đánh giá",
+      "retryCount": "Số lần làm lại",
+      "lastRetry": "Lần làm lại cuối",
+      "status": "Trạng thái"
+    },
+    "wasteInput":{
+      "title": "Quản lý phế phẩm",
+      "description": "Ghi nhận các loại phế phẩm phát sinh trong quá trình sơ chế",
+      "add": "Thêm phế phẩm",
+      "itemNumber": "Phế phẩm {{number}}",
+      "wasteType": "Loại phế phẩm",
+      "placeholder": {
+        "wasteType": "VD: Vỏ trấu, hạt vỡ, tạp chất...",
+        "note": "Ghi chú về phế phẩm..."
+      },
+      "quantity": "Khối lượng",
+      "unit": "Đơn vị",
+      "selectUnit": "-- Chọn đơn vị --",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Tấn (ton)",
+        "quintal": "Tạ (quintal)",
+        "yen": "Yến (yên)",
+        "lang": "Lạng",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      },
+      "recordedAt": "Ngày ghi nhận",
+      "note": "Ghi chú",
+      "emptyState": {
+        "noWaste": "Chưa có phế phẩm nào được ghi nhận",
+        "addWasteHint": "Nhấn 'Thêm phế phẩm' để bắt đầu ghi nhận"
+      },
+      "validation": {
+        "summary": "Vui lòng kiểm tra lại thông tin phế phẩm",
+        "wasteTypeRequired": "Vui lòng nhập loại phế phẩm",
+        "wasteQuantityPositive": "Khối lượng phế phẩm phải lớn hơn 0 và không quá 100,000"
+      },
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Tấn (ton)",
+        "quintal": "Tạ (quintal)",
+        "yen": "Yến (yên)",
+        "lang": "Lạng",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      }
+    },
+    "statusBadge":{
+      "inProgress": "Đang xử lý",
+      "awaitingEvaluation": "Chờ đánh giá",
+      "failed": "Thất bại",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy"
+    },
+    "wasteSummary":{
+      "title": "Tóm tắt phế phẩm",
+      "totalWaste": "Tổng phế phẩm",
+      "wastePercentage": "Tỷ lệ phế phẩm",
+      "wasteByType": "Phế phẩm theo loại",
+      "noWaste": "Không có phế phẩm"
+    },
+    "progressGuidanceCard":{
+      "title": "Hướng dẫn tiến trình",
+      "description": "Hướng dẫn về cách cập nhật tiến trình xử lý",
+      "instructions": "Hướng dẫn",
+      "tips": "Mẹo",
+      "examples": "Ví dụ"
+    },
+    "retryGuidanceInfo":{
+      "title": "Hướng dẫn làm lại",
+      "description": "Hướng dẫn về cách làm lại các giai đoạn thất bại",
+      "instructions": "Hướng dẫn",
+      "tips": "Mẹo",
+      "examples": "Ví dụ"
+    },
+    "stageFailureDisplay":{
+      "title": "Hiển thị thất bại giai đoạn",
+      "description": "Chi tiết về thất bại của giai đoạn",
+      "failureReason": "Lý do thất bại",
+      "suggestedAction": "Hành động đề xuất",
+      "retryInstructions": "Hướng dẫn làm lại"
+    },
+    "farmerRetryStatus":{
+      "title": "Trạng thái làm lại của nông dân",
+      "description": "Thông tin về việc làm lại của nông dân",
+      "retryCount": "Số lần làm lại",
+      "lastRetry": "Lần làm lại cuối",
+      "status": "Trạng thái",
+      "notes": "Ghi chú"
+    },
+    "filterBadge":{
+      "title": "Nhãn bộ lọc",
+      "active": "Đang hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "filterStatusPanel":{
+      "title": "Bảng trạng thái bộ lọc",
+      "description": "Quản lý các bộ lọc trạng thái",
+      "clearAll": "Xóa tất cả",
+      "apply": "Áp dụng"
+    },
+    "mediaUploadSection":{
+      "title": "Tải lên phương tiện",
+      "description": "Tải lên hình ảnh và video cho tiến trình",
+      "images": "Hình ảnh",
+      "videos": "Video",
+      "upload": "Tải lên",
+      "uploading": "Đang tải lên...",
+      "remove": "Xóa",
+      "multipleSelection": "Chọn nhiều",
+      "dragDrop": "Kéo thả file vào đây hoặc nhấn để chọn",
+      "selectPhoto": "Chọn hình ảnh",
+      "selectVideo": "Chọn video",
+      "selectedPhotos": "{{count}} hình ảnh đã chọn",
+      "selectedVideos": "{{count}} video đã chọn",
+      "files": "file",
+      "limits": {
+        "title": "Giới hạn file",
+        "maxFiles": "Tối đa",
+        "maxSize": "Kích thước tối đa",
+        "autoCompress": "Hình ảnh sẽ được nén tự động để tối ưu hóa."
+      },
+      "validation": {
+        "fileSize": "Kích thước file không được vượt quá {{size}}MB",
+        "fileType": "Chỉ chấp nhận file {{types}}",
+        "maxFiles": "Tối đa {{count}} file"
+      }
+    },
+    "processingBatchCard":{
+      "title": "Thẻ lô xử lý",
+      "batchCode": "Mã lô",
+      "status": "Trạng thái",
+      "viewDetails": "Xem chi tiết"
+    },
+    "evaluationFailureInfo":{
+      "title": "Thông tin thất bại đánh giá",
+      "description": "Chi tiết về thất bại trong đánh giá",
+      "failureReason": "Lý do thất bại",
+      "suggestedAction": "Hành động đề xuất",
+      "retryInstructions": "Hướng dẫn làm lại"
+    },
+    "failureInfoCard":{
+      "title": "Thẻ thông tin thất bại",
+      "description": "Hiển thị thông tin về thất bại",
+      "failureReason": "Lý do thất bại",
+      "suggestedAction": "Hành động đề xuất"
+    },
+    "farmerBatchSelector":{
+      "title": "Bộ chọn lô của nông dân",
+      "description": "Chọn lô xử lý của nông dân",
+      "selectBatch": "Chọn lô",
+      "noBatches": "Không có lô nào",
+      "loading": "Đang tải...",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm theo mã lô..."
+    }
   }
+  
+    
+  
 }
