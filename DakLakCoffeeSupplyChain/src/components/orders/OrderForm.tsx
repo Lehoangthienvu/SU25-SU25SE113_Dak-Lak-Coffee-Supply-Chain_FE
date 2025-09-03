@@ -1,1277 +1,769 @@
 "use client";
 
-import * as React from "react";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-
-import { Input } from "@/components/ui/input";
+import { toast } from "react-hot-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { DialogFooter } from "@/components/ui/dialog";
-
-import {
-  createOrder,
-  updateOrder,
-  getOrderDetails,
-  type OrderCreateDto,
-  type OrderUpdateDto,
-} from "@/lib/api/orders";
-import {
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Package, 
+  Plus, 
+  Trash2, 
+  Search, 
+  Filter,
+  ShoppingCart,
+  Calendar,
+  FileText,
+  AlertCircle
+} from "lucide-react";
+import { 
+  getAllContractDeliveryBatches, 
   getContractDeliveryBatchById,
-  buildCdiOptions,
-  type ContractDeliveryBatchViewDetailsDto,
-  getAllContractDeliveryBatches,
+  ContractDeliveryBatchViewAllDto,
+  ContractDeliveryBatchViewDetailsDto
 } from "@/lib/api/contractDeliveryBatches";
-import {
-  getContractDetails,
-  type ContractViewDetailsDto,
-} from "@/lib/api/contracts";
-
-import { getProductOptions, type ProductOption } from "@/lib/api/products";
+import { 
+  getContractDeliveryItemsByBatchId, 
+  ContractDeliveryItemViewDto 
+} from "@/lib/api/contractDeliveryItems";
+import { getAllProducts, ProductViewAllDto } from "@/lib/api/products";
+import { createOrder, OrderCreateDto } from "@/lib/api/orders";
+import { OrderItemCreateInline } from "@/lib/api/orderItems";
 import { OrderStatus } from "@/lib/constants/orderStatus";
 
-type Props = {
-  initialData?: OrderUpdateDto; // nếu có -> Edit; nếu không -> Create
-  deliveryBatchId?: string; // có thể truyền sẵn khi tạo từ trang đợt giao
-  onSuccess: () => void;
-};
+interface OrderFormProps {
+  deliveryBatchId?: string;
+  onSuccess?: () => void;
+}
 
-/** Dòng sản phẩm trong form */
-type OrderItemRow = {
-  orderItemId?: string; // chỉ có khi edit
-  contractDeliveryItemId: string;
+interface SelectedProduct {
   productId: string;
-  quantity: number | "";
-  unitPrice: number | "";
-  /** UI dùng %; khi submit sẽ convert sang amount */
-  discountAmount?: number | ""; // %
-  note?: string;
-};
+  productCode: string;
+  productName: string;
+  coffeeTypeName: string;
+  quantityAvailable: number;
+  unit: string;
+  unitPrice: number;
+  selectedQuantity: number;
+  contractDeliveryItemId: string;
+  contractDeliveryItemLabel: string;
+}
 
-type FormState = {
-  deliveryBatchId: string;
-  deliveryRound?: number | "";
-  /** Dùng string để bind với input type="date" */
-  orderDate?: string; // yyyy-MM-dd (sẽ convert -> ISO khi submit)
-  actualDeliveryDate?: string; // yyyy-MM-dd
-  note?: string;
-  status: OrderStatus;
-  cancelReason?: string;
-  orderItems: OrderItemRow[];
-};
-
-export default function OrderForm({
-  initialData,
-  deliveryBatchId,
-  onSuccess,
-}: Props) {
+export default function OrderForm({ deliveryBatchId, onSuccess }: OrderFormProps) {
   const { t } = useTranslation();
-  const isEdit = !!initialData;
-  const router = useRouter();
-
-  // Options
-  type DeliveryItemOption = { contractDeliveryItemId: string; name: string };
-  const [deliveryItemOptions, setDeliveryItemOptions] = useState<
-    DeliveryItemOption[]
-  >([]);
-  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
-  const [loadingOptions, setLoadingOptions] = useState(false);
-  const [batchOptions, setBatchOptions] = useState<
-    { id: string; label: string }[]
-  >([]);
-  // Map deliveryItemId -> unitPrice from related contract item
-  const [deliveryItemUnitPriceMap, setDeliveryItemUnitPriceMap] = useState<
-    Record<string, number>
-  >({});
-  // Map deliveryItemId -> discount (%) from related contract item
-  const [deliveryItemDiscountMap, setDeliveryItemDiscountMap] = useState<
-    Record<string, number>
-  >({});
-  // Map deliveryItemId -> coffeeTypeName to filter products by type
-  const [deliveryItemCoffeeTypeMap, setDeliveryItemCoffeeTypeMap] = useState<
-    Record<string, string>
-  >({});
-  // Map deliveryItemId -> plannedQuantity for quantity validation
-  const [deliveryItemQuantityMap, setDeliveryItemQuantityMap] = useState<
-    Record<string, number>
-  >({});
-
-  // UI giảm theo %
-  const DISCOUNT_IS_PERCENT = true;
-
-  // Hiển thị code đợt giao
-  const [deliveryBatchCode, setDeliveryBatchCode] = useState<string>("");
-
-  // Thêm state cho error handling
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [businessErrors, setBusinessErrors] = useState<string[]>([]);
-
-  // -------------------- form state (không-null để tránh lỗi hooks) --------------------
-  const [form, setForm] = useState<FormState>({
-    deliveryBatchId: deliveryBatchId ?? "",
+  
+  const [loading, setLoading] = useState(false);
+  const [deliveryBatches, setDeliveryBatches] = useState<ContractDeliveryBatchViewAllDto[]>([]);
+  const [products, setProducts] = useState<ProductViewAllDto[]>([]);
+  const [selectedDeliveryBatch, setSelectedDeliveryBatch] = useState<string>("");
+  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [coffeeTypeFilter, setCoffeeTypeFilter] = useState<string>("all");
+  const [showProductSelection, setShowProductSelection] = useState(false);
+  const [selectedBatchDetails, setSelectedBatchDetails] = useState<ContractDeliveryBatchViewDetailsDto | null>(null);
+  const [contractDeliveryItems, setContractDeliveryItems] = useState<ContractDeliveryItemViewDto[]>([]);
+  const [orderMode, setOrderMode] = useState<"single" | "multiple">("single");
+  
+  // Form fields
+  const [formData, setFormData] = useState({
     deliveryRound: "",
-    orderDate: undefined,
-    actualDeliveryDate: undefined,
+    orderDate: "",
+    actualDeliveryDate: "",
     note: "",
-    status: OrderStatus.Preparing,
-    cancelReason: "",
-    orderItems: [],
+    status: OrderStatus.Pending as OrderStatus
   });
 
-  // Map dữ liệu edit -> form
+  // Load delivery batches and products
   useEffect(() => {
-    if (!initialData) return;
-
-    // orderDate từ BE là ISO -> cắt yyyy-MM-dd cho input date
-    const orderDateStr = initialData.orderDate
-      ? String(initialData.orderDate).substring(0, 10)
-      : undefined;
-
-    setForm({
-      deliveryBatchId: initialData.deliveryBatchId,
-      deliveryRound: initialData.deliveryRound ?? "",
-      orderDate: orderDateStr,
-      actualDeliveryDate: initialData.actualDeliveryDate ?? undefined, // đã yyyy-MM-dd
-      note: initialData.note ?? "",
-      status: initialData.status ?? OrderStatus.Preparing,
-      cancelReason: initialData.cancelReason ?? "",
-      orderItems: (initialData.orderItems ?? []).map(
-        (it): OrderItemRow => ({
-          orderItemId: it.orderItemId,
-          contractDeliveryItemId: it.contractDeliveryItemId,
-          productId: it.productId,
-          quantity: typeof it.quantity === "number" ? it.quantity : "",
-          unitPrice: typeof it.unitPrice === "number" ? it.unitPrice : "",
-          // UI hiển thị %: discountAmount từ DB đã là % rồi
-          discountAmount: it.discountAmount ?? 0,
-          note: it.note ?? "",
-        })
-      ),
-    });
-  }, [initialData]);
-
-  // Load options theo đợt giao + danh sách sản phẩm
-  useEffect(() => {
-    (async () => {
-      if (!form.deliveryBatchId) {
-        // clear khi chưa chọn đợt giao
-        setDeliveryItemOptions([]);
-        setDeliveryBatchCode("");
-        return;
-      }
-      setLoadingOptions(true);
+    const loadData = async () => {
       try {
-        // Lấy viewDetails của đợt giao
-        const details = (await getContractDeliveryBatchById(
-          form.deliveryBatchId
-        )) as ContractDeliveryBatchViewDetailsDto;
-
-        // Set mã đợt giao và gợi ý số đợt nếu form đang trống
-        setDeliveryBatchCode(details.deliveryBatchCode || "");
-        if (form.deliveryRound === "" || form.deliveryRound === undefined) {
-          setField("deliveryRound", details.deliveryRound ?? "");
+        const [batchesRes, productsRes] = await Promise.all([
+          getAllContractDeliveryBatches(),
+          getAllProducts()
+        ]);
+        
+        setDeliveryBatches(batchesRes || []);
+        setProducts(productsRes || []);
+        
+        // Auto-select delivery batch if provided
+        if (deliveryBatchId) {
+          setSelectedDeliveryBatch(deliveryBatchId);
         }
-
-        // Build options cho dropdown "Mặt hàng đợt giao"
-        // viewDetails dùng deliveryItemId -> map sang contractDeliveryItemId cho UI
-        const opts = (details.contractDeliveryItems ?? []).map((x) => ({
-          contractDeliveryItemId: x.deliveryItemId,
-          name: `${x.coffeeTypeName} — KH: ${x.plannedQuantity}`,
-        }));
-        setDeliveryItemOptions(opts);
-
-        // Build coffee type mapping for each delivery item
-        const typeMap: Record<string, string> = {};
-        const quantityMap: Record<string, number> = {};
-        for (const it of details.contractDeliveryItems ?? []) {
-          if (it.deliveryItemId && it.coffeeTypeName) {
-            typeMap[it.deliveryItemId] = it.coffeeTypeName;
-          }
-          if (it.deliveryItemId && it.plannedQuantity) {
-            quantityMap[it.deliveryItemId] = it.plannedQuantity;
-          }
-        }
-        setDeliveryItemCoffeeTypeMap(typeMap);
-        setDeliveryItemQuantityMap(quantityMap);
-
-        // Fetch contract details to derive unit price per delivery item
-        try {
-          const contract = (await getContractDetails(
-            details.contractId
-          )) as ContractViewDetailsDto;
-          const priceByContractItem = new Map(
-            (contract.contractItems ?? []).map((ci) => [
-              ci.contractItemId,
-              Number(ci.unitPrice ?? 0),
-            ])
-          );
-          const discountByContractItem = new Map(
-            (contract.contractItems ?? []).map((ci) => [
-              ci.contractItemId,
-              Number(ci.discountAmount ?? 0),
-            ])
-          );
-          const map: Record<string, number> = {};
-          const discMap: Record<string, number> = {};
-          for (const di of details.contractDeliveryItems ?? []) {
-            const price = priceByContractItem.get(di.contractItemId);
-            if (price !== undefined) {
-              map[di.deliveryItemId] = price;
-            }
-            const disc = discountByContractItem.get(di.contractItemId);
-            if (disc !== undefined) {
-              discMap[di.deliveryItemId] = disc;
-            }
-          }
-          setDeliveryItemUnitPriceMap(map);
-          setDeliveryItemDiscountMap(discMap);
-        } catch (err) {
-          // Không chặn UX nếu lỗi lấy chi tiết hợp đồng
-          console.warn("Failed to load contract details for unit prices", err);
-          setDeliveryItemUnitPriceMap({});
-          setDeliveryItemDiscountMap({});
-        }
-
-        // 4) Product options
-        const products = await getProductOptions();
-        setProductOptions(products ?? []);
-      } catch (e) {
-        console.error(e);
-        toast.error(t("managerOrders.form.errors.loadDeliveryBatch"));
-      } finally {
-        setLoadingOptions(false);
+      } catch (error: any) {
+        toast.error(t("managerOrders.create.multiProduct.validation.loadDataError") + (error.message || "Unknown error"));
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.deliveryBatchId]);
+    };
+    
+    loadData();
+  }, [deliveryBatchId]);
 
-  // Khi chưa có deliveryBatchId, load danh sách đợt giao để chọn
+  // Load delivery batch details when selection changes
   useEffect(() => {
-    if (form.deliveryBatchId) return;
-    (async () => {
-      try {
-        const all = await getAllContractDeliveryBatches();
-        setBatchOptions(
-          (all ?? []).map((b) => ({
-            id: b.deliveryBatchId,
-            label: `${b.deliveryBatchCode} — ${b.contractNumber}`,
-          }))
-        );
-      } catch (e) {
-        console.error(e);
-        toast.error(t("managerOrders.form.errors.loadDeliveryBatches"));
-      }
-    })();
-  }, [form.deliveryBatchId]);
-
-  // Real-time validation for business rules
-  useEffect(() => {
-    if (!form.orderItems.length) {
-      setBusinessErrors([]);
+    if (!selectedDeliveryBatch) {
+      setSelectedBatchDetails(null);
+      setContractDeliveryItems([]);
       return;
     }
 
-    const newBusiness: string[] = [];
+    const loadBatchDetails = async () => {
+      try {
+        const [details, items] = await Promise.all([
+          getContractDeliveryBatchById(selectedDeliveryBatch),
+          getContractDeliveryItemsByBatchId(selectedDeliveryBatch)
+        ]);
+        
+        setSelectedBatchDetails(details);
+        setContractDeliveryItems(items || []);
+      } catch (error: any) {
+        toast.error(t("managerOrders.create.multiProduct.validation.loadDeliveryBatchError") + (error.message || "Unknown error"));
+        setSelectedBatchDetails(null);
+        setContractDeliveryItems([]);
+      }
+    };
 
-    form.orderItems.forEach((item) => {
-      if (!item.contractDeliveryItemId || !item.productId || !item.quantity)
+    loadBatchDetails();
+  }, [selectedDeliveryBatch]);
+
+  // Reset selected products when changing order mode
+  useEffect(() => {
+    if (orderMode === "single" && selectedProducts.length > 1) {
+      // Keep only the first product for single mode
+      setSelectedProducts(prev => prev.slice(0, 1));
+    }
+    setShowProductSelection(false);
+  }, [orderMode]);
+
+  // Filter products based on search and coffee type
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = !searchTerm || 
+        product.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.productCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.coffeeTypeName.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesCoffeeType = coffeeTypeFilter === "all" || 
+        product.coffeeTypeName === coffeeTypeFilter;
+      
+      return matchesSearch && matchesCoffeeType;
+    });
+  }, [products, searchTerm, coffeeTypeFilter]);
+
+  // Get unique coffee types for filter
+  const coffeeTypes = useMemo(() => {
+    const types = [...new Set(products.map(p => p.coffeeTypeName))];
+    return types.sort();
+  }, [products]);
+
+  // Get available contract delivery items for selected batch
+  const availableContractItems = useMemo(() => {
+    if (!contractDeliveryItems.length) return [];
+    
+    return contractDeliveryItems.map(item => ({
+      contractDeliveryItemId: item.deliveryItemId,
+      label: `${item.coffeeTypeName} - KH: ${item.plannedQuantity}`,
+      coffeeTypeName: item.coffeeTypeName,
+      plannedQuantity: item.plannedQuantity
+    }));
+  }, [contractDeliveryItems]);
+
+  const handleProductSelection = (product: ProductViewAllDto, isSelected: boolean) => {
+    if (isSelected) {
+      // Find available contract delivery item
+      const contractItem = availableContractItems.find(item => 
+        item.coffeeTypeName === product.coffeeTypeName
+      );
+      
+      if (!contractItem) {
+        toast.error(t("managerOrders.create.multiProduct.validation.noContractItem"));
         return;
-
-      // Validate quantity against delivery item planned quantity
-      const deliveryItemLimit =
-        deliveryItemQuantityMap[item.contractDeliveryItemId];
-      if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
-        newBusiness.push(
-          `Số lượng vượt quá kế hoạch của mặt hàng đợt giao (tối đa ${deliveryItemLimit} kg).`
-        );
       }
-
-      // Validate quantity against product available quantity
-      const selectedProduct = productOptions.find(
-        (p) => p.productId === item.productId
-      );
-      if (selectedProduct && selectedProduct.quantityAvailable) {
-        const productLimit = Number(selectedProduct.quantityAvailable);
-        if (Number(item.quantity) > productLimit) {
-          newBusiness.push(
-            `Số lượng vượt quá tồn kho có sẵn của sản phẩm (tối đa ${productLimit} kg).`
-          );
+      
+      // For single mode, clear existing products first
+      if (orderMode === "single") {
+        setSelectedProducts([]);
+      } else {
+        // Check if product is already selected in multiple mode
+        if (selectedProducts.some(p => p.productId === product.productId)) {
+          toast.error(t("managerOrders.create.multiProduct.validation.productAlreadySelected"));
+          return;
         }
       }
-    });
-
-    setBusinessErrors(newBusiness);
-  }, [form.orderItems, deliveryItemQuantityMap, productOptions]);
-
-  // Helpers
-  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((prev) => ({ ...(prev as FormState), [key]: value }));
-
-    // Clear field error when user starts typing
-    if (fieldErrors[key]) {
-      setFieldErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[key];
-        return newErrors;
-      });
-    }
-
-    // Note: Business errors are now handled by useEffect for real-time validation
-  };
-
-  const ensureItems = () =>
-    setForm((prev) => ({
-      ...(prev as FormState),
-      orderItems: Array.isArray(prev?.orderItems) ? prev!.orderItems : [],
-    }));
-
-  const addRow = () => {
-    ensureItems();
-    setForm((prev) => ({
-      ...(prev as FormState),
-      orderItems: [
-        ...((prev as FormState).orderItems || []),
-        {
-          contractDeliveryItemId: "",
-          productId: "",
-          quantity: "",
-          unitPrice: "",
-          discountAmount: 0, // %
-          note: "",
-        },
-      ],
-    }));
-  };
-
-  const updateRow = <K extends keyof OrderItemRow>(
-    idx: number,
-    key: K,
-    value: OrderItemRow[K]
-  ) => {
-    setForm((prev) => {
-      const base = { ...(prev as FormState) };
-      const arr = [...(base.orderItems || [])];
-      arr[idx] = {
-        ...arr[idx],
-        [key]:
-          key === "quantity" || key === "unitPrice" || key === "discountAmount"
-            ? ((value === "" ? "" : Number(value)) as any)
-            : (value as any),
+      
+      const selectedProduct: SelectedProduct = {
+        productId: product.productId,
+        productCode: product.productCode,
+        productName: product.productName,
+        coffeeTypeName: product.coffeeTypeName,
+        quantityAvailable: product.quantityAvailable || 0,
+        unit: product.unit,
+        unitPrice: product.unitPrice || 0,
+        selectedQuantity: Math.min(1, product.quantityAvailable || 1),
+        contractDeliveryItemId: contractItem.contractDeliveryItemId,
+        contractDeliveryItemLabel: contractItem.label
       };
-      base.orderItems = arr;
-      return base;
-    });
-
-    // Clear field error when user starts typing
-    const fieldKey = `orderItems.${idx}.${key}`;
-    if (fieldErrors[fieldKey]) {
-      setFieldErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldKey];
-        return newErrors;
-      });
-    }
-
-    // Note: Business errors are now handled by useEffect for real-time validation
-  };
-
-  const removeRow = (idx: number) =>
-    setForm((prev) => {
-      const base = { ...(prev as FormState) };
-      const arr = [...(base.orderItems || [])];
-      arr.splice(idx, 1);
-      base.orderItems = arr;
-      return base;
-    });
-
-  // Helper function to get error for a specific field
-  const getFieldError = (fieldName: string): string | undefined => {
-    return fieldErrors[fieldName];
-  };
-
-  // Helper function to check if field has error
-  const hasFieldError = (fieldName: string): boolean => {
-    return !!fieldErrors[fieldName];
-  };
-
-  // Helper function to get error for order item field
-  const getOrderItemError = (
-    index: number,
-    field: string
-  ): string | undefined => {
-    return fieldErrors[`orderItems.${index}.${field}`];
-  };
-
-  // Helper function to check if order item field has error
-  const hasOrderItemError = (index: number, field: string): boolean => {
-    return !!fieldErrors[`orderItems.${index}.${field}`];
-  };
-
-  // Tính tổng
-  const items = form.orderItems ?? [];
-
-  const lineTotal = (r: OrderItemRow) => {
-    const qty = Number(r.quantity) || 0;
-    const price = Number(r.unitPrice) || 0;
-    const discPercent = Number(r.discountAmount) || 0;
-    return Math.max(qty * price * (1 - discPercent / 100), 0);
-  };
-
-  const totalQuantity = useMemo(
-    () => items.reduce((s, x) => s + (Number(x.quantity) || 0), 0),
-    [items]
-  );
-
-  const totalAmount = useMemo(
-    () => items.reduce((s, x) => s + lineTotal(x), 0),
-    [items]
-  );
-
-  const fmtVnd = (n: number) =>
-    new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
-
-  const [saving, setSaving] = React.useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (saving) return;
-
-    // Clear previous errors
-    setFieldErrors({});
-    setBusinessErrors([]);
-
-    const data = form;
-
-    // Validate
-    const clientErrors: Record<string, string> = {};
-    const newBusiness: string[] = [];
-
-    if (!data.deliveryBatchId) {
-      clientErrors.deliveryBatchId = t(
-        "managerOrders.form.validation.selectDeliveryBatch"
-      );
-    }
-    if (!data.orderItems.length) {
-      clientErrors.orderItems = t(
-        "managerOrders.form.validation.addAtLeastOneItem"
-      );
+      
+      if (orderMode === "single") {
+        setSelectedProducts([selectedProduct]);
+      } else {
+        setSelectedProducts(prev => [...prev, selectedProduct]);
+      }
     } else {
-      data.orderItems.forEach((item, index) => {
-        if (!item.contractDeliveryItemId) {
-          clientErrors[`orderItems.${index}.contractDeliveryItemId`] = t(
-            "managerOrders.form.validation.selectDeliveryItem"
-          );
-        }
-        if (!item.productId) {
-          clientErrors[`orderItems.${index}.productId`] = t(
-            "managerOrders.form.validation.selectProduct"
-          );
-        }
-        if (!(Number(item.quantity) > 0)) {
-          clientErrors[`orderItems.${index}.quantity`] = t(
-            "managerOrders.form.validation.quantityRequired"
-          );
-        }
-        if (!(Number(item.unitPrice) > 0)) {
-          clientErrors[`orderItems.${index}.unitPrice`] = t(
-            "managerOrders.form.validation.unitPriceRequired"
-          );
-        }
-
-        // Validate quantity against delivery item planned quantity
-        const deliveryItemLimit =
-          deliveryItemQuantityMap[item.contractDeliveryItemId];
-        if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
-        }
-
-        // Validate quantity against product available quantity
-        const selectedProduct = productOptions.find(
-          (p) => p.productId === item.productId
-        );
-        if (selectedProduct && selectedProduct.quantityAvailable) {
-          const productLimit = Number(selectedProduct.quantityAvailable);
-          if (Number(item.quantity) > productLimit) {
-          }
-        }
-      });
+      setSelectedProducts(prev => prev.filter(p => p.productId !== product.productId));
     }
+  };
 
-    // Validate ngày giao thực tế không được trước ngày hiện tại (chỉ khi EDIT)
-    if (isEdit && data.actualDeliveryDate) {
-      const actualDate = new Date(data.actualDeliveryDate);
+  const updateProductQuantity = (productId: string, quantity: number) => {
+    setSelectedProducts(prev => prev.map(p => 
+      p.productId === productId 
+        ? { ...p, selectedQuantity: Math.max(0, Math.min(quantity, p.quantityAvailable)) }
+        : p
+    ));
+  };
+
+  const removeProduct = (productId: string) => {
+    setSelectedProducts(prev => prev.filter(p => p.productId !== productId));
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedDeliveryBatch) {
+      toast.error(t("managerOrders.create.multiProduct.validation.selectDeliveryBatch"));
+      return;
+    }
+    
+    if (selectedProducts.length === 0) {
+      toast.error(orderMode === "single" 
+        ? t("managerOrders.create.multiProduct.validation.selectOneProduct")
+        : t("managerOrders.create.multiProduct.validation.selectAtLeastOneProduct")
+      );
+      return;
+    }
+    
+    // Validate quantities
+    const invalidProducts = selectedProducts.filter(p => p.selectedQuantity <= 0);
+    if (invalidProducts.length > 0) {
+      toast.error(t("managerOrders.create.multiProduct.validation.invalidQuantity"));
+      return;
+    }
+    
+    // Validate order date
+    if (formData.orderDate) {
+      const selectedDate = new Date(formData.orderDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Reset time to start of day
-      if (actualDate < today) {
-        clientErrors.actualDeliveryDate = t(
-          "managerOrders.form.validation.actualDeliveryDateBeforeToday"
-        );
+      
+      if (selectedDate > today) {
+        toast.error(t("managerOrders.create.multiProduct.validation.orderDateExceedsCurrent"));
+        return;
       }
     }
-
-    // If there are client-side errors or business rule violations, display them and stop
-    if (Object.keys(clientErrors).length > 0 || newBusiness.length > 0) {
-      setFieldErrors(clientErrors);
-      setBusinessErrors(newBusiness);
-      toast.error(t("managerOrders.form.validation.checkFormErrors"));
-      return;
+    
+    // Validate actual delivery date
+    if (formData.actualDeliveryDate) {
+      const selectedDate = new Date(formData.actualDeliveryDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to start of day
+      
+      if (selectedDate > today) {
+        toast.error(t("managerOrders.create.multiProduct.validation.deliveryDateExceedsCurrent"));
+        return;
+      }
+      
+      // Validate actual delivery date không được trước order date
+      if (formData.orderDate) {
+        const orderDate = new Date(formData.orderDate);
+        if (selectedDate < orderDate) {
+          toast.error(t("managerOrders.create.multiProduct.validation.deliveryDateBeforeOrder"));
+          return;
+        }
+      }
     }
-
-    // Convert ngày: yyyy-MM-dd -> ISO (orderDate) và giữ yyyy-MM-dd (actual)
-    const orderDateIso = data.orderDate
-      ? new Date(`${data.orderDate}T00:00:00`).toISOString()
-      : undefined;
-    const actualDeliveryDateStr = data.actualDeliveryDate || undefined;
-
+    
+    setLoading(true);
+    
     try {
-      setSaving(true);
-
-      if (isEdit && initialData) {
-        const payload: OrderUpdateDto = {
-          orderId: initialData.orderId,
-          deliveryBatchId: data.deliveryBatchId,
-          deliveryRound:
-            data.deliveryRound === "" || data.deliveryRound === undefined
-              ? null
-              : Number(data.deliveryRound),
-          orderDate: orderDateIso ?? undefined,
-          actualDeliveryDate: actualDeliveryDateStr ?? undefined,
-          note: data.note?.trim() || undefined,
-          status: data.status,
-          cancelReason: data.cancelReason?.trim() || undefined,
-          orderItems: (data.orderItems || []).map((r) => {
-            const qty = Number(r.quantity) || 0;
-            const price = Number(r.unitPrice) || 0;
-            // Gửi discount trực tiếp dưới dạng % (không convert)
-            const discountPercent = Number(r.discountAmount) || 0;
-            return {
-              orderItemId: r.orderItemId!, // edit phải có
-              orderId: initialData.orderId,
-              contractDeliveryItemId: r.contractDeliveryItemId,
-              productId: r.productId,
-              quantity: qty,
-              unitPrice: price,
-              discountAmount: discountPercent, // Gửi % trực tiếp
-              note: r.note?.trim() || undefined,
-            };
-          }),
-        };
-
-        // Tạo promise gốc
-        const req = updateOrder(payload.orderId, payload);
-        // Hiển thị toast theo trạng thái promise
-        toast.promise(req, {
-          loading: t("managerOrders.form.actions.updating"),
-          success: t("managerOrders.form.actions.updateSuccess"),
-          error: t("managerOrders.form.actions.updateError"),
-        });
-        // Quan trọng: chờ promise gốc -> nếu fail sẽ nhảy vào catch, KHÔNG gọi onSuccess
-        await req;
-      } else {
-        const payload: OrderCreateDto = {
-          deliveryBatchId: data.deliveryBatchId,
-          deliveryRound:
-            data.deliveryRound === "" || data.deliveryRound === undefined
-              ? null
-              : Number(data.deliveryRound),
-          orderDate: orderDateIso ?? null,
-          actualDeliveryDate: actualDeliveryDateStr ?? null,
-          note: data.note?.trim() ?? null,
-          status: data.status,
-          cancelReason: data.cancelReason?.trim() ?? null,
-          orderItems: (data.orderItems || []).map((r) => {
-            const qty = Number(r.quantity) || 0;
-            const price = Number(r.unitPrice) || 0;
-            // Gửi discount trực tiếp dưới dạng % (không convert)
-            const discountPercent = Number(r.discountAmount) || 0;
-            return {
-              contractDeliveryItemId: r.contractDeliveryItemId,
-              productId: r.productId,
-              quantity: qty,
-              unitPrice: price,
-              discountAmount: discountPercent, // Gửi % trực tiếp
-              note: r.note?.trim() || undefined,
-            };
-          }),
-        };
-
-        const req = createOrder(payload);
-        toast.promise(req, {
-          loading: t("managerOrders.form.actions.creating"),
-          success: t("managerOrders.form.actions.createSuccess"),
-          error: t("managerOrders.form.actions.createError"),
-        });
-        await req;
-      }
-
-      // Chỉ gọi khi request thành công
-      onSuccess();
-    } catch (err) {
-      // KHÔNG log console.error để tránh hiển thị error box
-      // console.error(err);
-
-      // Xử lý lỗi validation từ backend
-      if (err && typeof err === "object" && "errors" in err && err.errors) {
-        const validationErrors = err.errors as Record<string, string[]>;
-        const newFieldErrors: Record<string, string> = {};
-        const newBusinessErrors: string[] = [];
-
-        // Phân loại lỗi: field validation vs business logic
-        Object.entries(validationErrors).forEach(([field, messages]) => {
-          if (Array.isArray(messages) && messages.length > 0) {
-            const message = messages[0];
-
-            // Lỗi nghiệp vụ thường có đặc điểm:
-            const isBusinessError =
-              message.length > 50 ||
-              message.includes("vượt quá") ||
-              message.includes("đã tồn tại") ||
-              message.includes("không được") ||
-              message.includes("phải") ||
-              message.includes("cùng loại") ||
-              message.includes("tổng khối lượng") ||
-              message.includes("tổng giá trị") ||
-              message.includes("tổng trị giá") ||
-              message.includes("đã tồn tại trong hệ thống") ||
-              message.includes("không có quyền") ||
-              message.includes("không tìm thấy") ||
-              message.includes("vượt quá tổng") ||
-              message.includes("không được có 2 dòng") ||
-              message.includes("không được âm") ||
-              message.includes("phải lớn hơn") ||
-              message.includes("phải nhỏ hơn") ||
-              message.includes("dòng hợp đồng") ||
-              message.includes("hợp đồng đã khai báo") ||
-              message.includes("kg) vượt quá") ||
-              message.includes("VND) vượt quá") ||
-              message.includes("từ các dòng") ||
-              message.includes("đã khai báo") ||
-              message.includes("các dòng hợp đồng") ||
-              message.includes("đã khai báo (") ||
-              message.includes(") vượt quá") ||
-              message.includes("quản lý doanh nghiệp") ||
-              message.includes("thông tin bên mua") ||
-              message.includes("Số hợp đồng") ||
-              message.includes("khối lượng từ các dòng") ||
-              message.includes("trị giá từ các dòng") ||
-              message.includes("vượt quá tổng khối lượng") ||
-              message.includes("vượt quá tổng giá trị") ||
-              message.includes("vượt quá tổng trị giá") ||
-              message.includes("hiện có") ||
-              message.includes("thêm") ||
-              message.includes("từ các dòng hợp đồng") ||
-              message.includes("Tổng khối lượng từ các dòng") ||
-              message.includes("Tổng trị giá từ các dòng") ||
-              message.includes("vượt quá tổng khối lượng hợp đồng") ||
-              message.includes("vượt quá tổng giá trị hợp đồng") ||
-              message.includes("vượt quá tổng trị giá hợp đồng") ||
-              message.includes("Tổng khối lượng từ các dòng hợp đồng") ||
-              message.includes("Tổng trị giá từ các dòng hợp đồng") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo"
-              ) ||
-              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
-              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
-              message.includes("Tổng khối lượng từ các dòng hợp đồng (") ||
-              message.includes("Tổng trị giá từ các dòng hợp đồng (") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo ("
-              ) ||
-              message.includes(
-                "vượt quá tổng giá trị hợp đồng đã khai báo ("
-              ) ||
-              message.includes(
-                "vượt quá tổng trị giá hợp đồng đã khai báo ("
-              ) ||
-              message.includes("kg) vượt quá tổng khối lượng") ||
-              message.includes("VND) vượt quá tổng giá trị") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo"
-              ) ||
-              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
-              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
-              message.includes("Lô giao hàng này đã có đơn hàng") ||
-              message.includes("Bạn không có quyền") ||
-              message.includes("Không tìm thấy lô giao hàng") ||
-              message.includes("Không tìm thấy Manager hoặc Staff") ||
-              message.includes("Ngày đặt hàng không được vượt quá") ||
-              message.includes("Ngày giao thực tế không được") ||
-              message.includes("Đơn hàng phải có ít nhất") ||
-              message.includes("Có sản phẩm bị trùng lặp") ||
-              message.includes("Đợt giao hàng phải lớn hơn") ||
-              message.includes("Giảm giá không được vượt quá") ||
-              message.includes("Giảm giá không được âm");
-
-            if (isBusinessError) {
-              newBusinessErrors.push(message);
-            } else {
-              // Xử lý lỗi cho order items (dạng: OrderItems[0].Quantity)
-              if (field.startsWith("OrderItems[") && field.includes("].")) {
-                const match = field.match(/OrderItems\[(\d+)\]\.(\w+)/);
-                if (match) {
-                  const index = match[1];
-                  const itemField = match[2];
-                  newFieldErrors[
-                    `orderItems.${index}.${itemField.toLowerCase()}`
-                  ] = message;
-                }
-              } else {
-                // Xử lý lỗi cho các field chính
-                newFieldErrors[field] = message;
-              }
-            }
-          }
-        });
-
-        // Set errors theo loại
-        if (Object.keys(newFieldErrors).length > 0) {
-          setFieldErrors(newFieldErrors);
-        }
-
-        if (newBusinessErrors.length > 0) {
-          setBusinessErrors(newBusinessErrors);
-        }
-
-        // Hiển thị toast với thông tin cụ thể
-        if (
-          Object.keys(newFieldErrors).length > 0 ||
-          newBusinessErrors.length > 0
-        ) {
-          toast.error(t("managerOrders.form.errors.checkFormErrors"));
-        }
-      } else {
-        // Xử lý lỗi khác - kiểm tra message trực tiếp
-        let errorMessage = t("managerOrders.form.errors.saveOrderError");
-
-        if (err && typeof err === "object" && "message" in err) {
-          const message = String(err.message);
-
-          // Kiểm tra các lỗi nghiệp vụ cụ thể
-          if (message.includes("Lô giao hàng này đã có đơn hàng")) {
-            setBusinessErrors([message]);
-            errorMessage =
-              t("managerOrders.form.errors.businessError") + message;
-          } else if (message.includes("Bạn không có quyền")) {
-            setBusinessErrors([message]);
-            errorMessage = t("managerOrders.form.errors.accessError") + message;
-          } else if (message.includes("Không tìm thấy")) {
-            setBusinessErrors([message]);
-            errorMessage = t("managerOrders.form.errors.dataError") + message;
-          }
-        }
-
-        toast.error(errorMessage);
-      }
+      // Tạo UUID tạm thời cho orderId (backend sẽ thay thế)
+      const tempOrderId = crypto.randomUUID();
+      
+      const orderItems: OrderItemCreateInline[] = selectedProducts.map(p => ({
+        orderId: tempOrderId, // Backend yêu cầu Guid, tạo UUID tạm thời
+        contractDeliveryItemId: p.contractDeliveryItemId,
+        productId: p.productId,
+        quantity: p.selectedQuantity,
+        unitPrice: p.unitPrice,
+        discountAmount: 0,
+        note: ""
+      }));
+      
+      const orderData: OrderCreateDto = {
+        deliveryBatchId: selectedDeliveryBatch,
+        deliveryRound: formData.deliveryRound ? parseInt(formData.deliveryRound) : undefined,
+        orderDate: formData.orderDate || undefined,
+        actualDeliveryDate: formData.actualDeliveryDate || undefined,
+        note: formData.note || undefined,
+        status: formData.status,
+        orderItems
+      };
+      
+      // Debug: Log dữ liệu gửi lên
+      console.log("Order data being sent:", orderData);
+      
+      await createOrder(orderData);
+      toast.success(t("managerOrders.create.multiProduct.validation.createOrderSuccess"));
+      onSuccess?.();
+    } catch (error: any) {
+      console.error("Error creating order:", error);
+      toast.error(t("managerOrders.create.multiProduct.validation.createOrderError") + (error.message || "Unknown error"));
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  }
+  };
+
+  const totalAmount = selectedProducts.reduce((sum, p) => 
+    sum + (p.unitPrice * p.selectedQuantity), 0
+  );
+
+  const totalQuantity = selectedProducts.reduce((sum, p) => 
+    sum + p.selectedQuantity, 0
+  );
 
   return (
-    <form className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
-      <h2 className="text-2xl font-semibold text-center">
-        {isEdit
-          ? t("managerOrders.edit.title")
-          : t("managerOrders.create.title")}
-      </h2>
-
-      {/* Hiển thị lỗi nghiệp vụ */}
-      {businessErrors.length > 0 && (
-        <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-orange-800 font-medium">
-              {t("managerOrders.form.businessRules.title")}
-            </h3>
-            <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-              {businessErrors.length}{" "}
-              {t("managerOrders.form.businessRules.rules")}
-            </span>
-          </div>
-
-          {/* Tóm tắt nhanh */}
-          <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
-            <strong> {t("managerOrders.form.businessRules.summary")}:</strong>
-            {businessErrors.length > 0 && (
-              <div className="mt-2">
-                {businessErrors.map((error, index) => (
-                  <div key={index} className="text-sm">
-                    • {error}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Hướng dẫn giải quyết */}
-          <div className="mt-3 pt-3 border-t border-orange-200">
-            <p className="text-orange-600 text-sm font-medium mb-2">
-              💡 {t("managerOrders.form.businessRules.guidance")}:
-            </p>
-            <ul className="text-orange-600 text-xs space-y-1">
-              {businessErrors.some((err) =>
-                err.includes("vượt quá kế hoạch")
-              ) && (
-                <li>
-                  • Giảm số lượng xuống dưới giới hạn kế hoạch của mặt hàng đợt
-                  giao
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("vượt quá tồn kho")
-              ) && (
-                <li>
-                  • Giảm số lượng xuống dưới số lượng tồn kho có sẵn của sản
-                  phẩm
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("cùng loại")) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.noDuplicateProducts")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("đã tồn tại")) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.orderInfoExists")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("không có quyền")) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.contactAdminForPermission"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Lô giao hàng này đã có đơn hàng")
-              ) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.oneOrderPerBatch")}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Ngày đặt hàng không được vượt quá")
-              ) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.orderDateNotExceedCurrent"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Ngày giao thực tế không được")
-              ) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.deliveryDateNotBeforeOrder"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Giảm giá không được vượt quá")
-              ) && (
-                <li>
-                  •{" "}
-                  {t("managerOrders.form.businessRules.discountNotExceedTotal")}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Giảm giá không được âm")
-              ) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.discountNotNegative")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("Không tìm thấy")) && (
-                <li>• {t("managerOrders.form.businessRules.dataNotExists")}</li>
-              )}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* DeliveryBatch + DeliveryRound + ActualDeliveryDate */}
-      <div
-        className={`grid grid-cols-1 gap-4 ${
-          isEdit ? "md:grid-cols-3" : "md:grid-cols-2"
-        }`}
-      >
-        {/* Đợt giao (create = select, edit = read-only) */}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.deliveryBatch")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-
-          {!isEdit ? (
-            // CREATE: cho phép chọn
-            <select
-              className={`w-full p-2 border rounded ${
-                hasFieldError("deliveryBatchId") ? "border-red-500" : ""
-              }`}
-              value={form.deliveryBatchId}
-              onChange={(e) => {
-                const id = e.target.value;
-                setField("deliveryBatchId", id);
-                // tùy chọn: cập nhật code tức thời từ batchOptions
-                const found = batchOptions.find((b) => b.id === id);
-                if (found)
-                  setDeliveryBatchCode(found.label.split(" — ")[0] || "");
-                // effect sau đó sẽ fetch viewDetails và đồng bộ lại mọi thứ
-              }}
-            >
-              <option value="">
-                -- {t("managerOrders.form.placeholders.selectDeliveryBatch")} --
-              </option>
-              {batchOptions.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            // EDIT: chỉ hiển thị code đọc-chỉ để biết đang thuộc đợt nào
-            <Input
-              value={deliveryBatchCode || "—"}
-              readOnly
-              className="bg-muted/40"
-            />
-          )}
-          {hasFieldError("deliveryBatchId") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("deliveryBatchId")}
-            </p>
-          )}
-        </div>
-
-        {/* Số đợt */}
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.deliveryRound")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="number"
-            value={form.deliveryRound ?? ""}
-            onChange={(e) =>
-              setField(
-                "deliveryRound",
-                e.target.value === "" ? "" : Number(e.target.value)
-              )
+          <h1 className="text-2xl font-bold text-gray-900">{t("managerOrders.create.multiProduct.title")}</h1>
+          <p className="text-gray-600">
+            {orderMode === "single" 
+              ? t("managerOrders.create.multiProduct.subtitle")
+              : t("managerOrders.create.multiProduct.subtitle")
             }
-            className="no-spinner"
-            onKeyDown={(e) => {
-              if (e.key === "-" || e.key.toLowerCase() === "e")
-                e.preventDefault();
-            }}
-          />
-        </div>
-
-        {/* Ngày giao thực tế - chỉ hiển thị khi EDIT */}
-        {isEdit && (
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("managerOrders.form.fields.actualDeliveryDate")}
-            </label>
-            <DatePicker
-              value={form.actualDeliveryDate}
-              onChange={(v) => setField("actualDeliveryDate", v)}
-              placeholder="yyyy-MM-dd"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Status */}
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.form.fields.status")}{" "}
-          <span className="text-red-500">*</span>
-        </label>
-        {!isEdit ? (
-          // CREATE: cứng "Đang chuẩn bị", không thể thay đổi
-          <Input
-            value={t(`managerOrders.status.${form.status.toLowerCase()}`)}
-            readOnly
-            className="bg-muted/40 cursor-not-allowed"
-          />
-        ) : (
-          // EDIT: có thể chọn trạng thái
-          <select
-            className="w-full p-2 border rounded"
-            value={form.status}
-            onChange={(e) => setField("status", e.target.value as OrderStatus)}
-          >
-            {Object.values(OrderStatus)
-              .filter((s) => s !== OrderStatus.Pending)
-              .map((s) => (
-                <option key={s} value={s}>
-                  {t(`managerOrders.status.${s.toLowerCase()}`)}
-                </option>
-              ))}
-          </select>
-        )}
-        {!isEdit && (
-          <p className="text-xs text-gray-500 mt-1">
-            {t("managerOrders.form.fields.statusCannotChange")}
           </p>
-        )}
-      </div>
-
-      {/* Cancel Reason - chỉ hiển thị khi EDIT và status là Cancelled */}
-      {isEdit && form.status === OrderStatus.Cancelled && (
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.cancelReason")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Input
-            value={form.cancelReason ?? ""}
-            onChange={(e) => setField("cancelReason", e.target.value)}
-            placeholder={t("managerOrders.form.placeholders.cancelReason")}
-          />
         </div>
-      )}
-
-      {/* Note */}
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.form.fields.note")}
-        </label>
-        <Textarea
-          placeholder={t("managerOrders.form.placeholders.note")}
-          value={form.note ?? ""}
-          onChange={(e) => setField("note", e.target.value)}
-        />
+        
+        {/* Order Mode Selection */}
+        <Card className="p-4">
+          <div className="flex items-center gap-4">
+            <Label className="text-sm font-medium">{t("managerOrders.create.multiProduct.orderMode.title")}</Label>
+            <Select value={orderMode} onValueChange={(value: "single" | "multiple") => setOrderMode(value)}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="single">{t("managerOrders.create.multiProduct.orderMode.single")}</SelectItem>
+                <SelectItem value="multiple">{t("managerOrders.create.multiProduct.orderMode.multiple")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </Card>
       </div>
 
-      {/* Order Items */}
-      <div className="space-y-2">
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.detail.productList.title")}{" "}
-          <span className="text-red-500">*</span>
-        </label>
-
-        {/* Hiển thị lỗi tổng quát cho order items */}
-        {hasFieldError("orderItems") && (
-          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm font-medium">
-              {getFieldError("orderItems")}
-            </p>
-          </div>
-        )}
-
-        {(form.orderItems ?? []).length > 0 && (
-          <>
-            {/* Header giống contract, thêm cột Sản phẩm => 7 cột */}
-            <div className="hidden md:grid md:grid-cols-7 gap-2 mb-1 text-xs font-medium text-muted-foreground">
-              <span>
-                {t("managerOrders.form.table.headers.deliveryItem")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>
-                {t("managerOrders.form.table.headers.product")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>
-                {t("managerOrders.form.table.headers.quantity")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>{t("managerOrders.form.table.headers.unitPrice")}</span>
-              <span>{t("managerOrders.form.table.headers.discount")}</span>
-              <span>{t("managerOrders.form.table.headers.note")}</span>
-              <span></span>
-            </div>
-
-            {/* Body */}
-            {(form.orderItems || []).map((row, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-1 md:grid-cols-7 gap-2 mb-2"
-              >
-                {/* Mặt hàng đợt giao */}
-                <select
-                  value={row.contractDeliveryItemId}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    updateRow(idx, "contractDeliveryItemId", value);
-                    const autoPrice = deliveryItemUnitPriceMap[value];
-                    if (autoPrice !== undefined) {
-                      updateRow(idx, "unitPrice", autoPrice as any);
-                    }
-                    const autoDisc = deliveryItemDiscountMap[value];
-                    if (autoDisc !== undefined) {
-                      updateRow(idx, "discountAmount", autoDisc as any);
-                    }
-                  }}
-                  className={`p-2 border rounded ${
-                    hasOrderItemError(idx, "contractDeliveryItemId")
-                      ? "border-red-500"
-                      : ""
-                  }`}
-                  disabled={loadingOptions}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Order Details */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Delivery Batch Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="w-5 h-5" />
+                {t("managerOrders.create.multiProduct.deliveryBatchInfo.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="deliveryBatch">{t("managerOrders.create.multiProduct.deliveryBatchInfo.deliveryBatch")}</Label>
+                <Select 
+                  value={selectedDeliveryBatch} 
+                  onValueChange={setSelectedDeliveryBatch}
                 >
-                  <option value="">
-                    -- {t("managerOrders.form.placeholders.selectDeliveryItem")}{" "}
-                    --
-                  </option>
-                  {(deliveryItemOptions ?? []).map((it) => (
-                    <option
-                      key={it.contractDeliveryItemId}
-                      value={it.contractDeliveryItemId}
-                    >
-                      {it.name}
-                    </option>
-                  ))}
-                </select>
-                {hasOrderItemError(idx, "contractDeliveryItemId") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "contractDeliveryItemId")}
-                  </p>
-                )}
-
-                {/* Sản phẩm */}
-                <select
-                  value={row.productId}
-                  onChange={(e) => updateRow(idx, "productId", e.target.value)}
-                  className={`p-2 border rounded ${
-                    hasOrderItemError(idx, "productId") ? "border-red-500" : ""
-                  }`}
-                  disabled={loadingOptions}
-                >
-                  <option value="">
-                    -- {t("managerOrders.form.placeholders.selectProduct")} --
-                  </option>
-                  {(productOptions ?? [])
-                    .filter((p) => {
-                      const currentDeliveryId = String(
-                        row.contractDeliveryItemId || ""
-                      );
-                      if (!currentDeliveryId) return true; // until user chooses a delivery item
-                      const neededType = (
-                        deliveryItemCoffeeTypeMap[currentDeliveryId] || ""
-                      ).toLowerCase();
-                      if (!neededType) return true;
-                      const productType = (
-                        p.coffeeTypeName || ""
-                      ).toLowerCase();
-                      return productType === neededType;
-                    })
-                    .map((p) => (
-                      <option key={p.productId} value={p.productId}>
-                        {p.name}
-                      </option>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("managerOrders.create.multiProduct.deliveryBatchInfo.selectDeliveryBatch")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {deliveryBatches.map(batch => (
+                      <SelectItem key={batch.deliveryBatchId} value={batch.deliveryBatchId}>
+                        {batch.deliveryBatchCode} - {batch.contractNumber}
+                      </SelectItem>
                     ))}
-                </select>
-                {hasOrderItemError(idx, "productId") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "productId")}
-                  </p>
-                )}
-
-                {/* Số lượng */}
-                <Input
-                  type="number"
-                  min={0}
-                  step={0.1}
-                  value={row.quantity}
-                  onChange={(e) =>
-                    updateRow(
-                      idx,
-                      "quantity",
-                      e.target.value === "" ? "" : Number(e.target.value)
-                    )
-                  }
-                  className={`no-spinner ${
-                    hasOrderItemError(idx, "quantity") ? "border-red-500" : ""
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === "-" || e.key.toLowerCase() === "e")
-                      e.preventDefault();
-                  }}
-                />
-                {hasOrderItemError(idx, "quantity") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "quantity")}
-                  </p>
-                )}
-
-                {/* Đơn giá - tự động từ mặt hàng đợt giao */}
-                <Input
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={row.unitPrice}
-                  readOnly
-                  className="bg-muted/40 cursor-not-allowed"
-                />
-
-                {/* Giảm trừ (%) - tự động từ mặt hàng đợt giao */}
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step={0.1}
-                  value={row.discountAmount ?? 0}
-                  readOnly
-                  className="bg-muted/40 cursor-not-allowed"
-                />
-
-                {/* Ghi chú */}
-                <Input
-                  placeholder={t("managerOrders.form.placeholders.note")}
-                  value={row.note ?? ""}
-                  onChange={(e) => updateRow(idx, "note", e.target.value)}
-                />
-
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => removeRow(idx)}
-                >
-                  {t("managerOrders.form.actions.removeItem")}
-                </Button>
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
-          </>
-        )}
+              
+              {selectedDeliveryBatch && (
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryRound">{t("managerOrders.create.multiProduct.deliveryBatchInfo.deliveryRound")}</Label>
+                  <Input
+                    id="deliveryRound"
+                    type="number"
+                    placeholder={t("managerOrders.create.multiProduct.deliveryBatchInfo.deliveryRoundPlaceholder")}
+                    value={formData.deliveryRound}
+                    onChange={(e) => setFormData(prev => ({ ...prev, deliveryRound: e.target.value }))}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={addRow}
-          disabled={loadingOptions || !form.deliveryBatchId}
-        >
-          {t("managerOrders.form.actions.addItem")}
-        </Button>
+          {/* Order Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                {t("managerOrders.create.multiProduct.orderInfo.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="orderDate">{t("managerOrders.create.multiProduct.orderInfo.orderDate")}</Label>
+                <Input
+                  id="orderDate"
+                  type="date"
+                  max={new Date().toISOString().split('T')[0]} // Không cho phép chọn ngày trong tương lai
+                  value={formData.orderDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, orderDate: e.target.value }))}
+                />
+                <p className="text-xs text-gray-500">{t("managerOrders.create.multiProduct.orderInfo.orderDateHelp")}</p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="actualDeliveryDate">{t("managerOrders.create.multiProduct.orderInfo.actualDeliveryDate")}</Label>
+                <Input
+                  id="actualDeliveryDate"
+                  type="date"
+                  max={new Date().toISOString().split('T')[0]} // Không cho phép chọn ngày trong tương lai
+                  value={formData.actualDeliveryDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, actualDeliveryDate: e.target.value }))}
+                />
+                <p className="text-xs text-gray-500">{t("managerOrders.create.multiProduct.orderInfo.deliveryDateHelp")}</p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="note">{t("managerOrders.create.multiProduct.orderInfo.note")}</Label>
+                <Textarea
+                  id="note"
+                  placeholder={t("managerOrders.create.multiProduct.orderInfo.notePlaceholder")}
+                  value={formData.note}
+                  onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="status">{t("managerOrders.create.multiProduct.orderInfo.status")}</Label>
+                <Select 
+                  value={formData.status} 
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as OrderStatus }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={OrderStatus.Pending}>{t("managerOrders.status.pending")}</SelectItem>
+                    <SelectItem value={OrderStatus.Preparing}>{t("managerOrders.status.preparing")}</SelectItem>
+                    <SelectItem value={OrderStatus.Shipped}>{t("managerOrders.status.shipped")}</SelectItem>
+                    <SelectItem value={OrderStatus.Delivered}>{t("managerOrders.status.delivered")}</SelectItem>
+                    <SelectItem value={OrderStatus.Cancelled}>{t("managerOrders.status.cancelled")}</SelectItem>
+                    <SelectItem value={OrderStatus.Failed}>{t("managerOrders.status.failed")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Tổng */}
-        <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
-          <div>
-            {t("managerOrders.form.summary.totalQuantity")}:{" "}
-            <strong>{totalQuantity.toLocaleString()} kg</strong>
-          </div>
-          <div>
-            {t("managerOrders.form.summary.totalAmount")}:{" "}
-            <strong>{fmtVnd(totalAmount)} VNĐ</strong>
-          </div>
+          {/* Order Summary */}
+          {selectedProducts.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  {t("managerOrders.create.multiProduct.orderSummary.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {orderMode === "multiple" && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">{t("managerOrders.create.multiProduct.orderSummary.productCount")}</span>
+                    <span className="font-medium">{selectedProducts.length}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">
+                    {orderMode === "single" ? t("managerOrders.create.multiProduct.orderSummary.totalQuantity") : t("managerOrders.create.multiProduct.orderSummary.totalQuantity")}
+                  </span>
+                  <span className="font-medium">{totalQuantity.toLocaleString()} kg</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <span className="text-lg font-semibold">
+                    {orderMode === "single" ? t("managerOrders.create.multiProduct.orderSummary.totalAmount") : t("managerOrders.create.multiProduct.orderSummary.totalAmount")}
+                  </span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {totalAmount.toLocaleString()} VNĐ
+                  </span>
+                </div>
+                
+                <Button 
+                  onClick={handleSubmit} 
+                  disabled={loading}
+                  className="w-full"
+                >
+                  {loading ? t("managerOrders.create.multiProduct.orderSummary.creating") : t("managerOrders.create.multiProduct.orderSummary.createOrder")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Right Column - Product Selection */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Product Selection Toggle - Only show for multiple mode */}
+          {orderMode === "multiple" && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  {t("managerOrders.create.multiProduct.productSelection.multipleMode.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={() => setShowProductSelection(!showProductSelection)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {showProductSelection ? t("managerOrders.create.multiProduct.productSelection.multipleMode.hideProductList") : t("managerOrders.create.multiProduct.productSelection.multipleMode.showProductList")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Single Product Selection */}
+          {orderMode === "single" && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  {t("managerOrders.create.multiProduct.productSelection.singleMode.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Product Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="singleProduct">{t("managerOrders.create.multiProduct.productSelection.singleMode.product")}</Label>
+                  <Select 
+                    value={selectedProducts[0]?.productId || ""} 
+                    onValueChange={(productId) => {
+                      const product = products.find(p => p.productId === productId);
+                      if (product) {
+                        handleProductSelection(product, true);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("managerOrders.create.multiProduct.productSelection.singleMode.selectProduct")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map(product => (
+                        <SelectItem key={product.productId} value={product.productId}>
+                          {product.productName} - {product.coffeeTypeName} ({product.quantityAvailable} {product.unit})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Quantity Input for Single Product */}
+                {selectedProducts.length > 0 && (
+                  <div className="space-y-2">
+                    <Label htmlFor="singleQuantity">{t("managerOrders.create.multiProduct.productSelection.singleMode.quantity")}</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="singleQuantity"
+                        type="number"
+                        min="0"
+                        max={selectedProducts[0]?.quantityAvailable || 0}
+                        value={selectedProducts[0]?.selectedQuantity || 0}
+                        onChange={(e) => updateProductQuantity(selectedProducts[0]?.productId, parseInt(e.target.value) || 0)}
+                        className="flex-1"
+                      />
+                      <span className="text-sm text-gray-500">{selectedProducts[0]?.unit}</span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {t("managerOrders.create.multiProduct.productSelection.singleMode.inventory")} {selectedProducts[0]?.quantityAvailable?.toLocaleString()} {selectedProducts[0]?.unit}
+                    </p>
+                  </div>
+                )}
+
+                {/* Product Info */}
+                {selectedProducts.length > 0 && (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-2">{t("managerOrders.create.multiProduct.productSelection.singleMode.productInfo")}</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                      <div><span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.singleMode.code")}</span> {selectedProducts[0].productCode}</div>
+                      <div><span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.singleMode.type")}</span> {selectedProducts[0].coffeeTypeName}</div>
+                      <div><span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.singleMode.unitPrice")}</span> {selectedProducts[0].unitPrice?.toLocaleString()} VNĐ</div>
+                      <div><span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.singleMode.warehouse")}</span> {products.find(p => p.productId === selectedProducts[0].productId)?.inventoryLocation}</div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Product Selection Interface */}
+          {orderMode === "multiple" && showProductSelection && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("managerOrders.create.multiProduct.productSelection.multipleMode.productList")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Filters */}
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        placeholder={t("managerOrders.create.multiProduct.productSelection.multipleMode.searchPlaceholder")}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-48">
+                    <Select value={coffeeTypeFilter} onValueChange={setCoffeeTypeFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("managerOrders.create.multiProduct.productSelection.multipleMode.coffeeTypeFilter")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t("managerOrders.create.multiProduct.productSelection.multipleMode.allTypes")}</SelectItem>
+                        {coffeeTypes.map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Products List */}
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {filteredProducts.map(product => {
+                    const isSelected = selectedProducts.some(p => p.productId === product.productId);
+                    const selectedProduct = selectedProducts.find(p => p.productId === product.productId);
+                    
+                    return (
+                      <div key={product.productId} className="border rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={(checked) => 
+                              handleProductSelection(product, checked as boolean)
+                            }
+                          />
+                          
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <h4 className="font-medium text-gray-900">{product.productName}</h4>
+                                <p className="text-sm text-gray-600">{product.productCode}</p>
+                              </div>
+                              <Badge variant="outline">{product.coffeeTypeName}</Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
+                              <div>
+                                <span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.multipleMode.productCard.warehouse")}</span> {product.inventoryLocation}
+                              </div>
+                              <div>
+                                <span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.multipleMode.productCard.batch")}</span> {product.batchCode}
+                              </div>
+                              <div>
+                                <span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.multipleMode.productCard.unitPrice")}</span> {product.unitPrice?.toLocaleString()} VNĐ
+                              </div>
+                              <div>
+                                <span className="font-medium">{t("managerOrders.create.multiProduct.productSelection.multipleMode.productCard.inventory")}</span> {product.quantityAvailable?.toLocaleString()} {product.unit}
+                              </div>
+                            </div>
+                            
+                            {isSelected && selectedProduct && (
+                              <div className="flex items-center gap-3">
+                                <Label htmlFor={`qty-${product.productId}`} className="text-sm font-medium">
+                                  {t("managerOrders.create.multiProduct.productSelection.multipleMode.productCard.quantity")}:
+                                </Label>
+                                <Input
+                                  id={`qty-${product.productId}`}
+                                  type="number"
+                                  min="0"
+                                  max={product.quantityAvailable || 0}
+                                  value={selectedProduct.selectedQuantity}
+                                  onChange={(e) => updateProductQuantity(product.productId, parseInt(e.target.value) || 0)}
+                                  className="w-24"
+                                />
+                                <span className="text-sm text-gray-500">{product.unit}</span>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => removeProduct(product.productId)}
+                                  className="ml-auto"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {filteredProducts.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Package className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                      <p>{t("managerOrders.create.multiProduct.productSelection.multipleMode.noProductsFound")}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Selected Products Summary */}
+          {orderMode === "multiple" && selectedProducts.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  {t("managerOrders.create.multiProduct.selectedProducts.title")} ({selectedProducts.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {selectedProducts.map(product => (
+                    <div key={product.productId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">{product.productName}</h4>
+                        <p className="text-sm text-gray-600">{product.productCode} - {product.coffeeTypeName}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">{product.selectedQuantity.toLocaleString()} {product.unit}</p>
+                        <p className="text-sm text-gray-600">
+                          {(product.unitPrice * product.selectedQuantity).toLocaleString()} VNĐ
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
-
-      <DialogFooter className="flex justify-between pt-4">
-        <Button type="submit" onClick={handleSubmit} disabled={saving}>
-          {isEdit
-            ? t("managerOrders.form.actions.updateOrder")
-            : t("managerOrders.form.actions.createOrder")}
-        </Button>
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          {t("managerOrders.detail.actions.back")}
-        </Button>
-      </DialogFooter>
-    </form>
+    </div>
   );
 }
