@@ -680,6 +680,140 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         </div>
       </div>
 
+      {/* References - Moved up to prioritize inventory selection */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("products.form.sections.references")}
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.inventoryId")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <select
+              className="w-full p-2 border rounded"
+              value={form.inventoryId}
+              onChange={(e) => {
+                const inventoryId = e.target.value;
+                setField("inventoryId", inventoryId);
+                handleInventoryChange(inventoryId);
+              }}
+              disabled={loadingOptions}
+            >
+              <option value="">
+                {t("products.form.selectOptions.selectInventory")}
+              </option>
+              {inventoryOptions.map((inventory) => (
+                <option
+                  key={inventory.inventoryId}
+                  value={inventory.inventoryId}
+                >
+                  {inventory.inventoryCode} - {inventory.warehouseName}
+                  {inventory.batchCode && ` (${inventory.batchCode})`}
+                  {inventory.coffeeTypeName && ` - ${inventory.coffeeTypeName}`}
+                  {inventory.quantity !== undefined &&
+                    ` - ${inventory.quantity} ${inventory.unit || "kg"}`}
+                </option>
+              ))}
+            </select>
+            {/* Debug info */}
+            {/* {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-gray-500 mt-1">
+                Có {inventoryOptions.length} kho, loading: {loadingOptions ? 'true' : 'false'}
+                <br />
+                Selected: {form.inventoryId || 'none'}
+                <br />
+                Options: {inventoryOptions.map(inv => `${inv.inventoryCode}(${inv.inventoryId})`).join(', ')}
+              </div>
+            )} */}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.batchId")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <select
+              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
+              value={form.batchId}
+              onChange={(e) => setField("batchId", e.target.value)}
+              disabled={loadingOptions || !canEditBatch()}
+            >
+              <option value="">
+                {t("products.form.selectOptions.selectBatch")}
+              </option>
+              {batchOptions.map((batch) => (
+                <option key={batch.batchId} value={batch.batchId}>
+                  {batch.batchCode}
+                </option>
+              ))}
+            </select>
+            {!form.inventoryId ? (
+              <div className="text-xs text-gray-500 mt-1">
+                {t("products.form.messages.selectInventoryFirst")}
+              </div>
+            ) : !canEditBatch() ? (
+              <div className="text-xs text-gray-500 mt-1">
+                Đã tự động điền từ kho
+              </div>
+            ) : (
+              <div className="text-xs text-green-600 mt-1">
+                {t("products.form.messages.canEdit")}
+              </div>
+            )}
+            {/* Debug info */}
+            {/* {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-gray-500 mt-1">
+                Có {batchOptions.length} batch, Selected: {form.batchId || 'none'}
+              </div>
+            )} */}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium">
+              {t("products.form.fields.coffeeTypeId")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <select
+              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
+              value={form.coffeeTypeId}
+              onChange={(e) => setField("coffeeTypeId", e.target.value)}
+              disabled={loadingOptions || !canEditCoffeeType()}
+            >
+              <option value="">
+                {t("products.form.selectOptions.selectCoffeeType")}
+              </option>
+              {coffeeTypes.map((type) => (
+                <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
+                  {type.typeName}
+                </option>
+              ))}
+            </select>
+            {!form.inventoryId ? (
+              <div className="text-xs text-gray-500 mt-1">
+                {t("products.form.messages.selectInventoryFirst")}
+              </div>
+            ) : !canEditCoffeeType() ? (
+              <div className="text-xs text-gray-500 mt-1">
+                Đã tự động điền từ kho
+              </div>
+            ) : (
+              <div className="text-xs text-green-600 mt-1">
+                {t("products.form.messages.canEdit")}
+              </div>
+            )}
+            {/* Debug info
+            {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-gray-500 mt-1">
+                Có {coffeeTypes.length} loại cà phê, Selected: {form.coffeeTypeId || 'none'}
+              </div>
+            )} */}
+          </div>
+        </div>
+      </div>
+
       {/* Pricing & Quantity */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
@@ -794,140 +928,6 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 {t("products.form.messages.canEdit")}
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* References */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">
-          {t("products.form.sections.references")}
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.batchId")}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <select
-              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
-              value={form.batchId}
-              onChange={(e) => setField("batchId", e.target.value)}
-              disabled={loadingOptions || !canEditBatch()}
-            >
-              <option value="">
-                {t("products.form.selectOptions.selectBatch")}
-              </option>
-              {batchOptions.map((batch) => (
-                <option key={batch.batchId} value={batch.batchId}>
-                  {batch.batchCode}
-                </option>
-              ))}
-            </select>
-            {!form.inventoryId ? (
-              <div className="text-xs text-gray-500 mt-1">
-                {t("products.form.messages.selectInventoryFirst")}
-              </div>
-            ) : !canEditBatch() ? (
-              <div className="text-xs text-gray-500 mt-1">
-                Đã tự động điền từ kho
-              </div>
-            ) : (
-              <div className="text-xs text-green-600 mt-1">
-                {t("products.form.messages.canEdit")}
-              </div>
-            )}
-            {/* Debug info */}
-            {/* {process.env.NODE_ENV === 'development' && (
-              <div className="text-xs text-gray-500 mt-1">
-                Có {batchOptions.length} batch, Selected: {form.batchId || 'none'}
-              </div>
-            )} */}
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.inventoryId")}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <select
-              className="w-full p-2 border rounded"
-              value={form.inventoryId}
-              onChange={(e) => {
-                const inventoryId = e.target.value;
-                setField("inventoryId", inventoryId);
-                handleInventoryChange(inventoryId);
-              }}
-              disabled={loadingOptions}
-            >
-              <option value="">
-                {t("products.form.selectOptions.selectInventory")}
-              </option>
-              {inventoryOptions.map((inventory) => (
-                <option
-                  key={inventory.inventoryId}
-                  value={inventory.inventoryId}
-                >
-                  {inventory.inventoryCode} - {inventory.warehouseName}
-                  {inventory.batchCode && ` (${inventory.batchCode})`}
-                  {inventory.coffeeTypeName && ` - ${inventory.coffeeTypeName}`}
-                  {inventory.quantity !== undefined &&
-                    ` - ${inventory.quantity} ${inventory.unit || "kg"}`}
-                </option>
-              ))}
-            </select>
-            {/* Debug info */}
-            {/* {process.env.NODE_ENV === 'development' && (
-              <div className="text-xs text-gray-500 mt-1">
-                Có {inventoryOptions.length} kho, loading: {loadingOptions ? 'true' : 'false'}
-                <br />
-                Selected: {form.inventoryId || 'none'}
-                <br />
-                Options: {inventoryOptions.map(inv => `${inv.inventoryCode}(${inv.inventoryId})`).join(', ')}
-              </div>
-            )} */}
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("products.form.fields.coffeeTypeId")}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <select
-              className="w-full p-2 border rounded disabled:cursor-not-allowed disabled:text-gray-500"
-              value={form.coffeeTypeId}
-              onChange={(e) => setField("coffeeTypeId", e.target.value)}
-              disabled={loadingOptions || !canEditCoffeeType()}
-            >
-              <option value="">
-                {t("products.form.selectOptions.selectCoffeeType")}
-              </option>
-              {coffeeTypes.map((type) => (
-                <option key={type.coffeeTypeId} value={type.coffeeTypeId}>
-                  {type.typeName}
-                </option>
-              ))}
-            </select>
-            {!form.inventoryId ? (
-              <div className="text-xs text-gray-500 mt-1">
-                {t("products.form.messages.selectInventoryFirst")}
-              </div>
-            ) : !canEditCoffeeType() ? (
-              <div className="text-xs text-gray-500 mt-1">
-                Đã tự động điền từ kho
-              </div>
-            ) : (
-              <div className="text-xs text-green-600 mt-1">
-                {t("products.form.messages.canEdit")}
-              </div>
-            )}
-            {/* Debug info
-            {process.env.NODE_ENV === 'development' && (
-              <div className="text-xs text-gray-500 mt-1">
-                Có {coffeeTypes.length} loại cà phê, Selected: {form.coffeeTypeId || 'none'}
-              </div>
-            )} */}
           </div>
         </div>
       </div>
