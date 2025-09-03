@@ -80,7 +80,11 @@
         "selectCropSeason": "Vui lòng chọn vụ mùa",
         "selectCoffeeType": "Vui lòng chọn loại cà phê",
         "noPlanProcessingMethod": "Loại cà phê này không có yêu cầu sơ chế từ kế hoạch",
-        "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
+        "enterBatchCode": "Vui lòng nhập mã lô sơ chế",
+        "ProgressDateInFuture": "Ngày tiến trình không được trong tương lai ({{ProgressDate}} > {{Today}})",
+        "ProgressDateTooPast": "Ngày tiến trình không được quá xa trong quá khứ ({{ProgressDate}} < {{MinDate}})",
+        "FirstProgressDateAfterHarvest": "Tiến trình đầu tiên phải từ ngày thu hoạch trở đi ({{ProgressDate}} < {{HarvestDate}}, tối thiểu {{MinDate}})",
+        "ProgressDateAfterPrevious": "Ngày tiến trình phải từ ngày của tiến trình trước đó trở đi ({{ProgressDate}} < {{PreviousProgressDate}}, tối thiểu {{MinDate}})"
       }
     },
 
@@ -3498,7 +3502,8 @@
       "totalReceipts": "Tổng phiếu",
       "confirmedReceipts": "Phiếu đã xác nhận",
       "pendingReceipts": "Phiếu chưa xác nhận",
-      "totalQuantity": "Tổng số lượng"
+      "totalQuantity": "Tổng số lượng",
+      "readyForDelivery": "Sẵn sàng giao hàng"
     },
     "table": {
       "title": "Danh sách phiếu xuất kho",
@@ -3532,11 +3537,14 @@
       },
       "status": {
         "confirmed": "Đã xác nhận",
-        "pending": "Chưa xác nhận"
+        "pending": "Chưa xác nhận",
+        "readyForDelivery": "Chờ shipper lấy hàng",
+        "completed": "Hoàn thành"
       },
       "actions": {
         "view": "Xem",
-        "confirm": "Xác nhận phiếu"
+        "confirm": "Xác nhận phiếu",
+        "back": "Quay lại"
       }
     },
     "create": {
@@ -6894,6 +6902,13 @@
       },
       "status": {
         "defaultNote": " Đợt giao mới sẽ có trạng thái \"Đang thực hiện\" mặc định"
+      },
+      "contractSelection": {
+        "title": "Hướng dẫn chọn hợp đồng:",
+        "onlyAvailableContracts": "• Chỉ hiển thị hợp đồng chưa đủ đợt giao hàng",
+        "displayFormat": "• Thông tin hiển thị: Số hợp đồng - Còn lại: X kg / Tổng: Y kg (Z đợt giao)",
+        "autoDeliveryRound": "• Delivery Round sẽ tự động được cập nhật thành round tiếp theo",
+        "completedContractsHidden": "• Hợp đồng đã đủ đợt giao sẽ không xuất hiện trong danh sách"
       }
     },
     "detail": {

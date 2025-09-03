@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:fast": "next dev --turbopack --experimental-turbo",
     "build": "next build",
+    "build:fast": "next build --experimental-turbo",
     "start": "next start",
     "lint": "next lint",
+    "clean": "if exist .next rmdir /s /q .next && if exist node_modules\\.cache rmdir /s /q node_modules\\.cache",
     "dev:both": "concurrently \"next dev --turbopack -p 3000\" \"npm run build && next start -p 3001\""
   },
   "dependencies": {

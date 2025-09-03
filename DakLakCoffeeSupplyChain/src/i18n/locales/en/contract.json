@@ -32,6 +32,21 @@
           "fileRemoved": "File removed successfully",
           "fileSelected": "File selected successfully"
         }
+      },
+      "settlement": {
+        "title": "Settlement Information",
+        "noFiles": "No settlement files available",
+        "totalRounds": "Total Rounds",
+        "uploadedFiles": "Uploaded Files",
+        "round": "Round",
+        "settlementFile": "Settlement File",
+        "file": "File",
+        "view": "View",
+        "download": "Download",
+        "viewFile": "View File",
+        "downloadSuccess": "Downloaded settlement file for round {{round}} successfully",
+        "downloadError": "Error downloading file",
+        "summary": "Showing {{total}} settlement files out of {{rounds}} total rounds"
       }
     }
   }

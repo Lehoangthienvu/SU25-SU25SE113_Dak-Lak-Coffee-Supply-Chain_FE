@@ -15,32 +15,90 @@ export async function createWarehouseInboundRequest(
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Chưa đăng nhập");
 
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(input),
-  });
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(input),
+    });
 
-  const contentType = response.headers.get("content-type");
+    const contentType = response.headers.get("content-type");
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Lỗi server: ${errorText}`);
-  }
-
-  if (contentType?.includes("application/json")) {
-    const result = await response.json();
-    if (result.status !== 1) {
-      throw new Error(result.message || "Gửi yêu cầu thất bại");
+    if (!response.ok) {
+      // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+      let errorMessage = "Gửi yêu cầu thất bại";
+      
+      if (contentType?.includes("application/json")) {
+        const errorData = await response.json();
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.errors) {
+          // Validation errors
+          const validationErrors = Object.values(errorData.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        } else if (errorData.status !== undefined && errorData.status !== 1) {
+          // ServiceResult format từ backend
+          errorMessage = errorData.message || "Gửi yêu cầu thất bại";
+        }
+      } else {
+        const errorText = await response.text();
+        errorMessage = errorText || `HTTP ${response.status}`;
+      }
+      
+      console.error('❌ Create inbound request error:', {
+        status: response.status,
+        message: errorMessage,
+        contentType,
+        fullResponse: response
+      });
+      
+      throw new Error(errorMessage);
     }
-    return result.message;
-  }
 
-  const text = await response.text();
-  return text || "Gửi yêu cầu thành công";
+    if (contentType?.includes("application/json")) {
+      const result = await response.json();
+      if (result.status !== 1) {
+        throw new Error(result.message || "Gửi yêu cầu thất bại");
+      }
+      return result.message;
+    }
+
+    const text = await response.text();
+    return text || "Gửi yêu cầu thành công";
+  } catch (error: any) {
+    // ✅ CẢI THIỆN: Xử lý lỗi chi tiết từ backend
+    let errorMessage = "Gửi yêu cầu thất bại";
+    
+    if (error.response?.data) {
+      // Lỗi từ backend có response data
+      if (error.response.data.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error.response.data === 'string') {
+        errorMessage = error.response.data;
+      } else if (error.response.data.errors) {
+        // Validation errors
+        const validationErrors = Object.values(error.response.data.errors).flat();
+        errorMessage = validationErrors.join(', ');
+      } else if (error.response.data.status !== undefined && error.response.data.status !== 1) {
+        // ServiceResult format từ backend
+        errorMessage = error.response.data.message || "Gửi yêu cầu thất bại";
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    console.error('❌ Create inbound request error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      fullError: error
+    });
+    
+    throw new Error(errorMessage);
+  }
 }
 
 export async function getAllInboundRequests() {

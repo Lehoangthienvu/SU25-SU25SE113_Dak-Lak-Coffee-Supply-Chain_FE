@@ -177,6 +177,13 @@ export const FieldValidationError: React.FC<{
        'OutputQuantity',
        'OutputQuantityEqualNotAllowed'
     ],
+    'progressDate': [
+      'ProgressDateInFuture',
+      'ProgressDateTooPast',
+      'FirstProgressDateAfterHarvest',
+      'ProgressDateAfterPrevious',
+      'ProgressDate'
+    ],
          'wasteQuantity': [
        'WasteQuantityExceedsAllowed',
        'WasteQuantityMustBePositive',
@@ -222,6 +229,7 @@ export const FieldValidationError: React.FC<{
   // Kiểm tra xem error có liên quan đến field này không
   const fieldKeywords: Record<string, string[]> = {
     'outputQuantity': ['output quantity', 'khối lượng đầu ra', 'output', 'đầu ra'],
+    'progressDate': ['progress date', 'ngày tiến trình', 'ngày ghi nhận', 'date', 'ngày'],
     'wasteQuantity': ['waste', 'phế phẩm', 'waste quantity', 'khối lượng phế phẩm'],
     'batchId': ['batch', 'lô', 'batch id'],
     'stageId': ['stage', 'công đoạn', 'stage id'],

@@ -598,7 +598,7 @@ export default function ViewProcessingBatch() {
               <div>
                 <p className="text-sm text-gray-500 font-medium">{t('processing.pages.farmerBatches.batchDetail.stats.output')}</p>
                         <p className="text-2xl font-bold text-amber-600">
-          {latestProgress?.outputQuantity || batch.totalOutputQuantity || 0}kg
+          {latestProgress?.outputQuantity || 0}kg
         </p>
               </div>
               <div className="p-3 bg-amber-100 rounded-xl">

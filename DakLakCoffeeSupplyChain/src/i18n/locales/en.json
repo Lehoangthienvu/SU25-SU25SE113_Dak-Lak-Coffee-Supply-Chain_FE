@@ -80,7 +80,11 @@
         "selectCropSeason": "Please select a crop season",
         "selectCoffeeType": "Please select a coffee type",
         "noPlanProcessingMethod": "This coffee type does not have processing requirements from the plan",
-        "enterBatchCode": "Please enter batch code"
+        "enterBatchCode": "Please enter batch code",
+        "ProgressDateInFuture": "Progress date cannot be in the future ({{ProgressDate}} > {{Today}})",
+        "ProgressDateTooPast": "Progress date cannot be too far in the past ({{ProgressDate}} < {{MinDate}})",
+        "FirstProgressDateAfterHarvest": "First progress must be from harvest date onwards ({{ProgressDate}} < {{HarvestDate}}, minimum {{MinDate}})",
+        "ProgressDateAfterPrevious": "Progress date must be from the previous progress date onwards ({{ProgressDate}} < {{PreviousProgressDate}}, minimum {{MinDate}})"
       }
     },
 
@@ -3451,7 +3455,8 @@
       "totalReceipts": "Total receipts",
       "confirmedReceipts": "Confirmed receipts",
       "pendingReceipts": "Pending receipts",
-      "totalQuantity": "Total quantity"
+      "totalQuantity": "Total quantity",
+      "readyForDelivery": "Ready for Delivery"
     },
     "table": {
       "title": "List of outbound receipts",
@@ -3485,11 +3490,14 @@
       },
       "status": {
         "confirmed": "Confirmed",
-        "pending": "Pending"
+        "pending": "Pending",
+        "readyForDelivery": "Ready for Delivery",
+        "completed": "Completed"
       },
       "actions": {
         "view": "View",
-        "confirm": "Confirm Receipt"
+        "confirm": "Confirm Receipt",
+        "back": "Back"
       }
     },
     "create": {
@@ -6837,6 +6845,13 @@
       },
       "status": {
         "defaultNote": " New delivery batch will have \"In Progress\" status by default"
+      },
+      "contractSelection": {
+        "title": "Contract Selection Guide:",
+        "onlyAvailableContracts": "• Only shows contracts that don't have enough delivery batches",
+        "displayFormat": "• Display format: Contract Number - Remaining: X kg / Total: Y kg (Z batches)",
+        "autoDeliveryRound": "• Delivery Round will automatically be updated to the next round",
+        "completedContractsHidden": "• Contracts with sufficient delivery batches will not appear in the list"
       }
     },
     "detail": {
