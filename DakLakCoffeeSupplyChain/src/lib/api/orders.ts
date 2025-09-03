@@ -1,6 +1,6 @@
 import api from "./axios";
 import { OrderStatus } from "@/lib/constants/orderStatus";
-import { OrderItemViewDto, OrderItemCreateInline, OrderItemUpdateDto} from "@/lib/api/orderItems";
+import { OrderItemViewDto, OrderItemCreateInline, OrderItemUpdateDto } from "@/lib/api/orderItems";
 
 // DTO: Dữ liệu hiển thị của đơn hàng (trang View All)
 export interface OrderViewAllDto {

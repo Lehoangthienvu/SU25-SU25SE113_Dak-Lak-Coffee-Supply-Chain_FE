@@ -14,6 +14,7 @@ import {
   ShipmentUpdateDto,
   createShipment,
   updateShipment,
+  getOrdersForShipment,
 } from "@/lib/api/shipments";
 import {
   useShipmentDeliveryStatusMap,
@@ -21,6 +22,8 @@ import {
 } from "@/lib/constants/shipmentDeliveryStatus";
 import { fromDateOnly, toDateOnly } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { OrderForShipmentDto } from "@/lib/api/shipments";
+import OrderSelectionDialog from "./OrderSelectionDialog";
 
 type Props = {
   initialData?: ShipmentUpdateDto;
@@ -65,9 +68,10 @@ export default function ShipmentForm({
   const [orderItems, setOrderItems] = useState<
     { orderItemId: string; productName: string; quantity: number }[]
   >([]);
-  const [orderOptions, setOrderOptions] = useState<
-    { orderId: string; orderCode: string }[]
-  >([]);
+  const [orderOptions, setOrderOptions] = useState<OrderForShipmentDto[]>([]);
+  const [showOrderDialog, setShowOrderDialog] = useState(false);
+  const [selectedOrderData, setSelectedOrderData] =
+    useState<OrderForShipmentDto | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
@@ -135,13 +139,8 @@ export default function ShipmentForm({
     if (isEdit) return; // edit: giữ nguyên orderId
     (async () => {
       try {
-        const list = await getAllOrders();
-        setOrderOptions(
-          (list || []).map((o) => ({
-            orderId: o.orderId,
-            orderCode: o.orderCode,
-          }))
-        );
+        const list = await getOrdersForShipment();
+        setOrderOptions(list || []);
       } catch {
         setOrderOptions([]);
       }
@@ -499,352 +498,368 @@ export default function ShipmentForm({
   const receivedStr = toDateOnly(formData.receivedAt);
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-8"
-    >
-      <h2 className="text-2xl font-semibold text-center mb-6">
-        {isEdit
-          ? t("shipments.form.title.edit")
-          : t("shipments.form.title.create")}
-      </h2>
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-8"
+      >
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          {isEdit
+            ? t("shipments.form.title.edit")
+            : t("shipments.form.title.create")}
+        </h2>
 
-      {/* Đơn hàng + Nhân viên giao */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            {t("shipments.form.order")} <span className="text-red-500">*</span>
-          </label>
-          {isEdit ? (
-            <Input
-              value={orderCodeDisplay || formData.orderId}
-              disabled
-              className="h-10"
-            />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <select
-                className={`w-full p-2 border rounded h-10 ${
-                  hasFieldError("orderId") ? "border-red-500" : ""
-                }`}
-                value={formData.orderId}
-                onChange={(e) => handleChange("orderId", e.target.value)}
-              >
-                <option value="">{t("shipments.form.selectOrder")}</option>
-                {orderOptions.map((o) => (
-                  <option key={o.orderId} value={o.orderId}>
-                    {o.orderCode}
-                  </option>
-                ))}
-              </select>
-              <Input
-                placeholder={t("shipments.form.orderCodePlaceholder")}
-                className="h-10"
-                onChange={(e) => {
-                  const code = e.target.value.trim().toLowerCase();
-                  const found = orderOptions.find(
-                    (o) => o.orderCode.toLowerCase() === code
-                  );
-                  if (found) handleChange("orderId", found.orderId);
-                }}
-              />
-            </div>
-          )}
-          {hasFieldError("orderId") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("orderId")}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            {t("shipments.form.deliveryStaff")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <select
-            className={`w-full p-2 border rounded h-10 ${
-              hasFieldError("deliveryStaffId") ? "border-red-500" : ""
-            }`}
-            value={formData.deliveryStaffId}
-            onChange={(e) => handleChange("deliveryStaffId", e.target.value)}
-          >
-            <option value="">{t("shipments.form.selectStaff")}</option>
-            {deliveryStaffOptions.map((s) => (
-              <option key={s.deliveryStaffId} value={s.deliveryStaffId}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          {hasFieldError("deliveryStaffId") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("deliveryStaffId")}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Thông tin giao hàng */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Số lượng đã giao - chỉ hiển thị khi EDIT */}
-        {isEdit && (
+        {/* Đơn hàng + Nhân viên giao */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium">
-              {t("shipments.form.shippedQuantity")}
+              {t("shipments.form.order")}{" "}
+              <span className="text-red-500">*</span>
             </label>
-            <Input
-              type="number"
-              min={0}
-              step={0.1}
-              value={formData.shippedQuantity ?? 0}
-              onChange={(e) =>
-                handleChange("shippedQuantity", Number(e.target.value))
-              }
-              className={`h-10 ${
-                hasFieldError("shippedQuantity") ? "border-red-500" : ""
-              }`}
-            />
-            {hasFieldError("shippedQuantity") && (
+            {isEdit ? (
+              <Input
+                value={orderCodeDisplay || formData.orderId}
+                disabled
+                className="h-10"
+              />
+            ) : (
+              <div className="space-y-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowOrderDialog(true)}
+                  className="w-full h-10"
+                >
+                  {selectedOrderData
+                    ? selectedOrderData.orderCode
+                    : "Chọn đơn hàng"}
+                </Button>
+                {selectedOrderData && (
+                  <div className="text-sm text-gray-600">
+                    <p>Hợp đồng: {selectedOrderData.contractCode}</p>
+                    <p>
+                      Còn lại:{" "}
+                      {selectedOrderData.totalRemainingQuantity.toLocaleString()}{" "}
+                      kg
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            {hasFieldError("orderId") && (
               <p className="text-red-500 text-xs mt-1">
-                {getFieldError("shippedQuantity")}
+                {getFieldError("orderId")}
               </p>
             )}
           </div>
-        )}
 
-        <div
-          className={`flex flex-col gap-2 ${!isEdit ? "md:col-span-2" : ""}`}
-        >
-          <label className="text-sm font-medium">
-            {t("shipments.form.status")}
-          </label>
-          {!isEdit ? (
-            // CREATE: cứng "Đang chờ", không thể thay đổi
-            <Input
-              value={t("shipments.status.pending")}
-              readOnly
-              className="h-10 bg-muted/40 cursor-not-allowed"
-            />
-          ) : (
-            // EDIT: có thể chọn trạng thái
-            <select
-              className="w-full p-2 border rounded h-10"
-              value={formData.deliveryStatus}
-              onChange={(e) =>
-                handleChange(
-                  "deliveryStatus",
-                  e.target.value as ShipmentDeliveryStatusValue
-                )
-              }
-            >
-              {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
-              <option value="Pending">{t("shipments.status.pending")}</option>
-              <option value="InTransit">
-                {t("shipments.status.inTransit")}
-              </option>
-              <option value="Delivered">
-                {t("shipments.status.delivered")}
-              </option>
-            </select>
-          )}
-        </div>
-      </div>
-
-      {/* Date pickers nhóm cuối bên trái */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            {t("shipments.form.shippedAt")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <DatePicker
-            className={`h-10 ${
-              hasFieldError("shippedAt") ? "border-red-500" : ""
-            }`}
-            value={shippedStr}
-            onChange={(d) => handleChange("shippedAt", fromDateOnly(d))}
-          />
-          {hasFieldError("shippedAt") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("shippedAt")}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            {t("shipments.form.receivedAt")}
-          </label>
-          <DatePicker
-            className={`h-10 ${
-              hasFieldError("receivedAt") ? "border-red-500" : ""
-            }`}
-            value={receivedStr}
-            onChange={(d) => handleChange("receivedAt", fromDateOnly(d))}
-          />
-          {hasFieldError("receivedAt") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("receivedAt")}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Danh sách sản phẩm giao */}
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          {t("shipments.form.productList")}{" "}
-          <span className="text-red-500">*</span>
-        </label>
-
-        {/* Hiển thị lỗi tổng quát cho shipment details */}
-        {hasFieldError("shipmentDetails") && (
-          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm font-medium">
-              {getFieldError("shipmentDetails")}
-            </p>
-          </div>
-        )}
-
-        {(formData.shipmentDetails?.length ?? 0) > 0 && (
-          <div className="hidden md:grid md:grid-cols-6 gap-3 mb-1 text-xs font-medium text-muted-foreground">
-            <span>
-              {t("shipments.form.table.orderItem")}{" "}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">
+              {t("shipments.form.deliveryStaff")}{" "}
               <span className="text-red-500">*</span>
-            </span>
-            <span className="text-left">
-              {t("shipments.form.table.quantity")}{" "}
-              <span className="text-red-500">*</span>
-            </span>
-            <span>{t("shipments.form.table.unit")}</span>
-            <span className="col-span-3">{t("shipments.form.table.note")}</span>
-          </div>
-        )}
-
-        {(formData.shipmentDetails || []).map((row, idx) => (
-          <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-2">
+            </label>
             <select
-              value={row.orderItemId}
-              onChange={(e) => {
-                const orderItemId = e.target.value;
-                updateRow(idx, "orderItemId", orderItemId);
-
-                // Tự động cập nhật số lượng từ orderItem tương ứng
-                if (orderItemId) {
-                  const selectedItem = orderItems.find(
-                    (item) => item.orderItemId === orderItemId
-                  );
-                  if (selectedItem) {
-                    updateRow(idx, "quantity", selectedItem.quantity);
-                  }
-                }
-              }}
-              className={`p-2 border rounded h-10 ${
-                hasShipmentDetailError(idx, "orderItemId")
-                  ? "border-red-500"
-                  : ""
+              className={`w-full p-2 border rounded h-10 ${
+                hasFieldError("deliveryStaffId") ? "border-red-500" : ""
               }`}
+              value={formData.deliveryStaffId}
+              onChange={(e) => handleChange("deliveryStaffId", e.target.value)}
             >
-              <option value="">{t("shipments.form.selectOrderItem")}</option>
-              {orderItems.map((opt) => (
-                <option key={opt.orderItemId} value={opt.orderItemId}>
-                  {opt.productName}
+              <option value="">{t("shipments.form.selectStaff")}</option>
+              {deliveryStaffOptions.map((s) => (
+                <option key={s.deliveryStaffId} value={s.deliveryStaffId}>
+                  {s.name}
                 </option>
               ))}
             </select>
-            {hasShipmentDetailError(idx, "orderItemId") && (
-              <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                {getShipmentDetailError(idx, "orderItemId")}
+            {hasFieldError("deliveryStaffId") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("deliveryStaffId")}
               </p>
             )}
-
-            <Input
-              type="number"
-              min={0}
-              step={0.1}
-              value={row.quantity ?? 0}
-              onChange={(e) => updateRow(idx, "quantity", e.target.value)}
-              className={`no-spinner text-left h-10 ${
-                hasShipmentDetailError(idx, "quantity") ? "border-red-500" : ""
-              }`}
-            />
-            {hasShipmentDetailError(idx, "quantity") && (
-              <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                {getShipmentDetailError(idx, "quantity")}
-              </p>
-            )}
-
-            <select
-              value={row.unit}
-              onChange={(e) => updateRow(idx, "unit", e.target.value)}
-              className={`p-2 border rounded h-10 ${
-                hasShipmentDetailError(idx, "unit") ? "border-red-500" : ""
-              }`}
-            >
-              <option value="Kg">Kg</option>
-              <option value="Ta">Tạ</option>
-              <option value="Tan">Tấn</option>
-            </select>
-            {hasShipmentDetailError(idx, "unit") && (
-              <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                {getShipmentDetailError(idx, "unit")}
-              </p>
-            )}
-
-            <Input
-              placeholder={t("shipments.form.notePlaceholder")}
-              value={row.note || ""}
-              onChange={(e) => updateRow(idx, "note", e.target.value)}
-              className={`md:col-span-2 h-10 ${
-                hasShipmentDetailError(idx, "note") ? "border-red-500" : ""
-              }`}
-            />
-            {hasShipmentDetailError(idx, "note") && (
-              <p className="text-red-500 text-xs mt-1 md:col-span-6">
-                {getShipmentDetailError(idx, "note")}
-              </p>
-            )}
-
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => removeRow(idx)}
-              className="h-10"
-            >
-              {t("shipments.form.delete")}
-            </Button>
-          </div>
-        ))}
-
-        <div className="flex items-center justify-between mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={addRow}
-            disabled={!formData.orderId}
-          >
-            {t("shipments.form.addRow")}
-          </Button>
-          <div className="text-sm text-gray-600">
-            {t("shipments.form.totalQuantity")}{" "}
-            <strong>{sumQuantity().toLocaleString()}</strong>{" "}
-            {t("shipments.form.kg")}
           </div>
         </div>
-      </div>
 
-      <DialogFooter className="flex justify-between pt-4">
-        <Button type="submit">
-          <h2>
-            {isEdit
-              ? t("shipments.form.buttons.save")
-              : t("shipments.form.buttons.create")}
-          </h2>
-        </Button>
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          {t("shipments.form.buttons.back")}
-        </Button>
-      </DialogFooter>
-    </form>
+        {/* Thông tin giao hàng */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Số lượng đã giao - chỉ hiển thị khi EDIT */}
+          {isEdit && (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">
+                {t("shipments.form.shippedQuantity")}
+              </label>
+              <Input
+                type="number"
+                min={0}
+                step={0.1}
+                value={formData.shippedQuantity ?? 0}
+                onChange={(e) =>
+                  handleChange("shippedQuantity", Number(e.target.value))
+                }
+                className={`h-10 ${
+                  hasFieldError("shippedQuantity") ? "border-red-500" : ""
+                }`}
+              />
+              {hasFieldError("shippedQuantity") && (
+                <p className="text-red-500 text-xs mt-1">
+                  {getFieldError("shippedQuantity")}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div
+            className={`flex flex-col gap-2 ${!isEdit ? "md:col-span-2" : ""}`}
+          >
+            <label className="text-sm font-medium">
+              {t("shipments.form.status")}
+            </label>
+            {!isEdit ? (
+              // CREATE: cứng "Đang chờ", không thể thay đổi
+              <Input
+                value={t("shipments.status.pending")}
+                readOnly
+                className="h-10 bg-muted/40 cursor-not-allowed"
+              />
+            ) : (
+              // EDIT: có thể chọn trạng thái
+              <select
+                className="w-full p-2 border rounded h-10"
+                value={formData.deliveryStatus}
+                onChange={(e) =>
+                  handleChange(
+                    "deliveryStatus",
+                    e.target.value as ShipmentDeliveryStatusValue
+                  )
+                }
+              >
+                {/* Chỉ cho phép chọn các trạng thái hợp lệ khi tạo/sửa */}
+                <option value="Pending">{t("shipments.status.pending")}</option>
+                <option value="InTransit">
+                  {t("shipments.status.inTransit")}
+                </option>
+                <option value="Delivered">
+                  {t("shipments.status.delivered")}
+                </option>
+              </select>
+            )}
+          </div>
+        </div>
+
+        {/* Date pickers nhóm cuối bên trái */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">
+              {t("shipments.form.shippedAt")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <DatePicker
+              className={`h-10 ${
+                hasFieldError("shippedAt") ? "border-red-500" : ""
+              }`}
+              value={shippedStr}
+              onChange={(d) => handleChange("shippedAt", fromDateOnly(d))}
+            />
+            {hasFieldError("shippedAt") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("shippedAt")}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">
+              {t("shipments.form.receivedAt")}
+            </label>
+            <DatePicker
+              className={`h-10 ${
+                hasFieldError("receivedAt") ? "border-red-500" : ""
+              }`}
+              value={receivedStr}
+              onChange={(d) => handleChange("receivedAt", fromDateOnly(d))}
+            />
+            {hasFieldError("receivedAt") && (
+              <p className="text-red-500 text-xs mt-1">
+                {getFieldError("receivedAt")}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Danh sách sản phẩm giao */}
+        <div>
+          <label className="block mb-1 text-sm font-medium">
+            {t("shipments.form.productList")}{" "}
+            <span className="text-red-500">*</span>
+          </label>
+
+          {/* Hiển thị lỗi tổng quát cho shipment details */}
+          {hasFieldError("shipmentDetails") && (
+            <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-sm font-medium">
+                {getFieldError("shipmentDetails")}
+              </p>
+            </div>
+          )}
+
+          {(formData.shipmentDetails?.length ?? 0) > 0 && (
+            <div className="hidden md:grid md:grid-cols-6 gap-3 mb-1 text-xs font-medium text-muted-foreground">
+              <span>
+                {t("shipments.form.table.orderItem")}{" "}
+                <span className="text-red-500">*</span>
+              </span>
+              <span className="text-left">
+                {t("shipments.form.table.quantity")}{" "}
+                <span className="text-red-500">*</span>
+              </span>
+              <span>{t("shipments.form.table.unit")}</span>
+              <span className="col-span-3">
+                {t("shipments.form.table.note")}
+              </span>
+            </div>
+          )}
+
+          {(formData.shipmentDetails || []).map((row, idx) => (
+            <div
+              key={idx}
+              className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-2"
+            >
+              <select
+                value={row.orderItemId}
+                onChange={(e) => {
+                  const orderItemId = e.target.value;
+                  updateRow(idx, "orderItemId", orderItemId);
+
+                  // Tự động cập nhật số lượng từ orderItem tương ứng
+                  if (orderItemId) {
+                    const selectedItem = orderItems.find(
+                      (item) => item.orderItemId === orderItemId
+                    );
+                    if (selectedItem) {
+                      updateRow(idx, "quantity", selectedItem.quantity);
+                    }
+                  }
+                }}
+                className={`p-2 border rounded h-10 ${
+                  hasShipmentDetailError(idx, "orderItemId")
+                    ? "border-red-500"
+                    : ""
+                }`}
+              >
+                <option value="">{t("shipments.form.selectOrderItem")}</option>
+                {orderItems.map((opt) => (
+                  <option key={opt.orderItemId} value={opt.orderItemId}>
+                    {opt.productName}
+                  </option>
+                ))}
+              </select>
+              {hasShipmentDetailError(idx, "orderItemId") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-6">
+                  {getShipmentDetailError(idx, "orderItemId")}
+                </p>
+              )}
+
+              <Input
+                type="number"
+                min={0}
+                step={0.1}
+                value={row.quantity ?? 0}
+                onChange={(e) => updateRow(idx, "quantity", e.target.value)}
+                className={`no-spinner text-left h-10 ${
+                  hasShipmentDetailError(idx, "quantity")
+                    ? "border-red-500"
+                    : ""
+                }`}
+              />
+              {hasShipmentDetailError(idx, "quantity") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-6">
+                  {getShipmentDetailError(idx, "quantity")}
+                </p>
+              )}
+
+              <select
+                value={row.unit}
+                onChange={(e) => updateRow(idx, "unit", e.target.value)}
+                className={`p-2 border rounded h-10 ${
+                  hasShipmentDetailError(idx, "unit") ? "border-red-500" : ""
+                }`}
+              >
+                <option value="Kg">Kg</option>
+                <option value="Ta">Tạ</option>
+                <option value="Tan">Tấn</option>
+              </select>
+              {hasShipmentDetailError(idx, "unit") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-6">
+                  {getShipmentDetailError(idx, "unit")}
+                </p>
+              )}
+
+              <Input
+                placeholder={t("shipments.form.notePlaceholder")}
+                value={row.note || ""}
+                onChange={(e) => updateRow(idx, "note", e.target.value)}
+                className={`md:col-span-2 h-10 ${
+                  hasShipmentDetailError(idx, "note") ? "border-red-500" : ""
+                }`}
+              />
+              {hasShipmentDetailError(idx, "note") && (
+                <p className="text-red-500 text-xs mt-1 md:col-span-6">
+                  {getShipmentDetailError(idx, "note")}
+                </p>
+              )}
+
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => removeRow(idx)}
+                className="h-10"
+              >
+                {t("shipments.form.delete")}
+              </Button>
+            </div>
+          ))}
+
+          <div className="flex items-center justify-between mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addRow}
+              disabled={!formData.orderId}
+            >
+              {t("shipments.form.addRow")}
+            </Button>
+            <div className="text-sm text-gray-600">
+              {t("shipments.form.totalQuantity")}{" "}
+              <strong>{sumQuantity().toLocaleString()}</strong>{" "}
+              {t("shipments.form.kg")}
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter className="flex justify-between pt-4">
+          <Button type="submit">
+            <h2>
+              {isEdit
+                ? t("shipments.form.buttons.save")
+                : t("shipments.form.buttons.create")}
+            </h2>
+          </Button>
+          <Button type="button" variant="outline" onClick={() => router.back()}>
+            {t("shipments.form.buttons.back")}
+          </Button>
+        </DialogFooter>
+      </form>
+
+      <OrderSelectionDialog
+        open={showOrderDialog}
+        onOpenChange={setShowOrderDialog}
+        onSelectOrder={(order) => {
+          setSelectedOrderData(order);
+          handleChange("orderId", order.orderId);
+          setShowOrderDialog(false);
+        }}
+        selectedOrderId={formData.orderId}
+      />
+    </>
   );
 }
