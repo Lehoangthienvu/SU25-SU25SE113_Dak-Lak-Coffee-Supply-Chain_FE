@@ -6114,7 +6114,10 @@
       "actions": {
         "backToList": "Quay lại danh sách"
       },
-      "loading": "Đang tải..."
+      "loading": "Đang tải...",
+      "productInfo": "Thông tin sản phẩm",
+      "warehouseInfo": "Thông tin kho",
+      "timestamps": "Thời gian"
     },
     "logs": {
       "title": "Lịch sử tồn kho",
