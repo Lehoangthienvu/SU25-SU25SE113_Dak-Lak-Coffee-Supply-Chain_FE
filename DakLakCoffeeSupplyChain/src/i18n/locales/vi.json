@@ -2673,8 +2673,8 @@
           "commitmentRequired": "Vui lòng chọn cam kết trồng trọt",
           "commitmentApprovedOnly": "Chỉ có thể tạo mùa vụ từ cam kết đã được duyệt",
           "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
-          "dateRangeTooLong": "Thời gian mùa vụ không được quá 12 tháng",
-          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-12 tháng",
+          "dateRangeTooLong": "Thời gian mùa vụ không được quá 15 tháng",
+          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-15 tháng (có thể kéo dài thêm 2-3 tháng nếu gặp thiên tai)",
           "seasonStartBeforeHarvest": "Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến",
           "seasonDurationIncludesHarvest": "Thời gian mùa vụ phải bao gồm thời gian thu hoạch dự kiến",
           "startDateAfterApproved": "Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)",
@@ -2715,7 +2715,7 @@
           "startDateRequired": "Ngày bắt đầu không được để trống",
           "endDateRequired": "Ngày kết thúc không được để trống",
           "endDateAfterStartDate": "Ngày kết thúc phải sau ngày bắt đầu",
-          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-12 tháng",
+          "seasonDurationMonths": "Thời gian mùa vụ phải trong khoảng 11-15 tháng (có thể kéo dài thêm 2-3 tháng nếu gặp thiên tai)",
           "startDateAfterApproved": "Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt (có thể bắt đầu cùng ngày)",
           "checkFormErrors": "Vui lòng kiểm tra và sửa các lỗi trong form"
         },
@@ -4574,6 +4574,54 @@
       "cropSeason": "Mùa vụ"
     }
   },
+  "inboundRequests": {
+    "title": "📥 Yêu cầu nhập kho",
+    "subtitle": "Theo dõi yêu cầu nông dân và trạng thái xử lý của nhân viên",
+    "filters": {
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "search": {
+      "placeholder": "Tìm theo nông dân, lô..."
+    },
+    "actions": {
+      "refresh": "Làm mới"
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng khối lượng"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu",
+      "loading": "Đang tải...",
+      "noData": "Không có dữ liệu",
+      "columns": {
+        "farmer": "Nông dân",
+        "batch": "Lô sơ chế",
+        "quantity": "Số lượng (kg)",
+        "status": "Trạng thái",
+        "updatedBy": "Người cập nhật",
+        "view": "Xem"
+      }
+    },
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "pagination": {
+      "info": "Hiển thị {{start}}–{{end}} trong {{total}} yêu cầu"
+    }
+  },
   "sidebar": {
     "loading": "Đang tải menu...",
     "dashboard": "Bảng điều khiển",
@@ -5305,9 +5353,9 @@
       "save": "Lưu hợp đồng",
       "back": "Quay lại",
       "format": "💡 Định dạng",
-      "formatText": "CT001-2024, HD001, CONTRACT-001, v.v.",
+      "formatText": "CT001-2025, HD001, CONTRACT-001, v.v.",
       "example": "💡 VD",
-      "exampleText": "Hợp đồng cung cấp cà phê Robusta Dak Lak 2024",
+      "exampleText": "Hợp đồng cung cấp cà phê Robusta Dak Lak 2025",
               "statusAutoUpdate": "💡 Trạng thái sẽ tự động cập nhật: \"Đang thực hiện\" nếu ngày bắt đầu ở quá khứ hoặc hiện tại, \"Chưa bắt đầu\" nếu ngày bắt đầu ở tương lai",
       "updateSuccess": "Cập nhật hợp đồng thành công!",
       "createSuccess": "Tạo hợp đồng thành công!",

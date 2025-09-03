@@ -92,9 +92,10 @@ export default function ContractForm({
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
 
   // Settlement files state
-  const [settlementFiles, setSettlementFiles] = useState<SettlementFilesWrapper>({
-    settlementRounds: []
-  });
+  const [settlementFiles, setSettlementFiles] =
+    useState<SettlementFilesWrapper>({
+      settlementRounds: [],
+    });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const lastStatusRef = useRef<ContractStatus | null>(null);
@@ -203,21 +204,23 @@ export default function ContractForm({
             settlementData.settlementRounds &&
             Array.isArray(settlementData.settlementRounds)
           ) {
-            const settlementRounds: SettlementRound[] = settlementData.settlementRounds.map(
-              (round: { roundName: number; settlementFileURL: string; roundPrice: number }) => ({
-                roundName: round.roundName,
-                settlementFileURL: round.settlementFileURL,
-                roundPrice: round.roundPrice || 0
-              })
-            );
+            const settlementRounds: SettlementRound[] =
+              settlementData.settlementRounds.map(
+                (round: {
+                  roundName: number;
+                  settlementFileURL: string;
+                  roundPrice: number;
+                }) => ({
+                  roundName: round.roundName,
+                  settlementFileURL: round.settlementFileURL,
+                  roundPrice: round.roundPrice || 0,
+                })
+              );
 
             setSettlementFiles({
-              settlementRounds: settlementRounds
+              settlementRounds: settlementRounds,
             });
-            console.log(
-              "Loaded settlement files:",
-              settlementRounds
-            );
+            console.log("Loaded settlement files:", settlementRounds);
           }
         } catch (error) {
           console.error("Error parsing settlementFilesJson:", error);
@@ -226,44 +229,53 @@ export default function ContractForm({
 
       // Khởi tạo settlement files từ apiSettlementFiles nếu có (từ API response)
       const extendedInitialData = initialData as ContractUpdateDto & {
-        apiSettlementFiles?: { roundName: number; settlementFileURL: string; roundPrice?: number }[];
+        apiSettlementFiles?: {
+          roundName: number;
+          settlementFileURL: string;
+          roundPrice?: number;
+        }[];
       };
       if (
         extendedInitialData.apiSettlementFiles &&
         Array.isArray(extendedInitialData.apiSettlementFiles)
       ) {
-        const apiSettlementRounds: SettlementRound[] = extendedInitialData.apiSettlementFiles.map(
-          (round: { roundName: number; settlementFileURL: string; roundPrice?: number }) => ({
-            roundName: round.roundName,
-            settlementFileURL: round.settlementFileURL,
-            roundPrice: round.roundPrice || 0
-          })
-        );
+        const apiSettlementRounds: SettlementRound[] =
+          extendedInitialData.apiSettlementFiles.map(
+            (round: {
+              roundName: number;
+              settlementFileURL: string;
+              roundPrice?: number;
+            }) => ({
+              roundName: round.roundName,
+              settlementFileURL: round.settlementFileURL,
+              roundPrice: round.roundPrice || 0,
+            })
+          );
 
         // Merge với settlement files đã có từ settlementFilesJson
         setSettlementFiles((prev) => {
           const existingRounds = prev.settlementRounds || [];
           const mergedRounds = [...existingRounds];
-          
+
           // Thêm hoặc cập nhật rounds từ API
-          apiSettlementRounds.forEach(apiRound => {
+          apiSettlementRounds.forEach((apiRound) => {
             const existingIndex = mergedRounds.findIndex(
-              round => round.roundName === apiRound.roundName
+              (round) => round.roundName === apiRound.roundName
             );
-            
+
             if (existingIndex >= 0) {
               // Cập nhật round đã có
               mergedRounds[existingIndex] = {
                 ...mergedRounds[existingIndex],
                 settlementFileURL: apiRound.settlementFileURL,
-                roundPrice: apiRound.roundPrice
+                roundPrice: apiRound.roundPrice,
               };
             } else {
               // Thêm round mới
               mergedRounds.push(apiRound);
             }
           });
-          
+
           return { settlementRounds: mergedRounds };
         });
 
@@ -309,7 +321,7 @@ export default function ContractForm({
       setSelectedFile(null);
       // Reset settlement files khi tạo mới
       setSettlementFiles({ settlementRounds: [] });
-              // No longer needed - using settlementFiles state
+      // No longer needed - using settlementFiles state
     }
   }, [initialData]);
 
@@ -323,7 +335,7 @@ export default function ContractForm({
   useEffect(() => {
     if (isEdit && settlementFiles.settlementRounds.length > 0) {
       const maxRoundNumber = Math.max(
-        ...settlementFiles.settlementRounds.map(round => round.roundName)
+        ...settlementFiles.settlementRounds.map((round) => round.roundName)
       );
       if (
         maxRoundNumber > 0 &&
@@ -387,7 +399,7 @@ export default function ContractForm({
   // Guard for null formData
   if (!formData) {
     return (
-      <div className='text-gray-500 text-center py-10'>
+      <div className="text-gray-500 text-center py-10">
         {t("contracts.messages.loading")}
       </div>
     );
@@ -470,9 +482,11 @@ export default function ContractForm({
   const handleNumericChange = (field: string, value: number) => {
     // Special handling for paymentRounds - prevent 0 or negative values
     if (field === "paymentRounds" && (value <= 0 || isNaN(value))) {
-      setFieldErrors((prev) => ({ 
-        ...prev, 
-        [field]: t("contract.components.form.validation.paymentRoundsPositiveInteger")
+      setFieldErrors((prev) => ({
+        ...prev,
+        [field]: t(
+          "contract.components.form.validation.paymentRoundsPositiveInteger"
+        ),
       }));
       return; // Don't update the value if it's invalid
     }
@@ -712,7 +726,10 @@ export default function ContractForm({
 
     // Validate roundPrice - bắt buộc khi có file hoặc URL
     settlementFiles.settlementRounds.forEach((round) => {
-      if ((round.settlementFile || round.settlementFileURL) && (!round.roundPrice || round.roundPrice <= 0)) {
+      if (
+        (round.settlementFile || round.settlementFileURL) &&
+        (!round.roundPrice || round.roundPrice <= 0)
+      ) {
         clientErrors[`roundPrice_${round.roundName}`] = t(
           "contract.components.form.validation.roundPriceRequired",
           { round: round.roundName }
@@ -732,7 +749,11 @@ export default function ContractForm({
     }
 
     // Validate paymentRounds - must be at least 1
-    if (!data.paymentRounds || data.paymentRounds <= 0 || !Number.isInteger(data.paymentRounds)) {
+    if (
+      !data.paymentRounds ||
+      data.paymentRounds <= 0 ||
+      !Number.isInteger(data.paymentRounds)
+    ) {
       clientErrors.paymentRounds = t(
         "contract.components.form.validation.paymentRoundsPositiveInteger"
       );
@@ -1347,13 +1368,13 @@ export default function ContractForm({
       const existingRoundIndex = prev.settlementRounds.findIndex(
         (round) => round.roundName === roundNumber
       );
-      
+
       if (existingRoundIndex >= 0) {
         // Update existing round
         const updatedRounds = [...prev.settlementRounds];
         updatedRounds[existingRoundIndex] = {
           ...updatedRounds[existingRoundIndex],
-          settlementFile: file
+          settlementFile: file,
         };
         return { settlementRounds: updatedRounds };
       } else {
@@ -1364,26 +1385,29 @@ export default function ContractForm({
             {
               roundName: roundNumber,
               settlementFile: file,
-              roundPrice: 0
-            }
-          ]
+              roundPrice: 0,
+            },
+          ],
         };
       }
     });
   };
 
-  const handleSettlementRoundPriceChange = (roundNumber: number, price: number) => {
+  const handleSettlementRoundPriceChange = (
+    roundNumber: number,
+    price: number
+  ) => {
     setSettlementFiles((prev) => {
       const existingRoundIndex = prev.settlementRounds.findIndex(
         (round) => round.roundName === roundNumber
       );
-      
+
       if (existingRoundIndex >= 0) {
         // Update existing round
         const updatedRounds = [...prev.settlementRounds];
         updatedRounds[existingRoundIndex] = {
           ...updatedRounds[existingRoundIndex],
-          roundPrice: price
+          roundPrice: price,
         };
         return { settlementRounds: updatedRounds };
       } else {
@@ -1393,15 +1417,17 @@ export default function ContractForm({
             ...prev.settlementRounds,
             {
               roundName: roundNumber,
-              roundPrice: price
-            }
-          ]
+              roundPrice: price,
+            },
+          ],
         };
       }
     });
   };
 
-  const getSettlementRound = (roundNumber: number): SettlementRound | undefined => {
+  const getSettlementRound = (
+    roundNumber: number
+  ): SettlementRound | undefined => {
     return settlementFiles.settlementRounds.find(
       (round) => round.roundName === roundNumber
     );
@@ -1411,7 +1437,7 @@ export default function ContractForm({
     setSettlementFiles((prev) => ({
       settlementRounds: prev.settlementRounds.filter(
         (round) => round.roundName !== roundNumber
-      )
+      ),
     }));
   };
 
@@ -1463,23 +1489,23 @@ export default function ContractForm({
       {/* Modal xem ảnh zoom */}
       {showImageModal && modalImageUrl && (
         <div
-          className='fixed inset-0 bg-black bg-opacity-75 z-50 overflow-auto'
+          className="fixed inset-0 bg-black bg-opacity-75 z-50 overflow-auto"
           onClick={() => setShowImageModal(false)}
         >
-          <div className='min-h-full flex items-center justify-center p-4'>
-            <div className='relative' onClick={(e) => e.stopPropagation()}>
+          <div className="min-h-full flex items-center justify-center p-4">
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
               {/* Nút đóng */}
               <button
                 onClick={() => setShowImageModal(false)}
-                className='absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 z-10'
+                className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 z-10"
               >
                 ✕
               </button>
 
               <img
                 src={modalImageUrl}
-                alt='Preview zoom'
-                className='max-w-none rounded-lg shadow-2xl'
+                alt="Preview zoom"
+                className="max-w-none rounded-lg shadow-2xl"
                 style={{ maxHeight: "90vh", width: "auto", height: "auto" }}
               />
             </div>
@@ -1487,25 +1513,25 @@ export default function ContractForm({
         </div>
       )}
 
-      <form className='max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6'>
-        <h2 className='text-2xl font-semibold text-center mb-6'>
+      <form className="max-w-4xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
+        <h2 className="text-2xl font-semibold text-center mb-6">
           {isEdit ? t("contracts.contract.edit") : t("contracts.contract.new")}
         </h2>
 
         {/* Hiển thị lỗi nghiệp vụ */}
         {businessErrors.length > 0 && (
-          <div className='p-4 bg-orange-50 border border-orange-200 rounded-lg'>
-            <div className='flex items-center justify-between mb-2'>
-              <h3 className='text-orange-800 font-medium'>
+          <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-orange-800 font-medium">
                 {t("contracts.contract.businessRules")}:
               </h3>
-              <span className='bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full'>
+              <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
                 {businessErrors.length} {t("contracts.contract.rules")}
               </span>
             </div>
 
             {/* Tóm tắt nhanh */}
-            <div className='mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm'>
+            <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
               <strong>{t("contracts.contract.summary")}:</strong>
               {businessErrors.some((err) => err.includes("vượt quá")) &&
                 t("contracts.contract.adjustTotal")}
@@ -1518,11 +1544,11 @@ export default function ContractForm({
             </div>
 
             {/* Hướng dẫn giải quyết */}
-            <div className='mt-3 pt-3 border-t border-orange-200'>
-              <p className='text-orange-600 text-sm font-medium mb-2'>
+            <div className="mt-3 pt-3 border-t border-orange-200">
+              <p className="text-orange-600 text-sm font-medium mb-2">
                 {t("contracts.contract.instructions")}:
               </p>
-              <ul className='text-orange-600 text-xs space-y-1'>
+              <ul className="text-orange-600 text-xs space-y-1">
                 {businessErrors.some((err) => err.includes("vượt quá")) && (
                   <>
                     <li>• {t("contracts.contract.checkTotal")}</li>
@@ -1546,11 +1572,11 @@ export default function ContractForm({
                               totalValue: data.totalValue || 0,
                             })}
                           </li>
-                          <li className='mt-2'>
+                          <li className="mt-2">
                             <Button
-                              type='button'
-                              variant='outline'
-                              size='sm'
+                              type="button"
+                              variant="outline"
+                              size="sm"
                               onClick={() => {
                                 const { totalQuantity, totalValue } =
                                   calculateTotals();
@@ -1560,7 +1586,7 @@ export default function ContractForm({
                                   t("contracts.messages.updateTotal")
                                 );
                               }}
-                              className='text-xs h-6 px-2'
+                              className="text-xs h-6 px-2"
                             >
                               {t("contracts.contract.autoUpdateTotal")}
                             </Button>
@@ -1677,14 +1703,14 @@ export default function ContractForm({
           )}
         </div> */}
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.contractNumber")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              placeholder='VD: CT001-2024, HD001, CONTRACT-001'
+              placeholder="VD: CT001-2025, HD001, CONTRACT-001"
               value={data.contractNumber}
               onChange={(e) => handleChange("contractNumber", e.target.value)}
               required
@@ -1693,34 +1719,34 @@ export default function ContractForm({
               }
             />
             {hasFieldError("contractNumber") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("contractNumber")}
               </p>
             )}
-            <p className='text-xs text-gray-500 mt-1'>
+            <p className="text-xs text-gray-500 mt-1">
               {t("contracts.contract.format")}:{" "}
               {t("contracts.contract.formatText")}
             </p>
           </div>
 
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.contractTitle")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              placeholder='VD: Hợp đồng cung cấp cà phê Robusta 2024'
+              placeholder="VD: Hợp đồng cung cấp cà phê Robusta 2025"
               value={data.contractTitle}
               onChange={(e) => handleChange("contractTitle", e.target.value)}
               required
               className={hasFieldError("contractTitle") ? "border-red-500" : ""}
             />
             {hasFieldError("contractTitle") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("contractTitle")}
               </p>
             )}
-            <p className='text-xs text-gray-500 mt-1'>
+            <p className="text-xs text-gray-500 mt-1">
               {t("contracts.contract.example")}:{" "}
               {t("contracts.contract.exampleText")}
             </p>
@@ -1728,12 +1754,12 @@ export default function ContractForm({
         </div>
 
         <div>
-          <label className='block mb-1 text-sm font-medium'>
+          <label className="block mb-1 text-sm font-medium">
             {t("contracts.contract.contractFile")}
           </label>
-          <div className='flex items-center gap-3'>
+          <div className="flex items-center gap-3">
             <Input
-              placeholder='URL file hoặc chọn file từ máy'
+              placeholder="URL file hoặc chọn file từ máy"
               value={data.contractFileUrl || ""}
               onChange={(e) => handleChange("contractFileUrl", e.target.value)}
               className={
@@ -1741,8 +1767,8 @@ export default function ContractForm({
               }
             />
             <Button
-              type='button'
-              variant='outline'
+              type="button"
+              variant="outline"
               onClick={() => {
                 // Tạo input file ẩn
                 const input = document.createElement("input");
@@ -1773,14 +1799,14 @@ export default function ContractForm({
                 };
                 input.click();
               }}
-              className='whitespace-nowrap'
+              className="whitespace-nowrap"
             >
               {t("contracts.contract.selectFile")}
             </Button>
             {data.contractFileUrl && (
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={() => {
                   // Nếu là URL, mở trong tab mới
                   if (data.contractFileUrl?.startsWith("http")) {
@@ -1794,48 +1820,48 @@ export default function ContractForm({
                     );
                   }
                 }}
-                className='whitespace-nowrap'
+                className="whitespace-nowrap"
               >
                 {t("contracts.contract.viewFile")}
               </Button>
             )}
           </div>
           {hasFieldError("contractFileUrl") && (
-            <p className='text-red-500 text-xs mt-1'>
+            <p className="text-red-500 text-xs mt-1">
               {getFieldError("contractFileUrl")}
             </p>
           )}
           {hasFieldError("contractFile") && (
-            <p className='text-red-500 text-xs mt-1'>
+            <p className="text-red-500 text-xs mt-1">
               {getFieldError("contractFile")}
             </p>
           )}
-          <p className='text-xs text-gray-500 mt-1'>
+          <p className="text-xs text-gray-500 mt-1">
             {t("contracts.contract.support")}: Ảnh (JPG, PNG, GIF, WebP), Word
             (DOC, DOCX)
           </p>
-          <p className='text-xs text-orange-600 mt-1 font-medium'>
+          <p className="text-xs text-orange-600 mt-1 font-medium">
             ⚠️ {t("contract.components.form.fields.uploadFileLimit")}: 10MB
           </p>
 
           {/* Preview file đã chọn hoặc file hiện tại */}
           {(data.contractFileUrl || selectedFile) && (
-            <div className='mt-3 p-3 bg-gray-50 border rounded-lg'>
-              <div className='flex items-center justify-between mb-2'>
-                <span className='text-sm font-medium text-gray-700'>
+            <div className="mt-3 p-3 bg-gray-50 border rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">
                   {selectedFile
                     ? t("contracts.contract.newFile")
                     : t("contracts.contract.currentFile")}
                   :
                 </span>
-                <span className='text-xs text-gray-500'>
+                <span className="text-xs text-gray-500">
                   {selectedFile ? selectedFile.name : data.contractFileUrl}
                 </span>
               </div>
 
               {/* Thông báo trạng thái */}
               {selectedFile && (
-                <div className='mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700 text-xs'>
+                <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700 text-xs">
                   ℹ️ {t("contracts.contract.newFileWillReplace")}
                 </div>
               )}
@@ -1843,14 +1869,14 @@ export default function ContractForm({
               {/* Preview cho ảnh */}
               {(data.contractFileUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
                 selectedFile?.type.startsWith("image/")) && (
-                <div className='mt-2'>
+                <div className="mt-2">
                   {filePreviewUrl ? (
                     <img
                       src={filePreviewUrl}
-                      alt='Preview'
+                      alt="Preview"
                       width={200}
                       height={150}
-                      className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
                       onError={() => toast.error("Không thể tải ảnh preview")}
                       onClick={() => {
                         if (filePreviewUrl) {
@@ -1863,10 +1889,10 @@ export default function ContractForm({
                   ) : data.contractFileUrl?.startsWith("http") ? (
                     <img
                       src={data.contractFileUrl}
-                      alt='Preview'
+                      alt="Preview"
                       width={200}
                       height={150}
-                      className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                      className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
                       onError={() => toast.error("Không thể tải ảnh preview")}
                       onClick={() => {
                         if (data.contractFileUrl) {
@@ -1877,8 +1903,8 @@ export default function ContractForm({
                       title={t("contracts.contract.clickToViewFull")}
                     />
                   ) : (
-                    <div className='h-32 bg-gray-100 border rounded flex items-center justify-center'>
-                      <span className='text-gray-500 text-sm'>
+                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">
                         {t("contracts.contract.imagePreview", {
                           name: selectedFile
                             ? selectedFile.name
@@ -1893,14 +1919,14 @@ export default function ContractForm({
               {/* Preview cho PDF */}
               {(data.contractFileUrl?.match(/\.pdf$/i) ||
                 selectedFile?.name?.match(/\.pdf$/i)) && (
-                <div className='mt-2'>
+                <div className="mt-2">
                   {data.contractFileUrl?.startsWith("http") ? (
-                    <div className='h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
+                    <div className="h-32 bg-red-50 border border-red-200 rounded flex items-center justify-center">
                       <a
                         href={data.contractFileUrl}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-red-600 hover:text-red-800 text-sm font-medium'
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
                       >
                         {t("contracts.contract.viewPdf", {
                           fileName: data.contractFileUrl.split("/").pop(),
@@ -1908,8 +1934,8 @@ export default function ContractForm({
                       </a>
                     </div>
                   ) : (
-                    <div className='h-32 bg-gray-100 border rounded flex items-center justify-center'>
-                      <span className='text-gray-500 text-sm'>
+                    <div className="h-32 bg-gray-100 border rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">
                         {t("contracts.contract.pdfPreview", {
                           name: selectedFile
                             ? selectedFile.name
@@ -1924,9 +1950,9 @@ export default function ContractForm({
               {/* Preview cho Word */}
               {(data.contractFileUrl?.match(/\.(doc|docx)$/i) ||
                 selectedFile?.name?.match(/\.(doc|docx)$/i)) && (
-                <div className='mt-2'>
-                  <div className='h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
-                    <span className='text-blue-600 text-sm font-medium'>
+                <div className="mt-2">
+                  <div className="h-32 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
+                    <span className="text-blue-600 text-sm font-medium">
                       {t("contracts.contract.wordPreview", {
                         name: selectedFile
                           ? selectedFile.name
@@ -1938,19 +1964,19 @@ export default function ContractForm({
               )}
 
               {/* Remove file buttons */}
-              <div className='mt-3 flex gap-2'>
+              <div className="mt-3 flex gap-2">
                 {selectedFile && (
                   <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       setSelectedFile(null);
                       setFilePreviewUrl(null);
                       handleChange("contractFileUrl", "");
                       toast.info(t("contracts.messages.deleteNewFile"));
                     }}
-                    className='text-red-600 border-red-200 hover:bg-red-50'
+                    className="text-red-600 border-red-200 hover:bg-red-50"
                   >
                     {t("contracts.contract.deleteNewFile")}
                   </Button>
@@ -1958,15 +1984,15 @@ export default function ContractForm({
 
                 {data.contractFileUrl && !selectedFile && (
                   <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       handleChange("contractFileUrl", "");
                       setFilePreviewUrl(null);
                       toast.info(t("contracts.messages.deleteCurrentFile"));
                     }}
-                    className='text-orange-600 border-orange-200 hover:bg-orange-50'
+                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
                   >
                     {t("contracts.contract.deleteCurrentFile")}
                   </Button>
@@ -1977,9 +2003,9 @@ export default function ContractForm({
         </div>
 
         <div>
-          <label className='block mb-1 text-sm font-medium'>
+          <label className="block mb-1 text-sm font-medium">
             {t("contracts.contract.buyer")}{" "}
-            <span className='text-red-500'>*</span>
+            <span className="text-red-500">*</span>
           </label>
           <select
             value={data.buyerId}
@@ -1989,7 +2015,7 @@ export default function ContractForm({
             }`}
             required
           >
-            <option value=''>
+            <option value="">
               -- {t("contracts.contract.selectBuyer")} --
             </option>
             {buyers.map((buyer) => (
@@ -1999,20 +2025,20 @@ export default function ContractForm({
             ))}
           </select>
           {hasFieldError("buyerId") && (
-            <p className='text-red-500 text-xs mt-1'>
+            <p className="text-red-500 text-xs mt-1">
               {getFieldError("buyerId")}
             </p>
           )}
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.deliveryRounds")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              type='number'
+              type="number"
               min={1}
               value={data.deliveryRounds || ""}
               onChange={(e) =>
@@ -2023,19 +2049,19 @@ export default function ContractForm({
               }
             />
             {hasFieldError("deliveryRounds") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("deliveryRounds")}
               </p>
             )}
           </div>
 
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.totalQuantity")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              type='number'
+              type="number"
               step={0.1}
               min={0}
               value={data.totalQuantity || ""}
@@ -2045,19 +2071,19 @@ export default function ContractForm({
               className={hasFieldError("totalQuantity") ? "border-red-500" : ""}
             />
             {hasFieldError("totalQuantity") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("totalQuantity")}
               </p>
             )}
           </div>
 
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.totalValue")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              type='number'
+              type="number"
               min={0}
               value={data.totalValue || ""}
               onChange={(e) =>
@@ -2066,21 +2092,21 @@ export default function ContractForm({
               className={hasFieldError("totalValue") ? "border-red-500" : ""}
             />
             {hasFieldError("totalValue") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("totalValue")}
               </p>
             )}
           </div>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contract.components.form.fields.paymentRounds")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Input
-              type='number'
+              type="number"
               min={1}
               step={1}
               value={data.paymentRounds || ""}
@@ -2094,32 +2120,39 @@ export default function ContractForm({
               }}
               onKeyDown={(e) => {
                 // Prevent typing negative sign or 0 as first character
-                if (e.key === '-' || (e.key === '0' && e.currentTarget.value === '')) {
+                if (
+                  e.key === "-" ||
+                  (e.key === "0" && e.currentTarget.value === "")
+                ) {
                   e.preventDefault();
                 }
               }}
               className={hasFieldError("paymentRounds") ? "border-red-500" : ""}
             />
             {hasFieldError("paymentRounds") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("paymentRounds")}
               </p>
             )}
           </div>
 
-          <div className='md:col-span-2'>
-            <label className='block mb-1 text-sm font-medium'>
+          <div className="md:col-span-2">
+            <label className="block mb-1 text-sm font-medium">
               {t("contract.components.form.fields.settlementNote")}
             </label>
             <Textarea
-              placeholder={t("contract.components.form.fields.settlementNotePlaceholder")}
+              placeholder={t(
+                "contract.components.form.fields.settlementNotePlaceholder"
+              )}
               value={data.settlementNote || ""}
               onChange={(e) => handleChange("settlementNote", e.target.value)}
-              className={hasFieldError("settlementNote") ? "border-red-500" : ""}
+              className={
+                hasFieldError("settlementNote") ? "border-red-500" : ""
+              }
               rows={3}
             />
             {hasFieldError("settlementNote") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("settlementNote")}
               </p>
             )}
@@ -2129,13 +2162,14 @@ export default function ContractForm({
         {/* Settlement Files Section */}
         {data.paymentRounds && data.paymentRounds > 0 && (
           <div>
-            <label className='block mb-3 text-sm font-medium'>
+            <label className="block mb-3 text-sm font-medium">
               {t("contract.components.form.fields.settlementFile")}
             </label>
-            <p className='text-xs text-orange-600 mb-3 font-medium'>
-              ⚠️ {t("contract.components.form.fields.uploadEachFileLimit")}: 10MB
+            <p className="text-xs text-orange-600 mb-3 font-medium">
+              ⚠️ {t("contract.components.form.fields.uploadEachFileLimit")}:
+              10MB
             </p>
-            <div className='space-y-4'>
+            <div className="space-y-4">
               {Array.from({ length: data.paymentRounds }, (_, index) => {
                 const roundNumber = index + 1;
                 const settlementRound = getSettlementRound(roundNumber);
@@ -2145,10 +2179,10 @@ export default function ContractForm({
                 return (
                   <div
                     key={roundNumber}
-                    className='border rounded-lg p-4 bg-gray-50'
+                    className="border rounded-lg p-4 bg-gray-50"
                   >
-                    <div className='flex items-center justify-between mb-3'>
-                      <h4 className='font-medium text-sm'>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-medium text-sm">
                         {t(
                           "contract.components.form.fields.settlementFiles.round",
                           { round: roundNumber }
@@ -2161,8 +2195,8 @@ export default function ContractForm({
                       )} */}
                     </div>
 
-                    <div className='space-y-3'>
-                      <div className='flex items-center gap-3'>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
                         <Input
                           placeholder={t(
                             "contract.components.form.fields.settlementFiles.placeholder"
@@ -2171,15 +2205,19 @@ export default function ContractForm({
                           onChange={(e) => {
                             // Cập nhật URL khi người dùng chỉnh sửa
                             setSettlementFiles((prev) => {
-                              const existingRoundIndex = prev.settlementRounds.findIndex(
-                                (round) => round.roundName === roundNumber
-                              );
-                              
+                              const existingRoundIndex =
+                                prev.settlementRounds.findIndex(
+                                  (round) => round.roundName === roundNumber
+                                );
+
                               if (existingRoundIndex >= 0) {
-                                const updatedRounds = [...prev.settlementRounds];
+                                const updatedRounds = [
+                                  ...prev.settlementRounds,
+                                ];
                                 updatedRounds[existingRoundIndex] = {
                                   ...updatedRounds[existingRoundIndex],
-                                  settlementFileURL: e.target.value.trim() || undefined
+                                  settlementFileURL:
+                                    e.target.value.trim() || undefined,
                                 };
                                 return { settlementRounds: updatedRounds };
                               } else {
@@ -2188,69 +2226,84 @@ export default function ContractForm({
                                     ...prev.settlementRounds,
                                     {
                                       roundName: roundNumber,
-                                      settlementFileURL: e.target.value.trim() || undefined,
-                                      roundPrice: 0
-                                    }
-                                  ]
+                                      settlementFileURL:
+                                        e.target.value.trim() || undefined,
+                                      roundPrice: 0,
+                                    },
+                                  ],
                                 };
                               }
                             });
                           }}
-                          className='flex-1'
+                          className="flex-1"
                         />
-                      <Button
-                        type='button'
-                        variant='outline'
-                        onClick={() => {
-                          const input = document.createElement("input");
-                          input.type = "file";
-                          input.accept = "image/*,.pdf,.doc,.docx";
-                          input.onchange = (e) => {
-                            const file = (e.target as HTMLInputElement)
-                              .files?.[0];
-                            if (file) {
-                              handleSettlementFileSelect(roundNumber, file);
-                            }
-                          };
-                          input.click();
-                        }}
-                        className='whitespace-nowrap'
-                      >
-                        {t("contracts.contract.selectFile")}
-                      </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.accept = "image/*,.pdf,.doc,.docx";
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement)
+                                .files?.[0];
+                              if (file) {
+                                handleSettlementFileSelect(roundNumber, file);
+                              }
+                            };
+                            input.click();
+                          }}
+                          className="whitespace-nowrap"
+                        >
+                          {t("contracts.contract.selectFile")}
+                        </Button>
                       </div>
-                      
+
                       {/* Settlement File Validation Error */}
                       {hasFieldError(`settlementFile_${roundNumber}`) && (
-                        <p className='text-red-500 text-xs mt-1'>
+                        <p className="text-red-500 text-xs mt-1">
                           {getFieldError(`settlementFile_${roundNumber}`)}
                         </p>
                       )}
-                      
+
                       {/* Round Price Input */}
-                      <div className='flex items-center gap-3'>
-                        <label className='text-sm font-medium text-gray-700 whitespace-nowrap'>
-                          {t("contract.components.form.fields.settlementFiles.roundPrice")}:
+                      <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                          {t(
+                            "contract.components.form.fields.settlementFiles.roundPrice"
+                          )}
+                          :
                           {(hasFile || previewUrl) && (
-                            <span className='text-red-500 ml-1'>*</span>
+                            <span className="text-red-500 ml-1">*</span>
                           )}
                         </label>
                         <Input
-                          type='number'
-                          placeholder={t("contract.components.form.fields.settlementFiles.roundPricePlaceholder")}
+                          type="number"
+                          placeholder={t(
+                            "contract.components.form.fields.settlementFiles.roundPricePlaceholder"
+                          )}
                           value={settlementRound?.roundPrice || ""}
                           onChange={(e) => {
                             const price = parseFloat(e.target.value) || 0;
-                            handleSettlementRoundPriceChange(roundNumber, price);
+                            handleSettlementRoundPriceChange(
+                              roundNumber,
+                              price
+                            );
                           }}
-                          className={`flex-1 ${hasFieldError(`roundPrice_${roundNumber}`) ? "border-red-500" : ""}`}
-                          min='0'
-                          step='1000'
+                          className={`flex-1 ${
+                            hasFieldError(`roundPrice_${roundNumber}`)
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                          min="0"
+                          step="1000"
                         />
-                        <span className='text-sm text-gray-500 whitespace-nowrap'>VND</span>
+                        <span className="text-sm text-gray-500 whitespace-nowrap">
+                          VND
+                        </span>
                       </div>
                       {hasFieldError(`roundPrice_${roundNumber}`) && (
-                        <p className='text-red-500 text-xs mt-1'>
+                        <p className="text-red-500 text-xs mt-1">
                           {getFieldError(`roundPrice_${roundNumber}`)}
                         </p>
                       )}
@@ -2258,9 +2311,9 @@ export default function ContractForm({
 
                     {/* File Preview */}
                     {(hasFile || previewUrl) && (
-                      <div className='mt-3 p-3 bg-white border rounded-lg'>
-                        <div className='flex items-center justify-between mb-2'>
-                          <span className='text-sm font-medium text-gray-700'>
+                      <div className="mt-3 p-3 bg-white border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-700">
                             {hasFile
                               ? t(
                                   "contract.components.form.fields.settlementFiles.selectedFile"
@@ -2270,10 +2323,8 @@ export default function ContractForm({
                                 )}
                             :
                           </span>
-                          <span className='text-xs text-gray-500'>
-                            {hasFile
-                              ? hasFile.name
-                              : previewUrl}
+                          <span className="text-xs text-gray-500">
+                            {hasFile ? hasFile.name : previewUrl}
                           </span>
                         </div>
 
@@ -2281,13 +2332,13 @@ export default function ContractForm({
                         {hasFile &&
                           hasFile.type.startsWith("image/") &&
                           previewUrl && (
-                            <div className='mt-2'>
+                            <div className="mt-2">
                               <img
                                 src={previewUrl}
                                 alt={`Settlement Round ${roundNumber} Preview`}
                                 width={200}
                                 height={150}
-                                className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                                className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={() => {
                                   setModalImageUrl(previewUrl);
                                   setShowImageModal(true);
@@ -2301,13 +2352,13 @@ export default function ContractForm({
                         {!hasFile &&
                           previewUrl &&
                           previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) && (
-                            <div className='mt-2'>
+                            <div className="mt-2">
                               <img
                                 src={previewUrl}
                                 alt={`Settlement Round ${roundNumber} Preview`}
                                 width={200}
                                 height={150}
-                                className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
+                                className="max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={() => {
                                   setModalImageUrl(previewUrl);
                                   setShowImageModal(true);
@@ -2319,9 +2370,9 @@ export default function ContractForm({
 
                         {/* Preview cho PDF từ file mới */}
                         {hasFile && hasFile.name?.match(/\.pdf$/i) && (
-                          <div className='mt-2'>
-                            <div className='h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
-                              <span className='text-red-600 text-sm font-medium'>
+                          <div className="mt-2">
+                            <div className="h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center">
+                              <span className="text-red-600 text-sm font-medium">
                                 📄 PDF: {hasFile.name}
                               </span>
                             </div>
@@ -2332,13 +2383,13 @@ export default function ContractForm({
                         {!hasFile &&
                           previewUrl &&
                           previewUrl?.match(/\.pdf$/i) && (
-                            <div className='mt-2'>
-                              <div className='h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
+                            <div className="mt-2">
+                              <div className="h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center">
                                 <a
                                   href={previewUrl}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-red-600 hover:text-red-800 text-sm font-medium'
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-red-600 hover:text-red-800 text-sm font-medium"
                                 >
                                   📄 PDF: {previewUrl.split("/").pop()}
                                 </a>
@@ -2348,9 +2399,9 @@ export default function ContractForm({
 
                         {/* Preview cho Word từ file mới */}
                         {hasFile && hasFile.name?.match(/\.(doc|docx)$/i) && (
-                          <div className='mt-2'>
-                            <div className='h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
-                              <span className='text-blue-600 text-sm font-medium'>
+                          <div className="mt-2">
+                            <div className="h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
+                              <span className="text-blue-600 text-sm font-medium">
                                 📝 Word: {hasFile.name}
                               </span>
                             </div>
@@ -2361,13 +2412,13 @@ export default function ContractForm({
                         {!hasFile &&
                           previewUrl &&
                           previewUrl?.match(/\.(doc|docx)$/i) && (
-                            <div className='mt-2'>
-                              <div className='h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
+                            <div className="mt-2">
+                              <div className="h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
                                 <a
                                   href={previewUrl}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                 >
                                   📝 Word: {previewUrl.split("/").pop()}
                                 </a>
@@ -2376,34 +2427,33 @@ export default function ContractForm({
                           )}
 
                         {/* Remove button */}
-                        <div className='mt-3 flex gap-2'>
+                        <div className="mt-3 flex gap-2">
                           {hasFile && (
                             <Button
-                              type='button'
-                              variant='outline'
-                              size='sm'
+                              type="button"
+                              variant="outline"
+                              size="sm"
                               onClick={() => removeSettlementFile(roundNumber)}
-                              className='text-red-600 border-red-200 hover:bg-red-50'
+                              className="text-red-600 border-red-200 hover:bg-red-50"
                             >
                               {t(
                                 "contract.components.form.fields.settlementFiles.removeFile"
                               )}
                             </Button>
                           )}
-                          {!hasFile &&
-                            previewUrl && (
-                              <Button
-                                type='button'
-                                variant='outline'
-                                size='sm'
-                                onClick={() => removeSettlementFile(roundNumber)}
-                                className='text-orange-600 border-orange-200 hover:bg-orange-50'
-                              >
-                                {t(
-                                  "contract.components.form.fields.settlementFiles.removeFile"
-                                )}
-                              </Button>
-                            )}
+                          {!hasFile && previewUrl && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeSettlementFile(roundNumber)}
+                              className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                            >
+                              {t(
+                                "contract.components.form.fields.settlementFiles.removeFile"
+                              )}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     )}
@@ -2414,11 +2464,11 @@ export default function ContractForm({
           </div>
         )}
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.startDate")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <DatePicker
               value={data.startDate || undefined}
@@ -2429,9 +2479,9 @@ export default function ContractForm({
             />
           </div>
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.endDate")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <DatePicker
               value={data.endDate || undefined}
@@ -2442,7 +2492,7 @@ export default function ContractForm({
             />
           </div>
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.signedAt")}
             </label>
             <DatePicker
@@ -2459,7 +2509,7 @@ export default function ContractForm({
         {/* Chỉ hiển thị trạng thái khi edit */}
         {isEdit && (
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.status")}
             </label>
             <select
@@ -2532,7 +2582,7 @@ export default function ContractForm({
               )}
             </select>
             {hasFieldError("status") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("status")}
               </p>
             )}
@@ -2542,10 +2592,10 @@ export default function ContractForm({
         {/* Hiển thị trạng thái hiện tại khi create */}
         {!isEdit && (
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.status")}
             </label>
-            <div className='p-2 border rounded bg-gray-50'>
+            <div className="p-2 border rounded bg-gray-50">
               <span
                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   getStatusDisplay(data.status).className
@@ -2554,7 +2604,7 @@ export default function ContractForm({
                 {getStatusDisplay(data.status).label}
               </span>
             </div>
-            <p className='text-xs text-gray-500 mt-2'>
+            <p className="text-xs text-gray-500 mt-2">
               {t("contracts.contract.statusAutoUpdate")}
             </p>
           </div>
@@ -2563,9 +2613,9 @@ export default function ContractForm({
         {/* Chỉ hiển thị lý do hủy khi edit và trạng thái = "Đã hủy" */}
         {isEdit && data.status === ContractStatus.Cancelled && (
           <div>
-            <label className='block mb-1 text-sm font-medium'>
+            <label className="block mb-1 text-sm font-medium">
               {t("contracts.contract.cancelReason")}{" "}
-              <span className='text-red-500'>*</span>
+              <span className="text-red-500">*</span>
             </label>
             <Textarea
               placeholder={t("contracts.contract.enterCancelReason")}
@@ -2575,7 +2625,7 @@ export default function ContractForm({
               required
             />
             {hasFieldError("cancelReason") && (
-              <p className='text-red-500 text-xs mt-1'>
+              <p className="text-red-500 text-xs mt-1">
                 {getFieldError("cancelReason")}
               </p>
             )}
@@ -2583,15 +2633,15 @@ export default function ContractForm({
         )}
 
         <div>
-          <label className='block mb-1 text-sm font-medium'>
+          <label className="block mb-1 text-sm font-medium">
             {t("contracts.contract.contractItems")}{" "}
-            <span className='text-red-500'>*</span>
+            <span className="text-red-500">*</span>
           </label>
 
           {/* Hiển thị lỗi tổng quát cho contract items */}
           {hasFieldError("contractItems") && (
-            <div className='mb-3 p-3 bg-red-50 border border-red-200 rounded-md'>
-              <p className='text-red-600 text-sm font-medium'>
+            <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-sm font-medium">
                 {getFieldError("contractItems")}
               </p>
             </div>
@@ -2600,7 +2650,7 @@ export default function ContractForm({
           {data.contractItems.length > 0 && (
             <>
               {/* Header */}
-              <div className='hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground'>
+              <div className="hidden md:grid md:grid-cols-6 gap-2 mb-1 text-xs font-medium text-muted-foreground">
                 <span>{t("contracts.contractItems.coffeeTypeId")}</span>
                 <span>{t("contracts.contractItems.quantity")}</span>
                 <span>{t("contracts.contractItems.unitPrice")}</span>
@@ -2613,7 +2663,7 @@ export default function ContractForm({
               {data.contractItems.map((item, index) => (
                 <div
                   key={index}
-                  className='grid grid-cols-1 md:grid-cols-6 gap-2 mb-2'
+                  className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2"
                 >
                   {/* Loại cà phê */}
                   <select
@@ -2627,7 +2677,7 @@ export default function ContractForm({
                         : ""
                     }`}
                   >
-                    <option value=''>
+                    <option value="">
                       -- {t("contracts.contractItems.selectCoffeeType")} --
                     </option>
                     {coffeeTypes.map((type) => (
@@ -2637,14 +2687,14 @@ export default function ContractForm({
                     ))}
                   </select>
                   {hasFieldError(`contractItems.${index}.coffeeTypeId`) && (
-                    <p className='text-red-500 text-xs mt-1'>
+                    <p className="text-red-500 text-xs mt-1">
                       {getFieldError(`contractItems.${index}.coffeeTypeId`)}
                     </p>
                   )}
 
                   {/* Số lượng */}
                   <Input
-                    type='number'
+                    type="number"
                     min={0}
                     step={0.1}
                     value={item.quantity}
@@ -2662,14 +2712,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.quantity`) && (
-                    <p className='text-red-500 text-xs mt-1'>
+                    <p className="text-red-500 text-xs mt-1">
                       {getFieldError(`contractItems.${index}.quantity`)}
                     </p>
                   )}
 
                   {/* Đơn giá */}
                   <Input
-                    type='number'
+                    type="number"
                     min={0}
                     value={item.unitPrice}
                     onChange={(e) =>
@@ -2686,14 +2736,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.unitPrice`) && (
-                    <p className='text-red-500 text-xs mt-1'>
+                    <p className="text-red-500 text-xs mt-1">
                       {getFieldError(`contractItems.${index}.unitPrice`)}
                     </p>
                   )}
 
                   {/* Chiết khấu */}
                   <Input
-                    type='number'
+                    type="number"
                     step={0.1}
                     min={0}
                     value={item.discountAmount || ""}
@@ -2711,7 +2761,7 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.discountAmount`) && (
-                    <p className='text-red-500 text-xs mt-1'>
+                    <p className="text-red-500 text-xs mt-1">
                       {getFieldError(`contractItems.${index}.discountAmount`)}
                     </p>
                   )}
@@ -2730,14 +2780,14 @@ export default function ContractForm({
                     }
                   />
                   {hasFieldError(`contractItems.${index}.note`) && (
-                    <p className='text-red-500 text-xs mt-1'>
+                    <p className="text-red-500 text-xs mt-1">
                       {getFieldError(`contractItems.${index}.note`)}
                     </p>
                   )}
 
                   <Button
-                    type='button'
-                    variant='destructive'
+                    type="button"
+                    variant="destructive"
                     onClick={() => removeContractItem(index)}
                   >
                     {t("contracts.contract.delete")}
@@ -2748,18 +2798,18 @@ export default function ContractForm({
           )}
 
           <Button
-            type='button'
-            variant='outline'
+            type="button"
+            variant="outline"
             onClick={addContractItem}
-            className='mt-2'
+            className="mt-2"
           >
             + {t("contracts.contract.addItem")}
           </Button>
         </div>
 
-        <DialogFooter className='flex justify-between pt-4'>
-          <LoadingButton 
-            type='submit' 
+        <DialogFooter className="flex justify-between pt-4">
+          <LoadingButton
+            type="submit"
             onClick={handleSubmit}
             loading={isSubmitting}
             className="relative"
@@ -2769,11 +2819,13 @@ export default function ContractForm({
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               </div>
             )}
-            <h2 className={isSubmitting ? "opacity-0" : ""}>{t("contracts.contract.save")}</h2>
+            <h2 className={isSubmitting ? "opacity-0" : ""}>
+              {t("contracts.contract.save")}
+            </h2>
           </LoadingButton>
           <Button
-            type='button'
-            variant='outline'
+            type="button"
+            variant="outline"
             onClick={() => router.push("/dashboard/manager/contracts")}
           >
             {t("contracts.contract.back")}

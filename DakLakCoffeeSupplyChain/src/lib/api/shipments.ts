@@ -152,3 +152,33 @@ export async function updateShipmentDetail(
 export async function softDeleteShipment(shipmentId: string): Promise<void> {
   await api.patch(`/Shipments/soft-delete/${shipmentId}`);
 }
+
+// DTO cho orders cần tạo shipment
+export interface OrderForShipmentDto {
+  orderId: string;
+  orderCode: string;
+  orderDate: string;
+  status: string;
+  totalOrderQuantity: number;
+  totalDeliveredQuantity: number;
+  totalRemainingQuantity: number;
+  contractCode: string;
+  deliveryBatchCode: string;
+  orderItems: OrderItemForShipmentDto[];
+}
+
+export interface OrderItemForShipmentDto {
+  orderItemId: string;
+  productId?: string;
+  productName: string;
+  orderQuantity: number;
+  deliveredQuantity: number;
+  remainingQuantity: number;
+  unit: string;
+}
+
+// API: Lấy danh sách orders cần tạo shipment
+export async function getOrdersForShipment(): Promise<OrderForShipmentDto[]> {
+  const { data } = await api.get<OrderForShipmentDto[]>("/Shipments/orders-for-shipment");
+  return data;
+}

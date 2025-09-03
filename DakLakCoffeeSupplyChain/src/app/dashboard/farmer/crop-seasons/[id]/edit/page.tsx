@@ -127,7 +127,7 @@ export default function EditCropSeasonPage() {
                 const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
                     (endDate.getMonth() - startDate.getMonth());
 
-                if (monthsDiff < 11 || monthsDiff > 13) { // Allow 1 month tolerance
+                if (monthsDiff < 11 || monthsDiff > 15) { // Allow 2 months tolerance for disaster handling
                     newErrors.endDate = t('cropSeasons.edit.validation.seasonDurationMonths');
                 }
             }
