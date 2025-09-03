@@ -3143,6 +3143,53 @@
       "description": "Failed to load inbound requests list"
     }
   },
+  "inboundRequests": {
+    "title": "📥 Inbound Requests",
+    "subtitle": "Track farmer requests and employee processing status",
+    "filters": {
+      "status": "Status",
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "search": {
+      "placeholder": "Search by farmer, batch, coffee type..."
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "stats": {
+      "totalRequests": "Total Requests",
+      "pending": "Pending",
+      "approved": "Approved",
+      "totalQuantity": "Total Quantity"
+    },
+    "table": {
+      "title": "Request List",
+      "loading": "Loading...",
+      "noData": "No data",
+      "columns": {
+        "farmer": "Farmer",
+        "batch": "Processing Batch",
+        "quantity": "Quantity (kg)",
+        "status": "Status",
+        "view": "View"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "pagination": {
+      "info": "Showing {{start}}–{{end}} of {{total}} requests"
+    }
+  },
   "warehouseOutboundRequests": {
     "title": "Warehouse Outbound Requests",
     "subtitle": "Manage and track warehouse outbound requests",
@@ -4525,6 +4572,54 @@
       "unknown": "Unknown",
       "processedBatch": "Processed Batch",
       "cropSeason": "Crop Season"
+    }
+  },
+  "inboundRequests": {
+    "title": "📥 Inbound Requests",
+    "subtitle": "Track farmer requests and employee processing status",
+    "filters": {
+      "status": "Status",
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "search": {
+      "placeholder": "Search by farmer, batch..."
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "stats": {
+      "totalRequests": "Total Requests",
+      "pending": "Pending",
+      "approved": "Approved",
+      "totalQuantity": "Total Quantity"
+    },
+    "table": {
+      "title": "Request List",
+      "loading": "Loading...",
+      "noData": "No data",
+      "columns": {
+        "farmer": "Farmer",
+        "batch": "Processing Batch",
+        "quantity": "Quantity (kg)",
+        "status": "Status",
+        "updatedBy": "Updated By",
+        "view": "View"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "pagination": {
+      "info": "Showing {{start}}–{{end}} of {{total}} requests"
     }
   },
   "sidebar": {
