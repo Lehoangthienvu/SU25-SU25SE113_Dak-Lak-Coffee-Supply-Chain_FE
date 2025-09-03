@@ -80,7 +80,11 @@
         "selectCropSeason": "Please select a crop season",
         "selectCoffeeType": "Please select a coffee type",
         "noPlanProcessingMethod": "This coffee type does not have processing requirements from the plan",
-        "enterBatchCode": "Please enter batch code"
+        "enterBatchCode": "Please enter batch code",
+        "ProgressDateInFuture": "Progress date cannot be in the future ({{ProgressDate}} > {{Today}})",
+        "ProgressDateTooPast": "Progress date cannot be too far in the past ({{ProgressDate}} < {{MinDate}})",
+        "FirstProgressDateAfterHarvest": "First progress must be from harvest date onwards ({{ProgressDate}} < {{HarvestDate}}, minimum {{MinDate}})",
+        "ProgressDateAfterPrevious": "Progress date must be from the previous progress date onwards ({{ProgressDate}} < {{PreviousProgressDate}}, minimum {{MinDate}})"
       }
     },
 

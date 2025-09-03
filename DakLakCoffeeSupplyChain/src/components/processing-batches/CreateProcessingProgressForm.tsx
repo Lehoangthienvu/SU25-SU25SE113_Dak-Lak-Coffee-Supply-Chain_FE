@@ -194,7 +194,22 @@ export default function CreateProcessingProgressForm({
      const today = new Date();
      today.setHours(23, 59, 59, 999); // Set to end of today
      if (selectedDate > today) {
-       setError({ message: t("common.futureDate") });
+       setError({ message: t("processing.batch.validation.ProgressDateInFuture", {
+         ProgressDate: selectedDate.toLocaleDateString('vi-VN'),
+         Today: today.toLocaleDateString('vi-VN')
+       }) });
+       setLoading(false);
+       return;
+     }
+
+     // Validate date không được quá xa trong quá khứ (1 năm)
+     const oneYearAgo = new Date();
+     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+     if (selectedDate < oneYearAgo) {
+       setError({ message: t("processing.batch.validation.ProgressDateTooPast", {
+         ProgressDate: selectedDate.toLocaleDateString('vi-VN'),
+         MinDate: oneYearAgo.toLocaleDateString('vi-VN')
+       }) });
        setLoading(false);
        return;
      }
@@ -470,6 +485,7 @@ export default function CreateProcessingProgressForm({
                 required
                 className="border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 hover:border-purple-300 transition-all duration-200 shadow-sm"
               />
+              <FieldValidationError error={error} fieldName="progressDate" />
             </div>
 
             <div>

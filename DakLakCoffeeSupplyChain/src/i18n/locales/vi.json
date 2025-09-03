@@ -80,7 +80,11 @@
         "selectCropSeason": "Vui lòng chọn vụ mùa",
         "selectCoffeeType": "Vui lòng chọn loại cà phê",
         "noPlanProcessingMethod": "Loại cà phê này không có yêu cầu sơ chế từ kế hoạch",
-        "enterBatchCode": "Vui lòng nhập mã lô sơ chế"
+        "enterBatchCode": "Vui lòng nhập mã lô sơ chế",
+        "ProgressDateInFuture": "Ngày tiến trình không được trong tương lai ({{ProgressDate}} > {{Today}})",
+        "ProgressDateTooPast": "Ngày tiến trình không được quá xa trong quá khứ ({{ProgressDate}} < {{MinDate}})",
+        "FirstProgressDateAfterHarvest": "Tiến trình đầu tiên phải từ ngày thu hoạch trở đi ({{ProgressDate}} < {{HarvestDate}}, tối thiểu {{MinDate}})",
+        "ProgressDateAfterPrevious": "Ngày tiến trình phải từ ngày của tiến trình trước đó trở đi ({{ProgressDate}} < {{PreviousProgressDate}}, tối thiểu {{MinDate}})"
       }
     },
 
