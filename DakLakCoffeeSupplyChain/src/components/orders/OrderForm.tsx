@@ -1103,10 +1103,6 @@ export default function OrderForm({
                   onChange={(e) => {
                     const value = e.target.value;
                     updateRow(idx, "contractDeliveryItemId", value);
-                    
-                    // Reset sản phẩm khi thay đổi mặt hàng đợt giao
-                    updateRow(idx, "productId", "");
-                    
                     const autoPrice = deliveryItemUnitPriceMap[value];
                     if (autoPrice !== undefined) {
                       updateRow(idx, "unitPrice", autoPrice as any);
