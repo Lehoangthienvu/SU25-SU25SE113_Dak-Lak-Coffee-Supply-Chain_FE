@@ -1808,12 +1808,12 @@
               "description": "If the evaluation fails, please update the progress according to the guidelines to improve quality."
             },
             "noEvaluation": "No evaluation yet"
-          },
-          "actions": {
+        },
+        "actions": {
             "title": "Actions",
             "viewBatchDetails": "View Batch Details",
-            "backToList": "Back to List"
-          },
+          "backToList": "Back to List"
+        },
           "history": {
             "title": "Evaluation History",
             "noDate": "No date"
@@ -1861,448 +1861,448 @@
       "noResults": "No results found",
       "searching": "Searching..."
     },
-         "pagination": {
-       "showing": "Showing",
-       "to": "to",
-       "of": "of",
-       "entries": "entries",
-       "previous": "Previous",
-       "next": "Next",
-       "first": "First",
-       "last": "Last"
-     },
-     "methods": {
-       "title": "Processing Methods Management",
-       "description": "Manage coffee processing methods",
-       "stats": {
-         "totalMethods": "Total Methods",
-         "active": "Active",
-         "inactive": "Inactive"
-       },
-       "status": {
-         "active": "Active",
-         "inactive": "Inactive"
-       },
-       "search": {
-         "placeholder": "Search methods..."
-       },
-       "actions": {
-         "addNew": "Add New Method"
-       },
-       "table": {
-         "methodName": "Method Name",
-         "description": "Description",
-         "status": "Status",
-         "createdAt": "Created At",
-         "actions": "Actions"
-       },
-       "noData": "No processing methods found",
-       "error": {
-         "loading": "Cannot load processing methods list"
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "entries": "entries",
+      "previous": "Previous",
+      "next": "Next",
+      "first": "First",
+      "last": "Last"
+    },
+    "methods": {
+      "title": "Processing Methods Management",
+      "description": "Manage coffee processing methods",
+      "stats": {
+        "totalMethods": "Total Methods",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "search": {
+        "placeholder": "Search methods..."
+      },
+      "actions": {
+        "addNew": "Add New Method"
+      },
+      "table": {
+        "methodName": "Method Name",
+        "description": "Description",
+        "status": "Status",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "noData": "No processing methods found",
+      "error": {
+        "loading": "Cannot load processing methods list"
        }
-            }
-     },
-  "evaluation": {
-    "title": "Evaluation Criteria",
-    "selectStage": "Select Stage",
-    "stageSelection": {
-      "title": "Select Evaluation Stage",
-      "label": "Stage",
-      "placeholder": "Select stage to evaluate",
-      "option": "Step {{order}}: {{name}}",
-      "loading": "Loading criteria...",
-      "loadCriteria": "Load evaluation criteria"
+      }
     },
-    "criteria": {
-      "title": "Criteria List",
-      "loading": "Loading evaluation criteria...",
-      "range": "Range: {{MIN}} - {{MAX}} {{unit}}",
-      "actualValue": "Actual Value"
-    },
-    "failureReasons": {
-      "title": "Failure Reasons"
-    },
-    "results": {
-      "title": "Evaluation Results",
-      "passedCriteria": "Passed Criteria",
-      "overallScore": "Overall Score",
-      "additionalComments": "Additional Comments",
-      "commentsPlaceholder": "Enter additional comments (if any)..."
-    },
-    "actions": {
-      "submitting": "Submitting...",
-      "evaluateStage": "Evaluate Stage",
+    "evaluation": {
+      "title": "Evaluation Criteria",
+      "selectStage": "Select Stage",
+      "stageSelection": {
+        "title": "Select Evaluation Stage",
+        "label": "Stage",
+        "placeholder": "Select stage to evaluate",
+        "option": "Step {{order}}: {{name}}",
+        "loading": "Loading criteria...",
+        "loadCriteria": "Load evaluation criteria"
+      },
+      "criteria": {
+        "title": "Criteria List",
+        "loading": "Loading evaluation criteria...",
+        "range": "Range: {{MIN}} - {{MAX}} {{unit}}",
+        "actualValue": "Actual Value"
+      },
+      "failureReasons": {
+        "title": "Failure Reasons"
+      },
+      "results": {
+        "title": "Evaluation Results",
+        "passedCriteria": "Passed Criteria",
+        "overallScore": "Overall Score",
+        "additionalComments": "Additional Comments",
+        "commentsPlaceholder": "Enter additional comments (if any)..."
+      },
+      "actions": {
+        "submitting": "Submitting...",
+        "evaluateStage": "Evaluate Stage",
         "evaluateBatch": "Evaluate Batch",
-      "passBatch": "Pass Batch"
-    },
-    "batchPassConfirm": {
-      "title": "Confirm Batch Pass",
-      "message": "Are you sure you want to pass this entire batch? This action will evaluate all criteria as \"Pass\" and cannot be undone.",
-      "cancel": "Cancel",
-      "confirm": "Confirm Batch Pass",
-      "processing": "Processing..."
-    },
-    "warning": {
-      "noStageSelected": "Please select a stage to evaluate",
-      "noCriteria": "No evaluation criteria for batch. Please contact admin to configure."
-    },
-    "error": {
-      "loadingStages": "Cannot load stage list from server",
-      "loadingCriteria": "Cannot load evaluation criteria for batch",
-      "noCriteriaForStage": "No evaluation criteria for stage {{stageName}}. Please contact admin to configure.",
-      "noStageSelected": "Please select a stage to evaluate",
-      "noCriteria": "Please enter values for all evaluation criteria",
-      "incompleteCriteria": "Please enter values for all evaluation criteria",
-      "noFailedStagesSelected": "Please select at least one stage that needs updating when evaluation fails",
-      "submitFailed": "Failed to create evaluation",
-      "noMethodId": "Missing processing method information. Please check again.",
-      "batchPassFailed": "Failed to create batch pass evaluation"
-    },
-    "failure": {
-      "details": "Evaluation failed: {{failedCount}}/{{totalCount}} criteria",
-      "recommendations": "Need to improve failed criteria to ensure quality",
-      "stageComment": "STAGE evaluation \"{{stageName}}\" failed: {{failedCount}}/{{totalCount}} criteria. {{failureDetails}}. {{recommendations}}",
-      "failedCriteria": "Failed Criteria",
-      "reasons": "Failure Reasons"
-    },
-    "success": {
-      "stageComment": "STAGE evaluation \"{{stageName}}\" successful: {{passedCount}}/{{totalCount}} criteria met standards. Details: {{criteriaDetails}}. Overall score: {{score}}/100",
-      "submitted": "Evaluation submitted successfully!",
-      "failureSubmitted": "Evaluation has been submitted. Please check the results.",
-      "batchComment": "BATCH evaluation successful: All stages met standards. Overall score: 100/100",
-      "batchPassed": "Batch evaluation passed and status updated!"
-    },
+        "passBatch": "Pass Batch"
+      },
+      "batchPassConfirm": {
+        "title": "Confirm Batch Pass",
+        "message": "Are you sure you want to pass this entire batch? This action will evaluate all criteria as \"Pass\" and cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Confirm Batch Pass",
+        "processing": "Processing..."
+      },
+      "warning": {
+        "noStageSelected": "Please select a stage to evaluate",
+        "noCriteria": "No evaluation criteria for batch. Please contact admin to configure."
+      },
+      "error": {
+        "loadingStages": "Cannot load stage list from server",
+        "loadingCriteria": "Cannot load evaluation criteria for batch",
+        "noCriteriaForStage": "No evaluation criteria for stage {{stageName}}. Please contact admin to configure.",
+        "noStageSelected": "Please select a stage to evaluate",
+        "noCriteria": "Please enter values for all evaluation criteria",
+        "incompleteCriteria": "Please enter values for all evaluation criteria",
+        "noFailedStagesSelected": "Please select at least one stage that needs updating when evaluation fails",
+        "submitFailed": "Failed to create evaluation",
+        "noMethodId": "Missing processing method information. Please check again.",
+        "batchPassFailed": "Failed to create batch pass evaluation"
+      },
+      "failure": {
+        "details": "Evaluation failed: {{failedCount}}/{{totalCount}} criteria",
+        "recommendations": "Need to improve failed criteria to ensure quality",
+        "stageComment": "STAGE evaluation \"{{stageName}}\" failed: {{failedCount}}/{{totalCount}} criteria. {{failureDetails}}. {{recommendations}}",
+        "failedCriteria": "Failed Criteria",
+        "reasons": "Failure Reasons"
+      },
+      "success": {
+        "stageComment": "STAGE evaluation \"{{stageName}}\" successful: {{passedCount}}/{{totalCount}} criteria met standards. Details: {{criteriaDetails}}. Overall score: {{score}}/100",
+        "submitted": "Evaluation submitted successfully!",
+        "failureSubmitted": "Evaluation has been submitted. Please check the results.",
+        "batchComment": "BATCH evaluation successful: All stages met standards. Overall score: 100/100",
+        "batchPassed": "Batch evaluation passed and status updated!"
+      },
       "failedStages": {
-    "title": "Stages to Update",
-    "description": "Select stages that need farmer to update when evaluation fails",
-    "loading": "Loading stage list...",
-    "order": "Order",
-    "selectedCount": "Selected {{count}} stages to update",
-    "noFailedStages": "No stages need to be updated",
-    "needsUpdate": "Needs Update",
-    "updateInstructions": "Please update the above stages to meet quality standards"
+        "title": "Stages to Update",
+        "description": "Select stages that need farmer to update when evaluation fails",
+        "loading": "Loading stage list...",
+        "order": "Order",
+        "selectedCount": "Selected {{count}} stages to update",
+        "noFailedStages": "No stages need to be updated",
+        "needsUpdate": "Needs Update",
+        "updateInstructions": "Please update the above stages to meet quality standards"
+      },
+      "comments": "Comments"
     },
-    "comments": "Comments"
-  },
-  "errors": {
-    "WasteQuantityExceeded": {
-      "title": "Waste quantity exceeds allowed limit",
-      "details": [
-        "Total waste quantity: {{TotalWaste}} {{CurrentUnit}}",
-        "Maximum allowed limit: {{MaxAllowed}} kg",
-        "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
-        "Current step: {{CurrentOutput}} {{CurrentUnit}}",
-        "Waste exceeded: {{WasteExceeded}} kg"
-      ],
-      "action": "Check waste quantity or output quantity again"
+    "errors": {
+      "WasteQuantityExceeded": {
+        "title": "Waste quantity exceeds allowed limit",
+        "details": [
+          "Total waste quantity: {{TotalWaste}} {{CurrentUnit}}",
+          "Maximum allowed limit: {{MaxAllowed}} kg",
+          "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
+          "Current step: {{CurrentOutput}} {{CurrentUnit}}",
+          "Waste exceeded: {{WasteExceeded}} kg"
+        ],
+        "action": "Check waste quantity or output quantity again"
+      },
+      "InvalidOutputQuantityLogic": {
+        "title": "Invalid output quantity logic",
+        "details": [
+          "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
+          "Current step: {{CurrentOutput}} {{CurrentUnit}}",
+          "Difference: {{Difference}} {{CurrentUnit}}",
+          "In coffee processing, output quantity usually decreases due to loss"
+        ],
+        "action": "Check current step output quantity again"
+      },
+      "MissingRequiredField": {
+        "title": "Missing required information",
+        "details": [
+          "Required field: {{FieldName}}",
+          "Field type: {{FieldType}}",
+          "Must enter information to calculate maximum allowed waste"
+        ],
+        "action": "Please enter required information"
+      },
+      "OutputQuantityMustBePositive": {
+        "title": "Invalid output quantity",
+        "details": [
+          "Current quantity: {{OutputQuantity}}",
+          "Minimum value: {{MinValue}}",
+          "Output quantity must be greater than 0"
+        ],
+        "action": "Please enter valid output quantity"
+      },
+      "OutputQuantityTooLarge": {
+        "title": "Output quantity too large",
+        "details": [
+          "Current quantity: {{OutputQuantity}}",
+          "Maximum value: {{MaxValue}}",
+          "Output quantity cannot exceed 100,000"
+        ],
+        "action": "Please check output quantity again"
+      },
+      "InvalidOutputUnit": {
+        "title": "Invalid unit",
+        "details": [
+          "Invalid unit: {{InvalidUnit}}",
+          "Valid units: {{ValidUnits}}"
+        ],
+        "action": "Please select valid unit"
+      },
+      "OutputQuantityIncreaseTooHigh": {
+        "title": "Output quantity increase too high",
+        "details": [
+          "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
+          "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
+          "Increase percentage: {{IncreasePercentage}}%",
+          "Allowed tolerance: {{Tolerance}}%"
+        ],
+        "action": "Please check again or explain reason for quantity increase"
+      },
+      "OutputQuantityDecreaseTooHigh": {
+        "title": "Output quantity decrease too high",
+        "details": [
+          "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
+          "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
+          "Decrease percentage: {{DecreasePercentage}}%"
+        ],
+        "action": "Please check again or explain reason for large loss"
+      },
+      "EntityNotFound": {
+        "title": "Data not found",
+        "details": [
+          "Data type: {{EntityName}}",
+          "ID: {{EntityId}}"
+        ],
+        "action": "Please check information again"
+      },
+      "PermissionDenied": {
+        "title": "Access denied",
+        "details": [
+          "Action: {{Action}}",
+          "Resource: {{Resource}}",
+          "User ID: {{UserId}}"
+        ],
+        "action": "Contact administrator for permission"
+      },
+      "InvalidStatus": {
+        "title": "Invalid status",
+        "details": [
+          "Current status: {{CurrentStatus}}",
+          "Expected status: {{ExpectedStatus}}",
+          "Entity: {{EntityName}}"
+        ],
+        "action": "Please check current status"
+      }
     },
-    "InvalidOutputQuantityLogic": {
-      "title": "Invalid output quantity logic",
-      "details": [
-        "Previous step: {{PreviousOutput}} {{PreviousUnit}}",
-        "Current step: {{CurrentOutput}} {{CurrentUnit}}",
-        "Difference: {{Difference}} {{CurrentUnit}}",
-        "In coffee processing, output quantity usually decreases due to loss"
-      ],
-      "action": "Check current step output quantity again"
+    "common": {
+      "close": "Close",
+      "fixError": "Fix Error",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info",
+      "success": "Success",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "add": "Add",
+      "create": "Create",
+      "edit": "Edit",
+      "details": "Details",
+      "search": "Search",
+      "filter": "Filter",
+      "refresh": "Refresh",
+      "export": "Export",
+      "import": "Import",
+      "download": "Download",
+      "upload": "Upload",
+      "loading": "Loading...",
+      "noData": "No data",
+      "retry": "Retry",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "networkError": "No response from server. Please check connection.",
+      "anonymous": "Anonymous",
+      "unknownRole": "Unknown Role",
+      "loadingBatches": "Cannot load processing batch list",
+      "loadingStages": "Cannot load stage information",
+      "noBatchSelected": "Please select a processing batch",
+      "noProgressDate": "Please select execution date",
+      "futureDate": "Execution date cannot be in the future",
+      "outputQuantity": "Output quantity must be greater than 0",
+      "outputQuantityLimit": "Output quantity cannot exceed 100,000",
+      "outputUnit": "Please enter unit",
+      "photoSizeLimit": "Photo cannot be larger than 10MB",
+      "videoSizeLimit": "Video cannot be larger than 100MB",
+      "totalSizeLimit": "Total file size ({{totalSizeMB}}MB) exceeds 50MB limit",
+      "totalFilesLimit": "Total files ({{totalFiles}}) exceeds 10 files limit",
+      "createProgressFailed": "Failed to create progress!",
+      "createProgressSuccess": "Progress created successfully!",
+      "filterByStatus": "Filter by Status",
+      "allStatuses": "All Statuses",
+      "notAvailable": "N/A",
+      "currency": "VND",
+      "navigation": {
+        "cultivationRegistration": "Cultivation Registration"
+      }
     },
-    "MissingRequiredField": {
-      "title": "Missing required information",
-      "details": [
-        "Required field: {{FieldName}}",
-        "Field type: {{FieldType}}",
-        "Must enter information to calculate maximum allowed waste"
-      ],
-      "action": "Please enter required information"
-    },
-    "OutputQuantityMustBePositive": {
-      "title": "Invalid output quantity",
-      "details": [
-        "Current quantity: {{OutputQuantity}}",
-        "Minimum value: {{MinValue}}",
-        "Output quantity must be greater than 0"
-      ],
-      "action": "Please enter valid output quantity"
-    },
-    "OutputQuantityTooLarge": {
-      "title": "Output quantity too large",
-      "details": [
-        "Current quantity: {{OutputQuantity}}",
-        "Maximum value: {{MaxValue}}",
-        "Output quantity cannot exceed 100,000"
-      ],
-      "action": "Please check output quantity again"
-    },
-    "InvalidOutputUnit": {
-      "title": "Invalid unit",
-      "details": [
-        "Invalid unit: {{InvalidUnit}}",
-        "Valid units: {{ValidUnits}}"
-      ],
-      "action": "Please select valid unit"
-    },
-    "OutputQuantityIncreaseTooHigh": {
-      "title": "Output quantity increase too high",
-      "details": [
-        "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
-        "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
-        "Increase percentage: {{IncreasePercentage}}%",
-        "Allowed tolerance: {{Tolerance}}%"
-      ],
-      "action": "Please check again or explain reason for quantity increase"
-    },
-    "OutputQuantityDecreaseTooHigh": {
-      "title": "Output quantity decrease too high",
-      "details": [
-        "Current quantity: {{CurrentQuantity}} {{CurrentUnit}}",
-        "Previous quantity: {{PreviousQuantity}} {{PreviousUnit}}",
-        "Decrease percentage: {{DecreasePercentage}}%"
-      ],
-      "action": "Please check again or explain reason for large loss"
-    },
-    "EntityNotFound": {
-      "title": "Data not found",
-      "details": [
-        "Data type: {{EntityName}}",
-        "ID: {{EntityId}}"
-      ],
-      "action": "Please check information again"
-    },
-    "PermissionDenied": {
-      "title": "Access denied",
-      "details": [
-        "Action: {{Action}}",
-        "Resource: {{Resource}}",
-        "User ID: {{UserId}}"
-      ],
-      "action": "Contact administrator for permission"
-    },
-    "InvalidStatus": {
-      "title": "Invalid status",
-      "details": [
-        "Current status: {{CurrentStatus}}",
-        "Expected status: {{ExpectedStatus}}",
-        "Entity: {{EntityName}}"
-      ],
-      "action": "Please check current status"
-    }
-  },
-  "common": {
-    "close": "Close",
-    "fixError": "Fix Error",
-    "error": "Error",
-    "warning": "Warning",
-    "info": "Info",
-    "success": "Success",
-    "confirm": "Confirm",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "add": "Add",
-    "create": "Create",
-    "edit": "Edit",
-    "details": "Details",
-    "search": "Search",
-    "filter": "Filter",
-    "refresh": "Refresh",
-    "export": "Export",
-    "import": "Import",
-    "download": "Download",
-    "upload": "Upload",
-    "loading": "Loading...",
-    "noData": "No data",
-    "retry": "Retry",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "networkError": "No response from server. Please check connection.",
-    "anonymous": "Anonymous",
-    "unknownRole": "Unknown Role",
-    "loadingBatches": "Cannot load processing batch list",
-    "loadingStages": "Cannot load stage information",
-    "noBatchSelected": "Please select a processing batch",
-    "noProgressDate": "Please select execution date",
-    "futureDate": "Execution date cannot be in the future",
-    "outputQuantity": "Output quantity must be greater than 0",
-    "outputQuantityLimit": "Output quantity cannot exceed 100,000",
-    "outputUnit": "Please enter unit",
-    "photoSizeLimit": "Photo cannot be larger than 10MB",
-    "videoSizeLimit": "Video cannot be larger than 100MB",
-    "totalSizeLimit": "Total file size ({{totalSizeMB}}MB) exceeds 50MB limit",
-    "totalFilesLimit": "Total files ({{totalFiles}}) exceeds 10 files limit",
-    "createProgressFailed": "Failed to create progress!",
-    "createProgressSuccess": "Progress created successfully!",
-    "filterByStatus": "Filter by Status",
-    "allStatuses": "All Statuses",
-    "notAvailable": "N/A",
-    "currency": "VND",
-    "navigation": {
-      "cultivationRegistration": "Cultivation Registration"
-    }
-  },
 
-  "notifications": {
-    "title": "Notifications",
-    "justNow": "Just now",
-    "markAllAsRead": "Mark all as read",
-    "noNotifications": "No notifications",
-    "read": "Read",
-    "viewAll": "View all notifications"
-  },
+    "notifications": {
+      "title": "Notifications",
+      "justNow": "Just now",
+      "markAllAsRead": "Mark all as read",
+      "noNotifications": "No notifications",
+      "read": "Read",
+      "viewAll": "View all notifications"
+    },
 
-  "farmerBatchSelector": {
-    "title": "Select Farmer to View Processing Batches",
-    "selectFarmer": "Select Farmer",
-    "selectFarmerPlaceholder": "Select farmer...",
-    "batchCount": "batches",
-    "batchListTitle": "Processing Batch List",
-    "systemCode": "System Code",
-    "coffeeType": "Coffee Type",
-    "cropSeason": "Crop Season",
-    "input": "Input",
-    "output": "Output",
-    "createdAt": "Created at",
-    "method": "Method",
-    "noBatches": {
-      "title": "No Processing Batches",
-      "description": "This farmer has no processing batches in committed crop seasons."
+    "farmerBatchSelector": {
+      "title": "Select Farmer to View Processing Batches",
+      "selectFarmer": "Select Farmer",
+      "selectFarmerPlaceholder": "Select farmer...",
+      "batchCount": "batches",
+      "batchListTitle": "Processing Batch List",
+      "systemCode": "System Code",
+      "coffeeType": "Coffee Type",
+      "cropSeason": "Crop Season",
+      "input": "Input",
+      "output": "Output",
+      "createdAt": "Created at",
+      "method": "Method",
+      "noBatches": {
+        "title": "No Processing Batches",
+        "description": "This farmer has no processing batches in committed crop seasons."
+      },
+      "error": {
+        "loadingFarmers": "Cannot load farmer list",
+        "loadingBatches": "Cannot load processing batch list for this farmer"
+      }
     },
-    "error": {
-      "loadingFarmers": "Cannot load farmer list",
-      "loadingBatches": "Cannot load processing batch list for this farmer"
-    }
-  },
-  "evaluationFailureInfo": {
-    "evaluationInfo": "Evaluation Information",
-    "result": "Result",
-    "comments": "Comments",
-    "detailedFeedback": "Detailed Feedback",
-    "recommendations": "Recommendations",
-    "failedEvaluation": "Failed Evaluation",
-    "stage": "Stage",
-    "step": "Step",
-    "farmer": "Farmer",
-    "hasUpdatedStage": "has updated this stage",
-    "needToRetryStage": "Need to retry this stage",
-    "problemDetails": "Problem Details",
-    "improvementRecommendations": "Improvement Recommendations",
-    "failedCriteria": "Failed Criteria",
-    "actualValue": "Actual Value",
-    "expectedValue": "Expected Value",
-    "reason": "Reason",
-    "selectedFailureReasons": "Selected Failure Reasons",
-    "retryInfo": "Retry Information",
-    "updateDate": "Update Date",
-    "updatedBy": "Updated By",
-    "nextSteps": "Next Steps",
-    "farmerHasUpdated": "Farmer has updated stage {{stageName}}. You can re-evaluate to check improved quality.",
-    "updateProgressWithImprovements": "Please update progress for stage {{stageName}} with improvements according to expert recommendations.",
-    "debug": {
-      "orderIndex": "OrderIndex",
-      "stageId": "StageId",
-      "rawComments": "Raw Comments"
-    }
-  },
-  "farmerRetryStatus": {
-    "farmer": "Farmer",
-    "hasUpdatedStage": "has updated stage {{stageName}}",
-    "updateDate": "Update Date",
-    "updatedBy": "Updated By",
-    "waitingForEvaluation": "Farmer has updated and is waiting for your evaluation.",
-    "canReEvaluate": "You can re-evaluate to check improved quality.",
-    "waitingForFarmer": "Waiting for {{farmerName}} to update stage {{stageName}}"
-  },
-  "stageFailureDisplay": {
-    "evaluationInfo": "Evaluation Information",
-    "noDetailedInfo": "No detailed information",
-    "improvementNeeded": "🔧 Stage Needs Improvement",
-    "stage": "Stage",
-    "step": "Step",
-    "issue": "Issue",
-    "recommendations": "Recommendations",
-    "guidance": "Guidance",
-    "improvementGuidance": "Please improve this stage according to expert recommendations and update the progress."
-  },
-  "retryGuidanceInfo": {
-    "title": "Retry Guidance",
-    "currentStatus": "Current Status",
-    "evaluationFailed": "Evaluation failed - needs improvement",
-    "farmerUpdated": "Farmer has updated",
-    "waitingForReEvaluation": "Waiting for re-evaluation",
-    "actionRequired": "Action Required",
-    "improveAndRetry": "Improve stage and retry",
-    "nextSteps": "Next Steps",
-    "step1": "Improve stage according to expert recommendations",
-    "step2": "Update progress with improvements",
-    "step3": "Wait for expert re-evaluation"
-  },
-  "updateAfterEvaluation": {
-    "title": "Update Progress After Evaluation",
-    "instruction": "Instructions",
-    "description": "Please improve this stage according to expert recommendations and update the progress.",
-    "progressDate": "Update Date",
-    "outputQuantity": "Output Quantity",
-    "quantityPlaceholder": "0.00",
-    "outputUnit": "Unit",
-    "selectUnit": "Select unit...",
-    "units": {
-      "kg": "Kilogram (kg)",
-      "g": "Gram (g)",
-      "ton": "Ton",
-      "quintal": "Quintal",
-      "yen": "Yen",
-      "lang": "Lang"
+    "evaluationFailureInfo": {
+      "evaluationInfo": "Evaluation Information",
+      "result": "Result",
+      "comments": "Comments",
+      "detailedFeedback": "Detailed Feedback",
+      "recommendations": "Recommendations",
+      "failedEvaluation": "Failed Evaluation",
+      "stage": "Stage",
+      "step": "Step",
+      "farmer": "Farmer",
+      "hasUpdatedStage": "has updated this stage",
+      "needToRetryStage": "Need to retry this stage",
+      "problemDetails": "Problem Details",
+      "improvementRecommendations": "Improvement Recommendations",
+      "failedCriteria": "Failed Criteria",
+      "actualValue": "Actual Value",
+      "expectedValue": "Expected Value",
+      "reason": "Reason",
+      "selectedFailureReasons": "Selected Failure Reasons",
+      "retryInfo": "Retry Information",
+      "updateDate": "Update Date",
+      "updatedBy": "Updated By",
+      "nextSteps": "Next Steps",
+      "farmerHasUpdated": "Farmer has updated stage {{stageName}}. You can re-evaluate to check improved quality.",
+      "updateProgressWithImprovements": "Please update progress for stage {{stageName}} with improvements according to expert recommendations.",
+      "debug": {
+        "orderIndex": "OrderIndex",
+        "stageId": "StageId",
+        "rawComments": "Raw Comments"
+      }
     },
-    "stageDescription": "Stage Description",
-    "descriptionPlaceholder": "Detailed description of the stage performed...",
-    "notes": "Notes",
-    "notesPlaceholder": "Additional notes...",
-    "improvementNote": "Please improve this stage according to expert recommendations",
-    "technicalParameters": "Technical Parameters (Optional)",
-    "addParameter": "+ Add Parameter",
-    "parameterName": "Parameter Name",
-    "parameterNamePlaceholder": "E.g: Temperature",
-    "parameterValue": "Value",
-    "parameterValuePlaceholder": "E.g: 25",
-    "unit": "Unit",
-    "unitPlaceholder": "E.g: °C",
-    "parameter": "Parameter {{index}}",
-    "images": "Images (Optional)",
-    "selectImages": "Select Images",
-    "videos": "Videos (Optional)",
-    "selectVideos": "Select Videos",
-    "cancel": "Cancel",
-    "updating": "Updating...",
-    "updateProgress": "Update Progress"
-  },
-  "progressGuidanceCard": {
-    "title": "Next Steps Guidance",
-    "needToRetry": "Need to retry",
-    "stageNotMet": "Stage {{stageName}} has not met standards.",
-    "updateWithImprovements": "Please update progress for this stage with improvements according to recommendations.",
-    "canContinue": "Can continue",
-    "stageImproved": "Stage {{stageName}} has been improved.",
-    "continueNextStep": "You can continue with the next step in the process.",
-    "needToHandle": "Need to handle",
-    "stageNeedsRetry": "Stage {{stageName}} needs to be retried.",
-    "updateProgressForStage": "Please update progress for this stage.",
-    "clickUpdateToRetry": "Click 'Update Progress' to retry this stage",
-    "clickUpdateToContinue": "Click 'Update Progress' to continue to the next step",
-    "clickUpdateToRetryFailed": "Click 'Update Progress' to retry the failed stage"
-  },
-  "failureInfoCard": {
-    "title": "Failure Information",
-    "stageInfo": "Stage Information",
-    "failed": "Failed",
-    "stage": "Stage",
-    "step": "Step",
-    "failureDetails": "Failure Details",
-    "recommendations": "Improvement Recommendations",
-    "actionRequired": "Action Required",
-    "improvementGuidance": "Please improve this stage according to recommendations and retry."
-  },
-  "filterBadge": {
-    "removeFilter": "Remove filter"
+    "farmerRetryStatus": {
+      "farmer": "Farmer",
+      "hasUpdatedStage": "has updated stage {{stageName}}",
+      "updateDate": "Update Date",
+      "updatedBy": "Updated By",
+      "waitingForEvaluation": "Farmer has updated and is waiting for your evaluation.",
+      "canReEvaluate": "You can re-evaluate to check improved quality.",
+      "waitingForFarmer": "Waiting for {{farmerName}} to update stage {{stageName}}"
+    },
+    "stageFailureDisplay": {
+      "evaluationInfo": "Evaluation Information",
+      "noDetailedInfo": "No detailed information",
+      "improvementNeeded": "🔧 Stage Needs Improvement",
+      "stage": "Stage",
+      "step": "Step",
+      "issue": "Issue",
+      "recommendations": "Recommendations",
+      "guidance": "Guidance",
+      "improvementGuidance": "Please improve this stage according to expert recommendations and update the progress."
+    },
+    "retryGuidanceInfo": {
+      "title": "Retry Guidance",
+      "currentStatus": "Current Status",
+      "evaluationFailed": "Evaluation failed - needs improvement",
+      "farmerUpdated": "Farmer has updated",
+      "waitingForReEvaluation": "Waiting for re-evaluation",
+      "actionRequired": "Action Required",
+      "improveAndRetry": "Improve stage and retry",
+      "nextSteps": "Next Steps",
+      "step1": "Improve stage according to expert recommendations",
+      "step2": "Update progress with improvements",
+      "step3": "Wait for expert re-evaluation"
+    },
+    "updateAfterEvaluation": {
+      "title": "Update Progress After Evaluation",
+      "instruction": "Instructions",
+      "description": "Please improve this stage according to expert recommendations and update the progress.",
+      "progressDate": "Update Date",
+      "outputQuantity": "Output Quantity",
+      "quantityPlaceholder": "0.00",
+      "outputUnit": "Unit",
+      "selectUnit": "Select unit...",
+      "units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "ton": "Ton",
+        "quintal": "Quintal",
+        "yen": "Yen",
+        "lang": "Lang"
+      },
+      "stageDescription": "Stage Description",
+      "descriptionPlaceholder": "Detailed description of the stage performed...",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes...",
+      "improvementNote": "Please improve this stage according to expert recommendations",
+      "technicalParameters": "Technical Parameters (Optional)",
+      "addParameter": "+ Add Parameter",
+      "parameterName": "Parameter Name",
+      "parameterNamePlaceholder": "E.g: Temperature",
+      "parameterValue": "Value",
+      "parameterValuePlaceholder": "E.g: 25",
+      "unit": "Unit",
+      "unitPlaceholder": "E.g: °C",
+      "parameter": "Parameter {{index}}",
+      "images": "Images (Optional)",
+      "selectImages": "Select Images",
+      "videos": "Videos (Optional)",
+      "selectVideos": "Select Videos",
+      "cancel": "Cancel",
+      "updating": "Updating...",
+      "updateProgress": "Update Progress"
+    },
+    "progressGuidanceCard": {
+      "title": "Next Steps Guidance",
+      "needToRetry": "Need to retry",
+      "stageNotMet": "Stage {{stageName}} has not met standards.",
+      "updateWithImprovements": "Please update progress for this stage with improvements according to recommendations.",
+      "canContinue": "Can continue",
+      "stageImproved": "Stage {{stageName}} has been improved.",
+      "continueNextStep": "You can continue with the next step in the process.",
+      "needToHandle": "Need to handle",
+      "stageNeedsRetry": "Stage {{stageName}} needs to be retried.",
+      "updateProgressForStage": "Please update progress for this stage.",
+      "clickUpdateToRetry": "Click 'Update Progress' to retry this stage",
+      "clickUpdateToContinue": "Click 'Update Progress' to continue to the next step",
+      "clickUpdateToRetryFailed": "Click 'Update Progress' to retry the failed stage"
+    },
+    "failureInfoCard": {
+      "title": "Failure Information",
+      "stageInfo": "Stage Information",
+      "failed": "Failed",
+      "stage": "Stage",
+      "step": "Step",
+      "failureDetails": "Failure Details",
+      "recommendations": "Improvement Recommendations",
+      "actionRequired": "Action Required",
+      "improvementGuidance": "Please improve this stage according to recommendations and retry."
+    },
+    "filterBadge": {
+      "removeFilter": "Remove filter"
   },
   "farmerBatchDetail": {
         "title": "Processing Batch Details",
@@ -6057,7 +6057,10 @@
       "actions": {
         "backToList": "Back to List"
       },
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "productInfo": "Product Information",
+      "warehouseInfo": "Warehouse Information",
+      "timestamps": "Timestamps"
     },
     "logs": {
       "title": "Inventory History",

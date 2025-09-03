@@ -3,9 +3,30 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getOutboundRequestById, cancelOutboundRequest } from '@/lib/api/warehouseOutboundRequest';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { 
+  Package, 
+  Warehouse, 
+  MapPin, 
+  Hash, 
+  Calendar, 
+  RefreshCw, 
+  Leaf,
+  Building2,
+  Boxes,
+  Tag,
+  Clock,
+  User,
+  Coffee,
+  FileText,
+  ClipboardCheck,
+  ArrowLeft,
+  XCircle
+} from 'lucide-react';
+import Link from 'next/link';
 
 export default function ViewOutboundRequestDetail() {
   const { t } = useTranslation();
