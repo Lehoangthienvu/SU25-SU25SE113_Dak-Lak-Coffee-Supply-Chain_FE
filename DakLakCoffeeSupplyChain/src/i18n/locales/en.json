@@ -3492,7 +3492,8 @@
       },
       "actions": {
         "view": "View",
-        "confirm": "Confirm Receipt"
+        "confirm": "Confirm Receipt",
+        "back": "Back"
       }
     },
     "create": {

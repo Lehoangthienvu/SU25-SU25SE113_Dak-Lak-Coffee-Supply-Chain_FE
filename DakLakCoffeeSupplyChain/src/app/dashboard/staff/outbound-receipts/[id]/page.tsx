@@ -110,10 +110,10 @@ export default function OutboundReceiptDetailPage() {
             </h1>
                           <p className="text-gray-600">{t('warehouseOutboundReceipts.detail.headers.receiptCode')}: {detail.outboundReceiptCode}</p>
           </div>
-                      <Button variant="outline" onClick={() => router.back()} className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              {t('warehouseOutboundReceipts.create.actions.cancel')}
-            </Button>
+                                <Button variant="outline" onClick={() => router.back()} className="gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            {t('warehouseOutboundReceipts.detail.actions.back')}
+          </Button>
         </div>
 
         {/* Chi tiết */}
