@@ -32,6 +32,21 @@
           "fileRemoved": "Xóa file thành công",
           "fileSelected": "Chọn file thành công"
         }
+      },
+      "settlement": {
+        "title": "Thông tin đợt thanh toán",
+        "noFiles": "Chưa có file thanh toán nào",
+        "totalRounds": "Tổng số đợt",
+        "uploadedFiles": "File đã tải lên",
+        "round": "Đợt",
+        "settlementFile": "File thanh toán",
+        "file": "File",
+        "view": "Xem",
+        "download": "Tải xuống",
+        "viewFile": "Xem file",
+        "downloadSuccess": "Tải xuống file đợt {{round}} thành công",
+        "downloadError": "Lỗi khi tải xuống file",
+        "summary": "Hiển thị {{total}} file thanh toán trong tổng số {{rounds}} đợt"
       }
     }
   }
