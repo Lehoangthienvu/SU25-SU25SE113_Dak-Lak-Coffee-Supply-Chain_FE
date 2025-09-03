@@ -57,7 +57,6 @@ type Inventory = {
   fifoPriority: number;
   isRecommended: boolean;
   fifoRecommendation: string;
-  coffeeTypeName: string; // ✅ Thêm thông tin loại cà phê
 };
 
 export default function CreateOutboundRequestPage() {
@@ -222,17 +221,6 @@ export default function CreateOutboundRequestPage() {
       }
     }
 
-    // ✅ Kiểm tra loại cà phê khớp với đơn hàng
-    if (form.orderItemId && selectedOrderItem && selectedInventory) {
-      const orderItemCoffeeType = selectedOrderItem.coffeeTypeName.toLowerCase();
-      const inventoryCoffeeType = selectedInventory.coffeeTypeName.toLowerCase();
-      
-      if (orderItemCoffeeType !== inventoryCoffeeType) {
-        toast.error(`❌ Loại cà phê không khớp! Đơn hàng yêu cầu: ${selectedOrderItem.coffeeTypeName}, Tồn kho có: ${selectedInventory.coffeeTypeName}`);
-        return;
-      }
-    }
-
     try {
       setLoading(true);
       const payload = {
@@ -374,7 +362,7 @@ export default function CreateOutboundRequestPage() {
                         <option value="">{t('managerWarehouseRequest.placeholders.selectInventory')}</option>
                         {inventories.map((inv) => (
                           <option key={inv.inventoryId} value={inv.inventoryId}>
-                            {inv.isRecommended ? '⭐ ' : ''}{inv.inventoryCode} – {inv.quantity} {inv.unit ?? ''} ({inv.coffeeTypeName})
+                            {inv.isRecommended ? '⭐ ' : ''}{inv.inventoryCode} – {inv.quantity} {inv.unit ?? ''} 
                             {inv.isRecommended ? ` (${t('managerWarehouseRequest.create.info.recommended')})` : ''}
                           </option>
                         ))}
@@ -586,14 +574,14 @@ export default function CreateOutboundRequestPage() {
               </Card>
             )}
 
-                        {/* Thông tin tồn kho đã chọn */}
+            {/* Thông tin tồn kho đã chọn */}
             {selectedInventory && (
               <Card className="bg-white shadow-lg border-0">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 p-3">
-                  <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
-                    <Package className="w-4 h-4 text-blue-600" />
-                    {t('managerWarehouseRequest.create.info.selectedInventory')}
-                  </CardTitle>
+                                  <CardTitle className="text-sm font-bold text-blue-800 flex items-center gap-2">
+                  <Package className="w-4 h-4 text-blue-600" />
+                  {t('managerWarehouseRequest.create.info.selectedInventory')}
+                </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3">
                   <div className="space-y-2 text-xs">
@@ -609,12 +597,6 @@ export default function CreateOutboundRequestPage() {
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t('managerWarehouseRequest.create.info.coffeeType')}:</span>
-                      <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs">
-                        {selectedInventory.coffeeTypeName}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
                       <span className="text-gray-600">{t('managerWarehouseRequest.create.info.fifoPriority')}:</span>
                       <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
                         #{selectedInventory.fifoPriority}
@@ -624,19 +606,6 @@ export default function CreateOutboundRequestPage() {
                       <div className="flex items-center gap-2 mt-2 p-2 bg-green-50 border border-green-200 rounded">
                         <Star className="w-3 h-3 text-green-600" />
                         <span className="text-green-700 text-xs font-medium">{t('managerWarehouseRequest.create.info.recommended')}</span>
-                      </div>
-                    )}
-                    
-                    {/* ✅ Cảnh báo khi loại cà phê không khớp với đơn hàng */}
-                    {selectedOrderItem && selectedInventory && 
-                     selectedOrderItem.coffeeTypeName.toLowerCase() !== selectedInventory.coffeeTypeName.toLowerCase() && (
-                      <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 border border-red-200 rounded">
-                        <AlertCircle className="w-3 h-3 text-red-600" />
-                        <div className="text-red-700 text-xs">
-                          <div className="font-medium">⚠️ Loại cà phê không khớp!</div>
-                          <div>Đơn hàng: {selectedOrderItem.coffeeTypeName}</div>
-                          <div>Tồn kho: {selectedInventory.coffeeTypeName}</div>
-                        </div>
                       </div>
                     )}
                   </div>
