@@ -145,8 +145,8 @@ export default function OrderForm({
           productId: it.productId,
           quantity: typeof it.quantity === "number" ? it.quantity : "",
           unitPrice: typeof it.unitPrice === "number" ? it.unitPrice : "",
-          // UI hiển thị %: nếu BE lưu amount, bạn có thể để 0 hoặc tính ngược lại tuỳ nhu cầu
-          discountAmount: 0,
+          // UI hiển thị %: discountAmount từ DB đã là % rồi
+          discountAmount: it.discountAmount ?? 0,
           note: it.note ?? "",
         })
       ),
@@ -544,10 +544,8 @@ export default function OrderForm({
           orderItems: (data.orderItems || []).map((r) => {
             const qty = Number(r.quantity) || 0;
             const price = Number(r.unitPrice) || 0;
+            // Gửi discount trực tiếp dưới dạng % (không convert)
             const discountPercent = Number(r.discountAmount) || 0;
-            const discountAmount = DISCOUNT_IS_PERCENT
-              ? qty * price * (discountPercent / 100)
-              : Number(r.discountAmount || 0);
             return {
               orderItemId: r.orderItemId!, // edit phải có
               orderId: initialData.orderId,
@@ -555,7 +553,7 @@ export default function OrderForm({
               productId: r.productId,
               quantity: qty,
               unitPrice: price,
-              discountAmount,
+              discountAmount: discountPercent, // Gửi % trực tiếp
               note: r.note?.trim() || undefined,
             };
           }),
@@ -586,16 +584,14 @@ export default function OrderForm({
           orderItems: (data.orderItems || []).map((r) => {
             const qty = Number(r.quantity) || 0;
             const price = Number(r.unitPrice) || 0;
+            // Gửi discount trực tiếp dưới dạng % (không convert)
             const discountPercent = Number(r.discountAmount) || 0;
-            const discountAmount = DISCOUNT_IS_PERCENT
-              ? qty * price * (discountPercent / 100)
-              : Number(r.discountAmount || 0);
             return {
               contractDeliveryItemId: r.contractDeliveryItemId,
               productId: r.productId,
               quantity: qty,
               unitPrice: price,
-              discountAmount,
+              discountAmount: discountPercent, // Gửi % trực tiếp
               note: r.note?.trim() || undefined,
             };
           }),
