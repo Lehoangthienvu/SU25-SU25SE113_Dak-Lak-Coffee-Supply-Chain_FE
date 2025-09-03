@@ -110,50 +110,53 @@ const NotificationBell: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.notificationId}
-                    className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? "bg-blue-50" : ""
-                      }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-sm font-medium text-gray-900 line-clamp-2">
-                            {notification.title}
-                          </h4>
-                          {!notification.isRead && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleMarkAsRead(notification.notificationId)}
-                              className="text-xs text-blue-600 hover:text-blue-700 p-1 h-6 w-6"
-                            >
-                              <Check className="h-3 w-3" />
-                            </Button>
-                          )}
+                {notifications
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sắp xếp theo thời gian mới nhất
+                  .slice(0, 5) // Chỉ hiển thị 10 thông báo gần đây nhất
+                  .map((notification) => (
+                    <div
+                      key={notification.notificationId}
+                      className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? "bg-blue-50" : ""
+                        }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="text-2xl">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                          {notification.message}
-                        </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-500">
-                            {formatDate(notification.createdAt)}
-                          </span>
-                          {notification.isRead && (
-                            <span className="text-xs text-green-600 flex items-center gap-1">
-                              <Check className="h-3 w-3" />
-                              {t('notifications.read')}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="text-sm font-medium text-gray-900 line-clamp-2">
+                              {notification.title}
+                            </h4>
+                            {!notification.isRead && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleMarkAsRead(notification.notificationId)}
+                                className="text-xs text-blue-600 hover:text-blue-700 p-1 h-6 w-6"
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                            {notification.message}
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-gray-500">
+                              {formatDate(notification.createdAt)}
                             </span>
-                          )}
+                            {notification.isRead && (
+                              <span className="text-xs text-green-600 flex items-center gap-1">
+                                <Check className="h-3 w-3" />
+                                {t('notifications.read')}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>
