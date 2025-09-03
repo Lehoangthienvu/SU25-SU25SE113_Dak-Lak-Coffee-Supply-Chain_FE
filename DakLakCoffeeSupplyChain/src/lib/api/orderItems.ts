@@ -26,11 +26,10 @@ export interface OrderItemCreateForOrder {
 
 // DTO: Payload tạo mặt hàng NESTED TRONG CREATE ORDER (không có orderId)
 export interface OrderItemCreateInline {
-  orderId: string; // Backend yêu cầu, nhưng sẽ set "" khi tạo order mới
   contractDeliveryItemId: string;
   productId: string;
-  quantity: number | null; // Backend yêu cầu nullable
-  unitPrice: number | null; // Backend yêu cầu nullable
+  quantity: number;
+  unitPrice: number;
   discountAmount?: number | null;
   note?: string | null;
 }
