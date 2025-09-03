@@ -120,29 +120,29 @@ export default function BusinessFarmingCommitmentPage() {
               {t("farmingCommitment.pages.list.table.noData")}
             </p>
           ) : (
-            <table className='w-full text-sm table-auto'>
+            <table className='w-full text-sm table-fixed'>
               <thead className='bg-gray-100 text-gray-700 font-medium'>
                 <tr>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-2/5'>
                     {t(
                       "farmingCommitment.pages.list.table.headers.commitmentName"
                     )}
                   </th>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-1/6'>
                     {t("farmingCommitment.pages.list.table.headers.farmerName")}
                   </th>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-1/6'>
                     {t("farmingCommitment.pages.list.table.headers.totalPrice")}
                   </th>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-32'>
                     {t("farmingCommitment.pages.list.table.headers.status")}
                   </th>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-32'>
                     {t(
                       "farmingCommitment.pages.list.table.headers.commitmentDate"
                     )}
                   </th>
-                  <th className='px-4 py-3 text-left'>
+                  <th className='px-4 py-3 text-left w-20'>
                     {t("farmingCommitment.pages.list.table.headers.actions")}
                   </th>
                 </tr>

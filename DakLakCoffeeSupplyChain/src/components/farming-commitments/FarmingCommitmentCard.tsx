@@ -9,6 +9,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { FiEdit, FiInfo } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type StatusInfo = {
   label: string;
@@ -32,7 +33,11 @@ export default function FarmingCommitmentCard({
         <Link
           href={`/dashboard/manager/farming-commitments/${commitment.commitmentId}`}
         >
-          <div className='font-medium'>{commitment.commitmentName}</div>
+          <Tooltip content={commitment.commitmentName} side='top' align='start'>
+            <div className='font-medium truncate' title={commitment.commitmentName}>
+              {commitment.commitmentName}
+            </div>
+          </Tooltip>
           <div className='text-sm text-muted-foreground flex items-center gap-1'>
             {commitment.commitmentCode}
           </div>
@@ -59,9 +64,9 @@ export default function FarmingCommitmentCard({
         <BasicDropdown>
             <DropdownMenu.Item
             className='px-3 py-2 hover:bg-gray-100 rounded cursor-pointer flex items-center'
-            disabled={commitment.status !== "Pending"}
+            disabled={commitment.status == "Active"}
             style={{
-              cursor: commitment.status !== "Pending" ? "not-allowed" : "pointer",
+              cursor: commitment.status == "Active" ? "not-allowed" : "pointer",
             }}
             onClick={() => {
               if (commitment.status === "Pending") {

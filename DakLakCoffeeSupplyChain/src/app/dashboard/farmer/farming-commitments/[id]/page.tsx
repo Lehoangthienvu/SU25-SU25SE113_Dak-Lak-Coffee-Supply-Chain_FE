@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiCheck, FiExternalLink, FiX } from "react-icons/fi";
 import { Separator } from "@/components/ui/separator";
-import { Package, FileText, User, Building2, Calendar, DollarSign, TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
+import { Package, FileText, User, TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
 
 import { AppToast } from "@/components/ui/AppToast";
 import { formatQuantity, getErrorMessage } from "@/lib/utils";
@@ -16,7 +16,7 @@ import {
   getCommitmentById,
   updateFarmingCommitmentStatusByFarmer,
 } from "@/lib/api/farmingCommitments";
-import { FarmingCommitmentStatusMap, getFarmingCommitmentStatusMap } from "@/lib/constants/FarmingCommitmentStatus";
+import { getFarmingCommitmentStatusMap } from "@/lib/constants/FarmingCommitmentStatus";
 import { getProcurementPlanStatusMap } from "@/lib/constants/procurementPlanStatus";
 import { getCultivationRegistrationStatusMap } from "@/lib/constants/cultivationRegistrationStatus";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
@@ -84,7 +84,7 @@ export default function FarmingCommitmentDetailPageForFarmer() {
     if (!commitment) return;
 
     const updatedCommitment = await updateFarmingCommitmentStatusByFarmer(
-      { status, rejectionReason },
+      { status: status, rejectReason: rejectionReason || "" },
       commitment.commitmentId
     ).catch((error) => {
       AppToast.error(getErrorMessage(error));
@@ -250,7 +250,7 @@ export default function FarmingCommitmentDetailPageForFarmer() {
             </div>
 
             {/* Ghi chú và lý do từ chối */}
-            {(commitment.note || commitment.rejectionReason) && (
+            {(commitment.note || commitment.rejectReason) && (
               <div className="mt-6 pt-4 border-t border-green-200">
                 {commitment.note && (
                   <div className="mb-3">
@@ -258,10 +258,10 @@ export default function FarmingCommitmentDetailPageForFarmer() {
                     <p className="text-gray-700 leading-relaxed">{commitment.note}</p>
                   </div>
                 )}
-                {commitment.rejectionReason && (
+                {commitment.rejectReason && (
                   <div>
                     <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.farmer.detail.sections.notes.rejectionReason')}</h4>
-                    <p className="text-red-700 leading-relaxed">{commitment.rejectionReason}</p>
+                    <p className="text-red-700 leading-relaxed">{commitment.rejectReason}</p>
                   </div>
                 )}
               </div>

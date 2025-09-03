@@ -20,7 +20,7 @@ export default function StatusBadge({ status, map }: Props) {
     const info = map[status];
 
     const colorClass = cn(
-        'inline-flex items-center justify-center min-w-[5rem] h-6 px-2 text-xs font-semibold rounded-full border transition-all duration-200 shadow-sm',
+        'inline-flex items-center justify-center w-28 h-6 px-3 text-xs font-semibold rounded-full border transition-all duration-200 shadow-sm whitespace-nowrap',
         {
             'bg-green-100 text-green-800 border-green-200': info?.color === 'green',
             'bg-yellow-100 text-yellow-800 border-yellow-200': info?.color === 'yellow',
