@@ -175,30 +175,18 @@ export default function CreateCropSeasonPage() {
             const startDate = new Date(form.startDate);
             const endDate = new Date(form.endDate);
 
-            // Kiểm tra thời gian mùa vụ có bao gồm thời gian thu hoạch không
-            if (selectedCommitment && selectedCommitment.farmingCommitmentDetails) {
-                const harvestDates = selectedCommitment.farmingCommitmentDetails
-                    .filter((detail: Partial<FarmingCommitmentDetail>) => detail.expectedHarvestStart && detail.expectedHarvestEnd)
-                    .map((detail: Partial<FarmingCommitmentDetail>) => ({
-                        start: new Date(detail.expectedHarvestStart!),
-                        end: new Date(detail.expectedHarvestEnd!)
-                    }));
+            // Kiểm tra thời gian mùa vụ phải trong khoảng 11-15 tháng
+            if (selectedCommitment && selectedCommitment.approvedAt) {
+                const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                    (endDate.getMonth() - startDate.getMonth());
 
-                if (harvestDates.length > 0) {
-                    const latestHarvestEnd = harvestDates.reduce((latest, current) =>
-                        current.end > latest.end ? current : latest
-                    );
-
-                    // Kiểm tra start date phải trước harvest start
-                    if (startDate > latestHarvestEnd.start) {
-                        newErrors.startDate = t('cropSeasons.create.validation.seasonStartBeforeHarvest');
-                    }
-
-                    if (endDate < latestHarvestEnd.end) {
-                        newErrors.endDate = t('cropSeasons.create.validation.seasonDurationIncludesHarvest');
-                    }
+                if (monthsDiff < 11 || monthsDiff > 15) { // Cho phép sai số 2 tháng để xử lý thiên tai
+                    newErrors.endDate = t('cropSeasons.create.validation.seasonDurationMonths');
                 }
             }
+
+            // Bỏ validation về thời gian thu hoạch dự kiến
+            // Cho phép nông dân tự do chọn thời gian mùa vụ không phụ thuộc vào thời gian thu hoạch dự kiến
         }
 
         // Kiểm tra start date phải sau hoặc bằng ngày approved
@@ -259,12 +247,14 @@ export default function CreateCropSeasonPage() {
             if (errorMessage.includes('Ngày bắt đầu phải trước ngày kết thúc')) {
                 setErrors({ endDate: t('cropSeasons.create.validation.endDateAfterStartDate') });
             } else if (errorMessage.includes('Thời gian mùa vụ phải bao gồm thời gian thu hoạch')) {
-                setErrors({ endDate: t('cropSeasons.create.validation.seasonDurationIncludesHarvest') });
+                // Bỏ validation về thời gian thu hoạch dự kiến
+                // Cho phép nông dân tự do chọn thời gian mùa vụ
             } else if (errorMessage.includes('Ngày bắt đầu mùa vụ phải trước thời gian thu hoạch dự kiến')) {
-                setErrors({ startDate: t('cropSeasons.create.validation.seasonStartBeforeHarvest') });
+                // Bỏ validation về thời gian thu hoạch dự kiến
+                // Cho phép nông dân tự do chọn thời gian mùa vụ
             } else if (errorMessage.includes('Ngày bắt đầu mùa vụ phải sau hoặc bằng ngày cam kết được duyệt')) {
                 setErrors({ startDate: t('cropSeasons.create.validation.startDateAfterApproved') });
-            } else if (errorMessage.includes('Thời gian mùa vụ phải trong khoảng 11-12 tháng')) {
+            } else if (errorMessage.includes('Thời gian mùa vụ phải trong khoảng 11-15 tháng')) {
                 setErrors({ endDate: t('cropSeasons.create.validation.seasonDurationMonths') });
             } else if (errorMessage.includes('Cam kết này đã có mùa vụ')) {
                 AppToast.error(t('cropSeasons.create.validation.commitmentAlreadyHasSeason'));
