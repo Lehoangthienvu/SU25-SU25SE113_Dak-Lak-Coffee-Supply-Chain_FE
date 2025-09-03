@@ -4573,6 +4573,54 @@
       "cropSeason": "Mùa vụ"
     }
   },
+  "inboundRequests": {
+    "title": "📥 Yêu cầu nhập kho",
+    "subtitle": "Theo dõi yêu cầu nông dân và trạng thái xử lý của nhân viên",
+    "filters": {
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "search": {
+      "placeholder": "Tìm theo nông dân, lô..."
+    },
+    "actions": {
+      "refresh": "Làm mới"
+    },
+    "stats": {
+      "totalRequests": "Tổng yêu cầu",
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "totalQuantity": "Tổng khối lượng"
+    },
+    "table": {
+      "title": "Danh sách yêu cầu",
+      "loading": "Đang tải...",
+      "noData": "Không có dữ liệu",
+      "columns": {
+        "farmer": "Nông dân",
+        "batch": "Lô sơ chế",
+        "quantity": "Số lượng (kg)",
+        "status": "Trạng thái",
+        "updatedBy": "Người cập nhật",
+        "view": "Xem"
+      }
+    },
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "completed": "Đã nhập kho",
+      "rejected": "Từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "pagination": {
+      "info": "Hiển thị {{start}}–{{end}} trong {{total}} yêu cầu"
+    }
+  },
   "sidebar": {
     "loading": "Đang tải menu...",
     "dashboard": "Bảng điều khiển",
@@ -5759,97 +5807,6 @@
         "summary": {
           "totalQuantity": "Tổng SL",
           "totalAmount": "Tổng tiền tạm tính"
-        }
-      },
-      "multiProduct": {
-        "title": "Tạo đơn hàng cho nhiều sản phẩm",
-        "subtitle": "Chọn nhiều sản phẩm để tạo đơn hàng",
-        "orderMode": {
-          "title": "Chế độ tạo đơn:",
-          "single": "Một sản phẩm",
-          "multiple": "Nhiều sản phẩm"
-        },
-        "deliveryBatchInfo": {
-          "title": "Thông tin đợt giao hàng",
-          "deliveryBatch": "Đợt giao hàng *",
-          "deliveryRound": "Vòng giao hàng",
-          "selectDeliveryBatch": "Chọn đợt giao hàng",
-          "deliveryRoundPlaceholder": "Ví dụ: 1"
-        },
-        "orderInfo": {
-          "title": "Thông tin đơn hàng",
-          "orderDate": "Ngày đặt hàng",
-          "actualDeliveryDate": "Ngày giao thực tế",
-          "note": "Ghi chú",
-          "status": "Trạng thái",
-          "orderDateHelp": "Ngày đặt hàng không được vượt quá ngày hiện tại",
-          "deliveryDateHelp": "Ngày giao không được vượt quá ngày hiện tại",
-          "notePlaceholder": "Ghi chú cho đơn hàng..."
-        },
-        "productSelection": {
-          "title": "Chọn sản phẩm",
-          "singleMode": {
-            "title": "Chọn sản phẩm",
-            "product": "Sản phẩm *",
-            "selectProduct": "Chọn sản phẩm",
-            "quantity": "Số lượng *",
-            "inventory": "Tồn kho:",
-            "productInfo": "Thông tin sản phẩm",
-            "code": "Mã:",
-            "type": "Loại:",
-            "unitPrice": "Đơn giá:",
-            "warehouse": "Kho:"
-          },
-          "multipleMode": {
-            "title": "Chọn sản phẩm",
-            "showProductList": "Hiển thị danh sách sản phẩm",
-            "hideProductList": "Ẩn danh sách sản phẩm",
-            "productList": "Danh sách sản phẩm",
-            "searchPlaceholder": "Tìm kiếm sản phẩm...",
-            "coffeeTypeFilter": "Loại cà phê",
-            "allTypes": "Tất cả loại",
-            "noProductsFound": "Không tìm thấy sản phẩm nào",
-            "productCard": {
-              "warehouse": "Kho:",
-              "batch": "Lô:",
-              "unitPrice": "Đơn giá:",
-              "inventory": "Tồn kho:",
-              "quantity": "Số lượng:",
-              "remove": "Xóa"
-            }
-          }
-        },
-        "selectedProducts": {
-          "title": "Sản phẩm đã chọn",
-          "productCount": "Sản phẩm đã chọn",
-          "productName": "Tên sản phẩm",
-          "productCode": "Mã sản phẩm",
-          "coffeeType": "Loại cà phê",
-          "quantity": "Số lượng",
-          "totalPrice": "Tổng tiền"
-        },
-        "orderSummary": {
-          "title": "Tóm tắt đơn hàng",
-          "productCount": "Số sản phẩm:",
-          "totalQuantity": "Tổng số lượng:",
-          "totalAmount": "Tổng tiền:",
-          "createOrder": "Tạo đơn hàng",
-          "creating": "Đang tạo..."
-        },
-        "validation": {
-          "selectDeliveryBatch": "Vui lòng chọn đợt giao hàng",
-          "selectAtLeastOneProduct": "Vui lòng chọn ít nhất một sản phẩm",
-          "selectOneProduct": "Vui lòng chọn một sản phẩm",
-          "invalidQuantity": "Vui lòng nhập số lượng hợp lệ cho tất cả sản phẩm",
-          "orderDateExceedsCurrent": "Ngày đặt hàng không được vượt quá ngày hiện tại",
-          "deliveryDateExceedsCurrent": "Ngày giao hàng không được vượt quá ngày hiện tại",
-          "deliveryDateBeforeOrder": "Ngày giao hàng không được trước ngày đặt hàng",
-          "noContractItem": "Không tìm thấy mục giao hàng phù hợp cho sản phẩm này",
-          "productAlreadySelected": "Sản phẩm này đã được chọn",
-          "loadDataError": "Lỗi khi tải dữ liệu: ",
-          "loadDeliveryBatchError": "Lỗi khi tải thông tin đợt giao hàng: ",
-          "createOrderError": "Lỗi khi tạo đơn hàng: ",
-          "createOrderSuccess": "Tạo đơn hàng thành công!"
         }
       }
     },
