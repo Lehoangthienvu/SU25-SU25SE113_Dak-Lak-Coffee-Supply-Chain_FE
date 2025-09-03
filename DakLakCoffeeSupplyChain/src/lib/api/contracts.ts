@@ -6,6 +6,18 @@ import { ContractItemUpdateDto } from "@/lib/api/contractItems";
 export interface SettlementFileDto {
   roundName: number;
   settlementFileURL: string;
+  roundPrice: number;
+}
+
+export interface SettlementFilesWrapper {
+  settlementRounds: SettlementRound[];
+}
+
+export interface SettlementRound {
+  roundName: number;
+  settlementFile?: File;
+  settlementFileURL?: string;
+  roundPrice: number;
 }
 
 // DTO: Hợp đồng (mock dùng cho demo)
@@ -103,7 +115,7 @@ export interface ContractCreateDto {
   cancelReason: string;
   contractType: string; // Có 2 loại là hợp đồng hoặc phụ lục hợp đồng, nếu chọn phụ lục hợp đồng thì phải chọn hợp đồng cha
   parentContractId: string;
-  settlementFiles?: File[]; // Thêm field cho nhiều settlement files
+  settlementFiles?: SettlementFilesWrapper; // Thay đổi từ File[] sang SettlementFilesWrapper
   paymentRounds: number;
   settlementFileURL?: string;
   settlementFilesJson?: string;
@@ -318,16 +330,17 @@ export async function createContract(data: ContractCreateDto): Promise<void> {
   if (data.contractFile) fd.append('contractFile', data.contractFile);
 
   // Thêm settlement files nếu có (create)
-  if ((data as ContractCreateDto & { settlementFiles?: File[] }).settlementFiles) {
-    const settlementFiles = (data as ContractCreateDto & { settlementFiles?: File[] }).settlementFiles as File[];
-    console.log('Settlement files to send:', settlementFiles);
-    settlementFiles.forEach((file, index) => {
-      if (file) {
-        // Use simple field name for ICollection<IFormFile>
-        const fieldName = 'settlementFiles';
-        fd.append(fieldName, file);
-        console.log(`Appending settlement file ${index + 1}: ${fieldName}`, file.name, file.size);
+  if (data.settlementFiles?.settlementRounds) {
+    console.log('Settlement files to send:', data.settlementFiles);
+    data.settlementFiles.settlementRounds.forEach((round, index) => {
+      if (round.settlementFile) {
+        // Append file with structured field name
+        fd.append(`settlementFiles.settlementRounds[${index}].settlementFile`, round.settlementFile);
+        console.log(`Appending settlement file ${index + 1}: settlementFiles.settlementRounds[${index}].settlementFile`, round.settlementFile.name, round.settlementFile.size);
       }
+      // Append round data
+      fd.append(`settlementFiles.settlementRounds[${index}].roundName`, String(round.roundName));
+      fd.append(`settlementFiles.settlementRounds[${index}].roundPrice`, String(round.roundPrice));
     });
   }
 
@@ -403,15 +416,20 @@ export async function updateContract(contractId: string, data: ContractUpdateDto
   if (data.contractFile) fd.append('contractFile', data.contractFile);
 
   // Thêm settlement files nếu có (update)
-  if ((data as ContractUpdateDto & { settlementFiles?: File[] }).settlementFiles) {
-    const settlementFiles = (data as ContractUpdateDto & { settlementFiles?: File[] }).settlementFiles as File[];
-    console.log('Settlement files to send (update):', settlementFiles);
-    settlementFiles.forEach((file, index) => {
-      if (file) {
-        // Use simple field name for ICollection<IFormFile>
-        const fieldName = 'settlementFiles';
-        fd.append(fieldName, file);
-        console.log(`Appending settlement file ${index + 1} (update): ${fieldName}`, file.name, file.size);
+  if (data.settlementFiles?.settlementRounds) {
+    console.log('Settlement files to send (update):', data.settlementFiles);
+    data.settlementFiles.settlementRounds.forEach((round, index) => {
+      if (round.settlementFile) {
+        // Append file with structured field name
+        fd.append(`settlementFiles.settlementRounds[${index}].settlementFile`, round.settlementFile);
+        console.log(`Appending settlement file ${index + 1} (update): settlementFiles.settlementRounds[${index}].settlementFile`, round.settlementFile.name, round.settlementFile.size);
+      }
+      // Append round data
+      fd.append(`settlementFiles.settlementRounds[${index}].roundName`, String(round.roundName));
+      fd.append(`settlementFiles.settlementRounds[${index}].roundPrice`, String(round.roundPrice));
+      // Append existing URL if no new file but URL exists
+      if (!round.settlementFile && round.settlementFileURL) {
+        fd.append(`settlementFiles.settlementRounds[${index}].settlementFileURL`, round.settlementFileURL);
       }
     });
   }

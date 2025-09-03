@@ -9,6 +9,8 @@
             "parentContract": "Phụ lục hợp đồng"
           },
           "parentContractId": "Phụ lục hợp đồng",
+          "uploadFileLimit": "Giới hạn kích thước file tải lên",
+          "uploadEachFileLimit": "Giới hạn kích thước mỗi file tải lên",
           "settlementFile": "File thanh toán",
           "paymentRounds": "Số đợt thanh toán",
           "settlementNote": "Ghi chú thanh toán",
@@ -18,13 +20,17 @@
             "placeholder": "URL file thanh toán",
             "selectedFile": "File mới được chọn",
             "removeFile": "🗑️ Xóa file mới",
-            "existingFile": "File đã tồn tại"
+            "existingFile": "File đã tồn tại",
+            "roundPrice": "Thành tiền của đợt này",
+            "roundPricePlaceholder": "Nhập thành tiền của đợt này"
           }
         },
         "validation": {
           "contractTypeRequired": "Loại hợp đồng là bắt buộc",
           "parentContractIdRequired": "Phụ lục hợp đồng là bắt buộc nếu bạn chọn phụ lục hợp đồng",
-          "paymentRoundsPositiveInteger": "Số đợt thanh toán phải lớn hơn 0"
+          "paymentRoundsPositiveInteger": "Số đợt thanh toán phải lớn hơn 0",
+          "roundPriceRequired": "Thành tiền của đợt {{round}} là bắt buộc nếu bạn có file hoặc URL",
+          "settlementFileSize": "File thanh toán cho đợt {{round}} vượt quá kích thước tối đa là 10MB"
         },
         "messages":{
           "success": "Lưu hợp đồng thành công",
@@ -41,6 +47,7 @@
         "round": "Đợt",
         "settlementFile": "File thanh toán",
         "file": "File",
+        "roundPrice": "Thành tiền đợt",
         "view": "Xem",
         "download": "Tải xuống",
         "viewFile": "Xem file",

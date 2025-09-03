@@ -23,6 +23,11 @@ export interface SignUpData {
   businessLicenseURl?: string;
 }
 
+export type VerifyAccountByAdminDto = {
+  action: boolean;
+  reason: string;
+};
+
 export async function login(email: string, password: string): Promise<DecodedToken> {
   const response = await api.post("/Auth/login", { email, password });
 
@@ -53,4 +58,8 @@ export async function signUp(signUpData: SignUpData): Promise<void> {
 
 export async function resendVerificationEmail(email: string): Promise<void> {
   await api.post("/Auth/resend-verification-email", { email });
+}
+
+export async function verifyBusinessManagerAccount(data: VerifyAccountByAdminDto): Promise<void> {
+  await api.patch("/Auth/verify-business-manager-account", data);
 }
