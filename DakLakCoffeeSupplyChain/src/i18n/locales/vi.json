@@ -3670,6 +3670,7 @@
       "retry": "Làm lại",
       "outputQuantity": "Sản lượng:",
       "updatedBy": "Cập nhật bởi:",
+      "description": "Mô tả",
       "noProgress": "Chưa có tiến trình nào được ghi nhận"
     },
     "overallEvaluation": {

@@ -42,11 +42,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProcessingBatchProgress, ProcessingParameter } from "@/lib/api/processingBatchProgress";
+import { ProcessingBatchProgress, ProcessingParameter, updateNextStages } from "@/lib/api/processingBatchProgress";
 import { ProcessingWaste } from "@/lib/api/processingBatchWastes";
 import CreateProcessingProgressForm from "@/components/processing-batches/CreateProcessingProgressForm";
 import AdvanceProcessingProgressForm from "@/components/processing-batches/AdvanceProcessingProgressForm";
 import UpdateAfterEvaluationForm from "@/components/processing-batches/UpdateAfterEvaluationForm";
+import UpdateNextStagesForm from "@/components/processing-batches/UpdateNextStagesForm";
+import FailedStagesList from "@/components/processing-batches/FailedStagesList";
 import EvaluationCriteriaForm from "@/components/processing-batches/EvaluationCriteriaForm";
 import FailureInfoCard from "@/components/processing-batches/FailureInfoCard";
 import ProgressGuidanceCard from "@/components/processing-batches/ProgressGuidanceCard";
@@ -55,7 +57,7 @@ import { ProcessingStatus } from "@/lib/constants/batchStatus";
 import { StageFailureParser, StageFailureInfo } from "@/lib/helpers/evaluationHelpers";
 import { getProcessingStagesByMethodId } from "@/lib/api/processingStages";
 import { ProcessingErrorDisplay } from "@/components/shared/ProcessingErrorDisplay";
-import FailedStagesInfo from "@/components/processing-batches/FailedStagesInfo";
+
 import EvaluationCriteriaDisplay from "@/components/processing-batches/EvaluationCriteriaDisplay";
 
 export default function ViewProcessingBatch() {
@@ -68,6 +70,11 @@ export default function ViewProcessingBatch() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openAdvanceModal, setOpenAdvanceModal] = useState(false);
   const [openUpdateAfterEvaluationModal, setOpenUpdateAfterEvaluationModal] = useState(false);
+  const [openUpdateNextStagesModal, setOpenUpdateNextStagesModal] = useState(false);
+  const [selectedStageForUpdate, setSelectedStageForUpdate] = useState<{
+    stageName: string;
+    stageOrder: number;
+  } | null>(null);
   const [openEvaluationCriteriaModal, setOpenEvaluationCriteriaModal] = useState(false);
   const [selectedEvaluation, setSelectedEvaluation] = useState<ProcessingBatchEvaluation | null>(null);
   const [latestProgress, setLatestProgress] = useState<ProcessingBatchProgress | null>(null);
@@ -113,6 +120,17 @@ export default function ViewProcessingBatch() {
   }, [batch?.progresses]);
 
 
+
+  // Hàm xử lý khi click vào nút cập nhật stage
+  const handleUpdateStage = useCallback((stageName: string, stageOrder: number) => {
+    setSelectedStageForUpdate({ stageName, stageOrder });
+    setOpenUpdateAfterEvaluationModal(true);
+  }, []);
+
+  // 🔧 MỚI: Hàm xử lý khi click vào nút "Cập nhật tiếp các stages"
+  const handleUpdateNextStages = useCallback(() => {
+    setOpenUpdateNextStagesModal(true);
+  }, []);
 
   // Hàm mở media viewer với tất cả media
   const openMediaViewer = useCallback((media: { url: string; type: 'image' | 'video'; caption?: string }) => {
@@ -247,68 +265,118 @@ export default function ViewProcessingBatch() {
     fetchEvaluations();
   }, [id]);
 
-  // Kiểm tra xem có đánh giá fail không
+  // Kiểm tra xem có đánh giá fail không - bao gồm cả khi đã retry một số stages
   const hasFailedEvaluation = useMemo(() => {
     if (!evaluations || evaluations.length === 0) return false;
 
-    const latestEvaluation = evaluations[0]; // Đã sort theo createdAt desc
-    return latestEvaluation.evaluationResult === 'Fail';
+    // Kiểm tra xem có evaluation nào có thông tin về stages cần retry không
+    const hasEvaluationWithFailedStages = evaluations.some(evaluation => {
+      const comments = evaluation.comments || '';
+      return comments.includes('Giai đoạn cần cập nhật:') || comments.includes('Tiến trình có vấn đề:');
+    });
+
+    return hasEvaluationWithFailedStages;
   }, [evaluations]);
 
   // Lấy thông tin stage bị fail
   const failedStageInfo = useMemo(() => {
     if (!hasFailedEvaluation || !evaluations || evaluations.length === 0) return null;
 
-    const latestEvaluation = evaluations[0];
-    const comments = latestEvaluation.comments || '';
+    // Tìm evaluation có thông tin về stages cần retry
+    const evaluationWithFailedStages = evaluations.find(evaluation => {
+      const comments = evaluation.comments || '';
+      return comments.includes('Giai đoạn cần cập nhật:') || comments.includes('Tiến trình có vấn đề:');
+    });
 
+    if (!evaluationWithFailedStages) return null;
 
+    const comments = evaluationWithFailedStages.comments || '';
 
     // Sử dụng StageFailureParser để parse thông tin
     const failureInfo = StageFailureParser.parseFailureFromComments(comments);
 
-
     if (failureInfo) {
       return {
-        stageId: failureInfo.failedOrderIndex, // Sử dụng failedOrderIndex thay vì failedStageId
+        stageId: failureInfo.failedOrderIndex,
         stageName: failureInfo.failedStageName || t('processing.pages.farmerBatches.batchDetail.status.unknown'),
-        failureDetails: failureInfo.failureDetails || t('processing.pages.farmerBatches.batchDetail.status.canContinue'), // Sử dụng failureDetails
-        evaluationId: latestEvaluation.evaluationId
-      };
-    }
-
-    // Fallback: Parse stage info từ comments nếu không có format chuẩn
-
-
-    // Pattern 1: "Tiến trình có vấn đề: Bước 1: Thu hoach"
-    const stepMatch = comments.match(/Bước\s*(\d+):\s*([^,\n]+)/);
-    if (stepMatch) {
-
-      return {
-        stageId: parseInt(stepMatch[1]),
-        stageName: stepMatch[2].trim(),
-        failureDetails: comments,
-        evaluationId: latestEvaluation.evaluationId
-      };
-    }
-
-    // Pattern 2: "StageId: X, StageName: Y"
-    const stageIdMatch = comments.match(/StageId:\s*(\d+)/);
-    const stageNameMatch = comments.match(/StageName:\s*([^,\n]+)/);
-    const detailsMatch = comments.match(/FailureDetails:\s*([^,\n]+)/);
-
-    if (stageIdMatch) {
-
-      return {
-        stageId: parseInt(stageIdMatch[1]),
-        stageName: stageNameMatch ? stageNameMatch[1].trim() : t('processing.pages.farmerBatches.batchDetail.status.unknown'),
-        failureDetails: detailsMatch ? detailsMatch[1].trim() : t('processing.pages.farmerBatches.batchDetail.status.canContinue'),
-        evaluationId: latestEvaluation.evaluationId
+        failureDetails: failureInfo.failureDetails || t('processing.pages.farmerBatches.batchDetail.status.canContinue'),
+        evaluationId: evaluationWithFailedStages.evaluationId
       };
     }
 
     return null;
-  }, [hasFailedEvaluation, evaluations]);
+  }, [hasFailedEvaluation, evaluations, t]);
+
+  // Lấy danh sách các stage bị fail
+  const failedStages = useMemo(() => {
+    if (!evaluations || evaluations.length === 0) return [];
+
+    // Tìm evaluation có thông tin về stages cần retry
+    const evaluationWithFailedStages = evaluations.find(evaluation => {
+      const comments = evaluation.comments || '';
+      return comments.includes('Giai đoạn cần cập nhật:') || comments.includes('Tiến trình có vấn đề:');
+    });
+
+    if (!evaluationWithFailedStages) return [];
+
+    const comments = evaluationWithFailedStages.comments || '';
+
+    // Parse danh sách stage từ comments
+    const stages: Array<{name: string, order: number}> = [];
+
+    // Pattern 1: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    const stagePattern = /Giai đoạn cần cập nhật:\s*(.+?)(?:\n|$)/;
+    const stageMatch = comments.match(stagePattern);
+    
+    if (stageMatch) {
+      const stageText = stageMatch[1];
+      // 🔧 CẢI THIỆN: Pattern để parse chính xác hơn, loại bỏ dấu phẩy
+      const individualStagePattern = /([^(,]+)\s*\(Thứ tự:\s*(\d+)\)/g;
+      
+      let match;
+      while ((match = individualStagePattern.exec(stageText)) !== null) {
+        // 🔧 MỚI: Loại bỏ dấu phẩy và khoảng trắng thừa
+        const stageName = match[1].trim().replace(/^[,\s]+|[,\s]+$/g, '');
+        stages.push({
+          name: stageName,
+          order: parseInt(match[2])
+        });
+      }
+    }
+
+    // Pattern 2: "Tiến trình có vấn đề: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    if (stages.length === 0) {
+      const problemPattern = /Tiến trình có vấn đề:\s*(.+?)(?:\n|$)/;
+      const problemMatch = comments.match(problemPattern);
+      
+      if (problemMatch) {
+        const stageText = problemMatch[1];
+        // 🔧 CẢI THIỆN: Pattern để parse chính xác hơn, loại bỏ dấu phẩy
+        const individualStagePattern = /([^(,]+)\s*\(Thứ tự:\s*(\d+)\)/g;
+        
+        let match;
+        while ((match = individualStagePattern.exec(stageText)) !== null) {
+          // 🔧 MỚI: Loại bỏ dấu phẩy và khoảng trắng thừa
+          const stageName = match[1].trim().replace(/^[,\s]+|[,\s]+$/g, '');
+          stages.push({
+            name: stageName,
+            order: parseInt(match[2])
+          });
+        }
+      }
+    }
+
+    // 🔧 MỚI: Loại bỏ các stages đã được retry
+    const retriedStages = batch?.progresses?.filter(p => 
+      p.stageDescription && p.stageDescription.includes('Làm lại (Retry)')
+    ).map(p => p.stageName) || [];
+
+    const remainingStages = stages.filter(stage => 
+      !retriedStages.includes(stage.name)
+    );
+
+    return remainingStages;
+  }, [evaluations, batch?.progresses]);
 
   // State để lưu max OrderIndex của method
   const [maxOrderIndex, setMaxOrderIndex] = useState<number>(0);
@@ -487,11 +555,11 @@ export default function ViewProcessingBatch() {
 
           </div>
           <div className="flex items-center gap-3">
-            {/* Nút cập nhật tiến trình - hiển thị khi có thể cập nhật VÀ chưa ở stage cuối HOẶC có failed evaluation */}
+            {/* Nút cập nhật tiến trình - hiển thị khi có thể cập nhật VÀ chưa ở stage cuối HOẶC có stages cần retry */}
             {batch.progresses && batch.progresses.length > 0 &&
               batch.status !== ProcessingStatus.Completed &&
               batch.status !== ProcessingStatus.AwaitingEvaluation &&
-              (!isAtLastStage || hasFailedEvaluation) && (
+              (!isAtLastStage || failedStages.length > 0) && (
                 <Button
                   onClick={() => setOpenAdvanceModal(true)}
                   className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white transition-all duration-200"
@@ -500,6 +568,17 @@ export default function ViewProcessingBatch() {
                   {t('processing.pages.farmerBatches.batchDetail.quickActions.advanceProgress')}
                 </Button>
               )}
+
+            {/* 🔧 MỚI: Nút cập nhật tiếp các stages sau stages fail */}
+            {hasFailedEvaluation && batch.status === ProcessingStatus.InProgress && failedStages.length === 0 && (
+              <Button
+                onClick={handleUpdateNextStages}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200"
+              >
+                <TrendingUp className="w-4 h-4" />
+                Cập nhật tiếp các stages
+              </Button>
+            )}
 
             {/* Nút tạo tiến trình đầu tiên - chỉ hiển thị khi chưa có progress */}
             {(!batch.progresses || batch.progresses.length === 0) && (
@@ -538,42 +617,17 @@ export default function ViewProcessingBatch() {
           </div>
         </div>
 
-                 {/* 🔧 ALERT: Chỉ hiện khi có đánh giá fail và batch status là InProgress */}
-         {hasFailedEvaluation && failedStageInfo && batch.status === ProcessingStatus.InProgress && (
-           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-             <div className="flex items-start">
-               <div className="flex-shrink-0">
-                 <div className="flex items-center space-x-2">
-                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                     <AlertTriangle className="w-4 h-4 text-red-600" />
-                   </div>
-                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                     <XCircle className="w-4 h-4 text-red-600" />
-                   </div>
-                 </div>
-               </div>
-               <div className="ml-3 flex-1">
-                 <h3 className="text-lg font-semibold text-red-800 mb-2">
-                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
-                 </h3>
-                 <p className="text-red-700 mb-4">
-                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')} <strong>{failedStageInfo.stageName}</strong>.
-                   {t('processing.pages.farmerBatches.batchDetail.status.canContinue')}
-                 </p>
-                 <div className="flex space-x-3">
-                   <Button
-                     onClick={() => {
-                       // Mở form cập nhật progress cho stage bị fail
-                       setOpenUpdateAfterEvaluationModal(true);
-                     }}
-                     className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
-                   >
-                     <Edit className="w-4 h-4" />
-                     Cập nhật sau đánh giá
-                   </Button>
-                 </div>
-               </div>
-             </div>
+                 {/* 🔧 ALERT: Hiển thị FailedStagesList khi có stages cần retry, không phụ thuộc vào evaluation mới nhất */}
+         {failedStages.length > 0 && (
+           batch.status === ProcessingStatus.InProgress ||
+           batch.status === ProcessingStatus.AwaitingEvaluation
+         ) && (
+           <div className="mb-6">
+             <FailedStagesList
+               failedStages={failedStages}
+               batchId={id as string}
+               onUpdateStage={handleUpdateStage}
+             />
            </div>
          )}
 
@@ -742,22 +796,7 @@ export default function ViewProcessingBatch() {
           </div>
         </div>
 
-        {/* Failure Info Card - Hiển thị khi có failure */}
-        {failureInfo && (
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-orange-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5" />
-                {t('processing.pages.farmerBatches.batchDetail.evaluation.title')}
-              </h2>
-            </div>
-            <div className="p-6">
-              <FailureInfoCard
-                failureInfo={failureInfo}
-              />
-            </div>
-          </div>
-        )}
+        
 
 
 
@@ -793,24 +832,27 @@ export default function ViewProcessingBatch() {
           </div>
 
           <div className="p-6">
-            {/* Progress Guidance Card - Hiển thị khi có failure */}
-            {failureInfo && (
-              <ProgressGuidanceCard
-                failureInfo={failureInfo}
-                latestProgress={latestProgress}
-                batchStatus={batch.status}
-              />
-            )}
+            
 
             {batch.progresses && batch.progresses.length > 0 ? (
               <div className="space-y-4">
                 {batch.progresses
                   .sort((a, b) => a.stepIndex - b.stepIndex) // Sắp xếp theo stepIndex
                   .map((progress, idx) => {
-                    // Kiểm tra xem có phải bước retry không
-                    const isRetryStep = progress.stepIndex > 1 && idx > 0;
+                    // 🔧 MỚI: Kiểm tra retry dựa trên StageDescription hoặc so sánh stageName
+                    const isRetryByDescription = progress.stageDescription && progress.stageDescription.includes('Làm lại (Retry)');
                     const previousProgress = idx > 0 ? batch.progresses.find(p => p.stepIndex === progress.stepIndex - 1) : null;
-                    const isRetry = previousProgress && previousProgress.stageName === progress.stageName;
+                    const isRetryByStageName = previousProgress && previousProgress.stageName === progress.stageName;
+                    const isRetry = isRetryByDescription || isRetryByStageName;
+                    
+                    // 🔧 DEBUG: Log để kiểm tra
+                    console.log(`Progress ${progress.stepIndex}:`, {
+                      stageName: progress.stageName,
+                      stageDescription: progress.stageDescription,
+                      isRetryByDescription,
+                      isRetryByStageName,
+                      isRetry
+                    });
 
                     return (
                       <div
@@ -830,17 +872,13 @@ export default function ViewProcessingBatch() {
                                 {t('processing.pages.farmerBatches.batchDetail.progress.step')} {progress.stepIndex}
                                 {isRetry && (
                                   <span className="ml-2 text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full">
-                                    {t('processing.pages.farmerBatches.batchDetail.progress.retry')}
+                                    Làm lại
                                   </span>
                                 )}
                               </span>
                               <h3 className="font-semibold text-gray-900 text-lg">
-                                {progress.stageName}
-                                {isRetry && (
-                                  <span className="ml-2 text-sm text-orange-600 font-medium">
-                                    ({t('processing.pages.farmerBatches.batchDetail.progress.retry')})
-                                  </span>
-                                )}
+                                { progress.stageName}
+                               
                               </h3>
                             </div>
                           </div>
@@ -1103,13 +1141,7 @@ export default function ViewProcessingBatch() {
               </div>
            </div>
 
-          <div className="p-6">
-            {/* Failed Stages Info - Hiển thị khi có đánh giá fail */}
-            {hasFailedEvaluation && (
-              <div className="mb-6">
-                <FailedStagesInfo batchId={id as string} />
-              </div>
-            )}
+                     <div className="p-6">
             
             {evaluations.length > 0 ? (
               <div className="space-y-4">
@@ -1355,17 +1387,41 @@ export default function ViewProcessingBatch() {
 
         {/* Update After Evaluation Modal */}
 
-        {failedStageInfo && (
+        {(failedStageInfo || selectedStageForUpdate) && (
           <UpdateAfterEvaluationForm
             batchId={id as string}
-            failedStageInfo={failedStageInfo}
+            failedStageInfo={selectedStageForUpdate ? {
+              stageId: selectedStageForUpdate.stageOrder,
+              stageName: selectedStageForUpdate.stageName,
+              failureDetails: `Cần cập nhật giai đoạn: ${selectedStageForUpdate.stageName} (Thứ tự: ${selectedStageForUpdate.stageOrder})`,
+              evaluationId: evaluations?.[0]?.evaluationId || ''
+            } : failedStageInfo!}
             isOpen={openUpdateAfterEvaluationModal}
-            onClose={() => setOpenUpdateAfterEvaluationModal(false)}
+            onClose={() => {
+              setOpenUpdateAfterEvaluationModal(false);
+              setSelectedStageForUpdate(null);
+            }}
             onSuccess={() => {
               window.location.reload();
             }}
+            isRetry={!!selectedStageForUpdate} // 🔧 MỚI: Xác định retry khi có selectedStageForUpdate
           />
         )}
+
+                                   {/* 🔧 MỚI: Update Next Stages Modal */}
+          <UpdateNextStagesForm
+            batchId={id as string}
+            methodId={batch?.methodId}
+            currentStageOrder={latestProgress?.stepIndex}
+            isOpen={openUpdateNextStagesModal}
+            onClose={() => {
+              setOpenUpdateNextStagesModal(false);
+            }}
+            onSuccess={() => {
+              setOpenUpdateNextStagesModal(false);
+              window.location.reload();
+            }}
+          />
 
         {/* Media Viewer Dialog */}
         <Dialog open={mediaViewerOpen} onOpenChange={setMediaViewerOpen}>

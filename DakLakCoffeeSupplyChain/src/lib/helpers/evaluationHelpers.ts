@@ -29,36 +29,105 @@ export interface StageFailureDisplayInfo {
 
 /**
  * Parse thông tin stage failure từ comments của evaluation
- * Format: FAILED_STAGE_ID:1|FAILED_STAGE_NAME:Thu hoạch|DETAILS:Vấn đề|RECOMMENDATIONS:Khuyến nghị
+ * Format mới: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
  */
 export function parseStageFailureFromComments(comments: string): StageFailureInfo | null {
-  if (!comments || !comments.includes('FAILED_STAGE_ID:')) {
+  if (!comments) {
     return null;
   }
 
   try {
-    const parts = comments.split('|');
+    // Pattern 1: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    const stagePattern = /Giai đoạn cần cập nhật:\s*(.+?)(?:\n|$)/;
+    const stageMatch = comments.match(stagePattern);
     
-    const stageIdPart = parts.find(p => p.startsWith('FAILED_STAGE_ID:'));
-    const stageNamePart = parts.find(p => p.startsWith('FAILED_STAGE_NAME:'));
-    const detailsPart = parts.find(p => p.startsWith('DETAILS:'));
-    const recommendationsPart = parts.find(p => p.startsWith('RECOMMENDATIONS:'));
+    if (stageMatch) {
+      const stageText = stageMatch[1];
+      // Parse từng stage: "Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+      const individualStagePattern = /([^(]+)\s*\(Thứ tự:\s*(\d+)\)/g;
+      const stages: Array<{name: string, order: number}> = [];
+      
+      let match;
+      while ((match = individualStagePattern.exec(stageText)) !== null) {
+        stages.push({
+          name: match[1].trim(),
+          order: parseInt(match[2])
+        });
+      }
+      
+      if (stages.length > 0) {
+        // Lấy stage đầu tiên làm stage chính
+        const firstStage = stages[0];
+        
+        return {
+          failedOrderIndex: firstStage.order,
+          failedStageId: undefined,
+          failedStageName: firstStage.name,
+          failureDetails: `Cần cập nhật các giai đoạn: ${stages.map(s => `${s.name} (Thứ tự: ${s.order})`).join(', ')}`,
+          recommendations: 'Vui lòng cập nhật lại các giai đoạn trên để đạt tiêu chuẩn chất lượng',
+          isFailure: true
+        };
+      }
+    }
 
-    if (!stageIdPart) return null;
-
-    const orderIndexStr = stageIdPart.replace('FAILED_STAGE_ID:', '');
-    const orderIndex = parseInt(orderIndexStr);
+    // Pattern 2: "Tiến trình có vấn đề: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    const problemPattern = /Tiến trình có vấn đề:\s*(.+?)(?:\n|$)/;
+    const problemMatch = comments.match(problemPattern);
     
-    if (isNaN(orderIndex)) return null;
+    if (problemMatch) {
+      const stageText = problemMatch[1];
+      const individualStagePattern = /([^(]+)\s*\(Thứ tự:\s*(\d+)\)/g;
+      const stages: Array<{name: string, order: number}> = [];
+      
+      let match;
+      while ((match = individualStagePattern.exec(stageText)) !== null) {
+        stages.push({
+          name: match[1].trim(),
+          order: parseInt(match[2])
+        });
+      }
+      
+      if (stages.length > 0) {
+        const firstStage = stages[0];
+        
+        return {
+          failedOrderIndex: firstStage.order,
+          failedStageId: undefined,
+          failedStageName: firstStage.name,
+          failureDetails: `Tiến trình có vấn đề: ${stages.map(s => `${s.name} (Thứ tự: ${s.order})`).join(', ')}`,
+          recommendations: 'Cần cải thiện công đoạn này theo khuyến nghị của chuyên gia',
+          isFailure: true
+        };
+      }
+    }
 
-    return {
-      failedOrderIndex: orderIndex,
-      failedStageId: undefined, // Sẽ được set từ service
-      failedStageName: stageNamePart?.replace('FAILED_STAGE_NAME:', '') || '',
-      failureDetails: detailsPart?.replace('DETAILS:', '') || '',
-      recommendations: recommendationsPart?.replace('RECOMMENDATIONS:', '') || '',
-      isFailure: true
-    };
+    // Pattern 3: Format cũ "FAILED_STAGE_ID:1|FAILED_STAGE_NAME:Thu hoạch|DETAILS:Vấn đề|RECOMMENDATIONS:Khuyến nghị"
+    if (comments.includes('FAILED_STAGE_ID:')) {
+      const parts = comments.split('|');
+      
+      const stageIdPart = parts.find(p => p.startsWith('FAILED_STAGE_ID:'));
+      const stageNamePart = parts.find(p => p.startsWith('FAILED_STAGE_NAME:'));
+      const detailsPart = parts.find(p => p.startsWith('DETAILS:'));
+      const recommendationsPart = parts.find(p => p.startsWith('RECOMMENDATIONS:'));
+
+      if (stageIdPart) {
+        const orderIndexStr = stageIdPart.replace('FAILED_STAGE_ID:', '');
+        const orderIndex = parseInt(orderIndexStr);
+        
+        if (!isNaN(orderIndex)) {
+          return {
+            failedOrderIndex: orderIndex,
+            failedStageId: undefined,
+            failedStageName: stageNamePart?.replace('FAILED_STAGE_NAME:', '') || '',
+            failureDetails: detailsPart?.replace('DETAILS:', '') || '',
+            recommendations: recommendationsPart?.replace('RECOMMENDATIONS:', '') || '',
+            isFailure: true
+          };
+        }
+      }
+    }
+
+    return null;
   } catch (error) {
     console.error('Error parsing stage failure from comments:', error);
     return null;

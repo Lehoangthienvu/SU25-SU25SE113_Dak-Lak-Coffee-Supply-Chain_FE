@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info, X, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getFailedStagesForBatch, type FailedStagesInfo } from '@/lib/api/processingBatchEvaluations';
-import { updateProgressAfterEvaluation } from '@/lib/api/processingBatchProgress';
+import { updateProgressAfterEvaluation, getBatchInfoBeforeRetry, RetryValidationInfo } from '@/lib/api/processingBatchProgress';
+import QuantityValidationInfo from './QuantityValidationInfo';
 import { AppToast } from '@/components/ui/AppToast';
 
 interface UpdateAfterEvaluationFormProps {
@@ -24,18 +24,20 @@ interface UpdateAfterEvaluationFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  isRetry?: boolean; // 🔧 MỚI: Xác định khi nào là retry (cập nhật sau evaluation fail)
 }
+
+
 
 export default function UpdateAfterEvaluationForm({
   batchId,
   failedStageInfo,
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
+  isRetry = false // 🔧 MỚI: Default là false
 }: UpdateAfterEvaluationFormProps) {
   const { t } = useTranslation();
-  const [failedStagesInfo, setFailedStagesInfo] = useState<FailedStagesInfo | null>(null);
-  const [loadingFailedStages, setLoadingFailedStages] = useState(false);
   const [form, setForm] = useState({
     progressDate: new Date().toISOString().split('T')[0],
     outputQuantity: 0,
@@ -45,6 +47,8 @@ export default function UpdateAfterEvaluationForm({
     unit: '',
     recordedAt: new Date().toISOString(),
   });
+
+
   const [parameters, setParameters] = useState<Array<{
     parameterName: string;
     parameterValue: string;
@@ -54,25 +58,112 @@ export default function UpdateAfterEvaluationForm({
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [previousProgress, setPreviousProgress] = useState<{
+    quantity: number;
+    unit: string;
+  } | null>(null);
 
-  // Fetch failed stages when component mounts
-  useEffect(() => {
-    const loadFailedStages = async () => {
-      try {
-        setLoadingFailedStages(true);
-        const info = await getFailedStagesForBatch(batchId);
-        setFailedStagesInfo(info);
-      } catch (err: any) {
-        console.error('❌ Lỗi loadFailedStages:', err);
-      } finally {
-        setLoadingFailedStages(false);
-      }
-    };
+  // 🔧 MỚI: State cho validation retry
+  const [retryValidation, setRetryValidation] = useState<RetryValidationInfo | null>(null);
+  const [validationLoading, setValidationLoading] = useState(false);
 
-    if (isOpen && batchId) {
-      loadFailedStages();
+  // 🔧 MỚI: Helper function để convert đơn vị về kg
+  const convertToKg = (quantity: number, unit: string): number => {
+    switch (unit.toLowerCase()) {
+      case 'kg':
+        return quantity;
+      case 'g':
+        return quantity / 1000;
+      case 'ton':
+        return quantity * 1000;
+      case 'quintal':
+        return quantity * 100;
+      case 'yen':
+        return quantity * 0.6; // 1 yến = 0.6 kg
+      case 'lang':
+        return quantity * 0.0375; // 1 lạng = 0.0375 kg
+      default:
+        return quantity; // Default là kg
     }
-  }, [isOpen, batchId]);
+  };
+
+  // 🔧 MỚI: Validate retry quantity
+  const validateRetryQuantity = useCallback(() => {
+    if (!retryValidation) return;
+
+    const retryQuantityInKg = convertToKg(form.outputQuantity, form.outputUnit);
+    const finalOutputInKg = convertToKg(retryValidation.finalOutputBeforeRetry, retryValidation.finalOutputUnit);
+
+    // Kiểm tra không vượt quá output cuối cùng trước retry
+    if (retryQuantityInKg > finalOutputInKg) {
+      setRetryValidation(prev => prev ? {
+        ...prev,
+        calculatedWaste: 0,
+        wastePercentage: 0,
+        isValid: false,
+        errorMessage: `Khối lượng retry (${form.outputQuantity} ${form.outputUnit}) không được vượt quá output cuối cùng trước retry (${retryValidation.finalOutputBeforeRetry} ${retryValidation.finalOutputUnit})`
+      } : null);
+      return;
+    }
+
+    // Tính waste
+    const waste = finalOutputInKg - retryQuantityInKg;
+    const wastePercentage = (waste / finalOutputInKg) * 100;
+
+    // Kiểm tra waste percentage
+    if (wastePercentage > retryValidation.maxWastePercentage) {
+      setRetryValidation(prev => prev ? {
+        ...prev,
+        calculatedWaste: waste,
+        wastePercentage,
+        isValid: false,
+        errorMessage: `Tỷ lệ waste quá cao (${wastePercentage.toFixed(1)}% > ${retryValidation.maxWastePercentage}%). Vui lòng giảm khối lượng retry`
+      } : null);
+      return;
+    }
+
+    // Valid
+    setRetryValidation(prev => prev ? {
+      ...prev,
+      calculatedWaste: waste,
+      wastePercentage,
+      isValid: true,
+      errorMessage: undefined
+    } : null);
+  }, [form.outputQuantity, form.outputUnit, retryValidation]);
+
+  // 🔧 MỚI: Effect để lấy thông tin batch trước retry khi component mở
+  useEffect(() => {
+    if (isOpen && isRetry) {
+      fetchBatchInfoBeforeRetry();
+    }
+  }, [isOpen, isRetry, batchId]);
+
+  // 🔧 MỚI: Effect để validate retry quantity khi user nhập
+  useEffect(() => {
+    if (isRetry && form.outputQuantity > 0 && retryValidation) {
+      // Sử dụng setTimeout để tránh infinite loop
+      const timeoutId = setTimeout(() => {
+        validateRetryQuantity();
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [form.outputQuantity, form.outputUnit, isRetry, validateRetryQuantity]); // Thêm validateRetryQuantity vào dependency
+
+  // 🔧 MỚI: Lấy thông tin batch trước retry
+  const fetchBatchInfoBeforeRetry = async () => {
+    try {
+      setValidationLoading(true);
+      const response = await getBatchInfoBeforeRetry(batchId);
+      setRetryValidation(response);
+    } catch (error) {
+      console.error('Error fetching batch info before retry:', error);
+      AppToast.error('Không thể lấy thông tin batch trước retry');
+    } finally {
+      setValidationLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -107,8 +198,23 @@ export default function UpdateAfterEvaluationForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // 🔧 MỚI: Enhanced validation với thông báo chi tiết
+    if (!form.progressDate) {
+      AppToast.error('Vui lòng chọn ngày cập nhật');
+      return;
+    }
     if (form.outputQuantity <= 0) {
-      AppToast.error('Vui lòng nhập khối lượng đầu ra hợp lệ');
+      AppToast.error('Sản lượng đầu ra phải lớn hơn 0');
+      return;
+    }
+    if (!form.outputUnit) {
+      AppToast.error('Vui lòng chọn đơn vị');
+      return;
+    }
+
+    // 🔧 MỚI: Kiểm tra validation retry nếu là retry
+    if (isRetry && retryValidation && !retryValidation.isValid) {
+      AppToast.error(retryValidation.errorMessage || 'Khối lượng retry không hợp lệ');
       return;
     }
 
@@ -125,6 +231,7 @@ export default function UpdateAfterEvaluationForm({
     setLoading(true);
     try {
       const payload = {
+        stageId: failedStageInfo.stageId, // 🔧 MỚI: Thêm StageId từ failedStageInfo
         progressDate: form.progressDate,
         outputQuantity: form.outputQuantity,
         outputUnit: form.outputUnit,
@@ -156,9 +263,61 @@ export default function UpdateAfterEvaluationForm({
       setParameters([]);
       setPhotoFiles([]);
       setVideoFiles([]);
+      setRetryValidation(null);
     } catch (error: any) {
       console.error('Error updating progress after evaluation:', error);
-      AppToast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiến trình');
+      
+      // 🔧 MỚI: Enhanced error handling với thông báo chi tiết
+      let errorMessage = 'Có lỗi xảy ra khi cập nhật tiến trình';
+      
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.response?.data?.errorCode) {
+        // Xử lý các error code cụ thể
+        const errorCode = error.response.data.errorCode;
+        const errorParams = error.response.data.errorParameters || {};
+        
+        switch (errorCode) {
+          case 'RetryQuantityExceedsFinalOutput':
+            errorMessage = `Khối lượng retry (${errorParams.RetryQuantity} ${errorParams.RetryUnit}) vượt quá output cuối cùng trước retry (${errorParams.FinalOutput} ${errorParams.FinalOutputUnit})`;
+            break;
+          case 'WastePercentageTooHigh':
+            errorMessage = `Tỷ lệ waste quá cao (${errorParams.WastePercentage?.toFixed(1)}% > ${errorParams.MaxWastePercentage}%). Vui lòng giảm khối lượng retry`;
+            break;
+          case 'InvalidWasteCalculation':
+            errorMessage = `Tính toán waste không hợp lệ. Vui lòng kiểm tra lại khối lượng`;
+            break;
+          case 'OutputQuantityIncreaseTooHigh':
+            errorMessage = `Khối lượng tăng quá cao (${errorParams.IncreasePercentage?.toFixed(1)}% > ${errorParams.MaxAllowed}%). ${errorParams.Suggestion || 'Vui lòng kiểm tra lại quy trình'}`;
+            break;
+          case 'OutputQuantityDecreaseTooHigh':
+            errorMessage = `Khối lượng giảm quá nhiều (${errorParams.DecreasePercentage?.toFixed(1)}% > ${errorParams.MaxAllowed}%). ${errorParams.Suggestion || 'Vui lòng kiểm tra lại quy trình'}`;
+            break;
+          case 'OutputQuantityTooLow':
+            errorMessage = `Khối lượng quá thấp (${errorParams.CurrentQuantity} < ${errorParams.MinRequired}). Vui lòng nhập khối lượng hợp lệ`;
+            break;
+          case 'OutputQuantityTooHigh':
+            errorMessage = `Khối lượng quá cao (${errorParams.CurrentQuantity} > ${errorParams.MaxAllowed}). Vui lòng kiểm tra lại`;
+            break;
+          case 'StageNotInFailedList':
+            errorMessage = `Giai đoạn này không nằm trong danh sách cần cập nhật. Vui lòng chọn giai đoạn khác`;
+            break;
+          case 'LastEvaluationNotFail':
+            errorMessage = `Chỉ có thể cập nhật sau khi đánh giá không đạt. Trạng thái hiện tại: ${errorParams.CurrentResult}`;
+            break;
+          case 'CannotUpdateProgressBatchNotInProgress':
+            errorMessage = `Chỉ có thể cập nhật khi batch đang trong quá trình xử lý. Trạng thái hiện tại: ${errorParams.CurrentStatus}`;
+            break;
+          case 'OutputQuantityExceedsCropProgress':
+            errorMessage = `Khối lượng xử lý (${errorParams.OutputQuantity} ${errorParams.OutputUnit}) vượt quá khối lượng thu hoạch (${errorParams.CropQuantity} ${errorParams.CropUnit} - ngày ${errorParams.CropProgressDate}). Vui lòng kiểm tra lại.`;
+            break;
+          default:
+            errorMessage = error.response.data.message || errorMessage;
+            break;
+        }
+      }
+      
+      AppToast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -187,43 +346,42 @@ export default function UpdateAfterEvaluationForm({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-          {/* Failed Stages Information */}
-          {loadingFailedStages ? (
-            <div className="bg-white/70 rounded-lg p-4">
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
-                <span className="ml-2 text-orange-700">{t('evaluation.failedStages.loading')}</span>
+          {/* Selected Stage Information */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <h4 className="font-medium text-yellow-800">Giai đoạn cần cập nhật</h4>
+            </div>
+            <p className="text-sm text-yellow-700 mb-3">
+              Chọn các giai đoạn cần farmer cập nhật lại khi đánh giá không đạt
+            </p>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3 p-2 border border-yellow-300 rounded-lg bg-white">
+                <div className="flex items-center justify-center w-5 h-5 bg-yellow-500 text-white rounded-full text-xs font-bold">
+                  1
+                </div>
+                <span className="font-medium text-gray-900">{failedStageInfo.stageName}</span>
               </div>
             </div>
-          ) : failedStagesInfo && failedStagesInfo.failedStages && failedStagesInfo.failedStages.length > 0 ? (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <h4 className="font-medium text-yellow-800">{t('evaluation.failedStages.title')}</h4>
-              </div>
-              <p className="text-sm text-yellow-700 mb-3">
-                {t('evaluation.failedStages.description')}
-              </p>
-              <div className="space-y-2">
-                {failedStagesInfo.failedStages.map((stage, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-2 border border-yellow-300 rounded-lg bg-white">
-                    <div className="flex items-center justify-center w-5 h-5 bg-yellow-500 text-white rounded-full text-xs font-bold">
-                      {index + 1}
-                    </div>
-                    <span className="font-medium text-gray-900">{stage}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white/70 rounded-lg p-4">
+          </div>
+
+          {/* 🔧 MỚI: Hiển thị thông tin batch trước retry */}
+          {isRetry && retryValidation && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Info className="h-4 w-4 text-blue-600" />
-                <h4 className="font-medium text-blue-800">{t('updateAfterEvaluation.instruction')}</h4>
+                <h4 className="font-medium text-blue-800">Thông tin trước retry</h4>
               </div>
-              <p className="text-sm text-blue-700">
-                {t('updateAfterEvaluation.description')}
-              </p>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-blue-700">Output cuối cùng trước retry:</span>
+                  <span className="font-medium ml-2">{retryValidation.finalOutputBeforeRetry} {retryValidation.finalOutputUnit}</span>
+                </div>
+                <div>
+                  <span className="text-blue-700">Tỷ lệ waste tối đa:</span>
+                  <span className="font-medium ml-2">{retryValidation.maxWastePercentage}%</span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -232,6 +390,7 @@ export default function UpdateAfterEvaluationForm({
               <Label htmlFor="progressDate">{t('updateAfterEvaluation.progressDate')}</Label>
               <Input
                 id="progressDate"
+                name="progressDate"
                 type="date"
                 value={form.progressDate}
                 onChange={handleChange}
@@ -241,17 +400,29 @@ export default function UpdateAfterEvaluationForm({
 
             <div className="space-y-2">
               <Label htmlFor="outputQuantity">{t('updateAfterEvaluation.outputQuantity')}</Label>
-              <Input
-                id="outputQuantity"
-                type="number"
-                step="0.01"
-                min="0.01"
-                max="100000"
-                value={form.outputQuantity}
-                onChange={handleChange}
-                placeholder={t('updateAfterEvaluation.quantityPlaceholder')}
-                className="border-orange-200 focus:border-orange-400"
-              />
+                              <Input
+                  id="outputQuantity"
+                  name="outputQuantity"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  value={form.outputQuantity}
+                  onChange={handleChange}
+                  onKeyDown={(e) => {
+                    // Cho phép backspace, delete, arrow keys, etc.
+                    if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                      return;
+                    }
+                    // Cho phép số và dấu chấm
+                    if (!/[\d.]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  placeholder="Nhập khối lượng..."
+                  className={`border-orange-200 focus:border-orange-400 ${
+                    isRetry && retryValidation && !retryValidation.isValid ? 'border-red-500' : ''
+                  }`}
+                />
             </div>
           </div>
 
@@ -271,6 +442,67 @@ export default function UpdateAfterEvaluationForm({
               </SelectContent>
             </Select>
           </div>
+
+          {/* 🔧 MỚI: Hiển thị validation retry và waste calculation */}
+          {isRetry && retryValidation && form.outputQuantity > 0 && (
+            <div className={`border rounded-lg p-4 ${
+              retryValidation.isValid ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+            }`}>
+              <div className="flex items-center gap-2 mb-3">
+                {retryValidation.isValid ? (
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                )}
+                <h4 className={`font-medium ${
+                  retryValidation.isValid ? 'text-green-800' : 'text-red-800'
+                }`}>
+                  {retryValidation.isValid ? 'Validation hợp lệ' : 'Validation không hợp lệ'}
+                </h4>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-700">Khối lượng retry:</span>
+                  <span className="font-medium ml-2">{form.outputQuantity} {form.outputUnit}</span>
+                </div>
+                <div>
+                  <span className="text-gray-700">Waste tính toán:</span>
+                  <span className="font-medium ml-2">{retryValidation.calculatedWaste.toFixed(2)} kg</span>
+                </div>
+                <div>
+                  <span className="text-gray-700">Tỷ lệ waste:</span>
+                  <span className={`font-medium ml-2 ${
+                    retryValidation.wastePercentage > retryValidation.maxWastePercentage ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {retryValidation.wastePercentage.toFixed(1)}%
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-700">Tỷ lệ tối đa:</span>
+                  <span className="font-medium ml-2">{retryValidation.maxWastePercentage}%</span>
+                </div>
+              </div>
+              
+              {retryValidation.errorMessage && (
+                <div className="mt-3 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
+                  {retryValidation.errorMessage}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 🔧 MỚI: Hiển thị thông tin validation khối lượng (chỉ khi là retry) */}
+          {previousProgress && form.outputQuantity > 0 && isRetry && (
+            <QuantityValidationInfo
+              stageName={failedStageInfo.stageName}
+              currentQuantity={form.outputQuantity}
+              currentUnit={form.outputUnit}
+              previousQuantity={previousProgress.quantity}
+              previousUnit={previousProgress.unit}
+              tolerance={0.25} // Default tolerance, có thể lấy từ API
+            />
+          )}
 
           {/* Thông số kỹ thuật */}
           <div className="space-y-4">
@@ -444,18 +676,6 @@ export default function UpdateAfterEvaluationForm({
             )}
           </div>
 
-          {/* Warning about specific stages */}
-          {failedStagesInfo && failedStagesInfo.failedStages && failedStagesInfo.failedStages.length > 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-blue-600" />
-                <span className="text-sm text-blue-800">
-                  {t('evaluation.failedStages.updateInstructions')}
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Buttons */}
           <div className="flex justify-end space-x-3 pt-4">
             <Button
@@ -466,18 +686,18 @@ export default function UpdateAfterEvaluationForm({
             >
               {t('updateAfterEvaluation.cancel')}
             </Button>
-                         <Button
-               type="submit"
-               disabled={loading}
-               className="bg-green-600 hover:bg-green-700 text-white"
-             >
-               {loading ? 'Đang cập nhật...' : 'Cập nhật sau đánh giá'}
-             </Button>
-                     </div>
-         </CardContent>
-       </Card>
-     </form>
-       </div>
-     </div>
-   );
- }
+            <Button
+              type="submit"
+              disabled={loading || (isRetry && retryValidation ? !retryValidation.isValid : false)}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              {loading ? 'Đang cập nhật...' : 'Cập nhật sau đánh giá'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </form>
+  </div>
+</div>
+);
+}
