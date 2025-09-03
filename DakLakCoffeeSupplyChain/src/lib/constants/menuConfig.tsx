@@ -220,6 +220,18 @@ export const useMenuConfig = () => {
         href: "/dashboard/manager/reports",
         icon: iconMap.reports,
       },
+      {
+        type: "link",
+        title: "Yêu cầu nhập kho",
+        href: "/dashboard/manager/inbound-requests",
+        icon: iconMap.contracts,
+      },
+      {
+        type: "link",
+        title: "Quản lý kho",
+        href: "/dashboard/manager/warehouses",
+        icon: iconMap.settings,
+      },
     ],
   };
 

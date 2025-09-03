@@ -3455,7 +3455,8 @@
       "totalReceipts": "Total receipts",
       "confirmedReceipts": "Confirmed receipts",
       "pendingReceipts": "Pending receipts",
-      "totalQuantity": "Total quantity"
+      "totalQuantity": "Total quantity",
+      "readyForDelivery": "Ready for Delivery"
     },
     "table": {
       "title": "List of outbound receipts",
@@ -3489,11 +3490,14 @@
       },
       "status": {
         "confirmed": "Confirmed",
-        "pending": "Pending"
+        "pending": "Pending",
+        "readyForDelivery": "Ready for Delivery",
+        "completed": "Completed"
       },
       "actions": {
         "view": "View",
-        "confirm": "Confirm Receipt"
+        "confirm": "Confirm Receipt",
+        "back": "Back"
       }
     },
     "create": {

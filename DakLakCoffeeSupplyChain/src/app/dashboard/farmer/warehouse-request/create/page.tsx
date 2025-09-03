@@ -222,7 +222,9 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error(t('farmerDeliveryRequest.create.fresh.errors.general', { message: err.message }));
+      // ✅ CẢI THIỆN: Hiển thị lỗi trực tiếp từ backend
+      const errorMessage = err.message || t('farmerDeliveryRequest.create.processed.errors.general');
+      toast.error(`❌ ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -285,7 +287,9 @@ export default function CreateDeliveryRequestPage() {
       toast.success(message);
       router.push('/dashboard/farmer/warehouse-request');
     } catch (err: any) {
-      toast.error(t('farmerDeliveryRequest.create.processed.errors.general', { message: err.message }));
+      // ✅ CẢI THIỆN: Hiển thị lỗi trực tiếp từ backend
+      const errorMessage = err.message || t('farmerDeliveryRequest.create.fresh.errors.general');
+      toast.error(`❌ ${errorMessage}`);
     } finally {
       setLoading(false);
     }

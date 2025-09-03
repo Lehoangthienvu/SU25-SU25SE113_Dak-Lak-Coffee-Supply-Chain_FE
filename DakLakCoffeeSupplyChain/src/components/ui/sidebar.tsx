@@ -758,6 +758,12 @@ export function SidebarGroup() {
                   path.startsWith("/dashboard/manager/inventory-logs"),
               },
               {
+                label: t('sidebar.navigation.inboundRequests'),
+                href: "/dashboard/manager/inbound-requests",
+                activeMatch: (path: string) =>
+                  path === "/dashboard/manager/inbound-requests",
+              },
+              {
                 label: t('sidebar.navigation.outboundRequests'),
                 href: "/dashboard/manager/warehouse-request",
                 activeMatch: (path: string) =>
