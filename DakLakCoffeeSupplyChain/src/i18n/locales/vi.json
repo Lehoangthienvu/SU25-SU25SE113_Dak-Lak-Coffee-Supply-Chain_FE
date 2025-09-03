@@ -3539,7 +3539,8 @@
       },
       "actions": {
         "view": "Xem",
-        "confirm": "Xác nhận phiếu"
+        "confirm": "Xác nhận phiếu",
+        "back": "Quay lại"
       }
     },
     "create": {
