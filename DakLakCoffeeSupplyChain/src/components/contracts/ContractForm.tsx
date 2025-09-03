@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+// LoadingButton component sẽ được tạo inline
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -12,6 +13,8 @@ import {
   ContractUpdateDto,
   createContract,
   updateContract,
+  SettlementFilesWrapper,
+  SettlementRound,
 } from "@/lib/api/contracts";
 import {
   getAllBusinessBuyers,
@@ -27,6 +30,7 @@ import {
 } from "@/lib/api/contractItems";
 import { getErrorMessage } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { LoadingButton } from "../ui/loadingProgress";
 
 // Sử dụng useRef thay vì biến global để tránh vấn đề HMR
 
@@ -88,12 +92,10 @@ export default function ContractForm({
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
 
   // Settlement files state
-  const [settlementFiles, setSettlementFiles] = useState<{
-    [roundNumber: number]: File | null;
-  }>({});
-  const [settlementFilePreviewUrls, setSettlementFilePreviewUrls] = useState<{
-    [roundNumber: number]: string | null;
-  }>({});
+  const [settlementFiles, setSettlementFiles] = useState<SettlementFilesWrapper>({
+    settlementRounds: []
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const lastStatusRef = useRef<ContractStatus | null>(null);
   const { t } = useTranslation();
@@ -201,23 +203,20 @@ export default function ContractForm({
             settlementData.settlementRounds &&
             Array.isArray(settlementData.settlementRounds)
           ) {
-            const newSettlementFilePreviewUrls: {
-              [roundNumber: number]: string | null;
-            } = {};
-
-            settlementData.settlementRounds.forEach(
-              (round: { roundName: number; settlementFileURL: string }) => {
-                if (round.roundName && round.settlementFileURL) {
-                  newSettlementFilePreviewUrls[round.roundName] =
-                    round.settlementFileURL;
-                }
-              }
+            const settlementRounds: SettlementRound[] = settlementData.settlementRounds.map(
+              (round: { roundName: number; settlementFileURL: string; roundPrice: number }) => ({
+                roundName: round.roundName,
+                settlementFileURL: round.settlementFileURL,
+                roundPrice: round.roundPrice || 0
+              })
             );
 
-            setSettlementFilePreviewUrls(newSettlementFilePreviewUrls);
+            setSettlementFiles({
+              settlementRounds: settlementRounds
+            });
             console.log(
-              "Loaded settlement file URLs:",
-              newSettlementFilePreviewUrls
+              "Loaded settlement files:",
+              settlementRounds
             );
           }
         } catch (error) {
@@ -227,29 +226,50 @@ export default function ContractForm({
 
       // Khởi tạo settlement files từ apiSettlementFiles nếu có (từ API response)
       const extendedInitialData = initialData as ContractUpdateDto & {
-        apiSettlementFiles?: { roundName: number; settlementFileURL: string }[];
+        apiSettlementFiles?: { roundName: number; settlementFileURL: string; roundPrice?: number }[];
       };
       if (
         extendedInitialData.apiSettlementFiles &&
         Array.isArray(extendedInitialData.apiSettlementFiles)
       ) {
-        const newSettlementFilePreviewUrls: {
-          [roundNumber: number]: string | null;
-        } = {};
-
-        extendedInitialData.apiSettlementFiles.forEach(
-          (round: { roundName: number; settlementFileURL: string }) => {
-            if (round.roundName && round.settlementFileURL) {
-              newSettlementFilePreviewUrls[round.roundName] =
-                round.settlementFileURL;
-            }
-          }
+        const apiSettlementRounds: SettlementRound[] = extendedInitialData.apiSettlementFiles.map(
+          (round: { roundName: number; settlementFileURL: string; roundPrice?: number }) => ({
+            roundName: round.roundName,
+            settlementFileURL: round.settlementFileURL,
+            roundPrice: round.roundPrice || 0
+          })
         );
 
-        setSettlementFilePreviewUrls(newSettlementFilePreviewUrls);
+        // Merge với settlement files đã có từ settlementFilesJson
+        setSettlementFiles((prev) => {
+          const existingRounds = prev.settlementRounds || [];
+          const mergedRounds = [...existingRounds];
+          
+          // Thêm hoặc cập nhật rounds từ API
+          apiSettlementRounds.forEach(apiRound => {
+            const existingIndex = mergedRounds.findIndex(
+              round => round.roundName === apiRound.roundName
+            );
+            
+            if (existingIndex >= 0) {
+              // Cập nhật round đã có
+              mergedRounds[existingIndex] = {
+                ...mergedRounds[existingIndex],
+                settlementFileURL: apiRound.settlementFileURL,
+                roundPrice: apiRound.roundPrice
+              };
+            } else {
+              // Thêm round mới
+              mergedRounds.push(apiRound);
+            }
+          });
+          
+          return { settlementRounds: mergedRounds };
+        });
+
         console.log(
           "Loaded settlement file URLs from API:",
-          newSettlementFilePreviewUrls
+          apiSettlementRounds
         );
       }
 
@@ -258,8 +278,8 @@ export default function ContractForm({
       console.log("InitialData đã format:", formattedData);
       console.log("signedAt gốc:", initialData.signedAt);
       console.log("signedAt đã format:", formattedData.signedAt);
-      console.log("contractType:", initialData.contractType);
-      console.log("parentContractId:", initialData.parentContractId);
+      // console.log("contractType:", initialData.contractType);
+      // console.log("parentContractId:", initialData.parentContractId);
       console.log("paymentRounds:", initialData.paymentRounds);
       console.log("settlementFilesJson:", initialData.settlementFilesJson);
     } else {
@@ -288,8 +308,8 @@ export default function ContractForm({
       setFilePreviewUrl(null);
       setSelectedFile(null);
       // Reset settlement files khi tạo mới
-      setSettlementFiles({});
-      setSettlementFilePreviewUrls({});
+      setSettlementFiles({ settlementRounds: [] });
+              // No longer needed - using settlementFiles state
     }
   }, [initialData]);
 
@@ -301,9 +321,9 @@ export default function ContractForm({
 
   // Auto-update paymentRounds when settlement files are loaded from API
   useEffect(() => {
-    if (isEdit && Object.keys(settlementFilePreviewUrls).length > 0) {
+    if (isEdit && settlementFiles.settlementRounds.length > 0) {
       const maxRoundNumber = Math.max(
-        ...Object.keys(settlementFilePreviewUrls).map(Number)
+        ...settlementFiles.settlementRounds.map(round => round.roundName)
       );
       if (
         maxRoundNumber > 0 &&
@@ -321,7 +341,7 @@ export default function ContractForm({
         );
       }
     }
-  }, [settlementFilePreviewUrls, isEdit]);
+  }, [settlementFiles, isEdit]);
 
   useEffect(() => {
     if (!formData) return;
@@ -360,14 +380,9 @@ export default function ContractForm({
         URL.revokeObjectURL(filePreviewUrl);
       }
 
-      // Cleanup settlement file preview URLs
-      Object.values(settlementFilePreviewUrls).forEach((url) => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-      });
+      // Cleanup is handled by settlementFiles state
     };
-  }, [filePreviewUrl, settlementFilePreviewUrls]);
+  }, [filePreviewUrl]);
 
   // Guard for null formData
   if (!formData) {
@@ -575,6 +590,9 @@ export default function ContractForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
+    // Set submitting state
+    setIsSubmitting(true);
+
     // Clear previous errors
     setFieldErrors({});
     setBusinessErrors([]);
@@ -610,17 +628,17 @@ export default function ContractForm({
       clientErrors.buyerId = t("contracts.validation.buyerIdRequired");
     }
 
-    if (!data.contractType?.trim()) {
-      clientErrors.contractType = t(
-        "contract.components.form.validation.contractTypeRequired"
-      );
-    }
+    // if (!data.contractType?.trim()) {
+    //   clientErrors.contractType = t(
+    //     "contract.components.form.validation.contractTypeRequired"
+    //   );
+    // }
 
-    if (data.contractType === "amendment" && !data.parentContractId?.trim()) {
-      clientErrors.parentContractId = t(
-        "contract.components.form.validation.parentContractIdRequired"
-      );
-    }
+    // if (data.contractType === "amendment" && !data.parentContractId?.trim()) {
+    //   clientErrors.parentContractId = t(
+    //     "contract.components.form.validation.parentContractIdRequired"
+    //   );
+    // }
 
     if (!data.startDate) {
       clientErrors.startDate = t("contracts.validation.startDateRequired");
@@ -662,13 +680,13 @@ export default function ContractForm({
     }
 
     // Validate settlement files (nếu có)
-    Object.entries(settlementFiles).forEach(([roundNumber, file]) => {
-      if (file) {
+    settlementFiles.settlementRounds.forEach((round) => {
+      if (round.settlementFile) {
         const maxSize = 10 * 1024 * 1024; // 10MB
-        if (file.size > maxSize) {
-          clientErrors[`settlementFile_${roundNumber}`] = t(
-            "contracts.validation.settlementFileSize",
-            { round: roundNumber }
+        if (round.settlementFile.size > maxSize) {
+          clientErrors[`settlementFile_${round.roundName}`] = t(
+            "contract.components.form.validation.settlementFileSize",
+            { round: round.roundName }
           );
         }
 
@@ -683,12 +701,22 @@ export default function ContractForm({
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ];
 
-        if (!allowedTypes.includes(file.type)) {
-          clientErrors[`settlementFile_${roundNumber}`] = t(
+        if (!allowedTypes.includes(round.settlementFile.type)) {
+          clientErrors[`settlementFile_${round.roundName}`] = t(
             "contracts.validation.settlementFileType",
-            { round: roundNumber }
+            { round: round.roundName }
           );
         }
+      }
+    });
+
+    // Validate roundPrice - bắt buộc khi có file hoặc URL
+    settlementFiles.settlementRounds.forEach((round) => {
+      if ((round.settlementFile || round.settlementFileURL) && (!round.roundPrice || round.roundPrice <= 0)) {
+        clientErrors[`roundPrice_${round.roundName}`] = t(
+          "contract.components.form.validation.roundPriceRequired",
+          { round: round.roundName }
+        );
       }
     });
 
@@ -754,6 +782,7 @@ export default function ContractForm({
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
       toast.error(t("contracts.validation.checkFormErrors"));
+      setIsSubmitting(false); // Reset submitting state
       return;
     }
 
@@ -809,12 +838,8 @@ export default function ContractForm({
         }
 
         // Thêm settlement files nếu có
-        if (Object.keys(settlementFiles).length > 0) {
-          (
-            updateData as ContractUpdateDto & { settlementFiles?: File[] }
-          ).settlementFiles = Object.values(settlementFiles).filter(
-            (file) => file !== null
-          );
+        if (settlementFiles.settlementRounds.length > 0) {
+          updateData.settlementFiles = settlementFiles;
         }
 
         await updateContract(dto.contractId, updateData);
@@ -859,9 +884,9 @@ export default function ContractForm({
               : dto.contractFileUrl,
           contractFile: selectedFile || undefined, // Thêm file đã chọn
           settlementFiles:
-            Object.keys(settlementFiles).length > 0
-              ? Object.values(settlementFiles).filter((file) => file !== null)
-              : undefined, // Thêm settlement files (chỉ những file không null)
+            settlementFiles.settlementRounds.length > 0
+              ? settlementFiles
+              : undefined, // Thêm settlement files
           contractItems: normalizedItems,
         } as ContractCreateDto);
 
@@ -1280,6 +1305,9 @@ export default function ContractForm({
           toast.error(errorMessage);
         }
       }
+    } finally {
+      // Reset submitting state
+      setIsSubmitting(false);
     }
   }
 
@@ -1315,53 +1343,76 @@ export default function ContractForm({
 
   // Settlement files helper functions
   const handleSettlementFileSelect = (roundNumber: number, file: File) => {
-    setSettlementFiles((prev) => ({
-      ...prev,
-      [roundNumber]: file,
-    }));
+    setSettlementFiles((prev) => {
+      const existingRoundIndex = prev.settlementRounds.findIndex(
+        (round) => round.roundName === roundNumber
+      );
+      
+      if (existingRoundIndex >= 0) {
+        // Update existing round
+        const updatedRounds = [...prev.settlementRounds];
+        updatedRounds[existingRoundIndex] = {
+          ...updatedRounds[existingRoundIndex],
+          settlementFile: file
+        };
+        return { settlementRounds: updatedRounds };
+      } else {
+        // Add new round
+        return {
+          settlementRounds: [
+            ...prev.settlementRounds,
+            {
+              roundName: roundNumber,
+              settlementFile: file,
+              roundPrice: 0
+            }
+          ]
+        };
+      }
+    });
+  };
 
-    // Create preview for images
-    if (file.type.startsWith("image/")) {
-      const url = URL.createObjectURL(file);
-      setSettlementFilePreviewUrls((prev) => ({
-        ...prev,
-        [roundNumber]: url,
-      }));
-    } else {
-      setSettlementFilePreviewUrls((prev) => ({
-        ...prev,
-        [roundNumber]: null,
-      }));
-    }
+  const handleSettlementRoundPriceChange = (roundNumber: number, price: number) => {
+    setSettlementFiles((prev) => {
+      const existingRoundIndex = prev.settlementRounds.findIndex(
+        (round) => round.roundName === roundNumber
+      );
+      
+      if (existingRoundIndex >= 0) {
+        // Update existing round
+        const updatedRounds = [...prev.settlementRounds];
+        updatedRounds[existingRoundIndex] = {
+          ...updatedRounds[existingRoundIndex],
+          roundPrice: price
+        };
+        return { settlementRounds: updatedRounds };
+      } else {
+        // Add new round
+        return {
+          settlementRounds: [
+            ...prev.settlementRounds,
+            {
+              roundName: roundNumber,
+              roundPrice: price
+            }
+          ]
+        };
+      }
+    });
+  };
 
-    toast.success(
-      t("contract.components.form.messages.fileSelected", {
-        round: roundNumber,
-        fileName: file.name,
-      })
+  const getSettlementRound = (roundNumber: number): SettlementRound | undefined => {
+    return settlementFiles.settlementRounds.find(
+      (round) => round.roundName === roundNumber
     );
   };
 
   const removeSettlementFile = (roundNumber: number) => {
-    setSettlementFiles((prev) => {
-      const newFiles = { ...prev };
-      delete newFiles[roundNumber];
-      return newFiles;
-    });
-
-    // Cleanup preview URL
-    if (settlementFilePreviewUrls[roundNumber]) {
-      URL.revokeObjectURL(settlementFilePreviewUrls[roundNumber]!);
-      setSettlementFilePreviewUrls((prev) => {
-        const newUrls = { ...prev };
-        delete newUrls[roundNumber];
-        return newUrls;
-      });
-    }
-
-    toast.info(
-      t("contract.components.form.messages.fileRemoved", { round: roundNumber })
-    );
+    setSettlementFiles((prev) => ({
+      settlementRounds: prev.settlementRounds.filter(
+        (round) => round.roundName !== roundNumber
+      )
+    }));
   };
 
   // Helper function to get display name for a field
@@ -1542,7 +1593,7 @@ export default function ContractForm({
           </div>
         )}
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        {/* <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
             <label className='block mb-1 text-sm font-medium'>
               {t("contract.components.form.fields.contractType")}{" "}
@@ -1624,7 +1675,7 @@ export default function ContractForm({
               )}
             </div>
           )}
-        </div>
+        </div> */}
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
@@ -1762,6 +1813,9 @@ export default function ContractForm({
           <p className='text-xs text-gray-500 mt-1'>
             {t("contracts.contract.support")}: Ảnh (JPG, PNG, GIF, WebP), Word
             (DOC, DOCX)
+          </p>
+          <p className='text-xs text-orange-600 mt-1 font-medium'>
+            ⚠️ {t("contract.components.form.fields.uploadFileLimit")}: 10MB
           </p>
 
           {/* Preview file đã chọn hoặc file hiện tại */}
@@ -2078,11 +2132,15 @@ export default function ContractForm({
             <label className='block mb-3 text-sm font-medium'>
               {t("contract.components.form.fields.settlementFile")}
             </label>
+            <p className='text-xs text-orange-600 mb-3 font-medium'>
+              ⚠️ {t("contract.components.form.fields.uploadEachFileLimit")}: 10MB
+            </p>
             <div className='space-y-4'>
               {Array.from({ length: data.paymentRounds }, (_, index) => {
                 const roundNumber = index + 1;
-                const hasFile = settlementFiles[roundNumber];
-                const previewUrl = settlementFilePreviewUrls[roundNumber];
+                const settlementRound = getSettlementRound(roundNumber);
+                const hasFile = settlementRound?.settlementFile;
+                const previewUrl = settlementRound?.settlementFileURL;
 
                 return (
                   <div
@@ -2103,24 +2161,43 @@ export default function ContractForm({
                       )} */}
                     </div>
 
-                    <div className='flex items-center gap-3'>
-                      <Input
-                        placeholder={t(
-                          "contract.components.form.fields.settlementFiles.placeholder"
-                        )}
-                        value={settlementFilePreviewUrls[roundNumber] || ""} // Hiển thị URL từ API hoặc để trống
-                        onChange={(e) => {
-                          // Cập nhật URL khi người dùng chỉnh sửa
-                          const newUrls = { ...settlementFilePreviewUrls };
-                          if (e.target.value.trim()) {
-                            newUrls[roundNumber] = e.target.value.trim();
-                          } else {
-                            delete newUrls[roundNumber];
-                          }
-                          setSettlementFilePreviewUrls(newUrls);
-                        }}
-                        className='flex-1'
-                      />
+                    <div className='space-y-3'>
+                      <div className='flex items-center gap-3'>
+                        <Input
+                          placeholder={t(
+                            "contract.components.form.fields.settlementFiles.placeholder"
+                          )}
+                          value={previewUrl || ""} // Hiển thị URL từ API hoặc để trống
+                          onChange={(e) => {
+                            // Cập nhật URL khi người dùng chỉnh sửa
+                            setSettlementFiles((prev) => {
+                              const existingRoundIndex = prev.settlementRounds.findIndex(
+                                (round) => round.roundName === roundNumber
+                              );
+                              
+                              if (existingRoundIndex >= 0) {
+                                const updatedRounds = [...prev.settlementRounds];
+                                updatedRounds[existingRoundIndex] = {
+                                  ...updatedRounds[existingRoundIndex],
+                                  settlementFileURL: e.target.value.trim() || undefined
+                                };
+                                return { settlementRounds: updatedRounds };
+                              } else {
+                                return {
+                                  settlementRounds: [
+                                    ...prev.settlementRounds,
+                                    {
+                                      roundName: roundNumber,
+                                      settlementFileURL: e.target.value.trim() || undefined,
+                                      roundPrice: 0
+                                    }
+                                  ]
+                                };
+                              }
+                            });
+                          }}
+                          className='flex-1'
+                        />
                       <Button
                         type='button'
                         variant='outline'
@@ -2141,10 +2218,46 @@ export default function ContractForm({
                       >
                         {t("contracts.contract.selectFile")}
                       </Button>
+                      </div>
+                      
+                      {/* Settlement File Validation Error */}
+                      {hasFieldError(`settlementFile_${roundNumber}`) && (
+                        <p className='text-red-500 text-xs mt-1'>
+                          {getFieldError(`settlementFile_${roundNumber}`)}
+                        </p>
+                      )}
+                      
+                      {/* Round Price Input */}
+                      <div className='flex items-center gap-3'>
+                        <label className='text-sm font-medium text-gray-700 whitespace-nowrap'>
+                          {t("contract.components.form.fields.settlementFiles.roundPrice")}:
+                          {(hasFile || previewUrl) && (
+                            <span className='text-red-500 ml-1'>*</span>
+                          )}
+                        </label>
+                        <Input
+                          type='number'
+                          placeholder={t("contract.components.form.fields.settlementFiles.roundPricePlaceholder")}
+                          value={settlementRound?.roundPrice || ""}
+                          onChange={(e) => {
+                            const price = parseFloat(e.target.value) || 0;
+                            handleSettlementRoundPriceChange(roundNumber, price);
+                          }}
+                          className={`flex-1 ${hasFieldError(`roundPrice_${roundNumber}`) ? "border-red-500" : ""}`}
+                          min='0'
+                          step='1000'
+                        />
+                        <span className='text-sm text-gray-500 whitespace-nowrap'>VND</span>
+                      </div>
+                      {hasFieldError(`roundPrice_${roundNumber}`) && (
+                        <p className='text-red-500 text-xs mt-1'>
+                          {getFieldError(`roundPrice_${roundNumber}`)}
+                        </p>
+                      )}
                     </div>
 
                     {/* File Preview */}
-                    {(hasFile || settlementFilePreviewUrls[roundNumber]) && (
+                    {(hasFile || previewUrl) && (
                       <div className='mt-3 p-3 bg-white border rounded-lg'>
                         <div className='flex items-center justify-between mb-2'>
                           <span className='text-sm font-medium text-gray-700'>
@@ -2160,7 +2273,7 @@ export default function ContractForm({
                           <span className='text-xs text-gray-500'>
                             {hasFile
                               ? hasFile.name
-                              : settlementFilePreviewUrls[roundNumber]}
+                              : previewUrl}
                           </span>
                         </div>
 
@@ -2186,21 +2299,17 @@ export default function ContractForm({
 
                         {/* Preview cho URL từ API (ảnh) */}
                         {!hasFile &&
-                          settlementFilePreviewUrls[roundNumber] &&
-                          settlementFilePreviewUrls[roundNumber]?.match(
-                            /\.(jpg|jpeg|png|gif|webp)$/i
-                          ) && (
+                          previewUrl &&
+                          previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) && (
                             <div className='mt-2'>
                               <img
-                                src={settlementFilePreviewUrls[roundNumber]!}
+                                src={previewUrl}
                                 alt={`Settlement Round ${roundNumber} Preview`}
                                 width={200}
                                 height={150}
                                 className='max-w-full h-32 object-contain border rounded cursor-pointer hover:opacity-80 transition-opacity'
                                 onClick={() => {
-                                  setModalImageUrl(
-                                    settlementFilePreviewUrls[roundNumber]!
-                                  );
+                                  setModalImageUrl(previewUrl);
                                   setShowImageModal(true);
                                 }}
                                 title={t("contracts.contract.clickToViewFull")}
@@ -2221,22 +2330,17 @@ export default function ContractForm({
 
                         {/* Preview cho URL từ API (PDF) */}
                         {!hasFile &&
-                          settlementFilePreviewUrls[roundNumber] &&
-                          settlementFilePreviewUrls[roundNumber]?.match(
-                            /\.pdf$/i
-                          ) && (
+                          previewUrl &&
+                          previewUrl?.match(/\.pdf$/i) && (
                             <div className='mt-2'>
                               <div className='h-20 bg-red-50 border border-red-200 rounded flex items-center justify-center'>
                                 <a
-                                  href={settlementFilePreviewUrls[roundNumber]!}
+                                  href={previewUrl}
                                   target='_blank'
                                   rel='noopener noreferrer'
                                   className='text-red-600 hover:text-red-800 text-sm font-medium'
                                 >
-                                  📄 PDF:{" "}
-                                  {settlementFilePreviewUrls[
-                                    roundNumber
-                                  ]!.split("/").pop()}
+                                  📄 PDF: {previewUrl.split("/").pop()}
                                 </a>
                               </div>
                             </div>
@@ -2255,22 +2359,17 @@ export default function ContractForm({
 
                         {/* Preview cho URL từ API (Word) */}
                         {!hasFile &&
-                          settlementFilePreviewUrls[roundNumber] &&
-                          settlementFilePreviewUrls[roundNumber]?.match(
-                            /\.(doc|docx)$/i
-                          ) && (
+                          previewUrl &&
+                          previewUrl?.match(/\.(doc|docx)$/i) && (
                             <div className='mt-2'>
                               <div className='h-20 bg-blue-50 border border-blue-200 rounded flex items-center justify-center'>
                                 <a
-                                  href={settlementFilePreviewUrls[roundNumber]!}
+                                  href={previewUrl}
                                   target='_blank'
                                   rel='noopener noreferrer'
                                   className='text-blue-600 hover:text-blue-800 text-sm font-medium'
                                 >
-                                  📝 Word:{" "}
-                                  {settlementFilePreviewUrls[
-                                    roundNumber
-                                  ]!.split("/").pop()}
+                                  📝 Word: {previewUrl.split("/").pop()}
                                 </a>
                               </div>
                             </div>
@@ -2292,24 +2391,12 @@ export default function ContractForm({
                             </Button>
                           )}
                           {!hasFile &&
-                            settlementFilePreviewUrls[roundNumber] && (
+                            previewUrl && (
                               <Button
                                 type='button'
                                 variant='outline'
                                 size='sm'
-                                onClick={() => {
-                                  const newUrls = {
-                                    ...settlementFilePreviewUrls,
-                                  };
-                                  delete newUrls[roundNumber];
-                                  setSettlementFilePreviewUrls(newUrls);
-                                  toast.info(
-                                    t(
-                                      "contract.components.form.messages.fileRemoved",
-                                      { round: roundNumber }
-                                    )
-                                  );
-                                }}
+                                onClick={() => removeSettlementFile(roundNumber)}
                                 className='text-orange-600 border-orange-200 hover:bg-orange-50'
                               >
                                 {t(
@@ -2671,9 +2758,19 @@ export default function ContractForm({
         </div>
 
         <DialogFooter className='flex justify-between pt-4'>
-          <Button type='submit' onClick={handleSubmit}>
-            <h2>{t("contracts.contract.save")}</h2>
-          </Button>
+          <LoadingButton 
+            type='submit' 
+            onClick={handleSubmit}
+            loading={isSubmitting}
+            className="relative"
+          >
+            {isSubmitting && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              </div>
+            )}
+            <h2 className={isSubmitting ? "opacity-0" : ""}>{t("contracts.contract.save")}</h2>
+          </LoadingButton>
           <Button
             type='button'
             variant='outline'

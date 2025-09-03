@@ -9,6 +9,8 @@
             "parentContract": "Contract Appendix"
           },
           "parentContractId": "Parent Contract",
+          "uploadFileLimit": "Upload File Size Limit",
+          "uploadEachFileLimit": "Upload Each File Size Limit",
           "settlementFile": "Settlement File",
           "paymentRounds": "Payment Round",
           "settlementNote": "Settlement Note",
@@ -18,13 +20,17 @@
             "placeholder": "Settlement file URL",
             "selectedFile": "Newly selected file",
             "removeFile": "🗑️ Remove new file",
-            "existingFile": "Existing file"
+            "existingFile": "Existing file",
+            "roundPrice": "Round price",
+            "roundPricePlaceholder": "Enter round price"
           }
         },
         "validation": {
           "contractTypeRequired": "Contract type is required",
           "parentContractIdRequired": "Parent contract is required if you select a parent contract",
-          "paymentRoundsPositiveInteger": "Payment rounds must be a positive integer"
+          "paymentRoundsPositiveInteger": "Payment rounds must be a positive integer",
+          "roundPriceRequired": "Round price is required if you have a file or URL",
+          "settlementFileSize": "Settlement file for round {{round}} exceeds the maximum size of 10MB"
         },
         "messages": {
           "success": "Contract saved successfully",
@@ -41,6 +47,7 @@
         "round": "Round",
         "settlementFile": "Settlement File",
         "file": "File",
+        "roundPrice": "Round Amount",
         "view": "View",
         "download": "Download",
         "viewFile": "View File",

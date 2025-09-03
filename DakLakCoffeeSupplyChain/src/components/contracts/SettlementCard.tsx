@@ -11,6 +11,7 @@ import { toast } from "sonner";
 interface SettlementFile {
   roundName: number;
   settlementFileURL: string;
+  roundPrice: number;
 }
 
 interface SettlementCardProps {
@@ -168,6 +169,9 @@ export const SettlementCard: React.FC<SettlementCardProps> = ({
                      </h4>
                      <p className="text-sm text-gray-500">
                        {t("contract.components.settlement.settlementFile")} - {getFileExtension(file.settlementFileURL).toUpperCase()}
+                     </p>
+                     <p className="text-sm font-medium text-green-600">
+                       💰 {t("contract.components.settlement.roundPrice")}: {file.roundPrice.toLocaleString()} VND
                      </p>
                    </div>
                  </div>
