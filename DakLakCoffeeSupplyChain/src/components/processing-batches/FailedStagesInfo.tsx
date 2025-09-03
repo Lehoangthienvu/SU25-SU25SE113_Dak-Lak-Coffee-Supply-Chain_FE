@@ -31,10 +31,10 @@ export default function FailedStagesInfo({ failedStages }: FailedStagesInfoProps
       <CardHeader>
         <CardTitle className="text-lg text-yellow-800 flex items-center gap-2">
           <AlertTriangle className="w-5 h-5" />
-          {t('evaluation.failedStages.title')}
+          {t('componentsprocessing.failedStagesInfo.title')}
         </CardTitle>
         <p className="text-sm text-yellow-700">
-          {t('evaluation.failedStages.description')}
+          {t('componentsprocessing.failedStagesInfo.description')}
         </p>
       </CardHeader>
       <CardContent>
@@ -58,7 +58,7 @@ export default function FailedStagesInfo({ failedStages }: FailedStagesInfoProps
           <div className="flex items-center gap-2">
             <Info className="w-4 h-4 text-blue-600" />
             <span className="text-sm text-blue-800">
-              {t('evaluation.failedStages.updateInstructions')}
+              {t('componentsprocessing.failedStagesInfo.retryInstructions')}
             </span>
           </div>
         </div>

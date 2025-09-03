@@ -351,14 +351,17 @@ export default function CreateProcessingProgressForm({
     setLoading(false);
   };
 
+  const onCancel = () => {
+    onSuccess?.();
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-              <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("processing.pages.farmerProgresses.createProgress.headerTitle")}</h2>
-          <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.createProgress.headerDescription")}</p>
-        </div>
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("componentsprocessing.createProcessingProgressForm.title")}</h2>
+        <p className="text-sm text-gray-600">{t("componentsprocessing.createProcessingProgressForm.description")}</p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Batch Selection - Chỉ hiển thị khi không có defaultBatchId */}
@@ -369,8 +372,8 @@ export default function CreateProcessingProgressForm({
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">{t("processing.pages.farmerProgresses.createProgress.batchSelectionTitle")}</h3>
-                <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.createProgress.batchSelectionDescription")}</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t("componentsprocessing.createProcessingProgressForm.batchSelectionTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("componentsprocessing.createProcessingProgressForm.batchSelectionDescription")}</p>
               </div>
             </div>
 
@@ -381,9 +384,9 @@ export default function CreateProcessingProgressForm({
                     <AlertCircle className="w-5 h-5 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-yellow-800">{t("processing.pages.farmerProgresses.createProgress.noAvailableBatches")}</p>
+                    <p className="text-sm font-medium text-yellow-800">{t("componentsprocessing.createProcessingProgressForm.noAvailableBatches")}</p>
                     <p className="text-xs text-yellow-700 mt-1">
-                      {t("processing.pages.farmerProgresses.createProgress.showBatchesStatus")}
+                      {t("componentsprocessing.createProcessingProgressForm.showBatchesStatus")}
                     </p>
                   </div>
                 </div>
@@ -395,10 +398,10 @@ export default function CreateProcessingProgressForm({
                   value={form.batchId}
                   onChange={handleChange}
                   required
-                  aria-label={t("processing.pages.farmerProgresses.createProgress.selectBatchLabel")}
+                  aria-label={t("componentsprocessing.createProcessingProgressForm.selectBatchLabel")}
                   className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white hover:border-blue-300 transition-all duration-200 shadow-sm"
                 >
-                  <option value="">{t("processing.pages.farmerProgresses.createProgress.selectBatchPlaceholder")}</option>
+                  <option value="">{t("componentsprocessing.createProcessingProgressForm.selectBatchPlaceholder")}</option>
                   {batches.map((b) => (
                     <option key={b.batchId} value={b.batchId}>
                       {b.batchCode} - {b.status}
@@ -418,17 +421,17 @@ export default function CreateProcessingProgressForm({
               <div className="p-2 bg-green-100 rounded-lg">
                 <PlayCircle className="w-5 h-5 text-green-600" />
               </div>
-                          <div>
-              <h3 className="text-lg font-semibold text-gray-900">{t("processing.pages.farmerProgresses.createProgress.stageInformationTitle")}</h3>
-              <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.createProgress.stageInformationDescription")}</p>
-            </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">{t("componentsprocessing.createProcessingProgressForm.stageInformationTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("componentsprocessing.createProcessingProgressForm.stageInformationDescription")}</p>
+              </div>
             </div>
 
             {loadingStages ? (
               <div className="bg-white rounded-lg p-4 border border-green-200">
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-                  <span className="ml-2 text-gray-600">{t("processing.pages.farmerProgresses.createProgress.loadingStages")}</span>
+                  <span className="ml-2 text-gray-600">{t("componentsprocessing.createProcessingProgressForm.loadingStages")}</span>
                 </div>
               </div>
             ) : stages.length > 0 ? (
@@ -436,162 +439,131 @@ export default function CreateProcessingProgressForm({
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium text-gray-900 text-lg">
-                      {t("processing.pages.farmerProgresses.createProgress.stageOrder", { order: stages[0]?.orderIndex || 1 })}: {stages[0]?.stageName || t("processing.pages.farmerProgresses.createProgress.firstStep")}
+                      {t("componentsprocessing.createProcessingProgressForm.stageOrder", { order: stages[0]?.orderIndex || 1 })}: {stages[0]?.stageName || t("componentsprocessing.createProcessingProgressForm.firstStep")}
                     </h4>
                     <p className="text-sm text-gray-600 mt-1">
-                      {t("processing.pages.farmerProgresses.createProgress.methodInfo", { methodName: selectedBatch.methodName || t("processing.pages.farmerProgresses.createProgress.processing") })}
+                      {t("componentsprocessing.createProcessingProgressForm.methodInfo", { methodName: selectedBatch.methodName || t("componentsprocessing.createProcessingProgressForm.processing") })}
                     </p>
                   </div>
                   <div className="text-right">
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                      {t("processing.pages.farmerProgresses.createProgress.stepOrder", { order: stages[0]?.orderIndex || 1 })}
+                      {t("componentsprocessing.createProcessingProgressForm.stepOrder", { order: stages[0]?.orderIndex || 1 })}
                     </span>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="bg-white rounded-lg p-4 border border-green-200">
-                <div className="text-center py-4">
-                  <p className="text-gray-600">{t("processing.pages.farmerProgresses.createProgress.noStageInfo")}</p>
-                </div>
+                <p className="text-gray-600">{t("componentsprocessing.createProcessingProgressForm.noStageInfo")}</p>
               </div>
             )}
           </div>
         )}
 
-        {/* Date and Quantity */}
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6">
+        {/* Progress Information */}
+        <div className="bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-200 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-purple-100 rounded-lg">
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{t("processing.pages.farmerProgresses.createProgress.progressInformationTitle")}</h3>
-              <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.createProgress.progressInformationDescription")}</p>
+              <h3 className="text-lg font-semibold text-gray-900">{t("componentsprocessing.createProcessingProgressForm.progressInformationTitle")}</h3>
+              <p className="text-sm text-gray-600">{t("componentsprocessing.createProcessingProgressForm.progressInformationDescription")}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="w-4 h-4 text-green-600" />
-                {t("processing.pages.farmerProgresses.createProgress.progressDateLabel")}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("componentsprocessing.createProcessingProgressForm.progressDateLabel")}
               </label>
-              <Input
+              <input
                 type="date"
                 name="progressDate"
                 value={form.progressDate}
                 onChange={handleChange}
                 required
-                className="border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 hover:border-purple-300 transition-all duration-200 shadow-sm"
+                className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white hover:border-purple-300 transition-all duration-200 shadow-sm"
               />
               <FieldValidationError error={error} fieldName="progressDate" />
             </div>
 
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Scale className="w-4 h-4 text-orange-600" />
-                {t("processing.pages.farmerProgresses.createProgress.outputQuantityLabel")}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("componentsprocessing.createProcessingProgressForm.outputQuantityLabel")}
               </label>
-              <div className="relative">
-                <Input
-                  type="number"
-                  name="outputQuantity"
-                  value={form.outputQuantity}
-                  onChange={handleChange}
-                  min={0}
-                  step={0.01}
-                  required
-                  className="border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-12 hover:border-purple-300 transition-all duration-200 shadow-sm"
-                  placeholder="0"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <span className="text-gray-500 text-sm font-medium">{form.outputUnit}</span>
-                </div>
-              </div>
+              <input
+                type="number"
+                name="outputQuantity"
+                value={form.outputQuantity}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white hover:border-purple-300 transition-all duration-200 shadow-sm"
+              />
               <FieldValidationError error={error} fieldName="outputQuantity" />
             </div>
           </div>
         </div>
 
-        {/* Technical Parameters Section */}
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Settings className="w-5 h-5 text-amber-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">{t("processing.pages.farmerProgresses.createProgress.technicalParametersTitle")}</h3>
-                <p className="text-sm text-gray-600">{t("processing.pages.farmerProgresses.createProgress.technicalParametersDescription")}</p>
-              </div>
+        {/* Technical Parameters */}
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <Settings className="w-5 h-5 text-orange-600" />
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addParameter}
-              className="flex items-center gap-1 text-xs bg-white hover:bg-amber-50 border-amber-300 text-amber-700"
-            >
-              <Plus className="w-3 h-3" />
-              {t("processing.pages.farmerProgresses.createProgress.addParameter")}
-            </Button>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{t("componentsprocessing.createProcessingProgressForm.technicalParametersTitle")}</h3>
+              <p className="text-sm text-gray-600">{t("componentsprocessing.createProcessingProgressForm.technicalParametersDescription")}</p>
+            </div>
           </div>
 
           <div className="space-y-4">
             {form.parameters.map((param, index) => (
-              <div key={index} className="bg-white rounded-lg p-4 border border-amber-200 shadow-sm">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t("processing.pages.farmerProgresses.createProgress.parameterNameLabel")}</label>
-                    <Input
-                      type="text"
-                      value={param.name}
-                      onChange={(e) => handleParameterChange(index, 'name', e.target.value)}
-                      placeholder={t("processing.pages.farmerProgresses.createProgress.parameterNamePlaceholder")}
-                      className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t("processing.pages.farmerProgresses.createProgress.parameterValueLabel")}</label>
-                    <Input
-                      type="text"
-                      value={param.value}
-                      onChange={(e) => handleParameterChange(index, 'value', e.target.value)}
-                      placeholder={t("processing.pages.farmerProgresses.createProgress.parameterValuePlaceholder")}
-                      className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">{t("processing.pages.farmerProgresses.createProgress.parameterUnitLabel")}</label>
-                      <Input
-                        type="text"
-                        value={param.unit}
-                        onChange={(e) => handleParameterChange(index, 'unit', e.target.value)}
-                        placeholder={t("processing.pages.farmerProgresses.createProgress.parameterUnitPlaceholder")}
-                        className="text-sm border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-300 transition-all duration-200"
-                      />
-                    </div>
-                    {form.parameters.length > 1 && (
-                      <div className="flex items-end">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeParameter(index)}
-                          className="px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white rounded-lg border border-orange-200">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{t("componentsprocessing.createProcessingProgressForm.parameterNameLabel")}</label>
+                  <input
+                    type="text"
+                    value={param.name}
+                    onChange={(e) => handleParameterChange(index, 'name', e.target.value)}
+                    placeholder={t("componentsprocessing.createProcessingProgressForm.parameterNamePlaceholder")}
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{t("componentsprocessing.createProcessingProgressForm.parameterValueLabel")}</label>
+                  <input
+                    type="text"
+                    value={param.value}
+                    onChange={(e) => handleParameterChange(index, 'value', e.target.value)}
+                    placeholder={t("componentsprocessing.createProcessingProgressForm.parameterValuePlaceholder")}
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{t("componentsprocessing.createProcessingProgressForm.parameterUnitLabel")}</label>
+                  <input
+                    type="text"
+                    value={param.unit}
+                    onChange={(e) => handleParameterChange(index, 'unit', e.target.value)}
+                    placeholder={t("componentsprocessing.createProcessingProgressForm.parameterUnitPlaceholder")}
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
                 </div>
               </div>
             ))}
+
+            <button
+              type="button"
+              onClick={addParameter}
+              className="flex items-center gap-2 text-orange-600 hover:text-orange-700 text-sm font-medium"
+            >
+              <Plus className="w-4 h-4" />
+              {t("componentsprocessing.createProcessingProgressForm.addParameter")}
+            </button>
           </div>
         </div>
 
@@ -630,24 +602,20 @@ export default function CreateProcessingProgressForm({
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
-          <Button
+          <button
             type="button"
-            variant="outline"
-            onClick={() => {
-              onSuccess?.();
-            }}
-            className="px-8 py-3 hover:bg-gray-50 border-gray-300 text-gray-700 font-medium transition-all duration-200"
+            onClick={onCancel}
+            className="px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 shadow-sm"
           >
-            {t("processing.pages.farmerProgresses.createProgress.cancelButton")}
-          </Button>
-          
-          <Button
+            {t("componentsprocessing.createProcessingProgressForm.cancel")}
+          </button>
+          <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            className="px-6 py-3 text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? t("processing.pages.farmerProgresses.createProgress.saving") : t("processing.pages.farmerProgresses.createProgress.createProgress")}
-          </Button>
+            {loading ? t("componentsprocessing.createProcessingProgressForm.submitting") : t("componentsprocessing.createProcessingProgressForm.submit")}
+          </button>
         </div>
       </form>
     </div>

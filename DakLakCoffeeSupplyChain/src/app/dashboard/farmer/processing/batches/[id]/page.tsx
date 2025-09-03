@@ -33,7 +33,9 @@ import {
   Pencil,
   Target,
   TrendingDown,
-  Eye
+  Eye,
+  RefreshCw,
+  Clock
 } from "lucide-react";
 import {
   Dialog,
@@ -269,12 +271,30 @@ export default function ViewProcessingBatch() {
   const hasFailedEvaluation = useMemo(() => {
     if (!evaluations || evaluations.length === 0) return false;
 
+    // 🔧 DEBUG: Log tất cả evaluations để kiểm tra
+    console.log('🔍 DEBUG: All evaluations:', evaluations);
+    
     // Kiểm tra xem có evaluation nào có thông tin về stages cần retry không
     const hasEvaluationWithFailedStages = evaluations.some(evaluation => {
       const comments = evaluation.comments || '';
-      return comments.includes('Giai đoạn cần cập nhật:') || comments.includes('Tiến trình có vấn đề:');
+      console.log('🔍 DEBUG: Evaluation comments:', comments);
+      console.log('🔍 DEBUG: Evaluation result:', evaluation.evaluationResult);
+      
+             // Kiểm tra cả evaluationResult === 'Fail' và comments có chứa thông tin stages
+       const hasFailedResult = evaluation.evaluationResult === 'Fail';
+       const hasStageInfo = comments.includes('🔧 Giai đoạn cần cập nhật:') || 
+                           comments.includes('giai đoạn cần cập nhật:') || 
+                           comments.includes('Giai đoạn cần cập nhật:') ||
+                           comments.includes('Tiến trình có vấn đề:') ||
+                           comments.includes('StageId:');
+      
+      console.log('🔍 DEBUG: Has failed result:', hasFailedResult);
+      console.log('🔍 DEBUG: Has stage info:', hasStageInfo);
+      
+      return hasFailedResult || hasStageInfo;
     });
 
+    console.log('🔍 DEBUG: Has failed evaluation:', hasEvaluationWithFailedStages);
     return hasEvaluationWithFailedStages;
   }, [evaluations]);
 
@@ -307,50 +327,101 @@ export default function ViewProcessingBatch() {
     return null;
   }, [hasFailedEvaluation, evaluations, t]);
 
+  // State để lưu max OrderIndex của method và stages info
+  const [maxOrderIndex, setMaxOrderIndex] = useState<number>(0);
+  const [stagesInfo, setStagesInfo] = useState<Array<{stageId: number, stageName: string, orderIndex: number}>>([]);
+
+  // Lấy OrderIndex lớn nhất trong method và thông tin stages
+  useEffect(() => {
+    const fetchStagesInfo = async () => {
+      if (batch?.methodId) {
+        try {
+          const stages = await getProcessingStagesByMethodId(batch.methodId);
+
+          if (stages && stages.length > 0) {
+            // Tìm OrderIndex lớn nhất
+            const maxIndex = Math.max(...stages.map((stage: any) => stage.orderIndex));
+            setMaxOrderIndex(maxIndex);
+            
+            // Lưu thông tin stages để map StageId sang tên stage
+            const stagesData = stages.map((stage: any) => ({
+              stageId: stage.stageId,
+              stageName: stage.stageName,
+              orderIndex: stage.orderIndex
+            }));
+            setStagesInfo(stagesData);
+          } else {
+            setMaxOrderIndex(batch.stageCount || 0);
+            setStagesInfo([]);
+          }
+        } catch (error) {
+          console.error("DEBUG: Error fetching stages:", error);
+          // Fallback: sử dụng stageCount từ batch
+          setMaxOrderIndex(batch.stageCount || 0);
+          setStagesInfo([]);
+        }
+      }
+    };
+
+    fetchStagesInfo();
+  }, [batch?.methodId, batch?.stageCount]);
+
   // Lấy danh sách các stage bị fail
   const failedStages = useMemo(() => {
     if (!evaluations || evaluations.length === 0) return [];
 
-    // Tìm evaluation có thông tin về stages cần retry
-    const evaluationWithFailedStages = evaluations.find(evaluation => {
-      const comments = evaluation.comments || '';
-      return comments.includes('Giai đoạn cần cập nhật:') || comments.includes('Tiến trình có vấn đề:');
-    });
+         // 🔧 MỚI: Tìm evaluation có thông tin về stages cần retry - mở rộng pattern matching
+     const evaluationWithFailedStages = evaluations.find(evaluation => {
+       const comments = evaluation.comments || '';
+       return comments.includes('🔧 Giai đoạn cần cập nhật:') || 
+              comments.includes('giai đoạn cần cập nhật:') || 
+              comments.includes('Giai đoạn cần cập nhật:') ||
+              comments.includes('Tiến trình có vấn đề:') ||
+              comments.includes('StageId:');
+     });
 
     if (!evaluationWithFailedStages) return [];
 
     const comments = evaluationWithFailedStages.comments || '';
+    console.log('🔍 DEBUG: Parsing comments for failed stages:', comments);
 
     // Parse danh sách stage từ comments
     const stages: Array<{name: string, order: number}> = [];
 
-    // Pattern 1: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
-    const stagePattern = /Giai đoạn cần cập nhật:\s*(.+?)(?:\n|$)/;
-    const stageMatch = comments.match(stagePattern);
-    
-    if (stageMatch) {
-      const stageText = stageMatch[1];
-      // 🔧 CẢI THIỆN: Pattern để parse chính xác hơn, loại bỏ dấu phẩy
-      const individualStagePattern = /([^(,]+)\s*\(Thứ tự:\s*(\d+)\)/g;
-      
-      let match;
-      while ((match = individualStagePattern.exec(stageText)) !== null) {
-        // 🔧 MỚI: Loại bỏ dấu phẩy và khoảng trắng thừa
-        const stageName = match[1].trim().replace(/^[,\s]+|[,\s]+$/g, '');
-        stages.push({
-          name: stageName,
-          order: parseInt(match[2])
-        });
-      }
-    }
+         // 🔧 MỚI: Pattern 1 - "🔧 Giai đoạn cần cập nhật: StageId: 1, StageId: 2, StageId: 3, StageId: 4"
+     const stageIdPattern = /🔧 Giai đoạn cần cập nhật:\s*StageId:\s*([\d,\s]+)/;
+     const stageIdMatch = comments.match(stageIdPattern);
+     
+     if (stageIdMatch) {
+       console.log('🔍 DEBUG: Found StageId pattern:', stageIdMatch[1]);
+       const stageIds = stageIdMatch[1].split(',').map(id => parseInt(id.trim()));
+       
+       // 🔧 MỚI: Lấy thông tin stage từ stagesInfo để map StageId sang tên stage
+       stageIds.forEach(stageId => {
+         const stageInfo = stagesInfo.find(s => s.stageId === stageId);
+         if (stageInfo) {
+           stages.push({
+             name: stageInfo.stageName,
+             order: stageInfo.orderIndex
+           });
+         } else {
+           // Fallback nếu không tìm thấy stage info
+           stages.push({
+             name: `Stage ${stageId}`,
+             order: stageId
+           });
+         }
+       });
+     }
 
-    // Pattern 2: "Tiến trình có vấn đề: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    // Pattern 2: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
     if (stages.length === 0) {
-      const problemPattern = /Tiến trình có vấn đề:\s*(.+?)(?:\n|$)/;
-      const problemMatch = comments.match(problemPattern);
+      const stagePattern = /Giai đoạn cần cập nhật:\s*(.+?)(?:\n|$)/;
+      const stageMatch = comments.match(stagePattern);
       
-      if (problemMatch) {
-        const stageText = problemMatch[1];
+      if (stageMatch) {
+        const stageText = stageMatch[1];
+        console.log('🔍 DEBUG: Found stage pattern:', stageText);
         // 🔧 CẢI THIỆN: Pattern để parse chính xác hơn, loại bỏ dấu phẩy
         const individualStagePattern = /([^(,]+)\s*\(Thứ tự:\s*(\d+)\)/g;
         
@@ -366,6 +437,31 @@ export default function ViewProcessingBatch() {
       }
     }
 
+    // Pattern 3: "Tiến trình có vấn đề: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
+    if (stages.length === 0) {
+      const problemPattern = /Tiến trình có vấn đề:\s*(.+?)(?:\n|$)/;
+      const problemMatch = comments.match(problemPattern);
+      
+      if (problemMatch) {
+        const stageText = problemMatch[1];
+        console.log('🔍 DEBUG: Found problem pattern:', stageText);
+        // 🔧 CẢI THIỆN: Pattern để parse chính xác hơn, loại bỏ dấu phẩy
+        const individualStagePattern = /([^(,]+)\s*\(Thứ tự:\s*(\d+)\)/g;
+        
+        let match;
+        while ((match = individualStagePattern.exec(stageText)) !== null) {
+          // 🔧 MỚI: Loại bỏ dấu phẩy và khoảng trắng thừa
+          const stageName = match[1].trim().replace(/^[,\s]+|[,\s]+$/g, '');
+          stages.push({
+            name: stageName,
+            order: parseInt(match[2])
+          });
+        }
+      }
+    }
+
+    console.log('🔍 DEBUG: Parsed stages:', stages);
+
     // 🔧 MỚI: Loại bỏ các stages đã được retry
     const retriedStages = batch?.progresses?.filter(p => 
       p.stageDescription && p.stageDescription.includes('Làm lại (Retry)')
@@ -375,38 +471,43 @@ export default function ViewProcessingBatch() {
       !retriedStages.includes(stage.name)
     );
 
-    return remainingStages;
-  }, [evaluations, batch?.progresses]);
+         console.log('🔍 DEBUG: Remaining stages after retry filter:', remainingStages);
+     return remainingStages;
+   }, [evaluations, batch?.progresses, batch?.methodId, stagesInfo]);
 
-  // State để lưu max OrderIndex của method
-  const [maxOrderIndex, setMaxOrderIndex] = useState<number>(0);
-
-  // Lấy OrderIndex lớn nhất trong method
+  // Lấy OrderIndex lớn nhất trong method và thông tin stages
   useEffect(() => {
-    const fetchMaxOrderIndex = async () => {
+    const fetchStagesInfo = async () => {
       if (batch?.methodId) {
         try {
-
           const stages = await getProcessingStagesByMethodId(batch.methodId);
 
           if (stages && stages.length > 0) {
             // Tìm OrderIndex lớn nhất
             const maxIndex = Math.max(...stages.map((stage: any) => stage.orderIndex));
-
             setMaxOrderIndex(maxIndex);
+            
+            // Lưu thông tin stages để map StageId sang tên stage
+            const stagesData = stages.map((stage: any) => ({
+              stageId: stage.stageId,
+              stageName: stage.stageName,
+              orderIndex: stage.orderIndex
+            }));
+            setStagesInfo(stagesData);
           } else {
-
             setMaxOrderIndex(batch.stageCount || 0);
+            setStagesInfo([]);
           }
         } catch (error) {
           console.error("DEBUG: Error fetching stages:", error);
           // Fallback: sử dụng stageCount từ batch
           setMaxOrderIndex(batch.stageCount || 0);
+          setStagesInfo([]);
         }
       }
     };
 
-    fetchMaxOrderIndex();
+    fetchStagesInfo();
   }, [batch?.methodId, batch?.stageCount]);
 
   // Kiểm tra xem có phải stage cuối không
@@ -1117,29 +1218,171 @@ export default function ViewProcessingBatch() {
 
 
 
-        {/* Evaluations Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
-                          <div className="flex items-center justify-between">
+        {/* 🔧 MỚI: Failed Evaluations Section - Hiển thị riêng các đánh giá fail */}
+        {hasFailedEvaluation && (
+          <div className="bg-white rounded-2xl shadow-lg border border-red-200 overflow-hidden mb-6">
+            <div className="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+              <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <ClipboardCheck className="w-5 h-5" />
-                    {t('processing.pages.farmerBatches.batchDetail.evaluations.title')}
+                    <AlertTriangle className="w-5 h-5" />
+                    Đánh giá cần cập nhật
                   </h2>
-                  <p className="text-blue-100 mt-1">{t('processing.pages.farmerBatches.batchDetail.evaluations.subtitle')}</p>
+                  <p className="text-red-100 mt-1">Các giai đoạn cần cải thiện và làm lại</p>
                 </div>
-                {evaluations.length > 0 && (
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push(`/dashboard/farmer/evaluations/${batch.batchId}`)}
-                    className="bg-white/20 hover:bg-white/30 text-white border-white/40"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Xem chi tiết đánh giá
-                  </Button>
-                )}
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                    {failedStages.length} giai đoạn cần cập nhật
+                  </span>
+                </div>
               </div>
-           </div>
+            </div>
+
+            <div className="p-6">
+                             {/* Thông báo tổng quan */}
+               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                 <div className="flex items-center gap-2">
+                   <AlertTriangle className="w-5 h-5 text-red-600" />
+                   <div>
+                     <h4 className="text-sm font-medium text-red-900">
+                       Tổng số tiêu chí: {
+                         (() => {
+                           const failedEvaluation = evaluations.find(e => e.evaluationResult === 'Fail');
+                           if (!failedEvaluation?.comments) return '0';
+                           
+                           // 🔧 MỚI: Parse từ format thực tế trong comments
+                           const totalMatch = failedEvaluation.comments.match(/Tổng số tiêu chí:\s*(\d+)/);
+                           if (totalMatch) return totalMatch[1];
+                           
+                           // Fallback: đếm số tiêu chí từ EVALUATION_TYPE format
+                           const criteriaMatches = failedEvaluation.comments.match(/CRITERIA:/g);
+                           return criteriaMatches ? criteriaMatches.length.toString() : '0';
+                         })()
+                       }
+                     </h4>
+                     <div className="flex items-center gap-4 mt-1">
+                       <span className="text-sm text-green-700 flex items-center gap-1">
+                         <CheckCircle className="w-4 h-4" />
+                         {
+                           (() => {
+                             const failedEvaluation = evaluations.find(e => e.evaluationResult === 'Fail');
+                             if (!failedEvaluation?.comments) return '0';
+                             
+                             // 🔧 MỚI: Parse từ format thực tế
+                             const passedMatch = failedEvaluation.comments.match(/(\d+)\s*Đạt/);
+                             if (passedMatch) return passedMatch[1];
+                             
+                             // Fallback: đếm RESULT:PASS trong EVALUATION_TYPE format
+                             const passedCriteria = failedEvaluation.comments.match(/RESULT:PASS/g);
+                             return passedCriteria ? passedCriteria.length.toString() : '0';
+                           })()
+                         } Đạt
+                       </span>
+                       <span className="text-sm text-red-700 flex items-center gap-1">
+                         <X className="w-4 h-4" />
+                         {
+                           (() => {
+                             const failedEvaluation = evaluations.find(e => e.evaluationResult === 'Fail');
+                             if (!failedEvaluation?.comments) return '0';
+                             
+                             // 🔧 MỚI: Parse từ format thực tế
+                             const failedMatch = failedEvaluation.comments.match(/(\d+)\s*Không đạt/);
+                             if (failedMatch) return failedMatch[1];
+                             
+                             // Fallback: đếm RESULT:FAIL trong EVALUATION_TYPE format
+                             const failedCriteria = failedEvaluation.comments.match(/RESULT:FAIL/g);
+                             return failedCriteria ? failedCriteria.length.toString() : '0';
+                           })()
+                         } Không đạt
+                       </span>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+              {/* Danh sách các giai đoạn cần cập nhật */}
+              {failedStages.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-900">Các giai đoạn cần cải thiện:</h4>
+                  {failedStages.map((stage, index) => (
+                    <div key={index} className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                            <AlertTriangle className="w-5 h-5 text-red-600" />
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-red-900">▲ Công đoạn cần cải thiện</h5>
+                            <p className="text-sm text-red-700">Công đoạn: {stage.name} (Bước {stage.order})</p>
+                            <p className="text-sm text-red-700">Vấn đề: Tiến trình có vấn đề: {stage.name} (Thứ tự: {stage.order})</p>
+                            <p className="text-sm text-green-700">Khuyến nghị: Cần cải thiện công đoạn này theo khuyến nghị của chuyên gia</p>
+                          </div>
+                        </div>
+                                                 <Button
+                           onClick={() => {
+                             setSelectedStageForUpdate({
+                               stageName: stage.name,
+                               stageOrder: stage.order
+                             });
+                             setOpenUpdateAfterEvaluationModal(true);
+                           }}
+                           className="bg-red-600 hover:bg-red-700 text-white"
+                         >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Retry Stage
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Hướng dẫn */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h5 className="text-sm font-medium text-green-900 mb-1">Hướng dẫn:</h5>
+                    <p className="text-sm text-green-800">Vui lòng cải thiện công đoạn này theo khuyến nghị của chuyên gia và cập nhật lại tiến trình.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trạng thái chờ */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                <div className="flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4 text-gray-600" />
+                  <Clock className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm text-gray-700">Đang chờ {batch.farmerName || 'Nông dân'} cập nhật lại công đoạn {failedStages[0]?.name}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Evaluations Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <ClipboardCheck className="w-5 h-5" />
+                  {t('processing.pages.farmerBatches.batchDetail.evaluations.title')}
+                </h2>
+                <p className="text-blue-100 mt-1">{t('processing.pages.farmerBatches.batchDetail.evaluations.subtitle')}</p>
+              </div>
+              {evaluations.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() => router.push(`/dashboard/farmer/evaluations/${batch.batchId}`)}
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/40"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Xem chi tiết đánh giá
+                </Button>
+              )}
+            </div>
+          </div>
 
                      <div className="p-6">
             

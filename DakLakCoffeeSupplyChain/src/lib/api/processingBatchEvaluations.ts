@@ -48,6 +48,8 @@ export interface CreateEvaluationDto {
     Notes?: string;
   }>;
   ExpertNotes?: string;
+  // 🔧 MỚI: StageId được expert chọn khi đánh giá fail
+  ExpertSelectedStageId?: number;
 }
 
 // Interface dựa trên EvaluationUpdateDto từ BE

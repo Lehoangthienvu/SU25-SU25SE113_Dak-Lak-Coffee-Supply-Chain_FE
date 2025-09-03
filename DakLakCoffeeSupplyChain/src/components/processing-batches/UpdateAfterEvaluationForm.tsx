@@ -329,7 +329,7 @@ export default function UpdateAfterEvaluationForm({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">{t('updateAfterEvaluation.title')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('componentsprocessing.updateAfterEvaluationForm.title')}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -342,7 +342,7 @@ export default function UpdateAfterEvaluationForm({
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-800">
                 <AlertTriangle className="h-5 w-5" />
-                {t('updateAfterEvaluation.title')}
+                {t('componentsprocessing.updateAfterEvaluationForm.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -387,7 +387,7 @@ export default function UpdateAfterEvaluationForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="progressDate">{t('updateAfterEvaluation.progressDate')}</Label>
+              <Label htmlFor="progressDate">{t('componentsprocessing.updateAfterEvaluationForm.progressDate')}</Label>
               <Input
                 id="progressDate"
                 name="progressDate"
@@ -399,46 +399,46 @@ export default function UpdateAfterEvaluationForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="outputQuantity">{t('updateAfterEvaluation.outputQuantity')}</Label>
-                              <Input
-                  id="outputQuantity"
-                  name="outputQuantity"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  value={form.outputQuantity}
-                  onChange={handleChange}
-                  onKeyDown={(e) => {
-                    // Cho phép backspace, delete, arrow keys, etc.
-                    if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
-                      return;
-                    }
-                    // Cho phép số và dấu chấm
-                    if (!/[\d.]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  placeholder="Nhập khối lượng..."
-                  className={`border-orange-200 focus:border-orange-400 ${
-                    isRetry && retryValidation && !retryValidation.isValid ? 'border-red-500' : ''
-                  }`}
-                />
+              <Label htmlFor="outputQuantity">{t('componentsprocessing.updateAfterEvaluationForm.outputQuantity')}</Label>
+              <Input
+                id="outputQuantity"
+                name="outputQuantity"
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={form.outputQuantity}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  // Cho phép backspace, delete, arrow keys, etc.
+                  if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                    return;
+                  }
+                  // Cho phép số và dấu chấm
+                  if (!/[\d.]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                placeholder="Nhập khối lượng..."
+                className={`border-orange-200 focus:border-orange-400 ${
+                  isRetry && retryValidation && !retryValidation.isValid ? 'border-red-500' : ''
+                }`}
+              />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="outputUnit">{t('updateAfterEvaluation.outputUnit')}</Label>
+            <Label htmlFor="outputUnit">{t('componentsprocessing.updateAfterEvaluationForm.outputUnit')}</Label>
             <Select value={form.outputUnit} onValueChange={(value) => setForm(prev => ({ ...prev, outputUnit: value }))}>
               <SelectTrigger className="border-orange-200 focus:border-orange-400">
-                <SelectValue placeholder={t('updateAfterEvaluation.selectUnit')} />
+                <SelectValue placeholder={t('componentsprocessing.updateAfterEvaluationForm.selectUnit')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="kg">{t('updateAfterEvaluation.units.kg')}</SelectItem>
-                <SelectItem value="g">{t('updateAfterEvaluation.units.g')}</SelectItem>
-                <SelectItem value="ton">{t('updateAfterEvaluation.units.ton')}</SelectItem>
-                <SelectItem value="quintal">{t('updateAfterEvaluation.units.quintal')}</SelectItem>
-                <SelectItem value="yen">{t('updateAfterEvaluation.units.yen')}</SelectItem>
-                <SelectItem value="lang">{t('updateAfterEvaluation.units.lang')}</SelectItem>
+                <SelectItem value="kg">{t('componentsprocessing.updateAfterEvaluationForm.units.kg')}</SelectItem>
+                <SelectItem value="g">{t('componentsprocessing.updateAfterEvaluationForm.units.g')}</SelectItem>
+                <SelectItem value="ton">{t('componentsprocessing.updateAfterEvaluationForm.units.ton')}</SelectItem>
+                <SelectItem value="quintal">{t('componentsprocessing.updateAfterEvaluationForm.units.quintal')}</SelectItem>
+                <SelectItem value="yen">{t('componentsprocessing.updateAfterEvaluationForm.units.yen')}</SelectItem>
+                <SelectItem value="lang">{t('componentsprocessing.updateAfterEvaluationForm.units.lang')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -507,7 +507,7 @@ export default function UpdateAfterEvaluationForm({
           {/* Thông số kỹ thuật */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.technicalParameters')}</h4>
+              <h4 className="font-medium text-gray-900">{t('componentsprocessing.updateAfterEvaluationForm.technicalParameters')}</h4>
               <Button
                 type="button"
                 variant="outline"
@@ -519,40 +519,40 @@ export default function UpdateAfterEvaluationForm({
                   recordedAt: new Date().toISOString(),
                 }])}
               >
-                {t('updateAfterEvaluation.addParameter')}
+                {t('componentsprocessing.updateAfterEvaluationForm.addParameter')}
               </Button>
             </div>
             
             {/* Single parameter */}
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="parameterName">{t('updateAfterEvaluation.parameterName')}</Label>
+                <Label htmlFor="parameterName">{t('componentsprocessing.updateAfterEvaluationForm.parameterName')}</Label>
                 <Input
                   id="parameterName"
                   name="parameterName"
                   value={form.parameterName}
                   onChange={handleChange}
-                  placeholder={t('updateAfterEvaluation.parameterNamePlaceholder')}
+                                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.parameterNamePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="parameterValue">{t('updateAfterEvaluation.parameterValue')}</Label>
+                <Label htmlFor="parameterValue">{t('componentsprocessing.updateAfterEvaluationForm.parameterValue')}</Label>
                 <Input
                   id="parameterValue"
                   name="parameterValue"
                   value={form.parameterValue}
                   onChange={handleChange}
-                  placeholder={t('updateAfterEvaluation.parameterValuePlaceholder')}
+                                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.parameterValuePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="unit">{t('updateAfterEvaluation.unit')}</Label>
+                <Label htmlFor="unit">{t('componentsprocessing.updateAfterEvaluationForm.unit')}</Label>
                 <Input
                   id="unit"
                   name="unit"
                   value={form.unit}
                   onChange={handleChange}
-                  placeholder={t('updateAfterEvaluation.unitPlaceholder')}
+                                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.unitPlaceholder')}
                 />
               </div>
             </div>
@@ -561,7 +561,7 @@ export default function UpdateAfterEvaluationForm({
             {parameters.map((param, index) => (
               <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="font-medium text-gray-700">{t('updateAfterEvaluation.parameter')}</h5>
+                  <h5 className="font-medium text-gray-700">{t('componentsprocessing.updateAfterEvaluationForm.parameter')}</h5>
                   <Button
                     type="button"
                     variant="outline"
@@ -574,33 +574,33 @@ export default function UpdateAfterEvaluationForm({
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.parameterName')}</Label>
+                    <Label className="text-sm font-medium">{t('componentsprocessing.updateAfterEvaluationForm.parameterName')}</Label>
                     <Input
                       value={param.parameterName}
                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
                         i === index ? { ...p, parameterName: e.target.value } : p
                       ))}
-                      placeholder={t('updateAfterEvaluation.parameterNamePlaceholder')}
+                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.parameterNamePlaceholder')}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.parameterValue')}</Label>
+                  <div className="space-y-2"> 
+                    <Label className="text-sm font-medium">{t('componentsprocessing.updateAfterEvaluationForm.parameterValue')}</Label>
                     <Input
                       value={param.parameterValue}
                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
                         i === index ? { ...p, parameterValue: e.target.value } : p
                       ))}
-                      placeholder={t('updateAfterEvaluation.parameterValuePlaceholder')}
+                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.parameterValuePlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">{t('updateAfterEvaluation.unit')}</Label>
+                    <Label className="text-sm font-medium">{t('componentsprocessing.updateAfterEvaluationForm.unit')}</Label>
                     <Input
                       value={param.unit}
                       onChange={(e) => setParameters(prev => prev.map((p, i) => 
                         i === index ? { ...p, unit: e.target.value } : p
                       ))}
-                      placeholder={t('updateAfterEvaluation.unitPlaceholder')}
+                      placeholder={t('componentsprocessing.updateAfterEvaluationForm.unitPlaceholder')}
                     />
                   </div>
                 </div>
@@ -610,9 +610,9 @@ export default function UpdateAfterEvaluationForm({
 
           {/* Upload hình ảnh */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.images')}</h4>
+            <h4 className="font-medium text-gray-900">{t('componentsprocessing.updateAfterEvaluationForm.images')}</h4>
             <div className="space-y-2">
-              <Label htmlFor="photoFiles">{t('updateAfterEvaluation.selectImages')}</Label>
+              <Label htmlFor="photoFiles">{t('componentsprocessing.updateAfterEvaluationForm.selectImages')}</Label>
               <Input
                 id="photoFiles"
                 type="file"
@@ -646,9 +646,9 @@ export default function UpdateAfterEvaluationForm({
 
           {/* Upload video */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">{t('updateAfterEvaluation.videos')}</h4>
+            <h4 className="font-medium text-gray-900">{t('componentsprocessing.updateAfterEvaluationForm.videos')}</h4>
             <div className="space-y-2">
-              <Label htmlFor="videoFiles">{t('updateAfterEvaluation.selectVideos')}</Label>
+              <Label htmlFor="videoFiles">{t('componentsprocessing.updateAfterEvaluationForm.selectVideos')}</Label>
               <Input
                 id="videoFiles"
                 type="file"
@@ -684,7 +684,7 @@ export default function UpdateAfterEvaluationForm({
               disabled={loading}
               onClick={onClose}
             >
-              {t('updateAfterEvaluation.cancel')}
+              {t('componentsprocessing.updateAfterEvaluationForm.cancel')}
             </Button>
             <Button
               type="submit"

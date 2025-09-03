@@ -69,13 +69,13 @@ export default function AdvanceProcessingProgressForm({
 
   // Tính toán button text dựa trên failedStageInfo
   const getButtonText = () => {
-    if (loading) return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.saving');
+    if (loading) return t('componentsprocessing.advanceProcessingProgressForm.submitting');
     
     if (failedStageInfo) {
-      return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.submit');
+      return t('componentsprocessing.advanceProcessingProgressForm.submit');
     }
     
-    return t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.submit');
+    return t('componentsprocessing.advanceProcessingProgressForm.submit');
   };
 
   // Load available stages khi component mount
@@ -156,17 +156,17 @@ export default function AdvanceProcessingProgressForm({
 
               // Không cần validate selectedStageId vì đã tự động chọn
            if (!progressDate) {
-        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.progressDateRequired'));
+        setError(t('componentsprocessing.advanceProcessingProgressForm.validation.progressDateRequired'));
         setLoading(false);
         return;
       }
       if (outputQuantity <= 0) {
-        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.outputQuantityRequired'));
+        setError(t('componentsprocessing.advanceProcessingProgressForm.validation.outputQuantityRequired'));
         setLoading(false);
         return;
       }
       if (!outputUnit.trim()) {
-        setError(t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.validation.outputUnitRequired'));
+        setError(t('componentsprocessing.advanceProcessingProgressForm.validation.outputUnitRequired'));
         setLoading(false);
         return;
       }
@@ -303,11 +303,11 @@ export default function AdvanceProcessingProgressForm({
           </div>
           <div>
                          <h2 className="text-white font-bold text-xl">
-               {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.title')}
-             </h2>
-                          <p className="text-orange-100 text-sm">
-                {failedStageInfo ? `${t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.improvementStage')}: ${failedStageInfo.stageName}` : latestProgress ? `${t('processing.stageInfo.nextStep')}: ${latestProgress.stageName}` : t('processing.stageInfo.firstProgress')}
-              </p>
+                             {t('componentsprocessing.advanceProcessingProgressForm.form.title')}
+            </h2>
+            <p className="text-orange-100 text-sm">
+              {failedStageInfo ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.improvementStage')}: ${failedStageInfo.stageName}` : latestProgress ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.nextStep')}: ${latestProgress.stageName}` : t('componentsprocessing.advanceProcessingProgressForm.stageInfo.firstProgress')}
+            </p>
           </div>
         </div>
         
@@ -341,25 +341,25 @@ export default function AdvanceProcessingProgressForm({
               failedStageInfo ? 'bg-red-500' : 'bg-blue-500'
             }`}></div>
                          <span className="font-semibold">
-               {failedStageInfo ? t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.errorStage') : t('processing.stageInfo.currentStage')}
+               {failedStageInfo ? t('componentsprocessing.advanceProcessingProgressForm.stageInfo.errorStage') : t('componentsprocessing.advanceProcessingProgressForm.stageInfo.currentStage')}
              </span>
                           <span className="font-bold text-lg">
-                {failedStageInfo ? failedStageInfo.stageName : latestProgress ? latestProgress.stageName : t('processing.stageInfo.noProgress')}
+                {failedStageInfo ? failedStageInfo.stageName : latestProgress ? latestProgress.stageName : t('componentsprocessing.advanceProcessingProgressForm.stageInfo.noProgress')}
               </span>
               {!failedStageInfo && latestProgress && (
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.stepNumber')} {latestProgress.stepIndex}
+                  {t('componentsprocessing.advanceProcessingProgressForm.stageInfo.stepNumber')} {latestProgress.stepIndex}
                 </span>
               )}
               {latestProgress && (
                 <span className="ml-auto text-xs opacity-75">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.previousDate')} {new Date(latestProgress.progressDate).toLocaleDateString("vi-VN")}
+                  {t('componentsprocessing.advanceProcessingProgressForm.stageInfo.previousDate')} {new Date(latestProgress.progressDate).toLocaleDateString("vi-VN")}
                 </span>
               )}
           </div>
                      {failedStageInfo && (
              <div className="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-               <strong>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.failureReason')}</strong> {failedStageInfo.failureDetails}
+               <strong>{t('componentsprocessing.advanceProcessingProgressForm.stageInfo.failureReason')}</strong> {failedStageInfo.failureDetails}
              </div>
            )}
         </div>
@@ -375,7 +375,7 @@ export default function AdvanceProcessingProgressForm({
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                  </svg>
                </div>
-               {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.basicInfo.title')}
+               {t('componentsprocessing.advanceProcessingProgressForm.basicInfo.title')}
              </h3>
 
             <div className="space-y-4">
@@ -383,7 +383,7 @@ export default function AdvanceProcessingProgressForm({
                              {failedStageInfo && (
                  <div>
                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                     {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.stageInfo.improvementStage')}
+                     {t('componentsprocessing.advanceProcessingProgressForm.stageInfo.improvementStage')}
                    </label>
                    <div className="w-full h-12 bg-red-50 border-2 border-red-200 rounded-lg px-4 flex items-center text-sm text-red-700 font-semibold">
                      {failedStageInfo.stageName}
@@ -393,7 +393,7 @@ export default function AdvanceProcessingProgressForm({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.progressDate.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.progressDate.label')}
                 </label>
                 <Input
                   type="date"
@@ -401,13 +401,13 @@ export default function AdvanceProcessingProgressForm({
                   onChange={(e) => setProgressDate(e.target.value)}
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.progressDate.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.progressDate.placeholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.outputQuantity.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.outputQuantity.label')}
                 </label>
                 <Input
                   type="number"
@@ -417,26 +417,26 @@ export default function AdvanceProcessingProgressForm({
                   onChange={(e) => setOutputQuantity(parseFloat(e.target.value))}
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.outputQuantity.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.outputQuantity.placeholder')}
                 />
                 <FieldValidationError error={error} fieldName="outputQuantity" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.stageDescription.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.stageDescription.label')}
                 </label>
                 <textarea
                   value={stageDescription}
                   onChange={(e) => setStageDescription(e.target.value)}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.stageDescription.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.stageDescription.placeholder')}
                   className="w-full h-24 border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 resize-none"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.unit.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.unit.label')}
                 </label>
                 <select
                   value={outputUnit}
@@ -444,7 +444,7 @@ export default function AdvanceProcessingProgressForm({
                   required
                   className="w-full h-12 border-2 border-gray-200 rounded-lg px-4 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
                 >
-                  <option value="">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.unit.placeholder')}</option>
+                  <option value="">{t('componentsprocessing.advanceProcessingProgressForm.form.unit.placeholder')}</option>
                   <option value="kg">Kilogram (kg)</option>
                   <option value="g">Gram (g)</option>
                   <option value="tấn">Tấn</option>
@@ -466,45 +466,45 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.title')}
+              {t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.title')}
             </h3>
 
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterName.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterName.label')}
                 </label>
                 <Input
                   type="text"
                   value={parameterName}
                   onChange={(e) => setParameterName(e.target.value)}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterName.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterName.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterValue.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterValue.label')}
                 </label>
                 <Input
                   type="text"
                   value={parameterValue}
                   onChange={(e) => setParameterValue(e.target.value)}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterValue.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterValue.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterUnit.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterUnit.label')}
                 </label>
                 <Input
                   type="text"
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.technicalParameters.parameterUnit.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.technicalParameters.parameterUnit.placeholder')}
                   className="w-full h-10 text-sm"
                 />
               </div>
@@ -519,14 +519,14 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.title')}
+              {t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.title')}
             </h3>
 
             <div className="space-y-3">
               {/* Photo upload */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.image.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.image.label')}
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-pink-400 transition-colors bg-gray-50">
                   <input
@@ -547,7 +547,7 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {photoFiles.length > 0 ? `${photoFiles.length} ảnh` : t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.image.placeholder')}
+                    {photoFiles.length > 0 ? `${photoFiles.length} ảnh` : t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.image.placeholder')}
                   </label>
                 </div>
               </div>
@@ -555,7 +555,7 @@ export default function AdvanceProcessingProgressForm({
               {/* Video upload */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.video.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.video.label')}
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-teal-400 transition-colors bg-gray-50">
                   <input
@@ -576,7 +576,7 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {videoFiles.length > 0 ? `${photoFiles.length} video` : t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.illustrativeDocuments.video.placeholder')}
+                    {videoFiles.length > 0 ? `${photoFiles.length} video` : t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.video.placeholder')}
                   </label>
                 </div>
               </div>
@@ -593,13 +593,13 @@ export default function AdvanceProcessingProgressForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
-              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.title')}
+              {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.title')}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.wasteType.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.wasteType.label')}
                 </label>
                 <Input
                   type="text"
@@ -609,14 +609,14 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], wasteType: e.target.value };
                     setWastes(newWastes);
                   }}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.wasteType.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.wasteType.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.quantity.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.quantity.label')}
                 </label>
                 <Input
                   type="number"
@@ -628,7 +628,7 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], quantity: parseFloat(e.target.value) || 0 };
                     setWastes(newWastes);
                   }}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.quantity.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.quantity.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
                 <FieldValidationError error={error} fieldName="wasteQuantity" />
@@ -636,7 +636,7 @@ export default function AdvanceProcessingProgressForm({
               
               <div>
                                  <label className="block text-sm font-semibold text-red-700 mb-2">
-                   {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.unit.label')}
+                   {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.unit.label')}
                  </label>
                 <select
                   value={wastes[0]?.unit || "kg"}
@@ -656,7 +656,7 @@ export default function AdvanceProcessingProgressForm({
               
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.notes.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.notes.label')}
                 </label>
                 <textarea
                   value={wastes[0]?.note || ""}
@@ -665,14 +665,14 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], note: e.target.value };
                     setWastes(newWastes);
                   }}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.notes.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.notes.placeholder')}
                   className="w-full h-24 border-2 border-red-200 rounded-lg px-4 py-3 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200 resize-none"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-red-700 mb-2">
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.recordDate.label')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.recordDate.label')}
                 </label>
                 <Input
                   type="date"
@@ -682,7 +682,7 @@ export default function AdvanceProcessingProgressForm({
                     newWastes[0] = { ...newWastes[0], recordedAt: e.target.value };
                     setWastes(newWastes);
                   }}
-                  placeholder={t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.wasteInformation.recordDate.placeholder')}
+                  placeholder={t('componentsprocessing.advanceProcessingProgressForm.form.wasteInformation.recordDate.placeholder')}
                   className="w-full h-12 border-2 border-red-200 rounded-lg px-4 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all duration-200"
                 />
               </div>
@@ -693,7 +693,7 @@ export default function AdvanceProcessingProgressForm({
         {/* Media previews - Horizontal layout */}
         {(photoFiles.length > 0 || videoFiles.length > 0) && (
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.previewTitle')}</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">{t('componentsprocessing.advanceProcessingProgressForm.form.fileUpload.previewTitle')}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {photoFiles.map((file, index) => (
                 <div key={`photo-${index}`} className="relative group">
@@ -738,13 +738,13 @@ export default function AdvanceProcessingProgressForm({
               <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.maxFiles')}</span>
+              <span>{t('componentsprocessing.advanceProcessingProgressForm.form.fileUpload.maxFiles')}</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>{t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.fileUpload.imageCompression')}</span>
+              <span>{t('componentsprocessing.advanceProcessingProgressForm.form.fileUpload.imageCompression')}</span>
             </div>
           </div>
 
@@ -755,7 +755,7 @@ export default function AdvanceProcessingProgressForm({
               variant="outline"
               className="px-6 py-3 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-lg transition-all duration-200"
             >
-              {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.cancel')}
+              {t('componentsprocessing.advanceProcessingProgressForm.form.actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -765,7 +765,7 @@ export default function AdvanceProcessingProgressForm({
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {t('processing.pages.farmerBatches.batchDetail.UpdateAdvanprogress.form.actions.saving')}
+                  {t('componentsprocessing.advanceProcessingProgressForm.form.actions.saving')}
                 </div>
               ) : (
                 getButtonText()

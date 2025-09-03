@@ -220,15 +220,15 @@ export default function UpdateNextStagesForm({
     
     // Validation
     if (!form.progressDate) {
-      AppToast.error('Vui lòng chọn ngày cập nhật');
+             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
       return;
     }
     if (form.outputQuantity <= 0) {
-      AppToast.error('Sản lượng đầu ra phải lớn hơn 0');
+             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityPositive'));
       return;
     }
     if (!form.outputUnit) {
-      AppToast.error('Vui lòng chọn đơn vị');
+             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
       return;
     }
 
@@ -238,13 +238,13 @@ export default function UpdateNextStagesForm({
     const hasVideos = videoFiles.length > 0;
     
     if (!hasParameter && !hasPhotos && !hasVideos) {
-      AppToast.error('Vui lòng nhập ít nhất một thông số kỹ thuật hoặc upload hình ảnh/video');
+             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
       return;
     }
 
     // 🔧 MỚI: Kiểm tra validation cho output quantity
     if (retryValidation && !retryValidation.isValid) {
-      AppToast.error(retryValidation.errorMessage || 'Khối lượng đầu ra không hợp lệ');
+             AppToast.error(retryValidation.errorMessage || t('componentsprocessing.updateNextStagesForm.validation.outputQuantityPositive'));
       return;
     }
 
@@ -315,10 +315,10 @@ export default function UpdateNextStagesForm({
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl">
               <TrendingUp className="w-6 h-6 text-blue-600" />
-              Cập nhật tiếp các stages
+              {t('componentsprocessing.updateNextStagesForm.title')}
             </CardTitle>
             <p className="text-gray-600 text-sm">
-              Cập nhật thông tin cho các giai đoạn tiếp theo sau khi đã hoàn thành retry
+              {t('componentsprocessing.updateNextStagesForm.description')}
             </p>
           </CardHeader>
 
@@ -391,7 +391,7 @@ export default function UpdateNextStagesForm({
                          {/* Sản lượng đầu ra */}
              <div className="grid grid-cols-2 gap-4">
                <div className="space-y-2">
-                 <Label htmlFor="outputQuantity">Sản lượng đầu ra</Label>
+                 <Label htmlFor="outputQuantity">{t('componentsprocessing.updateNextStagesForm.outputQuantity')}</Label>
                  <Input
                    id="outputQuantity"
                    name="outputQuantity"
@@ -408,7 +408,7 @@ export default function UpdateNextStagesForm({
                        e.preventDefault();
                      }
                    }}
-                   placeholder="Nhập khối lượng..."
+                   placeholder={t('componentsprocessing.updateNextStagesForm.outputQuantityPlaceholder')}
                    className={`border-blue-200 focus:border-blue-400 ${
                      retryValidation && !retryValidation.isValid ? 'border-red-300 focus:border-red-400' : ''
                    }`}
@@ -464,7 +464,7 @@ export default function UpdateNextStagesForm({
 
             {/* Thông số kỹ thuật */}
             <div className="space-y-4">
-              <h4 className="font-medium text-gray-900">Thông số kỹ thuật</h4>
+              <h4 className="font-medium text-gray-900">{t('componentsprocessing.updateNextStagesForm.parameters')}</h4>
               
               {/* Thêm thông số mới */}
               <div className="grid grid-cols-3 gap-4">
@@ -475,7 +475,7 @@ export default function UpdateNextStagesForm({
                     name="parameterName"
                     value={form.parameterName}
                     onChange={handleChange}
-                    placeholder="VD: Nhiệt độ, độ ẩm..."
+                    placeholder={t('componentsprocessing.updateNextStagesForm.parametersPlaceholder')}
                     className="border-blue-200 focus:border-blue-400"
                   />
                 </div>
@@ -614,14 +614,14 @@ export default function UpdateNextStagesForm({
                 onClick={onClose}
                 className="border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Hủy
+                                 {t('componentsprocessing.updateNextStagesForm.cancel')}
               </Button>
                              <Button
                  type="submit"
                  disabled={loading || (retryValidation !== null && retryValidation.isValid === false)}
                  className="bg-blue-600 hover:bg-blue-700 text-white"
                >
-                 {loading ? 'Đang cập nhật...' : 'Cập nhật tiếp các stages'}
+                                   {loading ? t('componentsprocessing.updateNextStagesForm.submitting') : t('componentsprocessing.updateNextStagesForm.submit')}
                </Button>
             </div>
           </CardContent>

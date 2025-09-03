@@ -33,12 +33,12 @@ export default function FailedStagesList({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-red-800">
           <AlertTriangle className="h-5 w-5" />
-          Giai đoạn cần cập nhật
+          {t('componentsprocessing.failedStagesList.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-red-700 mb-4">
-          Chọn các giai đoạn cần farmer cập nhật lại khi đánh giá không đạt
+          {t('componentsprocessing.failedStagesList.description')}
         </p>
         
         <div className="space-y-3">
@@ -55,7 +55,7 @@ export default function FailedStagesList({
                 className="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-sm flex items-center gap-1 transition-colors"
               >
                 <Edit className="w-3 h-3" />
-                Cần cập nhật
+                                 {t('componentsprocessing.failedStagesList.retryButton')}
               </button>
             </div>
           ))}
@@ -67,7 +67,7 @@ export default function FailedStagesList({
               <span className="text-white text-xs">i</span>
             </div>
             <span className="text-sm text-blue-800">
-              Vui lòng cập nhật lại các giai đoạn trên để đạt tiêu chuẩn chất lượng
+                             {t('componentsprocessing.failedStagesList.infoMessage')}
             </span>
           </div>
         </div>
