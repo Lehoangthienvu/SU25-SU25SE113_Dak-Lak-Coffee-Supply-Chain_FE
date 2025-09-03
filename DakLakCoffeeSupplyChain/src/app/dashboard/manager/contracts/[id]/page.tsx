@@ -29,6 +29,7 @@ import { FileText, Pencil, Trash2 } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 import ContractItemFormDialog from "@/components/contracts/ContractItemFormDialog";
+import SettlementCard from "@/components/contracts/SettlementCard";
 import { getCoffeeTypes, CoffeeType } from "@/lib/api/coffeeType";
 import { formatQuantity, formatDate, formatDiscount } from "@/lib/utils";
 
@@ -483,6 +484,12 @@ export default function ContractDetailPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Settlement Card */}
+        <SettlementCard
+          settlementFiles={contract.settlementFiles}
+          paymentRounds={contract.paymentRounds}
+        />
 
         {/* Danh sách mặt hàng hợp đồng */}
         <div className="rounded-xl border bg-white p-4">
