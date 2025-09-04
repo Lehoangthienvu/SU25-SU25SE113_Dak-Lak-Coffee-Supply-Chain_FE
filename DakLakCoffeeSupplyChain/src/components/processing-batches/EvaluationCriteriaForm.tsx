@@ -78,6 +78,9 @@ export default function EvaluationCriteriaForm({
   const [fiftyFiftyScenario, setFiftyFiftyScenario] = useState<boolean>(false);
   const [fiftyFiftyDecision, setFiftyFiftyDecision] = useState<'pass' | 'fail' | null>(null);
 
+  // 🔧 MỚI: State để tránh duplicate toast
+  const [toastShown, setToastShown] = useState<boolean>(false);
+
   // 🔧 CẢI THIỆN: Tự động load tiêu chí và stages khi form mở
   useEffect(() => {
     if (isOpen) {
@@ -90,8 +93,29 @@ export default function EvaluationCriteriaForm({
       setFiftyFiftyScenario(false);
       setFiftyFiftyDecision(null);
       setSelectedFailedStages([]);
+      setToastShown(false); // Reset toastShown khi form đóng
     }
   }, [isOpen, methodId]);
+
+  // 🔧 MỚI: Helper function để quản lý toast
+  const showToast = (type: 'success' | 'error' | 'warning', message: string) => {
+    if (!toastShown) {
+      switch (type) {
+        case 'success':
+          AppToast.success(message);
+          break;
+        case 'error':
+          AppToast.error(message);
+          break;
+        case 'warning':
+          AppToast.warning(message);
+          break;
+      }
+      setToastShown(true);
+      // Reset toastShown sau 3 giây
+      setTimeout(() => setToastShown(false), 3000);
+    }
+  };
 
   const loadCriteria = async () => {
     try {
@@ -111,13 +135,13 @@ export default function EvaluationCriteriaForm({
         setCriteriaResults(initialResults);
         console.log('✅ Loaded criteria:', criteriaData.length, 'items');
       } else {
-        AppToast.warning('Không có tiêu chí đánh giá nào được cấu hình');
+        showToast('warning', 'Không có tiêu chí đánh giá nào được cấu hình');
         setCriteria([]);
         setCriteriaResults([]);
       }
     } catch (error: any) {
       console.error('❌ Error loading criteria:', error);
-      AppToast.error('Không thể tải danh sách tiêu chí đánh giá');
+      showToast('error', 'Không thể tải danh sách tiêu chí đánh giá');
       setCriteria([]);
       setCriteriaResults([]);
     } finally {
@@ -142,7 +166,7 @@ export default function EvaluationCriteriaForm({
       }
     } catch (error: any) {
       console.error('❌ Error loading stages:', error);
-      AppToast.error('Không thể tải danh sách các bước xử lý');
+      showToast('error', 'Không thể tải danh sách các bước xử lý');
       setStages([]);
     } finally {
       setLoadingStages(false);
@@ -238,40 +262,46 @@ export default function EvaluationCriteriaForm({
       return;
     }
 
+    // 🔧 MỚI: Tập hợp tất cả lỗi validation trước khi hiển thị toast
+    const validationErrors: string[] = [];
+
     if (criteriaResults.length === 0) {
-      AppToast.error('Không có tiêu chí đánh giá nào');
+      validationErrors.push('Không có tiêu chí đánh giá nào');
+    }
+
+    // Kiểm tra xem tất cả tiêu chí đã được nhập chưa
+    const hasEmptyValues = criteriaResults.some(result => result.actualValue === null || result.actualValue === undefined);
+    if (hasEmptyValues) {
+      validationErrors.push(t('evaluation.error.incompleteCriteria'));
+    }
+
+    // 🔧 CẢI THIỆN: Kiểm tra chọn stage chỉ khi cần thiết
+    if (evaluationResult === EVALUATION_RESULTS.FAIL) {
+      const passCount = criteriaResults.filter(r => r.isPass).length;
+      const failCount = criteriaResults.filter(r => !r.isPass).length;
+      const shouldRequireStageSelection = failCount > passCount || 
+        (passCount === failCount && passCount > 0) || 
+        (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
+      
+      if (shouldRequireStageSelection && selectedFailedStages.length === 0) {
+        validationErrors.push(t('evaluation.error.noFailedStagesSelected'));
+      }
+    }
+
+    // 🔧 MỚI: Kiểm tra quyết định 50/50
+    if (fiftyFiftyScenario && fiftyFiftyDecision === null) {
+      validationErrors.push(t('evaluation.error.fiftyFiftyDecisionRequired'));
+    }
+
+    // 🔧 MỚI: Hiển thị tất cả lỗi validation cùng lúc
+    if (validationErrors.length > 0) {
+      showToast('error', validationErrors.join('\n'));
       return;
     }
 
-         // Kiểm tra xem tất cả tiêu chí đã được nhập chưa
-     const hasEmptyValues = criteriaResults.some(result => result.actualValue === null || result.actualValue === undefined);
-     if (hasEmptyValues) {
-       AppToast.error(t('evaluation.error.incompleteCriteria'));
-       return;
-     }
-
-     // 🔧 CẢI THIỆN: Kiểm tra chọn stage chỉ khi cần thiết
-     if (evaluationResult === EVALUATION_RESULTS.FAIL) {
-       const passCount = criteriaResults.filter(r => r.isPass).length;
-       const failCount = criteriaResults.filter(r => !r.isPass).length;
-       const shouldRequireStageSelection = failCount > passCount || 
-         (passCount === failCount && passCount > 0) || 
-         (fiftyFiftyScenario && fiftyFiftyDecision === 'fail');
-       
-       if (shouldRequireStageSelection && selectedFailedStages.length === 0) {
-         AppToast.error(t('evaluation.error.noFailedStagesSelected'));
-         return;
-       }
-     }
-
-     // 🔧 MỚI: Kiểm tra quyết định 50/50
-     if (fiftyFiftyScenario && fiftyFiftyDecision === null) {
-       AppToast.error(t('evaluation.error.fiftyFiftyDecisionRequired'));
-       return;
-     }
-
     try {
       setLoading(true);
+      setToastShown(false); // Reset toastShown khi bắt đầu submit
       
              // 🔧 CẢI THIỆN: Tạo comment chi tiết chỉ khi cần thiết
        let detailedComments = comments;
@@ -370,24 +400,28 @@ export default function EvaluationCriteriaForm({
       
       console.log('✅ Evaluation submitted successfully');
       
-             if (evaluationResult === EVALUATION_RESULTS.PASS) {
-         AppToast.success(t('evaluation.success.submitted'));
-         onSuccess();
-         onClose();
-       } else {
-         AppToast.success(t('evaluation.success.failureSubmitted'));
-         onSuccess();
-         onClose();
-         
-         // 🔧 MỚI: Chuyển về màn hình view ID khi đánh giá fail
-         const viewIdUrl = `/dashboard/expert/evaluations/${batchId}`;
-         router.push(viewIdUrl);
-       }
+      // 🔧 MỚI: Chỉ hiển thị toast success một lần
+      if (evaluationResult === EVALUATION_RESULTS.PASS) {
+        showToast('success', t('evaluation.success.submitted'));
+      } else {
+        showToast('success', t('evaluation.success.failureSubmitted'));
+      }
+      
+      onSuccess();
+      onClose();
+      
+      // 🔧 MỚI: Chuyển về màn hình view ID khi đánh giá fail
+      if (evaluationResult === EVALUATION_RESULTS.FAIL) {
+        const viewIdUrl = `/dashboard/expert/evaluations/${batchId}`;
+        router.push(viewIdUrl);
+      }
       
     } catch (error: any) {
       console.error('❌ Lỗi tạo đánh giá:', error);
       const errorMessage = error.message || t('evaluation.error.submitFailed');
-      AppToast.error(errorMessage);
+      
+      // 🔧 MỚI: Chỉ hiển thị toast error một lần
+      showToast('error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -406,6 +440,7 @@ export default function EvaluationCriteriaForm({
 
     try {
       setLoading(true);
+      setToastShown(false); // Reset toastShown khi bắt đầu submit
       
       const evaluationData = {
         BatchId: batchId,
@@ -422,14 +457,18 @@ export default function EvaluationCriteriaForm({
 
       await createProcessingBatchEvaluation(evaluationData);
       
-      AppToast.success(t('evaluation.success.batchPassed'));
+      // 🔧 MỚI: Chỉ hiển thị toast success một lần
+      showToast('success', t('evaluation.success.batchPassed'));
+      
       onSuccess();
       onClose();
       
     } catch (error: any) {
       console.error('❌ Lỗi tạo đánh giá đạt:', error);
       const errorMessage = error.message || t('evaluation.error.batchPassFailed');
-      AppToast.error(errorMessage);
+      
+      // 🔧 MỚI: Chỉ hiển thị toast error một lần
+      showToast('error', errorMessage);
     } finally {
       setLoading(false);
       setShowBatchPassConfirm(false);
