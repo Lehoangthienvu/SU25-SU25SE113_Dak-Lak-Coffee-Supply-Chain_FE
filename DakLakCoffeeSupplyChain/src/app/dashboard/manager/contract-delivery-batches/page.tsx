@@ -100,7 +100,13 @@ export default function ContractDeliveryBatchesPage() {
     const fetchBatches = async () => {
       try {
         const result = await getAllContractDeliveryBatches();
-        setData(result);
+        // Sắp xếp theo mới nhất (theo createdAt hoặc updatedAt)
+        const sortedBatches = result.sort((a, b) => {
+          const dateA = new Date(a.updatedAt || a.createdAt || 0);
+          const dateB = new Date(b.updatedAt || b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime(); // Sắp xếp giảm dần (mới nhất trước)
+        });
+        setData(sortedBatches);
       } catch (err) {
         console.error(t("contractDeliveryBatches.errors.loadBatches"), err);
       } finally {
@@ -185,7 +191,13 @@ export default function ContractDeliveryBatchesPage() {
     setLoading(true);
     try {
       const result = await getAllContractDeliveryBatches();
-      setData(result);
+      // Sắp xếp theo mới nhất (theo createdAt hoặc updatedAt)
+      const sortedBatches = result.sort((a, b) => {
+        const dateA = new Date(a.updatedAt || a.createdAt || 0);
+        const dateB = new Date(b.updatedAt || b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime(); // Sắp xếp giảm dần (mới nhất trước)
+      });
+      setData(sortedBatches);
     } catch (err) {
       console.error(t("contractDeliveryBatches.errors.reloadBatches"), err);
     } finally {
