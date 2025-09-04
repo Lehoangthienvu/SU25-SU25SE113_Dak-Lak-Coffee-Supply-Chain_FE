@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { getAllProcessingParameters, ProcessingParameter } from "@/lib/api/processingParameters";
-import { Eye, Edit, Trash2, Plus, Settings, Gauge, AlertCircle, Search } from "lucide-react";
+import { Plus, Settings, Gauge, AlertCircle, Search } from "lucide-react";
 
 // Import các component chung
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
@@ -63,13 +63,6 @@ export default function ManagerProcessingParametersPage() {
 
   // Cấu hình cột cho table
   const columns = [
-    { 
-      key: "parameterCode", 
-      title: t('processing.pages.managerBatches.parameters.table.parameterCode'),
-      render: (value: string) => (
-        <span className="font-medium text-blue-600">{value}</span>
-      )
-    },
     { 
       key: "parameterName", 
       title: t('processing.pages.managerBatches.parameters.table.parameterName'),
@@ -169,27 +162,7 @@ export default function ManagerProcessingParametersPage() {
     }
   ];
 
-  // Cấu hình actions cho table - MANAGER: Xem, sửa, và xóa mềm
-  const actions = [
-    {
-      label: t('common.view'),
-      icon: <Eye className="w-3 h-3" />,
-      onClick: (parameter: ProcessingParameter) => router.push(`/dashboard/manager/processing/parameters/${parameter.parameterId}`),
-      className: "hover:bg-green-50 hover:border-green-300"
-    },
-    {
-      label: t('common.edit'),
-      icon: <Edit className="w-3 h-3" />,
-      onClick: (parameter: ProcessingParameter) => router.push(`/dashboard/manager/processing/parameters/${parameter.parameterId}/edit`),
-      className: "hover:bg-blue-50 hover:border-blue-300"
-    },
-    {
-      label: t('processing.pages.managerBatches.parameters.actions.softDelete'),
-      icon: <Trash2 className="w-3 h-3" />,
-      onClick: (parameter: ProcessingParameter) => handleDelete(parameter.parameterId),
-      className: "hover:bg-red-50 hover:border-red-300"
-    }
-  ];
+
 
   // Tính toán thống kê
   const totalParameters = parameters.length;
@@ -301,7 +274,6 @@ export default function ManagerProcessingParametersPage() {
             <ProcessingTable
               data={paginatedData}
               columns={columns}
-              actions={actions}
               loading={loading}
               emptyMessage={t('processing.pages.managerBatches.parameters.table.noData')}
               emptyDescription={t('processing.pages.managerBatches.parameters.table.noDataDescription')}

@@ -46,16 +46,25 @@ export default function FarmerEvaluationsPage() {
     fetchData();
   }, []);
 
-  // Filter evaluations
-  const filteredEvaluations = evaluations.filter(evaluation => {
-    const matchesSearch = evaluation.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         evaluation.evaluationCode.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = filterStatus === "all" || 
-                         evaluation.evaluationResult.toLowerCase() === filterStatus.toLowerCase();
-    
-    return matchesSearch && matchesFilter;
-  });
+  // Filter and sort evaluations
+  const filteredEvaluations = evaluations
+    .filter(evaluation => {
+      const matchesSearch = evaluation.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           evaluation.evaluationCode.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesFilter = filterStatus === "all" || 
+                           evaluation.evaluationResult.toLowerCase() === filterStatus.toLowerCase();
+      
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian đánh giá (evaluatedAt) hoặc thời gian tạo (createdAt) nếu evaluatedAt không có
+      const dateA = a.evaluatedAt ? new Date(a.evaluatedAt) : new Date(a.createdAt);
+      const dateB = b.evaluatedAt ? new Date(b.evaluatedAt) : new Date(b.createdAt);
+      
+      // Sắp xếp mới nhất lên đầu (descending order)
+      return dateB.getTime() - dateA.getTime();
+    });
 
   if (loading) {
     return (

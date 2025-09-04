@@ -123,16 +123,25 @@ export default function ManagerProcessingBatchesPage() {
     return { label: t('processing.pages.managerBatches.status.unknown'), color: "bg-gray-100 text-gray-700 border-gray-200", icon: Package };
   };
 
-  // Filter batches
-  const filteredBatches = batches.filter(batch => {
-    const matchesSearch = batch.batchCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         batch.cropSeasonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         batch.methodName?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = filterStatus === "all" || String(batch.status) === String(filterStatus);
-    
-    return matchesSearch && matchesFilter;
-  });
+  // Filter and sort batches
+  const filteredBatches = batches
+    .filter(batch => {
+      const matchesSearch = batch.batchCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           batch.cropSeasonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           batch.methodName?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesFilter = filterStatus === "all" || String(batch.status) === String(filterStatus);
+      
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian tạo (createdAt) - mới nhất lên đầu
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      
+      // Sắp xếp mới nhất lên đầu (descending order)
+      return dateB.getTime() - dateA.getTime();
+    });
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredBatches.length / ITEMS_PER_PAGE);
@@ -152,8 +161,53 @@ export default function ManagerProcessingBatchesPage() {
 
   // Calculate statistics
   const totalBatches = batches.length;
-  const activeBatches = batches.filter(b => String(b.status) === '1' || String(b.status) === 'InProgress' || String(b.status) === '3' || String(b.status) === 'AwaitingEvaluation').length;
-  const totalOutput = batches.reduce((sum, b) => sum + (b.totalOutputQuantity || 0), 0);
+  
+  // Tính số lượng farmer đang làm ghi nhận sơ chế (có batch đang hoạt động)
+  const activeFarmers = new Set(
+    batches
+      .filter(b => String(b.status) === '1' || String(b.status) === 'InProgress' || String(b.status) === '3' || String(b.status) === 'AwaitingEvaluation')
+      .map(b => (b as any).farmerName || (b as any).farmer?.name || b.farmerId)
+      .filter(name => name && name !== 'unknown')
+  ).size;
+  
+  // Tính tổng sản lượng từ những batch đã hoàn thành
+  const totalOutput = batches.reduce((sum, batch) => {
+    // Debug: Log trạng thái của từng batch
+    console.log(`Batch ${batch.batchCode}: status = ${batch.status}, type = ${typeof batch.status}`);
+    
+    // Chỉ tính sản lượng từ batch đã hoàn thành (status = 2 hoặc "completed")
+    const isCompleted = String(batch.status) === '2' || 
+                       String(batch.status).toLowerCase() === 'completed' ||
+                       String(batch.status).toLowerCase() === 'hoàn thành';
+    
+    if (!isCompleted) {
+      console.log(`Batch ${batch.batchCode}: not completed, skipping`);
+      return sum;
+    }
+    
+    console.log(`Batch ${batch.batchCode}: is completed, calculating output`);
+    
+    // Thử lấy sản lượng từ nhiều trường khác nhau
+    const batchOutput = batch.totalOutputQuantity || (batch as any).outputQuantity || (batch as any).quantity || 0;
+    console.log(`Batch ${batch.batchCode}: batchOutput = ${batchOutput}`);
+    
+    // Nếu có progress, lấy sản lượng nhỏ nhất từ tất cả progress
+    const progressOutput = batch.progresses && batch.progresses.length > 0 ? 
+      Math.min(...batch.progresses.map(p => p.outputQuantity || (p as any).quantity || 0)) : 0;
+    console.log(`Batch ${batch.batchCode}: progressOutput = ${progressOutput}`);
+    
+    // Thử lấy sản lượng từ các trường khác có thể có
+    const alternativeOutput = (batch as any).output || (batch as any).totalOutput || (batch as any).finalOutput || 0;
+    console.log(`Batch ${batch.batchCode}: alternativeOutput = ${alternativeOutput}`);
+    
+    // Trả về giá trị lớn nhất trong tất cả các nguồn
+    const finalOutput = Math.max(batchOutput, progressOutput, alternativeOutput);
+    console.log(`Batch ${batch.batchCode}: finalOutput = ${finalOutput}`);
+    
+    return sum + finalOutput;
+  }, 0);
+  
+  console.log(`Total output calculated: ${totalOutput}`);
 
   // Đếm số lượng theo trạng thái
   const statusCounts = batches.reduce<Record<string, number>>((acc, batch) => {
@@ -207,7 +261,7 @@ export default function ManagerProcessingBatchesPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Main Content Header */}
           <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('processing.pages.managerBatches.title')}</h2>
                 <p className="text-gray-600">{t('processing.pages.managerBatches.subtitle')}</p>
@@ -223,23 +277,34 @@ export default function ManagerProcessingBatchesPage() {
                 </Button>
               </div>
             </div>
-            
-            {/* Stats inline trong header */}
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-orange-600" />
-                <span className="text-sm text-gray-600">{t('processing.pages.managerBatches.totalBatches')}: <span className="font-semibold text-gray-900">{totalBatches}</span></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-green-600" />
-                <span className="text-sm text-gray-600">{t('processing.pages.managerBatches.active')}: <span className="font-semibold text-gray-900">{activeBatches}</span></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                <span className="text-sm text-gray-600">{t('processing.pages.managerBatches.totalOutput')}: <span className="font-semibold text-gray-900">{totalOutput.toFixed(1)} kg</span></span>
-              </div>
-            </div>
           </div>
+
+                     {/* Stats Cards */}
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="bg-white rounded-xl shadow-sm p-6">
+               <div className="flex items-center gap-3">
+                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                   <Package className="w-6 h-6 text-orange-600" />
+                 </div>
+                 <div>
+                   <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.totalBatches')}</p>
+                   <p className="text-2xl font-bold text-gray-900">{totalBatches}</p>
+                 </div>
+               </div>
+             </div>
+             
+             <div className="bg-white rounded-xl shadow-sm p-6">
+               <div className="flex items-center gap-3">
+                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                   <Users className="w-6 h-6 text-green-600" />
+                 </div>
+                 <div>
+                   <p className="text-sm font-medium text-gray-600">{t('processing.pages.managerBatches.active')}</p>
+                   <p className="text-2xl font-bold text-gray-900">{activeFarmers}</p>
+                 </div>
+               </div>
+             </div>
+           </div>
 
           {/* Main Content */}
           <div className="flex gap-6">

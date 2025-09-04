@@ -167,7 +167,7 @@ export default function ProcessingMethodsPage() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.description')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.status')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.createdAt')}</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">{t('processing.pages.managerBatches.methods.table.actions')}</th>
+
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -190,33 +190,7 @@ export default function ProcessingMethodsPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {new Date(method.createdAt).toLocaleDateString("vi-VN")}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}`)}
-                          className="border-orange-200 hover:bg-orange-50"
-                        >
-                          {t('common.view')}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/dashboard/manager/processing/methods/${method.methodId}/edit`)}
-                          className="border-blue-200 hover:bg-blue-50"
-                        >
-                          {t('common.edit')}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-200 hover:bg-red-50"
-                        >
-                          {t('common.delete')}
-                        </Button>
-                      </div>
-                    </td>
+
                   </tr>
                 ))}
               </tbody>
