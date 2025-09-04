@@ -2925,6 +2925,9 @@
           "cancel": "Hủy",
           "updating": "Đang cập nhật..."
         },
+        "cancel": "Hủy",
+        "submit": "Cập nhật",
+        "updating": "Đang cập nhật...",
         "validation": {
           "seasonNameRequired": "Tên mùa vụ không được để trống",
           "seasonNameMinLength": "Tên mùa vụ phải có ít nhất 3 ký tự",
@@ -2987,6 +2990,8 @@
         "ratio": "Tỷ lệ (%)",
         "status": "Trạng thái",
         "expectedHarvest": "Thu hoạch dự kiến",
+        "expectedHarvestStart": "Bắt đầu thu hoạch dự kiến",
+        "expectedHarvestEnd": "Kết thúc thu hoạch dự kiến",
         "actions": "Hành động",
         "plantingArea": "Vùng trồng",
         "to": "đến",
