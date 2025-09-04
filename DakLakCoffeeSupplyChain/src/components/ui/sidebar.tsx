@@ -574,7 +574,7 @@ export function SidebarGroup() {
           <button
             className={cn(
               "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200",
-              pathname.startsWith("/dashboard/manager/reports") ||
+           
                 pathname.startsWith("/dashboard/manager/processing") ||
                 pathname === "/dashboard/manager/processing/farmer-batches"
                 ? "bg-orange-100 text-orange-700 shadow-sm"
@@ -594,7 +594,7 @@ export function SidebarGroup() {
           </button>
           {reportOpen && (
             <div className="pl-8 space-y-1">
-              <Link
+              {/* <Link
                 href="/dashboard/manager/reports"
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -604,7 +604,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.navigation.reports')}
-              </Link>
+              </Link> */}
               <Link
                 href="/dashboard/manager/processing/batches"
                 className={cn(
