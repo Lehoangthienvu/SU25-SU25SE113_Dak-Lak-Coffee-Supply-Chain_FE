@@ -49,7 +49,15 @@ export default function ProductsPage() {
     setLoading(true);
     getAllProducts()
       .then((data) => {
-        if (Array.isArray(data)) setProducts(data);
+        if (Array.isArray(data)) {
+          // Sắp xếp theo sản phẩm mới nhất (theo createdAt)
+          const sortedProducts = data.sort((a, b) => {
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
+            return dateB.getTime() - dateA.getTime(); // Sắp xếp giảm dần (mới nhất trước)
+          });
+          setProducts(sortedProducts);
+        }
       })
       .finally(() => setLoading(false));
   }, []);
