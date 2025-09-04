@@ -448,7 +448,7 @@
             },
             "deliveryTime": {
               "title": "Delivery Time",
-              "description": "Expected time period when farmers will deliver. The system will automatically fill in 1 day after the expected harvest end date from the farmer's registration details. Should be suitable for the harvest season."
+              "description": "Expected time period when farmers will deliver. The system will automatically fill in 10 days after the expected harvest end date from the farmer's registration details. Should be suitable for the harvest season."
             },
             "importantNotes": {
               "title": "Important Notes",

@@ -448,7 +448,7 @@
             },
             "deliveryTime": {
               "title": "Thời gian giao hàng",
-              "description": "Khoảng thời gian dự kiến nông hộ sẽ giao hàng. Hệ thống sẽ tự điền cách 1 ngày dựa trên ngày dự kiến thu hoạch kết thúc từ chi tiết đơn đăng ký của nông hộ. Nên phù hợp với mùa vụ thu hoạch."
+              "description": "Khoảng thời gian dự kiến nông hộ sẽ giao hàng. Hệ thống sẽ tự điền cách 10 ngày dựa trên ngày dự kiến thu hoạch kết thúc từ chi tiết đơn đăng ký của nông hộ. Nên phù hợp với mùa vụ thu hoạch."
             },
             "importantNotes": {
               "title": "Lưu ý quan trọng",
