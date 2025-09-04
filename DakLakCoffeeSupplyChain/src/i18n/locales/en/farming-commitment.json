@@ -352,7 +352,16 @@
       "farmingCommitmentCard": {
         "actions": {
           "edit": "Edit",
-          "view": "View Details"
+          "view": "View Details",
+          "complete": "Complete Commitment"
+        },
+        "completeSuccess": "Commitment completed successfully!",
+        "completeDialog": {
+          "title": "Confirm Commitment Completion",
+          "message": "Are you sure you want to complete this commitment? Once completed, this action cannot be undone.",
+          "confirm": "Confirm",
+          "cancel": "Cancel",
+          "processing": "Processing..."
         }
       },
       "farmingCommitmentForm": {
