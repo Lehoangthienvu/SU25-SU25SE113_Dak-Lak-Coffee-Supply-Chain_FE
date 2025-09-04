@@ -198,7 +198,7 @@ export default function FarmingCommitmentDetailPageForBusiness() {
             </div>
 
             {/* Ghi chú và lý do từ chối */}
-            {(commitment.note || commitment.rejectReason) && (
+            {(commitment.note || commitment.rejectionReason) && (
               <div className="mt-6 pt-4 border-t border-green-200">
                 {commitment.note && (
                   <div className="mb-3">
@@ -206,10 +206,10 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                     <p className="text-gray-700 leading-relaxed">{commitment.note}</p>
                   </div>
                 )}
-                {commitment.rejectReason && (
+                {commitment.rejectionReason && (
                   <div>
                     <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.sections.notes.rejectionReason')}</h4>
-                    <p className="text-red-700 leading-relaxed">{commitment.rejectReason}</p>
+                    <p className="text-red-700 leading-relaxed">{commitment.rejectionReason}</p>
                   </div>
                 )}
               </div>
