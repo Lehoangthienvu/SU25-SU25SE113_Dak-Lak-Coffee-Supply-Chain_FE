@@ -62,8 +62,9 @@ export default function AdvanceProcessingProgressForm({
   
   // State cho stage selection
   const [availableStages, setAvailableStages] = useState<ProcessingStage[]>([]);
-     const [selectedStageId, setSelectedStageId] = useState<number | undefined>(undefined); // ✅ Nhất quán với backend C# sử dụng int
-   const [loadingStages, setLoadingStages] = useState(false);
+  const [selectedStageId, setSelectedStageId] = useState<number | undefined>(undefined); // ✅ Nhất quán với backend C# sử dụng int
+  const [loadingStages, setLoadingStages] = useState(false);
+  const [nextStep, setNextStep] = useState("Thu hoạch");
 
    
 
@@ -99,43 +100,54 @@ export default function AdvanceProcessingProgressForm({
            
            setAvailableStages(availableStages);
            
-           
-           
            // Tự động chọn stage bị fail hoặc stage tiếp theo
            if (failedStageInfo) {
              // Nếu có stage bị fail, chọn stage đó
              const failedStage = availableStages.find(s => s.stageId === failedStageInfo.stageId);
-                           setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || undefined);
+             setSelectedStageId(failedStage?.stageId || availableStages[0]?.stageId || undefined);
            } else if (latestProgress) {
              // Nếu không có stage bị fail, chọn stage tiếp theo
-                           let currentStageIndex = availableStages.findIndex(s => s.stageId === latestProgress.stageId);
+             let currentStageIndex = availableStages.findIndex(s => s.stageId === latestProgress.stageId);
              
-                             // Nếu không tìm thấy exact match, thử tìm theo stageName
-                if (currentStageIndex === -1) {
-                  currentStageIndex = availableStages.findIndex(s => s.stageName === latestProgress.stageName);
-                }
+             // Nếu không tìm thấy exact match, thử tìm theo stageName
+             if (currentStageIndex === -1) {
+               currentStageIndex = availableStages.findIndex(s => s.stageName === latestProgress.stageName);
+             }
              
-                             // Nếu vẫn không tìm thấy, thử tìm theo stepIndex
-                if (currentStageIndex === -1 && latestProgress.stepIndex) {
-                  currentStageIndex = availableStages.findIndex(s => s.orderIndex === latestProgress.stepIndex);
-                }
+             // Nếu vẫn không tìm thấy, thử tìm theo stepIndex
+             if (currentStageIndex === -1 && latestProgress.stepIndex) {
+               currentStageIndex = availableStages.findIndex(s => s.orderIndex === latestProgress.stepIndex);
+             }
              
-                             if (currentStageIndex >= 0 && currentStageIndex < availableStages.length - 1) {
-                  const nextStage = availableStages[currentStageIndex + 1];
-                  setSelectedStageId(nextStage.stageId || undefined);
-                } else if (currentStageIndex >= 0) {
-                  const currentStage = availableStages[currentStageIndex];
-                  setSelectedStageId(currentStage?.stageId || undefined);
-                } else {
-                  // Nếu không tìm thấy stage hiện tại, chọn stage đầu tiên
-                  const firstStage = availableStages[0];
-                  setSelectedStageId(firstStage?.stageId || undefined);
-                }
-                       } else {
-              // Nếu chưa có progress nào, chọn stage đầu tiên
-              const firstStage = availableStages[0];
-              setSelectedStageId(firstStage?.stageId || undefined);
-            }
+             if (currentStageIndex >= 0 && currentStageIndex < availableStages.length - 1) {
+               const nextStage = availableStages[currentStageIndex + 1];
+               setSelectedStageId(nextStage.stageId || undefined);
+               setNextStep(nextStage.stageName || "Sơ chế");
+             } else if (currentStageIndex >= 0) {
+               const currentStage = availableStages[currentStageIndex];
+               setSelectedStageId(currentStage?.stageId || undefined);
+               // Nếu đang ở stage cuối, không có stage tiếp theo
+               setNextStep("Hoàn thành");
+             } else {
+               // Nếu không tìm thấy stage hiện tại, chọn stage đầu tiên
+               const firstStage = availableStages[0];
+               setSelectedStageId(firstStage?.stageId || undefined);
+               if (availableStages.length > 1) {
+                 setNextStep(availableStages[1].stageName || "Sơ chế");
+               } else {
+                 setNextStep("Hoàn thành");
+               }
+             }
+           } else {
+             // Nếu chưa có progress nào, chọn stage đầu tiên
+             const firstStage = availableStages[0];
+             setSelectedStageId(firstStage?.stageId || undefined);
+             if (availableStages.length > 1) {
+               setNextStep(availableStages[1].stageName || "Sơ chế");
+             } else {
+               setNextStep("Hoàn thành");
+             }
+           }
         }
       } catch (err) {
         console.error("Error loading stages:", err);
@@ -306,24 +318,16 @@ export default function AdvanceProcessingProgressForm({
                              {t('componentsprocessing.advanceProcessingProgressForm.form.title')}
             </h2>
             <p className="text-orange-100 text-sm">
-              {failedStageInfo ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.improvementStage')}: ${failedStageInfo.stageName}` : latestProgress ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.nextStep')}: ${latestProgress.stageName}` : t('componentsprocessing.advanceProcessingProgressForm.stageInfo.firstProgress')}
+              {failedStageInfo ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.improvementStage')}: ${failedStageInfo.stageName}` : latestProgress ? `${t('componentsprocessing.advanceProcessingProgressForm.stageInfo.nextStep')}: ${nextStep}` : t('componentsprocessing.advanceProcessingProgressForm.stageInfo.firstProgress')}
             </p>
           </div>
         </div>
         
                  {/* Language Switcher */}
-         <LanguageSwitcher />
+    
          
-         {/* Close button */}
-         <button
-           type="button"
-           onClick={() => onSuccess?.()}
-           className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all duration-200"
-         >
-           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-           </svg>
-         </button>
+   
+       
       </div>
 
       {/* Content - Horizontal layout */}

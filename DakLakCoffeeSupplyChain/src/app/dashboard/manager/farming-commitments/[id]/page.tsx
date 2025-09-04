@@ -141,7 +141,7 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.progress_label')}:</span>
-                    <span className="font-medium text-gray-800">{commitment.progressPercentage}%</span>
+                    <span className="font-medium text-gray-800">{Number(commitment.progressPercentage || 0).toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.createdDate_label')}:</span>
@@ -270,7 +270,7 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.output.registrationProgress_label')}:</span>
                       <span className="font-medium text-gray-800">
-                        {plan.progressPercentage}%
+                        {Number(plan.progressPercentage || 0).toFixed(1)}%
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -484,7 +484,7 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                           </div>
                           <div className="text-right text-sm">
                             <div className="text-gray-500">Tiến độ</div>
-                            <div className="font-medium text-purple-600">{detail.progressPercentage || 0}%</div>
+                            <div className="font-medium text-purple-600">{Number(detail.progressPercentage || 0).toFixed(1)}%</div>
                           </div>
                         </div>
                       </div>
@@ -517,7 +517,7 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                           </div>
                           <div className="text-right">
                             <div className="text-sm text-gray-500">{t('farmingCommitment.pages.detail.commitmentDetails.progress')}</div>
-                            <div className="font-medium text-purple-800">{detail.progressPercentage || 0}%</div>
+                            <div className="font-medium text-purple-800">{Number(detail.progressPercentage || 0).toFixed(1)}%</div>
                           </div>
                         </div>
 

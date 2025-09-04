@@ -943,7 +943,7 @@
             "criteria": {
               "title": "Danh sách tiêu chí",
               "loading": "Đang tải tiêu chí đánh giá...",
-              "range": "Phạm vi: {{MIN}} - {{MAX}} {{unit}}",
+              "range": "Phạm vi: ",
               "actualValue": "Giá trị thực tế",
               "expectedValue": "Giá trị mong đợi",
               "isPassed": "Đạt",
@@ -2141,10 +2141,16 @@
           "loading": "Đang tải tiêu chí...",
           "loadCriteria": "Tải tiêu chí đánh giá"
         },
+        "fiftyFifty": {
+          "title": "Quyết định đánh giá 50/50",
+          "description": "Số lượng tiêu chí đạt và không đạt bằng nhau. Vui lòng chọn quyết định cuối cùng cho lô này.",
+          "passDecision": "Đánh giá Đạt",
+          "failDecision": "Đánh giá Không đạt"
+        },
         "criteria": {
           "title": "Danh sách tiêu chí",
           "loading": "Đang tải tiêu chí đánh giá...",
-          "range": "Phạm vi: {{MIN}} - {{MAX}} {{unit}}",
+          "range": "Phạm vi: ",
           "actualValue": "Giá trị thực tế",
           "expectedValue": "Giá trị mong đợi",
           "isPassed": "Đạt",
@@ -2741,7 +2747,7 @@
             "title": "Tiêu chí đánh giá",
             "loading": "Đang tải tiêu chí...",
             "actualValue": "Giá trị thực tế",
-            "range": "Phạm vi: {{min}} - {{max}} {{unit}}"
+            "range": "Phạm vi: "
           },
           "results": {
             "title": "Kết quả đánh giá",
@@ -2925,6 +2931,9 @@
           "cancel": "Hủy",
           "updating": "Đang cập nhật..."
         },
+        "cancel": "Hủy",
+        "submit": "Cập nhật",
+        "updating": "Đang cập nhật...",
         "validation": {
           "seasonNameRequired": "Tên mùa vụ không được để trống",
           "seasonNameMinLength": "Tên mùa vụ phải có ít nhất 3 ký tự",
@@ -2987,6 +2996,8 @@
         "ratio": "Tỷ lệ (%)",
         "status": "Trạng thái",
         "expectedHarvest": "Thu hoạch dự kiến",
+        "expectedHarvestStart": "Bắt đầu thu hoạch dự kiến",
+        "expectedHarvestEnd": "Kết thúc thu hoạch dự kiến",
         "actions": "Hành động",
         "plantingArea": "Vùng trồng",
         "to": "đến",
@@ -4904,7 +4915,7 @@
       "businessCustomers": "Khách hàng doanh nghiệp",
       "products": "Sản phẩm",
       "farmers": "Nông dân",
-      "reportsAndProcessing": "Báo cáo & Chế biến",
+      "reportsAndProcessing": "Quy trình sơ chế",
       "processingBatches": "Danh sách lô chế biến",
       "farmerProcessingBatches": "Lô chế biến theo nông dân",
       "processingProgress": "Tiến trình lô chế biến",

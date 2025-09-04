@@ -726,7 +726,7 @@ export default function ExpertEvaluationDetailPage() {
           onSuccess={() => {
             setShowEvaluationForm(false);
             fetchData(); // Refresh data
-            AppToast.success(t("expertEvaluations.success.evaluationUpdated"));
+            // 🔧 FIX: Xóa AppToast.success() vì EvaluationCriteriaForm đã tự hiển thị toast
           }}
         />
 

@@ -3,25 +3,25 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
+// Removed useTranslation import
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { DialogFooter } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   createOrder,
   updateOrder,
   getOrderDetails,
+  getAllOrders,
   type OrderCreateDto,
   type OrderUpdateDto,
+  type OrderViewAllDto,
 } from "@/lib/api/orders";
 import {
   getContractDeliveryBatchById,
-  buildCdiOptions,
   type ContractDeliveryBatchViewDetailsDto,
   getAllContractDeliveryBatches,
 } from "@/lib/api/contractDeliveryBatches";
@@ -34,29 +34,24 @@ import { getProductOptions, type ProductOption } from "@/lib/api/products";
 import { OrderStatus } from "@/lib/constants/orderStatus";
 
 type Props = {
-  initialData?: OrderUpdateDto; // nếu có -> Edit; nếu không -> Create
-  deliveryBatchId?: string; // có thể truyền sẵn khi tạo từ trang đợt giao
+  initialData?: OrderUpdateDto;
+  deliveryBatchId?: string;
   onSuccess: () => void;
 };
 
-/** Dòng sản phẩm trong form */
 type OrderItemRow = {
-  orderItemId?: string; // chỉ có khi edit
+  orderItemId?: string;
   contractDeliveryItemId: string;
   productId: string;
   quantity: number | "";
   unitPrice: number | "";
-  /** UI dùng %; khi submit sẽ convert sang amount */
-  discountAmount?: number | ""; // %
+  discountAmount?: number | "";
   note?: string;
 };
 
 type FormState = {
   deliveryBatchId: string;
   deliveryRound?: number | "";
-  /** Dùng string để bind với input type="date" */
-  orderDate?: string; // yyyy-MM-dd (sẽ convert -> ISO khi submit)
-  actualDeliveryDate?: string; // yyyy-MM-dd
   note?: string;
   status: OrderStatus;
   cancelReason?: string;
@@ -68,73 +63,52 @@ export default function OrderForm({
   deliveryBatchId,
   onSuccess,
 }: Props) {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const isEdit = !!initialData;
   const router = useRouter();
 
-  // Options
-  type DeliveryItemOption = { contractDeliveryItemId: string; name: string };
-  const [deliveryItemOptions, setDeliveryItemOptions] = useState<
-    DeliveryItemOption[]
-  >([]);
-  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
-  const [loadingOptions, setLoadingOptions] = useState(false);
-  const [batchOptions, setBatchOptions] = useState<
-    { id: string; label: string }[]
-  >([]);
-  // Map deliveryItemId -> unitPrice from related contract item
-  const [deliveryItemUnitPriceMap, setDeliveryItemUnitPriceMap] = useState<
-    Record<string, number>
-  >({});
-  // Map deliveryItemId -> discount (%) from related contract item
-  const [deliveryItemDiscountMap, setDeliveryItemDiscountMap] = useState<
-    Record<string, number>
-  >({});
-  // Map deliveryItemId -> coffeeTypeName to filter products by type
-  const [deliveryItemCoffeeTypeMap, setDeliveryItemCoffeeTypeMap] = useState<
-    Record<string, string>
-  >({});
-  // Map deliveryItemId -> plannedQuantity for quantity validation
-  const [deliveryItemQuantityMap, setDeliveryItemQuantityMap] = useState<
-    Record<string, number>
-  >({});
-
-  // UI giảm theo %
-  const DISCOUNT_IS_PERCENT = true;
-
-  // Hiển thị code đợt giao
-  const [deliveryBatchCode, setDeliveryBatchCode] = useState<string>("");
-
-  // Thêm state cho error handling
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [businessErrors, setBusinessErrors] = useState<string[]>([]);
-
-  // -------------------- form state (không-null để tránh lỗi hooks) --------------------
+  // Form state
   const [form, setForm] = useState<FormState>({
     deliveryBatchId: deliveryBatchId ?? "",
     deliveryRound: "",
-    orderDate: undefined,
-    actualDeliveryDate: undefined,
     note: "",
     status: OrderStatus.Preparing,
     cancelReason: "",
     orderItems: [],
   });
 
-  // Map dữ liệu edit -> form
+  // Options and data
+  const [deliveryItemOptions, setDeliveryItemOptions] = useState<{ contractDeliveryItemId: string; name: string }[]>([]);
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+  const [batchOptions, setBatchOptions] = useState<{ id: string; label: string }[]>([]);
+  const [loadingOptions, setLoadingOptions] = useState(false);
+  const [deliveryBatchCode, setDeliveryBatchCode] = useState<string>("");
+  const [existingOrders, setExistingOrders] = useState<OrderViewAllDto[]>([]);
+
+  // Product selection state
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [showProductList, setShowProductList] = useState(true);
+  const [productSearch, setProductSearch] = useState("");
+  const [selectedCoffeeType, setSelectedCoffeeType] = useState<string>("");
+
+  // Maps for auto-fill
+  const [deliveryItemUnitPriceMap, setDeliveryItemUnitPriceMap] = useState<Record<string, number>>({});
+  const [deliveryItemDiscountMap, setDeliveryItemDiscountMap] = useState<Record<string, number>>({});
+  const [deliveryItemCoffeeTypeMap, setDeliveryItemCoffeeTypeMap] = useState<Record<string, string>>({});
+  const [deliveryItemQuantityMap, setDeliveryItemQuantityMap] = useState<Record<string, number>>({});
+
+  // Error handling
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [businessErrors, setBusinessErrors] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  // Map edit data to form
   useEffect(() => {
     if (!initialData) return;
-
-    // orderDate từ BE là ISO -> cắt yyyy-MM-dd cho input date
-    const orderDateStr = initialData.orderDate
-      ? String(initialData.orderDate).substring(0, 10)
-      : undefined;
 
     setForm({
       deliveryBatchId: initialData.deliveryBatchId,
       deliveryRound: initialData.deliveryRound ?? "",
-      orderDate: orderDateStr,
-      actualDeliveryDate: initialData.actualDeliveryDate ?? undefined, // đã yyyy-MM-dd
       note: initialData.note ?? "",
       status: initialData.status ?? OrderStatus.Preparing,
       cancelReason: initialData.cancelReason ?? "",
@@ -145,45 +119,42 @@ export default function OrderForm({
           productId: it.productId,
           quantity: typeof it.quantity === "number" ? it.quantity : "",
           unitPrice: typeof it.unitPrice === "number" ? it.unitPrice : "",
-          // UI hiển thị %: discountAmount từ DB đã là % rồi
           discountAmount: it.discountAmount ?? 0,
           note: it.note ?? "",
         })
       ),
     });
+
+    // Set selected products for edit mode
+    const selected = new Set(initialData.orderItems?.map(item => item.productId) || []);
+    setSelectedProducts(selected);
   }, [initialData]);
 
-  // Load options theo đợt giao + danh sách sản phẩm
+  // Load delivery batch options
   useEffect(() => {
     (async () => {
       if (!form.deliveryBatchId) {
-        // clear khi chưa chọn đợt giao
         setDeliveryItemOptions([]);
         setDeliveryBatchCode("");
         return;
       }
       setLoadingOptions(true);
       try {
-        // Lấy viewDetails của đợt giao
         const details = (await getContractDeliveryBatchById(
           form.deliveryBatchId
         )) as ContractDeliveryBatchViewDetailsDto;
 
-        // Set mã đợt giao và gợi ý số đợt nếu form đang trống
         setDeliveryBatchCode(details.deliveryBatchCode || "");
         if (form.deliveryRound === "" || form.deliveryRound === undefined) {
           setField("deliveryRound", details.deliveryRound ?? "");
         }
 
-        // Build options cho dropdown "Mặt hàng đợt giao"
-        // viewDetails dùng deliveryItemId -> map sang contractDeliveryItemId cho UI
         const opts = (details.contractDeliveryItems ?? []).map((x) => ({
           contractDeliveryItemId: x.deliveryItemId,
           name: `${x.coffeeTypeName} — KH: ${x.plannedQuantity}`,
         }));
         setDeliveryItemOptions(opts);
 
-        // Build coffee type mapping for each delivery item
         const typeMap: Record<string, string> = {};
         const quantityMap: Record<string, number> = {};
         for (const it of details.contractDeliveryItems ?? []) {
@@ -197,7 +168,6 @@ export default function OrderForm({
         setDeliveryItemCoffeeTypeMap(typeMap);
         setDeliveryItemQuantityMap(quantityMap);
 
-        // Fetch contract details to derive unit price per delivery item
         try {
           const contract = (await getContractDetails(
             details.contractId
@@ -229,88 +199,54 @@ export default function OrderForm({
           setDeliveryItemUnitPriceMap(map);
           setDeliveryItemDiscountMap(discMap);
         } catch (err) {
-          // Không chặn UX nếu lỗi lấy chi tiết hợp đồng
           console.warn("Failed to load contract details for unit prices", err);
           setDeliveryItemUnitPriceMap({});
           setDeliveryItemDiscountMap({});
         }
 
-        // 4) Product options
         const products = await getProductOptions();
         setProductOptions(products ?? []);
-      } catch (e) {
-        console.error(e);
-        toast.error(t("managerOrders.form.errors.loadDeliveryBatch"));
-      } finally {
+              } catch (e) {
+          console.error(e);
+          toast.error("Lỗi khi tải thông tin đợt giao hàng");
+        } finally {
         setLoadingOptions(false);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.deliveryBatchId]);
 
-  // Khi chưa có deliveryBatchId, load danh sách đợt giao để chọn
+  // Load batch options when no deliveryBatchId
   useEffect(() => {
     if (form.deliveryBatchId) return;
     (async () => {
       try {
-        const all = await getAllContractDeliveryBatches();
+        const [all, orders] = await Promise.all([
+          getAllContractDeliveryBatches(),
+          getAllOrders()
+        ]);
+
+        setExistingOrders(orders ?? []);
+
+        // Lọc bỏ các delivery batch đã có order
+        const deliveryBatchCodesWithOrders = new Set(orders.map(order => order.deliveryBatchCode));
+        const availableBatches = (all ?? []).filter(batch => !deliveryBatchCodesWithOrders.has(batch.deliveryBatchCode));
+
         setBatchOptions(
-          (all ?? []).map((b) => ({
+          availableBatches.map((b) => ({
             id: b.deliveryBatchId,
             label: `${b.deliveryBatchCode} — ${b.contractNumber}`,
           }))
         );
-      } catch (e) {
-        console.error(e);
-        toast.error(t("managerOrders.form.errors.loadDeliveryBatches"));
-      }
+              } catch (e) {
+          console.error(e);
+          toast.error("Lỗi khi tải danh sách đợt giao hàng");
+        }
     })();
   }, [form.deliveryBatchId]);
 
-  // Real-time validation for business rules
-  useEffect(() => {
-    if (!form.orderItems.length) {
-      setBusinessErrors([]);
-      return;
-    }
-
-    const newBusiness: string[] = [];
-
-    form.orderItems.forEach((item) => {
-      if (!item.contractDeliveryItemId || !item.productId || !item.quantity)
-        return;
-
-      // Validate quantity against delivery item planned quantity
-      const deliveryItemLimit =
-        deliveryItemQuantityMap[item.contractDeliveryItemId];
-      if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
-        newBusiness.push(
-          `Số lượng vượt quá kế hoạch của mặt hàng đợt giao (tối đa ${deliveryItemLimit} kg).`
-        );
-      }
-
-      // Validate quantity against product available quantity
-      const selectedProduct = productOptions.find(
-        (p) => p.productId === item.productId
-      );
-      if (selectedProduct && selectedProduct.quantityAvailable) {
-        const productLimit = Number(selectedProduct.quantityAvailable);
-        if (Number(item.quantity) > productLimit) {
-          newBusiness.push(
-            `Số lượng vượt quá tồn kho có sẵn của sản phẩm (tối đa ${productLimit} kg).`
-          );
-        }
-      }
-    });
-
-    setBusinessErrors(newBusiness);
-  }, [form.orderItems, deliveryItemQuantityMap, productOptions]);
-
-  // Helpers
+  // Helper functions
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((prev) => ({ ...(prev as FormState), [key]: value }));
-
-    // Clear field error when user starts typing
+    setForm((prev) => ({ ...prev, [key]: value }));
     if (fieldErrors[key]) {
       setFieldErrors((prev) => {
         const newErrors = { ...prev };
@@ -318,99 +254,79 @@ export default function OrderForm({
         return newErrors;
       });
     }
-
-    // Note: Business errors are now handled by useEffect for real-time validation
   };
 
-  const ensureItems = () =>
-    setForm((prev) => ({
-      ...(prev as FormState),
-      orderItems: Array.isArray(prev?.orderItems) ? prev!.orderItems : [],
-    }));
+  const addProductToOrder = (productId: string) => {
+    const product = productOptions.find(p => p.productId === productId);
+    if (!product) return;
 
-  const addRow = () => {
-    ensureItems();
-    setForm((prev) => ({
-      ...(prev as FormState),
-      orderItems: [
-        ...((prev as FormState).orderItems || []),
-        {
-          contractDeliveryItemId: "",
-          productId: "",
-          quantity: "",
-          unitPrice: "",
-          discountAmount: 0, // %
-          note: "",
-        },
-      ],
-    }));
-  };
-
-  const updateRow = <K extends keyof OrderItemRow>(
-    idx: number,
-    key: K,
-    value: OrderItemRow[K]
-  ) => {
-    setForm((prev) => {
-      const base = { ...(prev as FormState) };
-      const arr = [...(base.orderItems || [])];
-      arr[idx] = {
-        ...arr[idx],
-        [key]:
-          key === "quantity" || key === "unitPrice" || key === "discountAmount"
-            ? ((value === "" ? "" : Number(value)) as any)
-            : (value as any),
-      };
-      base.orderItems = arr;
-      return base;
+    // Find matching delivery item for this product type
+    const coffeeType = product.coffeeTypeName?.toLowerCase();
+    const matchingDeliveryItem = deliveryItemOptions.find(item => {
+      const itemCoffeeType = deliveryItemCoffeeTypeMap[item.contractDeliveryItemId]?.toLowerCase();
+      return itemCoffeeType === coffeeType;
     });
 
-    // Clear field error when user starts typing
-    const fieldKey = `orderItems.${idx}.${key}`;
-    if (fieldErrors[fieldKey]) {
-      setFieldErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldKey];
-        return newErrors;
-      });
+    if (!matchingDeliveryItem) {
+      toast.error("Không tìm thấy mặt hàng đợt giao phù hợp cho sản phẩm này");
+      return;
     }
 
-    // Note: Business errors are now handled by useEffect for real-time validation
+    const newItem: OrderItemRow = {
+      contractDeliveryItemId: matchingDeliveryItem.contractDeliveryItemId,
+      productId: productId,
+      quantity: 1,
+      unitPrice: deliveryItemUnitPriceMap[matchingDeliveryItem.contractDeliveryItemId] || 0,
+      discountAmount: deliveryItemDiscountMap[matchingDeliveryItem.contractDeliveryItemId] || 0,
+      note: "",
+    };
+
+    setForm(prev => ({
+      ...prev,
+      orderItems: [...prev.orderItems, newItem]
+    }));
   };
 
-  const removeRow = (idx: number) =>
-    setForm((prev) => {
-      const base = { ...(prev as FormState) };
-      const arr = [...(base.orderItems || [])];
-      arr.splice(idx, 1);
-      base.orderItems = arr;
-      return base;
-    });
+  const removeProductFromOrder = (productId: string) => {
+    setForm(prev => ({
+      ...prev,
+      orderItems: prev.orderItems.filter(item => item.productId !== productId)
+    }));
+  };
 
-  // Helper function to get error for a specific field
+  const updateOrderItemQuantity = (productId: string, quantity: number) => {
+    setForm(prev => ({
+      ...prev,
+      orderItems: prev.orderItems.map(item =>
+        item.productId === productId
+          ? { ...item, quantity: quantity }
+          : item
+      )
+    }));
+  };
+
+  const toggleProductSelection = (productId: string) => {
+    const newSelected = new Set(selectedProducts);
+    if (newSelected.has(productId)) {
+      newSelected.delete(productId);
+      removeProductFromOrder(productId);
+    } else {
+      newSelected.add(productId);
+      addProductToOrder(productId);
+    }
+    setSelectedProducts(newSelected);
+  };
+
+  // Error helper functions
   const getFieldError = (fieldName: string): string | undefined => {
     return fieldErrors[fieldName];
   };
 
-  // Helper function to check if field has error
   const hasFieldError = (fieldName: string): boolean => {
     return !!fieldErrors[fieldName];
   };
 
-  // Helper function to get error for order item field
-  const getOrderItemError = (
-    index: number,
-    field: string
-  ): string | undefined => {
-    return fieldErrors[`orderItems.${index}.${field}`];
-  };
-
-  // Helper function to check if order item field has error
-  const hasOrderItemError = (index: number, field: string): boolean => {
-    return !!fieldErrors[`orderItems.${index}.${field}`];
-  };
-
-  // Tính tổng
+  // Calculate totals
   const items = form.orderItems ?? [];
 
   const lineTotal = (r: OrderItemRow) => {
@@ -433,13 +349,37 @@ export default function OrderForm({
   const fmtVnd = (n: number) =>
     new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
 
-  const [saving, setSaving] = React.useState(false);
+  // Filter products based on search and delivery batch contract
+  const filteredProducts = useMemo(() => {
+    return productOptions.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+        product.productId.toLowerCase().includes(productSearch.toLowerCase());
+
+      // Filter by coffee type from delivery batch contract
+      const matchesDeliveryBatchContract = !form.deliveryBatchId ||
+        deliveryItemCoffeeTypeMap && Object.values(deliveryItemCoffeeTypeMap).some(coffeeType =>
+          coffeeType.toLowerCase() === (product.coffeeTypeName || "").toLowerCase()
+        );
+
+      // Filter by selected coffee type
+      const matchesSelectedType = !selectedCoffeeType ||
+        product.coffeeTypeName === selectedCoffeeType;
+
+      return matchesSearch && matchesDeliveryBatchContract && matchesSelectedType;
+    });
+  }, [productOptions, productSearch, form.deliveryBatchId, deliveryItemCoffeeTypeMap, selectedCoffeeType]);
+
+  // Get coffee types from delivery batch contract for filter
+  const availableCoffeeTypes = useMemo(() => {
+    if (!form.deliveryBatchId || !deliveryItemCoffeeTypeMap) return [];
+    const types = new Set(Object.values(deliveryItemCoffeeTypeMap).filter(Boolean));
+    return Array.from(types);
+  }, [form.deliveryBatchId, deliveryItemCoffeeTypeMap]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (saving) return;
 
-    // Clear previous errors
     setFieldErrors({});
     setBusinessErrors([]);
 
@@ -447,83 +387,37 @@ export default function OrderForm({
 
     // Validate
     const clientErrors: Record<string, string> = {};
-    const newBusiness: string[] = [];
 
     if (!data.deliveryBatchId) {
-      clientErrors.deliveryBatchId = t(
-        "managerOrders.form.validation.selectDeliveryBatch"
-      );
+      clientErrors.deliveryBatchId = "Vui lòng chọn đợt giao hàng";
     }
     if (!data.orderItems.length) {
-      clientErrors.orderItems = t(
-        "managerOrders.form.validation.addAtLeastOneItem"
-      );
+      clientErrors.orderItems = "Vui lòng thêm ít nhất một sản phẩm";
     } else {
       data.orderItems.forEach((item, index) => {
         if (!item.contractDeliveryItemId) {
-          clientErrors[`orderItems.${index}.contractDeliveryItemId`] = t(
-            "managerOrders.form.validation.selectDeliveryItem"
-          );
+          clientErrors[`orderItems.${index}.contractDeliveryItemId`] = "Vui lòng chọn mặt hàng đợt giao";
         }
         if (!item.productId) {
-          clientErrors[`orderItems.${index}.productId`] = t(
-            "managerOrders.form.validation.selectProduct"
-          );
+          clientErrors[`orderItems.${index}.productId`] = "Vui lòng chọn sản phẩm";
         }
         if (!(Number(item.quantity) > 0)) {
-          clientErrors[`orderItems.${index}.quantity`] = t(
-            "managerOrders.form.validation.quantityRequired"
-          );
+          clientErrors[`orderItems.${index}.quantity`] = "Số lượng phải lớn hơn 0";
         }
         if (!(Number(item.unitPrice) > 0)) {
-          clientErrors[`orderItems.${index}.unitPrice`] = t(
-            "managerOrders.form.validation.unitPriceRequired"
-          );
-        }
-
-        // Validate quantity against delivery item planned quantity
-        const deliveryItemLimit =
-          deliveryItemQuantityMap[item.contractDeliveryItemId];
-        if (deliveryItemLimit && Number(item.quantity) > deliveryItemLimit) {
-        }
-
-        // Validate quantity against product available quantity
-        const selectedProduct = productOptions.find(
-          (p) => p.productId === item.productId
-        );
-        if (selectedProduct && selectedProduct.quantityAvailable) {
-          const productLimit = Number(selectedProduct.quantityAvailable);
-          if (Number(item.quantity) > productLimit) {
-          }
+          clientErrors[`orderItems.${index}.unitPrice`] = "Đơn giá phải lớn hơn 0";
         }
       });
     }
 
-    // Validate ngày giao thực tế không được trước ngày hiện tại (chỉ khi EDIT)
-    if (isEdit && data.actualDeliveryDate) {
-      const actualDate = new Date(data.actualDeliveryDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Reset time to start of day
-      if (actualDate < today) {
-        clientErrors.actualDeliveryDate = t(
-          "managerOrders.form.validation.actualDeliveryDateBeforeToday"
-        );
-      }
-    }
-
-    // If there are client-side errors or business rule violations, display them and stop
-    if (Object.keys(clientErrors).length > 0 || newBusiness.length > 0) {
+    if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
-      setBusinessErrors(newBusiness);
-      toast.error(t("managerOrders.form.validation.checkFormErrors"));
+      toast.error("Vui lòng kiểm tra lại các lỗi trong form");
       return;
     }
 
-    // Convert ngày: yyyy-MM-dd -> ISO (orderDate) và giữ yyyy-MM-dd (actual)
-    const orderDateIso = data.orderDate
-      ? new Date(`${data.orderDate}T00:00:00`).toISOString()
-      : undefined;
-    const actualDeliveryDateStr = data.actualDeliveryDate || undefined;
+    const orderDateIso = undefined;
+    const actualDeliveryDateStr = undefined;
 
     try {
       setSaving(true);
@@ -532,10 +426,9 @@ export default function OrderForm({
         const payload: OrderUpdateDto = {
           orderId: initialData.orderId,
           deliveryBatchId: data.deliveryBatchId,
-          deliveryRound:
-            data.deliveryRound === "" || data.deliveryRound === undefined
-              ? null
-              : Number(data.deliveryRound),
+          deliveryRound: data.deliveryRound === "" || data.deliveryRound === undefined
+            ? null
+            : Number(data.deliveryRound),
           orderDate: orderDateIso ?? undefined,
           actualDeliveryDate: actualDeliveryDateStr ?? undefined,
           note: data.note?.trim() || undefined,
@@ -544,38 +437,33 @@ export default function OrderForm({
           orderItems: (data.orderItems || []).map((r) => {
             const qty = Number(r.quantity) || 0;
             const price = Number(r.unitPrice) || 0;
-            // Gửi discount trực tiếp dưới dạng % (không convert)
             const discountPercent = Number(r.discountAmount) || 0;
             return {
-              orderItemId: r.orderItemId!, // edit phải có
+              orderItemId: r.orderItemId!,
               orderId: initialData.orderId,
               contractDeliveryItemId: r.contractDeliveryItemId,
               productId: r.productId,
               quantity: qty,
               unitPrice: price,
-              discountAmount: discountPercent, // Gửi % trực tiếp
+              discountAmount: discountPercent,
               note: r.note?.trim() || undefined,
             };
           }),
         };
 
-        // Tạo promise gốc
         const req = updateOrder(payload.orderId, payload);
-        // Hiển thị toast theo trạng thái promise
         toast.promise(req, {
-          loading: t("managerOrders.form.actions.updating"),
-          success: t("managerOrders.form.actions.updateSuccess"),
-          error: t("managerOrders.form.actions.updateError"),
+          loading: "Đang cập nhật...",
+          success: "Cập nhật đơn hàng thành công",
+          error: "Lỗi khi cập nhật đơn hàng",
         });
-        // Quan trọng: chờ promise gốc -> nếu fail sẽ nhảy vào catch, KHÔNG gọi onSuccess
         await req;
       } else {
         const payload: OrderCreateDto = {
           deliveryBatchId: data.deliveryBatchId,
-          deliveryRound:
-            data.deliveryRound === "" || data.deliveryRound === undefined
-              ? null
-              : Number(data.deliveryRound),
+          deliveryRound: data.deliveryRound === "" || data.deliveryRound === undefined
+            ? null
+            : Number(data.deliveryRound),
           orderDate: orderDateIso ?? null,
           actualDeliveryDate: actualDeliveryDateStr ?? null,
           note: data.note?.trim() ?? null,
@@ -584,14 +472,13 @@ export default function OrderForm({
           orderItems: (data.orderItems || []).map((r) => {
             const qty = Number(r.quantity) || 0;
             const price = Number(r.unitPrice) || 0;
-            // Gửi discount trực tiếp dưới dạng % (không convert)
             const discountPercent = Number(r.discountAmount) || 0;
             return {
               contractDeliveryItemId: r.contractDeliveryItemId,
               productId: r.productId,
               quantity: qty,
               unitPrice: price,
-              discountAmount: discountPercent, // Gửi % trực tiếp
+              discountAmount: discountPercent,
               note: r.note?.trim() || undefined,
             };
           }),
@@ -599,170 +486,53 @@ export default function OrderForm({
 
         const req = createOrder(payload);
         toast.promise(req, {
-          loading: t("managerOrders.form.actions.creating"),
-          success: t("managerOrders.form.actions.createSuccess"),
-          error: t("managerOrders.form.actions.createError"),
+          loading: "Đang tạo...",
+          success: "Tạo đơn hàng thành công",
+          error: "Lỗi khi tạo đơn hàng",
         });
         await req;
       }
 
-      // Chỉ gọi khi request thành công
       onSuccess();
     } catch (err) {
-      // KHÔNG log console.error để tránh hiển thị error box
-      // console.error(err);
-
-      // Xử lý lỗi validation từ backend
       if (err && typeof err === "object" && "errors" in err && err.errors) {
         const validationErrors = err.errors as Record<string, string[]>;
         const newFieldErrors: Record<string, string> = {};
         const newBusinessErrors: string[] = [];
 
-        // Phân loại lỗi: field validation vs business logic
         Object.entries(validationErrors).forEach(([field, messages]) => {
           if (Array.isArray(messages) && messages.length > 0) {
             const message = messages[0];
-
-            // Lỗi nghiệp vụ thường có đặc điểm:
-            const isBusinessError =
-              message.length > 50 ||
-              message.includes("vượt quá") ||
-              message.includes("đã tồn tại") ||
-              message.includes("không được") ||
-              message.includes("phải") ||
-              message.includes("cùng loại") ||
-              message.includes("tổng khối lượng") ||
-              message.includes("tổng giá trị") ||
-              message.includes("tổng trị giá") ||
-              message.includes("đã tồn tại trong hệ thống") ||
-              message.includes("không có quyền") ||
-              message.includes("không tìm thấy") ||
-              message.includes("vượt quá tổng") ||
-              message.includes("không được có 2 dòng") ||
-              message.includes("không được âm") ||
-              message.includes("phải lớn hơn") ||
-              message.includes("phải nhỏ hơn") ||
-              message.includes("dòng hợp đồng") ||
-              message.includes("hợp đồng đã khai báo") ||
-              message.includes("kg) vượt quá") ||
-              message.includes("VND) vượt quá") ||
-              message.includes("từ các dòng") ||
-              message.includes("đã khai báo") ||
-              message.includes("các dòng hợp đồng") ||
-              message.includes("đã khai báo (") ||
-              message.includes(") vượt quá") ||
-              message.includes("quản lý doanh nghiệp") ||
-              message.includes("thông tin bên mua") ||
-              message.includes("Số hợp đồng") ||
-              message.includes("khối lượng từ các dòng") ||
-              message.includes("trị giá từ các dòng") ||
-              message.includes("vượt quá tổng khối lượng") ||
-              message.includes("vượt quá tổng giá trị") ||
-              message.includes("vượt quá tổng trị giá") ||
-              message.includes("hiện có") ||
-              message.includes("thêm") ||
-              message.includes("từ các dòng hợp đồng") ||
-              message.includes("Tổng khối lượng từ các dòng") ||
-              message.includes("Tổng trị giá từ các dòng") ||
-              message.includes("vượt quá tổng khối lượng hợp đồng") ||
-              message.includes("vượt quá tổng giá trị hợp đồng") ||
-              message.includes("vượt quá tổng trị giá hợp đồng") ||
-              message.includes("Tổng khối lượng từ các dòng hợp đồng") ||
-              message.includes("Tổng trị giá từ các dòng hợp đồng") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo"
-              ) ||
-              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
-              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
-              message.includes("Tổng khối lượng từ các dòng hợp đồng (") ||
-              message.includes("Tổng trị giá từ các dòng hợp đồng (") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo ("
-              ) ||
-              message.includes(
-                "vượt quá tổng giá trị hợp đồng đã khai báo ("
-              ) ||
-              message.includes(
-                "vượt quá tổng trị giá hợp đồng đã khai báo ("
-              ) ||
-              message.includes("kg) vượt quá tổng khối lượng") ||
-              message.includes("VND) vượt quá tổng giá trị") ||
-              message.includes(
-                "vượt quá tổng khối lượng hợp đồng đã khai báo"
-              ) ||
-              message.includes("vượt quá tổng giá trị hợp đồng đã khai báo") ||
-              message.includes("vượt quá tổng trị giá hợp đồng đã khai báo") ||
-              message.includes("Lô giao hàng này đã có đơn hàng") ||
-              message.includes("Bạn không có quyền") ||
-              message.includes("Không tìm thấy lô giao hàng") ||
-              message.includes("Không tìm thấy Manager hoặc Staff") ||
-              message.includes("Ngày đặt hàng không được vượt quá") ||
-              message.includes("Ngày giao thực tế không được") ||
-              message.includes("Đơn hàng phải có ít nhất") ||
-              message.includes("Có sản phẩm bị trùng lặp") ||
-              message.includes("Đợt giao hàng phải lớn hơn") ||
-              message.includes("Giảm giá không được vượt quá") ||
-              message.includes("Giảm giá không được âm");
+            const isBusinessError = message.length > 50 || message.includes("vượt quá") || message.includes("đã tồn tại");
 
             if (isBusinessError) {
               newBusinessErrors.push(message);
             } else {
-              // Xử lý lỗi cho order items (dạng: OrderItems[0].Quantity)
               if (field.startsWith("OrderItems[") && field.includes("].")) {
                 const match = field.match(/OrderItems\[(\d+)\]\.(\w+)/);
                 if (match) {
                   const index = match[1];
                   const itemField = match[2];
-                  newFieldErrors[
-                    `orderItems.${index}.${itemField.toLowerCase()}`
-                  ] = message;
+                  newFieldErrors[`orderItems.${index}.${itemField.toLowerCase()}`] = message;
                 }
               } else {
-                // Xử lý lỗi cho các field chính
                 newFieldErrors[field] = message;
               }
             }
           }
         });
 
-        // Set errors theo loại
         if (Object.keys(newFieldErrors).length > 0) {
           setFieldErrors(newFieldErrors);
         }
-
         if (newBusinessErrors.length > 0) {
           setBusinessErrors(newBusinessErrors);
         }
-
-        // Hiển thị toast với thông tin cụ thể
-        if (
-          Object.keys(newFieldErrors).length > 0 ||
-          newBusinessErrors.length > 0
-        ) {
-          toast.error(t("managerOrders.form.errors.checkFormErrors"));
+        if (Object.keys(newFieldErrors).length > 0 || newBusinessErrors.length > 0) {
+          toast.error("Vui lòng kiểm tra lại các lỗi trong form");
         }
       } else {
-        // Xử lý lỗi khác - kiểm tra message trực tiếp
-        let errorMessage = t("managerOrders.form.errors.saveOrderError");
-
-        if (err && typeof err === "object" && "message" in err) {
-          const message = String(err.message);
-
-          // Kiểm tra các lỗi nghiệp vụ cụ thể
-          if (message.includes("Lô giao hàng này đã có đơn hàng")) {
-            setBusinessErrors([message]);
-            errorMessage =
-              t("managerOrders.form.errors.businessError") + message;
-          } else if (message.includes("Bạn không có quyền")) {
-            setBusinessErrors([message]);
-            errorMessage = t("managerOrders.form.errors.accessError") + message;
-          } else if (message.includes("Không tìm thấy")) {
-            setBusinessErrors([message]);
-            errorMessage = t("managerOrders.form.errors.dataError") + message;
-          }
-        }
-
-        toast.error(errorMessage);
+        toast.error("Lỗi khi lưu đơn hàng");
       }
     } finally {
       setSaving(false);
@@ -770,508 +540,343 @@ export default function OrderForm({
   }
 
   return (
-    <form className="max-w-5xl mx-auto bg-white border rounded-2xl shadow p-8 space-y-6">
-      <h2 className="text-2xl font-semibold text-center">
-        {isEdit
-          ? t("managerOrders.edit.title")
-          : t("managerOrders.create.title")}
-      </h2>
+    <div className="max-w-7xl mx-auto bg-white border rounded-lg shadow p-6">
+      {/* Header */}
+      <div className="text-center mb-6">
+                         <h1 className="text-2xl font-bold text-gray-900">
+          {isEdit ? "Chỉnh sửa đơn hàng" : "Tạo đơn hàng mới"}
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Quản lý thông tin đơn hàng và sản phẩm
+        </p>
+      </div>
 
-      {/* Hiển thị lỗi nghiệp vụ */}
+      {/* Order Creation Mode */}
+      <div className="mb-6">
+                         <label className="block text-sm font-medium text-gray-700 mb-2">
+          Chế độ tạo đơn hàng:
+        </label>
+        <select className="w-full max-w-xs p-2 border border-gray-300 rounded-lg">
+          <option value="multiple">Nhiều sản phẩm</option>
+        </select>
+      </div>
+
+      {/* Business Errors */}
       {businessErrors.length > 0 && (
-        <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-orange-800 font-medium">
-              {t("managerOrders.form.businessRules.title")}
-            </h3>
-            <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
-              {businessErrors.length}{" "}
-              {t("managerOrders.form.businessRules.rules")}
-            </span>
-          </div>
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          {businessErrors.map((error, index) => (
+            <p key={index} className="text-red-600 text-sm">• {error}</p>
+          ))}
+        </div>
+      )}
 
-          {/* Tóm tắt nhanh */}
-          <div className="mb-3 p-2 bg-orange-100 rounded text-orange-800 text-sm">
-            <strong> {t("managerOrders.form.businessRules.summary")}:</strong>
-            {businessErrors.length > 0 && (
-              <div className="mt-2">
-                {businessErrors.map((error, index) => (
-                  <div key={index} className="text-sm">
-                    • {error}
-                  </div>
-                ))}
+      {/* Main Form Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column - Order Information */}
+        <div className="space-y-6">
+          {/* Delivery Batch Information */}
+          <div className="bg-gray-50 p-6 rounded-lg h-fit">
+            <div className="flex items-center mb-4">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
               </div>
-            )}
-          </div>
-
-          {/* Hướng dẫn giải quyết */}
-          <div className="mt-3 pt-3 border-t border-orange-200">
-            <p className="text-orange-600 text-sm font-medium mb-2">
-              💡 {t("managerOrders.form.businessRules.guidance")}:
-            </p>
-            <ul className="text-orange-600 text-xs space-y-1">
-              {businessErrors.some((err) =>
-                err.includes("vượt quá kế hoạch")
-              ) && (
-                <li>
-                  • Giảm số lượng xuống dưới giới hạn kế hoạch của mặt hàng đợt
-                  giao
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("vượt quá tồn kho")
-              ) && (
-                <li>
-                  • Giảm số lượng xuống dưới số lượng tồn kho có sẵn của sản
-                  phẩm
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("cùng loại")) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.noDuplicateProducts")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("đã tồn tại")) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.orderInfoExists")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("không có quyền")) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.contactAdminForPermission"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Lô giao hàng này đã có đơn hàng")
-              ) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.oneOrderPerBatch")}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Ngày đặt hàng không được vượt quá")
-              ) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.orderDateNotExceedCurrent"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Ngày giao thực tế không được")
-              ) && (
-                <li>
-                  •{" "}
-                  {t(
-                    "managerOrders.form.businessRules.deliveryDateNotBeforeOrder"
-                  )}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Giảm giá không được vượt quá")
-              ) && (
-                <li>
-                  •{" "}
-                  {t("managerOrders.form.businessRules.discountNotExceedTotal")}
-                </li>
-              )}
-              {businessErrors.some((err) =>
-                err.includes("Giảm giá không được âm")
-              ) && (
-                <li>
-                  • {t("managerOrders.form.businessRules.discountNotNegative")}
-                </li>
-              )}
-              {businessErrors.some((err) => err.includes("Không tìm thấy")) && (
-                <li>• {t("managerOrders.form.businessRules.dataNotExists")}</li>
-              )}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* DeliveryBatch + DeliveryRound + ActualDeliveryDate */}
-      <div
-        className={`grid grid-cols-1 gap-4 ${
-          isEdit ? "md:grid-cols-3" : "md:grid-cols-2"
-        }`}
-      >
-        {/* Đợt giao (create = select, edit = read-only) */}
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.deliveryBatch")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-
-          {!isEdit ? (
-            // CREATE: cho phép chọn
-            <select
-              className={`w-full p-2 border rounded ${
-                hasFieldError("deliveryBatchId") ? "border-red-500" : ""
-              }`}
-              value={form.deliveryBatchId}
-              onChange={(e) => {
-                const id = e.target.value;
-                setField("deliveryBatchId", id);
-                // tùy chọn: cập nhật code tức thời từ batchOptions
-                const found = batchOptions.find((b) => b.id === id);
-                if (found)
-                  setDeliveryBatchCode(found.label.split(" — ")[0] || "");
-                // effect sau đó sẽ fetch viewDetails và đồng bộ lại mọi thứ
-              }}
-            >
-              <option value="">
-                -- {t("managerOrders.form.placeholders.selectDeliveryBatch")} --
-              </option>
-              {batchOptions.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            // EDIT: chỉ hiển thị code đọc-chỉ để biết đang thuộc đợt nào
-            <Input
-              value={deliveryBatchCode || "—"}
-              readOnly
-              className="bg-muted/40"
-            />
-          )}
-          {hasFieldError("deliveryBatchId") && (
-            <p className="text-red-500 text-xs mt-1">
-              {getFieldError("deliveryBatchId")}
-            </p>
-          )}
-        </div>
-
-        {/* Số đợt */}
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.deliveryRound")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="number"
-            value={form.deliveryRound ?? ""}
-            onChange={(e) =>
-              setField(
-                "deliveryRound",
-                e.target.value === "" ? "" : Number(e.target.value)
-              )
-            }
-            className="no-spinner"
-            onKeyDown={(e) => {
-              if (e.key === "-" || e.key.toLowerCase() === "e")
-                e.preventDefault();
-            }}
-          />
-        </div>
-
-        {/* Ngày giao thực tế - chỉ hiển thị khi EDIT */}
-        {isEdit && (
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              {t("managerOrders.form.fields.actualDeliveryDate")}
-            </label>
-            <DatePicker
-              value={form.actualDeliveryDate}
-              onChange={(v) => setField("actualDeliveryDate", v)}
-              placeholder="yyyy-MM-dd"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Status */}
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.form.fields.status")}{" "}
-          <span className="text-red-500">*</span>
-        </label>
-        {!isEdit ? (
-          // CREATE: cứng "Đang chuẩn bị", không thể thay đổi
-          <Input
-            value={t(`managerOrders.status.${form.status.toLowerCase()}`)}
-            readOnly
-            className="bg-muted/40 cursor-not-allowed"
-          />
-        ) : (
-          // EDIT: có thể chọn trạng thái
-          <select
-            className="w-full p-2 border rounded"
-            value={form.status}
-            onChange={(e) => setField("status", e.target.value as OrderStatus)}
-          >
-            {Object.values(OrderStatus)
-              .filter((s) => s !== OrderStatus.Pending)
-              .map((s) => (
-                <option key={s} value={s}>
-                  {t(`managerOrders.status.${s.toLowerCase()}`)}
-                </option>
-              ))}
-          </select>
-        )}
-        {!isEdit && (
-          <p className="text-xs text-gray-500 mt-1">
-            {t("managerOrders.form.fields.statusCannotChange")}
-          </p>
-        )}
-      </div>
-
-      {/* Cancel Reason - chỉ hiển thị khi EDIT và status là Cancelled */}
-      {isEdit && form.status === OrderStatus.Cancelled && (
-        <div>
-          <label className="block mb-1 text-sm font-medium">
-            {t("managerOrders.form.fields.cancelReason")}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Input
-            value={form.cancelReason ?? ""}
-            onChange={(e) => setField("cancelReason", e.target.value)}
-            placeholder={t("managerOrders.form.placeholders.cancelReason")}
-          />
-        </div>
-      )}
-
-      {/* Note */}
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.form.fields.note")}
-        </label>
-        <Textarea
-          placeholder={t("managerOrders.form.placeholders.note")}
-          value={form.note ?? ""}
-          onChange={(e) => setField("note", e.target.value)}
-        />
-      </div>
-
-      {/* Order Items */}
-      <div className="space-y-2">
-        <label className="block mb-1 text-sm font-medium">
-          {t("managerOrders.detail.productList.title")}{" "}
-          <span className="text-red-500">*</span>
-        </label>
-
-        {/* Hiển thị lỗi tổng quát cho order items */}
-        {hasFieldError("orderItems") && (
-          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm font-medium">
-              {getFieldError("orderItems")}
-            </p>
-          </div>
-        )}
-
-        {(form.orderItems ?? []).length > 0 && (
-          <>
-            {/* Header giống contract, thêm cột Sản phẩm => 7 cột */}
-            <div className="hidden md:grid md:grid-cols-7 gap-2 mb-1 text-xs font-medium text-muted-foreground">
-              <span>
-                {t("managerOrders.form.table.headers.deliveryItem")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>
-                {t("managerOrders.form.table.headers.product")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>
-                {t("managerOrders.form.table.headers.quantity")}{" "}
-                <span className="text-red-500">*</span>
-              </span>
-              <span>{t("managerOrders.form.table.headers.unitPrice")}</span>
-              <span>{t("managerOrders.form.table.headers.discount")}</span>
-              <span>{t("managerOrders.form.table.headers.note")}</span>
-              <span></span>
+                             <h3 className="text-lg font-semibold text-gray-900">Thông tin đợt giao hàng</h3>
             </div>
 
-            {/* Body */}
-            {(form.orderItems || []).map((row, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-1 md:grid-cols-7 gap-2 mb-2"
-              >
-                {/* Mặt hàng đợt giao */}
-                <select
-                  value={row.contractDeliveryItemId}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    updateRow(idx, "contractDeliveryItemId", value);
-                    const autoPrice = deliveryItemUnitPriceMap[value];
-                    if (autoPrice !== undefined) {
-                      updateRow(idx, "unitPrice", autoPrice as any);
-                    }
-                    const autoDisc = deliveryItemDiscountMap[value];
-                    if (autoDisc !== undefined) {
-                      updateRow(idx, "discountAmount", autoDisc as any);
-                    }
-                  }}
-                  className={`p-2 border rounded ${
-                    hasOrderItemError(idx, "contractDeliveryItemId")
-                      ? "border-red-500"
-                      : ""
-                  }`}
-                  disabled={loadingOptions}
-                >
-                  <option value="">
-                    -- {t("managerOrders.form.placeholders.selectDeliveryItem")}{" "}
-                    --
-                  </option>
-                  {(deliveryItemOptions ?? []).map((it) => (
-                    <option
-                      key={it.contractDeliveryItemId}
-                      value={it.contractDeliveryItemId}
+            <div className="space-y-4">
+              <div>
+                                                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Đợt giao hàng <span className="text-red-500">*</span>
+                </label>
+                {!isEdit ? (
+                  <>
+                    <select
+                      className={`w-full p-3 border rounded-lg ${hasFieldError("deliveryBatchId") ? "border-red-500" : "border-gray-300"}`}
+                      value={form.deliveryBatchId}
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        setField("deliveryBatchId", id);
+                        const found = batchOptions.find((b) => b.id === id);
+                        if (found) setDeliveryBatchCode(found.label.split(" — ")[0] || "");
+                      }}
                     >
-                      {it.name}
-                    </option>
-                  ))}
-                </select>
-                {hasOrderItemError(idx, "contractDeliveryItemId") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "contractDeliveryItemId")}
-                  </p>
+                                             <option value="">Chọn đợt giao hàng</option>
+                      {batchOptions.map((b) => (
+                        <option key={b.id} value={b.id}>{b.label}</option>
+                      ))}
+                    </select>
+                    {batchOptions.length === 0 && (
+                      <p className="text-amber-600 text-xs mt-1">
+                        Không có đợt giao hàng khả dụng
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <Input value={deliveryBatchCode || "—"} readOnly className="bg-gray-50" />
                 )}
+                {hasFieldError("deliveryBatchId") && (
+                  <p className="text-red-500 text-xs mt-1">{getFieldError("deliveryBatchId")}</p>
+                )}
+              </div>
 
-                {/* Sản phẩm */}
+                             <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                   Đợt giao
+                 </label>
+                 <Input
+                   type="number"
+                   value={form.deliveryRound ?? ""}
+                   onChange={(e) => setField("deliveryRound", e.target.value === "" ? "" : Number(e.target.value))}
+                   placeholder="Tự động từ hợp đồng"
+                   className="no-spinner bg-gray-50"
+                   readOnly
+                 />
+                 <p className="text-xs text-gray-500 mt-1">
+                   Đợt giao được lấy tự động từ hợp đồng
+                 </p>
+               </div>
+            </div>
+          </div>
+
+          {/* Order Information */}
+          <div className="bg-gray-50 p-6 rounded-lg h-fit">
+            <div className="flex items-center mb-4">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Thông tin đơn hàng</h3>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ghi chú
+                </label>
+                <Textarea
+                  placeholder="Nhập ghi chú cho đơn hàng"
+                  value={form.note ?? ""}
+                  onChange={(e) => setField("note", e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Trạng thái
+                </label>
                 <select
-                  value={row.productId}
-                  onChange={(e) => updateRow(idx, "productId", e.target.value)}
-                  className={`p-2 border rounded ${
-                    hasOrderItemError(idx, "productId") ? "border-red-500" : ""
-                  }`}
-                  disabled={loadingOptions}
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  value={form.status}
+                  onChange={(e) => setField("status", e.target.value as OrderStatus)}
                 >
-                  <option value="">
-                    -- {t("managerOrders.form.placeholders.selectProduct")} --
-                  </option>
-                  {(productOptions ?? [])
-                    .filter((p) => {
-                      const currentDeliveryId = String(
-                        row.contractDeliveryItemId || ""
-                      );
-                      if (!currentDeliveryId) return true; // until user chooses a delivery item
-                      const neededType = (
-                        deliveryItemCoffeeTypeMap[currentDeliveryId] || ""
-                      ).toLowerCase();
-                      if (!neededType) return true;
-                      const productType = (
-                        p.coffeeTypeName || ""
-                      ).toLowerCase();
-                      return productType === neededType;
-                    })
-                    .map((p) => (
-                      <option key={p.productId} value={p.productId}>
-                        {p.name}
+                  {Object.values(OrderStatus)
+                    .filter((s) => s !== OrderStatus.Pending)
+                    .map((s) => (
+                      <option key={s} value={s}>
+                        {s === OrderStatus.Preparing ? "Đang chuẩn bị" :
+                          s === OrderStatus.Shipped ? "Đã xuất hàng" :
+                            s === OrderStatus.Delivered ? "Đã giao hàng" :
+                              s === OrderStatus.Cancelled ? "Đã hủy" :
+                                s === OrderStatus.Failed ? "Giao thất bại" : s}
                       </option>
                     ))}
                 </select>
-                {hasOrderItemError(idx, "productId") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "productId")}
-                  </p>
-                )}
-
-                {/* Số lượng */}
-                <Input
-                  type="number"
-                  min={0}
-                  step={0.1}
-                  value={row.quantity}
-                  onChange={(e) =>
-                    updateRow(
-                      idx,
-                      "quantity",
-                      e.target.value === "" ? "" : Number(e.target.value)
-                    )
-                  }
-                  className={`no-spinner ${
-                    hasOrderItemError(idx, "quantity") ? "border-red-500" : ""
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === "-" || e.key.toLowerCase() === "e")
-                      e.preventDefault();
-                  }}
-                />
-                {hasOrderItemError(idx, "quantity") && (
-                  <p className="text-red-500 text-xs mt-1 md:col-span-7">
-                    {getOrderItemError(idx, "quantity")}
-                  </p>
-                )}
-
-                {/* Đơn giá - tự động từ mặt hàng đợt giao */}
-                <Input
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={row.unitPrice}
-                  readOnly
-                  className="bg-muted/40 cursor-not-allowed"
-                />
-
-                {/* Giảm trừ (%) - tự động từ mặt hàng đợt giao */}
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step={0.1}
-                  value={row.discountAmount ?? 0}
-                  readOnly
-                  className="bg-muted/40 cursor-not-allowed"
-                />
-
-                {/* Ghi chú */}
-                <Input
-                  placeholder={t("managerOrders.form.placeholders.note")}
-                  value={row.note ?? ""}
-                  onChange={(e) => updateRow(idx, "note", e.target.value)}
-                />
-
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => removeRow(idx)}
-                >
-                  {t("managerOrders.form.actions.removeItem")}
-                </Button>
               </div>
-            ))}
-          </>
-        )}
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={addRow}
-          disabled={loadingOptions || !form.deliveryBatchId}
-        >
-          {t("managerOrders.form.actions.addItem")}
-        </Button>
-
-        {/* Tổng */}
-        <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
-          <div>
-            {t("managerOrders.form.summary.totalQuantity")}:{" "}
-            <strong>{totalQuantity.toLocaleString()} kg</strong>
+            </div>
           </div>
-          <div>
-            {t("managerOrders.form.summary.totalAmount")}:{" "}
-            <strong>{fmtVnd(totalAmount)} VNĐ</strong>
-          </div>
+        </div>
+
+        {/* Right Column - Product Selection */}
+        <div className="space-y-6">
+                     {/* Select Products Header */}
+           <div className="bg-gray-50 p-6 rounded-lg">
+             <div className="flex items-center justify-between mb-4">
+               <div className="flex items-center">
+                 <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                   <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                   </svg>
+                 </div>
+                 <h3 className="text-lg font-semibold text-gray-900">Chọn sản phẩm</h3>
+               </div>
+               <Button
+                 type="button"
+                 variant="outline"
+                 size="sm"
+                 onClick={() => setShowProductList(!showProductList)}
+               >
+                 {showProductList ? "Ẩn danh sách" : "Hiện danh sách"}
+               </Button>
+             </div>
+             
+             {/* Contract Summary */}
+             {form.deliveryBatchId && deliveryItemOptions.length > 0 && (
+               <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                 <h4 className="font-medium text-gray-900 mb-2">Thông tin hợp đồng</h4>
+                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p><strong>Đợt giao:</strong> {form.deliveryRound || "Chưa có"}</p>
+                      <p><strong>Tổng số lượng hợp đồng:</strong> {Object.values(deliveryItemQuantityMap).reduce((sum, qty) => sum + qty, 0).toLocaleString()} Kg</p>
+                    </div>
+                    <div>
+                      <p><strong>Số loại cà phê:</strong> {deliveryItemOptions.length}</p>
+                      <p><strong>Đơn giá trung bình:</strong> {(() => {
+                        const prices = Object.values(deliveryItemUnitPriceMap).filter(p => p > 0);
+                        return prices.length > 0 ? new Intl.NumberFormat("vi-VN").format(prices.reduce((sum, price) => sum + price, 0) / prices.length) : "N/A";
+                      })()} VNĐ/Kg
+                      </p>
+                    </div>
+                  </div>
+                 <div className="mt-3 pt-3 border-t border-blue-200">
+                   <p className="text-xs text-gray-600">
+                     <strong>Lưu ý:</strong> Số lượng hợp đồng là tổng cho tất cả sản phẩm cùng loại cà phê
+                   </p>
+                 </div>
+               </div>
+             )}
+           </div>
+
+          {/* Product List */}
+          {showProductList && (
+            <div className="bg-gray-50 p-6 rounded-lg">
+              {/* Search and Filter */}
+              <div className="flex gap-3 mb-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Tìm kiếm sản phẩm..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <select
+                  className="p-2 border border-gray-300 rounded-lg"
+                  value={selectedCoffeeType}
+                  onChange={(e) => setSelectedCoffeeType(e.target.value)}
+                >
+                  <option value="">Tất cả loại cà phê</option>
+                  {availableCoffeeTypes.map((type: string) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Products Grid */}
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {filteredProducts.map((product) => {
+                  const isSelected = selectedProducts.has(product.productId);
+                  const orderItem = form.orderItems.find(item => item.productId === product.productId);
+
+                  return (
+                    <div key={product.productId} className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3 flex-1">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleProductSelection(product.productId)}
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{product.name}</h4>
+                                                         <div className="text-sm text-gray-600 space-y-1 mt-1">
+                               <p><strong>Loại cà phê:</strong> {product.coffeeTypeName || "N/A"}</p>
+                               <p><strong>Tồn kho:</strong> {product.quantityAvailable?.toLocaleString() || 0} Kg</p>
+                             </div>
+
+                            {isSelected && orderItem && (
+                              <div className="mt-3 p-2 bg-blue-50 rounded border">
+                                <div className="flex items-center space-x-2">
+                                  <label className="text-sm font-medium">Số lượng:</label>
+                                  <Input
+                                    type="number"
+                                    min={1}
+                                    value={orderItem.quantity}
+                                    onChange={(e) => updateOrderItemQuantity(product.productId, Number(e.target.value) || 1)}
+                                    className="w-20 h-8 text-sm"
+                                  />
+                                  <span className="text-sm text-gray-600">Kg</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          {isSelected && (
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => toggleProductSelection(product.productId)}
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </Button>
+                          )}
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            {product.coffeeTypeName}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Selected Products Summary */}
+          {form.orderItems.length > 0 && (
+            <div className="bg-blue-50 p-6 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-3">Tóm tắt sản phẩm đã chọn</h4>
+              <div className="space-y-2">
+                {form.orderItems.map((item, index) => {
+                  const product = productOptions.find(p => p.productId === item.productId);
+                  return (
+                    <div key={index} className="flex items-center justify-between text-sm">
+                      <span className="text-gray-700">{product?.name}</span>
+                      <span className="text-gray-900 font-medium">
+                        {item.quantity} kg × {fmtVnd(Number(item.unitPrice))} VNĐ
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="border-t pt-3 mt-3">
+                <div className="flex items-center justify-between font-medium">
+                  <span>Tổng số lượng:</span>
+                  <span>{totalQuantity.toLocaleString()} kg</span>
+                </div>
+                <div className="flex items-center justify-between font-medium">
+                  <span>Tổng tiền:</span>
+                  <span>{fmtVnd(totalAmount)} VNĐ</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <DialogFooter className="flex justify-between pt-4">
-        <Button type="submit" onClick={handleSubmit} disabled={saving}>
-          {isEdit
-            ? t("managerOrders.form.actions.updateOrder")
-            : t("managerOrders.form.actions.createOrder")}
-        </Button>
+      {/* Form Actions */}
+      <div className="flex justify-between pt-6 border-t mt-6">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {t("managerOrders.detail.actions.back")}
+          Hủy
         </Button>
-      </DialogFooter>
-    </form>
+        <Button type="submit" onClick={handleSubmit} disabled={saving}>
+          {saving ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              {isEdit ? "Đang cập nhật..." : "Đang tạo..."}
+            </div>
+          ) : (
+            isEdit ? "Cập nhật" : "Tạo đơn hàng"
+          )}
+        </Button>
+      </div>
+    </div>
   );
 }

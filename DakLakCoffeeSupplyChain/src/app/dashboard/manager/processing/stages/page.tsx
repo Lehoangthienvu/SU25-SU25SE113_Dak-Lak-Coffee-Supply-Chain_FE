@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { getAllProcessingStages, ProcessingStage } from "@/lib/api/processingStages";
-import { Eye, Edit, Trash2, Plus, Settings, Clock, CheckCircle, Search } from "lucide-react";
+import { Plus, Settings, Clock, CheckCircle, Search } from "lucide-react";
 
 // Import các component chung
 import ProcessingHeader from "@/components/processing/ProcessingHeader";
@@ -140,27 +140,7 @@ export default function ManagerProcessingStagesPage() {
     }
   ];
 
-  // Cấu hình actions cho table - MANAGER: Xem, sửa, và xóa mềm
-  const actions = [
-    {
-      label: t('processing.pages.managerBatches.stages.actions.view'),
-      icon: <Eye className="w-3 h-3" />,
-      onClick: (stage: ProcessingStage) => router.push(`/dashboard/manager/processing/stages/${stage.stageId}`),
-      className: "hover:bg-green-50 hover:border-green-300"
-    },
-    {
-      label: t('processing.pages.managerBatches.stages.actions.edit'),
-      icon: <Edit className="w-3 h-3" />,
-      onClick: (stage: ProcessingStage) => router.push(`/dashboard/manager/processing/stages/${stage.stageId}/edit`),
-      className: "hover:bg-blue-50 hover:border-blue-300"
-    },
-    {
-      label: t('processing.pages.managerBatches.stages.actions.softDelete'),
-      icon: <Trash2 className="w-3 h-3" />,
-      onClick: (stage: ProcessingStage) => handleDelete(stage.stageId.toString()),
-      className: "hover:bg-red-50 hover:border-red-300"
-    }
-  ];
+
 
   // Tính toán thống kê
   const totalStages = stages.length;
@@ -273,7 +253,6 @@ export default function ManagerProcessingStagesPage() {
             <ProcessingTable
               data={paginatedData}
               columns={columns}
-              actions={actions}
               loading={loading}
               emptyMessage={t('processing.pages.managerBatches.stages.empty.title')}
               emptyDescription={t('processing.pages.managerBatches.stages.empty.description')}

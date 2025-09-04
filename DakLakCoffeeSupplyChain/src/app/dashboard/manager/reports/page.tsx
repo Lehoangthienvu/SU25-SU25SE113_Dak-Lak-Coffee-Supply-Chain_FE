@@ -98,6 +98,17 @@ export default function ManagerReportsPage() {
         return "Chưa xử lý";
     };
 
+    const getReportTypeDisplay = (reportType: string) => {
+        switch (reportType) {
+            case "Crop":
+                return "Cây trồng";
+            case "Processing":
+                return "Tiến độ";
+            default:
+                return reportType;
+        }
+    };
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("vi-VN", {
             year: "numeric",
@@ -254,10 +265,8 @@ export default function ManagerReportsPage() {
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Mã báo cáo</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Tiêu đề</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Loại</th>
-                                        <th className="text-left py-3 px-3 font-medium text-gray-700">Mức độ</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Nông dân</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Ngày báo cáo</th>
-                                        <th className="text-left py-3 px-3 font-medium text-gray-700">Tư vấn</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Trạng thái</th>
                                         <th className="text-left py-3 px-3 font-medium text-gray-700">Thao tác</th>
                                     </tr>
@@ -269,31 +278,17 @@ export default function ManagerReportsPage() {
                                                 <span className="font-mono text-xs text-gray-600">{report.reportCode}</span>
                                             </td>
                                             <td className="px-3 py-3">
-                                                <div className="font-medium text-gray-900 max-w-[200px] truncate" title={report.title}>
+                                                <div className="font-medium text-gray-900 max-w-[250px] truncate" title={report.title}>
                                                     {report.title}
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3">
                                                 <Badge className="bg-blue-100 text-blue-800 text-xs">
-                                                    {report.reportType}
+                                                    {getReportTypeDisplay(report.reportType)}
                                                 </Badge>
                                             </td>
                                             <td className="px-3 py-3">
-                                                {report.severityLevel !== null ? (
-                                                    <Badge className={
-                                                        report.severityLevel === 1 ? "bg-green-100 text-green-800" :
-                                                            report.severityLevel === 2 ? "bg-yellow-100 text-yellow-800" :
-                                                                "bg-red-100 text-red-800"
-                                                    }>
-                                                        {report.severityLevel === 1 ? "Thấp" :
-                                                            report.severityLevel === 2 ? "Trung bình" : "Cao"}
-                                                    </Badge>
-                                                ) : (
-                                                    <span className="text-gray-400">-</span>
-                                                )}
-                                            </td>
-                                            <td className="px-3 py-3">
-                                                <div className="max-w-[180px]">
+                                                <div className="max-w-[200px]">
                                                     <div className="font-medium text-gray-900 text-sm truncate" title={report.reportedByName}>
                                                         {report.reportedByName}
                                                     </div>
@@ -304,11 +299,6 @@ export default function ManagerReportsPage() {
                                             </td>
                                             <td className="px-3 py-3 text-gray-600 text-sm">
                                                 {formatDate(report.reportedAt)}
-                                            </td>
-                                            <td className="px-3 py-3">
-                                                <Badge className="bg-purple-100 text-purple-800 text-xs">
-                                                    {report.expertAdviceCount} tư vấn
-                                                </Badge>
                                             </td>
                                             <td className="px-3 py-3">
                                                 <Badge className={getStatusColor(report.isResolved)}>

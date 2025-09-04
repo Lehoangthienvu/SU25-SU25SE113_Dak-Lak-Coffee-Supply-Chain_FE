@@ -24,6 +24,7 @@ import {
   FiShoppingCart,
   FiBell,
   FiActivity,
+  FiLayers,
 } from "react-icons/fi";
 
 
@@ -37,7 +38,8 @@ const iconMap = {
   articles: <FiBookOpen />,
   consultation: <FiFeather />,
   crops: <FiClipboard />,
-  market: <FiActivity />
+  market: <FiActivity />,
+  cropStages: <FiLayers />
 };
 
 // ===== Sidebar Layout =====
@@ -195,6 +197,11 @@ export function SidebarGroup() {
         title: t('sidebar.navigation.contracts'),
         href: "/dashboard/admin/contracts",
         icon: iconMap.contracts,
+      },
+      {
+        title: "Quản lý Giai đoạn",
+        href: "/dashboard/admin/crop-stages",
+        icon: iconMap.cropStages,
       },
       {
         title: t('sidebar.navigation.reports'),
@@ -574,8 +581,8 @@ export function SidebarGroup() {
           <button
             className={cn(
               "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200",
-              pathname.startsWith("/dashboard/manager/reports") ||
-                pathname.startsWith("/dashboard/manager/processing") ||
+
+              pathname.startsWith("/dashboard/manager/processing") ||
                 pathname === "/dashboard/manager/processing/farmer-batches"
                 ? "bg-orange-100 text-orange-700 shadow-sm"
                 : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
@@ -594,7 +601,7 @@ export function SidebarGroup() {
           </button>
           {reportOpen && (
             <div className="pl-8 space-y-1">
-              <Link
+              {/* <Link
                 href="/dashboard/manager/reports"
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -604,7 +611,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.navigation.reports')}
-              </Link>
+              </Link> */}
               <Link
                 href="/dashboard/manager/processing/batches"
                 className={cn(
@@ -616,17 +623,7 @@ export function SidebarGroup() {
               >
                 {t('sidebar.navigation.processingBatches')}
               </Link>
-              <Link
-                href="/dashboard/manager/processing/farmer-batches"
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  pathname === "/dashboard/manager/processing/farmer-batches"
-                    ? "bg-orange-100 text-orange-700 shadow-sm"
-                    : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-                )}
-              >
-                {t('sidebar.navigation.farmerProcessingBatches')}
-              </Link>
+
 
               <Link
                 href="/dashboard/manager/processing/progresses"
@@ -639,7 +636,7 @@ export function SidebarGroup() {
               >
                 {t('sidebar.navigation.processingProgress')}
               </Link>
-              <Link
+              {/* <Link
                 href="/dashboard/manager/processing/wastes"
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -649,7 +646,7 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.navigation.processingWaste')}
-              </Link>
+              </Link> */}
               <Link
                 href="/dashboard/manager/processing/methods"
                 className={cn(
@@ -682,17 +679,6 @@ export function SidebarGroup() {
                 )}
               >
                 {t('sidebar.navigation.processingStages')}
-              </Link>
-              <Link
-                href="/dashboard/manager/processing/waste-disposals"
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  pathname.startsWith("/dashboard/manager/processing/waste-disposals")
-                    ? "bg-orange-100 text-orange-700 shadow-sm"
-                    : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-                )}
-              >
-                {t('sidebar.navigation.wasteDisposal')}
               </Link>
             </div>
           )}
@@ -1002,25 +988,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
     return null;
   }
 
-  return (
-    <div className="border-t border-orange-100 px-4 py-3 text-sm text-gray-600">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-gray-400">{t('sidebar.user.greeting')}</span>
-        <span className="font-medium text-orange-600">
-          {userName ?? t('sidebar.user.anonymous')}
-        </span>
-      </div>
-      <button
-        onClick={() => {
-          authService.logout();
-        }}
-        className="text-red-600 text-sm hover:underline transition-all"
-        title={t('sidebar.user.logoutTitle')}
-      >
-        {t('sidebar.user.logout')}
-      </button>
-    </div>
-  );
+  return
 }
 
 // Add displayName for proper component identification

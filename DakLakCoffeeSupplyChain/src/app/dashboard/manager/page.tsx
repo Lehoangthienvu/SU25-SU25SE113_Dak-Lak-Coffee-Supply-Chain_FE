@@ -17,7 +17,6 @@ import {
   FiShoppingCart,
   FiBriefcase,
   FiSend,
-  FiTag,
 } from "react-icons/fi";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -41,9 +40,9 @@ export default function ManagerDashboard() {
         if (batches) {
           const stats = {
             total: batches.length,
-            pending: batches.filter((b) => String(b.status) === '0').length,
-            processing: batches.filter((b) => String(b.status) === '1').length,
-            completed: batches.filter((b) => String(b.status) === '2').length,
+            pending: batches.filter((b) => String(b.status) === '0' || String(b.status) === 'pending').length,
+            processing: batches.filter((b) => String(b.status) === '1' || String(b.status) === 'processing' || String(b.status) === 'InProgress').length,
+            completed: batches.filter((b) => String(b.status) === '2' || String(b.status) === 'completed').length,
           };
           setProcessingStats(stats);
         }
@@ -77,107 +76,7 @@ export default function ManagerDashboard() {
           </div>
         </div>
 
-        {/* Processing Statistics Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg">
-                <FiCoffee className="text-white text-xl" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                {t('managerDashboard.processingStats.title')}
-              </h2>
-            </div>
-            <Link
-              href="/dashboard/manager/processing/batches"
-              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              {t('managerDashboard.processingStats.viewDetails')}
-            </Link>
-          </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <StatsCard
-              title={t('managerDashboard.processingStats.totalBatches')}
-              value={processingStats.total}
-              icon={<FiPackage className="w-6 h-6" />}
-              color="blue"
-              loading={loading}
-            />
-            <StatsCard
-              title={t('managerDashboard.processingStats.pending')}
-              value={processingStats.pending}
-              icon={<FiPending className="w-6 h-6" />}
-              color="yellow"
-              loading={loading}
-            />
-            <StatsCard
-              title={t('managerDashboard.processingStats.inProgress')}
-              value={processingStats.processing}
-              icon={<FiTrendingUp className="w-6 h-6" />}
-              color="blue"
-              loading={loading}
-            />
-            <StatsCard
-              title={t('managerDashboard.processingStats.completed')}
-              value={processingStats.completed}
-              icon={<FiCheckCircle className="w-6 h-6" />}
-              color="green"
-              loading={loading}
-            />
-          </div>
-
-          {/* Processing Chart */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-200 p-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <FiBarChart2 className="text-orange-500" />
-              {t('managerDashboard.processingStats.chart.title')}
-            </h3>
-            <div className="h-64 flex items-end justify-center gap-6">
-              {loading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-                </div>
-              ) : (
-                <>
-                  <ChartBar
-                    label={t('managerDashboard.processingStats.chart.pending')}
-                    value={processingStats.pending}
-                    max={processingStats.total}
-                    color="bg-yellow-400"
-                  />
-                  <ChartBar
-                    label={t('managerDashboard.processingStats.chart.inProgress')}
-                    value={processingStats.processing}
-                    max={processingStats.total}
-                    color="bg-blue-500"
-                  />
-                  <ChartBar
-                    label={t('managerDashboard.processingStats.chart.completed')}
-                    value={processingStats.completed}
-                    max={processingStats.total}
-                    color="bg-green-500"
-                  />
-                </>
-              )}
-            </div>
-            <div className="mt-4 flex justify-center gap-6 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                <span>{t('managerDashboard.processingStats.chart.pending')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                <span>{t('managerDashboard.processingStats.chart.inProgress')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded"></div>
-                <span>{t('managerDashboard.processingStats.chart.completed')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Quick Actions Grid */}
         <div className="mb-8">
@@ -350,27 +249,29 @@ function ChartBar({
   value,
   max,
   color,
+  bgColor,
 }: {
   label: string;
   value: number;
   max: number;
   color: string;
+  bgColor: string;
 }) {
   const height = max > 0 ? (value / max) * 100 : 0;
 
   return (
     <div className="flex flex-col items-center">
-      <div className="text-sm font-medium text-gray-900 mb-2">{value}</div>
+      <div className="text-lg font-bold text-gray-900 mb-3">{value}</div>
       <div
-        className="w-16 bg-gray-200 rounded-t-lg"
-        style={{ height: "200px" }}
+        className={`w-20 ${bgColor} rounded-t-lg relative`}
+        style={{ height: "240px" }}
       >
         <div
-          className={`${color} rounded-t-lg transition-all duration-500`}
+          className={`${color} rounded-b-lg transition-all duration-700 ease-out shadow-lg absolute bottom-0 w-full`}
           style={{ height: `${height}%` }}
         ></div>
       </div>
-      <div className="text-xs text-gray-600 mt-2 text-center">{label}</div>
+      <div className="text-sm font-medium text-gray-700 mt-3 text-center max-w-20">{label}</div>
     </div>
   );
 }
