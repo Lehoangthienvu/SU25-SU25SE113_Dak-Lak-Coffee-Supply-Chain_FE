@@ -256,33 +256,6 @@ export default function ProcessingBatchesPage() {
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Package className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.totalBatches')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{totalBatches}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.active')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{batches.filter(b => b.status === ProcessingStatus.InProgress).length}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Main Content */}
           <div className="flex gap-6">
             {/* Sidebar */}
