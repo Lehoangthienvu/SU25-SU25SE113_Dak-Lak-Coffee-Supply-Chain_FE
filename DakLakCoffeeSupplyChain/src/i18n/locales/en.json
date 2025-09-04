@@ -1917,7 +1917,7 @@
       "criteria": {
         "title": "Criteria List",
         "loading": "Loading evaluation criteria...",
-        "range": "Range: {{MIN}} - {{MAX}} {{unit}}",
+        "range": "Range: ",
         "actualValue": "Actual Value",
         "expectedValue": "Expected Value",
         "isPassed": "Passed",
@@ -2521,7 +2521,7 @@
             "title": "Evaluation Criteria",
             "loading": "Loading criteria...",
             "actualValue": "Actual Value",
-            "range": "Range: {{min}} - {{max}} {{unit}}"
+            "range": "Range: "
           },
           "results": {
             "title": "Evaluation Results",
