@@ -616,7 +616,7 @@ export function SidebarGroup() {
               >
                 {t('sidebar.navigation.processingBatches')}
               </Link>
-             
+
 
               <Link
                 href="/dashboard/manager/processing/progresses"
@@ -981,7 +981,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
     return null;
   }
 
-  return 
+  return
 }
 
 // Add displayName for proper component identification
