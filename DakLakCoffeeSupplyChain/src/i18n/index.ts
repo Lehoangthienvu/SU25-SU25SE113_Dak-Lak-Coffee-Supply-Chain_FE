@@ -20,6 +20,8 @@ import commonVi from './locales/vi/common.json';
 import commonEn from './locales/en/common.json';
 import contractVi from './locales/vi/contract.json';
 import contractEn from './locales/en/contract.json';
+import managerVi from './locales/vi/business-manager.json';
+import managerEn from './locales/en/business-manager.json';
 
 
 // Khởi tạo i18n
@@ -37,7 +39,8 @@ i18n
           ...marketplaceVi,
           ...farmerDashboardVi,
           ...profileVi,
-          ...contractVi
+          ...contractVi,
+          ...managerVi
         }
       },
       en: {
@@ -50,7 +53,8 @@ i18n
           ...marketplaceEn,
           ...farmerDashboardEn,
           ...profileEn,
-          ...contractEn
+          ...contractEn,
+          ...managerEn
         }
       }
     },

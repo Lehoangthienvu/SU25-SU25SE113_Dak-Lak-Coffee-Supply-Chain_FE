@@ -60,6 +60,6 @@ export async function resendVerificationEmail(email: string): Promise<void> {
   await api.post("/Auth/resend-verification-email", { email });
 }
 
-export async function verifyBusinessManagerAccount(data: VerifyAccountByAdminDto): Promise<void> {
-  await api.patch("/Auth/verify-business-manager-account", data);
+export async function verifyBusinessManagerAccount(managerId: string, data: VerifyAccountByAdminDto): Promise<void> {
+  await api.patch(`/Auth/verify-businessManager-account/${managerId}`, data);
 }

@@ -20,7 +20,9 @@
       }
     },
     "navigation": {
-      "cultivationRegistration": "Cultivation Registration"
+      "cultivationRegistration": "Cultivation Registration",
+      "managerManagement": "Business Management",
+      "systemConfiguration": "System Configuration"
     },
     "unit": {
       "currency": "VND"
