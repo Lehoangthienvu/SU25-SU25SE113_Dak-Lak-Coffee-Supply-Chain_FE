@@ -59,12 +59,12 @@ export function calculateEstimatedDeliveryDates(expectedHarvestEnd: string): {
       // Ngày giao hàng bắt đầu = ngày kế tiếp sau ngày kết thúc thu hoạch
       const harvestEndDate = new Date(expectedHarvestEnd);
       const deliveryStartDate = new Date(harvestEndDate);
-      deliveryStartDate.setDate(deliveryStartDate.getDate() + 1);
+      deliveryStartDate.setDate(deliveryStartDate.getDate() + 10);
       estimatedDeliveryStart = deliveryStartDate.toISOString().split('T')[0];
       
-      // Ngày giao hàng kết thúc = ngày giao hàng bắt đầu + 1 ngày
+      // Ngày giao hàng kết thúc = ngày giao hàng bắt đầu + 10 ngày
       const deliveryEndDate = new Date(deliveryStartDate);
-      deliveryEndDate.setDate(deliveryEndDate.getDate() + 1);
+      deliveryEndDate.setDate(deliveryEndDate.getDate() + 10);
       estimatedDeliveryEnd = deliveryEndDate.toISOString().split('T')[0];
     } catch (error) {
       console.error('Error calculating delivery dates:', error);
