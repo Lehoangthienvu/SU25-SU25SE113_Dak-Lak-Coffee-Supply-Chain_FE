@@ -24,6 +24,7 @@ import {
   FiShoppingCart,
   FiBell,
   FiActivity,
+  FiLayers,
 } from "react-icons/fi";
 
 
@@ -37,7 +38,8 @@ const iconMap = {
   articles: <FiBookOpen />,
   consultation: <FiFeather />,
   crops: <FiClipboard />,
-  market: <FiActivity />
+  market: <FiActivity />,
+  cropStages: <FiLayers />
 };
 
 // ===== Sidebar Layout =====
@@ -195,6 +197,11 @@ export function SidebarGroup() {
         title: t('sidebar.navigation.contracts'),
         href: "/dashboard/admin/contracts",
         icon: iconMap.contracts,
+      },
+      {
+        title: "Quản lý Giai đoạn",
+        href: "/dashboard/admin/crop-stages",
+        icon: iconMap.cropStages,
       },
       {
         title: t('sidebar.navigation.reports'),
@@ -574,8 +581,8 @@ export function SidebarGroup() {
           <button
             className={cn(
               "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200",
-           
-                pathname.startsWith("/dashboard/manager/processing") ||
+
+              pathname.startsWith("/dashboard/manager/processing") ||
                 pathname === "/dashboard/manager/processing/farmer-batches"
                 ? "bg-orange-100 text-orange-700 shadow-sm"
                 : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
