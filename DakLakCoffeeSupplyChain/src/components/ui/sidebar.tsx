@@ -177,6 +177,11 @@ export function SidebarGroup() {
         icon: iconMap.users,
       },
       {
+        title: t('common.navigation.managerManagement'),
+        href: "/dashboard/admin/managers",
+        icon: <FiUsers />,
+      },
+      {
         title: t('sidebar.navigation.expertManagement'),
         href: "/dashboard/admin/experts",
         icon: <FiUsers />,
@@ -207,7 +212,7 @@ export function SidebarGroup() {
         icon: <FiBell />,
       },
       {
-        title: t('sidebar.navigation.T'),
+        title: t('common.navigation.systemConfiguration'),
         href: "/dashboard/admin/system-configuration/criteria",
         icon: <FiBell />,
       },

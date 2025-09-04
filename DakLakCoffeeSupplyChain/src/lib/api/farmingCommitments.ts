@@ -16,7 +16,7 @@ export type FarmingCommitment = {
   note: string;
   commitmentDate: string; // ISO date string
   approvedAt?: string; // ISO date string - optional
-  rejectionReason: string;
+  rejectReason: string;
   progressPercentage: number;
   totalRatingByBusiness: number;
   totalRatingByFarmer: number;

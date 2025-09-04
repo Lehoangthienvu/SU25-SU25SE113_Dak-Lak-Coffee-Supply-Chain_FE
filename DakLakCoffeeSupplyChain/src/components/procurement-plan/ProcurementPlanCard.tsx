@@ -48,7 +48,7 @@ export default function ProcurementPlanCard({
       </td>
 
       <td className='px-4 py-3'>{plan.totalQuantity.toLocaleString()} {t('procurementPlan.components.procurementPlanCard.units.kilogram')}</td>
-      <td className='px-4 py-3 text-center'>{plan.progressPercentage}{t('procurementPlan.components.procurementPlanCard.units.percentage')}</td>
+      <td className='px-4 py-3 text-center'>{Number(plan.progressPercentage).toFixed(1)}{t('procurementPlan.components.procurementPlanCard.units.percentage')}</td>
 
       <td className='px-4 py-3'>
         <StatusBadge status={plan.status} map={statusMap} />

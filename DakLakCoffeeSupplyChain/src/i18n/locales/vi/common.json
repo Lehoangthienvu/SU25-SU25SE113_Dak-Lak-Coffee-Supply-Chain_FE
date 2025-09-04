@@ -20,7 +20,9 @@
       }
     },
     "navigation": {
-      "cultivationRegistration": "Các đơn đã đăng ký kế hoạch"
+      "cultivationRegistration": "Các đơn đã đăng ký kế hoạch",
+      "managerManagement": "Quản lý doanh nghiệp",
+      "systemConfiguration": "Cấu hình hệ thống"
     },
     "unit": {
       "currency": "VNĐ"
