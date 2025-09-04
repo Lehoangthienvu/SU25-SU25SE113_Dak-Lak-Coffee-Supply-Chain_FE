@@ -244,9 +244,11 @@ export default function UpdateAfterEvaluationForm({
       };
 
       console.log('🚀 Gửi payload:', payload);
-      await updateProgressAfterEvaluation(batchId, payload);
+      const response = await updateProgressAfterEvaluation(batchId, payload);
       
-      AppToast.success('Cập nhật tiến trình thành công!');
+      // 🔧 MỚI: Hiển thị message từ backend thay vì message cố định
+      const successMessage = response?.message || 'Cập nhật tiến trình thành công!';
+      AppToast.success(successMessage);
       onSuccess();
       onClose();
       
