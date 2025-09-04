@@ -22,6 +22,7 @@ import {
   ProductUnitLabel,
   getProcessingBatchOptions,
   getInventoryOptions,
+  getAvailableInventoryOptions,
   getInventoryDetailTest,
   type ProcessingBatchOption,
   type InventoryOption,
@@ -220,7 +221,27 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
             inventories.length,
             "items"
           );
-          setInventoryOptions(inventories);
+
+          // Lọc ra những inventory chưa được tạo product (chỉ hiển thị khi tạo mới)
+          if (!isEdit) {
+            // Sử dụng API mới để lấy inventory chưa có product
+            try {
+              console.log(
+                "Creating new product - getting available inventories only"
+              );
+              const availableInventories = await getAvailableInventoryOptions();
+              setInventoryOptions(availableInventories);
+            } catch (error) {
+              console.error(
+                "Error getting available inventories, falling back to all:",
+                error
+              );
+              setInventoryOptions(inventories);
+            }
+          } else {
+            // Khi edit, hiển thị tất cả inventory
+            setInventoryOptions(inventories);
+          }
         } else {
           console.log("Using fallback data for inventories");
           setInventoryOptions([
@@ -330,7 +351,7 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
         setLoadingOptions(false);
       }
     })();
-  }, []);
+  }, [isEdit]);
 
   // Helpers
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -718,6 +739,14 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
                 </option>
               ))}
             </select>
+
+            {/* Thông báo về inventory available */}
+            {!isEdit && (
+              <div className="text-xs text-gray-500 mt-1">
+                💡 Chỉ hiển thị những kho chưa được tạo sản phẩm
+              </div>
+            )}
+
             {/* Debug info */}
             {/* {process.env.NODE_ENV === 'development' && (
               <div className="text-xs text-gray-500 mt-1">
