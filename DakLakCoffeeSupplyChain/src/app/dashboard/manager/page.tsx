@@ -76,60 +76,7 @@ export default function ManagerDashboard() {
           </div>
         </div>
 
-        {/* Processing Chart */}
-        <div className="mb-8">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-200 p-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <FiBarChart2 className="text-orange-500" />
-              Biểu đồ tiến độ sơ chế
-            </h3>
-            <div className="h-80 flex items-end justify-center gap-8">
-              {loading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-                </div>
-              ) : (
-                <>
-                  <ChartBar
-                    label="Chờ xử lý"
-                    value={processingStats.pending}
-                    max={Math.max(processingStats.total, 1)}
-                    color="bg-yellow-400"
-                    bgColor="bg-gray-100"
-                  />
-                  <ChartBar
-                    label="Đang xử lý"
-                    value={processingStats.processing}
-                    max={Math.max(processingStats.total, 1)}
-                    color="bg-blue-500"
-                    bgColor="bg-gray-100"
-                  />
-                  <ChartBar
-                    label="Hoàn thành"
-                    value={processingStats.completed}
-                    max={Math.max(processingStats.total, 1)}
-                    color="bg-green-500"
-                    bgColor="bg-gray-100"
-                  />
-                </>
-              )}
-            </div>
-            <div className="mt-6 flex justify-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                <span className="font-medium">Chờ xử lý</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                <span className="font-medium">Đang xử lý</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span className="font-medium">Hoàn thành</span>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Quick Actions Grid */}
         <div className="mb-8">
