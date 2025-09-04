@@ -120,3 +120,11 @@ export async function updateFarmingCommitmentStatusByFarmer(data: Partial<Farmin
     );
     return res.data;
 }
+
+export async function updateFarmingCommitmentStatusByBusiness(data: Partial<FarmingCommitment>, commitmentId: string): Promise<FarmingCommitment | null> {
+  const res = await api.patch<FarmingCommitment>(
+      `/FarmingCommitment/UpdateStatusByManager/${commitmentId}`,
+      data
+    );
+    return res.data;
+}

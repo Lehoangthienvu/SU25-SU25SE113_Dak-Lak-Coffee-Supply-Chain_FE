@@ -352,7 +352,16 @@
       "farmingCommitmentCard":{
         "actions": {
           "edit": "Chỉnh sửa",
-          "view": "Xem chi tiết"
+          "view": "Xem chi tiết",
+          "complete": "Hoàn thành cam kết"
+        },
+        "completeSuccess": "Hoàn thành cam kết thành công!",
+        "completeDialog": {
+          "title": "Xác nhận hoàn thành cam kết",
+          "message": "Bạn có chắc chắn muốn hoàn thành cam kết? Sau khi đã hoàn thành cam kết thì sẽ không thể hoàn tác.",
+          "confirm": "Xác nhận",
+          "cancel": "Hủy",
+          "processing": "Đang xử lý..."
         }
       },
       "farmingCommitmentForm": {
