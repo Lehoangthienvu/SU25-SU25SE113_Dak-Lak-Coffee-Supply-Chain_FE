@@ -145,10 +145,10 @@ export default function ReportDetailPage() {
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-3">
-                            <div>
+                            {/* <div>
                                 <label className="text-sm font-medium text-gray-500">Mã báo cáo</label>
                                 <p className="font-mono text-lg text-gray-900">{report.reportId}</p>
-                            </div>
+                            </div> */}
                             <div>
                                 <label className="text-sm font-medium text-gray-500">Tiêu đề</label>
                                 <p className="text-lg text-gray-900">{report.title}</p>
