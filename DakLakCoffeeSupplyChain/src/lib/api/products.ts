@@ -347,3 +347,47 @@ export async function getInventoryDetailTest(id: string): Promise<any> {
     return null;
   }
 }
+
+// API: Lấy danh sách inventory chưa được tạo product
+export async function getAvailableInventoryOptions(): Promise<InventoryOption[]> {
+  try {
+    // Thử gọi API backend để lấy inventory chưa có product
+    try {
+      const { data } = await api.get<InventoryOption[]>("/Inventories/available-for-product");
+      console.log("Using backend API for available inventories:", data.length);
+      return data;
+    } catch (backendError) {
+      console.log("Backend API not available, using frontend filtering");
+    }
+    
+    // Fallback: Lọc ở frontend
+    const allInventories = await getInventoryOptions();
+    const { data: products } = await api.get<ProductViewAllDto[]>("/Products");
+    
+    console.log("All inventories:", allInventories.length);
+    console.log("All products:", products.length);
+    
+    // Lọc ra những inventory chưa có product
+    const availableInventories = allInventories.filter(inventory => {
+      // Kiểm tra xem inventory này đã có product chưa
+      const hasProduct = products.some(product => {
+        // So sánh theo inventoryCode hoặc warehouseName
+        return product.inventoryLocation === inventory.warehouseName ||
+               (product as any).inventoryCode === inventory.inventoryCode ||
+               product.inventoryLocation?.includes(inventory.warehouseName) ||
+               inventory.warehouseName?.includes(product.inventoryLocation);
+      });
+      
+      console.log(`Inventory ${inventory.inventoryCode} (${inventory.warehouseName}): hasProduct = ${hasProduct}`);
+      
+      return !hasProduct;
+    });
+    
+    console.log(`Found ${availableInventories.length} available inventories out of ${allInventories.length} total`);
+    return availableInventories;
+  } catch (error) {
+    console.error("Error getting available inventory options:", error);
+    // Fallback: trả về tất cả inventory nếu có lỗi
+    return await getInventoryOptions();
+  }
+}
