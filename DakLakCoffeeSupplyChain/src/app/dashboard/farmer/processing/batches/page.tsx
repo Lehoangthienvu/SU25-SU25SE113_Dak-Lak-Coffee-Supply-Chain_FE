@@ -67,17 +67,24 @@ export default function ProcessingBatchesPage() {
 
 
 
-  // Filter batches
-  const filteredBatches = batches.filter(batch => {
-    const matchesSearch = batch.batchCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         batch.farmerName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = filterStatus === "all" || String(batch.status) === String(filterStatus);
-    
-
-    
-    return matchesSearch && matchesFilter;
-  });
+  // Filter and sort batches
+  const filteredBatches = batches
+    .filter(batch => {
+      const matchesSearch = batch.batchCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           batch.farmerName.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesFilter = filterStatus === "all" || String(batch.status) === String(filterStatus);
+      
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian tạo (createdAt) - mới nhất lên đầu
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      
+      // Sắp xếp mới nhất lên đầu (descending order)
+      return dateB.getTime() - dateA.getTime();
+    });
 
   // Tính toán phân trang
   const totalPages = Math.ceil(filteredBatches.length / ITEMS_PER_PAGE);
@@ -250,7 +257,7 @@ export default function ProcessingBatchesPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -271,18 +278,6 @@ export default function ProcessingBatchesPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.active')}</p>
                   <p className="text-2xl font-bold text-gray-900">{batches.filter(b => b.status === ProcessingStatus.InProgress).length}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{t('processing.pages.farmerBatches.totalOutput')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{batches.reduce((sum, batch) => sum + (batch.totalOutputQuantity || 0), 0).toFixed(1)} kg</p>
                 </div>
               </div>
             </div>

@@ -104,14 +104,23 @@ export default function ProcessingProgressesPage() {
     };
   });
 
-  const filtered = groupedProgresses.filter((group) => {
-    const matchesSearch = (group.batchCode?.toLowerCase() || '').includes(search.toLowerCase());
-    
-    // Copy logic từ batches/page.tsx - sử dụng String comparison đơn giản
-    const matchesStatus = !selectedStatus || String(group.batch.status) === String(selectedStatus);
-    
-    return matchesSearch && matchesStatus;
-  });
+  const filtered = groupedProgresses
+    .filter((group) => {
+      const matchesSearch = (group.batchCode?.toLowerCase() || '').includes(search.toLowerCase());
+      
+      // Copy logic từ batches/page.tsx - sử dụng String comparison đơn giản
+      const matchesStatus = !selectedStatus || String(group.batch.status) === String(selectedStatus);
+      
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian cập nhật cuối cùng (lastUpdated) - mới nhất lên đầu
+      const dateA = new Date(a.lastUpdated);
+      const dateB = new Date(b.lastUpdated);
+      
+      // Sắp xếp mới nhất lên đầu (descending order)
+      return dateB.getTime() - dateA.getTime();
+    });
 
   // Tính toán phân trang
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
