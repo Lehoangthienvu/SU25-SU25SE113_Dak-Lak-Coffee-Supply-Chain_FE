@@ -193,6 +193,43 @@ export function CreateProgressDialog({
         }
     }, [stageOrder, open]);
 
+    // Validate fields when they change
+    useEffect(() => {
+        if (progressDate) {
+            const error = validateField('progressDate', progressDate);
+            if (error && !fieldErrors.progressDate) {
+                setFieldErrors(prev => ({ ...prev, progressDate: error }));
+            }
+        }
+    }, [progressDate]);
+
+    useEffect(() => {
+        if (actualYield !== undefined) {
+            const error = validateField('actualYield', actualYield);
+            if (error && !fieldErrors.actualYield) {
+                setFieldErrors(prev => ({ ...prev, actualYield: error }));
+            }
+        }
+    }, [actualYield]);
+
+    useEffect(() => {
+        if (note) {
+            const error = validateField('notes', note);
+            if (error && !fieldErrors.notes) {
+                setFieldErrors(prev => ({ ...prev, notes: error }));
+            }
+        }
+    }, [note]);
+
+    useEffect(() => {
+        if (mediaFiles.length > 0) {
+            const error = validateField('mediaFiles', mediaFiles);
+            if (error && !fieldErrors.mediaFiles) {
+                setFieldErrors(prev => ({ ...prev, mediaFiles: error }));
+            }
+        }
+    }, [mediaFiles]);
+
     // Validation function for actual yield with different severity levels and commitment impact
     const validateActualYield = (yieldValue: number): {
         error: string;
@@ -289,6 +326,15 @@ export function CreateProgressDialog({
         const numericValue = value ? parseFloat(value) : undefined;
         setActualYield(numericValue);
 
+        // Clear field error when user changes input
+        if (fieldErrors.actualYield) {
+            setFieldErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.actualYield;
+                return newErrors;
+            });
+        }
+
         if (numericValue && numericValue > 0) {
             const validation = validateActualYield(numericValue);
             setYieldValidationError(validation.error);
@@ -302,18 +348,24 @@ export function CreateProgressDialog({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Form submission started
+
         // Clear previous field errors
         setFieldErrors({});
 
         // Validate tất cả fields
         const newFieldErrors: Record<string, string> = {};
-        const fieldsToValidate = ['stageId', 'progressDate', 'actualYield'];
+        const fieldsToValidate = ['stageId', 'progressDate', 'actualYield', 'notes', 'mediaFiles'];
 
         fieldsToValidate.forEach(fieldName => {
             const value = fieldName === 'stageId' ? stageId :
                 fieldName === 'progressDate' ? progressDate :
-                    actualYield;
+                    fieldName === 'actualYield' ? actualYield :
+                        fieldName === 'notes' ? note :
+                            fieldName === 'mediaFiles' ? mediaFiles :
+                                null;
             const error = validateField(fieldName, value);
+            // Validation completed for field
             if (error) {
                 newFieldErrors[fieldName] = error;
             }
@@ -342,10 +394,12 @@ export function CreateProgressDialog({
         }
 
         // Set field errors
+        // Setting field errors
         setFieldErrors(newFieldErrors);
 
         // Nếu có lỗi validation, không submit
         if (Object.keys(newFieldErrors).length > 0) {
+            // Validation errors found, stopping submit
             // Chỉ hiển thị inline errors, không cần toast
             return;
         }
@@ -417,7 +471,23 @@ export function CreateProgressDialog({
             let errorMessage = t('cropProgress.createDialog.validation.createProgressError');
             const backendFieldErrors: Record<string, string> = {};
 
-            if (typeof error === 'object' && error !== null && 'response' in error) {
+            console.log('🔍 Caught error:', error);
+            console.log('🔍 Error type:', typeof error);
+            console.log('🔍 Error message:', error instanceof Error ? error.message : 'No message');
+
+            // Ưu tiên lấy message từ Error object (được throw từ API)
+            if (error instanceof Error) {
+                errorMessage = error.message;
+                console.log('🔍 Got error message from Error object:', errorMessage);
+            }
+
+            // Fallback: Tìm message trong string representation của error
+            if (errorMessage === t('cropProgress.createDialog.validation.createProgressError') && typeof error === 'string') {
+                errorMessage = error;
+                console.log('🔍 Got error message from string error:', errorMessage);
+            }
+            // Handle axios error response (fallback)
+            else if (typeof error === 'object' && error !== null && 'response' in error) {
                 const response = (error as { response?: { data?: { message?: string; errors?: Record<string, string[]>; title?: string } } }).response;
 
                 if (response?.data) {
@@ -434,22 +504,53 @@ export function CreateProgressDialog({
                         });
                     }
 
-                    // Handle general error message
-                    if (response.data.message) {
-                        errorMessage = response.data.message;
-                    } else if (response.data.title) {
-                        errorMessage = response.data.title;
+                    // Handle general error message (chỉ override nếu chưa có message từ Error object)
+                    if (errorMessage === t('cropProgress.createDialog.validation.createProgressError')) {
+                        if (response.data.message) {
+                            errorMessage = response.data.message;
+                            console.log('🔍 Got error message from response.data.message:', errorMessage);
+                        } else if (response.data.title) {
+                            errorMessage = response.data.title;
+                            console.log('🔍 Got error message from response.data.title:', errorMessage);
+                        }
                     }
                 }
             }
 
+            // Debug: Log error response để kiểm tra
+            console.log('🔍 Backend error response:', error);
+            console.log('🔍 Error instanceof Error:', error instanceof Error);
+            console.log('🔍 Error message property:', error instanceof Error ? error.message : 'N/A');
+            console.log('🔍 Parsed backend field errors:', backendFieldErrors);
+            console.log('🔍 Final error message:', errorMessage);
+
             // Nếu có backend field errors, hiển thị inline
             if (Object.keys(backendFieldErrors).length > 0) {
                 setFieldErrors(backendFieldErrors);
-                // Không cần hiển thị toast nếu có field errors cụ thể
-            } else {
-                setError(errorMessage);
+                // Cũng hiển thị toast để user biết có lỗi
                 AppToast.error(errorMessage);
+            } else {
+                // Nếu không có field errors cụ thể, cố gắng map general message thành field error
+                if (errorMessage.includes('Ngày ghi nhận phải sau ngày của giai đoạn trước') ||
+                    errorMessage.includes('Ngày ghi nhận không được trước ngày bắt đầu mùa vụ') ||
+                    errorMessage.includes('Ngày ghi nhận không được sau ngày kết thúc mùa vụ') ||
+                    errorMessage.includes('Ngày ghi nhận không được lớn hơn hôm nay') ||
+                    errorMessage.includes('Ngày ghi nhận không được quá xa trong quá khứ') ||
+                    errorMessage.includes('ProgressDate') ||
+                    errorMessage.includes('progressDate')) {
+                    setFieldErrors({ progressDate: errorMessage });
+                } else if (errorMessage.includes('ActualYield') ||
+                    errorMessage.includes('actualYield') ||
+                    errorMessage.includes('Sản lượng')) {
+                    setFieldErrors({ actualYield: errorMessage });
+                } else if (errorMessage.includes('StageId') ||
+                    errorMessage.includes('stageId') ||
+                    errorMessage.includes('Giai đoạn')) {
+                    setFieldErrors({ stageId: errorMessage });
+                } else {
+                    setError(errorMessage);
+                    AppToast.error(errorMessage);
+                }
             }
         } finally {
             setLoading(false);
@@ -468,14 +569,19 @@ export function CreateProgressDialog({
     };
 
     // Thêm function validate từng field
-    const validateField = (fieldName: string, value: string | number | null | undefined): string | null => {
+    const validateField = (fieldName: string, value: string | number | null | undefined | File[]): string | null => {
+        // Validating field
         switch (fieldName) {
             case 'stageId':
-                return !value ? t('cropProgress.createDialog.validation.selectStage') : null;
+                const stageError = !value ? t('cropProgress.createDialog.validation.selectStage') : null;
+                // Stage validation completed
+                return stageError;
             case 'progressDate':
-                if (!value) return t('cropProgress.createDialog.validation.selectDate');
+                if (!value) {
+                    return t('cropProgress.createDialog.validation.selectDate');
+                }
 
-                const selectedDate = new Date(value);
+                const selectedDate = new Date(value as string);
                 const today = new Date();
                 today.setHours(23, 59, 59, 999);
 
@@ -501,6 +607,25 @@ export function CreateProgressDialog({
                     if (!value || (typeof value === 'number' && value <= 0)) return t('cropProgress.createDialog.validation.yieldRequired');
                 }
                 return null;
+            case 'notes':
+                // Notes là optional, chỉ validate nếu có giá trị
+                if (value && typeof value === 'string' && value.length > 1000) {
+                    return t('cropProgress.createDialog.validation.notesTooLong');
+                }
+                return null;
+            case 'mediaFiles':
+                // Validate media files count and size
+                if (Array.isArray(value) && value.length > 0) {
+                    if (value.length > 10) {
+                        return t('cropProgress.createDialog.validation.tooManyFiles');
+                    }
+                    // Check total file size (max 50MB)
+                    const totalSize = value.reduce((sum: number, file: File) => sum + file.size, 0);
+                    if (totalSize > 50 * 1024 * 1024) {
+                        return t('cropProgress.createDialog.validation.filesTooLarge');
+                    }
+                }
+                return null;
             default:
                 return null;
         }
@@ -524,20 +649,48 @@ export function CreateProgressDialog({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
 
+        // Clear previous media errors
+        setFieldErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors.mediaFiles;
+            return newErrors;
+        });
+
         // Validate each file
         for (const file of files) {
             const error = validateFile(file);
             if (error) {
-                AppToast.error(error);
+                setFieldErrors(prev => ({ ...prev, mediaFiles: error }));
                 return;
             }
         }
 
-        setMediaFiles(prev => [...prev, ...files]);
+        // Validate total files count and size
+        const newFiles = [...mediaFiles, ...files];
+        const mediaError = validateField('mediaFiles', newFiles);
+        if (mediaError) {
+            setFieldErrors(prev => ({ ...prev, mediaFiles: mediaError }));
+            return;
+        }
+
+        setMediaFiles(newFiles);
     };
 
     const removeFile = (index: number) => {
-        setMediaFiles(prev => prev.filter((_, i) => i !== index));
+        setMediaFiles(prev => {
+            const newFiles = prev.filter((_, i) => i !== index);
+
+            // Clear media errors if no files left
+            if (newFiles.length === 0) {
+                setFieldErrors(prevErrors => {
+                    const newErrors = { ...prevErrors };
+                    delete newErrors.mediaFiles;
+                    return newErrors;
+                });
+            }
+
+            return newFiles;
+        });
     };
 
     const getFileIcon = (file: File) => {
@@ -608,34 +761,11 @@ export function CreateProgressDialog({
 
                     {/* Content - 3 columns horizontal layout */}
                     <div className="p-6">
-                        {/* Error Display */}
-                        {error && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <div className="flex items-center gap-2 text-red-800">
-                                    <AlertTriangle className="w-4 h-4" />
-                                    <span className="text-sm font-medium">{t('common.error')}</span>
-                                </div>
-                                <p className="text-sm text-red-700 mt-1">{error}</p>
-                            </div>
-                        )}
+                        {/* Error Display - Removed red banner as requested */}
 
-                        {/* Field Errors Summary Box */}
-                        {Object.keys(fieldErrors).length > 0 && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <div className="flex items-center gap-2 text-red-800 mb-2">
-                                    <AlertTriangle className="w-4 h-4" />
-                                    <span className="text-sm font-medium">{t('common.validation.errors')}</span>
-                                </div>
-                                <ul className="text-red-700 text-sm space-y-1">
-                                    {Object.values(fieldErrors).map((error, index) => (
-                                        <li key={index} className="flex items-center gap-2">
-                                            <AlertTriangle className="w-3 h-3" />
-                                            {error}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
+                        {/* Field Errors Summary Box - Removed as requested */}
+
+                        {/* Debug panel removed - validation working correctly */}
 
                         {/* Main form - 2 columns horizontal layout */}
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
@@ -752,7 +882,11 @@ export function CreateProgressDialog({
                                                     setProgressDate(e.target.value);
                                                     // Clear field error when user starts typing
                                                     if (fieldErrors.progressDate) {
-                                                        setFieldErrors(prev => ({ ...prev, progressDate: '' }));
+                                                        setFieldErrors(prev => {
+                                                            const newErrors = { ...prev };
+                                                            delete newErrors.progressDate;
+                                                            return newErrors;
+                                                        });
                                                     }
                                                 }}
                                                 onBlur={() => {
@@ -778,6 +912,7 @@ export function CreateProgressDialog({
                                                     {fieldErrors.progressDate}
                                                 </p>
                                             )}
+                                            {/* Debug info removed - validation working correctly */}
                                             <p className="text-xs text-gray-500 mt-1">
                                                 {t('cropProgress.createDialog.executionDateDesc')}
                                             </p>
@@ -905,11 +1040,30 @@ export function CreateProgressDialog({
                                             </label>
                                             <Textarea
                                                 value={note}
-                                                onChange={(e) => setNote(e.target.value)}
+                                                onChange={(e) => {
+                                                    setNote(e.target.value);
+                                                    // Clear error when user changes input
+                                                    if (fieldErrors.notes) {
+                                                        setFieldErrors(prev => {
+                                                            const newErrors = { ...prev };
+                                                            delete newErrors.notes;
+                                                            return newErrors;
+                                                        });
+                                                    }
+                                                }}
                                                 placeholder={t('cropProgress.createDialog.notesPlaceholder')}
-                                                className="w-full min-h-[80px] text-sm resize-none"
+                                                className={cn(
+                                                    "w-full min-h-[80px] text-sm resize-none",
+                                                    fieldErrors.notes && "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                                )}
                                                 rows={3}
                                             />
+                                            {fieldErrors.notes && (
+                                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                                    <AlertTriangle className="w-4 h-4" />
+                                                    {fieldErrors.notes}
+                                                </p>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -931,7 +1085,10 @@ export function CreateProgressDialog({
                                             <label className="block text-xs font-medium text-gray-700 mb-1">
                                                 {t('cropProgress.createDialog.photoUpload')}
                                             </label>
-                                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-gray-500 transition-colors bg-gray-50">
+                                            <div className={cn(
+                                                "border-2 border-dashed rounded-lg p-3 text-center hover:border-gray-500 transition-colors bg-gray-50",
+                                                fieldErrors.mediaFiles ? "border-red-300" : "border-gray-300"
+                                            )}>
                                                 <input
                                                     type="file"
                                                     multiple
@@ -948,6 +1105,12 @@ export function CreateProgressDialog({
                                                     {t('cropProgress.createDialog.selectPhoto')}
                                                 </label>
                                             </div>
+                                            {fieldErrors.mediaFiles && (
+                                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                                    <AlertTriangle className="w-4 h-4" />
+                                                    {fieldErrors.mediaFiles}
+                                                </p>
+                                            )}
                                         </div>
 
                                         {/* Video upload */}
