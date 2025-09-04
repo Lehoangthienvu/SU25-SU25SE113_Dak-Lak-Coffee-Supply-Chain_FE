@@ -34,7 +34,16 @@ export default function ContractsPage() {
 
   useEffect(() => {
     getAllContracts().then((data) => {
-      if (Array.isArray(data)) setContracts(data);
+      if (Array.isArray(data)) {
+        // Sắp xếp theo hợp đồng mới nhất (theo startDate hoặc endDate)
+        const sortedContracts = data.sort((a, b) => {
+          // Sử dụng startDate nếu có, nếu không thì dùng endDate
+          const dateA = new Date(a.startDate || a.endDate || 0);
+          const dateB = new Date(b.startDate || b.endDate || 0);
+          return dateB.getTime() - dateA.getTime(); // Sắp xếp giảm dần (mới nhất trước)
+        });
+        setContracts(sortedContracts);
+      }
     });
   }, []);
 
