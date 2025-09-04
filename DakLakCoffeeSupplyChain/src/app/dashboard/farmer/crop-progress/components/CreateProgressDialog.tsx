@@ -569,7 +569,7 @@ export function CreateProgressDialog({
     };
 
     // Thêm function validate từng field
-    const validateField = (fieldName: string, value: string | number | null | undefined): string | null => {
+    const validateField = (fieldName: string, value: string | number | null | undefined | File[]): string | null => {
         // Validating field
         switch (fieldName) {
             case 'stageId':
@@ -581,7 +581,7 @@ export function CreateProgressDialog({
                     return t('cropProgress.createDialog.validation.selectDate');
                 }
 
-                const selectedDate = new Date(value);
+                const selectedDate = new Date(value as string);
                 const today = new Date();
                 today.setHours(23, 59, 59, 999);
 
@@ -620,7 +620,7 @@ export function CreateProgressDialog({
                         return t('cropProgress.createDialog.validation.tooManyFiles');
                     }
                     // Check total file size (max 50MB)
-                    const totalSize = value.reduce((sum, file) => sum + file.size, 0);
+                    const totalSize = value.reduce((sum: number, file: File) => sum + file.size, 0);
                     if (totalSize > 50 * 1024 * 1024) {
                         return t('cropProgress.createDialog.validation.filesTooLarge');
                     }
