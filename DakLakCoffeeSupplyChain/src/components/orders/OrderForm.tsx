@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
+// Removed useTranslation import
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -63,7 +63,7 @@ export default function OrderForm({
   deliveryBatchId,
   onSuccess,
 }: Props) {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const isEdit = !!initialData;
   const router = useRouter();
 
@@ -208,7 +208,7 @@ export default function OrderForm({
         setProductOptions(products ?? []);
               } catch (e) {
           console.error(e);
-          toast.error(t("managerOrders.form.errors.loadDeliveryBatch"));
+          toast.error("Lỗi khi tải thông tin đợt giao hàng");
         } finally {
         setLoadingOptions(false);
       }
@@ -239,7 +239,7 @@ export default function OrderForm({
         );
               } catch (e) {
           console.error(e);
-          toast.error(t("managerOrders.form.errors.loadDeliveryBatches"));
+          toast.error("Lỗi khi tải danh sách đợt giao hàng");
         }
     })();
   }, [form.deliveryBatchId]);
@@ -389,30 +389,30 @@ export default function OrderForm({
     const clientErrors: Record<string, string> = {};
 
     if (!data.deliveryBatchId) {
-      clientErrors.deliveryBatchId = t("managerOrders.form.validation.selectDeliveryBatch");
+      clientErrors.deliveryBatchId = "Vui lòng chọn đợt giao hàng";
     }
     if (!data.orderItems.length) {
-      clientErrors.orderItems = t("managerOrders.form.validation.addAtLeastOneItem");
+      clientErrors.orderItems = "Vui lòng thêm ít nhất một sản phẩm";
     } else {
       data.orderItems.forEach((item, index) => {
         if (!item.contractDeliveryItemId) {
-          clientErrors[`orderItems.${index}.contractDeliveryItemId`] = t("managerOrders.form.validation.selectDeliveryItem");
+          clientErrors[`orderItems.${index}.contractDeliveryItemId`] = "Vui lòng chọn mặt hàng đợt giao";
         }
         if (!item.productId) {
-          clientErrors[`orderItems.${index}.productId`] = t("managerOrders.form.validation.selectProduct");
+          clientErrors[`orderItems.${index}.productId`] = "Vui lòng chọn sản phẩm";
         }
         if (!(Number(item.quantity) > 0)) {
-          clientErrors[`orderItems.${index}.quantity`] = t("managerOrders.form.validation.quantityRequired");
+          clientErrors[`orderItems.${index}.quantity`] = "Số lượng phải lớn hơn 0";
         }
         if (!(Number(item.unitPrice) > 0)) {
-          clientErrors[`orderItems.${index}.unitPrice`] = t("managerOrders.form.validation.unitPriceRequired");
+          clientErrors[`orderItems.${index}.unitPrice`] = "Đơn giá phải lớn hơn 0";
         }
       });
     }
 
     if (Object.keys(clientErrors).length > 0) {
       setFieldErrors(clientErrors);
-      toast.error(t("managerOrders.form.validation.checkFormErrors"));
+      toast.error("Vui lòng kiểm tra lại các lỗi trong form");
       return;
     }
 
@@ -453,9 +453,9 @@ export default function OrderForm({
 
         const req = updateOrder(payload.orderId, payload);
         toast.promise(req, {
-          loading: t("managerOrders.form.actions.updating"),
-          success: t("managerOrders.form.actions.updateSuccess"),
-          error: t("managerOrders.form.actions.updateError"),
+          loading: "Đang cập nhật...",
+          success: "Cập nhật đơn hàng thành công",
+          error: "Lỗi khi cập nhật đơn hàng",
         });
         await req;
       } else {
@@ -486,9 +486,9 @@ export default function OrderForm({
 
         const req = createOrder(payload);
         toast.promise(req, {
-          loading: t("managerOrders.form.actions.creating"),
-          success: t("managerOrders.form.actions.createSuccess"),
-          error: t("managerOrders.form.actions.createError"),
+          loading: "Đang tạo...",
+          success: "Tạo đơn hàng thành công",
+          error: "Lỗi khi tạo đơn hàng",
         });
         await req;
       }
@@ -529,10 +529,10 @@ export default function OrderForm({
           setBusinessErrors(newBusinessErrors);
         }
         if (Object.keys(newFieldErrors).length > 0 || newBusinessErrors.length > 0) {
-          toast.error(t("managerOrders.form.errors.checkFormErrors"));
+          toast.error("Vui lòng kiểm tra lại các lỗi trong form");
         }
       } else {
-        toast.error(t("managerOrders.form.errors.saveOrderError"));
+        toast.error("Lỗi khi lưu đơn hàng");
       }
     } finally {
       setSaving(false);
@@ -543,22 +543,22 @@ export default function OrderForm({
     <div className="max-w-7xl mx-auto bg-white border rounded-lg shadow p-6">
       {/* Header */}
       <div className="text-center mb-6">
-                 <h1 className="text-2xl font-bold text-gray-900">
-           {isEdit ? t("managerOrders.form.title.edit") : t("managerOrders.form.title.create")}
-         </h1>
-         <p className="text-gray-600 mt-1">
-           {t("managerOrders.form.subtitle")}
-         </p>
+                         <h1 className="text-2xl font-bold text-gray-900">
+          {isEdit ? "Chỉnh sửa đơn hàng" : "Tạo đơn hàng mới"}
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Quản lý thông tin đơn hàng và sản phẩm
+        </p>
       </div>
 
       {/* Order Creation Mode */}
       <div className="mb-6">
-                 <label className="block text-sm font-medium text-gray-700 mb-2">
-           {t("managerOrders.form.mode.label")}:
-         </label>
-         <select className="w-full max-w-xs p-2 border border-gray-300 rounded-lg">
-           <option value="multiple">{t("managerOrders.form.mode.multiple")}</option>
-         </select>
+                         <label className="block text-sm font-medium text-gray-700 mb-2">
+          Chế độ tạo đơn hàng:
+        </label>
+        <select className="w-full max-w-xs p-2 border border-gray-300 rounded-lg">
+          <option value="multiple">Nhiều sản phẩm</option>
+        </select>
       </div>
 
       {/* Business Errors */}
@@ -582,14 +582,14 @@ export default function OrderForm({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
-                             <h3 className="text-lg font-semibold text-gray-900">{t("managerOrders.form.deliveryBatch.title")}</h3>
+                             <h3 className="text-lg font-semibold text-gray-900">Thông tin đợt giao hàng</h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                   {t("managerOrders.form.deliveryBatch.label")} <span className="text-red-500">*</span>
-                 </label>
+                                                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Đợt giao hàng <span className="text-red-500">*</span>
+                </label>
                 {!isEdit ? (
                   <>
                     <select
@@ -602,7 +602,7 @@ export default function OrderForm({
                         if (found) setDeliveryBatchCode(found.label.split(" — ")[0] || "");
                       }}
                     >
-                                             <option value="">{t("managerOrders.form.deliveryBatch.placeholder")}</option>
+                                             <option value="">Chọn đợt giao hàng</option>
                       {batchOptions.map((b) => (
                         <option key={b.id} value={b.id}>{b.label}</option>
                       ))}
@@ -621,21 +621,22 @@ export default function OrderForm({
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Đợt giao
-                </label>
-                <Input
-                  type="number"
-                  value={form.deliveryRound ?? ""}
-                  onChange={(e) => setField("deliveryRound", e.target.value === "" ? "" : Number(e.target.value))}
-                  placeholder="Nhập số đợt giao"
-                  className="no-spinner"
-                  onKeyDown={(e) => {
-                    if (e.key === "-" || e.key.toLowerCase() === "e") e.preventDefault();
-                  }}
-                />
-              </div>
+                             <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                   Đợt giao
+                 </label>
+                 <Input
+                   type="number"
+                   value={form.deliveryRound ?? ""}
+                   onChange={(e) => setField("deliveryRound", e.target.value === "" ? "" : Number(e.target.value))}
+                   placeholder="Tự động từ hợp đồng"
+                   className="no-spinner bg-gray-50"
+                   readOnly
+                 />
+                 <p className="text-xs text-gray-500 mt-1">
+                   Đợt giao được lấy tự động từ hợp đồng
+                 </p>
+               </div>
             </div>
           </div>
 
@@ -691,27 +692,53 @@ export default function OrderForm({
 
         {/* Right Column - Product Selection */}
         <div className="space-y-6">
-          {/* Select Products Header */}
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Chọn sản phẩm</h3>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowProductList(!showProductList)}
-              >
-                {showProductList ? "Ẩn danh sách" : "Hiện danh sách"}
-              </Button>
-            </div>
-          </div>
+                     {/* Select Products Header */}
+           <div className="bg-gray-50 p-6 rounded-lg">
+             <div className="flex items-center justify-between mb-4">
+               <div className="flex items-center">
+                 <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                   <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                   </svg>
+                 </div>
+                 <h3 className="text-lg font-semibold text-gray-900">Chọn sản phẩm</h3>
+               </div>
+               <Button
+                 type="button"
+                 variant="outline"
+                 size="sm"
+                 onClick={() => setShowProductList(!showProductList)}
+               >
+                 {showProductList ? "Ẩn danh sách" : "Hiện danh sách"}
+               </Button>
+             </div>
+             
+             {/* Contract Summary */}
+             {form.deliveryBatchId && deliveryItemOptions.length > 0 && (
+               <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                 <h4 className="font-medium text-gray-900 mb-2">Thông tin hợp đồng</h4>
+                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p><strong>Đợt giao:</strong> {form.deliveryRound || "Chưa có"}</p>
+                      <p><strong>Tổng số lượng hợp đồng:</strong> {Object.values(deliveryItemQuantityMap).reduce((sum, qty) => sum + qty, 0).toLocaleString()} Kg</p>
+                    </div>
+                    <div>
+                      <p><strong>Số loại cà phê:</strong> {deliveryItemOptions.length}</p>
+                      <p><strong>Đơn giá trung bình:</strong> {(() => {
+                        const prices = Object.values(deliveryItemUnitPriceMap).filter(p => p > 0);
+                        return prices.length > 0 ? new Intl.NumberFormat("vi-VN").format(prices.reduce((sum, price) => sum + price, 0) / prices.length) : "N/A";
+                      })()} VNĐ/Kg
+                      </p>
+                    </div>
+                  </div>
+                 <div className="mt-3 pt-3 border-t border-blue-200">
+                   <p className="text-xs text-gray-600">
+                     <strong>Lưu ý:</strong> Số lượng hợp đồng là tổng cho tất cả sản phẩm cùng loại cà phê
+                   </p>
+                 </div>
+               </div>
+             )}
+           </div>
 
           {/* Product List */}
           {showProductList && (
@@ -754,11 +781,10 @@ export default function OrderForm({
                           />
                           <div className="flex-1">
                             <h4 className="font-medium text-gray-900">{product.name}</h4>
-                            <div className="text-sm text-gray-600 space-y-1 mt-1">
-                              <p><strong>Mã sản phẩm:</strong> {product.productId}</p>
-                              <p><strong>Loại cà phê:</strong> {product.coffeeTypeName || "N/A"}</p>
-                              <p><strong>Tồn kho:</strong> {product.quantityAvailable?.toLocaleString() || 0} Kg</p>
-                            </div>
+                                                         <div className="text-sm text-gray-600 space-y-1 mt-1">
+                               <p><strong>Loại cà phê:</strong> {product.coffeeTypeName || "N/A"}</p>
+                               <p><strong>Tồn kho:</strong> {product.quantityAvailable?.toLocaleString() || 0} Kg</p>
+                             </div>
 
                             {isSelected && orderItem && (
                               <div className="mt-3 p-2 bg-blue-50 rounded border">
