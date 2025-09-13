@@ -61,7 +61,8 @@ export default function OutboundReceiptListPage() {
   }, []);
 
   const confirmedReceipts = receipts.filter(r => r.note?.includes('[CONFIRMED:'));
-  const pendingReceipts = receipts.filter(r => !r.note?.includes('[CONFIRMED:'));
+  const waitingForPickupReceipts = receipts.filter(r => r.note?.includes('[WAITING_FOR_PICKUP]'));
+  const pendingReceipts = receipts.filter(r => !r.note?.includes('[CONFIRMED:') && !r.note?.includes('[WAITING_FOR_PICKUP]'));
   const totalQuantity = receipts.reduce((sum, r) => sum + (r.quantity || 0), 0);
 
   // Phân trang
@@ -167,6 +168,7 @@ export default function OutboundReceiptListPage() {
                     {pagedReceipts.map((r) => {
                       const isConfirmed = r.note?.includes('[CONFIRMED:');
                       const isCompleted = r.note?.includes('[COMPLETED:');
+                      const isWaitingForPickup = r.note?.includes('[WAITING_FOR_PICKUP]');
                       
                       return (
                         <tr key={r.outboundReceiptId} className="border-b border-gray-100 hover:bg-red-50 transition-colors">
@@ -178,17 +180,22 @@ export default function OutboundReceiptListPage() {
                             {isCompleted ? (
                               <Badge className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full">
                                 <CheckCircle className="w-3 h-3 mr-1" />
-                                {t('warehouseOutboundReceipts.detail.status.completed')}
+                                Hoàn thành
                               </Badge>
                             ) : isConfirmed ? (
                               <Badge className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full">
                                 <Package className="w-3 h-3 mr-1" />
-                                {t('warehouseOutboundReceipts.detail.status.readyForDelivery')}
+                                Sẵn sàng giao
+                              </Badge>
+                            ) : isWaitingForPickup ? (
+                              <Badge className="bg-orange-100 text-orange-800 border border-orange-200 px-3 py-1 rounded-full">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Chờ lấy hàng
                               </Badge>
                             ) : (
                               <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full">
                                 <Clock className="w-3 h-3 mr-1" />
-                                {t('warehouseOutboundReceipts.detail.status.pending')}
+                                Chưa xác nhận
                               </Badge>
                             )}
                           </td>
