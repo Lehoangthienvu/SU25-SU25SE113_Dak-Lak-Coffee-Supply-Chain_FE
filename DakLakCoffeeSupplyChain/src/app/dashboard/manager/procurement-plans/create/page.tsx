@@ -17,6 +17,7 @@ import ProcurementPlanForm, {
 } from "@/components/procurement-plan/ProcurementPlanForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementPlanFormGuide";
+import { getTargetRegionOptions, REGIONS } from "@/lib/api/regions";
 
 export default function CreateProcurementPlanPage() {
   useAuthGuard(["manager"]);
@@ -49,43 +50,75 @@ export default function CreateProcurementPlanPage() {
 
   const validateForm = (): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
-    if (!form.title) newErrors.title = t('procurementPlan.components.procurementPlanForm.validation.title');
-    if (!form.startDate) newErrors.startDate = t('procurementPlan.components.procurementPlanForm.validation.startDate');
-    if (!form.endDate) newErrors.endDate = t('procurementPlan.components.procurementPlanForm.validation.endDate');
+    if (!form.title)
+      newErrors.title = t(
+        "procurementPlan.components.procurementPlanForm.validation.title"
+      );
+    if (!form.startDate)
+      newErrors.startDate = t(
+        "procurementPlan.components.procurementPlanForm.validation.startDate"
+      );
+    if (!form.endDate)
+      newErrors.endDate = t(
+        "procurementPlan.components.procurementPlanForm.validation.endDate"
+      );
     if (
       form.startDate &&
       new Date(form.startDate) <
         new Date(new Date().toISOString().split("T")[0])
     ) {
-      newErrors.startDate = t('procurementPlan.components.procurementPlanForm.validation.startDatePast');
+      newErrors.startDate = t(
+        "procurementPlan.components.procurementPlanForm.validation.startDatePast"
+      );
     }
     if (new Date(form.startDate) >= new Date(form.endDate))
-      newErrors.endDate = t('procurementPlan.components.procurementPlanForm.validation.endDateAfterStart');
-    if (!form.description) newErrors.description = t('procurementPlan.components.procurementPlanForm.validation.description');
+      newErrors.endDate = t(
+        "procurementPlan.components.procurementPlanForm.validation.endDateAfterStart"
+      );
+    if (!form.description)
+      newErrors.description = t(
+        "procurementPlan.components.procurementPlanForm.validation.description"
+      );
     if (form.procurementPlansDetails.length === 0) {
-      newErrors.procurementPlansDetails = t('procurementPlan.components.procurementPlanForm.validation.detailsRequired');
+      newErrors.procurementPlansDetails = t(
+        "procurementPlan.components.procurementPlanForm.validation.detailsRequired"
+      );
     } else {
       form.procurementPlansDetails.forEach((detail, index) => {
         if (!detail.coffeeTypeId) {
-          newErrors[`coffeeTypeId-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.coffeeType');
+          newErrors[`coffeeTypeId-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.coffeeType"
+          );
         }
         if (detail.processMethodId === 0) {
-          newErrors[`processMethodId-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.processingMethod');
+          newErrors[`processMethodId-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.processingMethod"
+          );
         }
         if (detail.targetQuantity < 100) {
-          newErrors[`targetQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.targetQuantity');
+          newErrors[`targetQuantity-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.targetQuantity"
+          );
         }
         if (detail.minimumRegistrationQuantity < 100) {
-          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantity');
+          newErrors[`minimumRegistrationQuantity-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantity"
+          );
         }
         if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
-          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantityMax');
+          newErrors[`minimumRegistrationQuantity-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.minRegistrationQuantityMax"
+          );
         }
         if (detail.minPriceRange < 1000) {
-          newErrors[`minPriceRange-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.minPrice');
+          newErrors[`minPriceRange-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.minPrice"
+          );
         }
         if (detail.maxPriceRange < detail.minPriceRange) {
-          newErrors[`maxPriceRange-${index}`] = t('procurementPlan.components.procurementPlanForm.validation.maxPrice');
+          newErrors[`maxPriceRange-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.maxPrice"
+          );
         }
         // if (detail.expectedYieldPerHectare <= 0) {
         //   newErrors[`expectedYieldPerHectare-${index}`] =
@@ -108,12 +141,14 @@ export default function CreateProcurementPlanPage() {
   const [availableProcessingMethods, setAvailableProcessingMethods] = useState<
     ProcessingMethod[]
   >([]);
+  const [targetRegions, setTargetRegions] = useState<REGIONS[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCoffeeTypes();
     fetchProcessingMethods();
+    fetchTargetRegions();
   }, []);
 
   //#region API Calls
@@ -132,8 +167,17 @@ export default function CreateProcurementPlanPage() {
       AppToast.error(getErrorMessage(error));
       return [];
     });
-    console.log("processData: ", data);
+    //console.log("processData: ", data);
     setAvailableProcessingMethods(data);
+    setLoading(false);
+  };
+  const fetchTargetRegions = async () => {
+    setLoading(true);
+    const data = await getTargetRegionOptions().catch((error) => {
+      AppToast.error(getErrorMessage(error));
+      return [];
+    });
+    setTargetRegions(data);
     setLoading(false);
   };
   //#endregion
@@ -206,7 +250,7 @@ export default function CreateProcurementPlanPage() {
       };
       await createProcurementPlan(formDataToSend);
 
-      AppToast.success(t('procurementPlan.pages.create.success'));
+      AppToast.success(t("procurementPlan.pages.create.success"));
       router.push("/dashboard/manager/procurement-plans");
     } catch (err) {
       const message = getErrorMessage(err);
@@ -228,10 +272,10 @@ export default function CreateProcurementPlanPage() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            {t('procurementPlan.pages.create.title')}
+            {t("procurementPlan.pages.create.title")}
           </h1>
           <p className='mt-2 text-gray-600'>
-            {t('procurementPlan.pages.create.subtitle')}
+            {t("procurementPlan.pages.create.subtitle")}
           </p>
         </div>
 
@@ -249,10 +293,10 @@ export default function CreateProcurementPlanPage() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
                 <CardTitle className='text-white text-3xl font-bold pt-6'>
-                  {t('procurementPlan.pages.create.form.title')}
+                  {t("procurementPlan.pages.create.form.title")}
                 </CardTitle>
                 <p className='text-white text-md mt-1 pb-4'>
-                  {t('procurementPlan.pages.create.form.subtitle')}
+                  {t("procurementPlan.pages.create.form.subtitle")}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>
@@ -260,6 +304,7 @@ export default function CreateProcurementPlanPage() {
                   initialData={form}
                   availableCoffeeTypes={availableCoffeeTypes}
                   availableProcessingMethods={availableProcessingMethods}
+                  targetRegions={targetRegions}
                   loading={loading}
                   errors={errors}
                   isSubmitting={isSubmitting}

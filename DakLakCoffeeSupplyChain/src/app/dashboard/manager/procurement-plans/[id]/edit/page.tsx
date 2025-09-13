@@ -21,6 +21,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ProcurementPlanFormGuide from "@/components/procurement-plan/ProcurementPlanFormGuide";
+import { getTargetRegionOptions, REGIONS } from "@/lib/api/regions";
 
 export default function EditProcurementPlanPage() {
   useAuthGuard(["manager"]);
@@ -39,6 +40,7 @@ export default function EditProcurementPlanPage() {
   const [availableProcessingMethods, setAvailableProcessingMethods] = useState<
     ProcessingMethod[]
   >([]);
+  const [targetRegions, setTargetRegions] = useState<REGIONS[]>([]);
   const [initialData, setInitialData] =
     useState<ProcurementPlanFormData | null>(null);
 
@@ -46,14 +48,17 @@ export default function EditProcurementPlanPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [coffeeTypes, processingMethods, planData] = await Promise.all([
-          getCoffeeTypes(),
-          getAllProcessingMethods(),
-          getProcurementPlanById(planId),
-        ]);
+        const [coffeeTypes, processingMethods, regions, planData] =
+          await Promise.all([
+            getCoffeeTypes(),
+            getAllProcessingMethods(),
+            getTargetRegionOptions(),
+            getProcurementPlanById(planId),
+          ]);
 
         setAvailableCoffeeTypes(coffeeTypes);
         setAvailableProcessingMethods(processingMethods);
+        setTargetRegions(regions);
 
         // Chuyển format dữ liệu planData về đúng cấu trúc của form
         if (planData) {
@@ -84,7 +89,9 @@ export default function EditProcurementPlanPage() {
         }
       } catch (error) {
         AppToast.error(
-          t('procurementPlan.pages.edit.error', { error: getErrorMessage(error) })
+          t("procurementPlan.pages.edit.error", {
+            error: getErrorMessage(error),
+          })
         );
       } finally {
         setLoading(false);
@@ -109,38 +116,66 @@ export default function EditProcurementPlanPage() {
     data: ProcurementPlanFormData
   ): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
-    if (!data.title) newErrors.title = t('procurementPlan.pages.edit.validation.title');
-    if (!data.startDate) newErrors.startDate = t('procurementPlan.pages.edit.validation.startDate');
-    if (!data.endDate) newErrors.endDate = t('procurementPlan.pages.edit.validation.endDate');
+    if (!data.title)
+      newErrors.title = t("procurementPlan.pages.edit.validation.title");
+    if (!data.startDate)
+      newErrors.startDate = t(
+        "procurementPlan.pages.edit.validation.startDate"
+      );
+    if (!data.endDate)
+      newErrors.endDate = t("procurementPlan.pages.edit.validation.endDate");
     if (
       data.startDate &&
       new Date(data.startDate) <
         new Date(new Date().toISOString().split("T")[0])
     ) {
-      newErrors.startDate = t('procurementPlan.pages.edit.validation.startDatePast');
+      newErrors.startDate = t(
+        "procurementPlan.pages.edit.validation.startDatePast"
+      );
     }
     if (new Date(data.startDate) >= new Date(data.endDate))
-      newErrors.endDate = t('procurementPlan.pages.edit.validation.endDateAfterStart');
-    if (!data.description) newErrors.description = t('procurementPlan.pages.edit.validation.description');
+      newErrors.endDate = t(
+        "procurementPlan.pages.edit.validation.endDateAfterStart"
+      );
+    if (!data.description)
+      newErrors.description = t(
+        "procurementPlan.pages.edit.validation.description"
+      );
     if (data.procurementPlansDetails.length === 0) {
-      newErrors.procurementPlansDetails = t('procurementPlan.pages.edit.validation.detailsRequired');
+      newErrors.procurementPlansDetails = t(
+        "procurementPlan.pages.edit.validation.detailsRequired"
+      );
     } else {
       data.procurementPlansDetails.forEach((detail, index) => {
         if (!detail.coffeeTypeId)
-          newErrors[`coffeeTypeId-${index}`] = t('procurementPlan.pages.edit.validation.coffeeType');
+          newErrors[`coffeeTypeId-${index}`] = t(
+            "procurementPlan.pages.edit.validation.coffeeType"
+          );
         if (detail.processMethodId === 0)
-          newErrors[`processMethodId-${index}`] = t('procurementPlan.pages.edit.validation.processingMethod');
+          newErrors[`processMethodId-${index}`] = t(
+            "procurementPlan.pages.edit.validation.processingMethod"
+          );
         if (detail.targetQuantity < 100)
-          newErrors[`targetQuantity-${index}`] = t('procurementPlan.pages.edit.validation.targetQuantity');
+          newErrors[`targetQuantity-${index}`] = t(
+            "procurementPlan.pages.edit.validation.targetQuantity"
+          );
         if (detail.minimumRegistrationQuantity < 100)
-          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.pages.edit.validation.minRegistrationQuantity');
+          newErrors[`minimumRegistrationQuantity-${index}`] = t(
+            "procurementPlan.pages.edit.validation.minRegistrationQuantity"
+          );
         if (detail.minimumRegistrationQuantity > detail.targetQuantity) {
-          newErrors[`minimumRegistrationQuantity-${index}`] = t('procurementPlan.pages.edit.validation.minRegistrationQuantityMax');
+          newErrors[`minimumRegistrationQuantity-${index}`] = t(
+            "procurementPlan.pages.edit.validation.minRegistrationQuantityMax"
+          );
         }
         if (detail.minPriceRange < 1000)
-          newErrors[`minPriceRange-${index}`] = t('procurementPlan.pages.edit.validation.minPrice');
+          newErrors[`minPriceRange-${index}`] = t(
+            "procurementPlan.pages.edit.validation.minPrice"
+          );
         if (detail.maxPriceRange < detail.minPriceRange)
-          newErrors[`maxPriceRange-${index}`] = t('procurementPlan.pages.edit.validation.maxPrice');
+          newErrors[`maxPriceRange-${index}`] = t(
+            "procurementPlan.pages.edit.validation.maxPrice"
+          );
         // if (detail.expectedYieldPerHectare <= 0)
         //   newErrors[`expectedYieldPerHectare-${index}`] =
         //     "Sản lượng dự kiến trên 1 ha phải lớn hơn 0.";
@@ -221,7 +256,7 @@ export default function EditProcurementPlanPage() {
         procurementPlansDetailsCreateDto: detailsCreateDto,
       });
 
-      AppToast.success(t('procurementPlan.pages.edit.success'));
+      AppToast.success(t("procurementPlan.pages.edit.success"));
       router.push("/dashboard/manager/procurement-plans");
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -288,10 +323,10 @@ export default function EditProcurementPlanPage() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            {t('procurementPlan.pages.edit.title')}
+            {t("procurementPlan.pages.edit.title")}
           </h1>
           <p className='mt-2 text-gray-600'>
-            {t('procurementPlan.pages.edit.subtitle')}
+            {t("procurementPlan.pages.edit.subtitle")}
           </p>
         </div>
 
@@ -309,10 +344,10 @@ export default function EditProcurementPlanPage() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-amber-500 to-orange-400 text-white rounded-t-xl'>
                 <CardTitle className='text-white text-3xl font-bold pt-6'>
-                  {t('procurementPlan.pages.edit.form.title')}
+                  {t("procurementPlan.pages.edit.form.title")}
                 </CardTitle>
                 <p className='text-white text-md mt-1 pb-4'>
-                  {t('procurementPlan.pages.edit.form.subtitle')}
+                  {t("procurementPlan.pages.edit.form.subtitle")}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>
@@ -320,6 +355,7 @@ export default function EditProcurementPlanPage() {
                   initialData={formData || initialData}
                   availableCoffeeTypes={availableCoffeeTypes}
                   availableProcessingMethods={availableProcessingMethods}
+                  targetRegions={targetRegions}
                   loading={loading}
                   errors={errors}
                   isSubmitting={isSubmitting}

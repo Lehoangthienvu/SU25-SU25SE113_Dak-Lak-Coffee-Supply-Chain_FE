@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { HTTP_ERROR_MESSAGES } from "../constants/httpErrors";
 import { authService } from "../auth/authService";
 
@@ -47,7 +47,7 @@ api.interceptors.response.use(
     //   responseData: error.response?.data,
     //   responseStatus: error.response?.status
     // });
-    
+
     // TIMEOUT
     if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
       return Promise.reject(new Error("Yêu cầu mất quá nhiều thời gian, vui lòng thử lại sau."));
@@ -61,42 +61,42 @@ api.interceptors.response.use(
     // LỖI TỪ BACKEND CÓ RESPONSE
     if (error.response) {
       const status = error.response.status;
-      
+
       // Xử lý lỗi xác thực (401 Unauthorized)
       if (status === 401) {
         // Kiểm tra xem có đang ở trang login không để tránh hiển thị dialog trùng lặp
-        const isLoginPage = typeof window !== 'undefined' && 
-          (window.location.pathname === '/auth/login' || 
-           window.location.pathname.includes('/auth/login'));
-        
+        const isLoginPage = typeof window !== 'undefined' &&
+          (window.location.pathname === '/auth/login' ||
+            window.location.pathname.includes('/auth/login'));
+
         if (!isLoginPage) {
           authService.forceLogout('Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.');
         }
         return Promise.reject(new Error('Phiên đăng nhập đã hết hạn'));
       }
-      
+
       // Xử lý lỗi quyền truy cập (403 Forbidden)
       if (status === 403) {
-        const isLoginPage = typeof window !== 'undefined' && 
-          (window.location.pathname === '/auth/login' || 
-           window.location.pathname.includes('/auth/login'));
-        
+        const isLoginPage = typeof window !== 'undefined' &&
+          (window.location.pathname === '/auth/login' ||
+            window.location.pathname.includes('/auth/login'));
+
         if (!isLoginPage) {
           authService.forceLogout('Bạn không có quyền truy cập vào tài nguyên này.');
         }
         return Promise.reject(new Error('Không có quyền truy cập'));
       }
-      
+
       // Giữ nguyên cấu trúc lỗi validation (400 Bad Request)
       if (status === 400 && error.response.data?.errors) {
         return Promise.reject(error.response.data);
       }
-      
+
       // Giữ nguyên cấu trúc lỗi business logic (409 Conflict, etc.)
       if (status === 409 && error.response.data?.message) {
         return Promise.reject(error.response.data);
       }
-      
+
       // Các trường hợp khác: chuyển thành string như cũ
       let message = "";
       if (typeof error.response.data === "string" && error.response.data.trim() !== "") {
@@ -108,7 +108,7 @@ api.interceptors.response.use(
           HTTP_ERROR_MESSAGES[status] ||
           `Lỗi HTTP status ${status}`;
       }
-      
+
       return Promise.reject(message);
     }
 
