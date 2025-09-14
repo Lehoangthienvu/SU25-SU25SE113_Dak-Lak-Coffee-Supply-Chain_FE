@@ -242,8 +242,8 @@ export default function OrderSelectionForm({
                     <span className="font-medium">{formatDate(order.orderDate)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Số lượng:</span>
-                    <span className="font-medium">{order.totalQuantity?.toLocaleString() || 0} kg</span>
+                    <span className="text-gray-600">Mã lô giao hàng:</span>
+                    <span className="font-medium">{order.deliveryBatchCode}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tổng tiền:</span>

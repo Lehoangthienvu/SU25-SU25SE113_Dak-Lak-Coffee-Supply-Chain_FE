@@ -22,6 +22,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { AppToast } from "@/components/ui/AppToast";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 import { useTranslation } from "react-i18next";
+import { checkPaymentStatus } from "@/lib/api/payments";
 
 export default function BusinessProcurementPlansPage() {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export default function BusinessProcurementPlansPage() {
     null
   );
   const [loadingConfirm, setLoadingConfirm] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState(100000); // Phí đăng ký mặc định
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] =
@@ -59,7 +61,18 @@ export default function BusinessProcurementPlansPage() {
 
   async function handleOpenRegister(planId?: string) {
     if (!planId) return;
+    
     try {
+      // Kiểm tra trạng thái thanh toán trước
+      const paymentStatus = await checkPaymentStatus(planId);
+      
+      if (!paymentStatus.success) {
+        // Chưa thanh toán, chuyển đến trang thanh toán
+        router.push(`/dashboard/manager/procurement-plans/${planId}/payment?amount=${paymentAmount}`);
+        return;
+      }
+      
+      // Đã thanh toán, tiếp tục mở kế hoạch
       setLoadingConfirm(true);
       const updatedPlan = await updateProcurementPlanStatus(planId, {
         status: 0,
@@ -235,6 +248,7 @@ export default function BusinessProcurementPlansPage() {
     setDialogType(null);
     setSelectedPlan(null);
   }
+
 
   const filteredPlans = procurementPlans.filter(
     (plan) =>
@@ -471,6 +485,7 @@ export default function BusinessProcurementPlansPage() {
             </div>
           </div>
         )}
+
       </main>
     </div>
   );
