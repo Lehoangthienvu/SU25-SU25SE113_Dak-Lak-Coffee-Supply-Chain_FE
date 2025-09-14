@@ -12,6 +12,7 @@ import {
   ProcessingMethod,
 } from "@/lib/api/processingMethods";
 import { createProcurementPlan } from "@/lib/api/procurementPlans";
+import { createVnPayUrl } from "@/lib/api/payments";
 import ProcurementPlanForm, {
   ProcurementPlanFormData,
 } from "@/components/procurement-plan/ProcurementPlanForm";
@@ -248,7 +249,19 @@ export default function CreateProcurementPlanPage() {
           return copy;
         }),
       };
-      await createProcurementPlan(formDataToSend);
+      const created = await createProcurementPlan(formDataToSend);
+
+      if (created?.planId) {
+        // Chuyển đến trang thông báo thanh toán thay vì nhảy thẳng đến VNPay
+        const params = new URLSearchParams({
+          planId: created.planId,
+          amount: "100000",
+          planTitle: encodeURIComponent(form.title)
+        });
+        
+        router.push(`/dashboard/manager/procurement-plans/payment-notification?${params.toString()}`);
+        return;
+      }
 
       AppToast.success(t("procurementPlan.pages.create.success"));
       router.push("/dashboard/manager/procurement-plans");
