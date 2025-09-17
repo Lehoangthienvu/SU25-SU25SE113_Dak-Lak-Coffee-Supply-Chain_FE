@@ -238,9 +238,11 @@ export default function AdminCoffeeTypePage() {
                         </span>
                       </td>
                       <td className='py-3 px-4'>
-                        <Badge variant='outline'>
-                          {coffeeType.specialtyLevel}
-                        </Badge>
+                        {coffeeType.specialtyLevel && (
+                          <Badge variant='outline'>
+                            {coffeeType.specialtyLevel}
+                          </Badge>
+                        )}
                       </td>
 
                       <td className='py-3 px-4'>

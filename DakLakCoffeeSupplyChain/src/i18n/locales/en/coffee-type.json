@@ -67,6 +67,48 @@
         "createdAt": "Created At",
         "updatedAt": "Last Updated"
       }
+    },
+    "create": {
+      "title": "Add Coffee Type",
+      "subtitle": "Create a new coffee type in the system",
+      "back": "Back",
+      "save": "Save",
+      "creating": "Creating...",
+      "success": "Coffee type created successfully!",
+      "error": "Unable to create coffee type!",
+      "fields": {
+        "typeName": "Coffee Type Name",
+        "typeCode": "Coffee Type Code",
+        "botanicalName": "Botanical Name",
+        "description": "Description",
+        "typicalRegion": "Typical Region",
+        "specialtyLevel": "Specialty Level",
+        "placeholder": {
+          "typeName": "Enter coffee type name",
+          "typeCode": "Enter coffee type code",
+          "botanicalName": "Enter botanical name",
+          "description": "Enter description",
+          "typicalRegion": "Enter typical region",
+          "specialtyLevel": "Enter specialty level"
+        }
+      },
+      "validation": {
+        "typeNameRequired": "Coffee type name is required",
+        "typeCodeRequired": "Coffee type code is required",
+        "botanicalNameRequired": "Botanical name is required",
+        "descriptionRequired": "Description is required",
+        "typicalRegionRequired": "Typical region is required",
+        "specialtyLevelRequired": "Specialty level is required"
+      },
+      "buttons": {
+        "submit": "Click to create coffee type",
+        "submitTitle": "Create Coffee Type",
+        "submitting": "Creating..."
+      },
+      "messages": {
+        "createSuccess": "Coffee type created successfully!",
+        "createError": "Unable to create coffee type!"
+      }
     }
   }
 }

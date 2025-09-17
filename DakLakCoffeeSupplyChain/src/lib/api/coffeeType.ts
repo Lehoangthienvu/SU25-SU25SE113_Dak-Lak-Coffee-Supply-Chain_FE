@@ -4,7 +4,7 @@ export type CoffeeType = {
   coffeeTypeId: string;
   typeName: string;
   typeCode: string;
-  botanicalName?: string | null;
+  botanicalName?: string;
   description?: string;
   typicalRegion?: string;
   specialtyLevel?: string;
@@ -20,13 +20,13 @@ export async function getCoffeeTypeById(coffeeTypeId: string): Promise<CoffeeTyp
   return response.data;
 }
 
-export async function createCoffeeType(coffeeType: Omit<CoffeeType, "coffeeTypeId">): Promise<CoffeeType> {
-  const response = await api.post("/CoffeeType", coffeeType);
+export async function createCoffeeType(data: Partial<CoffeeType>): Promise<CoffeeType> {
+  const response = await api.post("/CoffeeType", data);
   return response.data;
 }
 
-export async function updateCoffeeType(coffeeTypeId: string, coffeeType: Partial<CoffeeType>): Promise<CoffeeType> {
-  const response = await api.put(`/CoffeeType/${coffeeTypeId}`, coffeeType);
+export async function updateCoffeeType(data: Partial<CoffeeType>, coffeeTypeId: string): Promise<CoffeeType> {
+  const response = await api.put(`/CoffeeType/${coffeeTypeId}`, data);
   return response.data;
 }
 
