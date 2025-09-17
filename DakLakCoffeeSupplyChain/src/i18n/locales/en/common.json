@@ -9,6 +9,7 @@
     "search": "Search",
     "create": "Create",
     "edit": "Edit",
+    "back": "Back",
     "components": {
       "filterStatusPanel": {
         "title": "Filter by Status",

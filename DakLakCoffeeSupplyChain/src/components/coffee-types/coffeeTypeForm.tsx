@@ -71,8 +71,7 @@ export default function CoffeeTypeForm({
         {/* Basic Information Section */}
         <div className='bg-white rounded-lg border border-gray-200 p-6'>
           <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
-            {/* <Package className='w-5 h-5 text-blue-600' /> */}
-            {t("coffeeType.create.title")}
+            {t("coffeeType.title")}
           </h3>
 
           <div className='space-y-4'>
@@ -204,16 +203,9 @@ export default function CoffeeTypeForm({
           </div>
 
           {/* Submit Section */}
-          <div className='bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-6'>
+          <div className='rounded-lg p-6 mt-6'>
             <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
-              <div>
-                <h3 className='text-lg font-semibold text-blue-800'>
-                  {t("coffeeType.create.buttons.submitTitle")}
-                </h3>
-                <p className='text-blue-600 text-sm'>
-                  {t("coffeeType.create.buttons.submit")}
-                </p>
-              </div>
+              <div></div>
               <LoadingButton
                 loading={isSubmitting}
                 type='submit'
@@ -223,7 +215,7 @@ export default function CoffeeTypeForm({
               >
                 {isSubmitting
                   ? t("coffeeType.create.buttons.submitting")
-                  : t("coffeeType.create.buttons.submitTitle")}
+                  : t("coffeeType.saveCoffee")}
               </LoadingButton>
             </div>
           </div>

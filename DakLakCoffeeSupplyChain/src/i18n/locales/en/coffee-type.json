@@ -9,6 +9,7 @@
     "filterUnverified": "Unverified",
     "coffeeList": "Coffee Type List",
     "noCoffeeTypes": "No coffee types found.",
+    "saveCoffee": "Save Coffee Type",
     "table": {
       "typeCode": "Coffee Type Code",
       "typeName": "Coffee Type Name",
@@ -108,6 +109,48 @@
       "messages": {
         "createSuccess": "Coffee type created successfully!",
         "createError": "Unable to create coffee type!"
+      }
+    },
+    "edit": {
+      "title": "Edit Coffee Type",
+      "subtitle": "Edit the coffee type in the system",
+      "back": "Back",
+      "save": "Save",
+      "creating": "Creating...",
+      "success": "Coffee type updated successfully!",
+      "error": "Unable to update coffee type!",
+      "fields": {
+        "typeName": "Coffee Type Name",
+        "typeCode": "Coffee Type Code",
+        "botanicalName": "Botanical Name",
+        "description": "Description",
+        "typicalRegion": "Typical Region",
+        "specialtyLevel": "Specialty Level",
+        "placeholder": {
+          "typeName": "Enter coffee type name",
+          "typeCode": "Enter coffee type code",
+          "botanicalName": "Enter botanical name",
+          "description": "Enter description",
+          "typicalRegion": "Enter typical region",
+          "specialtyLevel": "Enter specialty level"
+        }
+      },
+      "validation": {
+        "typeNameRequired": "Coffee type name is required",
+        "typeCodeRequired": "Coffee type code is required",
+        "botanicalNameRequired": "Botanical name is required",
+        "descriptionRequired": "Description is required",
+        "typicalRegionRequired": "Typical region is required",
+        "specialtyLevelRequired": "Specialty level is required"
+      },
+      "buttons": {
+        "submit": "Click to update coffee type",
+        "submitTitle": "Update Coffee Type",
+        "submitting": "Updating..."
+      },
+      "messages": {
+        "editSuccess": "Coffee type updated successfully!",
+        "editError": "Unable to update coffee type!"
       }
     }
   }

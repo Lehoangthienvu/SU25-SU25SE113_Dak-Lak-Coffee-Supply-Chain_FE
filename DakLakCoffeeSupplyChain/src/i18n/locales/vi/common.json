@@ -9,6 +9,7 @@
     "search": "Tìm kiếm",
     "create": "Tạo",
     "edit": "Sửa",
+    "back": "Quay lại",
     "components": {
       "filterStatusPanel": {
         "title": "Lọc theo trạng thái",

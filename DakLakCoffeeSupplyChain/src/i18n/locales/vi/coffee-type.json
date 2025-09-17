@@ -9,6 +9,7 @@
     "filterUnverified": "Chưa xác thực",
     "coffeeList": "Danh sách loại cà phê",
     "noCoffeeTypes": "Không tìm thấy loại cà phê nào.",
+    "saveCoffee": "Lưu loại cà phê",
     "table": {
       "typeCode": "Mã loại cà phê",
       "typeName": "Tên loại cà phê",
@@ -108,6 +109,48 @@
       "messages": {
         "createSuccess": "Tạo loại cà phê thành công!",
         "createError": "Không thể tạo loại cà phê!"
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa loại cà phê",
+      "subtitle": "Chỉnh sửa loại cà phê trong hệ thống",
+      "back": "Quay lại",
+      "save": "Lưu",
+      "updating": "Đang cập nhật...",
+      "success": "Cập nhật loại cà phê thành công!",
+      "error": "Không thể cập nhật loại cà phê!",
+      "fields": {
+        "typeName": "Tên loại cà phê",
+        "typeCode": "Mã loại cà phê",
+        "botanicalName": "Tên khoa học",
+        "description": "Mô tả",
+        "typicalRegion": "Vùng trồng tiêu biểu",
+        "specialtyLevel": "Cấp độ đặc sản",
+        "placeholder": {
+          "typeName": "Nhập tên loại cà phê",
+          "typeCode": "Nhập mã loại cà phê",
+          "botanicalName": "Nhập tên khoa học",
+          "description": "Nhập mô tả",
+          "typicalRegion": "Nhập vùng trồng tiêu biểu",
+          "specialtyLevel": "Nhập cấp độ đặc sản"
+        }
+      },
+      "validation": {
+        "typeNameRequired": "Tên loại cà phê là bắt buộc",
+        "typeCodeRequired": "Mã loại cà phê là bắt buộc",
+        "botanicalNameRequired": "Tên khoa học là bắt buộc",
+        "descriptionRequired": "Mô tả là bắt buộc",
+        "typicalRegionRequired": "Vùng trồng tiêu biểu là bắt buộc",
+        "specialtyLevelRequired": "Cấp độ đặc sản là bắt buộc"
+      },
+      "buttons": {
+        "submit": "Nhấn để cập nhật loại cà phê",
+        "submitTitle": "Cập nhật loại cà phê",
+        "submitting": "Đang cập nhật..."
+      },
+      "messages": {
+        "editSuccess": "Cập nhật loại cà phê thành công!",
+        "editError": "Không thể cập nhật loại cà phê!"
       }
     }
   }
