@@ -1,0 +1,173 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, XCircle, Loader2, ArrowLeft, Wallet } from 'lucide-react';
+import { processWalletTopupPayment } from '@/lib/api/wallet';
+import { toast } from 'sonner';
+
+export default function WalletTopupSuccessPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [transactionData, setTransactionData] = useState<{
+    amount: number;
+    newBalance: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const processPayment = async () => {
+      try {
+        // Lấy thông tin từ URL params
+        const vnp_ResponseCode = searchParams.get('vnp_ResponseCode');
+        const vnp_TransactionStatus = searchParams.get('vnp_TransactionStatus');
+        const vnp_Amount = searchParams.get('vnp_Amount');
+        const vnp_TxnRef = searchParams.get('vnp_TxnRef');
+        const vnp_OrderInfo = searchParams.get('vnp_OrderInfo');
+
+        if (!vnp_TxnRef || !vnp_Amount) {
+          setError('Thiếu thông tin giao dịch');
+          setLoading(false);
+          return;
+        }
+
+        // Kiểm tra kết quả thanh toán
+        if (vnp_ResponseCode === '00' && vnp_TransactionStatus === '00') {
+          // Thanh toán thành công
+          const amount = parseInt(vnp_Amount) / 100; // VNPay trả về amount * 100
+
+          // Xử lý giao dịch
+          const result = await processWalletTopupPayment({
+            transactionId: vnp_TxnRef,
+            amount: amount
+          });
+
+          setSuccess(true);
+          setTransactionData({
+            amount: amount,
+            newBalance: result.newBalance || 0
+          });
+
+          toast.success('Nạp tiền vào ví thành công!');
+        } else {
+          // Thanh toán thất bại
+          setError('Thanh toán thất bại hoặc bị hủy');
+          toast.error('Thanh toán thất bại');
+        }
+      } catch (error: any) {
+        console.error('Lỗi xử lý thanh toán:', error);
+        setError(error.message || 'Có lỗi xảy ra khi xử lý thanh toán');
+        toast.error('Có lỗi xảy ra khi xử lý thanh toán');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    processPayment();
+  }, [searchParams]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center space-y-4">
+              <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+              <h2 className="text-xl font-semibold">Đang xử lý thanh toán...</h2>
+              <p className="text-gray-600 text-center">
+                Vui lòng chờ trong giây lát, chúng tôi đang xử lý giao dịch của bạn.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          {success ? (
+            <>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              <CardTitle className="text-2xl text-green-600">Thanh toán thành công!</CardTitle>
+              <CardDescription>
+                Giao dịch nạp tiền vào ví đã được xử lý thành công
+              </CardDescription>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <XCircle className="h-8 w-8 text-red-600" />
+              </div>
+              <CardTitle className="text-2xl text-red-600">Thanh toán thất bại</CardTitle>
+              <CardDescription>
+                {error || 'Có lỗi xảy ra trong quá trình thanh toán'}
+              </CardDescription>
+            </>
+          )}
+        </CardHeader>
+
+        <CardContent className="space-y-6">
+          {success && transactionData && (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-green-50 p-4">
+                <div className="flex items-center space-x-2 text-green-800">
+                  <Wallet className="h-5 w-5" />
+                  <span className="font-medium">Chi tiết giao dịch</span>
+                </div>
+                <div className="mt-2 space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Số tiền nạp:</span>
+                    <span className="font-medium">{formatCurrency(transactionData.amount)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Số dư mới:</span>
+                    <span className="font-medium text-green-600">
+                      {formatCurrency(transactionData.newBalance)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col space-y-3">
+            <Button 
+              onClick={() => router.push('/dashboard')}
+              className="w-full"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Về trang chủ
+            </Button>
+            
+            {success && (
+              <Button 
+                variant="outline"
+                onClick={() => router.push('/dashboard/wallet')}
+                className="w-full"
+              >
+                <Wallet className="h-4 w-4 mr-2" />
+                Xem ví của tôi
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

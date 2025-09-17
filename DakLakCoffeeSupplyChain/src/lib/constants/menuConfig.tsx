@@ -10,6 +10,7 @@ import {
   FiBookOpen,
   FiClipboard,
   FiFeather,
+  FiCreditCard,
 } from "react-icons/fi";
 import { JSX } from "react";
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ const iconMap = {
   articles: <FiBookOpen />,
   consultation: <FiFeather />,
   crops: <FiClipboard />,
+  wallet: <FiCreditCard />,
 };
 
 export type MenuItem =
@@ -231,6 +233,12 @@ export const useMenuConfig = () => {
         title: "Quản lý kho",
         href: "/dashboard/manager/warehouses",
         icon: iconMap.settings,
+      },
+      {
+        type: "link",
+        title: "Ví của tôi",
+        href: "/dashboard/wallet",
+        icon: iconMap.wallet,
       },
     ],
   };
