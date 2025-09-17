@@ -9,7 +9,7 @@
     "search": "Search",
     "create": "Create",
     "edit": "Edit",
-    "components" : {
+    "components": {
       "filterStatusPanel": {
         "title": "Filter by Status",
         "allStatuses": "All Statuses"
@@ -22,7 +22,8 @@
     "navigation": {
       "cultivationRegistration": "Cultivation Registration",
       "managerManagement": "Business Management",
-      "systemConfiguration": "System Configuration"
+      "systemConfiguration": "System Configuration",
+      "coffeeTypeManagement": "Coffee Type Management"
     },
     "unit": {
       "currency": "VND"

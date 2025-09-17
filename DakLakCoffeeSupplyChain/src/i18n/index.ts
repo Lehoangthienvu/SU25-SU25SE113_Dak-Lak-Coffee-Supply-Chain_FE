@@ -22,6 +22,8 @@ import contractVi from './locales/vi/contract.json';
 import contractEn from './locales/en/contract.json';
 import managerVi from './locales/vi/business-manager.json';
 import managerEn from './locales/en/business-manager.json';
+import coffeeTypeVi from './locales/vi/coffee-type.json';
+import coffeeTypeEn from './locales/en/coffee-type.json';
 
 
 // Khởi tạo i18n
@@ -40,7 +42,8 @@ i18n
           ...farmerDashboardVi,
           ...profileVi,
           ...contractVi,
-          ...managerVi
+          ...managerVi,
+          ...coffeeTypeVi
         }
       },
       en: {
@@ -54,7 +57,8 @@ i18n
           ...farmerDashboardEn,
           ...profileEn,
           ...contractEn,
-          ...managerEn
+          ...managerEn,
+          ...coffeeTypeEn
         }
       }
     },
