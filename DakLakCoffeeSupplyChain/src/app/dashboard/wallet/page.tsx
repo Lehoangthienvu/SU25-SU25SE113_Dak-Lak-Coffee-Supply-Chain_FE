@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Wallet, Plus, CreditCard, TrendingUp, History } from 'lucide-react';
+import { Wallet, Plus, CreditCard, TrendingUp, History, Eye } from 'lucide-react';
 import { getMyWallet } from '@/lib/api/wallet';
 import { WalletDetail } from '@/lib/api/wallet';
 import SimpleTopupDialog from '@/components/wallet/SimpleTopupDialog';
+import WalletTransactionList from '@/components/wallet/WalletTransactionList';
+import WalletTransactionDetail from '@/components/wallet/WalletTransactionDetail';
+import { WalletTransactionList as TransactionListType } from '@/lib/api/walletTransaction';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +21,9 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState<WalletDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [topupDialogOpen, setTopupDialogOpen] = useState(false);
+  const [showTransactionHistory, setShowTransactionHistory] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+  const [transactionDetailOpen, setTransactionDetailOpen] = useState(false);
 
   useEffect(() => {
     loadWallet();
@@ -46,6 +52,15 @@ export default function WalletPage() {
   const handleTopupSuccess = () => {
     loadWallet(); // Reload wallet data
     setTopupDialogOpen(false);
+  };
+
+  const handleTransactionClick = (transaction: TransactionListType) => {
+    setSelectedTransactionId(transaction.transactionId);
+    setTransactionDetailOpen(true);
+  };
+
+  const toggleTransactionHistory = () => {
+    setShowTransactionHistory(!showTransactionHistory);
   };
 
   if (loading) {
@@ -169,20 +184,54 @@ export default function WalletPage() {
             <Button 
               variant="outline" 
               className="w-full justify-start"
-              onClick={() => {/* TODO: Implement transaction history */}}
+              onClick={toggleTransactionHistory}
             >
               <History className="h-4 w-4 mr-2" />
-              Lịch sử giao dịch
+              {showTransactionHistory ? 'Ẩn lịch sử' : 'Lịch sử giao dịch'}
             </Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* Topup Dialog */}
+      {/* Transaction History */}
+      {showTransactionHistory && wallet && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Lịch sử giao dịch</h2>
+              <p className="text-gray-600">Xem tất cả giao dịch của ví</p>
+            </div>
+            <Button 
+              variant="outline"
+              onClick={() => router.push('/dashboard/wallet/transactions')}
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Xem chi tiết
+            </Button>
+          </div>
+          
+          {wallet.walletId && (
+            <WalletTransactionList
+              walletId={wallet.walletId}
+              onTransactionClick={handleTransactionClick}
+              showActions={true}
+              initialPageSize={5}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Dialogs */}
       <SimpleTopupDialog
         open={topupDialogOpen}
         onOpenChange={setTopupDialogOpen}
         onSuccess={handleTopupSuccess}
+      />
+
+      <WalletTransactionDetail
+        transactionId={selectedTransactionId}
+        open={transactionDetailOpen}
+        onOpenChange={setTransactionDetailOpen}
       />
     </div>
   );

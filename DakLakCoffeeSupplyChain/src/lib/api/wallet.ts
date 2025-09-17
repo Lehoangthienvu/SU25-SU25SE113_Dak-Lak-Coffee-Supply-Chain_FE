@@ -124,3 +124,20 @@ export async function addMoneyToWallet(amount: number, description: string): Pro
     message: 'Tạo URL thanh toán thành công'
   };
 }
+
+// Lấy ví của user hiện tại (wrapper cho getMyWallet)
+export async function getCurrentUserWallet(): Promise<WalletDetail> {
+  return await getMyWallet();
+}
+
+// Tạo transaction record sau khi thanh toán thành công
+export async function recordWalletTransaction(transactionData: {
+  walletId: string;
+  paymentId?: string;
+  amount: number;
+  transactionType: 'TopUp' | 'Withdraw' | 'Transfer' | 'Payment';
+  description?: string;
+}): Promise<any> {
+  const response = await api.post('/WalletTransaction', transactionData);
+  return response.data;
+}
