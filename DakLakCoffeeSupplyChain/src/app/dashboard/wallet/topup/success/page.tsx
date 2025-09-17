@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { CheckCircle, XCircle, Loader2, ArrowLeft, Wallet } from 'lucide-react';
 import { processWalletTopupPayment } from '@/lib/api/wallet';
 import { toast } from 'sonner';
 
-export default function WalletTopupSuccessPage() {
+function WalletTopupSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -169,5 +169,31 @@ export default function WalletTopupSuccessPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Card className="w-full max-w-md">
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            <h2 className="text-xl font-semibold">Đang tải...</h2>
+            <p className="text-gray-600 text-center">
+              Vui lòng chờ trong giây lát.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default function WalletTopupSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <WalletTopupSuccessContent />
+    </Suspense>
   );
 }
