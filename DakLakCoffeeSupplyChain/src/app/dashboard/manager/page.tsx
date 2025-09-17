@@ -17,6 +17,7 @@ import {
   FiShoppingCart,
   FiBriefcase,
   FiSend,
+  FiCreditCard,
 } from "react-icons/fi";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -163,6 +164,16 @@ export default function ManagerDashboard() {
                 icon={<FiPackage className="text-orange-500 text-xl" />}
                 title={t('managerDashboard.quickActions.inventories.title')}
                 description={t('managerDashboard.quickActions.inventories.description')}
+                isLink
+              />
+            </Link>
+
+            {/* Ví của tôi */}
+            <Link href="/dashboard/wallet">
+              <DashboardCard
+                icon={<FiCreditCard className="text-orange-500 text-xl" />}
+                title="Ví của tôi"
+                description="Quản lý số dư và thực hiện giao dịch"
                 isLink
               />
             </Link>
