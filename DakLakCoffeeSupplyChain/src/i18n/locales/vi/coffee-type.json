@@ -1,0 +1,157 @@
+{
+  "coffeeType": {
+    "title": "Quản lý loại cà phê",
+    "subtitle": "Quản lý danh sách loại cà phê trong hệ thống",
+    "addCoffeeType": "Thêm loại cà phê",
+    "searchPlaceholder": "Tìm kiếm theo tên loại, mã loại...",
+    "filterAll": "Tất cả trạng thái",
+    "filterVerified": "Đã xác thực",
+    "filterUnverified": "Chưa xác thực",
+    "coffeeList": "Danh sách loại cà phê",
+    "noCoffeeTypes": "Không tìm thấy loại cà phê nào.",
+    "saveCoffee": "Lưu loại cà phê",
+    "table": {
+      "typeCode": "Mã loại cà phê",
+      "typeName": "Tên loại cà phê",
+      "botanicalName": "Tên khoa học",
+      "description": "Mô tả",
+      "typicalRegion": "Vùng trồng tiêu biểu",
+      "specialtyLevel": "Cấp độ đặc sản",
+      "actions": "Thao tác"
+    },
+    "status": {
+      "verified": "Đã xác thực",
+      "unverified": "Chưa xác thực"
+    },
+    "actions": {
+      "verify": "Xác thực",
+      "unverify": "Bỏ xác thực",
+      "viewDetails": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa"
+    },
+    "messages": {
+      "loading": "Đang tải...",
+      "error": "Đã xảy ra lỗi",
+      "retry": "Thử lại",
+      "loadError": "Không thể tải danh sách loại cà phê!",
+      "verifySuccess": "Cập nhật trạng thái xác thực thành công!",
+      "verifyError": "Không thể cập nhật trạng thái xác thực!",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa loại cà phê này?",
+      "deleteSuccess": "Xóa loại cà phê thành công!",
+      "deleteError": "Không thể xóa loại cà phê!"
+    },
+    "detail": {
+      "title": "Chi tiết loại cà phê",
+      "subtitle": "Thông tin chi tiết loại cà phê",
+      "back": "Quay lại",
+      "notFound": "Không tìm thấy loại cà phê",
+      "notFoundDesc": "Loại cà phê bạn đang tìm kiếm không tồn tại.",
+      "backToList": "Quay lại danh sách",
+      "personalInfo": "Thông tin cá nhân",
+      "companyInfo": "Thông tin công ty",
+      "contactInfo": "Thông tin liên hệ",
+      "systemInfo": "Thông tin hệ thống",
+      "statistics": "Thống kê",
+      "fields": {
+        "managerCode": "Mã loại cà phê",
+        "companyName": "Tên loại cà phê",
+        "position": "Chức vụ",
+        "department": "Phòng ban",
+        "status": "Trạng thái",
+        "companyAddress": "Địa chỉ công ty",
+        "taxId": "Mã số thuế",
+        "website": "Website",
+        "contactEmail": "Email liên hệ",
+        "phoneNumber": "Số điện thoại",
+        "businessLicense": "Giấy phép kinh doanh",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Cập nhật lần cuối"
+      }
+    },
+    "create": {
+      "title": "Thêm loại cà phê",
+      "subtitle": "Tạo mới loại cà phê trong hệ thống",
+      "back": "Quay lại",
+      "save": "Lưu",
+      "creating": "Đang tạo...",
+      "success": "Tạo loại cà phê thành công!",
+      "error": "Không thể tạo loại cà phê!",
+      "fields": {
+        "typeName": "Tên loại cà phê",
+        "typeCode": "Mã loại cà phê",
+        "botanicalName": "Tên khoa học",
+        "description": "Mô tả",
+        "typicalRegion": "Vùng trồng tiêu biểu",
+        "specialtyLevel": "Cấp độ đặc sản",
+        "placeholder": {
+          "typeName": "Nhập tên loại cà phê",
+          "typeCode": "Nhập mã loại cà phê",
+          "botanicalName": "Nhập tên khoa học",
+          "description": "Nhập mô tả",
+          "typicalRegion": "Nhập vùng trồng tiêu biểu",
+          "specialtyLevel": "Nhập cấp độ đặc sản"
+        }
+      },
+      "validation": {
+        "typeNameRequired": "Tên loại cà phê là bắt buộc",
+        "typeCodeRequired": "Mã loại cà phê là bắt buộc",
+        "botanicalNameRequired": "Tên khoa học là bắt buộc",
+        "descriptionRequired": "Mô tả là bắt buộc",
+        "typicalRegionRequired": "Vùng trồng tiêu biểu là bắt buộc",
+        "specialtyLevelRequired": "Cấp độ đặc sản là bắt buộc"
+      },
+      "buttons": {
+        "submit": "Nhấn để tạo loại cà phê",
+        "submitTitle": "Tạo loại cà phê",
+        "submitting": "Đang tạo..."
+      },
+      "messages": {
+        "createSuccess": "Tạo loại cà phê thành công!",
+        "createError": "Không thể tạo loại cà phê!"
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa loại cà phê",
+      "subtitle": "Chỉnh sửa loại cà phê trong hệ thống",
+      "back": "Quay lại",
+      "save": "Lưu",
+      "updating": "Đang cập nhật...",
+      "success": "Cập nhật loại cà phê thành công!",
+      "error": "Không thể cập nhật loại cà phê!",
+      "fields": {
+        "typeName": "Tên loại cà phê",
+        "typeCode": "Mã loại cà phê",
+        "botanicalName": "Tên khoa học",
+        "description": "Mô tả",
+        "typicalRegion": "Vùng trồng tiêu biểu",
+        "specialtyLevel": "Cấp độ đặc sản",
+        "placeholder": {
+          "typeName": "Nhập tên loại cà phê",
+          "typeCode": "Nhập mã loại cà phê",
+          "botanicalName": "Nhập tên khoa học",
+          "description": "Nhập mô tả",
+          "typicalRegion": "Nhập vùng trồng tiêu biểu",
+          "specialtyLevel": "Nhập cấp độ đặc sản"
+        }
+      },
+      "validation": {
+        "typeNameRequired": "Tên loại cà phê là bắt buộc",
+        "typeCodeRequired": "Mã loại cà phê là bắt buộc",
+        "botanicalNameRequired": "Tên khoa học là bắt buộc",
+        "descriptionRequired": "Mô tả là bắt buộc",
+        "typicalRegionRequired": "Vùng trồng tiêu biểu là bắt buộc",
+        "specialtyLevelRequired": "Cấp độ đặc sản là bắt buộc"
+      },
+      "buttons": {
+        "submit": "Nhấn để cập nhật loại cà phê",
+        "submitTitle": "Cập nhật loại cà phê",
+        "submitting": "Đang cập nhật..."
+      },
+      "messages": {
+        "editSuccess": "Cập nhật loại cà phê thành công!",
+        "editError": "Không thể cập nhật loại cà phê!"
+      }
+    }
+  }
+}

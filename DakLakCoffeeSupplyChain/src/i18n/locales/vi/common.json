@@ -9,7 +9,8 @@
     "search": "Tìm kiếm",
     "create": "Tạo",
     "edit": "Sửa",
-    "components" : {
+    "back": "Quay lại",
+    "components": {
       "filterStatusPanel": {
         "title": "Lọc theo trạng thái",
         "allStatuses": "Tất cả trạng thái"
@@ -22,7 +23,8 @@
     "navigation": {
       "cultivationRegistration": "Các đơn đã đăng ký kế hoạch",
       "managerManagement": "Quản lý doanh nghiệp",
-      "systemConfiguration": "Cấu hình hệ thống"
+      "systemConfiguration": "Cấu hình hệ thống",
+      "coffeeTypeManagement": "Quản lý loại cà phê"
     },
     "unit": {
       "currency": "VNĐ"

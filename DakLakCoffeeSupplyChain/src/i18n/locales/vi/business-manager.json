@@ -1,69 +1,72 @@
 {
-  "title": "Quản lý doanh nghiệp",
-  "subtitle": "Quản lý danh sách doanh nghiệp trong hệ thống",
-  "addManager": "Thêm doanh nghiệp",
-  "searchPlaceholder": "Tìm kiếm theo tên công ty, phòng ban, chức vụ...",
-  "filterAll": "Tất cả trạng thái",
-  "filterVerified": "Đã xác thực",
-  "filterUnverified": "Chưa xác thực",
-  "managersList": "Danh sách doanh nghiệp",
-  "noManagers": "Không tìm thấy doanh nghiệp nào.",
-  "table": {
-    "managerCode": "Mã doanh nghiệp",
-    "companyName": "Tên doanh nghiệp",
-    "position": "Chức vụ",
-    "department": "Phòng ban",
-    "status": "Trạng thái",
-    "actions": "Thao tác"
-  },
-  "status": {
-    "verified": "Đã xác thực",
-    "unverified": "Chưa xác thực"
-  },
-  "actions": {
-    "verify": "Xác thực",
-    "unverify": "Bỏ xác thực",
-    "viewDetails": "Xem chi tiết",
-    "edit": "Chỉnh sửa",
-    "delete": "Xóa mềm"
-  },
-  "messages": {
-    "loading": "Đang tải...",
-    "error": "Đã xảy ra lỗi",
-    "retry": "Thử lại",
-    "loadError": "Không thể tải danh sách doanh nghiệp!",
-    "verifySuccess": "Cập nhật trạng thái xác thực thành công!",
-    "verifyError": "Không thể cập nhật trạng thái xác thực!",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa doanh nghiệp này?",
-    "deleteSuccess": "Xóa doanh nghiệp thành công!",
-    "deleteError": "Không thể xóa doanh nghiệp!"
-  },
-  "detail": {
-    "title": "Chi tiết doanh nghiệp",
-    "subtitle": "Thông tin chi tiết doanh nghiệp",
-    "back": "Quay lại",
-    "notFound": "Không tìm thấy doanh nghiệp",
-    "notFoundDesc": "Doanh nghiệp bạn đang tìm kiếm không tồn tại.",
-    "backToList": "Quay lại danh sách",
-    "personalInfo": "Thông tin doanh nghiệp",
-    "companyInfo": "Thông tin công ty",
-    "contactInfo": "Thông tin liên hệ",
-    "systemInfo": "Thông tin hệ thống",
-    "statistics": "Thống kê",
-    "fields": {
+  "businessManager": {
+    "title": "Quản lý doanh nghiệp",
+    "subtitle": "Quản lý danh sách doanh nghiệp trong hệ thống",
+    "addManager": "Thêm doanh nghiệp",
+    "searchPlaceholder": "Tìm kiếm theo tên công ty, phòng ban, chức vụ...",
+    "filterAll": "Tất cả trạng thái",
+    "filterVerified": "Đã xác thực",
+    "filterUnverified": "Chưa xác thực",
+    "managersList": "Danh sách doanh nghiệp",
+    "noManagers": "Không tìm thấy doanh nghiệp nào.",
+    "table": {
       "managerCode": "Mã doanh nghiệp",
-      "companyName": "Tên công ty",
+      "companyName": "Tên doanh nghiệp",
       "position": "Chức vụ",
       "department": "Phòng ban",
       "status": "Trạng thái",
-      "companyAddress": "Địa chỉ công ty",
-      "taxId": "Mã số thuế",
-      "website": "Website",
-      "contactEmail": "Email liên hệ",
-      "phoneNumber": "Số điện thoại",
-      "businessLicense": "Giấy phép kinh doanh",
-      "createdAt": "Ngày tạo",
-      "updatedAt": "Cập nhật lần cuối"
+      "actions": "Thao tác"
+    },
+    "status": {
+      "verified": "Đã xác thực",
+      "unverified": "Chưa xác thực"
+    },
+    "actions": {
+      "verify": "Xác thực",
+      "unverify": "Bỏ xác thực",
+      "viewDetails": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa mềm"
+    },
+    "messages": {
+      "loading": "Đang tải...",
+      "error": "Đã xảy ra lỗi",
+      "retry": "Thử lại",
+      "loadError": "Không thể tải danh sách doanh nghiệp!",
+      "verifySuccess": "Cập nhật trạng thái xác thực thành công!",
+      "verifyError": "Không thể cập nhật trạng thái xác thực!",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa doanh nghiệp này?",
+      "deleteSuccess": "Xóa doanh nghiệp thành công!",
+      "deleteError": "Không thể xóa doanh nghiệp!"
+    },
+    "detail": {
+      "title": "Chi tiết doanh nghiệp",
+      "subtitle": "Thông tin chi tiết doanh nghiệp",
+      "back": "Quay lại",
+      "notFound": "Không tìm thấy doanh nghiệp",
+      "notFoundDesc": "Doanh nghiệp bạn đang tìm kiếm không tồn tại.",
+      "backToList": "Quay lại danh sách",
+      "personalInfo": "Thông tin doanh nghiệp",
+      "companyInfo": "Thông tin công ty",
+      "contactInfo": "Thông tin liên hệ",
+      "systemInfo": "Thông tin hệ thống",
+      "statistics": "Thống kê",
+      "fields": {
+        "managerCode": "Mã doanh nghiệp",
+        "companyName": "Tên công ty",
+        "position": "Chức vụ",
+        "department": "Phòng ban",
+        "status": "Trạng thái",
+        "companyAddress": "Địa chỉ công ty",
+        "taxId": "Mã số thuế",
+        "website": "Website",
+        "contactEmail": "Email liên hệ",
+        "loginEmail": "Email đăng nhập",
+        "phoneNumber": "Số điện thoại",
+        "businessLicense": "Giấy phép kinh doanh",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Cập nhật lần cuối"
+      }
     }
   }
 }
