@@ -44,6 +44,37 @@
   },
   "processing": {
     "title": "Coffee Processing Recording",
+    "admin": {
+      "title": "Processing Management",
+      "description": "Manage processing methods and coffee processing stages",
+      "addMethod": "Add Processing Method",
+      "manageStages": "Manage Stages",
+      "searchPlaceholder": "Search methods...",
+      "stages": "Stages",
+      "stats": {
+        "totalMethods": "Total Methods",
+        "activeMethods": "Active Methods",
+        "totalStages": "Total Stages",
+        "avgStagesPerMethod": "Avg Stages/Method"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "stage": {
+      "title": "Processing Stages",
+      "manageTitle": "Manage Processing Stages",
+      "addStage": "Add Stage",
+      "required": "Required",
+      "configDescription": "Configure processing stages for {{methodName}}",
+      "loading": "Loading stages...",
+      "namePlaceholder": "E.g: Wash, Dry, Hull",
+      "codePlaceholder": "E.g: WASH, DRY, HULL",
+      "descriptionPlaceholder": "E.g: Clean coffee beans",
+      "save": "Save",
+      "saving": "Saving..."
+    },
     "batch": {
       "title": "Processing Batch",
       "create": "Record New Batch",
@@ -8003,6 +8034,70 @@
       "description": "Update information for failed stage",
       "update": "Update",
       "updating": "Updating..."
+    },
+    "admin": {
+      "title": "Processing Management",
+      "description": "Manage processing methods and stages for coffee processing",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "stats": {
+        "totalMethods": "Total Methods",
+        "activeMethods": "Active Methods", 
+        "totalStages": "Total Stages",
+        "avgStagesPerMethod": "Avg Stages/Method"
+      },
+      "search": {
+        "placeholder": "Search methods..."
+      },
+      "actions": {
+        "addMethod": "Add Processing Method",
+        "manageStages": "Manage Stages"
+      },
+      "stages": "Stages",
+      "required": "Required",
+      "moreStages": "more stages",
+      "noMethods": "No processing methods found"
+    },
+    "methods": {
+      "form": {
+        "createTitle": "Create Processing Method",
+        "editTitle": "Edit Processing Method",
+        "createDescription": "Create a new coffee processing method",
+        "editDescription": "Edit existing coffee processing method",
+        "methodCode": "Method Code",
+        "methodCodePlaceholder": "E.g.: WASHED, NATURAL, HONEY",
+        "methodCodeDescription": "Unique code to identify the processing method",
+        "name": "Method Name",
+        "namePlaceholder": "E.g.: Washed Process, Natural Process",
+        "description": "Description",
+        "descriptionPlaceholder": "Describe the processing method...",
+        "descriptionDescription": "Detailed description of the processing method",
+        "validation": {
+          "methodCodeRequired": "Method code is required",
+          "nameRequired": "Method name is required",
+          "descriptionRequired": "Description is required"
+        },
+        "createSuccess": "Processing method created successfully",
+        "updateSuccess": "Processing method updated successfully"
+      }
+    },
+    "stages": {
+      "form": {
+        "title": "Manage Processing Stages",
+        "description": "Configure processing stages for {{methodName}}",
+        "stagesList": "Processing Stages",
+        "addStage": "Add Stage",
+        "stageNamePlaceholder": "E.g.: Washing, Drying, Hulling",
+        "required": "Required",
+        "validation": {
+          "stageNameRequired": "Stage name is required",
+          "duplicateStageNames": "Stage names must be unique",
+          "minStages": "At least one stage is required"
+        },
+        "saveSuccess": "Processing stages saved successfully"
+      }
     },
     "createProcessingProgressForm":{
       "title": "Create New Processing Progress",

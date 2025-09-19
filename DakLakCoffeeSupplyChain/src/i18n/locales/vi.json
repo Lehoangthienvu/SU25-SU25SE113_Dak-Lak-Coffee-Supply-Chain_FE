@@ -44,6 +44,37 @@
   },
   "processing": {
     "title": "Ghi nhận xử lý cà phê",
+    "admin": {
+      "title": "Quản lý Sơ chế",
+      "description": "Quản lý phương pháp sơ chế và giai đoạn xử lý cà phê",
+      "addMethod": "Thêm Phương pháp Sơ chế",
+      "manageStages": "Quản lý Giai đoạn",
+      "searchPlaceholder": "Tìm kiếm phương pháp...",
+      "stages": "Giai đoạn",
+      "stats": {
+        "totalMethods": "Tổng phương pháp",
+        "activeMethods": "Phương pháp hoạt động",
+        "totalStages": "Tổng giai đoạn",
+        "avgStagesPerMethod": "TB giai đoạn/phương pháp"
+      },
+      "status": {
+        "active": "Hoạt động",
+        "inactive": "Không hoạt động"
+      }
+    },
+    "stage": {
+      "title": "Giai đoạn Sơ chế",
+      "manageTitle": "Quản lý Giai đoạn Sơ chế",
+      "addStage": "Thêm Giai đoạn",
+      "required": "Bắt buộc",
+      "configDescription": "Cấu hình giai đoạn sơ chế cho {{methodName}}",
+      "loading": "Đang tải giai đoạn...",
+      "namePlaceholder": "Ví dụ: Rửa, Sấy, Tách vỏ",
+      "codePlaceholder": "Ví dụ: RUA, SAY, TACH_VO",
+      "descriptionPlaceholder": "Ví dụ: Rửa sạch hạt cà phê",
+      "save": "Lưu",
+      "saving": "Đang lưu..."
+    },
     "batch": {
       "title": "Lô xử lý",
       "create": "Ghi nhận lô mới",
@@ -8222,6 +8253,70 @@
       "description": "Cập nhật thông tin cho giai đoạn thất bại",
       "update": "Cập nhật",
       "updating": "Đang cập nhật..."
+    },
+    "admin": {
+      "title": "Quản lý Sơ chế",
+      "description": "Quản lý phương pháp sơ chế và giai đoạn xử lý cà phê",
+      "status": {
+        "active": "Hoạt động",
+        "inactive": "Không hoạt động"
+      },
+      "stats": {
+        "totalMethods": "Tổng phương pháp",
+        "activeMethods": "Phương pháp hoạt động", 
+        "totalStages": "Tổng giai đoạn",
+        "avgStagesPerMethod": "TB giai đoạn/phương pháp"
+      },
+      "search": {
+        "placeholder": "Tìm kiếm phương pháp..."
+      },
+      "actions": {
+        "addMethod": "Thêm Phương pháp Sơ chế",
+        "manageStages": "Quản lý Giai đoạn"
+      },
+      "stages": "Giai đoạn",
+      "required": "Bắt buộc",
+      "moreStages": "giai đoạn khác",
+      "noMethods": "Không tìm thấy phương pháp sơ chế"
+    },
+    "methods": {
+      "form": {
+        "createTitle": "Tạo Phương pháp Sơ chế",
+        "editTitle": "Chỉnh sửa Phương pháp Sơ chế",
+        "createDescription": "Tạo phương pháp sơ chế cà phê mới",
+        "editDescription": "Chỉnh sửa phương pháp sơ chế cà phê hiện có",
+        "methodCode": "Mã Phương pháp",
+        "methodCodePlaceholder": "Ví dụ: WASHED, NATURAL, HONEY",
+        "methodCodeDescription": "Mã duy nhất để nhận diện phương pháp sơ chế",
+        "name": "Tên Phương pháp",
+        "namePlaceholder": "Ví dụ: Phương pháp Rửa, Phương pháp Tự nhiên",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Mô tả phương pháp sơ chế...",
+        "descriptionDescription": "Mô tả chi tiết về phương pháp sơ chế",
+        "validation": {
+          "methodCodeRequired": "Mã phương pháp là bắt buộc",
+          "nameRequired": "Tên phương pháp là bắt buộc",
+          "descriptionRequired": "Mô tả là bắt buộc"
+        },
+        "createSuccess": "Tạo phương pháp sơ chế thành công",
+        "updateSuccess": "Cập nhật phương pháp sơ chế thành công"
+      }
+    },
+    "stages": {
+      "form": {
+        "title": "Quản lý Giai đoạn Sơ chế",
+        "description": "Cấu hình giai đoạn sơ chế cho {{methodName}}",
+        "stagesList": "Giai đoạn Sơ chế",
+        "addStage": "Thêm Giai đoạn",
+        "stageNamePlaceholder": "Ví dụ: Rửa, Sấy, Tách vỏ",
+        "required": "Bắt buộc",
+        "validation": {
+          "stageNameRequired": "Tên giai đoạn là bắt buộc",
+          "duplicateStageNames": "Tên giai đoạn phải duy nhất",
+          "minStages": "Cần ít nhất một giai đoạn"
+        },
+        "saveSuccess": "Lưu giai đoạn sơ chế thành công"
+      }
     },
     "createProcessingProgressForm":{
       "title": "Tạo tiến trình xử lý mới",

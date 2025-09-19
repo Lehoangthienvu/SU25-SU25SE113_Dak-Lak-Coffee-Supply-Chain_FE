@@ -79,6 +79,15 @@ export default function AdvanceProcessingProgressForm({
     return t('componentsprocessing.advanceProcessingProgressForm.submit');
   };
 
+  // Helper functions for file management
+  const removePhotoFile = (index: number) => {
+    setPhotoFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeVideoFile = (index: number) => {
+    setVideoFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   // Load available stages khi component mount
   useEffect(() => {
     const loadStages = async () => {
@@ -539,7 +548,7 @@ export default function AdvanceProcessingProgressForm({
                     accept="image/*"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      setPhotoFiles(files);
+                      setPhotoFiles(prev => [...prev, ...files]);
                     }}
                     className="hidden"
                     id="photo-upload"
@@ -554,6 +563,30 @@ export default function AdvanceProcessingProgressForm({
                     {photoFiles.length > 0 ? `${photoFiles.length} ảnh` : t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.image.placeholder')}
                   </label>
                 </div>
+                
+                {/* Photo preview */}
+                {photoFiles.length > 0 && (
+                  <div className="mt-3">
+                    <div className="flex flex-wrap gap-2">
+                      {photoFiles.map((file, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`Photo ${index + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removePhotoFile(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Video upload */}
@@ -568,7 +601,7 @@ export default function AdvanceProcessingProgressForm({
                     accept="video/*"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      setVideoFiles(files);
+                      setVideoFiles(prev => [...prev, ...files]);
                     }}
                     className="hidden"
                     id="video-upload"
@@ -580,9 +613,33 @@ export default function AdvanceProcessingProgressForm({
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    {videoFiles.length > 0 ? `${photoFiles.length} video` : t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.video.placeholder')}
+                    {videoFiles.length > 0 ? `${videoFiles.length} video` : t('componentsprocessing.advanceProcessingProgressForm.form.illustrativeDocuments.video.placeholder')}
                   </label>
                 </div>
+                
+                {/* Video preview */}
+                {videoFiles.length > 0 && (
+                  <div className="mt-3">
+                    <div className="flex flex-wrap gap-2">
+                      {videoFiles.map((file, index) => (
+                        <div key={index} className="relative">
+                          <video
+                            src={URL.createObjectURL(file)}
+                            className="w-20 h-20 object-cover rounded-lg border"
+                            controls
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeVideoFile(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

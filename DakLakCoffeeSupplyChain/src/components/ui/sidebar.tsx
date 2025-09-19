@@ -209,6 +209,11 @@ export function SidebarGroup() {
         icon: iconMap.cropStages,
       },
       {
+        title: "Quản lý Sơ chế",
+        href: "/dashboard/admin/processing",
+        icon: <FiSettings />,
+      },
+      {
         title: t("sidebar.navigation.reports"),
         href: "/dashboard/admin/reports",
         icon: iconMap.reports,

@@ -40,12 +40,17 @@ export const createProcessingMethod = async (data: Partial<ProcessingMethod>): P
   }
 };
 
-export const updateProcessingMethod = async (id: string, data: Partial<ProcessingMethod>): Promise<ProcessingMethod> => {
+export const updateProcessingMethod = async (id: string, data: Partial<ProcessingMethod> & { methodId: string }): Promise<ProcessingMethod> => {
   try {
+    console.log(`🔍 DEBUG: updateProcessingMethod called with id:`, id);
+    console.log(`🔍 DEBUG: updateProcessingMethod data:`, data);
+    console.log(`🔍 DEBUG: URL:`, `/ProcessingMethod/${id}`);
     const response = await api.put(`/ProcessingMethod/${id}`, data);
+    console.log(`🔍 DEBUG: updateProcessingMethod response:`, response.data);
     return response.data;
   } catch (error) {
     console.error('Error updating processing method:', error);
+
     throw error;
   }
 };
