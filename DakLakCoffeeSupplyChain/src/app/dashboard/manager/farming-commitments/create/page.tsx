@@ -6,14 +6,15 @@ import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { createFarmingCommitment } from "@/lib/api/farmingCommitments";
 import {
   CultivationRegistration,
   getCultivationRegistrationById,
 } from "@/lib/api/cultivationRegistrations";
 import FarmingCommitmentFormGuide from "@/components/farming-commitments/FarmingCommitmentFormGuide";
-import FarmingCommitmentForm, { FarmingCommitmentFormData } from "@/components/farming-commitments/FarmingCommitmentForm";
+import FarmingCommitmentForm, {
+  FarmingCommitmentFormData,
+} from "@/components/farming-commitments/FarmingCommitmentForm";
 import { calculateEstimatedDeliveryDates } from "@/lib/helpers/dateHelpers";
 import { useTranslation } from "react-i18next";
 
@@ -45,22 +46,26 @@ function CreateFarmingCommitmentContent() {
 
   // Tự động điền form khi có dữ liệu registration
   useEffect(() => {
-    if (registration && registration.cultivationRegistrationDetails.length > 0) {
-      const approvedDetails = registration.cultivationRegistrationDetails.filter(
-        (detail) => detail.status === "Approved"
-      );
-      
+    if (
+      registration &&
+      registration.cultivationRegistrationDetails.length > 0
+    ) {
+      const approvedDetails =
+        registration.cultivationRegistrationDetails.filter(
+          (detail) => detail.status === "Approved"
+        );
+
       if (approvedDetails.length > 0) {
         setForm((prev) => ({
           ...prev,
           farmingCommitmentDetails: approvedDetails.map((detail) => {
             // Tính toán ngày giao hàng dự kiến
-            const { estimatedDeliveryStart, estimatedDeliveryEnd } = calculateEstimatedDeliveryDates(
-              detail.expectedHarvestEnd || ""
-            );
-            
+            const { estimatedDeliveryStart, estimatedDeliveryEnd } =
+              calculateEstimatedDeliveryDates(detail.expectedHarvestEnd || "");
+
             return {
-              registrationDetailId: detail.cultivationRegistrationDetailId || "",
+              registrationDetailId:
+                detail.cultivationRegistrationDetailId || "",
               confirmedPrice: detail.wantedPrice || 0,
               advancePayment: 0,
               committedQuantity: detail.estimatedYield || 0,
@@ -93,11 +98,14 @@ function CreateFarmingCommitmentContent() {
   const validateForm = (): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
     if (!form.commitmentName) {
-      newErrors.commitmentName = t('farmingCommitment.components.farmingCommitmentForm.validation.commitmentName');
+      newErrors.commitmentName = t(
+        "farmingCommitment.components.farmingCommitmentForm.validation.commitmentName"
+      );
     }
     if (form.farmingCommitmentDetails.length === 0) {
-      newErrors.farmingCommitmentDetails =
-        t('farmingCommitment.components.farmingCommitmentForm.validation.detailsRequired');
+      newErrors.farmingCommitmentDetails = t(
+        "farmingCommitment.components.farmingCommitmentForm.validation.detailsRequired"
+      );
     } else {
       form.farmingCommitmentDetails.forEach((detail, index) => {
         if (!detail.registrationDetailId) {
@@ -187,19 +195,21 @@ function CreateFarmingCommitmentContent() {
         commitmentName: form.commitmentName,
         registrationId: paramRegistrationId,
         note: form.note,
-        farmingCommitmentsDetailsCreateDtos: form.farmingCommitmentDetails.map(detail => ({
-          registrationDetailId: detail.registrationDetailId,
-          confirmedPrice: detail.confirmedPrice,
-          advancePayment: detail.advancePayment,
-          committedQuantity: detail.committedQuantity,
-          estimatedDeliveryStart: detail.estimatedDeliveryStart,
-          estimatedDeliveryEnd: detail.estimatedDeliveryEnd,
-          note: detail.note,
-        })),
+        farmingCommitmentsDetailsCreateDtos: form.farmingCommitmentDetails.map(
+          (detail) => ({
+            registrationDetailId: detail.registrationDetailId,
+            confirmedPrice: detail.confirmedPrice,
+            advancePayment: detail.advancePayment,
+            committedQuantity: detail.committedQuantity,
+            estimatedDeliveryStart: detail.estimatedDeliveryStart,
+            estimatedDeliveryEnd: detail.estimatedDeliveryEnd,
+            note: detail.note,
+          })
+        ),
       };
 
       await createFarmingCommitment(apiData);
-      AppToast.success(t('farmingCommitment.pages.create.success'));
+      AppToast.success(t("farmingCommitment.pages.create.success"));
       router.push("/dashboard/manager/farming-commitments");
 
       setErrors({});
@@ -209,7 +219,9 @@ function CreateFarmingCommitmentContent() {
         farmingCommitmentDetails: [],
       });
     } catch (error) {
-      AppToast.error(getErrorMessage(error) || t('farmingCommitment.pages.create.error'));
+      AppToast.error(
+        getErrorMessage(error) || t("farmingCommitment.pages.create.error")
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -222,9 +234,11 @@ function CreateFarmingCommitmentContent() {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Header */}
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-gray-900'>{t('farmingCommitment.pages.create.title')}</h1>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            {t("farmingCommitment.pages.create.title")}
+          </h1>
           <p className='text-gray-600 mt-2'>
-            {t('farmingCommitment.pages.create.subtitle')}
+            {t("farmingCommitment.pages.create.subtitle")}
           </p>
         </div>
 
@@ -242,10 +256,10 @@ function CreateFarmingCommitmentContent() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-orange-600 to-orange-700 text-white px-6 py-6 m-0 rounded-t-xl'>
                 <CardTitle className='text-white text-2xl font-bold'>
-                  {t('farmingCommitment.pages.create.form.title')}
+                  {t("farmingCommitment.pages.create.form.title")}
                 </CardTitle>
                 <p className='text-green-100 text-sm mt-1'>
-                  {t('farmingCommitment.pages.create.form.subtitle')}
+                  {t("farmingCommitment.pages.create.form.subtitle")}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>
