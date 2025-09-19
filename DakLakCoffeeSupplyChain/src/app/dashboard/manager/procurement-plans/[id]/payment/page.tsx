@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
-import { createVnPayUrl } from '@/lib/api/payments';
+import { createVnPayUrl, getPlanPostingFee } from '@/lib/api/payments';
 import { getProcurementPlanById } from '@/lib/api/procurementPlans';
 import { ProcurementPlan } from '@/lib/api/procurementPlans';
 import { AppToast } from '@/components/ui/AppToast';
@@ -26,20 +26,30 @@ export default function PaymentPage() {
   useEffect(() => {
     if (!id) return;
     
-    // Lấy amount từ query params nếu có
-    const amountParam = searchParams.get('amount');
-    if (amountParam) {
-      setAmount(parseInt(amountParam));
-    }
-    
-    // Lấy thông tin kế hoạch
-    getProcurementPlanById(id as string)
-      .then(setPlan)
-      .catch((error) => {
+    const loadData = async () => {
+      try {
+        // Lấy amount từ query params nếu có, nếu không thì lấy từ API
+        const amountParam = searchParams.get('amount');
+        if (amountParam) {
+          setAmount(parseInt(amountParam));
+        } else {
+          // Lấy phí thanh toán từ API nếu không có trong query params
+          const feeInfo = await getPlanPostingFee();
+          setAmount(feeInfo.amount);
+        }
+        
+        // Lấy thông tin kế hoạch
+        const planData = await getProcurementPlanById(id as string);
+        setPlan(planData);
+      } catch (error) {
         AppToast.error('Không thể tải thông tin kế hoạch');
         console.error(error);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [id, searchParams]);
 
   const handlePayment = async () => {
@@ -50,7 +60,6 @@ export default function PaymentPage() {
       
       const paymentUrl = await createVnPayUrl({
         planId: id as string,
-        amount: amount,
         returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/${id}/payment/success`,
         locale: 'vn'
       });

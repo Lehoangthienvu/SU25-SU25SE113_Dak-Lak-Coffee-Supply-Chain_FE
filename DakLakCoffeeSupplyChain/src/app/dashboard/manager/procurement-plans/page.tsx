@@ -22,7 +22,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { AppToast } from "@/components/ui/AppToast";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 import { useTranslation } from "react-i18next";
-import { checkPaymentStatus } from "@/lib/api/payments";
+import { checkPaymentStatus, getPlanPostingFee } from "@/lib/api/payments";
 
 export default function BusinessProcurementPlansPage() {
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export default function BusinessProcurementPlansPage() {
     null
   );
   const [loadingConfirm, setLoadingConfirm] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState(100000); // Phí đăng ký mặc định
+  const [paymentAmount, setPaymentAmount] = useState(100000); // Phí đăng ký mặc định - sẽ được cập nhật từ API
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] =
@@ -52,11 +52,22 @@ export default function BusinessProcurementPlansPage() {
 
   const fetchData = async () => {
     setIsLoading(true);
+    
+    // Load procurement plans
     const data = await getAllProcurementPlans().catch((error) => {
       console.error(getErrorMessage(error));
       return [];
     });
     setProcurementPlans(data);
+    
+    // Load payment amount from API
+    try {
+      const feeInfo = await getPlanPostingFee();
+      setPaymentAmount(feeInfo.amount);
+    } catch (error) {
+      console.error('Không thể lấy thông tin phí thanh toán:', error);
+      // Giữ giá trị mặc định 100000 nếu không lấy được từ API
+    }
   };
 
   async function handleOpenRegister(planId?: string) {
@@ -64,11 +75,19 @@ export default function BusinessProcurementPlansPage() {
     
     try {
       // Kiểm tra trạng thái thanh toán trước
-      const paymentStatus = await checkPaymentStatus(planId);
+      let paymentStatus;
+      try {
+        paymentStatus = await checkPaymentStatus(planId);
+      } catch (error) {
+        console.error('Lỗi khi kiểm tra trạng thái thanh toán:', error);
+        // Nếu không kiểm tra được thanh toán, chuyển đến trang thanh toán để đảm bảo an toàn
+        router.push(`/dashboard/manager/procurement-plans/${planId}/payment`);
+        return;
+      }
       
-      if (!paymentStatus.success) {
+      if (!paymentStatus.hasPayment || paymentStatus.paymentStatus !== "Success") {
         // Chưa thanh toán, chuyển đến trang thanh toán
-        router.push(`/dashboard/manager/procurement-plans/${planId}/payment?amount=${paymentAmount}`);
+        router.push(`/dashboard/manager/procurement-plans/${planId}/payment`);
         return;
       }
       
