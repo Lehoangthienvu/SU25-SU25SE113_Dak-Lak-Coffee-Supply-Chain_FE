@@ -1,7 +1,9 @@
 import api from "./axios";
 
 export interface ProcessingStage {
-  stageId: number; // ✅ Nhất quán với backend C# sử dụng int
+  stageId: number; 
+  stageCode: string;
+  description: string;
   stageName: string;
   orderIndex: number;
   methodId: number;
@@ -12,11 +14,16 @@ export interface ProcessingStage {
 export async function getProcessingStagesByMethodId(methodId: number): Promise<ProcessingStage[]> {
   try {
     console.log("🔍 DEBUG: Calling GET /ProcessingStages/method/{methodId} API...");
+    console.log("🔍 DEBUG: URL:", `/ProcessingStages/method/${methodId}`);
     const res = await api.get(`/ProcessingStages/method/${methodId}`);
     console.log("🔍 DEBUG: GET /ProcessingStages response:", res);
+    console.log("🔍 DEBUG: Response status:", res.status);
+    console.log("🔍 DEBUG: Response data:", res.data);
     return res.data || [];
-  } catch (err) {
+  } catch (err: any) {
     console.error("❌ Lỗi getProcessingStagesByMethodId:", err);
+    console.error("❌ Error response:", err?.response?.data);
+    console.error("❌ Error status:", err?.response?.status);
     return [];
   }
 }
@@ -47,10 +54,10 @@ export async function createProcessingStages(
 
 export async function updateProcessingStages(
   id: string,
-  data: Omit<ProcessingStage, "stageId">
+  data: ProcessingStage
 ) {
   try {
-    const res = await api.put(`/ProcessingStagess/${id}`, data);
+    const res = await api.put(`/ProcessingStages/${id}`, data);
     return res.data;
   } catch (err) {
     console.error("Lỗi updateProcessingStages:", err);
