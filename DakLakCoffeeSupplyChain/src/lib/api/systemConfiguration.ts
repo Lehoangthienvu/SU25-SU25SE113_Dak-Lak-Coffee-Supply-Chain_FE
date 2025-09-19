@@ -71,6 +71,72 @@ export interface UpdateProcessingBatchCriteriaDto {
   effectedDateTo?: string | null;
 }
 
+// ========== PAYMENT CONFIGURATION TYPES ==========
+
+// Backend DTOs
+export interface PaymentConfigurationViewAllDto {
+  configId: string;
+  roleName: string;
+  feeType: string;
+  amount: number;
+  isActive: boolean | null;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+}
+
+export interface PaymentConfigurationViewDetailsDto {
+  configId: string;
+  roleId: number;
+  roleName: string;
+  feeType: string;
+  amount: number;
+  description: string;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean | null;
+}
+
+export interface PaymentConfigurationCreateDto {
+  roleId: number;
+  feeType: string;
+  amount: number;
+  description?: string | null;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  isActive?: boolean | null;
+}
+
+export interface PaymentConfigurationUpdateDto {
+  configId: string;
+  roleId: number;
+  feeType: string;
+  amount: number;
+  description?: string | null;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  isActive?: boolean | null;
+}
+
+// Frontend types (compatible with backend)
+export interface PaymentConfiguration extends PaymentConfigurationViewDetailsDto {
+  // Alias for compatibility
+  configID: string;
+  roleID: number;
+}
+
+export interface CreatePaymentConfigurationDto extends PaymentConfigurationCreateDto {
+  // Alias for compatibility
+  roleID: number;
+}
+
+export interface UpdatePaymentConfigurationDto extends PaymentConfigurationUpdateDto {
+  // Alias for compatibility
+  configID: string;
+  roleID: number;
+}
+
 // ========== SYSTEM CONFIGURATION APIs ==========
 
 export async function getAllSytemConfiguration(): Promise<SystemConfiguration[]> {
@@ -90,7 +156,7 @@ export async function getSytemConfigurationByName(name: string): Promise<SystemC
 export async function getProcessingBatchCriteria(): Promise<ProcessingBatchCriteria[]> {
   try {
     const response = await api.get("/SystemConfiguration/processing-batch/criteria");
-    
+
     // Backend trả về trực tiếp data, không có wrapper status
     if (response.data && Array.isArray(response.data)) {
       return response.data;
@@ -111,7 +177,7 @@ export async function getProcessingBatchCriteria(): Promise<ProcessingBatchCrite
 export async function getProcessingBatchCriteriaByName(name: string): Promise<ProcessingBatchCriteria | null> {
   try {
     const response = await api.get(`/SystemConfiguration/processing-batch/criteria/${name}`);
-    
+
     // Backend trả về trực tiếp data, không có wrapper status
     if (response.data && typeof response.data === 'object') {
       return response.data;
@@ -130,7 +196,7 @@ export async function getProcessingBatchCriteriaByName(name: string): Promise<Pr
 export async function createProcessingBatchCriteria(dto: CreateProcessingBatchCriteriaDto): Promise<ProcessingBatchCriteria> {
   try {
     const response = await api.post("/SystemConfiguration/processing-batch/criteria", dto);
-    
+
     // Backend trả về trực tiếp data cho create
     if (response.data && typeof response.data === 'object') {
       return response.data;
@@ -149,7 +215,7 @@ export async function createProcessingBatchCriteria(dto: CreateProcessingBatchCr
 export async function updateProcessingBatchCriteria(name: string, dto: UpdateProcessingBatchCriteriaDto): Promise<ProcessingBatchCriteria> {
   try {
     const response = await api.put(`/SystemConfiguration/processing-batch/criteria/${name}`, dto);
-    
+
     // Backend trả về trực tiếp data cho update
     if (response.data && typeof response.data === 'object') {
       return response.data;
@@ -168,7 +234,7 @@ export async function updateProcessingBatchCriteria(name: string, dto: UpdatePro
 export async function deleteProcessingBatchCriteria(name: string): Promise<string> {
   try {
     const response = await api.delete(`/SystemConfiguration/processing-batch/criteria/${name}`);
-    
+
     // Backend trả về message trực tiếp cho delete
     if (response.data && typeof response.data === 'string') {
       return response.data;
@@ -187,7 +253,7 @@ export async function deleteProcessingBatchCriteria(name: string): Promise<strin
 export async function activateProcessingBatchCriteria(name: string): Promise<string> {
   try {
     const response = await api.patch(`/SystemConfiguration/processing-batch/criteria/${name}/activate`);
-    
+
     // Backend trả về message trực tiếp cho activate
     if (response.data && typeof response.data === 'string') {
       return response.data;
@@ -206,7 +272,7 @@ export async function activateProcessingBatchCriteria(name: string): Promise<str
 export async function deactivateProcessingBatchCriteria(name: string): Promise<string> {
   try {
     const response = await api.patch(`/SystemConfiguration/processing-batch/criteria/${name}/deactivate`);
-    
+
     // Backend trả về message trực tiếp cho deactivate
     if (response.data && typeof response.data === 'string') {
       return response.data;
@@ -216,5 +282,117 @@ export async function deactivateProcessingBatchCriteria(name: string): Promise<s
   } catch (error: any) {
     console.error("❌ Lỗi deactivateProcessingBatchCriteria:", error);
     throw new Error(error.response?.data?.message || error.message || 'Lỗi khi vô hiệu hóa tiêu chí');
+  }
+}
+
+// ========== PAYMENT CONFIGURATION APIs ==========
+
+/**
+ * Lấy tất cả cấu hình phí
+ */
+export async function getPaymentConfigurations(): Promise<PaymentConfigurationViewAllDto[]> {
+  try {
+    const response = await api.get("/PaymentConfigurations");
+
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && response.data.length === 0) {
+      return [];
+    } else {
+      throw new Error('Lỗi khi lấy danh sách cấu hình phí');
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi getPaymentConfigurations:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi lấy danh sách cấu hình phí');
+  }
+}
+
+/**
+ * Lấy cấu hình phí theo ID
+ */
+export async function getPaymentConfigurationById(configID: string): Promise<PaymentConfigurationViewDetailsDto | null> {
+  try {
+    const response = await api.get(`/PaymentConfigurations/${configID}`);
+
+    if (response.data && typeof response.data === 'object') {
+      return response.data;
+    } else {
+      return null;
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi getPaymentConfigurationById:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi lấy cấu hình phí');
+  }
+}
+
+/**
+ * Tạo cấu hình phí mới
+ */
+export async function createPaymentConfiguration(dto: PaymentConfigurationCreateDto): Promise<PaymentConfigurationViewDetailsDto> {
+  try {
+    const response = await api.post("/PaymentConfigurations", dto);
+
+    if (response.data && typeof response.data === 'object') {
+      return response.data;
+    } else {
+      throw new Error('Lỗi khi tạo cấu hình phí');
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi createPaymentConfiguration:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi tạo cấu hình phí');
+  }
+}
+
+/**
+ * Cập nhật cấu hình phí
+ */
+export async function updatePaymentConfiguration(configID: string, dto: PaymentConfigurationUpdateDto): Promise<PaymentConfigurationViewDetailsDto> {
+  try {
+    const response = await api.put(`/PaymentConfigurations/${configID}`, dto);
+
+    if (response.data && typeof response.data === 'object') {
+      return response.data;
+    } else {
+      throw new Error('Lỗi khi cập nhật cấu hình phí');
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi updatePaymentConfiguration:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi cập nhật cấu hình phí');
+  }
+}
+
+/**
+ * Xóa cấu hình phí (hard delete)
+ */
+export async function deletePaymentConfiguration(configID: string): Promise<string> {
+  try {
+    const response = await api.delete(`/PaymentConfigurations/${configID}`);
+
+    if (response.data && typeof response.data === 'string') {
+      return response.data;
+    } else {
+      return 'Xóa cấu hình phí thành công';
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi deletePaymentConfiguration:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi xóa cấu hình phí');
+  }
+}
+
+/**
+ * Xóa mềm cấu hình phí
+ */
+export async function softDeletePaymentConfiguration(configID: string): Promise<string> {
+  try {
+    const response = await api.patch(`/PaymentConfigurations/soft-delete/${configID}`);
+
+    if (response.data && typeof response.data === 'string') {
+      return response.data;
+    } else {
+      return 'Xóa mềm cấu hình phí thành công';
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi softDeletePaymentConfiguration:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi xóa mềm cấu hình phí');
   }
 }
