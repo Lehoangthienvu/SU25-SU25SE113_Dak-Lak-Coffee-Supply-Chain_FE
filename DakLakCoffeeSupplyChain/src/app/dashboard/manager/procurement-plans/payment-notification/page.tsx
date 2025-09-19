@@ -51,7 +51,6 @@ function PaymentNotificationContent() {
       const returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result`;
       const url = await createVnPayUrl({
         planId: paymentData.planId,
-        amount: paymentData.amount,
         returnUrl
       });
 
