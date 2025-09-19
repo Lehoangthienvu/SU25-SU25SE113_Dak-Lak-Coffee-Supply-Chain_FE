@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import {
   getPaymentConfigurations,
@@ -204,6 +204,17 @@ export default function PaymentConfigurationsPage() {
   const [viewingConfiguration, setViewingConfiguration] =
     useState<PaymentConfigurationViewDetailsDto | null>(null);
 
+  // Filters and pagination states
+  const [filterRoleId, setFilterRoleId] = useState<string>("all");
+  const [filterFeeType, setFilterFeeType] = useState<string>("all");
+  const [amountMin, setAmountMin] = useState<string>("");
+  const [amountMax, setAmountMax] = useState<string>("");
+  const [effectiveFromFilter, setEffectiveFromFilter] = useState<string>("");
+  const [effectiveToFilter, setEffectiveToFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // all | active | inactive
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const PAGE_SIZE = 6;
+
   // Form states
   const [formData, setFormData] = useState<PaymentConfigurationCreateDto>({
     roleId: 0,
@@ -251,6 +262,154 @@ export default function PaymentConfigurationsPage() {
   useEffect(() => {
     fetchConfigurations();
   }, []);
+
+  // Helpers placed before memoized computations to avoid TDZ issues
+  const getRoleName = (roleName: string) => {
+    if (!roleName) return "Không xác định";
+    // If already Vietnamese, return as is
+    const vnLikely = [
+      "Nông dân",
+      "Quản lý doanh nghiệp",
+      "Chuyên gia",
+      "Nhân viên",
+      "Quản trị viên",
+    ];
+    if (vnLikely.includes(roleName)) return roleName;
+
+    // Normalize
+    const key = roleName.trim().toLowerCase();
+    const map: Record<string, string> = {
+      farmer: "Nông dân",
+      growers: "Nông dân",
+      grower: "Nông dân",
+      businessmanager: "Quản lý doanh nghiệp",
+      manager: "Quản lý doanh nghiệp",
+      enterprise_manager: "Quản lý doanh nghiệp",
+      expert: "Chuyên gia",
+      specialist: "Chuyên gia",
+      staff: "Nhân viên",
+      employee: "Nhân viên",
+      admin: "Quản trị viên",
+      administrator: "Quản trị viên",
+      system_admin: "Quản trị viên",
+    };
+    return map[key] || roleName;
+  };
+
+  const getFeeTypeLabel = (feeType: string) => {
+    const fee = feeTypeOptions.find((f) => f.value === feeType);
+    return fee ? fee.label : feeType;
+  };
+
+  // Derived filtered list
+  const filteredConfigurations = useMemo(() => {
+    const minVal = amountMin ? Number(amountMin.replace(/[^\d]/g, "")) : null;
+    const maxVal = amountMax ? Number(amountMax.replace(/[^\d]/g, "")) : null;
+
+    const parseDate = (d?: string | null) => (d ? new Date(d) : null);
+    const toDateOnly = (d: Date | null) =>
+      d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null;
+    const filterFromDate = parseDate(effectiveFromFilter);
+    const filterToDate = parseDate(effectiveToFilter);
+    const filterFromOnly = toDateOnly(filterFromDate);
+    const filterToOnly = toDateOnly(filterToDate);
+
+    const selectedRoleNameVn =
+      roleOptions.find((r) => r.id.toString() === filterRoleId)?.name || null;
+    const selectedRoleNameVnLower = selectedRoleNameVn
+      ? selectedRoleNameVn.toLowerCase()
+      : null;
+
+    return configurations.filter((cfg) => {
+      const feeLabel = getFeeTypeLabel(cfg.feeType).toLowerCase();
+      const roleLabelVn = getRoleName(cfg.roleName || "").toLowerCase();
+
+      // Role filter
+      const matchesRole =
+        filterRoleId === "all" ||
+        String((cfg as any).roleId ?? "") === filterRoleId ||
+        (selectedRoleNameVnLower !== null &&
+          roleLabelVn === selectedRoleNameVnLower);
+
+      // Fee type filter
+      const matchesFeeType =
+        filterFeeType === "all" || cfg.feeType === filterFeeType;
+
+      // Amount filter
+      const matchesAmount =
+        (minVal === null || cfg.amount >= minVal) &&
+        (maxVal === null || cfg.amount <= maxVal);
+
+      // Effective date filter (range applied to effectiveFrom only)
+      const cfgFromOnly = toDateOnly(new Date(cfg.effectiveFrom));
+      let matchesEffective = true;
+      if (filterFromOnly) {
+        matchesEffective =
+          matchesEffective && !!cfgFromOnly && cfgFromOnly >= filterFromOnly;
+      }
+      if (filterToOnly) {
+        matchesEffective =
+          matchesEffective && !!cfgFromOnly && cfgFromOnly <= filterToOnly;
+      }
+
+      // Status filter
+      const isActive = !!cfg.isActive;
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" && isActive) ||
+        (statusFilter === "inactive" && !isActive);
+
+      return (
+        matchesRole &&
+        matchesFeeType &&
+        matchesAmount &&
+        matchesEffective &&
+        matchesStatus
+      );
+    });
+  }, [
+    configurations,
+    filterRoleId,
+    filterFeeType,
+    amountMin,
+    amountMax,
+    effectiveFromFilter,
+    effectiveToFilter,
+    statusFilter,
+  ]);
+
+  // Reset to page 1 when filters/search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    filterRoleId,
+    filterFeeType,
+    amountMin,
+    amountMax,
+    effectiveFromFilter,
+    effectiveToFilter,
+    statusFilter,
+  ]);
+
+  const totalItems = filteredConfigurations.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const currentPageClamped = Math.min(currentPage, totalPages);
+  const startIndex = (currentPageClamped - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const paginatedConfigurations = filteredConfigurations.slice(
+    startIndex,
+    endIndex
+  );
+
+  const clearFilters = () => {
+    setFilterRoleId("all");
+    setFilterFeeType("all");
+    setAmountMin("");
+    setAmountMax("");
+    setEffectiveFromFilter("");
+    setEffectiveToFilter("");
+    setStatusFilter("all");
+  };
 
   const handleCreate = async () => {
     try {
@@ -431,20 +590,13 @@ export default function PaymentConfigurationsPage() {
     }
   };
 
-  const getRoleName = (roleName: string) => {
-    return roleName || "Không xác định";
-  };
-
-  const getFeeTypeLabel = (feeType: string) => {
-    const fee = feeTypeOptions.find((f) => f.value === feeType);
-    return fee ? fee.label : feeType;
-  };
-
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatted = new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
     }).format(amount);
+    return `${formatted} VND`;
   };
 
   const formatDate = (dateString: string) => {
@@ -576,7 +728,7 @@ export default function PaymentConfigurationsPage() {
                     />
                     {formData.amount > 0 && (
                       <p className="text-sm text-blue-600 font-medium mt-1">
-                        {numberToVietnameseWords(formData.amount)} đồng
+                        {numberToVietnameseWords(formData.amount)} VND
                       </p>
                     )}
                   </div>
@@ -641,16 +793,113 @@ export default function PaymentConfigurationsPage() {
           </div>
         </div>
 
+        {/* Filters */}
+        <Card className="mb-4">
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div>
+                <Label>Vai trò</Label>
+                <Select value={filterRoleId} onValueChange={setFilterRoleId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn vai trò" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    {roleOptions.map((role) => (
+                      <SelectItem key={role.id} value={role.id.toString()}>
+                        {role.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Loại phí</Label>
+                <Select value={filterFeeType} onValueChange={setFilterFeeType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn loại phí" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    {feeTypeOptions.map((fee) => (
+                      <SelectItem key={fee.value} value={fee.value}>
+                        {fee.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Số tiền từ</Label>
+                <Input
+                  placeholder="0"
+                  value={amountMin}
+                  onChange={(e) =>
+                    setAmountMin(e.target.value.replace(/[^\d]/g, ""))
+                  }
+                />
+              </div>
+              <div>
+                <Label>Đến</Label>
+                <Input
+                  placeholder="0"
+                  value={amountMax}
+                  onChange={(e) =>
+                    setAmountMax(e.target.value.replace(/[^\d]/g, ""))
+                  }
+                />
+              </div>
+              <div>
+                <Label>Trạng thái</Label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    <SelectItem value="active">Đang hoạt động</SelectItem>
+                    <SelectItem value="inactive">Không hoạt động</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              <div>
+                <Label>Hiệu lực từ</Label>
+                <Input
+                  type="date"
+                  value={effectiveFromFilter}
+                  onChange={(e) => setEffectiveFromFilter(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Đến</Label>
+                <Input
+                  type="date"
+                  value={effectiveToFilter}
+                  onChange={(e) => setEffectiveToFilter(e.target.value)}
+                />
+              </div>
+              <div className="md:col-span-2 flex items-end justify-end">
+                <Button variant="outline" onClick={clearFilters}>
+                  Xóa bộ lọc
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Configurations Table */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FiDollarSign />
-              Danh sách cấu hình phí ({configurations.length})
+              Danh sách cấu hình phí ({paginatedConfigurations.length}/
+              {filteredConfigurations.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {configurations.length === 0 ? (
+            {filteredConfigurations.length === 0 ? (
               <div className="text-center py-8">
                 <FiDollarSign className="text-gray-400 text-4xl mx-auto mb-4" />
                 <p className="text-gray-500">Chưa có cấu hình phí nào</p>
@@ -668,7 +917,7 @@ export default function PaymentConfigurationsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {configurations.map((config) => (
+                  {paginatedConfigurations.map((config) => (
                     <TableRow key={config.configId}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
@@ -768,6 +1017,38 @@ export default function PaymentConfigurationsPage() {
                 </TableBody>
               </Table>
             )}
+            {/* Pagination */}
+            {filteredConfigurations.length > 0 && (
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm text-gray-600">
+                  Hiển thị{" "}
+                  {Math.min(filteredConfigurations.length, startIndex + 1)}-
+                  {Math.min(filteredConfigurations.length, endIndex)} trong{" "}
+                  {filteredConfigurations.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={currentPageClamped === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  >
+                    Trang trước
+                  </Button>
+                  <span className="text-sm text-gray-700">
+                    {currentPageClamped}/{totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    disabled={currentPageClamped === totalPages}
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                  >
+                    Trang sau
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -849,7 +1130,7 @@ export default function PaymentConfigurationsPage() {
                 />
                 {formData.amount > 0 && (
                   <p className="text-sm text-blue-600 font-medium mt-1">
-                    {numberToVietnameseWords(formData.amount)} đồng
+                    {numberToVietnameseWords(formData.amount)} VND
                   </p>
                 )}
               </div>
