@@ -206,7 +206,7 @@ export default function EditProcurementPlanPage() {
     }
 
     const detailsUpdateDto = formData.procurementPlansDetails
-      .filter((item) => item.planDetailsId && item.planDetailsId.trim() !== "")
+      //.filter((item) => item.planDetailsId && item.planDetailsId.trim() !== "")
       .map((item) => {
         const detail: any = {
           planDetailsId: item.planDetailsId,
@@ -226,25 +226,25 @@ export default function EditProcurementPlanPage() {
         return detail;
       });
 
-    const detailsCreateDto = formData.procurementPlansDetails
-      .filter((item) => !item.planDetailsId || item.planDetailsId.trim() === "")
-      .map((item) => {
-        const detail: any = {
-          coffeeTypeId: item.coffeeTypeId,
-          targetQuantity: item.targetQuantity,
-          targetRegion: item.targetRegion,
-          minimumRegistrationQuantity: item.minimumRegistrationQuantity,
-          minPriceRange: item.minPriceRange,
-          maxPriceRange: item.maxPriceRange,
-          expectedYieldPerHectare: item.expectedYieldPerHectare,
-          note: item.note,
-          //contractItemId: item.contractItemId ?? null,
-        };
-        if (item.processMethodId && item.processMethodId !== 0) {
-          detail.processMethodId = item.processMethodId;
-        }
-        return detail;
-      });
+    // const detailsCreateDto = formData.procurementPlansDetails
+    //   .filter((item) => !item.planDetailsId || item.planDetailsId.trim() === "")
+    //   .map((item) => {
+    //     const detail: any = {
+    //       coffeeTypeId: item.coffeeTypeId,
+    //       targetQuantity: item.targetQuantity,
+    //       targetRegion: item.targetRegion,
+    //       minimumRegistrationQuantity: item.minimumRegistrationQuantity,
+    //       minPriceRange: item.minPriceRange,
+    //       maxPriceRange: item.maxPriceRange,
+    //       expectedYieldPerHectare: item.expectedYieldPerHectare,
+    //       note: item.note,
+    //       //contractItemId: item.contractItemId ?? null,
+    //     };
+    //     if (item.processMethodId && item.processMethodId !== 0) {
+    //       detail.processMethodId = item.processMethodId;
+    //     }
+    //     return detail;
+    //   });
 
     try {
       await updateProcurementPlan(planId, {
@@ -253,7 +253,7 @@ export default function EditProcurementPlanPage() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         procurementPlansDetailsUpdateDto: detailsUpdateDto,
-        procurementPlansDetailsCreateDto: detailsCreateDto,
+        //procurementPlansDetailsCreateDto: detailsCreateDto,
       });
 
       AppToast.success(t("procurementPlan.pages.edit.success"));
@@ -278,6 +278,7 @@ export default function EditProcurementPlanPage() {
       procurementPlansDetails: [
         ...formData.procurementPlansDetails,
         {
+          planDetailsId: "00000000-0000-0000-0000-000000000000",
           coffeeTypeId: "",
           processMethodId: 0,
           targetQuantity: 0,

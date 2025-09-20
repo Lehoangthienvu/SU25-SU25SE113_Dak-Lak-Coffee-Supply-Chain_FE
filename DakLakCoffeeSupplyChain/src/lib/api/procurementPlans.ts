@@ -25,7 +25,7 @@ export type ProcurementPlan = {
   procurementPlansDetails: Partial<ProcurementPlansDetails>[];
   commitments: Partial<FarmingCommitment>[];
   procurementPlansDetailsUpdateDto: Partial<ProcurementPlansDetails>[];
-  procurementPlansDetailsCreateDto: Partial<ProcurementPlansDetails>[];
+  //procurementPlansDetailsCreateDto: Partial<ProcurementPlansDetails>[];
 };
 
 export type ProcurementPlansDetails = {

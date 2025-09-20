@@ -247,7 +247,7 @@ export default function AdminCoffeeTypePage() {
 
                       <td className='py-3 px-4'>
                         <div className='flex gap-2'>
-                          <Button
+                          {/* <Button
                             size='sm'
                             variant='outline'
                             className='h-8 w-8 p-0'
@@ -259,7 +259,7 @@ export default function AdminCoffeeTypePage() {
                             >
                               <Eye className='w-4 h-4' />
                             </Link>
-                          </Button>
+                          </Button> */}
                           <Button
                             size='sm'
                             variant='outline'
