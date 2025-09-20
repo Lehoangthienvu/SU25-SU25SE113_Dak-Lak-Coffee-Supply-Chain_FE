@@ -66,7 +66,9 @@ function EditFarmmingCommitmentContent() {
           note: commitmentData.note,
           farmingCommitmentDetails: commitmentData.farmingCommitmentDetails.map(
             (detail) => ({
-              commitmentDetailId: detail.commitmentDetailId ?? "",
+              commitmentDetailId:
+                detail.commitmentDetailId ??
+                "00000000-0000-0000-0000-000000000000",
               registrationDetailId: detail.registrationDetailId ?? "",
               confirmedPrice: detail.confirmedPrice ?? 0,
               advancePayment: detail.advancePayment ?? 0,
@@ -86,7 +88,7 @@ function EditFarmmingCommitmentContent() {
       }
     } catch (error) {
       AppToast.error(
-        t('farmingCommitment.pages.edit.loadError') + getErrorMessage(error)
+        t("farmingCommitment.pages.edit.loadError") + getErrorMessage(error)
       );
     } finally {
       setLoading(false);
@@ -111,7 +113,7 @@ function EditFarmmingCommitmentContent() {
       farmingCommitmentDetails: [
         ...formData.farmingCommitmentDetails,
         {
-          commitmentDetailId: "",
+          commitmentDetailId: "00000000-0000-0000-0000-000000000000",
           registrationDetailId: "",
           confirmedPrice: 0,
           advancePayment: 0,
@@ -123,6 +125,7 @@ function EditFarmmingCommitmentContent() {
         },
       ],
     });
+    console.log("Added detail, new formData:", formData);
   };
 
   // Xóa chi tiết
@@ -199,10 +202,10 @@ function EditFarmmingCommitmentContent() {
     }
 
     const detailsUpdateDto = formData.farmingCommitmentDetails
-      .filter(
-        (item) =>
-          item.commitmentDetailId && item.commitmentDetailId.trim() !== ""
-      )
+      // .filter(
+      //   (item) =>
+      //     item.commitmentDetailId && item.commitmentDetailId.trim() !== ""
+      // )
       .map((item) => ({
         commitmentDetailId: item.commitmentDetailId,
         registrationDetailId: item.registrationDetailId,
@@ -221,7 +224,7 @@ function EditFarmmingCommitmentContent() {
         farmingCommitmentsDetailsUpdateDtos: detailsUpdateDto,
       });
 
-      AppToast.success(t('farmingCommitment.pages.edit.success'));
+      AppToast.success(t("farmingCommitment.pages.edit.success"));
       router.push("/dashboard/manager/farming-commitments");
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -244,10 +247,10 @@ function EditFarmmingCommitmentContent() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900'>
-            {t('farmingCommitment.pages.edit.title')}
+            {t("farmingCommitment.pages.edit.title")}
           </h1>
           <p className='text-gray-600 mt-2'>
-            {t('farmingCommitment.pages.edit.subtitle')}
+            {t("farmingCommitment.pages.edit.subtitle")}
           </p>
         </div>
 
@@ -265,10 +268,10 @@ function EditFarmmingCommitmentContent() {
             <Card className='shadow-lg border-0 p-0'>
               <CardHeader className='bg-gradient-to-r from-orange-600 to-orange-700 text-white px-6 py-6 m-0 rounded-t-xl'>
                 <CardTitle className='text-white text-2xl font-bold'>
-                  {t('farmingCommitment.pages.edit.form.title')}
+                  {t("farmingCommitment.pages.edit.form.title")}
                 </CardTitle>
                 <p className='text-green-100 text-sm mt-1'>
-                  {t('farmingCommitment.pages.edit.form.subtitle')}
+                  {t("farmingCommitment.pages.edit.form.subtitle")}
                 </p>
               </CardHeader>
               <CardContent className='p-6'>
