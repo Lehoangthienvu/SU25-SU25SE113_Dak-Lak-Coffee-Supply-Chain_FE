@@ -59,13 +59,19 @@ interface WalletTransactionListProps {
   walletId?: string;
   isAdmin?: boolean;
   onTransactionCreated?: () => void;
+  onTransactionClick?: (transaction: TransactionList) => void;
+  showActions?: boolean;
+  initialPageSize?: number;
 }
 
 export default function WalletTransactionList({ 
   userId, 
   walletId, 
   isAdmin = false,
-  onTransactionCreated 
+  onTransactionCreated,
+  onTransactionClick,
+  showActions = true,
+  initialPageSize = 10
 }: WalletTransactionListProps) {
   const [transactions, setTransactions] = useState<TransactionList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +81,7 @@ export default function WalletTransactionList({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const pageSize = 10;
+  const pageSize = initialPageSize;
 
   // Dialog states
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -277,7 +283,11 @@ export default function WalletTransactionList({
           </Card>
         ) : (
           filteredTransactions.map((transaction) => (
-            <Card key={transaction.transactionId} className="hover:shadow-md transition-shadow">
+            <Card 
+              key={transaction.transactionId} 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => onTransactionClick?.(transaction)}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -329,35 +339,46 @@ export default function WalletTransactionList({
                       {formatAmount(transaction.amount, transaction.transactionType)}
                     </div>
                     
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditTransaction(transaction)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteTransaction(transaction)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      
-                      {isAdmin && (
+                    {showActions && (
+                      <div className="flex gap-2 mt-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleHardDeleteTransaction(transaction)}
-                          className="text-red-800 hover:text-red-900"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditTransaction(transaction);
+                          }}
                         >
-                          <MoreVertical className="h-4 w-4" />
+                          <Edit className="h-4 w-4" />
                         </Button>
-                      )}
-                    </div>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTransaction(transaction);
+                          }}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                        
+                        {isAdmin && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleHardDeleteTransaction(transaction);
+                            }}
+                            className="text-red-800 hover:text-red-900"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
