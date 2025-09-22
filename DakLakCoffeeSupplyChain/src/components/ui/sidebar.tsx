@@ -238,6 +238,11 @@ export function SidebarGroup() {
         href: "/dashboard/admin/system-configuration/payment-configurations",
         icon: <FiDollarSign />,
       },
+      {
+        title: "Ví Hệ Thống",
+        href: "/dashboard/admin/system-wallet",
+        icon: <FiDollarSign />,
+      },
     ],
     expert: [
       {
