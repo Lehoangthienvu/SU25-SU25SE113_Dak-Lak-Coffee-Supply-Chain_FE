@@ -132,7 +132,7 @@ export default function AdminCoffeeTypePage() {
           </h1>
           <p className='text-gray-600 mt-2'>{t("coffeeType.subtitle")}</p>
         </div>
-        <Button variant={"secondaryGradient"} asChild>
+        <Button variant={"secondary"} asChild>
           <Link href='/dashboard/admin/coffee-types/create'>
             <Plus className='w-4 h-4 mr-2' />
             {t("coffeeType.addCoffeeType")}
