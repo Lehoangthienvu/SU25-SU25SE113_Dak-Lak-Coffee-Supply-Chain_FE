@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CreditCard, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
-import { createVnPayUrl } from "@/lib/api/payments";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CreditCard, Clock, AlertCircle, CheckCircle2, Wallet } from "lucide-react";
+import { createVnPayUrl, processWalletPayment } from "@/lib/api/payments";
 import { AppToast } from "@/components/ui/AppToast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
@@ -24,6 +25,7 @@ function PaymentNotificationContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentNotificationData | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string>('VNPay');
 
   useEffect(() => {
     // Lấy dữ liệu từ URL params
@@ -48,21 +50,39 @@ function PaymentNotificationContent() {
 
     setLoading(true);
     try {
-      const returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result`;
-      const url = await createVnPayUrl({
-        planId: paymentData.planId,
-        returnUrl
-      });
+      if (paymentMethod === 'VNPay') {
+        // Thanh toán qua VNPay
+        const returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result`;
+        const url = await createVnPayUrl({
+          planId: paymentData.planId,
+          returnUrl
+        });
 
-      if (url) {
-        // Chuyển đến VNPay sandbox
-        window.location.href = url;
+        if (url) {
+          // Chuyển đến VNPay sandbox
+          window.location.href = url;
+        } else {
+          AppToast.error("Không thể tạo URL thanh toán");
+        }
       } else {
-        AppToast.error("Không thể tạo URL thanh toán");
+        // Thanh toán qua ví nội bộ
+        const result = await processWalletPayment({
+          planId: paymentData.planId,
+          amount: paymentData.amount,
+          description: `Thanh toán phí đăng ký kế hoạch: ${paymentData.planTitle}`
+        });
+
+        if (result.success) {
+          AppToast.success("Thanh toán thành công! Kế hoạch đã được kích hoạt.");
+          // Chuyển về trang danh sách kế hoạch
+          router.push("/dashboard/manager/procurement-plans");
+        } else {
+          AppToast.error(result.message || "Thanh toán thất bại");
+        }
       }
     } catch (error) {
-      console.error("Lỗi tạo URL thanh toán:", error);
-      AppToast.error("Có lỗi xảy ra khi tạo URL thanh toán");
+      console.error("Lỗi xử lý thanh toán:", error);
+      AppToast.error("Có lỗi xảy ra khi xử lý thanh toán");
     } finally {
       setLoading(false);
     }
@@ -116,6 +136,42 @@ function PaymentNotificationContent() {
 
               <Separator />
 
+              {/* Chọn phương thức thanh toán */}
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <CreditCard className="h-5 w-5 text-blue-500 mr-2" />
+                  Phương thức thanh toán
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Chọn phương thức thanh toán
+                    </label>
+                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Chọn phương thức thanh toán" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="VNPay">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="h-4 w-4" />
+                            VNPay (Ngân hàng)
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Wallet">
+                          <div className="flex items-center gap-2">
+                            <Wallet className="h-4 w-4" />
+                            Ví nội bộ
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
               {/* Thông tin thanh toán */}
               <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
@@ -131,7 +187,9 @@ function PaymentNotificationContent() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Phương thức:</span>
-                    <span className="font-medium">VNPay</span>
+                    <span className="font-medium">
+                      {paymentMethod === 'VNPay' ? 'VNPay (Ngân hàng)' : 'Ví nội bộ'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -145,10 +203,21 @@ function PaymentNotificationContent() {
                   Lưu ý quan trọng
                 </h3>
                 <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Bạn sẽ được chuyển đến trang thanh toán VNPay</li>
-                  <li>• Sử dụng thông tin thẻ test để thanh toán</li>
-                  <li>• Sau khi thanh toán thành công, kế hoạch sẽ được kích hoạt</li>
-                  <li>• Nếu thanh toán thất bại, bạn có thể thử lại</li>
+                  {paymentMethod === 'VNPay' ? (
+                    <>
+                      <li>• Bạn sẽ được chuyển đến trang thanh toán VNPay</li>
+                      <li>• Sử dụng thông tin thẻ test để thanh toán</li>
+                      <li>• Sau khi thanh toán thành công, kế hoạch sẽ được kích hoạt</li>
+                      <li>• Nếu thanh toán thất bại, bạn có thể thử lại</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>• Số tiền sẽ được trừ trực tiếp từ ví nội bộ của bạn</li>
+                      <li>• Đảm bảo ví có đủ số dư để thanh toán</li>
+                      <li>• Sau khi thanh toán thành công, kế hoạch sẽ được kích hoạt</li>
+                      <li>• Giao dịch sẽ được ghi nhận trong lịch sử ví</li>
+                    </>
+                  )}
                 </ul>
               </div>
 
@@ -168,8 +237,12 @@ function PaymentNotificationContent() {
                     </>
                   ) : (
                     <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Tiến hành thanh toán
+                      {paymentMethod === 'VNPay' ? (
+                        <CreditCard className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Wallet className="mr-2 h-4 w-4" />
+                      )}
+                      {paymentMethod === 'VNPay' ? 'Thanh toán VNPay' : 'Thanh toán ví'}
                     </>
                   )}
                 </Button>

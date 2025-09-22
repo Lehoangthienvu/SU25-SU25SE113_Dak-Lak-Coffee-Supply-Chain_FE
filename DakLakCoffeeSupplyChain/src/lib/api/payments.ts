@@ -47,6 +47,23 @@ export async function processPaymentSuccess(request: ProcessPaymentSuccessReques
   return res.data;
 }
 
+export type WalletPaymentRequest = {
+  planId: string;
+  amount: number;
+  description?: string;
+};
+
+export type WalletPaymentResponse = {
+  success: boolean;
+  message: string;
+  transactionId?: string;
+};
+
+export async function processWalletPayment(request: WalletPaymentRequest): Promise<WalletPaymentResponse> {
+  const res = await api.post('/Payments/wallet-payment', request);
+  return res.data;
+}
+
 
 
 
