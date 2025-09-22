@@ -35,6 +35,18 @@ export async function getPlanPostingFee(): Promise<PaymentAmountResponse> {
   return res.data;
 }
 
+export type ProcessPaymentSuccessRequest = {
+  txnRef: string;
+  orderInfo: string;
+  responseCode?: string;
+  amount?: string;
+};
+
+export async function processPaymentSuccess(request: ProcessPaymentSuccessRequest): Promise<any> {
+  const res = await api.post('/Payments/process-payment-success', request);
+  return res.data;
+}
+
 
 
 

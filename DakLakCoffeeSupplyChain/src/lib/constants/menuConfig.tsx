@@ -123,6 +123,12 @@ export const useMenuConfig = () => {
         href: "/dashboard/admin/settings",
         icon: iconMap.settings,
       },
+      {
+        type: "link",
+        title: "Ví Hệ Thống",
+        href: "/dashboard/admin/system-wallet",
+        icon: iconMap.wallet,
+      },
     ],
 
     expert: [
