@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, XCircle, Clock, AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { AppToast } from "@/components/ui/AppToast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { processPaymentSuccess } from "@/lib/api/payments";
 
 function PaymentResultContent() {
   const { t } = useTranslation();
@@ -22,13 +23,15 @@ function PaymentResultContent() {
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
-    const processPaymentResult = () => {
+    const processPaymentResult = async () => {
       try {
         // Lấy các tham số từ VNPay return URL
         const responseCode = searchParams.get("vnp_ResponseCode");
         const transactionId = searchParams.get("vnp_TransactionNo");
         const amount = searchParams.get("vnp_Amount");
         const secureHash = searchParams.get("vnp_SecureHash");
+        const txnRef = searchParams.get("vnp_TxnRef");
+        const orderInfo = searchParams.get("vnp_OrderInfo");
 
         if (!responseCode) {
           setMessage("Thiếu thông tin thanh toán");
@@ -43,6 +46,22 @@ function PaymentResultContent() {
           setMessage("Thanh toán thành công");
           setTransactionId(transactionId || "");
           setAmount(amount ? parseInt(amount) / 100 : 0);
+
+          // Gọi API để xử lý thanh toán thành công
+          if (txnRef && orderInfo) {
+            try {
+              await processPaymentSuccess({
+                txnRef: txnRef,
+                orderInfo: orderInfo,
+                responseCode: responseCode,
+                amount: amount || undefined
+              });
+              AppToast.success("Thanh toán đã được xử lý thành công!");
+            } catch (error: any) {
+              console.error("Lỗi xử lý thanh toán:", error);
+              AppToast.error("Có lỗi xảy ra khi xử lý thanh toán: " + (error.message || "Lỗi không xác định"));
+            }
+          }
         } else {
           setIsSuccess(false);
           setMessage("Thanh toán thất bại");
