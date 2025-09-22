@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   getTransactionsByUserId,
   getTransactionsByWallet,
+  getSystemWalletTransactions,
   deleteWalletTransaction,
   hardDeleteWalletTransaction,
   updateWalletTransaction,
@@ -105,6 +106,9 @@ export default function WalletTransactionList({
           pageSize: pageSize,
           totalPages: Math.ceil(walletTransactions.length / pageSize)
         };
+      } else if (isAdmin) {
+        // Admin xem giao dịch của System Wallet
+        result = await getSystemWalletTransactions(page, pageSize);
       } else {
         // Xem giao dịch của user hiện tại - sử dụng userId mặc định cho demo
         const currentUserId = '00000000-0000-0000-0000-000000000000';
@@ -283,6 +287,20 @@ export default function WalletTransactionList({
                       >
                         {formatTransactionType(transaction.transactionType)}
                       </Badge>
+                      {transaction.paymentStatus && (
+                        <Badge 
+                          className={transaction.paymentStatus === 'Success' 
+                            ? 'bg-green-100 text-green-800' 
+                            : transaction.paymentStatus === 'Pending'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                          }
+                        >
+                          {transaction.paymentStatus === 'Success' ? 'Thành công' : 
+                           transaction.paymentStatus === 'Pending' ? 'Đang xử lý' : 
+                           transaction.paymentStatus}
+                        </Badge>
+                      )}
                       <span className="text-sm text-gray-500">
                         {new Date(transaction.createdAt).toLocaleDateString('vi-VN', {
                           year: 'numeric',

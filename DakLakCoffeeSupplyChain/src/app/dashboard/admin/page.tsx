@@ -21,8 +21,11 @@ import {
     FiBarChart2,
     FiBox,
     FiPieChart,
+    FiCreditCard,
+    FiDollarSign,
 } from "react-icons/fi";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
+import Link from "next/link";
 
 ChartJS.register(
     CategoryScale,
@@ -41,7 +44,7 @@ export default function ManagerDashboard() {
         <div className="w-full bg-orange-50 min-h-screen">
             <div className="p-6">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
                     <Card>
                         <CardContent className="p-5 flex items-center gap-4">
                             <div className="text-orange-500 text-2xl">
@@ -74,6 +77,18 @@ export default function ManagerDashboard() {
                             <div>
                                 <div className="text-sm text-gray-500">Nông dân</div>
                                 <div className="text-xl font-semibold">48 hộ</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent className="p-5 flex items-center gap-4">
+                            <div className="text-orange-500 text-2xl">
+                                <FiDollarSign />
+                            </div>
+                            <div>
+                                <div className="text-sm text-gray-500">Giao dịch ví</div>
+                                <div className="text-xl font-semibold">156</div>
                             </div>
                         </CardContent>
                     </Card>
@@ -143,7 +158,7 @@ export default function ManagerDashboard() {
                 </div>
 
                 {/* Feature Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                     <Card className="hover:shadow-lg transition">
                         <CardHeader className="flex items-center gap-2">
                             <FiFileText className="text-orange-500 text-xl" />
@@ -179,6 +194,20 @@ export default function ManagerDashboard() {
                             </p>
                         </CardContent>
                     </Card>
+
+                    <Link href="/dashboard/admin/wallet-transactions">
+                        <Card className="hover:shadow-lg transition cursor-pointer">
+                            <CardHeader className="flex items-center gap-2">
+                                <FiCreditCard className="text-orange-500 text-xl" />
+                                <CardTitle className="text-lg">Giao dịch ví</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-500 text-sm">
+                                    Quản lý và theo dõi tất cả giao dịch ví trong hệ thống.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </Link>
                 </div>
             </div>
         </div>

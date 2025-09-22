@@ -47,6 +47,7 @@ export default function WalletTransactionForm({
     transactionType: 'TopUp',
     description: ''
   });
+  const [paymentMethod, setPaymentMethod] = useState<string>('Wallet');
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function WalletTransactionForm({
         transactionType: 'TopUp',
         description: ''
       });
+      setPaymentMethod('Wallet');
     }
   }, [open, walletId]);
 
@@ -131,6 +133,22 @@ export default function WalletTransactionForm({
                   <SelectItem value="Withdraw">Rút tiền</SelectItem>
                   <SelectItem value="Transfer">Chuyển tiền</SelectItem>
                   <SelectItem value="Payment">Thanh toán</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="paymentMethod">Phương thức thanh toán</Label>
+              <Select 
+                value={paymentMethod} 
+                onValueChange={setPaymentMethod}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn phương thức thanh toán" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Wallet">Ví nội bộ</SelectItem>
+                  <SelectItem value="VNPay">VNPay</SelectItem>
                 </SelectContent>
               </Select>
             </div>

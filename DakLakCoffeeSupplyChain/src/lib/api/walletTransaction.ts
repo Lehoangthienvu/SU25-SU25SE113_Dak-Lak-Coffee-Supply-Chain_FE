@@ -34,6 +34,7 @@ export interface WalletTransactionList {
   isDeleted: boolean;
   walletType?: string;
   userName?: string;
+  paymentStatus?: string;
 }
 
 export interface WalletTransactionSearchResult {
@@ -94,6 +95,17 @@ export async function getTransactionsByUserId(userId: string, pageNumber: number
   }
 }
 
+// 4.1. Lấy giao dịch System Wallet cho Admin (với phân trang)
+export async function getSystemWalletTransactions(pageNumber: number = 1, pageSize: number = 10): Promise<WalletTransactionSearchResult> {
+  try {
+    const response = await api.get(`/WalletTransaction/system-wallet?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting system wallet transactions:', error);
+    throw error;
+  }
+}
+
 // 5. Cập nhật giao dịch
 export async function updateWalletTransaction(transactionId: string, updateData: WalletTransactionUpdate): Promise<WalletTransactionDetail> {
   try {
@@ -138,6 +150,8 @@ export function formatTransactionType(type: string): string {
       return 'Chuyển tiền';
     case 'payment':
       return 'Thanh toán';
+    case 'fee':
+      return 'Thu phí';
     default:
       return type;
   }
@@ -154,6 +168,8 @@ export function getTransactionTypeColor(type: string): string {
       return 'text-blue-600 bg-blue-50';
     case 'payment':
       return 'text-orange-600 bg-orange-50';
+    case 'fee':
+      return 'text-green-600 bg-green-50';
     default:
       return 'text-gray-600 bg-gray-50';
   }
@@ -170,6 +186,8 @@ export function getTransactionAmountColor(type: string): string {
       return 'text-blue-600';
     case 'payment':
       return 'text-orange-600';
+    case 'fee':
+      return 'text-green-600';
     default:
       return 'text-gray-600';
   }
@@ -178,8 +196,8 @@ export function getTransactionAmountColor(type: string): string {
 export function formatAmount(amount: number, type: string): string {
   const formatted = amount.toLocaleString('vi-VN');
   
-  // TopUp và DirectTopup = tăng tiền (+), còn lại là giảm tiền (-)
-  if (type.toLowerCase() === 'topup' || type.toLowerCase() === 'directtopup') {
+  // TopUp, DirectTopup và Fee = tăng tiền (+), còn lại là giảm tiền (-)
+  if (type.toLowerCase() === 'topup' || type.toLowerCase() === 'directtopup' || type.toLowerCase() === 'fee') {
     return `+${formatted} VND`;
   } else {
     return `-${formatted} VND`;

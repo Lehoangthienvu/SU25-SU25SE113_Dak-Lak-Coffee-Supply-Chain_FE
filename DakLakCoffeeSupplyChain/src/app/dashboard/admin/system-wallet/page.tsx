@@ -7,7 +7,8 @@ import { AppToast } from '@/components/ui/AppToast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Wallet, TrendingUp, Clock } from 'lucide-react';
+import { RefreshCw, Wallet, TrendingUp, Clock, CreditCard, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function SystemWalletPage() {
   const { t } = useTranslation();
@@ -144,6 +145,47 @@ export default function SystemWalletPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Action Buttons */}
+      {systemWallet && (
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link href="/dashboard/admin/wallet-transactions">
+            <Card className="hover:shadow-lg transition cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-orange-100 rounded-lg">
+                    <CreditCard className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Quản lý giao dịch</h3>
+                    <p className="text-sm text-gray-600">
+                      Xem và quản lý tất cả giao dịch ví trong hệ thống
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/dashboard/admin">
+            <Card className="hover:shadow-lg transition cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <BarChart3 className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Dashboard tổng quan</h3>
+                    <p className="text-sm text-gray-600">
+                      Quay lại trang dashboard chính của admin
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
       )}
 
       {/* No Data */}

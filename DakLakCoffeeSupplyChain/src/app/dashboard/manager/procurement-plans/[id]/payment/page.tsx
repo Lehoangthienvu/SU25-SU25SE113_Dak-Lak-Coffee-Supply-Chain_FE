@@ -5,8 +5,8 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
-import { createVnPayUrl, getPlanPostingFee } from '@/lib/api/payments';
+import { ArrowLeft, CreditCard, AlertCircle, CheckCircle, Wallet } from 'lucide-react';
+import { createVnPayUrl, getPlanPostingFee, processWalletPayment } from '@/lib/api/payments';
 import { getProcurementPlanById } from '@/lib/api/procurementPlans';
 import { ProcurementPlan } from '@/lib/api/procurementPlans';
 import { AppToast } from '@/components/ui/AppToast';
@@ -22,6 +22,7 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [amount, setAmount] = useState(100000);
+  const [paymentMethod, setPaymentMethod] = useState<string>('VNPay');
 
   useEffect(() => {
     if (!id) return;
@@ -58,16 +59,34 @@ export default function PaymentPage() {
     try {
       setProcessing(true);
       
-      const paymentUrl = await createVnPayUrl({
-        planId: id as string,
-        returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/${id}/payment/success`,
-        locale: 'vn'
-      });
-      
-      // Chuyển đến VNPay
-      window.location.href = paymentUrl;
+      if (paymentMethod === 'VNPay') {
+        // Thanh toán qua VNPay
+        const paymentUrl = await createVnPayUrl({
+          planId: id as string,
+          returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/${id}/payment/success`,
+          locale: 'vn'
+        });
+        
+        // Chuyển đến VNPay
+        window.location.href = paymentUrl;
+      } else {
+        // Thanh toán qua ví nội bộ
+        const result = await processWalletPayment({
+          planId: id as string,
+          amount: amount,
+          description: `Thanh toán phí đăng ký kế hoạch: ${plan?.title || 'N/A'}`
+        });
+
+        if (result.success) {
+          AppToast.success("Thanh toán thành công! Kế hoạch đã được kích hoạt.");
+          // Chuyển về trang danh sách kế hoạch
+          router.push("/dashboard/manager/procurement-plans");
+        } else {
+          AppToast.error(result.message || "Thanh toán thất bại");
+        }
+      }
     } catch (error) {
-      AppToast.error('Không thể tạo liên kết thanh toán');
+      AppToast.error('Không thể xử lý thanh toán');
       console.error(error);
     } finally {
       setProcessing(false);
@@ -185,12 +204,36 @@ export default function PaymentPage() {
 
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">Phương thức thanh toán</h4>
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-blue-50">
-                <CreditCard className="h-6 w-6 text-blue-600" />
-                <div>
-                  <p className="font-medium text-blue-900">VNPay</p>
-                  <p className="text-sm text-blue-700">Thanh toán trực tuyến an toàn</p>
-                </div>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              >
+                <option value="VNPay">VNPay (Ngân hàng)</option>
+                <option value="Wallet">Ví nội bộ</option>
+              </select>
+              
+              {/* Hiển thị thông tin phương thức được chọn */}
+              <div className={`flex items-center gap-3 p-3 border rounded-lg ${
+                paymentMethod === 'VNPay' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'
+              }`}>
+                {paymentMethod === 'VNPay' ? (
+                  <>
+                    <CreditCard className="h-6 w-6 text-blue-600" />
+                    <div>
+                      <p className="font-medium text-blue-900">VNPay</p>
+                      <p className="text-sm text-blue-700">Thanh toán trực tuyến an toàn</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="h-6 w-6 text-green-600" />
+                    <div>
+                      <p className="font-medium text-green-900">Ví nội bộ</p>
+                      <p className="text-sm text-green-700">Thanh toán trực tiếp từ ví</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -198,7 +241,11 @@ export default function PaymentPage() {
               <Button
                 onClick={handlePayment}
                 disabled={processing}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                className={`w-full text-white ${
+                  paymentMethod === 'VNPay' 
+                    ? 'bg-blue-600 hover:bg-blue-700' 
+                    : 'bg-green-600 hover:bg-green-700'
+                }`}
                 size="lg"
               >
                 {processing ? (
@@ -210,14 +257,21 @@ export default function PaymentPage() {
                   </>
                 ) : (
                   <>
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Thanh toán ngay
+                    {paymentMethod === 'VNPay' ? (
+                      <CreditCard className="h-4 w-4 mr-2" />
+                    ) : (
+                      <Wallet className="h-4 w-4 mr-2" />
+                    )}
+                    {paymentMethod === 'VNPay' ? 'Thanh toán VNPay' : 'Thanh toán ví'}
                   </>
                 )}
               </Button>
               
               <p className="text-xs text-gray-500 text-center mt-2">
-                Bạn sẽ được chuyển đến trang thanh toán VNPay
+                {paymentMethod === 'VNPay' 
+                  ? 'Bạn sẽ được chuyển đến trang thanh toán VNPay'
+                  : 'Số tiền sẽ được trừ trực tiếp từ ví nội bộ của bạn'
+                }
               </p>
             </div>
           </CardContent>
