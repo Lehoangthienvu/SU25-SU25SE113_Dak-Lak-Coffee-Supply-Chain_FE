@@ -35,7 +35,8 @@
       "unverify": "Unverify",
       "viewDetails": "View Details",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "toggleStatus": "Toggle Status"
     },
     "messages": {
       "loading": "Loading...",
