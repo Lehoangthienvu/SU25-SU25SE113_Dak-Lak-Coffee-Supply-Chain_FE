@@ -8,6 +8,10 @@ export type CoffeeType = {
   description?: string;
   typicalRegion?: string;
   specialtyLevel?: string;
+  status?: string;
+  coffeeTypeCategory?: string;
+  coffeeTypeParentId?: string;
+  coffeeTypeParentName?: string;
 };
 
 export async function getCoffeeTypes(): Promise<CoffeeType[]> {
