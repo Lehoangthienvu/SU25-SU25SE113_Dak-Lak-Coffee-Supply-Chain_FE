@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loadingProgress";
 import { useTranslation } from "react-i18next";
+import { CoffeeType } from "@/lib/api/coffeeType";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 export interface CoffeeTypeFormData {
   typeName: string;
@@ -12,10 +14,14 @@ export interface CoffeeTypeFormData {
   description: string;
   typicalRegion: string;
   specialtyLevel: string;
+  coffeeTypeCategory: string;
+  coffeeTypeParentId?: string;
+  parentCoffeeTypes?: CoffeeType[];
 }
 
 interface Props {
   initialData?: CoffeeTypeFormData;
+  availableCoffeeTypes: CoffeeType[];
   loading: boolean;
   errors: Record<string, string>;
   isSubmitting: boolean;
@@ -25,6 +31,8 @@ interface Props {
 
 export default function CoffeeTypeForm({
   initialData,
+  availableCoffeeTypes,
+  loading,
   errors,
   isSubmitting,
   onChange,
@@ -39,14 +47,17 @@ export default function CoffeeTypeForm({
       description: "",
       typicalRegion: "",
       specialtyLevel: "",
+      coffeeTypeCategory: "",
+      coffeeTypeParentId: "",
+      parentCoffeeTypes: [],
     }
   );
 
-  useEffect(() => {
-    if (initialData) {
-      setForm(initialData);
-    }
-  }, [initialData]);
+  // useEffect(() => {
+  //   if (initialData) {
+  //     setForm(initialData);
+  //   }
+  // }, [initialData]);
 
   // Khi giá trị form thay đổi sẽ đẩy lên parent
   const handleChange = (
@@ -73,6 +84,112 @@ export default function CoffeeTypeForm({
           <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
             {t("coffeeType.title")}
           </h3>
+
+          <div className='flex gap-4 mb-6'>
+            {/* Combobox phân loại */}
+            <div className='flex-1'>
+              <Label
+                htmlFor='coffeeTypeCategory'
+                className='text-sm font-medium text-gray-700'
+              >
+                {t("coffeeType.create.fields.coffeeTypeCategory")}
+                <span className='text-red-500 ml-1'>*</span>
+              </Label>
+              <select
+                id='coffeeTypeCategory'
+                name='coffeeTypeCategory'
+                required
+                value={form.coffeeTypeCategory || ""}
+                onChange={(e) => {
+                  // const value = e.target.value;
+                  // onChange({
+                  //   ...form,
+                  //   coffeeTypeCategory: value,
+                  //   coffeeTypeParentId:
+                  //     value === "general" ? "" : form.coffeeTypeParentId,
+                  // });
+                  handleChange(e);
+                }}
+                className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+              >
+                <option value='' disabled>
+                  {t("coffeeType.create.fields.placeholder.coffeeTypeCategory")}
+                </option>
+                <option value='general'>
+                  {t("coffeeType.create.options.general")}
+                </option>
+                <option value='specific'>
+                  {t("coffeeType.create.options.specific")}
+                </option>
+              </select>
+              {errors["coffeeTypeCategory"] && (
+                <p className='text-red-500 text-xs mt-1'>
+                  {errors["coffeeTypeCategory"]}
+                </p>
+              )}
+            </div>
+
+            {/* Combobox parentID chỉ hiện khi chọn cụ thể */}
+            <div
+              className='flex-1'
+              style={{
+                visibility:
+                  form.coffeeTypeCategory === "specific" ? "visible" : "hidden",
+                pointerEvents:
+                  form.coffeeTypeCategory === "specific" ? "auto" : "none",
+              }}
+            >
+              <Label
+                htmlFor='coffeeTypeParentID'
+                className='text-sm font-medium text-gray-700'
+              >
+                {t("coffeeType.create.fields.coffeeTypeParentID")}
+                <span className='text-red-500 ml-1'>*</span>
+              </Label>
+              {loading ? (
+                <LoadingSpinner />
+              ) : availableCoffeeTypes.length === 0 ? (
+                <p className='text-red-500 text-sm italic mt-1'>
+                  {t(
+                    "procurementPlan.components.procurementPlanForm.fields.coffeeType.noOptions"
+                  )}
+                </p>
+              ) : (
+                <>
+                  <select
+                    id='coffeeTypeParentId'
+                    name='coffeeTypeParentId'
+                    required={form.coffeeTypeCategory === "specific"}
+                    value={form.coffeeTypeParentId || ""}
+                    onChange={(e) =>
+                      // onChange({ ...form, coffeeTypeParentId: e.target.value })
+                      handleChange(e)
+                    }
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                  >
+                    <option value='' disabled>
+                      {t(
+                        "coffeeType.create.fields.placeholder.coffeeTypeParentID"
+                      )}
+                    </option>
+                    {availableCoffeeTypes.map((coffee) => (
+                      <option
+                        key={coffee.coffeeTypeId}
+                        value={coffee.coffeeTypeId}
+                      >
+                        {coffee.typeName}
+                      </option>
+                    ))}
+                  </select>
+                  {errors["coffeeTypeParentID"] && (
+                    <p className='text-red-500 text-xs mt-1'>
+                      {errors["coffeeTypeParentID"]}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
 
           <div className='space-y-4'>
             <div>

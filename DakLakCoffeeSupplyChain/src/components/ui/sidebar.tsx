@@ -26,6 +26,7 @@ import {
   FiActivity,
   FiLayers,
 } from "react-icons/fi";
+import { FaSeedling } from "react-icons/fa";
 
 const iconMap = {
   dashboard: <FiPieChart />,
@@ -63,12 +64,12 @@ export function Sidebar({
         "flex flex-col fixed left-0 top-0 z-30"
       )}
     >
-      <div className="h-16 flex items-center justify-between px-4 border-b border-orange-100">
-        <div className="flex items-center gap-2 overflow-hidden">
+      <div className='h-16 flex items-center justify-between px-4 border-b border-orange-100'>
+        <div className='flex items-center gap-2 overflow-hidden'>
           {!isCollapsed && (
             <>
-              <img src="/logo_bg.png" alt="logo" className="w-7 h-7" />
-              <span className="text-xl font-bold text-orange-600 truncate">
+              <img src='/logo_bg.png' alt='logo' className='w-7 h-7' />
+              <span className='text-xl font-bold text-orange-600 truncate'>
                 DakLakCoffee
               </span>
             </>
@@ -80,14 +81,14 @@ export function Sidebar({
             setIsCollapsed(newState);
             onCollapseChange?.(newState);
           }}
-          className="text-orange-600 hover:bg-orange-100 rounded-lg p-2 transition-colors"
+          className='text-orange-600 hover:bg-orange-100 rounded-lg p-2 transition-colors'
           title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
           aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
         >
           <Menu size={20} />
         </button>
       </div>
-      <div className="flex-1 overflow-auto">{children}</div>
+      <div className='flex-1 overflow-auto'>{children}</div>
     </aside>
   );
 }
@@ -95,7 +96,7 @@ export function Sidebar({
 // ===== Sidebar Header =====
 export function SidebarHeader({ children }: { children?: ReactNode }) {
   return (
-    <div className="px-4 py-3 border-b border-orange-100 font-medium text-sm text-gray-700">
+    <div className='px-4 py-3 border-b border-orange-100 font-medium text-sm text-gray-700'>
       {children}
     </div>
   );
@@ -103,7 +104,7 @@ export function SidebarHeader({ children }: { children?: ReactNode }) {
 
 // ===== Sidebar Content =====
 export function SidebarContent({ children }: { children: ReactNode }) {
-  return <nav className="py-4 space-y-1">{children}</nav>;
+  return <nav className='py-4 space-y-1'>{children}</nav>;
 }
 
 // ===== Sidebar Group (navigation) =====
@@ -197,6 +198,11 @@ export function SidebarGroup() {
         title: t("sidebar.navigation.farmerManagement"),
         href: "/dashboard/admin/farmers",
         icon: <FiUsers />,
+      },
+      {
+        title: t("common.navigation.coffeeTypeManagement"),
+        href: "/dashboard/admin/coffee-types",
+        icon: <FaSeedling />,
       },
       {
         title: t("sidebar.navigation.contracts"),
@@ -319,12 +325,12 @@ export function SidebarGroup() {
 
   if (!role || !navigationItems[role]) {
     return (
-      <div className="px-4 text-gray-400 text-sm">{t("sidebar.loading")}</div>
+      <div className='px-4 text-gray-400 text-sm'>{t("sidebar.loading")}</div>
     );
   }
 
   return (
-    <div className="space-y-1 px-2">
+    <div className='space-y-1 px-2'>
       {navigationItems[role].map((item) => {
         const isActive = pathname === item.href;
         return (
@@ -338,8 +344,8 @@ export function SidebarGroup() {
                 : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
             )}
           >
-            <span className="shrink-0 w-5 text-center">{item.icon}</span>
-            <span className="truncate">{item.title}</span>
+            <span className='shrink-0 w-5 text-center'>{item.icon}</span>
+            <span className='truncate'>{item.title}</span>
           </Link>
         );
       })}
@@ -354,11 +360,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setProcessingOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 {iconMap.articles}
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.processing")}
               </span>
             </div>
@@ -370,9 +376,9 @@ export function SidebarGroup() {
             />
           </button>
           {processingOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               <Link
-                href="/dashboard/farmer/processing/batches"
+                href='/dashboard/farmer/processing/batches'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith("/dashboard/farmer/processing/batches")
@@ -383,7 +389,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.processingBatches")}
               </Link>
               <Link
-                href="/dashboard/farmer/processing/progresses"
+                href='/dashboard/farmer/processing/progresses'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith("/dashboard/farmer/processing/progresses")
@@ -394,7 +400,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.processingProgresses")}
               </Link>
               <Link
-                href="/dashboard/farmer/processing/wastes"
+                href='/dashboard/farmer/processing/wastes'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith("/dashboard/farmer/processing/wastes")
@@ -426,11 +432,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setContractOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 <FiFileText />
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.contractsAndDelivery")}
               </span>
             </div>
@@ -442,9 +448,9 @@ export function SidebarGroup() {
             />
           </button>
           {contractOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               <Link
-                href="/dashboard/manager/contracts"
+                href='/dashboard/manager/contracts'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/contracts"
@@ -455,7 +461,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.supplyContracts")}
               </Link>
               <Link
-                href="/dashboard/manager/contract-delivery-batches"
+                href='/dashboard/manager/contract-delivery-batches'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/contract-delivery-batches"
@@ -466,7 +472,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.deliverySchedule")}
               </Link>
               <Link
-                href="/dashboard/manager/procurement-plans"
+                href='/dashboard/manager/procurement-plans'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/procurement-plans"
@@ -477,7 +483,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.procurementPlans")}
               </Link>
               <Link
-                href="/dashboard/manager/farming-commitments"
+                href='/dashboard/manager/farming-commitments'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/farming-commitments"
@@ -505,11 +511,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setOrderOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 <FiShoppingCart />
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.ordersAndDelivery")}
               </span>
             </div>
@@ -521,9 +527,9 @@ export function SidebarGroup() {
             />
           </button>
           {orderOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               <Link
-                href="/dashboard/manager/orders"
+                href='/dashboard/manager/orders'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/orders"
@@ -534,7 +540,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.orders")}
               </Link>
               <Link
-                href="/dashboard/manager/shipments"
+                href='/dashboard/manager/shipments'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/shipments"
@@ -563,11 +569,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setCustomerOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 <FiUsers />
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.customersAndProducts")}
               </span>
             </div>
@@ -579,9 +585,9 @@ export function SidebarGroup() {
             />
           </button>
           {customerOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               <Link
-                href="/dashboard/manager/business-buyers"
+                href='/dashboard/manager/business-buyers'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/business-buyers"
@@ -592,7 +598,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.businessCustomers")}
               </Link>
               <Link
-                href="/dashboard/manager/products"
+                href='/dashboard/manager/products'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/products"
@@ -603,7 +609,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.products")}
               </Link>
               <Link
-                href="/dashboard/manager/farmers"
+                href='/dashboard/manager/farmers'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/farmers"
@@ -632,11 +638,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setReportOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 <FiBarChart2 />
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.reportsAndProcessing")}
               </span>
             </div>
@@ -648,7 +654,7 @@ export function SidebarGroup() {
             />
           </button>
           {reportOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               {/* <Link
                 href="/dashboard/manager/reports"
                 className={cn(
@@ -661,7 +667,7 @@ export function SidebarGroup() {
                 {t('sidebar.navigation.reports')}
               </Link> */}
               <Link
-                href="/dashboard/manager/processing/batches"
+                href='/dashboard/manager/processing/batches'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/processing/batches"
@@ -673,7 +679,7 @@ export function SidebarGroup() {
               </Link>
 
               <Link
-                href="/dashboard/manager/processing/progresses"
+                href='/dashboard/manager/processing/progresses'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith(
@@ -697,7 +703,7 @@ export function SidebarGroup() {
                 {t('sidebar.navigation.processingWaste')}
               </Link> */}
               <Link
-                href="/dashboard/manager/processing/methods"
+                href='/dashboard/manager/processing/methods'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith("/dashboard/manager/processing/methods")
@@ -708,7 +714,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.processingMethods")}
               </Link>
               <Link
-                href="/dashboard/manager/processing/parameters"
+                href='/dashboard/manager/processing/parameters'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith(
@@ -721,7 +727,7 @@ export function SidebarGroup() {
                 {t("sidebar.navigation.processingParameters")}
               </Link>
               <Link
-                href="/dashboard/manager/processing/stages"
+                href='/dashboard/manager/processing/stages'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname.startsWith("/dashboard/manager/processing/stages")
@@ -748,11 +754,11 @@ export function SidebarGroup() {
             )}
             onClick={() => setStaffOpen((v) => !v)}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="shrink-0 w-5 text-center">
+            <div className='flex items-center gap-2 overflow-hidden'>
+              <span className='shrink-0 w-5 text-center'>
                 <FiUsers />
               </span>
-              <span className="truncate">
+              <span className='truncate'>
                 {t("sidebar.navigation.staffManagement")}
               </span>
             </div>
@@ -764,9 +770,9 @@ export function SidebarGroup() {
             />
           </button>
           {staffOpen && (
-            <div className="pl-8 space-y-1">
+            <div className='pl-8 space-y-1'>
               <Link
-                href="/dashboard/manager/business-staffs"
+                href='/dashboard/manager/business-staffs'
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   pathname === "/dashboard/manager/business-staffs"
@@ -833,11 +839,11 @@ export function SidebarGroup() {
                   )}
                   onClick={() => setWarehouseOpen((v) => !v)}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className="shrink-0 w-5 text-center">
+                  <div className='flex items-center gap-2 overflow-hidden'>
+                    <span className='shrink-0 w-5 text-center'>
                       <FiSettings />
                     </span>
-                    <span className="truncate">
+                    <span className='truncate'>
                       {t("sidebar.navigation.warehouseManagement")}
                     </span>
                   </div>
@@ -850,7 +856,7 @@ export function SidebarGroup() {
                 </button>
 
                 {warehouseOpen && (
-                  <div className="pl-8 space-y-1">
+                  <div className='pl-8 space-y-1'>
                     {warehouseLinks.map(({ label, href, activeMatch }) => (
                       <Link
                         key={href}
@@ -919,11 +925,11 @@ export function SidebarGroup() {
                   )}
                   onClick={() => setProcessingOpen((v) => !v)}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className="shrink-0 w-5 text-center">
+                  <div className='flex items-center gap-2 overflow-hidden'>
+                    <span className='shrink-0 w-5 text-center'>
                       <FiClipboard />
                     </span>
-                    <span className="truncate">
+                    <span className='truncate'>
                       {t("sidebar.navigation.warehouseOperations")}
                     </span>
                   </div>
@@ -936,7 +942,7 @@ export function SidebarGroup() {
                 </button>
 
                 {processingOpen && (
-                  <div className="pl-8 space-y-1">
+                  <div className='pl-8 space-y-1'>
                     {operationLinks.map(({ label, href, activeMatch }) => (
                       <Link
                         key={href}
@@ -995,11 +1001,11 @@ export function SidebarGroup() {
                   )}
                   onClick={() => setWarehouseOpen((v) => !v)}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className="shrink-0 w-5 text-center">
+                  <div className='flex items-center gap-2 overflow-hidden'>
+                    <span className='shrink-0 w-5 text-center'>
                       <FiSettings />
                     </span>
-                    <span className="truncate">
+                    <span className='truncate'>
                       {t("sidebar.navigation.warehouseManagement")}
                     </span>
                   </div>
@@ -1012,7 +1018,7 @@ export function SidebarGroup() {
                 </button>
 
                 {warehouseOpen && (
-                  <div className="pl-8 space-y-1">
+                  <div className='pl-8 space-y-1'>
                     {warehouseLinks.map(({ label, href, activeMatch }) => (
                       <Link
                         key={href}

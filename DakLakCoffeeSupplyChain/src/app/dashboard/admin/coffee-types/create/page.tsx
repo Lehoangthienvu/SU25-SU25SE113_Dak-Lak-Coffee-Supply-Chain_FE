@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
-import { createCoffeeType } from "@/lib/api/coffeeType";
+import {
+  CoffeeType,
+  createCoffeeType,
+  getCoffeeTypes,
+} from "@/lib/api/coffeeType";
 import { AppToast } from "@/components/ui/AppToast";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/lib/utils";
@@ -22,14 +26,33 @@ export default function CreateCoffeePage() {
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [form, setForm] = useState({
+  const [parentCoffeeTypes, setParentCoffeeTypes] = useState<CoffeeType[]>([]);
+  const [form, setForm] = useState<CoffeeTypeFormData>({
     typeName: "",
     typeCode: "",
     botanicalName: "",
     description: "",
     typicalRegion: "",
     specialtyLevel: "",
+    coffeeTypeCategory: "",
+    coffeeTypeParentId: "",
   });
+
+  const fetchCoffeeTypes = async () => {
+    setLoading(true);
+    const data = await getCoffeeTypes().catch((error) => {
+      console.error(
+        "Lỗi khi lấy danh sách coffeeTypes:",
+        getErrorMessage(error)
+      );
+      return [];
+    });
+    const filteredData = data.filter(
+      (ct) => ct.coffeeTypeCategory === "general"
+    );
+    setParentCoffeeTypes(filteredData);
+    setLoading(false);
+  };
 
   const validateForm = (): { isValid: boolean; errorMessages: string[] } => {
     const newErrors: Record<string, string> = {};
@@ -58,7 +81,13 @@ export default function CreateCoffeePage() {
   };
 
   const handleFormChange = (formData: CoffeeTypeFormData) => {
-    setForm(formData);
+    // Loại bỏ trường parentCoffeeTypes khỏi formData nếu có
+    const { parentCoffeeTypes, ...formattedData } = formData;
+    // Nếu coffeeTypeParentId rỗng thì loại bỏ trường này khỏi formattedData
+    if (!formattedData.coffeeTypeParentId) {
+      delete formattedData.coffeeTypeParentId;
+    }
+    setForm(formattedData);
   };
 
   const handleSubmit = async () => {
@@ -70,6 +99,7 @@ export default function CreateCoffeePage() {
       AppToast.error(errorMessages.join("\n")); // show errors from validateForm directly
       return;
     }
+    //console.log("Submitting form data:", form);
 
     try {
       await createCoffeeType(form);
@@ -79,9 +109,13 @@ export default function CreateCoffeePage() {
       console.error("Lỗi khi tạo coffeeType:", getErrorMessage(error));
       AppToast.error(getErrorMessage(error));
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    fetchCoffeeTypes();
+  }, []);
 
   return (
     <div className='flex flex-col items-center space-y-6'>
@@ -101,6 +135,7 @@ export default function CreateCoffeePage() {
         {/* Form */}
         <CoffeeTypeForm
           initialData={form}
+          availableCoffeeTypes={parentCoffeeTypes}
           loading={loading}
           errors={errors}
           isSubmitting={isSubmitting}
