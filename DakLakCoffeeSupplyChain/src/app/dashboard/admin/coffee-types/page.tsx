@@ -9,7 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { useTranslation } from "react-i18next";
-import { CoffeeType, deleteCoffeeType } from "@/lib/api/coffeeType";
+import {
+  CoffeeType,
+  deleteCoffeeType,
+  updateStatusCoffeeType,
+} from "@/lib/api/coffeeType";
 import { getCoffeeTypes } from "@/lib/api/coffeeType";
 import { getErrorMessage } from "@/lib/utils";
 import { AppToast } from "@/components/ui/AppToast";
@@ -41,6 +45,38 @@ export default function AdminCoffeeTypePage() {
       console.log(getErrorMessage(error));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (
+    coffeeTypeId: string,
+    currentStatus: string | number
+  ) => {
+    try {
+      const newStatus = currentStatus === "Active" ? 0 : 1;
+      const updatedCoffeeType = await updateStatusCoffeeType(
+        {
+          coffeeTypeId,
+          status: newStatus,
+        },
+        coffeeTypeId
+      );
+
+      // Cập nhật lại trong state
+      setCoffeeTypes((prev) =>
+        prev.map((coffee) =>
+          coffee.coffeeTypeId === coffeeTypeId
+            ? { ...coffee, status: updatedCoffeeType.status }
+            : coffee
+        )
+      );
+
+      AppToast.success(
+        `Đã ${newStatus === 1 ? "mở" : "đóng"} trạng thái cho loại cà phê.`
+      );
+    } catch (error) {
+      console.error(getErrorMessage(error));
+      AppToast.error("Cập nhật trạng thái thất bại.");
     }
   };
 
@@ -290,6 +326,19 @@ export default function AdminCoffeeTypePage() {
                               <Eye className='w-4 h-4' />
                             </Link>
                           </Button> */}
+
+                          <Input
+                            type='checkbox'
+                            checked={coffeeType.status === "Active"}
+                            onChange={() =>
+                              handleToggleStatus(
+                                coffeeType.coffeeTypeId,
+                                coffeeType.status ?? "InActive"
+                              )
+                            }
+                            className='h-8 w-8 p-0 rounded-full cursor-pointer accent-orange-600'
+                            title={t("coffeeType.actions.toggleStatus")}
+                          />
                           <Button
                             size='sm'
                             variant='outline'

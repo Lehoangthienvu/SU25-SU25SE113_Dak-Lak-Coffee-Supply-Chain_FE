@@ -55,8 +55,11 @@ export default function EditProcurementPlanPage() {
             getTargetRegionOptions(),
             getProcurementPlanById(planId),
           ]);
+        const filteredCoffeeTypes = coffeeTypes.filter(
+          (ct) => ct.status === "Active"
+        );
 
-        setAvailableCoffeeTypes(coffeeTypes);
+        setAvailableCoffeeTypes(filteredCoffeeTypes);
         setAvailableProcessingMethods(processingMethods);
         setTargetRegions(regions);
 

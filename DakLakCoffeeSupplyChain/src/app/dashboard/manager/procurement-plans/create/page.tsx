@@ -159,7 +159,8 @@ export default function CreateProcurementPlanPage() {
       AppToast.error(getErrorMessage(error));
       return [];
     });
-    setAvailableCoffeeTypes(data);
+    const filtered = data.filter((ct) => ct.status === "Active");
+    setAvailableCoffeeTypes(filtered);
     setLoading(false);
   };
   const fetchProcessingMethods = async () => {
@@ -258,14 +259,16 @@ export default function CreateProcurementPlanPage() {
           const params = new URLSearchParams({
             planId: created.planId,
             amount: feeInfo.amount.toString(),
-            planTitle: encodeURIComponent(form.title)
+            planTitle: encodeURIComponent(form.title),
           });
-          
-          router.push(`/dashboard/manager/procurement-plans/payment-notification?${params.toString()}`);
+
+          router.push(
+            `/dashboard/manager/procurement-plans/payment-notification?${params.toString()}`
+          );
           return;
         } catch (error) {
-          console.error('Không thể lấy thông tin phí thanh toán:', error);
-          AppToast.error('Không thể lấy thông tin phí thanh toán');
+          console.error("Không thể lấy thông tin phí thanh toán:", error);
+          AppToast.error("Không thể lấy thông tin phí thanh toán");
           return;
         }
       }
