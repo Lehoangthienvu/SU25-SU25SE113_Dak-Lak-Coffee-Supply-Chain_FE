@@ -54,8 +54,6 @@ const translateAddressToVietnamese = (displayName: string): string => {
         'Ea Wy District': 'Huyện Ea Wy',
         'Ea Khăl': 'Ea Khăl',
         'Ea Khăl District': 'Huyện Ea Khăl',
-        'Ea Súp': 'Ea Súp',
-        'Ea Súp District': 'Huyện Ea Súp',
         'Ea Rốk': 'Ea Rốk',
         'Ea Rốk District': 'Huyện Ea Rốk',
         'Ea Bung': 'Ea Bung',

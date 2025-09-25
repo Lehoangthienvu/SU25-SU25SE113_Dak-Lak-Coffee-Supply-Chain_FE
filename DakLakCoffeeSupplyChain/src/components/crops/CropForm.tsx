@@ -60,9 +60,12 @@ export const CropForm: React.FC<CropFormProps> = ({
             if (initialData) {
                 // Update existing crop
                 await updateCrop({
-                    ...formData,
                     cropId: initialData.cropId,
-                    cropCode: initialData.cropCode
+                    cropCode: initialData.cropCode,
+                    address: formData.address,
+                    farmName: formData.farmName,
+                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
+                    status: formData.status as any
                 });
                 toast.success('Cập nhật crop thành công!');
             } else {
@@ -142,7 +145,7 @@ export const CropForm: React.FC<CropFormProps> = ({
                         </label>
                         <select
                             value={formData.status}
-                            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Inactive' | 'Processed' | 'Harvested' | 'Sold' })}
                             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="Active">Active</option>
