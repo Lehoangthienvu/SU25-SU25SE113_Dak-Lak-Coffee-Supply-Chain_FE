@@ -54,6 +54,12 @@ export const useMenuConfig = () => {
         icon: iconMap.dashboard,
       },
       {
+        type: "link",
+        title: "Quản lý Crops",
+        href: "/dashboard/farmer/crops",
+        icon: iconMap.crops,
+      },
+      {
         type: "group",
         title: t('sidebar.navigation.farmer.cropSeasons'),
         icon: iconMap.crops,
