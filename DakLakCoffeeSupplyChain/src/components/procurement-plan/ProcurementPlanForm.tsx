@@ -363,11 +363,11 @@ export default function ProcurementPlanForm({
                   </CardTitle>
                   {form.procurementPlansDetails.length > 1 && (
                     <Button
-                      variant='destructiveGradient'
+                      variant='destructive'
                       size='sm'
                       onClick={() => handleRemoveDetail(index)}
                       type='button'
-                      //className='hover:bg-red-600'
+                    //className='hover:bg-red-600'
                     >
                       <FiTrash2 className='mr-2' />
                       {t(
@@ -411,7 +411,7 @@ export default function ProcurementPlanForm({
                     ) : (
                       <>
                         <select
-                          id={`coffeeTypeId-${index}`}
+                          id={`coffeeTypeId-${index}-${Math.random()}`}
                           name='coffeeTypeId'
                           value={detail.coffeeTypeId}
                           onChange={(e) => handleDetailChange(index, e)}
@@ -467,7 +467,7 @@ export default function ProcurementPlanForm({
                     ) : (
                       <>
                         <select
-                          id={`processMethodId-${index}`}
+                          id={`processMethodId-${index}-${Math.random()}`}
                           name='processMethodId'
                           value={detail.processMethodId}
                           onChange={(e) => handleDetailChange(index, e)}
@@ -765,7 +765,7 @@ export default function ProcurementPlanForm({
                     ) : (
                       <>
                         <select
-                          id={`targetRegion-${index}`}
+                          id={`targetRegion-${index}-${Math.random()}`}
                           name='targetRegion'
                           value={detail.targetRegion}
                           onChange={(e) => handleDetailChange(index, e)}
@@ -867,10 +867,10 @@ export default function ProcurementPlanForm({
           <div className='flex justify-start mb-6'>
             <Button
               onClick={handleAddDetail}
-              variant='secondaryGradient'
+              variant='secondary'
               size='lg'
               type='button'
-              //className='border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
+            //className='border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
             >
               +{" "}
               {t(
@@ -899,15 +899,15 @@ export default function ProcurementPlanForm({
                 type='submit'
                 variant='default'
                 disabled={isSubmitting}
-                //className='bg-blue-600 hover:bg-blue-700 px-8 py-3'
+              //className='bg-blue-600 hover:bg-blue-700 px-8 py-3'
               >
                 {isSubmitting
                   ? t(
-                      "procurementPlan.components.procurementPlanForm.buttons.submit"
-                    )
+                    "procurementPlan.components.procurementPlanForm.buttons.submit"
+                  )
                   : t(
-                      "procurementPlan.components.procurementPlanForm.buttons.submit"
-                    )}
+                    "procurementPlan.components.procurementPlanForm.buttons.submit"
+                  )}
               </LoadingButton>
             </div>
           </div>
