@@ -181,11 +181,11 @@ export default function CropsPage() {
             )}
 
             <ConfirmDialog
-                isOpen={!!deleteConfirm}
-                onClose={() => setDeleteConfirm(null)}
+                open={!!deleteConfirm}
+                onOpenChange={(open) => !open && setDeleteConfirm(null)}
                 onConfirm={() => deleteConfirm && handleDelete(deleteConfirm)}
                 title="Xác nhận xóa"
-                message="Bạn có chắc chắn muốn xóa crop này? Hành động này không thể hoàn tác."
+                description="Bạn có chắc chắn muốn xóa crop này? Hành động này không thể hoàn tác."
                 confirmText="Xóa"
                 cancelText="Hủy"
             />
