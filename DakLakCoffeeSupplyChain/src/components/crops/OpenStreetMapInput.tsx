@@ -1,5 +1,8 @@
 'use client';
 
+// OpenStreetMap Nominatim API URL
+const NOMINATIM_API_URL = 'https://nominatim.openstreetmap.org/search';
+
 import { useState, useEffect, useRef } from 'react';
 
 interface OpenStreetMapInputProps {
@@ -206,11 +209,6 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Initialize inputValue when component mounts
-    useEffect(() => {
-        setInputValue(value || '');
-    }, []);
-
     // Sync inputValue với value prop
     useEffect(() => {
         setInputValue(value || '');
@@ -230,7 +228,7 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
             // Tìm kiếm chỉ trong khu vực Đắk Lắk
             const searchQuery = `${query}, Đắk Lắk, Vietnam`;
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQuery)}&format=json&countrycodes=vn&limit=10&addressdetails=1&accept-language=vi,en&bounded=1&viewbox=107.5,12.0,109.0,13.5`
+                `${NOMINATIM_API_URL}?q=${encodeURIComponent(searchQuery)}&format=json&countrycodes=vn&limit=10&addressdetails=1&accept-language=vi,en&bounded=1&viewbox=107.5,12.0,109.0,13.5`
             );
 
             if (!response.ok) {

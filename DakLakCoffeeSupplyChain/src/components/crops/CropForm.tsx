@@ -21,7 +21,7 @@ export const CropForm: React.FC<CropFormProps> = ({
         address: initialData?.address || '',
         farmName: initialData?.farmName || '',
         cropArea: initialData?.cropArea || '',
-        status: initialData?.status || CropStatus.Active
+        status: CropStatus.Active
     });
 
     const [loading, setLoading] = useState(false);
@@ -65,8 +65,7 @@ export const CropForm: React.FC<CropFormProps> = ({
                     cropCode: initialData.cropCode,
                     address: formData.address,
                     farmName: formData.farmName,
-                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
-                    status: formData.status as CropStatus
+                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
                 });
                 toast.success('Cập nhật crop thành công!');
             } else {
@@ -74,16 +73,36 @@ export const CropForm: React.FC<CropFormProps> = ({
                 await createCrop({
                     address: formData.address,
                     farmName: formData.farmName,
-                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
-                    status: formData.status as CropStatus
+                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
                 });
                 toast.success('Tạo crop mới thành công!');
             }
 
             onSubmit();
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error saving crop:', error);
-            toast.error('Có lỗi xảy ra khi lưu crop');
+            const getErrorMessage = (err: unknown): string => {
+                if (err && typeof err === 'object' && 'response' in err) {
+                    const axiosError = err as { response?: { data?: unknown } };
+                    // Check if data is a string (direct error message)
+                    if (typeof axiosError.response?.data === 'string') {
+                        return axiosError.response.data;
+                    }
+                    // Check if data has message property
+                    if (axiosError.response?.data && typeof axiosError.response.data === 'object' && 'message' in axiosError.response.data) {
+                        return (axiosError.response.data as { message: string }).message;
+                    }
+                    // Check if data has error property
+                    if (axiosError.response?.data && typeof axiosError.response.data === 'object' && 'error' in axiosError.response.data) {
+                        return (axiosError.response.data as { error: string }).error;
+                    }
+                }
+                if (err && typeof err === 'object' && 'message' in err) {
+                    return (err as { message: string }).message;
+                }
+                return 'Có lỗi xảy ra khi lưu crop';
+            };
+            toast.error(getErrorMessage(error));
         } finally {
             setLoading(false);
         }

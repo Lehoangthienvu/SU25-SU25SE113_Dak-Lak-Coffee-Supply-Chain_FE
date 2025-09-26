@@ -5,7 +5,6 @@ export interface CropCreateDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: CropStatus;
 }
 
 export interface CropUpdateDto {
@@ -14,7 +13,6 @@ export interface CropUpdateDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: CropStatus;
 }
 
 export interface CropViewAllDto {
@@ -66,3 +64,4 @@ export const updateCrop = async (data: CropUpdateDto): Promise<CropViewAllDto> =
 export const deleteCrop = async (id: string): Promise<void> => {
   await api.delete(`/crops/${id}`);
 };
+
