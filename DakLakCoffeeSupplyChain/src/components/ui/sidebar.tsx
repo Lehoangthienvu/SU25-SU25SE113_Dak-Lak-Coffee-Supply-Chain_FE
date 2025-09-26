@@ -138,7 +138,7 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Cây trồng",
+        title: "Vùng trồng",
         href: "/dashboard/farmer/crops",
         icon: <FaSeedling />,
       },

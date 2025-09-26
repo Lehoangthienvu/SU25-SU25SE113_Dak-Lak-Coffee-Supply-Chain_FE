@@ -177,7 +177,7 @@ export default function AdminCropStagesPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Quản lý Giai đoạn Cây trồng</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Quản lý Giai đoạn Vùng trồng</h1>
                     <p className="text-gray-600 mt-1">
                         Quản lý các giai đoạn phát triển của cây cà phê
                     </p>

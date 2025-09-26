@@ -1,10 +1,11 @@
 import api from "./axios";
+import { CropStatus } from "../constants/cropStatus";
 
 export interface CropCreateDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: 'Active' | 'Inactive' | 'Harvested' | 'Processed' | 'Sold';
+  status: CropStatus;
 }
 
 export interface CropUpdateDto {
@@ -13,7 +14,7 @@ export interface CropUpdateDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: 'Active' | 'Inactive' | 'Harvested' | 'Processed' | 'Sold';
+  status: CropStatus;
 }
 
 export interface CropViewAllDto {
@@ -22,7 +23,7 @@ export interface CropViewAllDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: string;
+  status: CropStatus;
 }
 
 export interface CropViewDetailsDto {
@@ -31,7 +32,7 @@ export interface CropViewDetailsDto {
   address: string;
   farmName: string;
   cropArea?: number;
-  status: string;
+  status: CropStatus;
   createdAt: string;
   updatedAt: string;
   createdBy: string;

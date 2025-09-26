@@ -58,7 +58,7 @@ export default function EditExpertPage() {
         "Quản lý chất lượng",
         "Kinh tế nông nghiệp",
         "Công nghệ sinh học",
-        "Thổ nhưỡng và dinh dưỡng cây trồng",
+        "Thổ nhưỡng và dinh dưỡng ùng trồng",
         "Khác",
     ];
 
