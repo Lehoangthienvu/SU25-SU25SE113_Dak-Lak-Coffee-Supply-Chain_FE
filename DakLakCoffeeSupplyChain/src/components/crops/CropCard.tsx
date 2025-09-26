@@ -1,108 +1,97 @@
 'use client';
 
 import { CropViewAllDto } from '@/lib/api/crops';
+import { CropStatus, CropStatusLabels, CropStatusColors, CropStatusIconColors } from '@/lib/constants/cropStatus';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Ruler, Calendar, Edit, Trash2 } from 'lucide-react';
+import { MapPin, Ruler, Calendar, Trash2, Hash, Circle } from 'lucide-react';
 
 interface CropCardProps {
     crop: CropViewAllDto;
-    onEdit: (crop: CropViewAllDto) => void;
     onDelete: (cropId: string) => void;
+    onView?: (crop: CropViewAllDto) => void;
 }
 
-const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-        case 'active':
-            return 'bg-green-100 text-green-800';
-        case 'inactive':
-            return 'bg-gray-100 text-gray-800';
-        case 'harvested':
-            return 'bg-yellow-100 text-yellow-800';
-        case 'processed':
-            return 'bg-blue-100 text-blue-800';
-        case 'sold':
-            return 'bg-purple-100 text-purple-800';
-        default:
-            return 'bg-gray-100 text-gray-800';
-    }
+const getStatusColor = (status: CropStatus) => {
+    return CropStatusColors[status] || 'bg-gray-100 text-gray-800';
 };
 
-const getStatusLabel = (status: string) => {
-    switch (status.toLowerCase()) {
-        case 'active':
-            return 'Hoạt động';
-        case 'inactive':
-            return 'Không hoạt động';
-        case 'harvested':
-            return 'Đã thu hoạch';
-        case 'processed':
-            return 'Đã chế biến';
-        case 'sold':
-            return 'Đã bán';
-        default:
-            return status;
-    }
+const getStatusLabel = (status: CropStatus) => {
+    return CropStatusLabels[status] || status;
 };
 
-export const CropCard: React.FC<CropCardProps> = ({ crop, onEdit, onDelete }) => {
+export const CropCard: React.FC<CropCardProps> = ({ crop, onDelete, onView }) => {
+    const handleCardClick = () => {
+        if (onView) {
+            onView(crop);
+        }
+    };
+
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
-                <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {crop.cropCode}
-                    </h3>
-                    <Badge className={getStatusColor(crop.status)}>
-                        {getStatusLabel(crop.status)}
-                    </Badge>
-                </div>
+        <div
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:border-green-300 hover:-translate-y-1 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+            onClick={handleCardClick}
+        >
+            {/* Background gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 to-emerald-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEdit(crop)}
-                        className="h-8 w-8 p-0"
-                    >
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onDelete(crop.cropId)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
-
-            <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+            {/* Content */}
+            <div className="relative z-10">
+                {/* Header - Farm Name */}
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                        <MapPin className="h-5 w-5 text-white" />
+                    </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-900">{crop.farmName}</p>
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-700 transition-colors">
+                            {crop.farmName}
+                        </h3>
                     </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
-                    <div>
-                        <p className="text-sm text-gray-600">{crop.address}</p>
-                    </div>
-                </div>
-
-                {crop.cropArea && (
-                    <div className="flex items-center gap-3">
-                        <Ruler className="h-5 w-5 text-gray-400" />
-                        <div>
-                            <p className="text-sm text-gray-600">
-                                Diện tích: <span className="font-medium">{crop.cropArea} ha</span>
-                            </p>
+                {/* Info Section */}
+                <div className="space-y-3">
+                    {/* Code */}
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl group-hover:bg-green-50 transition-colors">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Hash className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700">Mã vùng trồng</p>
+                            <p className="text-sm text-gray-600 mt-1 font-mono">{crop.cropCode}</p>
                         </div>
                     </div>
-                )}
+
+                    {/* Area */}
+                    {crop.cropArea && (
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl group-hover:bg-green-50 transition-colors">
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Ruler className="h-4 w-4 text-orange-600" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-700">Diện tích</p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    <span className="font-semibold text-green-600">{crop.cropArea} ha</span>
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Status */}
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl group-hover:bg-green-50 transition-colors">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Circle className={`h-4 w-4 ${CropStatusIconColors[crop.status]}`} />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700">Trạng thái</p>
+                            <div className="mt-1">
+                                <Badge className={`${getStatusColor(crop.status)} border-0 shadow-sm text-xs`}>
+                                    {getStatusLabel(crop.status)}
+                                </Badge>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

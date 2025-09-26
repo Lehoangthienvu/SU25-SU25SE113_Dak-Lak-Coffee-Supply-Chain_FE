@@ -197,12 +197,24 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
     placeholder = "Nhập địa chỉ...",
     className = ""
 }) => {
+    const [inputValue, setInputValue] = useState('');
+
     const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Initialize inputValue when component mounts
+    useEffect(() => {
+        setInputValue(value || '');
+    }, []);
+
+    // Sync inputValue với value prop
+    useEffect(() => {
+        setInputValue(value || '');
+    }, [value]);
 
     const searchAddress = async (query: string) => {
         if (query.length < 3) {
@@ -271,8 +283,9 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value;
-        onChange(inputValue);
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        onChange(newValue);
 
         // Clear previous timeout
         if (timeoutRef.current) {
@@ -281,12 +294,13 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
 
         // Debounce search
         timeoutRef.current = setTimeout(() => {
-            searchAddress(inputValue);
+            searchAddress(newValue);
         }, 500);
     };
 
     const handleSuggestionClick = (result: NominatimResult) => {
         const vietnameseAddress = translateAddressToVietnamese(result.display_name);
+        setInputValue(vietnameseAddress);
         onChange(vietnameseAddress);
         setShowSuggestions(false);
     };
@@ -310,12 +324,13 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
         };
     }, []);
 
+
     return (
         <div className={`relative ${className}`}>
             <input
                 ref={inputRef}
                 type="text"
-                value={value}
+                value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}

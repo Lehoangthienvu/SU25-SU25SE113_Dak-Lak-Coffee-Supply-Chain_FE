@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { OpenStreetMapInput } from './OpenStreetMapInput';
-import { createCrop, updateCrop, CropCreateDto, CropUpdateDto } from '@/lib/api/crops';
+import { createCrop, updateCrop, CropUpdateDto } from '@/lib/api/crops';
+import { CropStatus } from '@/lib/constants/cropStatus';
 import { toast } from 'sonner';
 
 interface CropFormProps {
@@ -20,7 +21,7 @@ export const CropForm: React.FC<CropFormProps> = ({
         address: initialData?.address || '',
         farmName: initialData?.farmName || '',
         cropArea: initialData?.cropArea || '',
-        status: initialData?.status || 'Active'
+        status: initialData?.status || CropStatus.Active
     });
 
     const [loading, setLoading] = useState(false);
@@ -65,7 +66,7 @@ export const CropForm: React.FC<CropFormProps> = ({
                     address: formData.address,
                     farmName: formData.farmName,
                     cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
-                    status: formData.status as any
+                    status: formData.status as CropStatus
                 });
                 toast.success('Cập nhật crop thành công!');
             } else {
@@ -74,7 +75,7 @@ export const CropForm: React.FC<CropFormProps> = ({
                     address: formData.address,
                     farmName: formData.farmName,
                     cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
-                    status: formData.status as any
+                    status: formData.status as CropStatus
                 });
                 toast.success('Tạo crop mới thành công!');
             }
@@ -145,14 +146,16 @@ export const CropForm: React.FC<CropFormProps> = ({
                         </label>
                         <select
                             value={formData.status}
-                            onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Inactive' | 'Processed' | 'Harvested' | 'Sold' })}
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value as CropStatus })}
                             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            aria-label="Chọn trạng thái"
                         >
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="Harvested">Harvested</option>
-                            <option value="Processed">Processed</option>
-                            <option value="Sold">Sold</option>
+                            <option value={CropStatus.Active}>Hoạt động</option>
+                            <option value={CropStatus.Inactive}>Không hoạt động</option>
+                            <option value={CropStatus.Harvested}>Đã thu hoạch</option>
+                            <option value={CropStatus.Processed}>Đã chế biến</option>
+                            <option value={CropStatus.Sold}>Đã bán</option>
+                            <option value={CropStatus.Other}>Khác</option>
                         </select>
                     </div>
                 </div>
