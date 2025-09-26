@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CropViewAllDto, CropViewDetailsDto, getCropById } from '@/lib/api/crops';
 import { CropStatus, CropStatusLabels, CropStatusColors, CropStatusIconColors } from '@/lib/constants/cropStatus';
 import { MapPin, Home, Ruler, Activity, Hash, Calendar, Edit, X, Loader2, Circle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface CropDetailDialogProps {
     open: boolean;
@@ -23,13 +23,7 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
     const [cropDetails, setCropDetails] = useState<CropViewDetailsDto | null>(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (open && crop) {
-            loadCropDetails();
-        }
-    }, [open, crop]);
-
-    const loadCropDetails = async () => {
+    const loadCropDetails = useCallback(async () => {
         if (!crop) return;
 
         try {
@@ -42,7 +36,7 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
             setCropDetails(details);
         } catch (error) {
             console.error('Error loading crop details:', error);
-            // Fallback to basic crop data if API fails
+            // Fallback data nếu API lỗi
             setCropDetails({
                 ...crop,
                 createdAt: '',
@@ -54,7 +48,13 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
         } finally {
             setLoading(false);
         }
-    };
+    }, [crop]);
+
+    useEffect(() => {
+        if (open && crop) {
+            loadCropDetails();
+        }
+    }, [open, crop, loadCropDetails]);
 
     if (!crop) return null;
 
