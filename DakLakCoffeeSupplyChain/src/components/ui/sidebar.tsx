@@ -138,6 +138,11 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
+        title: "Cây trồng",
+        href: "/dashboard/farmer/crops",
+        icon: <FaSeedling />,
+      },
+      {
         title: t("sidebar.navigation.coffeeMarketplace"),
         href: "/dashboard/farmer/market-place",
         icon: iconMap.market,
