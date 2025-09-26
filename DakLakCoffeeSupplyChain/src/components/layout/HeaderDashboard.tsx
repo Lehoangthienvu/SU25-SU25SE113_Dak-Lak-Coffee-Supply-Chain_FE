@@ -60,6 +60,7 @@ export default function HeaderDashboard() {
       shipments: t("sidebar.shipments"),
       "contract-delivery-batches": t("sidebar.deliveries"),
       products: t("sidebar.products"),
+      crops: "Cây trồng",
       reports: t("sidebar.reports"),
       users: t("sidebar.users"),
       settings: t("sidebar.settings"),
