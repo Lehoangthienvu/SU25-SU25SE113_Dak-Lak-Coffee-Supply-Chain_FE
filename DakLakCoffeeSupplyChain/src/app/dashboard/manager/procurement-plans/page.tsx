@@ -52,14 +52,14 @@ export default function BusinessProcurementPlansPage() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    
+
     // Load procurement plans
     const data = await getAllProcurementPlans().catch((error) => {
       console.error(getErrorMessage(error));
       return [];
     });
     setProcurementPlans(data);
-    
+
     // Load payment amount from API
     try {
       const feeInfo = await getPlanPostingFee();
@@ -70,52 +70,28 @@ export default function BusinessProcurementPlansPage() {
     }
   };
 
+  // BusinessProcurementPlansPage.tsx
   async function handleOpenRegister(planId?: string) {
     if (!planId) return;
-    
+
     try {
-      // Kiểm tra trạng thái thanh toán trước
-      let paymentStatus;
-      try {
-        paymentStatus = await checkPaymentStatus(planId);
-      } catch (error) {
-        console.error('Lỗi khi kiểm tra trạng thái thanh toán:', error);
-        // Nếu không kiểm tra được thanh toán, chuyển đến trang thanh toán để đảm bảo an toàn
-        router.push(`/dashboard/manager/procurement-plans/${planId}/payment`);
-        return;
-      }
-      
-      if (!paymentStatus.hasPayment || paymentStatus.paymentStatus !== "Success") {
-        // Chưa thanh toán, chuyển đến trang thanh toán
-        router.push(`/dashboard/manager/procurement-plans/${planId}/payment`);
-        return;
-      }
-      
-      // Đã thanh toán, tiếp tục mở kế hoạch
-      setLoadingConfirm(true);
-      const updatedPlan = await updateProcurementPlanStatus(planId, {
-        status: 0,
-      });
-      if (updatedPlan) {
-        setProcurementPlans((prev) =>
-          prev.map((p) => (p.planId === planId ? updatedPlan : p))
+      const paymentStatus = await checkPaymentStatus(planId).catch(() => null);
+
+      // CHƯA SUCCESS => đẩy sang payment-notification kèm đủ info
+      if (!paymentStatus || paymentStatus.paymentStatus !== "Success") {
+        const plan = procurementPlans.find(p => p.planId === planId);
+        const title = encodeURIComponent(plan?.title ?? "");
+        router.push(
+          `/dashboard/manager/procurement-plans/payment-notification?planId=${planId}&amount=${paymentAmount}&planTitle=${title}`
         );
+        return;
+      }
 
-        // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans
-          .filter(
-            (plan) =>
-              (!selectedStatus || plan.status === selectedStatus) &&
-              (!search ||
-                plan.title.toLowerCase().includes(search.toLowerCase()))
-          )
-          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
-        if (currentPageItems.length === 0 && currentPage > 1) {
-          setCurrentPage(1);
-        }
-
+      // ĐÃ SUCCESS => mở kế hoạch
+      setLoadingConfirm(true);
+      const updatedPlan = await updateProcurementPlanStatus(planId, { status: 0 });
+      if (updatedPlan) {
+        setProcurementPlans(prev => prev.map(p => p.planId === planId ? updatedPlan : p));
         closeDialog();
         AppToast.success(t("procurementPlan.messages.success.opened"));
       }
@@ -125,6 +101,7 @@ export default function BusinessProcurementPlansPage() {
       setLoadingConfirm(false);
     }
   }
+
 
   async function handleClose(planId?: string) {
     if (!planId) return;
@@ -404,12 +381,12 @@ export default function BusinessProcurementPlansPage() {
             dialogType === "open"
               ? t("procurementPlan.dialogs.confirm.open.title")
               : dialogType === "closed"
-              ? t("procurementPlan.dialogs.confirm.close.title")
-              : dialogType === "cancel"
-              ? t("procurementPlan.dialogs.confirm.cancel.title")
-              : dialogType === "delete"
-              ? t("procurementPlan.dialogs.confirm.delete.title")
-              : ""
+                ? t("procurementPlan.dialogs.confirm.close.title")
+                : dialogType === "cancel"
+                  ? t("procurementPlan.dialogs.confirm.cancel.title")
+                  : dialogType === "delete"
+                    ? t("procurementPlan.dialogs.confirm.delete.title")
+                    : ""
           }
           description={
             dialogType === "open" ? (
