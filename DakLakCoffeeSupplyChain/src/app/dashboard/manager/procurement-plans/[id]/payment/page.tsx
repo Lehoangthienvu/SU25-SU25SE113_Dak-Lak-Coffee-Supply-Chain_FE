@@ -17,7 +17,7 @@ export default function PaymentPage() {
   const { id } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [plan, setPlan] = useState<ProcurementPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -26,20 +26,17 @@ export default function PaymentPage() {
 
   useEffect(() => {
     if (!id) return;
-    
+
     const loadData = async () => {
       try {
-        // Lấy amount từ query params nếu có, nếu không thì lấy từ API
         const amountParam = searchParams.get('amount');
         if (amountParam) {
           setAmount(parseInt(amountParam));
         } else {
-          // Lấy phí thanh toán từ API nếu không có trong query params
           const feeInfo = await getPlanPostingFee();
           setAmount(feeInfo.amount);
         }
-        
-        // Lấy thông tin kế hoạch
+
         const planData = await getProcurementPlanById(id as string);
         setPlan(planData);
       } catch (error) {
@@ -55,22 +52,24 @@ export default function PaymentPage() {
 
   const handlePayment = async () => {
     if (!id) return;
-    
+
     try {
       setProcessing(true);
-      
+
       if (paymentMethod === 'VNPay') {
-        // Thanh toán qua VNPay
+        // <<< THAY ĐỔI QUAN TRỌNG Ở ĐÂY >>>
+        // URL này trỏ đến trang mới có logic polling, không phải trang 'success' tĩnh
+        const returnUrlForUser = `${window.location.origin}/dashboard/manager/procurement-plans/payment-return`;
+
         const paymentUrl = await createVnPayUrl({
           planId: id as string,
-          returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/${id}/payment/success`,
+          returnUrl: returnUrlForUser, // Sử dụng URL đã sửa
           locale: 'vn'
         });
-        
-        // Chuyển đến VNPay
+
         window.location.href = paymentUrl;
       } else {
-        // Thanh toán qua ví nội bộ
+        // Thanh toán qua ví nội bộ (giữ nguyên)
         const result = await processWalletPayment({
           planId: id as string,
           amount: amount,
@@ -79,7 +78,6 @@ export default function PaymentPage() {
 
         if (result.success) {
           AppToast.success("Thanh toán thành công! Kế hoạch đã được kích hoạt.");
-          // Chuyển về trang danh sách kế hoạch
           router.push("/dashboard/manager/procurement-plans");
         } else {
           AppToast.error(result.message || "Thanh toán thất bại");
@@ -158,19 +156,19 @@ export default function PaymentPage() {
               <label className="text-sm font-medium text-gray-500">Tên kế hoạch</label>
               <p className="text-lg font-semibold text-gray-900">{plan.title}</p>
             </div>
-            
+
             <div>
               <label className="text-sm font-medium text-gray-500">Mã kế hoạch</label>
               <p className="text-sm text-gray-900 font-mono">{plan.planId}</p>
             </div>
-            
+
             <div>
               <label className="text-sm font-medium text-gray-500">Trạng thái hiện tại</label>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                 {plan.status === 'Draft' ? 'Bản nháp' : plan.status}
               </span>
             </div>
-            
+
             <div>
               <label className="text-sm font-medium text-gray-500">Tổng sản lượng</label>
               <p className="text-sm text-gray-900">{plan.totalQuantity?.toLocaleString()} kg</p>
@@ -212,11 +210,9 @@ export default function PaymentPage() {
                 <option value="VNPay">VNPay (Ngân hàng)</option>
                 <option value="Wallet">Ví nội bộ</option>
               </select>
-              
-              {/* Hiển thị thông tin phương thức được chọn */}
-              <div className={`flex items-center gap-3 p-3 border rounded-lg ${
-                paymentMethod === 'VNPay' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'
-              }`}>
+
+              <div className={`flex items-center gap-3 p-3 border rounded-lg ${paymentMethod === 'VNPay' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'
+                }`}>
                 {paymentMethod === 'VNPay' ? (
                   <>
                     <CreditCard className="h-6 w-6 text-blue-600" />
@@ -241,11 +237,10 @@ export default function PaymentPage() {
               <Button
                 onClick={handlePayment}
                 disabled={processing}
-                className={`w-full text-white ${
-                  paymentMethod === 'VNPay' 
-                    ? 'bg-blue-600 hover:bg-blue-700' 
+                className={`w-full text-white ${paymentMethod === 'VNPay'
+                    ? 'bg-blue-600 hover:bg-blue-700'
                     : 'bg-green-600 hover:bg-green-700'
-                }`}
+                  }`}
                 size="lg"
               >
                 {processing ? (
@@ -266,9 +261,9 @@ export default function PaymentPage() {
                   </>
                 )}
               </Button>
-              
+
               <p className="text-xs text-gray-500 text-center mt-2">
-                {paymentMethod === 'VNPay' 
+                {paymentMethod === 'VNPay'
                   ? 'Bạn sẽ được chuyển đến trang thanh toán VNPay'
                   : 'Số tiền sẽ được trừ trực tiếp từ ví nội bộ của bạn'
                 }

@@ -1,97 +1,122 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, ArrowLeft, ExternalLink } from 'lucide-react';
-import { AppToast } from '@/components/ui/AppToast';
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { checkPaymentStatus } from "@/lib/api/payments"; // Import hàm API của bạn
+import { Loader2, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-export default function PaymentSuccessPage() {
-  const { id } = useParams();
+function PaymentReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [countdown, setCountdown] = useState(5);
+  const [status, setStatus] = useState("pending"); // Các trạng thái: pending | success | failed | timeout
+  const [message, setMessage] = useState("Đang xác nhận thanh toán, vui lòng chờ...");
 
   useEffect(() => {
-    // Đếm ngược 5 giây rồi chuyển về trang danh sách
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          router.push('/dashboard/manager/procurement-plans');
-          return 0;
+    // Chỉ chạy logic một lần khi component được mount
+    if (status !== 'pending') return;
+
+    // Lấy các tham số từ URL mà VNPay trả về
+    const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
+    const vnp_OrderInfo = searchParams.get("vnp_OrderInfo");
+
+    // Trích xuất planId từ vnp_OrderInfo. BE phải đảm bảo format là "SomePrefix:planId"
+    const planId = vnp_OrderInfo?.split(':')[1];
+
+    if (!planId) {
+      setStatus("failed");
+      setMessage("Không tìm thấy mã kế hoạch. Giao dịch không thể được xác minh.");
+      return;
+    }
+
+    // Nếu người dùng hủy hoặc giao dịch thất bại ngay tại cổng VNPay
+    if (vnp_ResponseCode !== "00") {
+      setStatus("failed");
+      setMessage("Giao dịch đã bị hủy hoặc thất bại tại cổng thanh toán.");
+      return;
+    }
+
+    // Bắt đầu kiểm tra trạng thái lặp lại (Polling) với backend
+    const intervalId = setInterval(async () => {
+      try {
+        const res = await checkPaymentStatus(planId);
+        if (res.paymentStatus === "Success") {
+          setStatus("success");
+          setMessage("Thanh toán thành công! Tự động chuyển trang sau 3 giây...");
+          clearInterval(intervalId);
+          setTimeout(() => router.push("/dashboard/manager/procurement-plans"), 3000);
+        } else if (res.paymentStatus === "Failed") {
+          setStatus("failed");
+          setMessage("Thanh toán đã thất bại. Vui lòng thử lại.");
+          clearInterval(intervalId);
         }
-        return prev - 1;
+        // Nếu trạng thái vẫn là "Pending", không làm gì cả và đợi lần kiểm tra tiếp theo
+      } catch (error) {
+        console.error("Lỗi khi kiểm tra trạng thái thanh toán:", error);
+        // Có thể thêm xử lý lỗi ở đây nếu muốn
+      }
+    }, 3000); // Lặp lại mỗi 3 giây
+
+    // Dừng polling sau 45 giây để tránh lặp vô hạn
+    const timeoutId = setTimeout(() => {
+      // Chỉ cập nhật trạng thái nếu nó vẫn đang là pending
+      setStatus(currentStatus => {
+        if (currentStatus === 'pending') {
+          setMessage("Giao dịch của bạn đang được xử lý. Hệ thống sẽ cập nhật và thông báo cho bạn sau.");
+          clearInterval(intervalId);
+          return "timeout";
+        }
+        return currentStatus;
       });
-    }, 1000);
+    }, 45000);
 
-    return () => clearInterval(timer);
-  }, [router]);
+    // Cleanup function: Dừng interval khi component bị unmount
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
+  }, [searchParams, router, status]); // Thêm 'status' để tránh chạy lại effect không cần thiết
 
-  const handleGoToPlans = () => {
-    router.push('/dashboard/manager/procurement-plans');
-  };
-
-  const handleViewPlan = () => {
-    router.push(`/dashboard/manager/procurement-plans/${id}`);
+  const renderStatus = () => {
+    switch (status) {
+      case "success":
+        return <CheckCircle className="w-16 h-16 text-green-500" />;
+      case "failed":
+        return <XCircle className="w-16 h-16 text-red-500" />;
+      case "timeout":
+        return <AlertTriangle className="w-16 h-16 text-yellow-500" />;
+      default: // pending
+        return <Loader2 className="w-16 h-16 animate-spin text-blue-500" />;
+    }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <Card className="text-center">
-        <CardHeader className="pb-4">
-          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-          </div>
-          <CardTitle className="text-2xl text-green-600">
-            Thanh toán thành công!
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Kế hoạch đã được mở đăng ký thành công
-          </CardDescription>
+    <div className="flex items-center justify-center min-h-screen">
+      <Card className="w-full max-w-md text-center">
+        <CardHeader>
+          <CardTitle>Kết quả thanh toán</CardTitle>
         </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-green-800 mb-2">Kế hoạch đã được kích hoạt</h3>
-            <p className="text-sm text-green-700">
-              Kế hoạch của bạn đã được chuyển sang trạng thái "Mở" và nông dân có thể bắt đầu đăng ký tham gia.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-900">Những gì xảy ra tiếp theo:</h4>
-            <ul className="text-sm text-gray-600 space-y-1 text-left">
-              <li>• Kế hoạch sẽ hiển thị trên sàn thu mua cà phê</li>
-              <li>• Nông dân có thể đăng ký tham gia kế hoạch</li>
-              <li>• Bạn có thể theo dõi tiến độ đăng ký trong trang chi tiết</li>
-              <li>• Kế hoạch sẽ tự động đóng khi đủ số lượng đăng ký</li>
-            </ul>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              onClick={handleViewPlan}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Xem kế hoạch
+        <CardContent className="flex flex-col items-center gap-4 p-6">
+          {renderStatus()}
+          <p className="text-lg">{message}</p>
+          {(status === 'failed' || status === 'timeout') && (
+            <Button onClick={() => router.push('/dashboard/manager/procurement-plans')}>
+              Về trang quản lý
             </Button>
-            <Button
-              onClick={handleGoToPlans}
-              variant="outline"
-              className="flex-1"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Danh sách kế hoạch
-            </Button>
-          </div>
-
-          <p className="text-xs text-gray-500">
-            Tự động chuyển về danh sách kế hoạch sau {countdown} giây...
-          </p>
+          )}
         </CardContent>
       </Card>
     </div>
   );
+}
+
+
+// Component cha sử dụng Suspense để đảm bảo useSearchParams hoạt động đúng
+export default function PaymentReturnPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Đang tải...</div>}>
+      <PaymentReturnContent />
+    </Suspense>
+  )
 }
