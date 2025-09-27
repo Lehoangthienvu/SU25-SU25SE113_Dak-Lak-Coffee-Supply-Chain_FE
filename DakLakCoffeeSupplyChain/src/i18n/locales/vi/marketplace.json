@@ -97,7 +97,7 @@
        "title": "Danh sách đơn đăng ký",
        "noRegistrations": "Chưa có đơn đăng ký nào.",
        "details": "chi tiết",
-       "registeredArea": "Diện tích đăng ký: {{area}}ha"
+       "registeredArea": "Tổng diện tích đăng ký: {{area}}ha"
      },
      "businessInfo": {
        "title": "Thông tin doanh nghiệp",
