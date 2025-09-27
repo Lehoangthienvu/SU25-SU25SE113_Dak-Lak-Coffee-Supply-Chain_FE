@@ -43,6 +43,7 @@ export default function RegistrationGuideCard() {
               <span className="text-xs font-semibold text-blue-700">2</span>
             </div>
             <div>
+              
               <h4 className="font-medium text-blue-800 mb-1">{t('cultivationRegistration.components.registrationGuide.steps.step2.title')}</h4>
               <p className="text-sm text-blue-700">
                 {t('cultivationRegistration.components.registrationGuide.steps.step2.description')}
@@ -56,6 +57,7 @@ export default function RegistrationGuideCard() {
               <span className="text-xs font-semibold text-blue-700">3</span>
             </div>
             <div>
+              
               <h4 className="font-medium text-blue-800 mb-1">{t('cultivationRegistration.components.registrationGuide.steps.step3.title')}</h4>
               <p className="text-sm text-blue-700">
                 {t('cultivationRegistration.components.registrationGuide.steps.step3.description')}
@@ -72,6 +74,19 @@ export default function RegistrationGuideCard() {
               <h4 className="font-medium text-blue-800 mb-1">{t('cultivationRegistration.components.registrationGuide.steps.step4.title')}</h4>
               <p className="text-sm text-blue-700">
                 {t('cultivationRegistration.components.registrationGuide.steps.step4.description')}
+              </p>
+            </div>
+          </div>
+
+          {/* Bước 5 */}
+          <div className="flex items-start gap-3">
+            <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-xs font-semibold text-blue-700">5</span>
+            </div>
+            <div>
+              <h4 className="font-medium text-blue-800 mb-1">{t('cultivationRegistration.components.registrationGuide.steps.step5.title')}</h4>
+              <p className="text-sm text-blue-700">
+                {t('cultivationRegistration.components.registrationGuide.steps.step5.description')}
               </p>
             </div>
           </div>

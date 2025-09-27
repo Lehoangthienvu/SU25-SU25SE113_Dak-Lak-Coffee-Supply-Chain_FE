@@ -182,9 +182,11 @@ export default function RegistrationCard({
           <p className='text-xs text-gray-400 mt-0.5'>
             {t('cultivationRegistration.components.registrationCard.labels.registrationCode')} <span className='font-mono'>{registrationCode}</span> - {t('cultivationRegistration.components.registrationCard.labels.registrationDate')} {format(new Date(registeredAt), "dd/MM/yyyy HH:mm")}
           </p>
-          <p className='text-sm text-gray-600 mt-1'>
+          {note && (
+            <p className='text-sm text-gray-600 mt-1'>
             {t('cultivationRegistration.components.registrationCard.labels.description')} <span className='font-medium'>{note}</span>
           </p>
+          )}
         </div>
 
         {/* Nút mở rộng */}
@@ -246,6 +248,12 @@ export default function RegistrationCard({
                   {detail.wantedPrice
                     ? detail.wantedPrice.toLocaleString() + " " + t('cultivationRegistration.components.registrationCard.units.vndPerKg')
                     : t('cultivationRegistration.components.registrationCard.status.notUpdated')}
+                </p>
+                <p>
+                  <strong>{t('cultivationRegistration.components.registrationCard.labels.cropInfo')}</strong>{" "}
+                  {detail?.crop?.farmName
+                  && detail?.crop?.farmName + " " + detail?.crop?.address + " " + detail?.crop?.cropArea + "ha"
+                  }
                 </p>
                 <p>
                   <strong>{t('cultivationRegistration.components.registrationCard.labels.harvestTime')}</strong>{" "}

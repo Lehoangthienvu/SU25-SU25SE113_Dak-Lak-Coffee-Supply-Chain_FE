@@ -15,6 +15,8 @@ import { createCultivationRegistration } from "@/lib/api/cultivationRegistration
 import { ProcurementPlan } from "@/lib/api/procurementPlans";
 import { getSytemConfigurationByName } from "@/lib/api/systemConfiguration";
 import { useTranslation } from "react-i18next";
+import { CropViewAllDto, getCrops } from "@/lib/api/crops";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface CultivationRegistrationFormProps {
   plan: ProcurementPlan;
@@ -31,24 +33,43 @@ export default function CultivationRegistrationForm({
 }: CultivationRegistrationFormProps) {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [maxRegistrationCount, setMaxRegistrationCount] = useState<number | null>(null);
-  
-  useEffect(() => {
-    
+  const [maxRegistrationCount, setMaxRegistrationCount] = useState<
+    number | null
+  >(null);
+  const [existingCrops, setExistingCrops] = useState<CropViewAllDto[]>([]);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
     fetchMaxRegistrationCount();
+    fetchCrops();
   }, []);
 
+  //#region API Calls
   const fetchMaxRegistrationCount = async () => {
-      try {
-        const config = await getSytemConfigurationByName("CULTIVATION_REGISTRATION_CREATION_LIMIT");
-        if (config) {
-          setMaxRegistrationCount(config.minValue);
-        }
-      } catch (error) {
-        console.error("Error fetching system configuration:", error);
+    try {
+      const config = await getSytemConfigurationByName(
+        "CULTIVATION_REGISTRATION_CREATION_LIMIT"
+      );
+      if (config) {
+        setMaxRegistrationCount(config.minValue);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching system configuration:", error);
+    }
+  };
+
+  const fetchCrops = async () => {
+    setLoading(true);
+    const crops = await getCrops().catch((error) => {
+      console.error("Error fetching crops:", error);
+      setLoading(false);
+      return [];
+    });
+    setExistingCrops(crops);
+    setLoading(false);
+  };
+
+  //#endregion
 
   const [formData, setFormData] = useState({
     planId: plan.planId,
@@ -62,6 +83,8 @@ export default function CultivationRegistrationForm({
         expectedHarvestStart: "",
         expectedHarvestEnd: "",
         note: "",
+        cropId: "",
+        registeredArea: 0,
       },
     ],
   });
@@ -72,20 +95,38 @@ export default function CultivationRegistrationForm({
     const newErrors: Record<string, string> = {};
 
     if (!formData.planId) {
-      newErrors.planId = t('cultivationRegistration.components.registrationForm.validation.planId');
+      newErrors.planId = t(
+        "cultivationRegistration.components.registrationForm.validation.planId"
+      );
     }
-    if (formData.registeredArea <= 0) {
-      newErrors.registeredArea = t('cultivationRegistration.components.registrationForm.validation.registeredArea');
-    }
+    // if (formData.registeredArea <= 0) {
+    //   newErrors.registeredArea = t(
+    //     "cultivationRegistration.components.registrationForm.validation.registeredArea"
+    //   );
+    // }
     formData.cultivationRegistrationDetailsCreateViewDto.forEach(
       (detail, idx) => {
         if (!detail.planDetailId)
-          newErrors[`planDetailId_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.planDetailId');
+          newErrors[`planDetailId_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.planDetailId"
+          );
+        if (!detail.cropId)
+          newErrors[`cropId_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.cropId"
+          );
+        if (!detail.registeredArea)
+          newErrors[`registeredArea_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.registeredArea"
+          );
         if (detail.estimatedYield <= 0)
-          newErrors[`estimatedYield_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.estimatedYield');
+          newErrors[`estimatedYield_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.estimatedYield"
+          );
         if (detail.wantedPrice <= 0)
-          newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPrice');
-        
+          newErrors[`wantedPrice_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.wantedPrice"
+          );
+
         // Validate wanted price is within the plan's price range
         if (detail.planDetailId) {
           const selectedPlanDetail = plan.procurementPlansDetails.find(
@@ -93,26 +134,45 @@ export default function CultivationRegistrationForm({
           );
           if (selectedPlanDetail) {
             if (detail.wantedPrice < (selectedPlanDetail.minPriceRange || 0)) {
-              newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPriceTooLow', { 
-                minPrice: selectedPlanDetail.minPriceRange 
-              });
-            } else if (detail.wantedPrice > (selectedPlanDetail.maxPriceRange || 0)) {
-              newErrors[`wantedPrice_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.wantedPriceTooHigh', { 
-                maxPrice: selectedPlanDetail.maxPriceRange 
-              });
+              newErrors[`wantedPrice_${idx}`] = t(
+                "cultivationRegistration.components.registrationForm.validation.wantedPriceTooLow",
+                {
+                  minPrice: selectedPlanDetail.minPriceRange,
+                }
+              );
+            } else if (
+              detail.wantedPrice > (selectedPlanDetail.maxPriceRange || 0)
+            ) {
+              newErrors[`wantedPrice_${idx}`] = t(
+                "cultivationRegistration.components.registrationForm.validation.wantedPriceTooHigh",
+                {
+                  maxPrice: selectedPlanDetail.maxPriceRange,
+                }
+              );
             }
           }
         }
-        
+
         if (!detail.expectedHarvestStart)
-          newErrors[`expectedHarvestStart_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.expectedHarvestStart');
+          newErrors[`expectedHarvestStart_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.expectedHarvestStart"
+          );
         if (!detail.expectedHarvestEnd)
-          newErrors[`expectedHarvestEnd_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.expectedHarvestEnd');
-        if (new Date(detail.expectedHarvestStart) < new Date(new Date().toISOString().split("T")[0])) {
-          newErrors[`expectedHarvestStart_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.harvestStartInThePast');
+          newErrors[`expectedHarvestEnd_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.expectedHarvestEnd"
+          );
+        if (
+          new Date(detail.expectedHarvestStart) <
+          new Date(new Date().toISOString().split("T")[0])
+        ) {
+          newErrors[`expectedHarvestStart_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.harvestStartInThePast"
+          );
         }
         if (detail.expectedHarvestStart > detail.expectedHarvestEnd) {
-          newErrors[`expectedHarvestEnd_${idx}`] = t('cultivationRegistration.components.registrationForm.validation.harvestEndAfterStart');
+          newErrors[`expectedHarvestEnd_${idx}`] = t(
+            "cultivationRegistration.components.registrationForm.validation.harvestEndAfterStart"
+          );
         }
       }
     );
@@ -137,6 +197,8 @@ export default function CultivationRegistrationForm({
           expectedHarvestStart: "",
           expectedHarvestEnd: "",
           note: "",
+          cropId: "",
+          registeredArea: 0,
         },
       ],
     }));
@@ -160,9 +222,9 @@ export default function CultivationRegistrationForm({
       details[index] = { ...details[index], [key]: value };
       return { ...prev, cultivationRegistrationDetailsCreateViewDto: details };
     });
-    
+
     // Clear validation errors when plan detail changes
-    if (key === 'planDetailId') {
+    if (key === "planDetailId") {
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[`wantedPrice_${index}`];
@@ -184,7 +246,11 @@ export default function CultivationRegistrationForm({
 
     try {
       await createCultivationRegistration(formData);
-      AppToast.success(t('cultivationRegistration.components.registrationForm.messages.success'));
+      AppToast.success(
+        t(
+          "cultivationRegistration.components.registrationForm.messages.success"
+        )
+      );
       onRegistrationSuccess();
 
       // Reset form after successful submission
@@ -200,6 +266,8 @@ export default function CultivationRegistrationForm({
             expectedHarvestStart: "",
             expectedHarvestEnd: "",
             note: "",
+            cropId: "",
+            registeredArea: 0,
           },
         ],
       });
@@ -214,30 +282,34 @@ export default function CultivationRegistrationForm({
   return (
     <Card className='p-6 rounded-xl shadow-lg'>
       <h3 className='text-2xl font-semibold mb-6 text-orange-700'>
-        {t('cultivationRegistration.components.registrationForm.title')}
+        {t("cultivationRegistration.components.registrationForm.title")}
       </h3>
 
       {/* Thông báo số lần đăng ký tối đa */}
       {maxRegistrationCount !== null && (
-        // <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
-        //   <p className='text-red-700 text-sm font-medium'>
-        //     Nông hộ chỉ có thể đăng ký cùng một kế hoạch <span className='font-bold'>{maxRegistrationCount}</span> lần
-        //   </p>
-        // </div>
         <p className='text-red-700 text-sm font-medium'>
-            {t('cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached', { count: maxRegistrationCount })}
+          {t(
+            "cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached",
+            { count: maxRegistrationCount }
+          )}
         </p>
       )}
 
       <form className='space-y-6' onSubmit={handleSubmit}>
         {!isLoggedIn && (
           <div className='mb-2 text-red-600 text-sm'>
-            * {t('cultivationRegistration.components.registrationForm.messages.loginRequired')}
+            *{" "}
+            {t(
+              "cultivationRegistration.components.registrationForm.messages.loginRequired"
+            )}
           </div>
         )}
 
-        <Label className='text-sm'>
-          {t('cultivationRegistration.components.registrationForm.labels.registeredArea')} <span className='text-red-500'>*</span>
+        {/* <Label className='text-sm'>
+          {t(
+            "cultivationRegistration.components.registrationForm.labels.registeredArea"
+          )}{" "}
+          <span className='text-red-500'>*</span>
         </Label>
         <Input
           type='number'
@@ -249,11 +321,13 @@ export default function CultivationRegistrationForm({
               registeredArea: Number(e.target.value),
             })
           }
-        />
+        /> */}
 
         <div>
           <Label htmlFor='note' className='text-sm'>
-            {t('cultivationRegistration.components.registrationForm.labels.note')}
+            {t(
+              "cultivationRegistration.components.registrationForm.labels.note"
+            )}
           </Label>
           <Textarea
             id='note'
@@ -279,7 +353,7 @@ export default function CultivationRegistrationForm({
 
             const options = plan.procurementPlansDetails.filter(
               (d) =>
-                (Number(d.progressPercentage ?? 0) < 100) &&
+                Number(d.progressPercentage ?? 0) < 100 &&
                 !alreadySelected.includes(d.planDetailsId ?? null)
             );
 
@@ -288,113 +362,222 @@ export default function CultivationRegistrationForm({
                 key={idx}
                 className='border rounded-md p-4 bg-orange-50 mb-2 flex flex-col gap-3 relative'
               >
-                <Label className='text-sm'>
-                  {t('cultivationRegistration.components.registrationForm.labels.planDetail')}{" "}
-                  <span className='text-red-500'>*</span>
-                </Label>
-                <select
-                  value={detail.planDetailId}
-                  className='w-full border rounded p-2 bg-white'
-                  onChange={(e) =>
-                    handleDetailChange(
-                      idx,
-                      "planDetailId",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value=''>-- {t('cultivationRegistration.components.registrationForm.placeholders.planDetail')} --</option>
-                  {options.map((d) => (
-                    <option
-                      key={d.planDetailsId}
-                      value={d.planDetailsId}
-                    >
-                      {d.coffeeType?.typeName}{" "}
-                      {d.processingMethodName && (
-                        <>
-                          {" "}
-                          {" - "} {d.processingMethodName}
-                        </>
-                      )}
-                      {d.targetRegion && <> ({d.targetRegion})</>}
+                {/* Chi tiết kế hoạch */}
+                <>
+                  <Label className='text-sm'>
+                    {t(
+                      "cultivationRegistration.components.registrationForm.labels.planDetail"
+                    )}{" "}
+                    <span className='text-red-500'>*</span>
+                  </Label>
+                  <select
+                    value={detail.planDetailId}
+                    className='w-full border rounded p-2 bg-white'
+                    onChange={(e) =>
+                      handleDetailChange(idx, "planDetailId", e.target.value)
+                    }
+                  >
+                    <option value=''>
+                      --{" "}
+                      {t(
+                        "cultivationRegistration.components.registrationForm.placeholders.planDetail"
+                      )}{" "}
+                      --
                     </option>
-                  ))}
-                </select>
-                {errors[`planDetailId_${idx}`] && (
-                  <p className='text-red-500 text-xs'>
-                    {errors[`planDetailId_${idx}`]}
-                  </p>
-                )}
+                    {options.map((d) => (
+                      <option key={d.planDetailsId} value={d.planDetailsId}>
+                        {d.coffeeType?.typeName}{" "}
+                        {d.processingMethodName && (
+                          <>
+                            {" "}
+                            {" - "} {d.processingMethodName}
+                          </>
+                        )}
+                        {d.targetRegion && <> ({d.targetRegion})</>}
+                      </option>
+                    ))}
+                  </select>
+                  {errors[`planDetailId_${idx}`] && (
+                    <p className='text-red-500 text-xs'>
+                      {errors[`planDetailId_${idx}`]}
+                    </p>
+                  )}
+                </>
+                {/* Vùng trồng */}
+                <>
+                  <Label className='text-sm'>
+                    {t(
+                      "cultivationRegistration.components.registrationForm.labels.crop"
+                    )}{" "}
+                    <span className='text-red-500'>*</span>
+                  </Label>
+                  {loading ? (
+                    <LoadingSpinner />
+                  ) : existingCrops.length === 0 ? (
+                    <p className='text-gray-500 text-sm'>
+                      {t(
+                        "cultivationRegistration.components.registrationForm.messages.noCropsAvailable"
+                      )}
+                    </p>
+                  ) : (
+                    <>
+                      <select
+                        value={detail.cropId}
+                        className='w-full border rounded p-2 bg-white'
+                        onChange={(e) =>
+                          handleDetailChange(idx, "cropId", e.target.value)
+                        }
+                      >
+                        <option value=''>
+                          --{" "}
+                          {t(
+                            "cultivationRegistration.components.registrationForm.placeholders.crop"
+                          )}{" "}
+                          --
+                        </option>
+                        {existingCrops.map((d) => (
+                          <option key={d.cropId} value={d.cropId}>
+                            {d.farmName}{" "}
+                            {d.cropArea && (
+                              <>
+                                {" "}
+                                {" - "} {d.cropArea}ha
+                              </>
+                            )}
+                          </option>
+                        ))}
+                      </select>
+                      {errors[`cropId_${idx}`] && (
+                        <p className='text-red-500 text-xs'>
+                          {errors[`cropId_${idx}`]}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </>
 
-                <Label className='text-sm'>
-                  {t('cultivationRegistration.components.registrationForm.labels.estimatedYield')}{" "}
-                  <span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  className='bg-white'
-                  type='number'
-                  min={0}
-                  value={detail.estimatedYield}
-                  onChange={(e) =>
-                    handleDetailChange(
-                      idx,
-                      "estimatedYield",
-                      Number(e.target.value)
-                    )
-                  }
-                />
-                {errors[`estimatedYield_${idx}`] && (
-                  <p className='text-red-500 text-xs'>
-                    {errors[`estimatedYield_${idx}`]}
-                  </p>
-                )}
+                {/* Dện tích đăng ký */}
+                <>
+                  <Label className='text-sm'>
+                    {t(
+                      "cultivationRegistration.components.registrationForm.labels.registeredArea"
+                    )}{" "}
+                    <span className='text-red-500'>*</span>
+                  </Label>
+                  <Input
+                    className='bg-white'
+                    type='number'
+                    min={0}
+                    value={detail.registeredArea}
+                    onChange={(e) =>
+                      handleDetailChange(
+                        idx,
+                        "registeredArea",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                  {errors[`registeredArea_${idx}`] && (
+                    <p className='text-red-500 text-xs'>
+                      {errors[`registeredArea_${idx}`]}
+                    </p>
+                  )}
+                </>
 
-                <Label className='text-sm'>
-                  {t('cultivationRegistration.components.registrationForm.labels.wantedPrice')}{" "}
-                  <span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  className='bg-white'
-                  type='number'
-                  min={0}
-                  value={detail.wantedPrice}
-                  onChange={(e) =>
-                    handleDetailChange(
-                      idx,
-                      "wantedPrice",
-                      Number(e.target.value)
-                    )
-                  }
-                />
-                {/* Show price range for selected plan detail */}
-                {detail.planDetailId && (() => {
-                  const selectedPlanDetail = plan.procurementPlansDetails.find(
-                    (d) => d.planDetailsId === detail.planDetailId
-                  );
-                  return selectedPlanDetail ? (
-                    <div className='text-xs text-gray-600 mt-1 space-y-1'>
-                      <p>
-                        {t('cultivationRegistration.components.registrationForm.messages.priceRange', {
-                          minPrice: selectedPlanDetail.minPriceRange?.toLocaleString('vi-VN'),
-                          maxPrice: selectedPlanDetail.maxPriceRange?.toLocaleString('vi-VN')
-                        })}
-                      </p>
-                      <p className='text-blue-600'>
-                        {t('cultivationRegistration.components.registrationForm.messages.priceRangeHint')}
-                      </p>
-                    </div>
-                  ) : null;
-                })()}
-                {errors[`wantedPrice_${idx}`] && (
-                  <p className='text-red-500 text-xs'>
-                    {errors[`wantedPrice_${idx}`]}
-                  </p>
-                )}
+                {/* Sản lượng đăng ký */}
+                <>
+                  <Label className='text-sm'>
+                    {t(
+                      "cultivationRegistration.components.registrationForm.labels.estimatedYield"
+                    )}{" "}
+                    <span className='text-red-500'>*</span>
+                  </Label>
+                  <Input
+                    className='bg-white'
+                    type='number'
+                    min={0}
+                    value={detail.estimatedYield}
+                    onChange={(e) =>
+                      handleDetailChange(
+                        idx,
+                        "estimatedYield",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                  {errors[`estimatedYield_${idx}`] && (
+                    <p className='text-red-500 text-xs'>
+                      {errors[`estimatedYield_${idx}`]}
+                    </p>
+                  )}
+                </>
+
+                {/* Giá cả mong muốn */}
+                <>
+                  <Label className='text-sm'>
+                    {t(
+                      "cultivationRegistration.components.registrationForm.labels.wantedPrice"
+                    )}{" "}
+                    <span className='text-red-500'>*</span>
+                  </Label>
+                  <Input
+                    className='bg-white'
+                    type='number'
+                    min={0}
+                    value={detail.wantedPrice}
+                    onChange={(e) =>
+                      handleDetailChange(
+                        idx,
+                        "wantedPrice",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                  {/* Show price range for selected plan detail */}
+                  {detail.planDetailId &&
+                    (() => {
+                      const selectedPlanDetail =
+                        plan.procurementPlansDetails.find(
+                          (d) => d.planDetailsId === detail.planDetailId
+                        );
+                      return selectedPlanDetail ? (
+                        <div className='text-xs text-gray-600 mt-1 space-y-1'>
+                          <p>
+                            {t(
+                              "cultivationRegistration.components.registrationForm.messages.priceRange",
+                              {
+                                minPrice:
+                                  selectedPlanDetail.minPriceRange?.toLocaleString(
+                                    "vi-VN"
+                                  ),
+                                maxPrice:
+                                  selectedPlanDetail.maxPriceRange?.toLocaleString(
+                                    "vi-VN"
+                                  ),
+                              }
+                            )}
+                          </p>
+                          <p className='text-blue-600'>
+                            {t(
+                              "cultivationRegistration.components.registrationForm.messages.priceRangeHint"
+                            )}
+                          </p>
+                        </div>
+                      ) : null;
+                    })()}
+                  {errors[`wantedPrice_${idx}`] && (
+                    <p className='text-red-500 text-xs'>
+                      {errors[`wantedPrice_${idx}`]}
+                    </p>
+                  )}
+                </>
 
                 <div className='flex gap-3'>
                   <div className='flex-1'>
                     <Label className='text-sm'>
-                      {t('cultivationRegistration.components.registrationForm.labels.expectedHarvestStart')}{" "}
+                      {t(
+                        "cultivationRegistration.components.registrationForm.labels.expectedHarvestStart"
+                      )}{" "}
                       <span className='text-red-500'>*</span>
                     </Label>
                     <Input
@@ -417,7 +600,9 @@ export default function CultivationRegistrationForm({
                   </div>
                   <div className='flex-1'>
                     <Label className='text-sm'>
-                      {t('cultivationRegistration.components.registrationForm.labels.expectedHarvestEnd')}{" "}
+                      {t(
+                        "cultivationRegistration.components.registrationForm.labels.expectedHarvestEnd"
+                      )}{" "}
                       <span className='text-red-500'>*</span>
                     </Label>
                     <Input
@@ -440,7 +625,11 @@ export default function CultivationRegistrationForm({
                   </div>
                 </div>
 
-                <Label className='text-sm'>{t('cultivationRegistration.components.registrationForm.labels.detailNote')}</Label>
+                <Label className='text-sm'>
+                  {t(
+                    "cultivationRegistration.components.registrationForm.labels.detailNote"
+                  )}
+                </Label>
                 <Textarea
                   className='bg-white'
                   value={detail.note}
@@ -450,15 +639,17 @@ export default function CultivationRegistrationForm({
                 />
 
                 {/* Nút xoá - chỉ hiện nếu có hơn 1 dòng */}
-                {formData.cultivationRegistrationDetailsCreateViewDto
-                  .length > 1 && (
+                {formData.cultivationRegistrationDetailsCreateViewDto.length >
+                  1 && (
                   <Button
                     type='button'
                     onClick={() => handleRemoveDetail(idx)}
                     className='text-red-500 py-1 px-2 text-xs absolute right-2 top-2 hover:bg-red-500 hover:text-white trasition bg-red-100'
                   >
                     <FiTrash2 className='mr-1' />
-                    {t('cultivationRegistration.components.registrationForm.buttons.removeDetail')}
+                    {t(
+                      "cultivationRegistration.components.registrationForm.buttons.removeDetail"
+                    )}
                   </Button>
                 )}
               </div>
@@ -468,36 +659,41 @@ export default function CultivationRegistrationForm({
 
         {/* Nút thêm chi tiết - disable nếu đã chọn toàn bộ chi tiết kế hoạch */}
         <Tooltip
-          content={
-            (() => {
-              const availableCount = plan.procurementPlansDetails.filter(
-                (d) => Number(d.progressPercentage ?? 0) < 100
-              ).length;
-              return formData.cultivationRegistrationDetailsCreateViewDto.length >= availableCount
-                ? t('cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached', { count: availableCount })
-                : t('cultivationRegistration.components.registrationForm.buttons.addDetail');
-            })()
-          }
+          content={(() => {
+            const availableCount = plan.procurementPlansDetails.filter(
+              (d) => Number(d.progressPercentage ?? 0) < 100
+            ).length;
+            return formData.cultivationRegistrationDetailsCreateViewDto
+              .length >= availableCount
+              ? t(
+                  "cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached",
+                  { count: availableCount }
+                )
+              : t(
+                  "cultivationRegistration.components.registrationForm.buttons.addDetail"
+                );
+          })()}
           side='bottom'
           align='center'
         >
           <Button
             type='button'
             variant='default'
-            disabled={
-              (() => {
-                const availableCount = plan.procurementPlansDetails.filter(
-                  (d) => Number(d.progressPercentage ?? 0) < 100
-                ).length;
-                return (
-                  formData.cultivationRegistrationDetailsCreateViewDto.length >=
-                  availableCount
-                );
-              })()
-            }
+            disabled={(() => {
+              const availableCount = plan.procurementPlansDetails.filter(
+                (d) => Number(d.progressPercentage ?? 0) < 100
+              ).length;
+              return (
+                formData.cultivationRegistrationDetailsCreateViewDto.length >=
+                availableCount
+              );
+            })()}
             onClick={handleAddDetail}
           >
-            + {t('cultivationRegistration.components.registrationForm.buttons.addDetail')}
+            +{" "}
+            {t(
+              "cultivationRegistration.components.registrationForm.buttons.addDetail"
+            )}
           </Button>
         </Tooltip>
 
@@ -508,7 +704,9 @@ export default function CultivationRegistrationForm({
             variant='default'
             disabled={isSubmitting || !isLoggedIn || !isFarmer}
           >
-            {t('cultivationRegistration.components.registrationForm.buttons.submit')}
+            {t(
+              "cultivationRegistration.components.registrationForm.buttons.submit"
+            )}
           </LoadingButton>
         </div>
       </form>
