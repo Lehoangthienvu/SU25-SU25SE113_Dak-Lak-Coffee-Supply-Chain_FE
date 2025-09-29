@@ -57,7 +57,7 @@ export async function createWalletTopupVnPayUrl(request: WalletTopupRequest): Pr
   const response = await api.post('/payments/wallet-topup/vnpay/create-url', {
     walletId: request.walletId,
     amount: request.amount,
-    returnUrl: request.returnUrl,
+    // returnUrl: request.returnUrl, // ← XÓA để dùng appsettings
     locale: request.locale || 'vn',
     description: request.description
   });
@@ -114,7 +114,7 @@ export async function addMoneyToWallet(amount: number, description: string): Pro
     walletId: myWallet.walletId,
     amount: amount,
     description: description,
-    returnUrl: `${window.location.origin}/dashboard/wallet/topup/success`
+    // returnUrl: `${window.location.origin}/dashboard/wallet/topup/success` // ← XÓA để dùng appsettings
   });
 
   return {
