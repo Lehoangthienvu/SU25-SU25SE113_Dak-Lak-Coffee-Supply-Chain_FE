@@ -57,11 +57,13 @@ export default function PaymentPage() {
       setProcessing(true);
 
       if (paymentMethod === 'VNPay') {
-        // <<< SỬA LỖI BẢO MẬT >>>
-        // Không gửi returnUrl để backend sử dụng appsettings
+        // <<< THAY ĐỔI QUAN TRỌNG Ở ĐÂY >>>
+        // URL này trỏ đến trang mới có logic polling, không phải trang 'success' tĩnh
+        const returnUrlForUser = `${window.location.origin}/dashboard/manager/procurement-plans/payment-return`;
+
         const paymentUrl = await createVnPayUrl({
           planId: id as string,
-          // returnUrl: returnUrlForUser, // ← XÓA để dùng appsettings
+          returnUrl: returnUrlForUser, // Sử dụng URL đã sửa
           locale: 'vn'
         });
 

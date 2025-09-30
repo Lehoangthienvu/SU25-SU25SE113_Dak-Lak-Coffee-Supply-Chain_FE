@@ -47,11 +47,12 @@ function PaymentNotificationContent() {
     setLoading(true);
     try {
       if (paymentMethod === 'VNPay') {
-        // <<< SỬA LỖI BẢO MẬT >>>
-        // Không gửi returnUrl để backend sử dụng appsettings
+        // <<< SỬA LẠI ĐÚNG ĐƯỜNG DẪN TẠI ĐÂY >>>
+        const returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`;;
+
         const url = await createVnPayUrl({
           planId: paymentData.planId,
-          // returnUrl // ← XÓA để dùng appsettings
+          returnUrl
         });
 
         if (url) {
