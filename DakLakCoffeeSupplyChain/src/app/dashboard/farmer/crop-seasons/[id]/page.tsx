@@ -7,8 +7,6 @@ import {
     getCropSeasonById,
     CropSeason,
 } from '@/lib/api/cropSeasons';
-import { getCropSeasonDetailsByCropSeasonId } from '@/lib/api/cropSeasonDetail';
-import type { CropSeasonDetail } from '@/lib/api/cropSeasonDetail';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Leaf, Calendar, MapPin, User, FileText, Plus, TrendingUp } from 'lucide-react';
@@ -24,19 +22,14 @@ export default function CropSeasonDetail() {
     const cropSeasonId = params.id as string;
 
     const [season, setSeason] = useState<CropSeason | null>(null);
-    const [details, setDetails] = useState<CropSeasonDetail[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const { user } = useAuth();
 
     const loadSeason = useCallback(async () => {
         try {
-            const [seasonData, detailsData] = await Promise.all([
-                getCropSeasonById(cropSeasonId),
-                getCropSeasonDetailsByCropSeasonId(cropSeasonId)
-            ]);
+            const seasonData = await getCropSeasonById(cropSeasonId);
             setSeason(seasonData);
-            setDetails(detailsData);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : t('cropSeasons.details.error');
             setError(errorMessage);
@@ -92,9 +85,10 @@ export default function CropSeasonDetail() {
     }
 
     // Tính toán thống kê
+    const details = season?.details || [];
     const totalDetails = details.length;
-    const completedDetails = details.filter(d => d.status === 2).length; // 2 = Completed
-    const inProgressDetails = details.filter(d => d.status === 1).length; // 1 = InProgress
+    const completedDetails = details.filter(d => d.status === 'Completed').length;
+    const inProgressDetails = details.filter(d => d.status === 'InProgress').length;
     const totalArea = details.reduce((sum, d) => sum + (d.areaAllocated || 0), 0);
 
     return (
@@ -253,7 +247,28 @@ export default function CropSeasonDetail() {
                     </CardHeader>
                     <CardContent className="p-4">
                         <CropSeasonDetailTable
-                            details={details}
+                            details={details.map(detail => ({
+                                ...detail,
+                                farmName: detail.farmerName, // Map farmerName to farmName for compatibility
+                                address: '',
+                                stages: null,
+                                success: null,
+                                error: '',
+                                cropSeasonId: cropSeasonId,
+                                commitmentDetailId: detail.coffeeTypeId,
+                                commitmentDetailCode: '',
+                                estimatedYield: detail.estimatedYield || 0,
+                                actualYield: detail.actualYield,
+                                plannedQuality: detail.plannedQuality || '',
+                                qualityGrade: detail.qualityGrade || '',
+                                status: detail.status === 'Completed' ? 2 : detail.status === 'InProgress' ? 1 : 0,
+                                farmerId: detail.farmerId || '',
+                                farmerName: detail.farmerName || '',
+                                committedQuantity: detail.committedQuantity,
+                                cropId: '',
+                                cropCode: '',
+                                cropArea: detail.areaAllocated
+                            }))}
                             onReload={loadSeason}
                         />
                     </CardContent>
