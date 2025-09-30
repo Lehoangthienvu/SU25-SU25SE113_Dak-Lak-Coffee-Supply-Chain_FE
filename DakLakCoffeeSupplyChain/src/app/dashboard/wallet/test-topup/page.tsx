@@ -39,7 +39,7 @@ export default function TestTopupPage() {
         walletId: walletId,
         amount: parseFloat(amount),
         description: 'Test nạp tiền',
-        // returnUrl: `${window.location.origin}/dashboard/wallet/topup/success` // ← XÓA để dùng appsettings
+        returnUrl: `${window.location.origin}/dashboard/wallet/topup/success`
       });
       
       console.log('Tạo URL thành công:', result);
