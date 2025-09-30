@@ -23,6 +23,13 @@ export type CropSeasonDetail = {
   farmerId: string;
   farmerName: string;
   committedQuantity?: number; // ✅ Thêm committedQuantity từ commitmentDetail
+  
+  // Crop information
+  cropId?: string;
+  cropCode?: string;
+  farmName?: string;
+  address?: string;
+  cropArea?: number;
 };
 
 

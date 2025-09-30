@@ -10,6 +10,7 @@ interface OpenStreetMapInputProps {
     onChange: (address: string) => void;
     placeholder?: string;
     className?: string;
+    hasError?: boolean;
 }
 
 interface NominatimResult {
@@ -198,14 +199,15 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
     value,
     onChange,
     placeholder = "Nhập địa chỉ...",
-    className = ""
+    className = "",
+    hasError = false
 }) => {
     const [inputValue, setInputValue] = useState('');
 
     const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [searchError, setSearchError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -223,7 +225,7 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
 
         try {
             setLoading(true);
-            setError(null);
+            setSearchError(null);
 
             // Tìm kiếm chỉ trong khu vực Đắk Lắk
             const searchQuery = `${query}, Đắk Lắk, Vietnam`;
@@ -270,9 +272,9 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
 
             setSuggestions(dakLakResults);
             setShowSuggestions(true);
-        } catch (error) {
-            console.error('Error searching address:', error);
-            setError('Không thể tìm kiếm địa chỉ');
+        } catch (searchErr) {
+            console.error('Error searching address:', searchErr);
+            setSearchError('Không thể tìm kiếm địa chỉ');
             setSuggestions([]);
             setShowSuggestions(false);
         } finally {
@@ -333,7 +335,10 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}
                 placeholder={placeholder}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ${hasError
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
+                    }`}
             />
 
             {loading && (
@@ -342,9 +347,9 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
                 </div>
             )}
 
-            {error && (
+            {searchError && (
                 <div className="absolute top-full left-0 right-0 mt-1 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
-                    {error}
+                    {searchError}
                 </div>
             )}
 

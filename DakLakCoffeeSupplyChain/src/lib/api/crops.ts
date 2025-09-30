@@ -62,6 +62,11 @@ export const updateCrop = async (data: CropUpdateDto): Promise<CropViewAllDto> =
 };
 
 export const deleteCrop = async (id: string): Promise<void> => {
-  await api.delete(`/crops/${id}`);
+  await api.delete(`/crops/${id}/softDelete`);
+};
+
+// Hard delete (permanent deletion) - use with caution
+export const hardDeleteCrop = async (id: string): Promise<void> => {
+  await api.delete(`/crops/${id}/hardDelete`);
 };
 

@@ -91,7 +91,7 @@ export default function CropsPage() {
     const handleDelete = async (cropId: string) => {
         try {
             await deleteCrop(cropId);
-            toast.success('Xóa vùng trồng thành công!');
+            toast.success('Đã đánh dấu xóa vùng trồng thành công!');
             loadCrops();
         } catch (error) {
             console.error('Error deleting crop:', error);
@@ -182,15 +182,6 @@ export default function CropsPage() {
                                     : 'Bắt đầu tạo vùng trồng đầu tiên của bạn'
                                 }
                             </p>
-                            {!searchTerm && (
-                                <Button
-                                    onClick={handleCreateNew}
-                                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                                >
-                                    <Plus className="h-5 w-5" />
-                                    Tạo vùng trồng đầu tiên
-                                </Button>
-                            )}
                         </div>
                     </div>
                 ) : (
@@ -212,7 +203,7 @@ export default function CropsPage() {
                 onOpenChange={(open) => !open && setDeleteConfirm(null)}
                 onConfirm={() => deleteConfirm && handleDelete(deleteConfirm)}
                 title="Xác nhận xóa"
-                description="Bạn có chắc chắn muốn xóa vùng trồng này? Hành động này không thể hoàn tác."
+                description="Bạn có chắc chắn muốn xóa vùng trồng này? Dữ liệu sẽ được đánh dấu là đã xóa và có thể khôi phục sau này."
                 confirmText="Xóa"
                 cancelText="Hủy"
             />
