@@ -1,12 +1,14 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     getCropSeasonById,
     CropSeason,
 } from '@/lib/api/cropSeasons';
+import { getCropSeasonDetailsByCropSeasonId } from '@/lib/api/cropSeasonDetail';
+import type { CropSeasonDetail } from '@/lib/api/cropSeasonDetail';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Leaf, Calendar, MapPin, User, FileText, Plus, TrendingUp } from 'lucide-react';
@@ -22,28 +24,33 @@ export default function CropSeasonDetail() {
     const cropSeasonId = params.id as string;
 
     const [season, setSeason] = useState<CropSeason | null>(null);
+    const [details, setDetails] = useState<CropSeasonDetail[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const { user } = useAuth();
 
-    const loadSeason = async () => {
+    const loadSeason = useCallback(async () => {
         try {
-            const data = await getCropSeasonById(cropSeasonId);
-            setSeason(data);
+            const [seasonData, detailsData] = await Promise.all([
+                getCropSeasonById(cropSeasonId),
+                getCropSeasonDetailsByCropSeasonId(cropSeasonId)
+            ]);
+            setSeason(seasonData);
+            setDetails(detailsData);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : t('cropSeasons.details.error');
             setError(errorMessage);
         } finally {
             setLoading(false);
         }
-    };
+    }, [cropSeasonId, t]);
 
     useEffect(() => {
         if (user?.id) {
             setLoading(true);
             loadSeason();
         }
-    }, [user?.id, cropSeasonId, t]);
+    }, [user?.id, loadSeason]);
 
     const formatDate = (date?: string) => {
         if (!date) return t('cropSeasons.details.notUpdated');
@@ -85,10 +92,9 @@ export default function CropSeasonDetail() {
     }
 
     // Tính toán thống kê
-    const details = season.details || [];
     const totalDetails = details.length;
-    const completedDetails = details.filter(d => d.status === 'Completed').length;
-    const inProgressDetails = details.filter(d => d.status === 'InProgress').length;
+    const completedDetails = details.filter(d => d.status === 2).length; // 2 = Completed
+    const inProgressDetails = details.filter(d => d.status === 1).length; // 1 = InProgress
     const totalArea = details.reduce((sum, d) => sum + (d.areaAllocated || 0), 0);
 
     return (

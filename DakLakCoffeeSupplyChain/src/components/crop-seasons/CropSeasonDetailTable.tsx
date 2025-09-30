@@ -9,7 +9,7 @@ import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
   getCropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
-import { CropSeasonDetail } from "@/lib/api/cropSeasons";
+import { CropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
