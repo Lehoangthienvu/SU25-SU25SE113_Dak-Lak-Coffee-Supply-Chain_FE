@@ -61,6 +61,7 @@ export async function processWalletPayment(request: WalletPaymentRequest): Promi
  *   - URLSearchParams
  *   - Record<string, string>
  */
+
 export async function confirmVnPayReturn(
   query: string | URLSearchParams | Record<string, string>
 ): Promise<{ code: string; message: string }> {
@@ -85,4 +86,22 @@ export async function confirmVnPayReturn(
   const qs = params.toString(); // chỉ chứa các key vnp_*
   const res = await api.get(`/Payments/vnpay/return?${qs}`);
   return res.data;
+}
+
+
+export type PaymentHistory = {
+  paymentId: string;
+  paymentPurpose: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  paymentAmount: number;
+  createdAt: string;
+  paymentTime?: string | null;
+  relatedEntityId?: string | null;
+  paymentCode: string;
+};
+
+export async function getPaymentHistory(): Promise<PaymentHistory[]> {
+  const res = await api.get('/Payments/history');
+  return res.data ?? [];
 }
