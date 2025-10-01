@@ -236,7 +236,14 @@ export default function MarketplaceDetailPage() {
                           </div>
                           <div>
                             <p className='text-gray-500'>{t('marketplace.detailPage.planDetailCard.purchaseRegion')}</p>
-                            <p className='font-medium'>{detail.targetRegion}</p>
+                            
+                            {/* <p className='font-medium'>{detail.targetRegion}</p> */}
+                            {detail.targetRegions &&
+                              detail.targetRegions.length > 0
+                                ? <p className='font-medium'>{detail.targetRegions.join(", ")}</p>
+                                : detail.targetRegion
+                                ? <p className='font-medium'>{detail.targetRegion}</p>
+                                : <p className='font-medium'>{t("procurementPlan.common.noData")}</p>}
                           </div>
                           <div>
                             <p className='text-gray-500'>

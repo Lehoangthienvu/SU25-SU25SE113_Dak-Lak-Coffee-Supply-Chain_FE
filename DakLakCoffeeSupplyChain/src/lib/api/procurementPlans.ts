@@ -46,6 +46,7 @@ export type ProcurementPlansDetails = {
   processingMethodName: string | undefined;
   targetQuantity: number;
   targetRegion: string;
+  targetRegions: string[];
   minimumRegistrationQuantity: number;
   minPriceRange: number;
   maxPriceRange: number;

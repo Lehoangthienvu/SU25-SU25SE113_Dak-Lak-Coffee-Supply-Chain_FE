@@ -390,7 +390,9 @@ export default function ProcurementPlanDetailPage() {
                               )}
                             </div>
                             <div className='font-medium text-blue-600'>
-                              {Number(detail.progressPercentage || 0).toFixed(1)}
+                              {Number(detail.progressPercentage || 0).toFixed(
+                                1
+                              )}
                               {t(
                                 "procurementPlan.components.procurementPlanCard.units.percentage"
                               )}
@@ -441,9 +443,17 @@ export default function ProcurementPlanDetailPage() {
                                 "procurementPlan.pages.detail.planDetails.detail.targetRegion"
                               )}
                             </div>
-                            <div className='font-medium text-gray-800'>
+                            {/* <div className='font-medium text-gray-800'>
                               {detail.targetRegion ||
                                 t("procurementPlan.common.noData")}
+                            </div> */}
+                            <div className='font-medium text-gray-800'>
+                              {detail.targetRegions &&
+                              detail.targetRegions.length > 0
+                                ? detail.targetRegions.join(", ")
+                                : detail.targetRegion
+                                ? detail.targetRegion
+                                : t("procurementPlan.common.noData")}
                             </div>
                           </div>
                         </div>
@@ -568,7 +578,9 @@ export default function ProcurementPlanDetailPage() {
                                   )}
                                 </span>
                                 <span className='font-medium'>
-                                  {Number(detail.progressPercentage || 0).toFixed(1)}
+                                  {Number(
+                                    detail.progressPercentage || 0
+                                  ).toFixed(1)}
                                   {t(
                                     "procurementPlan.components.procurementPlanCard.units.percentage"
                                   )}

@@ -213,7 +213,8 @@
           },
           "targetRegion": {
             "label": "Target Region",
-            "placeholder": "Select target region..."
+            "placeholder": "Select target region...",
+            "all" : "Select all target regions"
           },
           "minimumRegistrationQuantity": {
             "label": "Minimum Registration Quantity",
@@ -237,15 +238,6 @@
           "note": {
             "label": "Description",
             "placeholder": "Enter detailed description..."
-          },
-          "targetRegion": {
-            "label": "Target Region",
-            "placeholder": "-- Select Target Region --"
-          },
-          "minimumRegistrationQuantity": {
-            "label": "Minimum Registration Quantity (kg)",
-            "placeholder": "Enter minimum quantity...",
-            "required": "*"
           }
         },
         "buttons": {
