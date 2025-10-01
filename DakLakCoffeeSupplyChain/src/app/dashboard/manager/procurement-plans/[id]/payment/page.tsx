@@ -33,7 +33,7 @@ export default function PaymentPage() {
         if (amountParam) {
           setAmount(parseInt(amountParam));
         } else {
-          const feeInfo = await getPlanPostingFee();
+          const feeInfo = await getPlanPostingFee(id as string);
           setAmount(feeInfo.amount);
         }
 
@@ -238,8 +238,8 @@ export default function PaymentPage() {
                 onClick={handlePayment}
                 disabled={processing}
                 className={`w-full text-white ${paymentMethod === 'VNPay'
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-green-600 hover:bg-green-700'
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-green-600 hover:bg-green-700'
                   }`}
                 size="lg"
               >

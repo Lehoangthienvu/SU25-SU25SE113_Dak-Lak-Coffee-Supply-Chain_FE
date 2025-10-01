@@ -62,11 +62,13 @@ export default function BusinessProcurementPlansPage() {
 
     // Load payment amount from API
     try {
-      const feeInfo = await getPlanPostingFee();
-      setPaymentAmount(feeInfo.amount);
+      // lấy một planId để tính phí (ví dụ plan đầu tiên trong danh sách)
+      if (data.length > 0) {
+        const feeInfo = await getPlanPostingFee(data[0].planId);
+        setPaymentAmount(feeInfo.amount);
+      }
     } catch (error) {
       console.error('Không thể lấy thông tin phí thanh toán:', error);
-      // Giữ giá trị mặc định 100000 nếu không lấy được từ API
     }
   };
 
