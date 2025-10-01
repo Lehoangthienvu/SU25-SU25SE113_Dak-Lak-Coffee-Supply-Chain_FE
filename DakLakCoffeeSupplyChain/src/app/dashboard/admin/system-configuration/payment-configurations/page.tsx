@@ -185,6 +185,8 @@ import {
   FiDollarSign,
   FiCalendar,
   FiUsers,
+  FiToggleLeft,
+  FiToggleRight,
 } from "react-icons/fi";
 
 export default function PaymentConfigurationsPage() {
@@ -205,6 +207,9 @@ export default function PaymentConfigurationsPage() {
     useState<PaymentConfigurationViewDetailsDto | null>(null);
 
   // Filters and pagination states
+  const [searchConfigName, setSearchConfigName] = useState<string>("");
+  const [searchTonsMin, setSearchTonsMin] = useState<string>("");
+  const [searchTonsMax, setSearchTonsMax] = useState<string>("");
   const [filterRoleId, setFilterRoleId] = useState<string>("all");
   const [filterFeeType, setFilterFeeType] = useState<string>("all");
   const [amountMin, setAmountMin] = useState<string>("");
@@ -241,6 +246,7 @@ export default function PaymentConfigurationsPage() {
     { value: "MonthlyMaintenance", label: "Phí duy trì tháng" },
     { value: "QuarterlyMaintenance", label: "Phí duy trì quý" },
     { value: "YearlyMaintenance", label: "Phí duy trì năm" },
+    { value: "PlanPosting", label: "Phí đăng kế hoạch thu mua" },
     { value: "PurchasePlanPosting", label: "Phí đăng kế hoạch thu mua" },
     { value: "Other", label: "Phí khác" },
   ];
@@ -324,6 +330,57 @@ export default function PaymentConfigurationsPage() {
       const feeLabel = getFeeTypeLabel(cfg.feeType).toLowerCase();
       const roleLabelVn = getRoleName(cfg.roleName || "").toLowerCase();
 
+      // Config name search
+      const matchesConfigName =
+        !searchConfigName ||
+        (cfg.configName &&
+          cfg.configName
+            .toLowerCase()
+            .includes(searchConfigName.toLowerCase()));
+
+      // Tons range search
+      const searchTonsMinVal = searchTonsMin ? Number(searchTonsMin) : null;
+      const searchTonsMaxVal = searchTonsMax ? Number(searchTonsMax) : null;
+
+      let matchesTonsRange = true;
+
+      if (searchTonsMinVal !== null || searchTonsMaxVal !== null) {
+        matchesTonsRange = false;
+
+        // Nếu config có cả minTons và maxTons
+        if (cfg.minTons != null && cfg.maxTons != null) {
+          // Khoảng config: [cfg.minTons, cfg.maxTons]
+          // Khoảng search: [searchTonsMinVal, searchTonsMaxVal]
+          const configMin = cfg.minTons;
+          const configMax = cfg.maxTons;
+          const searchMin = searchTonsMinVal || 0;
+          const searchMax = searchTonsMaxVal || Number.MAX_SAFE_INTEGER;
+
+          // Có overlap nếu: configMin <= searchMax && configMax >= searchMin
+          matchesTonsRange = configMin <= searchMax && configMax >= searchMin;
+        }
+        // Nếu config chỉ có minTons (không giới hạn trên)
+        else if (cfg.minTons != null && cfg.maxTons == null) {
+          const configMin = cfg.minTons;
+          const searchMax = searchTonsMaxVal || Number.MAX_SAFE_INTEGER;
+          matchesTonsRange =
+            configMin <= searchMax &&
+            (searchTonsMinVal == null || configMin >= searchTonsMinVal);
+        }
+        // Nếu config chỉ có maxTons (không giới hạn dưới)
+        else if (cfg.minTons == null && cfg.maxTons != null) {
+          const configMax = cfg.maxTons;
+          const searchMin = searchTonsMinVal || 0;
+          matchesTonsRange =
+            configMax >= searchMin &&
+            (searchTonsMaxVal == null || configMax <= searchTonsMaxVal);
+        }
+        // Nếu config không có giới hạn tấn nào
+        else {
+          matchesTonsRange = false; // Không giới hạn tấn thì không match với search tấn
+        }
+      }
+
       // Role filter
       const matchesRole =
         filterRoleId === "all" ||
@@ -360,6 +417,8 @@ export default function PaymentConfigurationsPage() {
         (statusFilter === "inactive" && !isActive);
 
       return (
+        matchesConfigName &&
+        matchesTonsRange &&
         matchesRole &&
         matchesFeeType &&
         matchesAmount &&
@@ -369,6 +428,9 @@ export default function PaymentConfigurationsPage() {
     });
   }, [
     configurations,
+    searchConfigName,
+    searchTonsMin,
+    searchTonsMax,
     filterRoleId,
     filterFeeType,
     amountMin,
@@ -382,6 +444,9 @@ export default function PaymentConfigurationsPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [
+    searchConfigName,
+    searchTonsMin,
+    searchTonsMax,
     filterRoleId,
     filterFeeType,
     amountMin,
@@ -402,6 +467,9 @@ export default function PaymentConfigurationsPage() {
   );
 
   const clearFilters = () => {
+    setSearchConfigName("");
+    setSearchTonsMin("");
+    setSearchTonsMax("");
     setFilterRoleId("all");
     setFilterFeeType("all");
     setAmountMin("");
@@ -795,7 +863,40 @@ export default function PaymentConfigurationsPage() {
 
         {/* Filters */}
         <Card className="mb-4">
-          <CardContent className="pt-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Bộ lọc và tìm kiếm</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <Label>Tìm kiếm tên cấu hình</Label>
+                <Input
+                  placeholder="Nhập tên cấu hình..."
+                  value={searchConfigName}
+                  onChange={(e) => setSearchConfigName(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Tấn tối thiểu</Label>
+                <Input
+                  placeholder="Nhập số tấn..."
+                  value={searchTonsMin}
+                  onChange={(e) =>
+                    setSearchTonsMin(e.target.value.replace(/[^\d]/g, ""))
+                  }
+                />
+              </div>
+              <div>
+                <Label>Tấn tối đa</Label>
+                <Input
+                  placeholder="Nhập số tấn..."
+                  value={searchTonsMax}
+                  onChange={(e) =>
+                    setSearchTonsMax(e.target.value.replace(/[^\d]/g, ""))
+                  }
+                />
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
                 <Label>Vai trò</Label>
@@ -908,9 +1009,11 @@ export default function PaymentConfigurationsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Tên cấu hình</TableHead>
                     <TableHead>Vai trò</TableHead>
                     <TableHead>Loại phí</TableHead>
                     <TableHead>Số tiền</TableHead>
+                    <TableHead>Khoảng tấn</TableHead>
                     <TableHead>Hiệu lực</TableHead>
                     <TableHead>Trạng thái</TableHead>
                     <TableHead>Hành động</TableHead>
@@ -919,6 +1022,14 @@ export default function PaymentConfigurationsPage() {
                 <TableBody>
                   {paginatedConfigurations.map((config) => (
                     <TableRow key={config.configId}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <FiDollarSign className="text-blue-500" />
+                          {config.configName && config.configName.trim() !== ""
+                            ? config.configName
+                            : "Không có tên"}
+                        </div>
+                      </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <FiUsers className="text-orange-500" />
@@ -932,6 +1043,24 @@ export default function PaymentConfigurationsPage() {
                       </TableCell>
                       <TableCell className="font-semibold text-green-600">
                         {formatCurrency(config.amount)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {config.minTons != null || config.maxTons != null ? (
+                            <div>
+                              {config.minTons != null && (
+                                <div>Từ: {config.minTons} tấn</div>
+                              )}
+                              {config.maxTons != null && (
+                                <div>Đến: {config.maxTons} tấn</div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">
+                              Không giới hạn
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2 text-sm">
@@ -994,11 +1123,16 @@ export default function PaymentConfigurationsPage() {
                             title={
                               config.isActive ? "Vô hiệu hóa" : "Kích hoạt"
                             }
+                            className={
+                              config.isActive
+                                ? "text-orange-600 hover:text-orange-700"
+                                : "text-green-600 hover:text-green-700"
+                            }
                           >
                             {config.isActive ? (
-                              <FiEyeOff className="w-4 h-4" />
+                              <FiToggleRight className="w-4 h-4" />
                             ) : (
-                              <FiCheckCircle className="w-4 h-4" />
+                              <FiToggleLeft className="w-4 h-4" />
                             )}
                           </Button>
                           <Button
