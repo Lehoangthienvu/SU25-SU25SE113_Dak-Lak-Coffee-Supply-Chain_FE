@@ -17,33 +17,21 @@ export async function createVnPayUrl(req: VnPayCreateRequest): Promise<string> {
   return res.data?.url;
 }
 
-
 export type PaymentStatusResponse = {
-  hasPayment: boolean;
+
   paymentStatus: string;
   message?: string;
   paymentTime?: string;
 };
 
 export async function checkPaymentStatus(planId: string): Promise<PaymentStatusResponse> {
+  // BE có cả 2 route, đang dùng route của ProcurementPlans:
   const res = await api.get(`/ProcurementPlans/${planId}/payment-status`);
   return res.data;
 }
 
 export async function getPlanPostingFee(): Promise<PaymentAmountResponse> {
   const res = await api.get('/Payments/plan-posting-fee');
-  return res.data;
-}
-
-export type ProcessPaymentSuccessRequest = {
-  txnRef: string;
-  orderInfo: string;
-  responseCode?: string;
-  amount?: string;
-};
-
-export async function processPaymentSuccess(request: ProcessPaymentSuccessRequest): Promise<any> {
-  const res = await api.post('/Payments/process-payment-success', request);
   return res.data;
 }
 
@@ -64,25 +52,16 @@ export async function processWalletPayment(request: WalletPaymentRequest): Promi
   return res.data;
 }
 
+/**
+ * Xác nhận kết quả thanh toán VNPay qua endpoint /Payments/vnpay/return
+ * -> Tự động lọc CHỈ tham số bắt đầu bằng "vnp_" để ký đúng chuẩn.
+ *
+ * @param query - Có thể truyền:
+ *   - string: toàn bộ query ("?a=1&vnp_...") hay chỉ phần sau dấu ?
+ *   - URLSearchParams
+ *   - Record<string, string>
+ */
 
-
-
-export type PaymentHistory = {
-  paymentId: string;
-  paymentPurpose: string;
-  paymentStatus: string;
-  paymentMethod: string;
-  paymentAmount: number;
-  createdAt: string;
-  paymentTime?: string | null;
-  relatedEntityId?: string | null;
-  paymentCode: string;
-};
-
-export async function getPaymentHistory(): Promise<PaymentHistory[]> {
-  const res = await api.get('/Payments/history');
-  return res.data ?? [];
-}
 export async function confirmVnPayReturn(
   query: string | URLSearchParams | Record<string, string>
 ): Promise<{ code: string; message: string }> {
@@ -107,4 +86,22 @@ export async function confirmVnPayReturn(
   const qs = params.toString(); // chỉ chứa các key vnp_*
   const res = await api.get(`/Payments/vnpay/return?${qs}`);
   return res.data;
+}
+
+
+export type PaymentHistory = {
+  paymentId: string;
+  paymentPurpose: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  paymentAmount: number;
+  createdAt: string;
+  paymentTime?: string | null;
+  relatedEntityId?: string | null;
+  paymentCode: string;
+};
+
+export async function getPaymentHistory(): Promise<PaymentHistory[]> {
+  const res = await api.get('/Payments/history');
+  return res.data ?? [];
 }

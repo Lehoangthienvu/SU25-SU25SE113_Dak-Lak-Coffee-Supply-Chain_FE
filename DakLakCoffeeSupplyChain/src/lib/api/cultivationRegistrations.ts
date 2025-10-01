@@ -1,5 +1,5 @@
-import { ParamValue } from "next/dist/server/request/params";
 import api from "./axios";
+import { CropViewAllDto } from "./crops";
 
 export interface CultivationRegistration {
   registrationId: string;
@@ -32,6 +32,9 @@ export interface CultivationRegistrationDetail {
   expectedYield: number; // in kg per hectare
   note: string;
   status: string | number; // e.g. "Pending", "Approved", "Rejected"
+  registeredArea?: number; // in hectares
+  cropId?: string;
+  crop?: CropViewAllDto;
 };
 
 export async function getCultivationRegistrationsByPlanId(planId: string): Promise<CultivationRegistration[]> {

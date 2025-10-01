@@ -10,6 +10,10 @@
     "coffeeList": "Coffee Type List",
     "noCoffeeTypes": "No coffee types found.",
     "saveCoffee": "Save Coffee Type",
+    "category": {
+      "general": "General",
+      "specific": "Specific"
+    },
     "table": {
       "typeCode": "Coffee Type Code",
       "typeName": "Coffee Type Name",
@@ -17,6 +21,9 @@
       "description": "Description",
       "typicalRegion": "Typical Region",
       "specialtyLevel": "Specialty Level",
+      "status": "Status",
+      "categoryParent": "Category/Parent Type",
+      "belongTo": "Belong To",
       "actions": "Actions"
     },
     "status": {
@@ -28,7 +35,8 @@
       "unverify": "Unverify",
       "viewDetails": "View Details",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "toggleStatus": "Toggle Status"
     },
     "messages": {
       "loading": "Loading...",
@@ -78,6 +86,8 @@
       "success": "Coffee type created successfully!",
       "error": "Unable to create coffee type!",
       "fields": {
+        "coffeeTypeCategory": "Coffee Type Category",
+        "coffeeTypeParentID": "Parent Coffee Type",
         "typeName": "Coffee Type Name",
         "typeCode": "Coffee Type Code",
         "botanicalName": "Botanical Name",
@@ -90,8 +100,14 @@
           "botanicalName": "Enter botanical name",
           "description": "Enter description",
           "typicalRegion": "Enter typical region",
-          "specialtyLevel": "Enter specialty level"
+          "specialtyLevel": "Enter specialty level",
+          "coffeeTypeCategory": "Select coffee type category",
+          "coffeeTypeParentID": "Select parent coffee type"
         }
+      },
+      "options": {
+        "general": "General",
+        "specific": "Specific"
       },
       "validation": {
         "typeNameRequired": "Coffee type name is required",

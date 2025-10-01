@@ -10,6 +10,10 @@
     "coffeeList": "Danh sách loại cà phê",
     "noCoffeeTypes": "Không tìm thấy loại cà phê nào.",
     "saveCoffee": "Lưu loại cà phê",
+    "category": {
+      "general": "Chung",
+      "specific": "Cụ thể"
+    },
     "table": {
       "typeCode": "Mã loại cà phê",
       "typeName": "Tên loại cà phê",
@@ -17,6 +21,9 @@
       "description": "Mô tả",
       "typicalRegion": "Vùng trồng tiêu biểu",
       "specialtyLevel": "Cấp độ đặc sản",
+      "status": "Trạng thái",
+      "categoryParent": "Phân loại loài",
+      "belongTo": "Thuộc chủng loại",
       "actions": "Thao tác"
     },
     "status": {
@@ -28,7 +35,8 @@
       "unverify": "Bỏ xác thực",
       "viewDetails": "Xem chi tiết",
       "edit": "Chỉnh sửa",
-      "delete": "Xóa"
+      "delete": "Xóa",
+      "toggleStatus": "Chuyển đổi trạng thái"
     },
     "messages": {
       "loading": "Đang tải...",
@@ -78,6 +86,8 @@
       "success": "Tạo loại cà phê thành công!",
       "error": "Không thể tạo loại cà phê!",
       "fields": {
+        "coffeeTypeCategory": "Danh mục loại cà phê",
+        "coffeeTypeParentID": "Loại cà phê cha",
         "typeName": "Tên loại cà phê",
         "typeCode": "Mã loại cà phê",
         "botanicalName": "Tên khoa học",
@@ -90,8 +100,14 @@
           "botanicalName": "Nhập tên khoa học",
           "description": "Nhập mô tả",
           "typicalRegion": "Nhập vùng trồng tiêu biểu",
-          "specialtyLevel": "Nhập cấp độ đặc sản"
+          "specialtyLevel": "Nhập cấp độ đặc sản",
+          "coffeeTypeCategory": "Chọn danh mục loại cà phê",
+          "coffeeTypeParentID": "Chọn loại cà phê cha"
         }
+      },
+      "options": {
+        "general": "Chung",
+        "specific": "Cụ thể"
       },
       "validation": {
         "typeNameRequired": "Tên loại cà phê là bắt buộc",

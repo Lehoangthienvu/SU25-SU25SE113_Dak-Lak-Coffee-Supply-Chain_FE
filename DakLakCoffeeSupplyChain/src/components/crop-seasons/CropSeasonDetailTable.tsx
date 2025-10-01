@@ -9,7 +9,7 @@ import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
   getCropSeasonDetailStatusMap,
 } from "@/lib/constants/cropSeasonDetailStatus";
-import { CropSeasonDetail } from "@/lib/api/cropSeasons";
+import { CropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import UpdateCropSeasonDetailDialog from "./UpdateCropSeasonDetailDialog";
@@ -197,8 +197,13 @@ export default function CropSeasonDetailTable({
                       <div className="font-medium text-gray-900">{detail.typeName}</div>
                       <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                         <MapPin className="w-3 h-3" />
-                        <span>{t('cropSeasons.detailTable.plantingArea')}</span>
+                        <span>{detail.farmName || t('cropSeasons.detailTable.plantingArea')}</span>
                       </div>
+                      {detail.address && (
+                        <div className="text-xs text-gray-400 mt-1">
+                          {detail.address}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </td>

@@ -3,7 +3,7 @@
     "status": {
       "approved": "Đã có cam kết",
       "rejected": "Đã từ chối",
-      "pending": "Đang chờ duyệt",
+      "pending": "Đang chờ có cam kết",
       "cancelled": "Đã hủy cam kết",
       "detailApproved": "Đã duyệt",
       "detailRejected": "Đã từ chối",
@@ -19,6 +19,7 @@
           "coffeeType": "Loại cà phê:",
           "estimatedYield": "Sản lượng đăng ký:",
           "wantedPrice": "Giá mong muốn:",
+          "cropInfo": "Thông tin vùng trồng",
           "harvestTime": "Thời gian thu hoạch dự kiến:",
           "note": "Ghi chú:"
         },
@@ -53,14 +54,17 @@
         "title": "Đăng ký tham gia kế hoạch",
         "subtitle": "Điền thông tin để đăng ký tham gia kế hoạch thu mua",
         "labels": {
-          "registeredArea": "Diện tích đăng ký (ha)",
+          "registeredArea": "Diện tích đăng ký của vùng trồng (ha)",
           "note": "Giới thiệu bản thân",
           "planDetail": "Chi tiết kế hoạch",
           "estimatedYield": "Sản lượng đăng ký (kg)",
           "wantedPrice": "Giá mong muốn (VNĐ/kg)",
           "expectedHarvestStart": "Ngày bắt đầu thu hoạch dự kiến",
           "expectedHarvestEnd": "Ngày kết thúc thu hoạch dự kiến",
-          "detailNote": "Ghi chú nếu có"
+          "detailNote": "Ghi chú nếu có",
+          "crop": "Vùng trồng",
+          "cropArea": "Diện tích trồng"
+
         },
         "placeholders": {
           "planDetail": "Chi tiết kế hoạch",
@@ -70,7 +74,8 @@
           "wantedPrice": "Nhập giá mong muốn",
           "expectedHarvestStart": "Chọn ngày bắt đầu",
           "expectedHarvestEnd": "Chọn ngày kết thúc",
-          "detailNote": "Nhập ghi chú chi tiết (tùy chọn)"
+          "detailNote": "Nhập ghi chú chi tiết (tùy chọn)",
+          "crop": "Chọn vùng trồng"
         },
         "buttons": {
           "addDetail": "Thêm chi tiết",
@@ -82,6 +87,7 @@
           "planId": "Vui lòng chọn kế hoạch.",
           "registeredArea": "Vui lòng nhập diện tích đăng ký hợp lệ.",
           "planDetailId": "Cần chọn chi tiết kế hoạch.",
+          "cropId": "Cần chọn vùng trồng.",
           "estimatedYield": "Nhập sản lượng đăng ký hợp lệ.",
           "wantedPrice": "Nhập giá mong muốn hợp lệ.",
           "wantedPriceTooLow": "Giá mong muốn phải từ {{minPrice}} VNĐ/kg trở lên.",
@@ -98,26 +104,31 @@
           "priceRange": "Khoảng giá: {{minPrice}} - {{maxPrice}} VNĐ/kg",
           "priceRangeHint": "Giá mong muốn phải nằm trong khoảng này để được chấp nhận",
           "loginRequired": "Vui lòng đăng nhập để thực hiện đăng ký.",
-          "farmerOnly": "Chỉ nông dân mới có thể đăng ký tham gia kế hoạch."
+          "farmerOnly": "Chỉ nông dân mới có thể đăng ký tham gia kế hoạch.",
+          "noCropsAvailable": "Không có vùng trồng nào khả dụng. Vui lòng thêm vùng trồng trước khi đăng ký."
         }
       },
       "registrationGuide": {
         "title": "Hướng dẫn đăng ký",
         "subtitle": "Tham gia kế hoạch thu mua cà phê",
-        "steps": {
+        "steps": {          
           "step1": {
-            "title": "Diện tích đăng ký",
-            "description": "Đây là thông tin về diện tích đất trồng cho toàn bộ các chi tiết kế hoạch mà bạn đã đăng ký. Đơn vị tính bằng hecta(ha)."
-          },
-          "step2": {
             "title": "Chọn chi tiết kế hoạch",
             "description": "Chọn chi tiết kế hoạch mà bạn muốn đăng ký bán."
           },
+          "step2": {
+            "title": "Chọn vùng trồng",
+            "description": "Nếu bạn chưa có vùng trồng, hãy vào mục vùng trồng để tạo vùng trồng mới."
+          },
           "step3": {
+            "title": "Diện tích đăng ký của vùng trồng",
+            "description": "Đây là thông tin về diện tích đất trồng cho chi tiết kế hoạch mà bạn đang đăng ký. Diện tích đăng ký có thể bằng hoặc nhỏ hơn diện tích vùng trồng vẫn còn trống. Đơn vị tính bằng hecta(ha)."
+          },
+          "step4": {
             "title": "Nhập thông tin chi tiết",
             "description": "Điền đầy đủ thông tin về sản lượng, giá cả và thời gian thu hoạch"
           },
-          "step4": {
+          "step5": {
             "title": "Gửi đăng ký",
             "description": "Kiểm tra lại thông tin và gửi đăng ký để doanh nghiệp xem xét"
           }

@@ -19,6 +19,7 @@
           "coffeeType": "Coffee Type:",
           "estimatedYield": "Registered Yield:",
           "wantedPrice": "Desired Price:",
+          "cropInfo" : "Crop Information",
           "harvestTime": "Expected Harvest Time:",
           "note": "Note:"
         },
@@ -60,7 +61,9 @@
           "wantedPrice": "Desired Price (VND/kg)",
           "expectedHarvestStart": "Expected Harvest Start Date",
           "expectedHarvestEnd": "Expected Harvest End Date",
-          "detailNote": "Note (optional)"
+          "detailNote": "Note (optional)",
+          "crop": "Crop",
+          "cropArea": "Crop Area"
         },
         "placeholders": {
           "planDetail": "Plan Detail",
@@ -70,7 +73,8 @@
           "wantedPrice": "Enter desired price",
           "expectedHarvestStart": "Select start date",
           "expectedHarvestEnd": "Select end date",
-          "detailNote": "Enter detail note (optional)"
+          "detailNote": "Enter detail note (optional)",
+          "crop": "Select crop"
         },
         "buttons": {
           "addDetail": "Add Detail",
@@ -82,6 +86,7 @@
           "planId": "Please select a plan.",
           "registeredArea": "Please enter a valid registered area.",
           "planDetailId": "Please select a plan detail.",
+          "cropId": "Please select a crop.",
           "estimatedYield": "Please enter a valid estimated yield.",
           "wantedPrice": "Please enter a valid desired price.",
           "wantedPriceTooLow": "Desired price must be at least {{minPrice}} VND/kg.",
@@ -98,7 +103,8 @@
           "priceRange": "Price range: {{minPrice}} - {{maxPrice}} VND/kg",
           "priceRangeHint": "Desired price must be within this range to be accepted",
           "loginRequired": "Please log in to submit registration.",
-          "farmerOnly": "Only farmers can register to join plans."
+          "farmerOnly": "Only farmers can register to join plans.",
+          "noCropsAvailable": "No crops available. Please add crops before registering."
         }
       },
       "registrationGuide": {
@@ -106,18 +112,22 @@
         "subtitle": "Join coffee procurement plan",
         "steps": {
           "step1": {
-            "title": "Registered Area",
-            "description": "This is information about the planting area for all plan details you have registered. Unit is measured in hectares (ha)."
-          },
-          "step2": {
             "title": "Select Plan Detail",
             "description": "Select the plan detail you want to register to sell."
           },
-          "step3": {
+          "step2": {
+            "title": "Enter Crop",
+            "description": "If you do not have a crop area, please go to the crop area section to create a new crop area."
+          },
+            "step3": {
+            "title": "Registering Area",
+            "description": "This is the information about the cultivation area for the plan detail you are registering. The registered area can be equal to or less than the available area of your crop. The unit is hectare (ha)."
+          },
+          "step4": {
             "title": "Enter Detail Information",
             "description": "Fill in complete information about yield, price and harvest time"
           },
-          "step4": {
+          "step5": {
             "title": "Submit Registration",
             "description": "Review the information and submit registration for business review"
           }

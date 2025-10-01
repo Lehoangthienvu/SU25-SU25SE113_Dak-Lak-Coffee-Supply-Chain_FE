@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     getCropSeasonById,
@@ -26,24 +26,24 @@ export default function CropSeasonDetail() {
     const [error, setError] = useState('');
     const { user } = useAuth();
 
-    const loadSeason = async () => {
+    const loadSeason = useCallback(async () => {
         try {
-            const data = await getCropSeasonById(cropSeasonId);
-            setSeason(data);
+            const seasonData = await getCropSeasonById(cropSeasonId);
+            setSeason(seasonData);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : t('cropSeasons.details.error');
             setError(errorMessage);
         } finally {
             setLoading(false);
         }
-    };
+    }, [cropSeasonId, t]);
 
     useEffect(() => {
         if (user?.id) {
             setLoading(true);
             loadSeason();
         }
-    }, [user?.id, cropSeasonId, t]);
+    }, [user?.id, loadSeason]);
 
     const formatDate = (date?: string) => {
         if (!date) return t('cropSeasons.details.notUpdated');
@@ -85,7 +85,7 @@ export default function CropSeasonDetail() {
     }
 
     // Tính toán thống kê
-    const details = season.details || [];
+    const details = season?.details || [];
     const totalDetails = details.length;
     const completedDetails = details.filter(d => d.status === 'Completed').length;
     const inProgressDetails = details.filter(d => d.status === 'InProgress').length;
@@ -247,7 +247,28 @@ export default function CropSeasonDetail() {
                     </CardHeader>
                     <CardContent className="p-4">
                         <CropSeasonDetailTable
-                            details={details}
+                            details={details.map(detail => ({
+                                ...detail,
+                                farmName: detail.farmerName, // Map farmerName to farmName for compatibility
+                                address: '',
+                                stages: null,
+                                success: null,
+                                error: '',
+                                cropSeasonId: cropSeasonId,
+                                commitmentDetailId: detail.coffeeTypeId,
+                                commitmentDetailCode: '',
+                                estimatedYield: detail.estimatedYield || 0,
+                                actualYield: detail.actualYield,
+                                plannedQuality: detail.plannedQuality || '',
+                                qualityGrade: detail.qualityGrade || '',
+                                status: detail.status === 'Completed' ? 2 : detail.status === 'InProgress' ? 1 : 0,
+                                farmerId: detail.farmerId || '',
+                                farmerName: detail.farmerName || '',
+                                committedQuantity: detail.committedQuantity,
+                                cropId: '',
+                                cropCode: '',
+                                cropArea: detail.areaAllocated
+                            }))}
                             onReload={loadSeason}
                         />
                     </CardContent>

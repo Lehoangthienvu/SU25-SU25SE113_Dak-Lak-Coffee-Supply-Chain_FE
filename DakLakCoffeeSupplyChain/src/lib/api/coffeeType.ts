@@ -8,6 +8,10 @@ export type CoffeeType = {
   description?: string;
   typicalRegion?: string;
   specialtyLevel?: string;
+  status?: string | number;
+  coffeeTypeCategory?: string;
+  coffeeTypeParentId?: string;
+  coffeeTypeParentName?: string;
 };
 
 export async function getCoffeeTypes(): Promise<CoffeeType[]> {
@@ -32,4 +36,9 @@ export async function updateCoffeeType(data: Partial<CoffeeType>, coffeeTypeId: 
 
 export async function deleteCoffeeType(coffeeTypeId: string): Promise<void> {
   await api.patch(`/CoffeeType/soft-delete/${coffeeTypeId}`);
+}
+
+export async function updateStatusCoffeeType(data: Partial<CoffeeType>, coffeeTypeId: string): Promise<CoffeeType> {
+  const response = await api.patch(`/CoffeeType/status/${coffeeTypeId}`, data);
+  return response.data;
 }

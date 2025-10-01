@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { AppToast } from "@/components/ui/AppToast";
 import { getErrorMessage } from "@/lib/utils";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -10,7 +10,12 @@ import { useTranslation } from "react-i18next";
 import CoffeeTypeForm, {
   CoffeeTypeFormData,
 } from "@/components/coffee-types/coffeeTypeForm";
-import { getCoffeeTypeById, updateCoffeeType } from "@/lib/api/coffeeType";
+import {
+  CoffeeType,
+  getCoffeeTypeById,
+  getCoffeeTypes,
+  updateCoffeeType,
+} from "@/lib/api/coffeeType";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -28,6 +33,18 @@ function EditCoffeeType() {
   const [initialData, setInitialData] = useState<CoffeeTypeFormData | null>(
     null
   );
+  const [parentCoffeeTypes, setParentCoffeeTypes] = useState<CoffeeType[]>([]);
+
+  const [formData, setFormData] = useState<CoffeeTypeFormData | null>({
+    typeName: "",
+    typeCode: "",
+    botanicalName: "",
+    description: "",
+    typicalRegion: "",
+    specialtyLevel: "",
+    coffeeTypeCategory: "",
+    coffeeTypeParentId: "",
+  });
 
   useEffect(() => {
     fetchData(coffeeTypeId);
@@ -38,6 +55,10 @@ function EditCoffeeType() {
       setFormData(initialData);
     }
   }, [initialData]);
+
+  useEffect(() => {
+    fetchCoffeeTypes();
+  }, []);
 
   const fetchData = async (coffeeTypeId: string) => {
     setLoading(true);
@@ -54,6 +75,8 @@ function EditCoffeeType() {
           description: coffeeTypeData.description || "",
           typicalRegion: coffeeTypeData.typicalRegion || "",
           specialtyLevel: coffeeTypeData.specialtyLevel || "",
+          coffeeTypeCategory: coffeeTypeData.coffeeTypeCategory || "",
+          coffeeTypeParentId: coffeeTypeData.coffeeTypeParentId || "",
         };
         setInitialData(formattedData);
       }
@@ -64,11 +87,34 @@ function EditCoffeeType() {
     }
   };
 
-  const [formData, setFormData] = useState<CoffeeTypeFormData | null>(null);
+  const fetchCoffeeTypes = async () => {
+    setLoading(true);
+    const data = await getCoffeeTypes().catch((error) => {
+      console.error(
+        "Lỗi khi lấy danh sách coffeeTypes:",
+        getErrorMessage(error)
+      );
+      return [];
+    });
+    const filteredData = data.filter(
+      (ct) => ct.coffeeTypeCategory === "general"
+    );
+    setParentCoffeeTypes(filteredData);
+    setLoading(false);
+  };
 
   // Cập nhật dữ liệu form khi component con báo về thay đổi
   const handleFormChange = (data: CoffeeTypeFormData) => {
-    setFormData(data);
+    const { parentCoffeeTypes, ...formattedData } = data;
+    if (!formattedData.coffeeTypeParentId) {
+      delete formattedData.coffeeTypeParentId;
+    }
+    if (data.coffeeTypeCategory === "general") {
+      formattedData.coffeeTypeParentId = "00000000-0000-0000-0000-000000000000";
+    }
+    //console.log("Dữ liệu form cập nhật:", data);
+    //console.log("Dữ liệu form cập nhật1:", formattedData);
+    setFormData(formattedData);
   };
 
   // Validate form
@@ -121,6 +167,8 @@ function EditCoffeeType() {
           description: formData.description,
           typicalRegion: formData.typicalRegion,
           specialtyLevel: formData.specialtyLevel,
+          coffeeTypeCategory: formData.coffeeTypeCategory,
+          coffeeTypeParentId: formData.coffeeTypeParentId,
         },
         coffeeTypeId
       );
@@ -160,6 +208,7 @@ function EditCoffeeType() {
         {/* Form */}
         <CoffeeTypeForm
           initialData={initialData}
+          availableCoffeeTypes={parentCoffeeTypes}
           loading={loading}
           errors={errors}
           isSubmitting={isSubmitting}

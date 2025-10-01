@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { useTranslation } from "react-i18next";
-import { CoffeeType, deleteCoffeeType } from "@/lib/api/coffeeType";
+import {
+  CoffeeType,
+  deleteCoffeeType,
+  updateStatusCoffeeType,
+} from "@/lib/api/coffeeType";
 import { getCoffeeTypes } from "@/lib/api/coffeeType";
 import { getErrorMessage } from "@/lib/utils";
 import { AppToast } from "@/components/ui/AppToast";
@@ -22,7 +26,7 @@ export default function AdminCoffeeTypePage() {
   // Sử dụng translation
   const { t } = useTranslation();
 
-  const [coffeeType, setCoffeeType] = useState<CoffeeType[]>([]);
+  const [coffeeTypes, setCoffeeTypes] = useState<CoffeeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,12 +39,44 @@ export default function AdminCoffeeTypePage() {
       setError(null);
 
       const data = await getCoffeeTypes();
-      setCoffeeType(data);
+      setCoffeeTypes(data);
     } catch (error) {
       setError(getErrorMessage(error));
       console.log(getErrorMessage(error));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (
+    coffeeTypeId: string,
+    currentStatus: string | number
+  ) => {
+    try {
+      const newStatus = currentStatus === "Active" ? 0 : 1;
+      const updatedCoffeeType = await updateStatusCoffeeType(
+        {
+          coffeeTypeId,
+          status: newStatus,
+        },
+        coffeeTypeId
+      );
+
+      // Cập nhật lại trong state
+      setCoffeeTypes((prev) =>
+        prev.map((coffee) =>
+          coffee.coffeeTypeId === coffeeTypeId
+            ? { ...coffee, status: updatedCoffeeType.status }
+            : coffee
+        )
+      );
+
+      AppToast.success(
+        `Đã ${newStatus === 1 ? "mở" : "đóng"} trạng thái cho loại cà phê.`
+      );
+    } catch (error) {
+      console.error(getErrorMessage(error));
+      AppToast.error("Cập nhật trạng thái thất bại.");
     }
   };
 
@@ -53,7 +89,7 @@ export default function AdminCoffeeTypePage() {
     fetchCoffeeType();
   };
 
-  const filteredCoffeeTypes = coffeeType.filter((coffee) => {
+  const filteredCoffeeTypes = coffeeTypes.filter((coffee) => {
     const matchesSearch =
       coffee.typeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       coffee.typeCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,7 +104,7 @@ export default function AdminCoffeeTypePage() {
     if (confirm(t("coffeeType.messages.deleteConfirm"))) {
       try {
         await deleteCoffeeType(coffeeTypeId);
-        setCoffeeType((prev) =>
+        setCoffeeTypes((prev) =>
           prev.filter((coffee) => coffee.coffeeTypeId !== coffeeTypeId)
         );
         AppToast.success(t("coffeeType.messages.deleteSuccess"));
@@ -204,6 +240,15 @@ export default function AdminCoffeeTypePage() {
                       {t("coffeeType.table.specialtyLevel")}
                     </th>
                     <th className='text-left py-3 px-4 font-medium text-gray-700'>
+                      {t("coffeeType.table.status")}
+                    </th>
+                    <th className='text-left py-3 px-4 font-medium text-gray-700'>
+                      {t("coffeeType.table.categoryParent")}
+                    </th>
+                    <th className='text-left py-3 px-4 font-medium text-gray-700'>
+                      {t("coffeeType.table.belongTo")}
+                    </th>
+                    <th className='text-left py-3 px-4 font-medium text-gray-700'>
                       {t("coffeeType.table.actions")}
                     </th>
                   </tr>
@@ -244,6 +289,27 @@ export default function AdminCoffeeTypePage() {
                           </Badge>
                         )}
                       </td>
+                      <td className='py-3 px-4'>
+                        {coffeeType.status && (
+                          <Badge variant='outline'>{coffeeType.status}</Badge>
+                        )}
+                      </td>
+                      <td className='py-3 px-4'>
+                        <span className='font-medium'>
+                          {coffeeType.coffeeTypeCategory === "general"
+                            ? ` ${t("coffeeType.category.general")}`
+                            : coffeeType.coffeeTypeCategory === "specific"
+                            ? ` ${t("coffeeType.category.specific")}`
+                            : ""}
+                        </span>
+                      </td>
+                      <td className='py-3 px-4'>
+                        {coffeeType.coffeeTypeParentId && (
+                          <span className='font-medium'>
+                            {coffeeType.coffeeTypeParentName}
+                          </span>
+                        )}
+                      </td>
 
                       <td className='py-3 px-4'>
                         <div className='flex gap-2'>
@@ -260,6 +326,19 @@ export default function AdminCoffeeTypePage() {
                               <Eye className='w-4 h-4' />
                             </Link>
                           </Button> */}
+
+                          <Input
+                            type='checkbox'
+                            checked={coffeeType.status === "Active"}
+                            onChange={() =>
+                              handleToggleStatus(
+                                coffeeType.coffeeTypeId,
+                                coffeeType.status ?? "InActive"
+                              )
+                            }
+                            className='h-8 w-8 p-0 rounded-full cursor-pointer accent-orange-600'
+                            title={t("coffeeType.actions.toggleStatus")}
+                          />
                           <Button
                             size='sm'
                             variant='outline'

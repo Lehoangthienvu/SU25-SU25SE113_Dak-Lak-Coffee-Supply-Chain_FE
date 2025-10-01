@@ -101,7 +101,7 @@ export default function ManagerReportsPage() {
     const getReportTypeDisplay = (reportType: string) => {
         switch (reportType) {
             case "Crop":
-                return "Cây trồng";
+                return "Vùng trồng";
             case "Processing":
                 return "Tiến độ";
             default:
