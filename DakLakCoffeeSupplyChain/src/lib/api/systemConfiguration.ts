@@ -79,6 +79,9 @@ export interface PaymentConfigurationViewAllDto {
   roleName: string;
   feeType: string;
   amount: number;
+  minTons?: number | null;
+  maxTons?: number | null;
+  configName?: string;
   isActive: boolean | null;
   effectiveFrom: string;
   effectiveTo: string | null;
