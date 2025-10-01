@@ -72,10 +72,11 @@ function PaymentNotificationContent() {
 
     try {
       if (paymentMethod === "VNPay") {
-        const payload: { planId: string; returnUrl?: string } = { planId: paymentData.planId };
-        if (!isProd) {
-          payload.returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`;
-        }
+        // Xóa bỏ if (!isProd) và luôn gửi returnUrl
+        const payload = {
+          planId: paymentData.planId,
+          returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`
+        };
 
         const url = await createVnPayUrl(payload);
         if (url) {
