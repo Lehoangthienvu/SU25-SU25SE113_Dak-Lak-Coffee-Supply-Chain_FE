@@ -12,13 +12,15 @@ import { CoffeeType } from "@/lib/api/coffeeType";
 import { ProcessingMethod } from "@/lib/api/processingMethods";
 import { REGIONS } from "@/lib/api/regions";
 import { useTranslation } from "react-i18next";
+import TargetRegionSelect from "../target-regions/TargetRegionSelect";
 
 export interface ProcurementPlanDetailFormData {
   planDetailsId?: string; // Optional for new details
   coffeeTypeId: string;
   processMethodId: number;
   targetQuantity: number;
-  targetRegion: string;
+  //targetRegion: string;
+  targetRegions: string[];
   minimumRegistrationQuantity: number;
   minPriceRange: number;
   maxPriceRange: number;
@@ -73,12 +75,13 @@ export default function ProcurementPlanForm({
           coffeeTypeId: "",
           processMethodId: 0,
           targetQuantity: 0,
-          targetRegion: "",
+          //targetRegion: "",
           minimumRegistrationQuantity: 0,
           minPriceRange: 0,
           maxPriceRange: 0,
           expectedYieldPerHectare: 0,
           note: "",
+          targetRegions: [],
         },
       ],
     }
@@ -102,33 +105,73 @@ export default function ProcurementPlanForm({
     onChange(newForm);
   };
 
+  // const handleDetailChange = (
+  //   index: number,
+  //   e: React.ChangeEvent<
+  //     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  //   >
+  // ) => {
+  //   const { name, value } = e.target;
+  //   const numberFields = [
+  //     "processMethodId",
+  //     "targetQuantity",
+  //     "minimumRegistrationQuantity",
+  //     "minPriceRange",
+  //     "maxPriceRange",
+  //     "expectedYieldPerHectare",
+  //   ];
+
+  //   const newDetails = [...form.procurementPlansDetails];
+
+  //   if (name === "processMethodId") {
+  //     newDetails[index] = {
+  //       ...newDetails[index],
+  //       [name]: Number(value) === 0 ? 0 : Number(value),
+  //     };
+  //   } else {
+  //     newDetails[index] = {
+  //       ...newDetails[index],
+  //       [name]: numberFields.includes(name) ? Number(value) : value,
+  //     };
+  //   }
+
+  //   const newForm = { ...form, procurementPlansDetails: newDetails };
+  //   setForm(newForm);
+  //   onChange(newForm);
+  // };
+
   const handleDetailChange = (
     index: number,
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    eOrField:
+      | React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+      | string,
+    value?: any
   ) => {
-    const { name, value } = e.target;
-    const numberFields = [
-      "processMethodId",
-      "targetQuantity",
-      "minimumRegistrationQuantity",
-      "minPriceRange",
-      "maxPriceRange",
-      "expectedYieldPerHectare",
-    ];
-
     const newDetails = [...form.procurementPlansDetails];
 
-    if (name === "processMethodId") {
+    if (typeof eOrField === "string") {
+      // Trường hợp custom component gọi thẳng field + value
       newDetails[index] = {
         ...newDetails[index],
-        [name]: Number(value) === 0 ? 0 : Number(value),
+        [eOrField]: value,
       };
     } else {
+      // Trường hợp input/select mặc định
+      const { name, value: inputValue } = eOrField.target;
+      const numberFields = [
+        "processMethodId",
+        "targetQuantity",
+        "minimumRegistrationQuantity",
+        "minPriceRange",
+        "maxPriceRange",
+        "expectedYieldPerHectare",
+      ];
+
       newDetails[index] = {
         ...newDetails[index],
-        [name]: numberFields.includes(name) ? Number(value) : value,
+        [name]: numberFields.includes(name) ? Number(inputValue) : inputValue,
       };
     }
 
@@ -367,7 +410,7 @@ export default function ProcurementPlanForm({
                       size='sm'
                       onClick={() => handleRemoveDetail(index)}
                       type='button'
-                    //className='hover:bg-red-600'
+                      //className='hover:bg-red-600'
                     >
                       <FiTrash2 className='mr-2' />
                       {t(
@@ -764,7 +807,7 @@ export default function ProcurementPlanForm({
                       </p>
                     ) : (
                       <>
-                        <select
+                        {/* <select
                           id={`targetRegion-${index}-${Math.random()}`}
                           name='targetRegion'
                           value={detail.targetRegion}
@@ -777,6 +820,11 @@ export default function ProcurementPlanForm({
                               "procurementPlan.components.procurementPlanForm.fields.targetRegion.placeholder"
                             )}
                           </option>
+                          <option value={0} className='cursor-pointer'>
+                            {t(
+                              "procurementPlan.components.procurementPlanForm.fields.targetRegion.all"
+                            )}
+                          </option>
                           {targetRegions.map((region) => (
                             <option
                               key={region.name}
@@ -786,7 +834,18 @@ export default function ProcurementPlanForm({
                               {region.name}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <TargetRegionSelect
+                          index={index}
+                          detail={detail}
+                          handleDetailChange={handleDetailChange}
+                          t={t}
+                          options={targetRegions.map((r) => ({
+                            value: r.name,
+                            label: r.name,
+                          }))}
+                        />
+
                         {errors[`targetRegion-${index}`] && (
                           <p className='text-red-500 text-xs mt-1'>
                             {errors[`targetRegion-${index}`]}
@@ -794,28 +853,6 @@ export default function ProcurementPlanForm({
                         )}
                       </>
                     )}
-                    {/* <select
-                      id={`targetRegion-${index}`}
-                      name='targetRegion'
-                      value={detail.targetRegion}
-                      onChange={(e) => handleDetailChange(index, e)}
-                      className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 cursor-pointer focus:border-blue-500 focus:ring-blue-500'
-                    >
-                      <option value='' className='cursor-pointer'>
-                        {t(
-                          "procurementPlan.components.procurementPlanForm.fields.targetRegion.placeholder"
-                        )}
-                      </option>
-                      {getTargetRegionOptions().map((region) => (
-                        <option
-                          key={region.value}
-                          value={region.value}
-                          className='cursor-pointer'
-                        >
-                          {region.label}
-                        </option>
-                      ))}
-                    </select> */}
                   </div>
 
                   {/* <div>
@@ -870,7 +907,7 @@ export default function ProcurementPlanForm({
               variant='secondary'
               size='lg'
               type='button'
-            //className='border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
+              //className='border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
             >
               +{" "}
               {t(
@@ -899,15 +936,15 @@ export default function ProcurementPlanForm({
                 type='submit'
                 variant='default'
                 disabled={isSubmitting}
-              //className='bg-blue-600 hover:bg-blue-700 px-8 py-3'
+                //className='bg-blue-600 hover:bg-blue-700 px-8 py-3'
               >
                 {isSubmitting
                   ? t(
-                    "procurementPlan.components.procurementPlanForm.buttons.submit"
-                  )
+                      "procurementPlan.components.procurementPlanForm.buttons.submit"
+                    )
                   : t(
-                    "procurementPlan.components.procurementPlanForm.buttons.submit"
-                  )}
+                      "procurementPlan.components.procurementPlanForm.buttons.submit"
+                    )}
               </LoadingButton>
             </div>
           </div>
