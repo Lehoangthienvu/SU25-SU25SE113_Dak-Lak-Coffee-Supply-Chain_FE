@@ -66,7 +66,7 @@ export default function CreateProcurementPlanPage() {
     if (
       form.startDate &&
       new Date(form.startDate) <
-        new Date(new Date().toISOString().split("T")[0])
+      new Date(new Date().toISOString().split("T")[0])
     ) {
       newErrors.startDate = t(
         "procurementPlan.components.procurementPlanForm.validation.startDatePast"
@@ -255,7 +255,7 @@ export default function CreateProcurementPlanPage() {
       if (created?.planId) {
         // Lấy phí thanh toán từ API thay vì hard-code
         try {
-          const feeInfo = await getPlanPostingFee();
+          const feeInfo = await getPlanPostingFee(created.planId); // ✅ truyền planId
           const params = new URLSearchParams({
             planId: created.planId,
             amount: feeInfo.amount.toString(),

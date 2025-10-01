@@ -30,8 +30,8 @@ export async function checkPaymentStatus(planId: string): Promise<PaymentStatusR
   return res.data;
 }
 
-export async function getPlanPostingFee(): Promise<PaymentAmountResponse> {
-  const res = await api.get('/Payments/plan-posting-fee');
+export async function getPlanPostingFee(planId: string): Promise<PaymentAmountResponse> {
+  const res = await api.get(`/Payments/plan-posting-fee/${planId}`);
   return res.data;
 }
 
