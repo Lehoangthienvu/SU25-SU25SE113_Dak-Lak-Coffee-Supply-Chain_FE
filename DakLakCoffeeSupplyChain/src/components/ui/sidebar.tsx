@@ -25,6 +25,7 @@ import {
   FiBell,
   FiActivity,
   FiLayers,
+  FiCreditCard,
 } from "react-icons/fi";
 import { FaSeedling } from "react-icons/fa";
 
@@ -177,6 +178,11 @@ export function SidebarGroup() {
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
+      {
+        title: "Lịch sử thanh toán",
+        href: "/dashboard/payments/history",
+        icon: <FiCreditCard />,
+      },
     ],
     admin: [
       {
@@ -281,6 +287,11 @@ export function SidebarGroup() {
         href: "/dashboard/notifications",
         icon: <FiBell />,
       },
+      {
+        title: "Lịch sử thanh toán",
+        href: "/dashboard/payments/history",
+        icon: <FiCreditCard />,
+      },
     ],
     staff: [
       {
@@ -297,6 +308,11 @@ export function SidebarGroup() {
         title: t("sidebar.navigation.notifications"),
         href: "/dashboard/notifications",
         icon: <FiBell />,
+      },
+      {
+        title: "Lịch sử thanh toán",
+        href: "/dashboard/payments/history",
+        icon: <FiCreditCard />,
       },
     ],
     manager: [
@@ -324,6 +340,11 @@ export function SidebarGroup() {
         title: t("sidebar.navigation.notifications"),
         href: "/dashboard/notifications",
         icon: <FiBell />,
+      },
+      {
+        title: "Lịch sử thanh toán",
+        href: "/dashboard/payments/history",
+        icon: <FiCreditCard />,
       },
     ],
   };
