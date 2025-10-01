@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CreditCard, Wallet, AlertCircle, CheckCircle2, Clock } from "lucide-react";
-import { createVnPayUrl, processWalletPayment } from "@/lib/api/payments";
+import { CreditCard, Wallet, AlertCircle, CheckCircle2 } from "lucide-react";
+import { createVnPayUrl, processWalletPayment, getPlanPostingFee } from "@/lib/api/payments";
 import { AppToast } from "@/components/ui/AppToast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { Separator } from "@/components/ui/separator";
@@ -23,74 +22,102 @@ function PaymentNotificationContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentNotificationData | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>('VNPay');
+  const [paymentMethod, setPaymentMethod] = useState<string>("VNPay");
+  const submittingRef = useRef(false);
+
+  const isProd = useMemo(
+    () => process.env.NEXT_PUBLIC_ENV === "production" || process.env.NODE_ENV === "production",
+    []
+  );
 
   useEffect(() => {
-    const planId = searchParams.get("planId");
-    const amount = searchParams.get("amount");
-    const planTitle = searchParams.get("planTitle");
+    const planId = searchParams.get("planId") || "";
+    const planTitle = searchParams.get("planTitle") || "";
 
-    if (planId && amount && planTitle) {
-      setPaymentData({
-        planId,
-        amount: parseInt(amount),
-        planTitle: decodeURIComponent(planTitle)
-      });
-    } else {
+    if (!planId || !planTitle) {
+      AppToast.error("Thiếu dữ liệu thanh toán. Quay lại trang quản lý.");
       router.push("/dashboard/manager/procurement-plans");
+      return;
     }
+
+    const safeTitle = (() => {
+      try {
+        return decodeURIComponent(planTitle);
+      } catch {
+        return planTitle;
+      }
+    })();
+
+    // 🔥 Gọi API để lấy phí mới nhất theo planId
+    (async () => {
+      try {
+        const fee = await getPlanPostingFee(planId);
+        setPaymentData({
+          planId,
+          amount: fee.amount,
+          planTitle: safeTitle,
+        });
+      } catch (e) {
+        console.error("Lỗi lấy phí:", e);
+        AppToast.error("Không thể lấy phí đăng ký. Quay lại trang quản lý.");
+        router.push("/dashboard/manager/procurement-plans");
+      }
+    })();
   }, [searchParams, router]);
 
   const handleProceedToPayment = async () => {
-    if (!paymentData) return;
-
+    if (!paymentData || submittingRef.current) return;
+    submittingRef.current = true;
     setLoading(true);
+
     try {
-      if (paymentMethod === 'VNPay') {
-        // <<< SỬA LẠI ĐÚNG ĐƯỜNG DẪN TẠI ĐÂY >>>
-        const returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`;;
+      if (paymentMethod === "VNPay") {
+        const payload: { planId: string; returnUrl?: string } = { planId: paymentData.planId };
+        if (!isProd) {
+          payload.returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`;
+        }
 
-        const url = await createVnPayUrl({
-          planId: paymentData.planId,
-          returnUrl
-        });
-
+        const url = await createVnPayUrl(payload);
         if (url) {
           window.location.href = url;
         } else {
-          AppToast.error("Không thể tạo URL thanh toán");
+          AppToast.error("Không thể tạo URL thanh toán VNPay.");
         }
       } else {
         const result = await processWalletPayment({
           planId: paymentData.planId,
           amount: paymentData.amount,
-          description: `Thanh toán phí đăng ký kế hoạch: ${paymentData.planTitle}`
+          description: `Thanh toán phí đăng ký kế hoạch: ${paymentData.planTitle}`,
         });
 
         if (result.success) {
           AppToast.success("Thanh toán thành công! Kế hoạch đã được kích hoạt.");
           router.push("/dashboard/manager/procurement-plans");
         } else {
-          AppToast.error(result.message || "Thanh toán thất bại");
+          AppToast.error(result.message || "Thanh toán thất bại.");
         }
       }
     } catch (error) {
       console.error("Lỗi xử lý thanh toán:", error);
-      AppToast.error("Có lỗi xảy ra khi xử lý thanh toán");
+      AppToast.error("Có lỗi xảy ra khi xử lý thanh toán.");
     } finally {
       setLoading(false);
+      submittingRef.current = false;
     }
   };
 
   if (!paymentData) {
-    return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen py-8 bg-gray-50">
       <div className="max-w-2xl mx-auto px-4">
         <Card className="shadow-lg border-0">
-          {/* Card Header */}
           <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-xl">
             <div className="flex items-center space-x-3">
               <CreditCard className="h-8 w-8" />
@@ -101,7 +128,6 @@ function PaymentNotificationContent() {
             </div>
           </CardHeader>
 
-          {/* Card Content */}
           <CardContent className="p-8 space-y-6">
             {/* Plan Info */}
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -122,10 +148,18 @@ function PaymentNotificationContent() {
                 Phương thức thanh toán
               </h3>
               <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Chọn phương thức" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="VNPay"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4" />VNPay (Ngân hàng)</div></SelectItem>
-                  <SelectItem value="Wallet"><div className="flex items-center gap-2"><Wallet className="h-4 w-4" />Ví nội bộ</div></SelectItem>
+                  <SelectItem value="VNPay">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" /> VNPay (Ngân hàng)
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Wallet">
+                    <div className="flex items-center gap-2">
+                      <Wallet className="h-4 w-4" /> Ví nội bộ
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -148,9 +182,20 @@ function PaymentNotificationContent() {
 
             {/* Action Buttons */}
             <div className="flex space-x-4 pt-4">
-              <Button onClick={() => router.push("/dashboard/manager/procurement-plans")} variant="outline" className="flex-1">Hủy bỏ</Button>
-              <Button onClick={handleProceedToPayment} disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
-                {loading ? <LoadingSpinner /> : (paymentMethod === 'VNPay' ? 'Tiếp tục với VNPay' : 'Thanh toán bằng ví')}
+              <Button
+                onClick={() => router.push("/dashboard/manager/procurement-plans")}
+                variant="outline"
+                className="flex-1"
+                disabled={loading}
+              >
+                Hủy bỏ
+              </Button>
+              <Button
+                onClick={handleProceedToPayment}
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {loading ? <LoadingSpinner /> : (paymentMethod === "VNPay" ? "Tiếp tục với VNPay" : "Thanh toán bằng ví")}
               </Button>
             </div>
           </CardContent>

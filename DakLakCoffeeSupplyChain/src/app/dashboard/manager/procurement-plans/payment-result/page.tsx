@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { checkPaymentStatus, confirmVnPayReturn } from "@/lib/api/payments"; // <<< thêm import
+import { checkPaymentStatus, confirmVnPayReturn } from "@/lib/api/payments";
 import { Loader2, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ function PaymentReturnContent() {
     if (status !== "pending") return;
 
     const planId = searchParams.get("planId");
-    const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
+    const vnp_ResponseCode = searchParams.get("vnp_ResponseCode"); // có thể null khi quay về FE
 
     if (!planId) {
       setStatus("failed");
@@ -25,7 +25,7 @@ function PaymentReturnContent() {
       return;
     }
 
-    // 1) Gọi callback return trên BE để xác nhận giao dịch (idempotent)
+    // 1) Gọi BE xác nhận (idempotent) – chỉ gửi các tham số vnp_
     (async () => {
       try {
         await confirmVnPayReturn(window.location.search);
@@ -35,14 +35,14 @@ function PaymentReturnContent() {
       }
     })();
 
-    // Nếu user hủy/thất bại ở cổng VNPay -> báo luôn
+    // 2) Nếu cổng báo lỗi rõ ràng → fail sớm
     if (vnp_ResponseCode && vnp_ResponseCode !== "00") {
       setStatus("failed");
       setMessage("Giao dịch đã bị hủy hoặc thất bại tại cổng thanh toán.");
       return;
     }
 
-    // 2) Poll trạng thái planId
+    // 3) Poll trạng thái theo planId
     const intervalId = setInterval(async () => {
       try {
         const res = await checkPaymentStatus(planId);
@@ -56,16 +56,16 @@ function PaymentReturnContent() {
           setMessage("Thanh toán đã thất bại. Vui lòng thử lại.");
           clearInterval(intervalId);
         }
-        // Pending -> đợi poll tiếp
+        // Pending → tiếp tục poll
       } catch (e) {
         console.error("Lỗi khi kiểm tra trạng thái thanh toán:", e);
-        // để poll tiếp, tránh false-fail do mạng
+        // tiếp tục poll để tránh false-fail do mạng
       }
     }, 3000);
 
-    // 3) Timeout dừng poll
+    // 4) Timeout (45s) dừng poll
     const timeoutId = setTimeout(() => {
-      setStatus(cur => {
+      setStatus((cur) => {
         if (cur === "pending") {
           clearInterval(intervalId);
           setMessage("Giao dịch đang được xử lý. Hệ thống sẽ cập nhật và thông báo cho bạn sau.");
@@ -81,20 +81,30 @@ function PaymentReturnContent() {
     };
   }, [searchParams, router, status]);
 
-  const Icon = status === "success" ? CheckCircle
-    : status === "failed" ? XCircle
-      : status === "timeout" ? AlertTriangle
-        : Loader2;
+  const Icon =
+    status === "success" ? CheckCircle :
+      status === "failed" ? XCircle :
+        status === "timeout" ? AlertTriangle :
+          Loader2;
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-full max-w-md text-center">
         <CardHeader><CardTitle>Kết quả thanh toán</CardTitle></CardHeader>
         <CardContent className="flex flex-col items-center gap-4 p-6">
-          <Icon className={`w-16 h-16 ${status === "pending" ? "animate-spin text-blue-500" : status === "success" ? "text-green-500" : status === "failed" ? "text-red-500" : "text-yellow-500"}`} />
+          <Icon
+            className={`w-16 h-16 ${status === "pending"
+                ? "animate-spin text-blue-500"
+                : status === "success"
+                  ? "text-green-500"
+                  : status === "failed"
+                    ? "text-red-500"
+                    : "text-yellow-500"
+              }`}
+          />
           <p className="text-lg">{message}</p>
           {(status === "failed" || status === "timeout") && (
-            <Button onClick={() => router.push('/dashboard/manager/procurement-plans')}>
+            <Button onClick={() => router.push("/dashboard/manager/procurement-plans")}>
               Về trang quản lý
             </Button>
           )}
