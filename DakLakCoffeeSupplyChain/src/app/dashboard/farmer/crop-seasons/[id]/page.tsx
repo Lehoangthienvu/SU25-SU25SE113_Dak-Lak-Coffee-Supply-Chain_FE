@@ -7,6 +7,7 @@ import {
     getCropSeasonById,
     CropSeason,
 } from '@/lib/api/cropSeasons';
+import { CropSeasonDetailStatusValueToNumber } from '@/lib/constants/cropSeasonDetailStatus';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Leaf, Calendar, MapPin, User, FileText, Plus, TrendingUp } from 'lucide-react';
@@ -261,7 +262,7 @@ export default function CropSeasonDetail() {
                                 actualYield: detail.actualYield,
                                 plannedQuality: detail.plannedQuality || '',
                                 qualityGrade: detail.qualityGrade || '',
-                                status: detail.status === 'Completed' ? 2 : detail.status === 'InProgress' ? 1 : 0,
+                                status: CropSeasonDetailStatusValueToNumber[detail.status as keyof typeof CropSeasonDetailStatusValueToNumber] || 0,
                                 farmerId: detail.farmerId || '',
                                 farmerName: detail.farmerName || '',
                                 committedQuantity: detail.committedQuantity,
