@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,11 +25,6 @@ function PaymentNotificationContent() {
   const [paymentMethod, setPaymentMethod] = useState<string>("VNPay");
   const submittingRef = useRef(false);
 
-  const isProd = useMemo(
-    () => process.env.NEXT_PUBLIC_ENV === "production" || process.env.NODE_ENV === "production",
-    []
-  );
-
   useEffect(() => {
     const planId = searchParams.get("planId") || "";
     const planTitle = searchParams.get("planTitle") || "";
@@ -48,7 +43,6 @@ function PaymentNotificationContent() {
       }
     })();
 
-    // 🔥 Gọi API để lấy phí mới nhất theo planId
     (async () => {
       try {
         const fee = await getPlanPostingFee(planId);
@@ -72,10 +66,11 @@ function PaymentNotificationContent() {
 
     try {
       if (paymentMethod === "VNPay") {
-        const payload: { planId: string; returnUrl?: string } = { planId: paymentData.planId };
-        if (!isProd) {
-          payload.returnUrl = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${paymentData.planId}`;
-        }
+        const payload = {
+          planId: paymentData.planId,
+          returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/payment-return?planId=${paymentData.planId}`,
+          locale: "vn"
+        };
 
         const url = await createVnPayUrl(payload);
         if (url) {

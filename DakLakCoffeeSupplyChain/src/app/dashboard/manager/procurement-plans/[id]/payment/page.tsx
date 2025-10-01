@@ -57,19 +57,20 @@ export default function PaymentPage() {
       setProcessing(true);
 
       if (paymentMethod === 'VNPay') {
-        // <<< THAY ĐỔI QUAN TRỌNG Ở ĐÂY >>>
-        // URL này trỏ đến trang mới có logic polling, không phải trang 'success' tĩnh
-        const returnUrlForUser = `${window.location.origin}/dashboard/manager/procurement-plans/payment-return`;
-
+        // 🔥 Luôn truyền returnUrl kèm planId để tránh lỗi config
         const paymentUrl = await createVnPayUrl({
           planId: id as string,
-          returnUrl: returnUrlForUser, // Sử dụng URL đã sửa
+          returnUrl: `${window.location.origin}/dashboard/manager/procurement-plans/payment-return?planId=${id}`,
           locale: 'vn'
         });
 
-        window.location.href = paymentUrl;
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        } else {
+          AppToast.error("Không thể tạo URL thanh toán VNPay.");
+        }
       } else {
-        // Thanh toán qua ví nội bộ (giữ nguyên)
+        // Thanh toán qua ví nội bộ
         const result = await processWalletPayment({
           planId: id as string,
           amount: amount,
