@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import {
   getCropSeasonDetailStatusMap,
+  CropSeasonDetailStatusNumberToValue,
 } from "@/lib/constants/cropSeasonDetailStatus";
 import { CropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 import { Edit, Coffee, MapPin, Calendar, Target } from "lucide-react";
@@ -235,7 +236,7 @@ export default function CropSeasonDetailTable({
                   })()}
                 </td>
                 <td className="px-3 py-3 text-center">
-                  <StatusBadge status={detail.status} map={getCropSeasonDetailStatusMap(t)} />
+                  <StatusBadge status={CropSeasonDetailStatusNumberToValue[detail.status] || 'Planned'} map={getCropSeasonDetailStatusMap(t)} />
                 </td>
                 <td className="px-3 py-3 text-center">
                   <div className="flex items-center justify-center gap-1">
