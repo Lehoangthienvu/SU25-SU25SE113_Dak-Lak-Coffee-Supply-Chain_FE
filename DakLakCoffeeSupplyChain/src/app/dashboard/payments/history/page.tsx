@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getPaymentHistory, PaymentHistory, confirmVnPayReturn } from "@/lib/api/payments";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,7 +48,7 @@ function renderStatusBadge(status: string) {
   return <Badge className={variant}>{label || "Không xác định"}</Badge>;
 }
 
-export default function PaymentHistoryPage() {
+function PaymentHistoryContent() {
   const [items, setItems] = useState<PaymentHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -472,5 +472,19 @@ export default function PaymentHistoryPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function PaymentHistoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto py-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-gray-500">Đang tải...</div>
+        </div>
+      </div>
+    }>
+      <PaymentHistoryContent />
+    </Suspense>
   );
 }
