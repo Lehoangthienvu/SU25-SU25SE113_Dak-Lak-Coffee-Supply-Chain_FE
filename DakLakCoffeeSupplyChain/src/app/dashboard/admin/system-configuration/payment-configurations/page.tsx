@@ -187,6 +187,9 @@ import {
   FiUsers,
   FiToggleLeft,
   FiToggleRight,
+  FiChevronDown,
+  FiChevronUp,
+  FiFilter,
 } from "react-icons/fi";
 
 export default function PaymentConfigurationsPage() {
@@ -218,6 +221,7 @@ export default function PaymentConfigurationsPage() {
   const [effectiveToFilter, setEffectiveToFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all"); // all | active | inactive
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showFilters, setShowFilters] = useState<boolean>(false); // Ẩn/hiện bộ lọc
   const PAGE_SIZE = 6;
 
   // Form states
@@ -225,6 +229,9 @@ export default function PaymentConfigurationsPage() {
     roleId: 0,
     feeType: "",
     amount: 0,
+    minTons: null,
+    maxTons: null,
+    configName: "",
     description: "",
     effectiveFrom: new Date().toISOString().split("T")[0],
     effectiveTo: null,
@@ -247,7 +254,6 @@ export default function PaymentConfigurationsPage() {
     { value: "QuarterlyMaintenance", label: "Phí duy trì quý" },
     { value: "YearlyMaintenance", label: "Phí duy trì năm" },
     { value: "PlanPosting", label: "Phí đăng kế hoạch thu mua" },
-    { value: "PurchasePlanPosting", label: "Phí đăng kế hoạch thu mua" },
     { value: "Other", label: "Phí khác" },
   ];
 
@@ -505,6 +511,9 @@ export default function PaymentConfigurationsPage() {
         roleId: 0,
         feeType: "",
         amount: 0,
+        minTons: null,
+        maxTons: null,
+        configName: "",
         description: "",
         effectiveFrom: new Date().toISOString().split("T")[0],
         effectiveTo: null,
@@ -538,6 +547,9 @@ export default function PaymentConfigurationsPage() {
         roleId: formData.roleId,
         feeType: formData.feeType,
         amount: formData.amount,
+        minTons: formData.minTons,
+        maxTons: formData.maxTons,
+        configName: formData.configName,
         description: formData.description,
         effectiveFrom: formData.effectiveFrom,
         effectiveTo: formData.effectiveTo,
@@ -588,6 +600,9 @@ export default function PaymentConfigurationsPage() {
         roleId: configDetails.roleId,
         feeType: configDetails.feeType,
         amount: configDetails.amount,
+        minTons: configDetails.minTons,
+        maxTons: configDetails.maxTons,
+        configName: configDetails.configName,
         description: configDetails.description,
         effectiveFrom: configDetails.effectiveFrom,
         effectiveTo: configDetails.effectiveTo,
@@ -644,6 +659,9 @@ export default function PaymentConfigurationsPage() {
         roleId: configDetails.roleId,
         feeType: configDetails.feeType,
         amount: configDetails.amount,
+        minTons: configDetails.minTons,
+        maxTons: configDetails.maxTons,
+        configName: configDetails.configName || "",
         description: configDetails.description || "",
         effectiveFrom: configDetails.effectiveFrom.split("T")[0],
         effectiveTo: configDetails.effectiveTo
@@ -775,6 +793,17 @@ export default function PaymentConfigurationsPage() {
                   </div>
 
                   <div>
+                    <Label>Tên cấu hình</Label>
+                    <Input
+                      value={formData.configName || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, configName: e.target.value })
+                      }
+                      placeholder="Nhập tên cấu hình..."
+                    />
+                  </div>
+
+                  <div>
                     <Label>
                       Số tiền (VND) <span className="text-red-500">*</span>
                     </Label>
@@ -799,6 +828,41 @@ export default function PaymentConfigurationsPage() {
                         {numberToVietnameseWords(formData.amount)} VND
                       </p>
                     )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Tấn tối thiểu</Label>
+                      <Input
+                        type="number"
+                        value={formData.minTons || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            minTons: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          })
+                        }
+                        placeholder="Nhập số tấn..."
+                      />
+                    </div>
+                    <div>
+                      <Label>Tấn tối đa</Label>
+                      <Input
+                        type="number"
+                        value={formData.maxTons || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            maxTons: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          })
+                        }
+                        placeholder="Nhập số tấn..."
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -862,132 +926,232 @@ export default function PaymentConfigurationsPage() {
         </div>
 
         {/* Filters */}
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-lg">Bộ lọc và tìm kiếm</CardTitle>
+        <Card className="mb-6">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FiFilter className="w-5 h-5" />
+                Bộ lọc và tìm kiếm
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+              >
+                {showFilters ? (
+                  <>
+                    <FiChevronUp className="w-4 h-4" />
+                    Ẩn bộ lọc
+                  </>
+                ) : (
+                  <>
+                    <FiChevronDown className="w-4 h-4" />
+                    Hiện bộ lọc
+                  </>
+                )}
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div>
-                <Label>Tìm kiếm tên cấu hình</Label>
-                <Input
-                  placeholder="Nhập tên cấu hình..."
-                  value={searchConfigName}
-                  onChange={(e) => setSearchConfigName(e.target.value)}
-                />
+          {showFilters && (
+            <CardContent className="space-y-6 pt-4">
+              {/* Search Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-700 border-b pb-2">
+                  Tìm kiếm
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Tên cấu hình</Label>
+                    <Input
+                      placeholder="Nhập tên cấu hình..."
+                      value={searchConfigName}
+                      onChange={(e) => setSearchConfigName(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Khoảng tấn</Label>
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        placeholder="Từ"
+                        value={searchTonsMin}
+                        onChange={(e) =>
+                          setSearchTonsMin(e.target.value.replace(/[^\d]/g, ""))
+                        }
+                      />
+                      <Input
+                        placeholder="Đến"
+                        value={searchTonsMax}
+                        onChange={(e) =>
+                          setSearchTonsMax(e.target.value.replace(/[^\d]/g, ""))
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">
+                      Khoảng tiền (VND)
+                    </Label>
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        placeholder="Từ"
+                        value={amountMin}
+                        onChange={(e) =>
+                          setAmountMin(e.target.value.replace(/[^\d]/g, ""))
+                        }
+                      />
+                      <Input
+                        placeholder="Đến"
+                        value={amountMax}
+                        onChange={(e) =>
+                          setAmountMax(e.target.value.replace(/[^\d]/g, ""))
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>Tấn tối thiểu</Label>
-                <Input
-                  placeholder="Nhập số tấn..."
-                  value={searchTonsMin}
-                  onChange={(e) =>
-                    setSearchTonsMin(e.target.value.replace(/[^\d]/g, ""))
-                  }
-                />
+
+              {/* Filter Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-700 border-b pb-2">
+                  Bộ lọc
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Vai trò</Label>
+                    <Select
+                      value={filterRoleId}
+                      onValueChange={setFilterRoleId}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Chọn vai trò" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tất cả vai trò</SelectItem>
+                        {roleOptions.map((role) => (
+                          <SelectItem key={role.id} value={role.id.toString()}>
+                            {role.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Loại phí</Label>
+                    <Select
+                      value={filterFeeType}
+                      onValueChange={setFilterFeeType}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Chọn loại phí" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tất cả loại phí</SelectItem>
+                        {feeTypeOptions.map((fee) => (
+                          <SelectItem key={fee.value} value={fee.value}>
+                            {fee.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Trạng thái</Label>
+                    <Select
+                      value={statusFilter}
+                      onValueChange={setStatusFilter}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                        <SelectItem value="active">Đang hoạt động</SelectItem>
+                        <SelectItem value="inactive">
+                          Không hoạt động
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>Tấn tối đa</Label>
-                <Input
-                  placeholder="Nhập số tấn..."
-                  value={searchTonsMax}
-                  onChange={(e) =>
-                    setSearchTonsMax(e.target.value.replace(/[^\d]/g, ""))
-                  }
-                />
+
+              {/* Date Filter Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-700 border-b pb-2">
+                  Hiệu lực
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Từ ngày</Label>
+                    <Input
+                      type="date"
+                      value={effectiveFromFilter}
+                      onChange={(e) => setEffectiveFromFilter(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Đến ngày</Label>
+                    <Input
+                      type="date"
+                      value={effectiveToFilter}
+                      onChange={(e) => setEffectiveToFilter(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div>
-                <Label>Vai trò</Label>
-                <Select value={filterRoleId} onValueChange={setFilterRoleId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn vai trò" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    {roleOptions.map((role) => (
-                      <SelectItem key={role.id} value={role.id.toString()}>
-                        {role.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Loại phí</Label>
-                <Select value={filterFeeType} onValueChange={setFilterFeeType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn loại phí" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    {feeTypeOptions.map((fee) => (
-                      <SelectItem key={fee.value} value={fee.value}>
-                        {fee.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Số tiền từ</Label>
-                <Input
-                  placeholder="0"
-                  value={amountMin}
-                  onChange={(e) =>
-                    setAmountMin(e.target.value.replace(/[^\d]/g, ""))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Đến</Label>
-                <Input
-                  placeholder="0"
-                  value={amountMax}
-                  onChange={(e) =>
-                    setAmountMax(e.target.value.replace(/[^\d]/g, ""))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Trạng thái</Label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="active">Đang hoạt động</SelectItem>
-                    <SelectItem value="inactive">Không hoạt động</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-              <div>
-                <Label>Hiệu lực từ</Label>
-                <Input
-                  type="date"
-                  value={effectiveFromFilter}
-                  onChange={(e) => setEffectiveFromFilter(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label>Đến</Label>
-                <Input
-                  type="date"
-                  value={effectiveToFilter}
-                  onChange={(e) => setEffectiveToFilter(e.target.value)}
-                />
-              </div>
-              <div className="md:col-span-2 flex items-end justify-end">
-                <Button variant="outline" onClick={clearFilters}>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={clearFilters}
+                  className="flex items-center gap-2"
+                >
+                  <FiRefreshCw className="w-4 h-4" />
                   Xóa bộ lọc
                 </Button>
               </div>
-            </div>
-          </CardContent>
+            </CardContent>
+          )}
+          {!showFilters && (
+            <CardContent className="pt-2">
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-4">
+                  <span>Hiển thị {filteredConfigurations.length} cấu hình</span>
+                  {(searchConfigName ||
+                    searchTonsMin ||
+                    searchTonsMax ||
+                    filterRoleId !== "all" ||
+                    filterFeeType !== "all" ||
+                    amountMin ||
+                    amountMax ||
+                    effectiveFromFilter ||
+                    effectiveToFilter ||
+                    statusFilter !== "all") && (
+                    <Badge
+                      variant="secondary"
+                      className="bg-blue-100 text-blue-800"
+                    >
+                      Đã áp dụng bộ lọc
+                    </Badge>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Xóa bộ lọc
+                </Button>
+              </div>
+            </CardContent>
+          )}
         </Card>
 
         {/* Configurations Table */}
@@ -1243,6 +1407,17 @@ export default function PaymentConfigurationsPage() {
               </div>
 
               <div>
+                <Label>Tên cấu hình</Label>
+                <Input
+                  value={formData.configName || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, configName: e.target.value })
+                  }
+                  placeholder="Nhập tên cấu hình..."
+                />
+              </div>
+
+              <div>
                 <Label>
                   Số tiền (VND) <span className="text-red-500">*</span>
                 </Label>
@@ -1267,6 +1442,37 @@ export default function PaymentConfigurationsPage() {
                     {numberToVietnameseWords(formData.amount)} VND
                   </p>
                 )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Tấn tối thiểu</Label>
+                  <Input
+                    type="number"
+                    value={formData.minTons || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        minTons: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                    placeholder="Nhập số tấn..."
+                  />
+                </div>
+                <div>
+                  <Label>Tấn tối đa</Label>
+                  <Input
+                    type="number"
+                    value={formData.maxTons || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        maxTons: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                    placeholder="Nhập số tấn..."
+                  />
+                </div>
               </div>
 
               <div>
@@ -1337,116 +1543,262 @@ export default function PaymentConfigurationsPage() {
 
         {/* View Details Dialog */}
         <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Chi tiết cấu hình phí</DialogTitle>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="pb-6">
+              <DialogTitle className="text-2xl font-bold text-gray-900">
+                Chi tiết cấu hình phí
+              </DialogTitle>
             </DialogHeader>
             {viewingConfiguration && (
-              <div className="space-y-6">
-                {/* Header Info */}
-                <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-lg">
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <FiDollarSign className="text-orange-600 text-2xl" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {getFeeTypeLabel(viewingConfiguration.feeType)}
-                    </h3>
-                    <p className="text-gray-600">
-                      {getRoleName(viewingConfiguration.roleName)}
-                    </p>
-                  </div>
-                  <div className="ml-auto">
-                    <Badge
-                      variant={
-                        viewingConfiguration.isActive ? "default" : "secondary"
-                      }
-                      className={
-                        viewingConfiguration.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-600"
-                      }
-                    >
-                      {viewingConfiguration.isActive
-                        ? "Đang hoạt động"
-                        : "Không hoạt động"}
-                    </Badge>
+              <div className="space-y-8">
+                {/* Header Info - Enhanced */}
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-50 via-orange-50 to-orange-100 p-6 border border-orange-200">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200 rounded-full opacity-20 -translate-y-16 translate-x-16"></div>
+                  <div className="relative flex items-start gap-6">
+                    <div className="p-4 bg-white rounded-xl shadow-sm border border-orange-200">
+                      <FiDollarSign className="text-orange-600 text-3xl" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                            {viewingConfiguration.configName &&
+                            viewingConfiguration.configName.trim() !== ""
+                              ? viewingConfiguration.configName
+                              : getFeeTypeLabel(viewingConfiguration.feeType)}
+                          </h3>
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-orange-200">
+                              <FiUsers className="text-orange-600 w-4 h-4" />
+                              <span className="text-sm font-medium text-gray-700">
+                                {getRoleName(viewingConfiguration.roleName)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-orange-200">
+                              <span className="text-sm font-medium text-gray-700">
+                                {getFeeTypeLabel(viewingConfiguration.feeType)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-3xl font-bold text-green-600">
+                            {formatCurrency(viewingConfiguration.amount)}
+                          </div>
+                        </div>
+                        <Badge
+                          variant={
+                            viewingConfiguration.isActive
+                              ? "default"
+                              : "secondary"
+                          }
+                          className={`px-4 py-2 text-sm font-medium ${
+                            viewingConfiguration.isActive
+                              ? "bg-green-100 text-green-800 border-green-200"
+                              : "bg-gray-100 text-gray-600 border-gray-200"
+                          }`}
+                        >
+                          {viewingConfiguration.isActive ? (
+                            <div className="flex items-center gap-2">
+                              <FiCheckCircle className="w-4 h-4" />
+                              Đang hoạt động
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <FiXCircle className="w-4 h-4" />
+                              Không hoạt động
+                            </div>
+                          )}
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Số tiền
-                      </Label>
-                      <p className="text-2xl font-bold text-green-600">
+                {/* Details Grid - Enhanced */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column */}
+                  <div className="space-y-6">
+                    <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <FiDollarSign className="text-blue-600 w-5 h-5" />
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Thông tin tài chính
+                        </Label>
+                      </div>
+                      <div className="text-2xl font-bold text-green-600 mb-2">
                         {formatCurrency(viewingConfiguration.amount)}
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {numberToVietnameseWords(viewingConfiguration.amount)}{" "}
+                        VND
                       </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Vai trò
-                      </Label>
-                      <p className="text-lg font-medium text-gray-900">
+                    <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          <FiUsers className="text-purple-600 w-5 h-5" />
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Đối tượng áp dụng
+                        </Label>
+                      </div>
+                      <p className="text-lg font-medium text-gray-900 mb-2">
                         {getRoleName(viewingConfiguration.roleName)}
                       </p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Loại phí
-                      </Label>
-                      <p className="text-lg font-medium text-gray-900">
+                      <p className="text-sm text-gray-600">
                         {getFeeTypeLabel(viewingConfiguration.feeType)}
                       </p>
                     </div>
+
+                    <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <FiRefreshCw className="text-green-600 w-5 h-5" />
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Khoảng tấn áp dụng
+                        </Label>
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        {viewingConfiguration.minTons != null ||
+                        viewingConfiguration.maxTons != null ? (
+                          <div className="space-y-1">
+                            {viewingConfiguration.minTons != null && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">
+                                  Từ:
+                                </span>
+                                <span className="font-semibold">
+                                  {viewingConfiguration.minTons} tấn
+                                </span>
+                              </div>
+                            )}
+                            {viewingConfiguration.maxTons != null && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">
+                                  Đến:
+                                </span>
+                                <span className="font-semibold">
+                                  {viewingConfiguration.maxTons} tấn
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic">
+                            Không giới hạn
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Hiệu lực từ
-                      </Label>
-                      <p className="text-lg font-medium text-gray-900">
-                        {formatDate(viewingConfiguration.effectiveFrom)}
-                      </p>
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-orange-100 rounded-lg">
+                          <FiCalendar className="text-orange-600 w-5 h-5" />
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Thời gian hiệu lực
+                        </Label>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <span className="text-sm text-gray-500">
+                            Từ ngày:
+                          </span>
+                          <p className="text-lg font-medium text-gray-900">
+                            {formatDate(viewingConfiguration.effectiveFrom)}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-sm text-gray-500">
+                            Đến ngày:
+                          </span>
+                          <p className="text-lg font-medium text-gray-900">
+                            {viewingConfiguration.effectiveTo ? (
+                              formatDate(viewingConfiguration.effectiveTo)
+                            ) : (
+                              <span className="text-gray-400 italic">
+                                Không giới hạn
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Hết hiệu lực
-                      </Label>
-                      <p className="text-lg font-medium text-gray-900">
-                        {viewingConfiguration.effectiveTo
-                          ? formatDate(viewingConfiguration.effectiveTo)
-                          : "Không giới hạn"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Trạng thái
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        {viewingConfiguration.isActive ? (
-                          <FiCheckCircle className="text-green-500" />
-                        ) : (
-                          <FiXCircle className="text-red-500" />
-                        )}
-                        <span
-                          className={
+                    <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className={`p-2 rounded-lg ${
                             viewingConfiguration.isActive
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }
+                              ? "bg-green-100"
+                              : "bg-red-100"
+                          }`}
                         >
-                          {viewingConfiguration.isActive
-                            ? "Đang hoạt động"
-                            : "Không hoạt động"}
-                        </span>
+                          {viewingConfiguration.isActive ? (
+                            <FiCheckCircle className="text-green-600 w-5 h-5" />
+                          ) : (
+                            <FiXCircle className="text-red-600 w-5 h-5" />
+                          )}
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Trạng thái hoạt động
+                        </Label>
+                      </div>
+                      <div
+                        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium ${
+                          viewingConfiguration.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {viewingConfiguration.isActive ? (
+                          <>
+                            <FiCheckCircle className="w-4 h-4" />
+                            Đang hoạt động
+                          </>
+                        ) : (
+                          <>
+                            <FiXCircle className="w-4 h-4" />
+                            Không hoạt động
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Timestamps */}
+                    <div className="bg-gray-50 rounded-lg border border-gray-200 p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-gray-200 rounded-lg">
+                          <FiCalendar className="text-gray-600 w-5 h-5" />
+                        </div>
+                        <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                          Thông tin hệ thống
+                        </Label>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Ngày tạo:</span>
+                          <span className="font-medium text-gray-700">
+                            {new Date(
+                              viewingConfiguration.createdAt
+                            ).toLocaleString("vi-VN")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Cập nhật:</span>
+                          <span className="font-medium text-gray-700">
+                            {new Date(
+                              viewingConfiguration.updatedAt
+                            ).toLocaleString("vi-VN")}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1454,11 +1806,16 @@ export default function PaymentConfigurationsPage() {
 
                 {/* Description */}
                 {viewingConfiguration.description && (
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      Mô tả
-                    </Label>
-                    <div className="mt-2 p-4 bg-gray-50 rounded-lg">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <FiEdit className="text-indigo-600 w-5 h-5" />
+                      </div>
+                      <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                        Mô tả chi tiết
+                      </Label>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-indigo-400">
                       <p className="text-gray-700 leading-relaxed">
                         {viewingConfiguration.description}
                       </p>
@@ -1466,55 +1823,35 @@ export default function PaymentConfigurationsPage() {
                   </div>
                 )}
 
-                {/* Timestamps */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      Ngày tạo
-                    </Label>
-                    <p className="text-sm text-gray-600">
-                      {new Date(viewingConfiguration.createdAt).toLocaleString(
-                        "vi-VN"
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      Cập nhật lần cuối
-                    </Label>
-                    <p className="text-sm text-gray-600">
-                      {new Date(viewingConfiguration.updatedAt).toLocaleString(
-                        "vi-VN"
-                      )}
-                    </p>
-                  </div>
-                </div>
-
                 {/* Actions */}
-                <div className="flex justify-end gap-2 pt-4 border-t">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowViewDialog(false)}
-                  >
-                    Đóng
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setShowViewDialog(false);
-                      openEditDialog({
-                        configId: viewingConfiguration.configId,
-                        roleName: viewingConfiguration.roleName,
-                        feeType: viewingConfiguration.feeType,
-                        amount: viewingConfiguration.amount,
-                        isActive: viewingConfiguration.isActive,
-                        effectiveFrom: viewingConfiguration.effectiveFrom,
-                        effectiveTo: viewingConfiguration.effectiveTo,
-                      });
-                    }}
-                  >
-                    <FiEdit className="w-4 h-4 mr-2" />
-                    Chỉnh sửa
-                  </Button>
+                <div className="flex justify-end items-center pt-6 border-t border-gray-200">
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowViewDialog(false)}
+                      className="px-6"
+                    >
+                      Đóng
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowViewDialog(false);
+                        openEditDialog({
+                          configId: viewingConfiguration.configId,
+                          roleName: viewingConfiguration.roleName,
+                          feeType: viewingConfiguration.feeType,
+                          amount: viewingConfiguration.amount,
+                          isActive: viewingConfiguration.isActive,
+                          effectiveFrom: viewingConfiguration.effectiveFrom,
+                          effectiveTo: viewingConfiguration.effectiveTo,
+                        });
+                      }}
+                      className="px-6 bg-orange-600 hover:bg-orange-700"
+                    >
+                      <FiEdit className="w-4 h-4 mr-2" />
+                      Chỉnh sửa
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
