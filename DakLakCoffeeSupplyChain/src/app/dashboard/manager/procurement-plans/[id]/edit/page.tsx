@@ -15,6 +15,7 @@ import {
 } from "@/lib/api/processingMethods";
 import {
   getProcurementPlanById,
+  ProcurementPlansDetails,
   updateProcurementPlan,
 } from "@/lib/api/procurementPlans";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -71,18 +72,19 @@ export default function EditProcurementPlanPage() {
             startDate: planData.startDate.split("T")[0], // nếu API trả về ISO string
             endDate: planData.endDate.split("T")[0],
             procurementPlansDetails: planData.procurementPlansDetails.map(
-              (detail: any) => ({
-                planDetailsId: detail.planDetailsId,
-                coffeeTypeId: detail.coffeeTypeId,
-                processMethodId: detail.processMethodId || 0,
-                targetQuantity: detail.targetQuantity,
-                targetRegion: detail.targetRegion || "",
-                minimumRegistrationQuantity: detail.minimumRegistrationQuantity,
-                minPriceRange: detail.minPriceRange,
-                maxPriceRange: detail.maxPriceRange,
-                expectedYieldPerHectare: detail.expectedYieldPerHectare,
-                note: detail.note || "",
-                contractItemId: detail.contractItemId || null,
+              (detail: Partial<ProcurementPlansDetails>) => ({
+                planDetailsId: detail.planDetailsId ?? "",
+                coffeeTypeId: detail.coffeeTypeId ?? "",
+                processMethodId: detail.processMethodId ?? 0,
+                targetQuantity: detail.targetQuantity ?? 0,
+                //targetRegion: detail.targetRegion || "",
+                targetRegions: detail.targetRegions ?? [],
+                minimumRegistrationQuantity: detail.minimumRegistrationQuantity ?? 0,
+                minPriceRange: detail.minPriceRange ?? 0,
+                maxPriceRange: detail.maxPriceRange ?? 0,
+                expectedYieldPerHectare: detail.expectedYieldPerHectare ?? 0,
+                note: detail.note ?? "",
+                //contractItemId: detail.contractItemId || null,
               })
             ),
           };
@@ -211,11 +213,12 @@ export default function EditProcurementPlanPage() {
     const detailsUpdateDto = formData.procurementPlansDetails
       //.filter((item) => item.planDetailsId && item.planDetailsId.trim() !== "")
       .map((item) => {
-        const detail: any = {
+        const detail: Partial<ProcurementPlansDetails> = {
           planDetailsId: item.planDetailsId,
           coffeeTypeId: item.coffeeTypeId,
           targetQuantity: item.targetQuantity,
-          targetRegion: item.targetRegion,
+          //targetRegion: item.targetRegion,
+          targetRegions: item.targetRegions,
           minimumRegistrationQuantity: item.minimumRegistrationQuantity,
           minPriceRange: item.minPriceRange,
           maxPriceRange: item.maxPriceRange,
@@ -228,26 +231,6 @@ export default function EditProcurementPlanPage() {
         }
         return detail;
       });
-
-    // const detailsCreateDto = formData.procurementPlansDetails
-    //   .filter((item) => !item.planDetailsId || item.planDetailsId.trim() === "")
-    //   .map((item) => {
-    //     const detail: any = {
-    //       coffeeTypeId: item.coffeeTypeId,
-    //       targetQuantity: item.targetQuantity,
-    //       targetRegion: item.targetRegion,
-    //       minimumRegistrationQuantity: item.minimumRegistrationQuantity,
-    //       minPriceRange: item.minPriceRange,
-    //       maxPriceRange: item.maxPriceRange,
-    //       expectedYieldPerHectare: item.expectedYieldPerHectare,
-    //       note: item.note,
-    //       //contractItemId: item.contractItemId ?? null,
-    //     };
-    //     if (item.processMethodId && item.processMethodId !== 0) {
-    //       detail.processMethodId = item.processMethodId;
-    //     }
-    //     return detail;
-    //   });
 
     try {
       await updateProcurementPlan(planId, {
@@ -285,7 +268,8 @@ export default function EditProcurementPlanPage() {
           coffeeTypeId: "",
           processMethodId: 0,
           targetQuantity: 0,
-          targetRegion: "",
+          //targetRegion: "",
+          targetRegions: [],
           minimumRegistrationQuantity: 0,
           minPriceRange: 0,
           maxPriceRange: 0,

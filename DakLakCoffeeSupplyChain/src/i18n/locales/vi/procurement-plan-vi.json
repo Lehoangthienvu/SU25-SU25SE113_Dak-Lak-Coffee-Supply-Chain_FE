@@ -213,7 +213,8 @@
           },
           "targetRegion": {
             "label": "Khu vực thu mua",
-            "placeholder": "Chọn khu vực thu mua..."
+            "placeholder": "Chọn khu vực thu mua...",
+            "all" : "Chọn toàn bộ khu vực"
           },
           "minimumRegistrationQuantity": {
             "label": "Sản lượng đăng ký tối thiểu",
@@ -237,15 +238,6 @@
           "note": {
             "label": "Mô tả",
             "placeholder": "Nhập mô tả chi tiết..."
-          },
-          "targetRegion": {
-            "label": "Khu vực ưu tiên",
-            "placeholder": "-- Chọn khu vực ưu tiên --"
-          },
-          "minimumRegistrationQuantity": {
-            "label": "Sản lượng đăng ký tối thiểu (kg)",
-            "placeholder": "Nhập sản lượng tối thiểu...",
-            "required": "*"
           }
         },
         "buttons": {
