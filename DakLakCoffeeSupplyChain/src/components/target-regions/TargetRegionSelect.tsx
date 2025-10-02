@@ -49,15 +49,6 @@ const TargetRegionSelect: React.FC<Props> = ({
 
   return (
     <div>
-      <label
-        htmlFor={`targetRegion-${index}`}
-        className="text-sm font-medium text-gray-700"
-      >
-        {t(
-          "procurementPlan.components.procurementPlanForm.fields.targetRegion.label"
-        )}
-      </label>
-
       <select
         id={`targetRegion-${index}`}
         onChange={handleSelect}
