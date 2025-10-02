@@ -1,23 +1,34 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { checkPaymentStatus, confirmVnPayReturn } from "@/lib/api/payments";
 import { Loader2, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-function PaymentReturnContent() {
+export default function PaymentReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isMounted, setIsMounted] = useState(false);
   const [status, setStatus] = useState<"pending" | "success" | "failed" | "timeout">("pending");
   const [message, setMessage] = useState("Đang xác nhận thanh toán, vui lòng chờ...");
 
+  // ✅ FIX: Đảm bảo component đã mount (client-side)
   useEffect(() => {
-    if (status !== "pending") return;
+    setIsMounted(true);
+    console.log("[PaymentResult] Mounted (client-side)");
+    return () => {
+      setIsMounted(false);
+      console.log("[PaymentResult] Unmounted");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || status !== "pending") return;
 
     const planId = searchParams.get("planId");
-    const vnp_ResponseCode = searchParams.get("vnp_ResponseCode"); // có thể null khi quay về FE
+    const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
 
     if (!planId) {
       setStatus("failed");
@@ -79,7 +90,7 @@ function PaymentReturnContent() {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
     };
-  }, [searchParams, router, status]);
+  }, [isMounted, searchParams, router, status]);
 
   const Icon =
     status === "success" ? CheckCircle :
@@ -87,8 +98,17 @@ function PaymentReturnContent() {
         status === "timeout" ? AlertTriangle :
           Loader2;
 
+  // ✅ FIX: Hiển thị loading khi chưa mount
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-16 h-16 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div key={`payment-result-${isMounted}`} className="flex items-center justify-center min-h-screen">
       <Card className="w-full max-w-md text-center">
         <CardHeader><CardTitle>Kết quả thanh toán</CardTitle></CardHeader>
         <CardContent className="flex flex-col items-center gap-4 p-6">
@@ -111,13 +131,5 @@ function PaymentReturnContent() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-export default function PaymentReturnPage() {
-  return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Đang tải...</div>}>
-      <PaymentReturnContent />
-    </Suspense>
   );
 }

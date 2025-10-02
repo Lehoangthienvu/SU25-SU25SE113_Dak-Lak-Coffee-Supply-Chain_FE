@@ -141,3 +141,21 @@ export async function recordWalletTransaction(transactionData: {
   const response = await api.post('/WalletTransaction', transactionData);
   return response.data;
 }
+
+/**
+ * ✅ Tái tạo VNPay URL cho payment pending (tiếp tục thanh toán)
+ */
+export async function recreateWalletTopupPayment(paymentId: string, amount: number): Promise<WalletTopupResponse> {
+  const paymentUrl = await api.post('/Payments/wallet-topup/vnpay/recreate-url', {
+    paymentId,
+    amount,
+    returnUrl: `${window.location.origin}/dashboard/payments/history` // ✅ Redirect về Payment History
+  }).then(res => res.data.url);
+
+  return {
+    paymentUrl,
+    transactionId: paymentId,
+    amount,
+    message: 'Tiếp tục thanh toán thành công'
+  };
+}

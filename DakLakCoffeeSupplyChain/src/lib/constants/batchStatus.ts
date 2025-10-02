@@ -1,10 +1,4 @@
-import {
-  Clock4,
-  Loader2,
-  CheckCircle,
-  XCircle,
-  LucideIcon,
-} from "lucide-react";
+﻿import { LucideIcon, Clock4, Loader2, CheckCircle, ClipboardList, XCircle } from "lucide-react";
 
 export enum ProcessingStatus {
   NotStarted = "NotStarted",
@@ -21,36 +15,33 @@ export interface ProcessingStatusInfo {
   textClass: string;
 }
 
-export const ProcessingStatusMap: Record<
-  ProcessingStatus,
-  ProcessingStatusInfo
-> = {
+export const ProcessingStatusMap: Record<ProcessingStatus, ProcessingStatusInfo> = {
   [ProcessingStatus.NotStarted]: {
     label: "Chưa bắt đầu",
-    icon: Clock4, // đồng hồ
-    bgClass: "bg-yellow-100",
-    textClass: "text-yellow-800",
+    icon: Clock4,
+    bgClass: "bg-amber-100",
+    textClass: "text-amber-800",
   },
   [ProcessingStatus.InProgress]: {
     label: "Đang xử lý",
-    icon: Loader2, // vòng quay xử lý
+    icon: Loader2,
     bgClass: "bg-blue-100",
     textClass: "text-blue-800",
   },
   [ProcessingStatus.Completed]: {
     label: "Hoàn thành",
     icon: CheckCircle,
-    bgClass: "bg-green-100",
-    textClass: "text-green-800",
+    bgClass: "bg-emerald-100",
+    textClass: "text-emerald-800",
   },
   [ProcessingStatus.AwaitingEvaluation]: {
     label: "Chờ đánh giá",
-    icon: Clock4,
+    icon: ClipboardList,
     bgClass: "bg-orange-100",
     textClass: "text-orange-800",
   },
   [ProcessingStatus.Cancelled]: {
-    label: "Đã huỷ",
+    label: "Đã hủy",
     icon: XCircle,
     bgClass: "bg-red-100",
     textClass: "text-red-800",

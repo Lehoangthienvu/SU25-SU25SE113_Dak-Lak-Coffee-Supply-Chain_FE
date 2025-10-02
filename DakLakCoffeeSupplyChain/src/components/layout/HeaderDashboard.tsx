@@ -9,7 +9,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Input } from "@/components/ui/input";
 import { roleRawToDisplayName } from "@/lib/constants/role";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User, Settings, Wallet } from "lucide-react";
 import { authService } from "@/lib/auth/authService";
 
 export default function HeaderDashboard() {
@@ -237,6 +237,16 @@ export default function HeaderDashboard() {
                   <User size={16} className='text-orange-600' />
                 </div>
                 <span>{t("sidebar.profile")}</span>
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Item
+                className='px-3 py-2 hover:bg-green-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200'
+                onClick={() => router.push("/dashboard/wallet")}
+              >
+                <div className='w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center'>
+                  <Wallet size={16} className='text-green-600' />
+                </div>
+                <span>{t("sidebar.wallet", "Ví")}</span>
               </DropdownMenu.Item>
 
               <DropdownMenu.Item
