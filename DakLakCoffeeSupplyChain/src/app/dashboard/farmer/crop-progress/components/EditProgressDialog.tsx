@@ -339,13 +339,11 @@ export function EditProgressDialog({
             // Ưu tiên lấy message từ Error object (được throw từ API)
             if (error instanceof Error) {
                 errorMessage = error.message;
-                console.log('Got error message from Error object:', errorMessage);
             }
 
             // Fallback: Tìm message trong string representation của error
             if (errorMessage === defaultErrorMessage && typeof error === 'string') {
                 errorMessage = error;
-                console.log('Got error message from string error:', errorMessage);
             }
 
             if (typeof error === 'object' && error !== null && 'response' in error) {
@@ -369,21 +367,13 @@ export function EditProgressDialog({
                     if (errorMessage === defaultErrorMessage) {
                         if (response.data.message) {
                             errorMessage = response.data.message;
-                            console.log('Got error message from response.data.message:', errorMessage);
                         } else if (response.data.title) {
                             errorMessage = response.data.title;
-                            console.log('Got error message from response.data.title:', errorMessage);
                         }
                     }
                 }
             }
 
-            // Debug: Log error response để kiểm tra
-            console.log('Backend error response:', error);
-            console.log('Error instanceof Error:', error instanceof Error);
-            console.log('Error message property:', error instanceof Error ? error.message : 'N/A');
-            console.log('Parsed backend field errors:', backendFieldErrors);
-            console.log('Final error message:', errorMessage);
 
             // Nếu có backend field errors, hiển thị inline
             if (Object.keys(backendFieldErrors).length > 0) {

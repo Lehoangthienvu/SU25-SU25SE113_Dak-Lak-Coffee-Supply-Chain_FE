@@ -1,6 +1,31 @@
 import api from "./axios";
 import { CropSeasonStatusValue, CropSeasonStatusValueToNumber } from "../constants/cropSeasonStatus";
 
+// Backend CropSeasonDetail type (different from our CropSeasonDetail)
+export interface BackendCropSeasonDetail {
+  detailId: string;
+  coffeeTypeId: string;
+  typeName: string;
+  areaAllocated: number;
+  expectedHarvestStart: string;
+  expectedHarvestEnd: string;
+  estimatedYield: number;
+  actualYield: number | null;
+  plannedQuality: string;
+  qualityGrade: string;
+  status: string;
+  farmerId: string;
+  farmerName: string;
+  committedQuantity?: number;
+  // Crop information from backend
+  cropId?: string;
+  cropCode?: string;
+  farmName?: string;
+  address?: string;
+  Address?: string;
+  cropArea?: number;
+}
+
 // Define types locally since they're not exported from a types file
 export interface CropSeason {
   id: string;
@@ -13,7 +38,7 @@ export interface CropSeason {
   note?: string;
   commitmentName?: string;
   area?: number;
-  details?: CropSeasonDetail[];
+  details?: BackendCropSeasonDetail[];
   farmerName?: string;
   registrationCode?: string;
   cropSeasonId?: string;
@@ -60,22 +85,6 @@ interface BackendResponse {
   data?: unknown;
 }
 
-export interface CropSeasonDetail {
-  committedQuantity: any;
-  detailId: string;
-  coffeeTypeId: string;
-  typeName: string;
-  areaAllocated: number;
-  expectedHarvestStart: string;
-  expectedHarvestEnd: string;
-  estimatedYield: number;
-  actualYield: number | null;
-  plannedQuality: string;
-  qualityGrade: string;
-  status: string;
-  farmerId: string;
-  farmerName: string;
-}
 
 export interface CropSeasonUpdatePayload {
   cropSeasonId: string;
@@ -228,17 +237,6 @@ export async function getCropSeasonsForCurrentUser(params: {
     }
   }
 
-  // Log chi tiết lỗi để debug
-  if (typeof lastError === 'object' && lastError !== null) {
-    const errorObj = lastError as ErrorResponse;
-    if (errorObj.response) {
-      console.error("Response status:", errorObj.response.status);
-      console.error("Response data:", errorObj.response.data);
-    }
-    if (errorObj.message) {
-      console.error("Error message:", errorObj.message);
-    }
-  }
   
   // Trả về mảng rỗng thay vì throw error để tránh crash UI
   return [];

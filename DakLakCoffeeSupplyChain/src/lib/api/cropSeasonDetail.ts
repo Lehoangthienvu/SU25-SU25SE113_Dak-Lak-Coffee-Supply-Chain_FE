@@ -4,14 +4,11 @@ import { getErrorMessage } from '@/lib/utils';
 // ================== TYPES ==================
 
 export type CropSeasonDetail = {
-  stages: unknown;
-  success: unknown;
-  error: string;
   detailId: string;
   cropSeasonId: string;
-  commitmentDetailId: string; // ✅ Dùng thay cho coffeeTypeId
+  commitmentDetailId: string;
   commitmentDetailCode: string;
-  typeName: string; // ✅ Thêm typeName
+  typeName: string;
   expectedHarvestStart: string;
   expectedHarvestEnd: string;
   estimatedYield: number;
@@ -22,13 +19,14 @@ export type CropSeasonDetail = {
   status: number;
   farmerId: string;
   farmerName: string;
-  committedQuantity?: number; // ✅ Thêm committedQuantity từ commitmentDetail
+  committedQuantity?: number;
   
-  // Crop information
+  // Crop information - Support both lowercase and uppercase from backend
   cropId?: string;
   cropCode?: string;
   farmName?: string;
-  address?: string;
+  address?: string; // lowercase version
+  Address?: string; // uppercase version from backend DTO
   cropArea?: number;
 };
 
@@ -112,9 +110,27 @@ export async function getCropSeasonDetailsByCropSeasonId(
   cropSeasonId: string
 ): Promise<CropSeasonDetail[]> {
   try {
-    const response = await api.get(`${baseUrl}/by-cropSeason/${cropSeasonId}`);
-    return response.data;
-  } catch (err) {
+    // Use GetAll endpoint and filter by cropSeasonId on frontend
+    const response = await api.get(`${baseUrl}`);
+    
+    let allDetails: CropSeasonDetail[] = [];
+    
+    if (response.data) {
+      // Handle ServiceResult format {status, message, data}
+      if (response.data.status === 1 && response.data.data) {
+        allDetails = response.data.data;
+      }
+      // Handle direct array format
+      else if (Array.isArray(response.data)) {
+        allDetails = response.data;
+      }
+    }
+    
+    // Filter by cropSeasonId on frontend
+    const filteredDetails = allDetails.filter(detail => detail.cropSeasonId === cropSeasonId);
+    
+    return filteredDetails;
+  } catch (err: unknown) {
     console.error('Lỗi getCropSeasonDetailsByCropSeasonId:', err);
     throw new Error(getErrorMessage(err) || 'Không thể lấy danh sách vùng trồng');
   }
