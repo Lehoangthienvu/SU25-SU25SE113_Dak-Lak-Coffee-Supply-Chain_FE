@@ -78,23 +78,10 @@ export function CreateProgressDialog({
         // Tìm giai đoạn tiếp theo cần tạo
         const createdStageCodes = (localExistingProgress ?? []).map(p => p.stageCode);
 
-        // Debug logging
-        console.log('Debug getNextStage:', {
-            existingProgress,
-            localExistingProgress,
-            createdStageCodes,
-            stageOrder,
-            stages,
-            existingProgressLength: existingProgress?.length || 0,
-            localExistingProgressLength: localExistingProgress?.length || 0
-        });
-
         // Tìm giai đoạn đầu tiên chưa được tạo
         const nextStage = stages.find(stageCode =>
             !createdStageCodes.includes(stageCode)
         );
-
-        console.log('  nextStage:', nextStage);
         return nextStage;
     };
 
@@ -112,12 +99,10 @@ export function CreateProgressDialog({
             // Tìm giai đoạn tiếp theo cần tạo (sử dụng orderedStages thay vì stageOrder)
             const nextStageCode = getNextStage(orderedStages);
 
-            console.log('loadStageOptions - nextStageCode:', nextStageCode);
 
             if (nextStageCode) {
                 // Chỉ hiển thị giai đoạn tiếp theo
                 const nextStage = stages.find(stage => stage.stageCode === nextStageCode);
-                console.log('loadStageOptions - nextStage found:', nextStage);
                 if (nextStage) {
                     setStageOptions([nextStage]);
                     // Tự động chọn giai đoạn tiếp theo
@@ -125,7 +110,6 @@ export function CreateProgressDialog({
                 }
             } else {
                 // Nếu đã hoàn thành tất cả giai đoạn
-                console.log('loadStageOptions - All stages completed');
                 setStageOptions([]);
                 setStageId(null);
             }
@@ -144,13 +128,6 @@ export function CreateProgressDialog({
         try {
             setError(null);
             const detail = await getCropSeasonDetailById(detailId);
-            console.log('Loaded crop season detail:', detail);
-            console.log('Expected harvest dates:', {
-                start: detail.expectedHarvestStart,
-                end: detail.expectedHarvestEnd,
-                startType: typeof detail.expectedHarvestStart,
-                endType: typeof detail.expectedHarvestEnd
-            });
             setCropSeasonDetail(detail);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : t('cropProgress.createDialog.validation.loadSeasonDetailError');
@@ -160,7 +137,6 @@ export function CreateProgressDialog({
     }, [detailId, t]);
 
     useEffect(() => {
-        console.log('Dialog useEffect triggered:', { open, existingProgressLength: existingProgress?.length || 0 });
         if (open) {
             // Cập nhật local state khi dialog mở
             setLocalExistingProgress(existingProgress || []);

@@ -7,6 +7,7 @@ import {
     getCropSeasonById,
     CropSeason,
 } from '@/lib/api/cropSeasons';
+import { getCropSeasonDetailsByCropSeasonId, type CropSeasonDetail } from '@/lib/api/cropSeasonDetail';
 import { CropSeasonDetailStatusValueToNumber } from '@/lib/constants/cropSeasonDetailStatus';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import StatusBadge from '@/components/crop-seasons/StatusBadge';
 import { CropSeasonStatusMap } from '@/lib/constants/cropSeasonStatus';
 import { useAuth } from '@/lib/hooks/useAuth';
 import CropSeasonDetailTable from '@/components/crop-seasons/CropSeasonDetailTable';
+import { formatDate } from '@/lib/utils';
 
 export default function CropSeasonDetail() {
     const { t } = useTranslation();
@@ -29,7 +31,42 @@ export default function CropSeasonDetail() {
 
     const loadSeason = useCallback(async () => {
         try {
+            // Get basic season info
             const seasonData = await getCropSeasonById(cropSeasonId);
+            
+            // Get detailed crop season details with address
+            const detailsData = await getCropSeasonDetailsByCropSeasonId(cropSeasonId);
+            
+            if (detailsData && detailsData.length > 0) {
+                
+                // Merge season data with detailed data
+                if (seasonData) {
+                    seasonData.details = detailsData.map(detail => ({
+                        detailId: detail.detailId,
+                        coffeeTypeId: detail.commitmentDetailId,
+                        typeName: detail.typeName,
+                        areaAllocated: detail.areaAllocated,
+                        expectedHarvestStart: detail.expectedHarvestStart,
+                        expectedHarvestEnd: detail.expectedHarvestEnd,
+                        estimatedYield: detail.estimatedYield,
+                        actualYield: detail.actualYield ?? null,
+                        plannedQuality: detail.plannedQuality,
+                        qualityGrade: detail.qualityGrade || '',
+                        status: detail.status.toString(),
+                        farmerId: detail.farmerId,
+                        farmerName: detail.farmerName,
+                        committedQuantity: detail.committedQuantity,
+                        // Crop information
+                        cropId: detail.cropId,
+                        cropCode: detail.cropCode,
+                        farmName: detail.farmName,
+                        address: detail.address,
+                        Address: detail.Address,
+                        cropArea: detail.cropArea
+                    }));
+                }
+            }
+            
             setSeason(seasonData);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : t('cropSeasons.details.error');
@@ -88,16 +125,17 @@ export default function CropSeasonDetail() {
     // Tính toán thống kê
     const details = season?.details || [];
     const totalDetails = details.length;
-    const completedDetails = details.filter(d => d.status === 'Completed').length;
-    const inProgressDetails = details.filter(d => d.status === 'InProgress').length;
+    const completedDetails = details.filter(d => d.status === 'Completed' || d.status === 'completed').length;
+    const inProgressDetails = details.filter(d => d.status === 'InProgress' || d.status === 'inprogress' || d.status === 'active').length;
     const totalArea = details.reduce((sum, d) => sum + (d.areaAllocated || 0), 0);
 
     return (
         <div className="min-h-screen bg-orange-50 p-4">
             <div className="max-w-6xl mx-auto space-y-4">
-                {/* Header */}
-                <div className="bg-white rounded-lg shadow-sm p-4 border border-orange-100">
-                    <div className="flex items-center justify-between mb-4">
+                {/* Header + Thông tin mùa vụ gộp lại */}
+                <Card className="border-orange-200 shadow-sm">
+                    <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
+                        <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2">
                                 <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
@@ -146,35 +184,17 @@ export default function CropSeasonDetail() {
                         <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-3 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-purple-100 text-xs">{t('cropSeasons.details.statistics.totalArea')}</p>
+                                    <p className="text-purple-100 text-xs">Tổng diện tích</p>
                                     <p className="text-xl font-bold">{totalArea.toFixed(1)} ha</p>
                                 </div>
                                 <MapPin className="w-5 h-5 text-purple-200" />
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Thông tin mùa vụ - 1 hàng ngang */}
-                <Card className="border-orange-200 shadow-sm">
-                    <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
-                        <CardTitle className="text-gray-800 flex items-center gap-2 text-sm">
-                            <FileText className="w-4 h-4 text-orange-600" />
-                            {t('cropSeasons.details.seasonInfo')}
-                        </CardTitle>
                     </CardHeader>
+                    
                     <CardContent className="p-4">
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-
-                            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
-                                <FileText className="w-4 h-4 text-purple-600" />
-                                <div>
-                                    <p className="text-xs text-gray-600">{t('cropSeasons.details.season')}</p>
-                                    <p className="font-medium text-gray-800">
-                                        {season.seasonName || <span className="italic text-gray-500">{t('cropSeasons.details.notAvailable')}</span>}
-                                    </p>
-                                </div>
-                            </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
                                 <User className="w-4 h-4 text-green-600" />
                                 <div>
@@ -192,14 +212,6 @@ export default function CropSeasonDetail() {
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
-                                <MapPin className="w-4 h-4 text-orange-600" />
-                                <div>
-                                    <p className="text-xs text-gray-600">{t('cropSeasons.details.area')}</p>
-                                    <p className="font-medium text-gray-800">{season.area} ha</p>
-                                </div>
-                            </div>
-
 
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
                                 <FileText className="w-4 h-4 text-indigo-600" />
@@ -212,7 +224,7 @@ export default function CropSeasonDetail() {
                             </div>
 
                             {season.note && (
-                                <div className="col-span-2 md:col-span-3 lg:col-span-5 flex items-start gap-2 p-3 bg-gray-50 rounded-md">
+                                <div className="col-span-2 md:col-span-3 lg:col-span-4 flex items-start gap-2 p-3 bg-gray-50 rounded-md">
                                     <FileText className="w-4 h-4 text-amber-600 mt-1" />
                                     <div>
                                         <p className="text-xs text-gray-600">{t('cropSeasons.details.note')}</p>
@@ -223,6 +235,7 @@ export default function CropSeasonDetail() {
                         </div>
                     </CardContent>
                 </Card>
+
 
                 {/* Chi tiết vùng trồng - Full width */}
                 <Card className="border-orange-200 shadow-sm">
@@ -248,28 +261,38 @@ export default function CropSeasonDetail() {
                     </CardHeader>
                     <CardContent className="p-4">
                         <CropSeasonDetailTable
-                            details={details.map(detail => ({
-                                ...detail,
-                                farmName: detail.farmerName, // Map farmerName to farmName for compatibility
-                                address: '',
-                                stages: null,
-                                success: null,
-                                error: '',
-                                cropSeasonId: cropSeasonId,
-                                commitmentDetailId: detail.coffeeTypeId,
-                                commitmentDetailCode: '',
-                                estimatedYield: detail.estimatedYield || 0,
-                                actualYield: detail.actualYield,
-                                plannedQuality: detail.plannedQuality || '',
-                                qualityGrade: detail.qualityGrade || '',
-                                status: CropSeasonDetailStatusValueToNumber[detail.status as keyof typeof CropSeasonDetailStatusValueToNumber] || 0,
-                                farmerId: detail.farmerId || '',
-                                farmerName: detail.farmerName || '',
-                                committedQuantity: detail.committedQuantity,
-                                cropId: '',
-                                cropCode: '',
-                                cropArea: detail.areaAllocated
-                            }))}
+                            details={details.map((detail, index) => {
+                                const mappedDetail = {
+                                    detailId: detail.detailId,
+                                    cropSeasonId: cropSeasonId,
+                                    commitmentDetailId: detail.coffeeTypeId || '',
+                                    commitmentDetailCode: '',
+                                    typeName: detail.typeName || '',
+                                    expectedHarvestStart: detail.expectedHarvestStart || '',
+                                    expectedHarvestEnd: detail.expectedHarvestEnd || '',
+                                    estimatedYield: detail.estimatedYield || 0,
+                                    actualYield: detail.actualYield || null,
+                                    areaAllocated: detail.areaAllocated || 0,
+                                    plannedQuality: detail.plannedQuality || '',
+                                    qualityGrade: detail.qualityGrade || '',
+                                    status: typeof detail.status === 'string' 
+                                        ? (CropSeasonDetailStatusValueToNumber[detail.status as keyof typeof CropSeasonDetailStatusValueToNumber] || 0)
+                                        : (detail.status as number),
+                                    farmerId: detail.farmerId || '',
+                                    farmerName: detail.farmerName || '',
+                                    committedQuantity: detail.committedQuantity,
+                                    // Crop information - NOW WITH ADDRESS! 🎉
+                                    cropId: detail.cropId || '',
+                                    cropCode: detail.cropCode || '',
+                                    farmName: detail.farmName || '',
+                                    address: detail.address || '', // ✅ This should now have value!
+                                    Address: detail.Address,
+                                    cropArea: detail.cropArea || detail.areaAllocated || 0
+                                };
+                                
+                                
+                                return mappedDetail;
+                            })}
                             onReload={loadSeason}
                         />
                     </CardContent>
