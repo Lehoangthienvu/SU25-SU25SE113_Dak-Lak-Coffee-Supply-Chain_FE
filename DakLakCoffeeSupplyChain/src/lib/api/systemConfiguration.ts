@@ -93,6 +93,9 @@ export interface PaymentConfigurationViewDetailsDto {
   roleName: string;
   feeType: string;
   amount: number;
+  minTons?: number | null;
+  maxTons?: number | null;
+  configName?: string;
   description: string;
   effectiveFrom: string;
   effectiveTo: string | null;
@@ -105,6 +108,9 @@ export interface PaymentConfigurationCreateDto {
   roleId: number;
   feeType: string;
   amount: number;
+  minTons?: number | null;
+  maxTons?: number | null;
+  configName?: string;
   description?: string | null;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -116,6 +122,9 @@ export interface PaymentConfigurationUpdateDto {
   roleId: number;
   feeType: string;
   amount: number;
+  minTons?: number | null;
+  maxTons?: number | null;
+  configName?: string;
   description?: string | null;
   effectiveFrom: string;
   effectiveTo?: string | null;
