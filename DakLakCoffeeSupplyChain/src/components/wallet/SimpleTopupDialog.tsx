@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,18 +21,27 @@ interface SimpleTopupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  initialAmount?: number; // ✅ Số tiền sẵn có từ payment pending
 }
 
 export default function SimpleTopupDialog({ 
   open, 
   onOpenChange, 
-  onSuccess 
+  onSuccess,
+  initialAmount 
 }: SimpleTopupDialogProps) {
-  const [amount, setAmount] = useState<string>('');
+  const [amount, setAmount] = useState<string>(initialAmount ? initialAmount.toString() : '');
   const [description, setDescription] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   const presetAmounts = [50000, 100000, 200000, 500000, 1000000, 2000000];
+
+  // ✅ Update amount khi initialAmount thay đổi (mở dialog mới)
+  useEffect(() => {
+    if (initialAmount) {
+      setAmount(initialAmount.toString());
+    }
+  }, [initialAmount]);
 
   const handleSubmit = async (useVNPay: boolean = true) => {
     if (!amount || parseFloat(amount) < 1000) {
@@ -138,23 +147,7 @@ export default function SimpleTopupDialog({
           <Button variant="outline" onClick={handleClose}>
             Hủy
           </Button>
-          <Button 
-            onClick={() => handleSubmit(false)} 
-            disabled={loading || !amount}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Đang xử lý...
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 mr-2" />
-                Nạp trực tiếp (Test)
-              </>
-            )}
-          </Button>
+         
           <Button 
             onClick={() => handleSubmit(true)} 
             disabled={loading || !amount}

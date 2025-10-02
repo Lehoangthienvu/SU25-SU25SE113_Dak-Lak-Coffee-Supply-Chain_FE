@@ -1,8 +1,8 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getPaymentHistory, PaymentHistory } from "@/lib/api/payments";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getPaymentHistory, PaymentHistory, confirmVnPayReturn } from "@/lib/api/payments";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { RefreshCw, Search } from "lucide-react";
 import { formatDateTimeVN } from "@/lib/utils";
 import { Pagination } from "@/components/processing/Pagination";
+import { recreateWalletTopupPayment } from "@/lib/api/wallet";
+import { toast } from "sonner";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
   style: "currency",
@@ -55,6 +57,7 @@ export default function PaymentHistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const loadHistory = async () => {
     try {
@@ -73,9 +76,44 @@ export default function PaymentHistoryPage() {
     }
   };
 
+  // ✅ Xử lý VNPay return callback
   useEffect(() => {
-    loadHistory();
-  }, []);
+    const handleVnPayReturn = async () => {
+      const vnpParams: Record<string, string> = {};
+      let hasVnpParams = false;
+
+      searchParams.forEach((value, key) => {
+        if (key.startsWith('vnp_')) {
+          vnpParams[key] = value;
+          hasVnpParams = true;
+        }
+      });
+
+      if (hasVnpParams) {
+        try {
+          const result = await confirmVnPayReturn(vnpParams);
+          
+          if (result.code === "00") {
+            toast.success("Thanh toán thành công!");
+          } else {
+            toast.error(`Thanh toán thất bại: ${result.message}`);
+          }
+
+          // Xóa query params và reload history
+          router.replace('/dashboard/payments/history');
+          await loadHistory();
+        } catch (error: any) {
+          console.error('VNPay confirm error:', error);
+          toast.error('Lỗi xác nhận thanh toán: ' + (error.response?.data?.message || error.message));
+        }
+      } else {
+        // Không có VNPay params, load history bình thường
+        loadHistory();
+      }
+    };
+
+    handleVnPayReturn();
+  }, [searchParams]);
 
   const summary = useMemo(() => {
     const totals = {
@@ -153,12 +191,54 @@ export default function PaymentHistoryPage() {
 
   const showOtherCard = summary.other.count > 0;
 
-  const handleContinuePayment = (item: PaymentHistory) => {
-    const planId = item.relatedEntityId;
-    if (!planId) return;
+  // ✅ Xử lý tiếp tục thanh toán WalletTopup: Tái tạo VNPay URL từ payment pending
+  const handleWalletTopupContinue = async (paymentId: string, amount: number) => {
+    if (!amount || amount < 1000) {
+      toast.error('Số tiền phải lớn hơn 1,000 VND');
+      return;
+    }
 
+    setLoading(true);
+    try {
+      const data = await recreateWalletTopupPayment(paymentId, amount);
+      
+      if (data.paymentUrl) {
+        // ✅ Redirect sang VNPay với payment đã có sẵn (không tạo mới)
+        window.location.href = data.paymentUrl;
+      } else {
+        toast.error('Không thể tạo URL thanh toán');
+      }
+    } catch (error: any) {
+      toast.error('Lỗi: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContinuePayment = async (item: PaymentHistory) => {
+    const entityId = item.relatedEntityId;
+    const purpose = item.paymentPurpose?.toLowerCase() ?? "";
+    
+    if (!entityId) {
+      alert("Không tìm thấy thông tin giao dịch để tiếp tục.");
+      return;
+    }
+
+    // ✅ Xử lý route động theo Purpose
     const amountQuery = item.paymentAmount ? `?amount=${item.paymentAmount}` : "";
-    router.push(`/dashboard/manager/procurement-plans/${planId}/payment${amountQuery}`);
+    
+    switch (purpose) {
+      case "planposting":
+        router.push(`/dashboard/manager/procurement-plans/${entityId}/payment${amountQuery}`);
+        break;
+      case "wallettopup":
+        // ✅ Tái tạo VNPay URL từ payment pending (không tạo mới)
+        await handleWalletTopupContinue(item.paymentId, item.paymentAmount || 0);
+        break;
+      default:
+        alert(`Loại giao dịch "${item.paymentPurpose}" chưa được hỗ trợ tiếp tục thanh toán.`);
+        break;
+    }
   };
 
   return (
@@ -279,7 +359,7 @@ export default function PaymentHistoryPage() {
                 placeholder="Tìm theo mã thanh toán"
                 className="w-full pl-9"
               />
-              <p className="mt-1 text-xs text-gray-500">Tìm kiếm theo mã thanh toán (paymentCode).</p>
+              <p className="mt-1 text-xs text-gray-500">Tìm kiếm theo mã thanh toán.</p>
             </div>
           </div>
         </CardHeader>
@@ -315,7 +395,40 @@ export default function PaymentHistoryPage() {
               ) : (
                 paginatedItems.map((item) => {
                   const normalizedStatus = item.paymentStatus?.toLowerCase() ?? "";
-                  const canContinue = normalizedStatus === "pending" && Boolean(item.relatedEntityId);
+                  const entityId = item.relatedEntityId;
+                  const purpose = item.paymentPurpose?.toLowerCase() ?? "";
+                  const hasSuccessPayment = entityId && purpose
+                    ? items.some(
+                        (payment) =>
+                          payment.relatedEntityId === entityId &&
+                          payment.paymentPurpose?.toLowerCase() === purpose &&
+                          payment.paymentStatus?.toLowerCase() === "success" &&
+                          payment.paymentId !== item.paymentId // Không check chính payment này
+                      )
+                    : false;
+
+                  const canContinue =
+                    normalizedStatus === "pending" &&
+                    Boolean(entityId);
+
+                  // ✅ Xác định text hiển thị dựa trên Status và Purpose
+                  const getActionText = () => {
+                    if (normalizedStatus === "success") {
+                      return <span className="text-sm text-green-600">Hoàn tất</span>;
+                    }
+                    if (normalizedStatus === "failed") {
+                      return <span className="text-sm text-red-600">Thất bại</span>;
+                    }
+                    if (normalizedStatus === "pending") {
+                      // Nếu là PlanPosting Pending nhưng đã có payment Success khác
+                      if (hasSuccessPayment) {
+                        return <span className="text-sm text-green-600">Đã thanh toán</span>;
+                      }
+                      // Các trường hợp Pending khác
+                      return <span className="text-sm text-yellow-600">Đang xử lý</span>;
+                    }
+                    return <span className="text-sm text-gray-400">-</span>;
+                  };
 
                   return (
                     <TableRow key={item.paymentId}>
@@ -337,7 +450,7 @@ export default function PaymentHistoryPage() {
                             Tiếp tục thanh toán
                           </Button>
                         ) : (
-                          <span className="text-sm text-gray-400">-</span>
+                          getActionText()
                         )}
                       </TableCell>
                     </TableRow>

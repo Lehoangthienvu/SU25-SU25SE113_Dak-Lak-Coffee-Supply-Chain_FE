@@ -120,6 +120,16 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* ✅ FIX: Override Next.js hydration overlay pointer-events block */
+  body[style*="pointer-events: none"] {
+    pointer-events: auto !important;
+  }
+
+  /* ✅ FIX: Ensure all interactive elements work during hydration */
+  body > * {
+    pointer-events: auto !important;
+  }
 }
 
 /* Media Viewer Override */

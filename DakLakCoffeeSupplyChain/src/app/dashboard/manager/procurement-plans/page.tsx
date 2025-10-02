@@ -26,74 +26,80 @@ import { checkPaymentStatus, getPlanPostingFee } from "@/lib/api/payments";
 
 export default function BusinessProcurementPlansPage() {
   const { t } = useTranslation();
-  const [procurementPlans, setProcurementPlans] = useState<ProcurementPlan[]>(
-    []
-  );
-  const [dialogType, setDialogType] = useState<
-    "cancel" | "delete" | "open" | "closed" | null
-  >(null);
-  const [selectedPlan, setSelectedPlan] = useState<ProcurementPlan | null>(
-    null
-  );
+  const [isMounted, setIsMounted] = useState(false);
+  const [procurementPlans, setProcurementPlans] = useState<ProcurementPlan[]>([]);
+  const [dialogType, setDialogType] = useState<"cancel" | "delete" | "open" | "closed" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<ProcurementPlan | null>(null);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState(100000); // Phí đăng ký mặc định - sẽ được cập nhật từ API
+  const [paymentAmount, setPaymentAmount] = useState(100000);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedStatus, setSelectedStatus] =
-    useState<ProcurementPlanStatusValue | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<ProcurementPlanStatusValue | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const router = useRouter();
 
+  // ✅ FIX: Đảm bảo component đã mount (client-side)
   useEffect(() => {
-    fetchData();
-    setIsLoading(false);
+    setIsMounted(true);
+    console.log("[ProcurementPlans] Mounted (client-side)");
+    return () => {
+      setIsMounted(false);
+      console.log("[ProcurementPlans] Unmounted");
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    console.log("[ProcurementPlans] Mount → reset loadingConfirm");
+    setLoadingConfirm(false);
+    fetchData();
+  }, [isMounted]);
 
   const fetchData = async () => {
     setIsLoading(true);
-
-    // Load procurement plans
     const data = await getAllProcurementPlans().catch((error) => {
       console.error(getErrorMessage(error));
       return [];
     });
     setProcurementPlans(data);
 
-    // Load payment amount from API
     try {
-      // lấy một planId để tính phí (ví dụ plan đầu tiên trong danh sách)
       if (data.length > 0) {
         const feeInfo = await getPlanPostingFee(data[0].planId);
         setPaymentAmount(feeInfo.amount);
       }
     } catch (error) {
-      console.error('Không thể lấy thông tin phí thanh toán:', error);
+      console.error("Không thể lấy thông tin phí thanh toán:", error);
     }
+    setIsLoading(false);
   };
 
-  // BusinessProcurementPlansPage.tsx
   async function handleOpenRegister(planId?: string) {
+    console.log("[ProcurementPlans] Click open register", { planId });
     if (!planId) return;
-
+    setLoadingConfirm(true);
     try {
       const paymentStatus = await checkPaymentStatus(planId).catch(() => null);
+      console.log("[ProcurementPlans] paymentStatus", paymentStatus);
 
-      // CHƯA SUCCESS => đẩy sang payment-notification kèm đủ info
       if (!paymentStatus || paymentStatus.paymentStatus !== "Success") {
         const plan = procurementPlans.find(p => p.planId === planId);
-        const title = encodeURIComponent(plan?.title ?? "");
-        router.push(
-          `/dashboard/manager/procurement-plans/payment-notification?planId=${planId}&amount=${paymentAmount}&planTitle=${title}`
-        );
+        if (!plan?.title) {
+          AppToast.error("Không tìm thấy tên kế hoạch để thanh toán");
+          setLoadingConfirm(false);
+          return;
+        }
+        const encodedTitle = encodeURIComponent(plan.title);
+        console.log("[ProcurementPlans] redirect to payment-notification", { planId, encodedTitle });
+        setLoadingConfirm(false);
+        router.push(`/dashboard/manager/procurement-plans/payment-notification?planId=${planId}&planTitle=${encodedTitle}`);
         return;
       }
 
-      // ĐÃ SUCCESS => mở kế hoạch
-      setLoadingConfirm(true);
       const updatedPlan = await updateProcurementPlanStatus(planId, { status: 0 });
       if (updatedPlan) {
-        setProcurementPlans(prev => prev.map(p => p.planId === planId ? updatedPlan : p));
+        setProcurementPlans((prev) => prev.map((p) => (p.planId === planId ? updatedPlan : p)));
         closeDialog();
         AppToast.success(t("procurementPlan.messages.success.opened"));
       }
@@ -104,34 +110,14 @@ export default function BusinessProcurementPlansPage() {
     }
   }
 
-
   async function handleClose(planId?: string) {
     if (!planId) return;
     try {
       setLoadingConfirm(true);
-      const updatedPlan = await updateProcurementPlanStatus(planId, {
-        status: 1,
-      });
+      const updatedPlan = await updateProcurementPlanStatus(planId, { status: 1 });
       if (updatedPlan) {
-        setProcurementPlans((prev) =>
-          prev.map((p) => (p.planId === planId ? updatedPlan : p))
-        );
-
-        // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans
-          .filter(
-            (plan) =>
-              (!selectedStatus || plan.status === selectedStatus) &&
-              (!search ||
-                plan.title.toLowerCase().includes(search.toLowerCase()))
-          )
-          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
-        if (currentPageItems.length === 0 && currentPage > 1) {
-          setCurrentPage(1);
-        }
-
+        setProcurementPlans((prev) => prev.map((p) => (p.planId === planId ? updatedPlan : p)));
+        adjustPagination();
         closeDialog();
         AppToast.success(t("procurementPlan.messages.success.closed"));
       }
@@ -148,35 +134,14 @@ export default function BusinessProcurementPlansPage() {
       setLoadingConfirm(true);
       const updatedPlan = await deleteProcurementPlan(planId);
       if (updatedPlan) {
-        // Lấy dữ liệu mới
         const newData = await getAllProcurementPlans().catch((error) => {
           AppToast.error(getErrorMessage(error));
           return [];
         });
-
-        // Cập nhật state
         setProcurementPlans(newData);
-
-        // Kiểm tra và điều chỉnh trang ngay lập tức với dữ liệu mới
-        const filteredPlans = newData.filter(
-          (plan) =>
-            (!selectedStatus || plan.status === selectedStatus) &&
-            (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
-        );
-        const totalPages = Math.ceil(filteredPlans.length / pageSize);
-
-        // Nếu trang hiện tại vượt quá tổng số trang, chuyển về trang cuối cùng
-        if (currentPage > totalPages && totalPages > 0) {
-          setCurrentPage(totalPages);
-        }
-        // Nếu không còn item nào, chuyển về trang 1
-        else if (totalPages === 0) {
-          setCurrentPage(1);
-        }
-
+        adjustPagination(newData);
         closeDialog();
         AppToast.success(t("procurementPlan.messages.success.deleted"));
-        setIsLoading(false);
       }
     } catch (error) {
       AppToast.error(getErrorMessage(error));
@@ -189,29 +154,10 @@ export default function BusinessProcurementPlansPage() {
     if (!planId) return;
     try {
       setLoadingConfirm(true);
-      const updatedPlan = await updateProcurementPlanStatus(planId, {
-        status: 2,
-      });
+      const updatedPlan = await updateProcurementPlanStatus(planId, { status: 2 });
       if (updatedPlan) {
-        setProcurementPlans((prev) =>
-          prev.map((p) => (p.planId === planId ? updatedPlan : p))
-        );
-
-        // Kiểm tra và điều chỉnh trang ngay lập tức
-        const currentPageItems = procurementPlans
-          .filter(
-            (plan) =>
-              (!selectedStatus || plan.status === selectedStatus) &&
-              (!search ||
-                plan.title.toLowerCase().includes(search.toLowerCase()))
-          )
-          .slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-        // Nếu trang hiện tại không còn item nào và không phải trang 1, chuyển về trang 1
-        if (currentPageItems.length === 0 && currentPage > 1) {
-          setCurrentPage(1);
-        }
-
+        setProcurementPlans((prev) => prev.map((p) => (p.planId === planId ? updatedPlan : p)));
+        adjustPagination();
         closeDialog();
         AppToast.success(t("procurementPlan.messages.success.cancelled"));
       }
@@ -222,31 +168,22 @@ export default function BusinessProcurementPlansPage() {
     }
   }
 
-  function openCancelDialog(plan: ProcurementPlan) {
-    setSelectedPlan(plan);
-    setDialogType("cancel");
+  function adjustPagination(newData: ProcurementPlan[] = procurementPlans) {
+    const filteredPlans = newData.filter(
+      (plan) =>
+        (!selectedStatus || plan.status === selectedStatus) &&
+        (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
+    );
+    const totalPages = Math.ceil(filteredPlans.length / pageSize);
+    if (currentPage > totalPages && totalPages > 0) setCurrentPage(totalPages);
+    else if (totalPages === 0) setCurrentPage(1);
   }
 
-  function openOpenRegisterDialog(plan: ProcurementPlan) {
-    setSelectedPlan(plan);
-    setDialogType("open");
-  }
-
-  function openClosedRegisterDialog(plan: ProcurementPlan) {
-    setSelectedPlan(plan);
-    setDialogType("closed");
-  }
-
-  function openDeleteDialog(plan: ProcurementPlan) {
-    setSelectedPlan(plan);
-    setDialogType("delete");
-  }
-
-  function closeDialog() {
-    setDialogType(null);
-    setSelectedPlan(null);
-  }
-
+  function openCancelDialog(plan: ProcurementPlan) { setSelectedPlan(plan); setDialogType("cancel"); }
+  function openOpenRegisterDialog(plan: ProcurementPlan) { setSelectedPlan(plan); setDialogType("open"); }
+  function openClosedRegisterDialog(plan: ProcurementPlan) { setSelectedPlan(plan); setDialogType("closed"); }
+  function openDeleteDialog(plan: ProcurementPlan) { setSelectedPlan(plan); setDialogType("delete"); }
+  function closeDialog() { setDialogType(null); setSelectedPlan(null); }
 
   const filteredPlans = procurementPlans.filter(
     (plan) =>
@@ -254,54 +191,36 @@ export default function BusinessProcurementPlansPage() {
       (!search || plan.title.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // Reset về trang 1 khi thay đổi filter hoặc search
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedStatus, search]);
+  useEffect(() => { setCurrentPage(1); }, [selectedStatus, search]);
 
   const totalPages = Math.ceil(filteredPlans.length / pageSize);
-  const pagedPlans = filteredPlans.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
+  const pagedPlans = filteredPlans.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const statusMap = getProcurementPlanStatusMap(t);
+  const statusCounts = procurementPlans.reduce<Record<ProcurementPlanStatusValue, number>>(
+    (acc, plan) => { acc[plan.status as ProcurementPlanStatusValue] = (acc[plan.status as ProcurementPlanStatusValue] || 0) + 1; return acc; },
+    { Open: 0, Closed: 0, Draft: 0, Cancelled: 0 }
   );
 
-  const statusMap = getProcurementPlanStatusMap(t);
-  const statusCounts = procurementPlans.reduce<
-    Record<ProcurementPlanStatusValue, number>
-  >(
-    (acc, plan) => {
-      const status = plan.status as ProcurementPlanStatusValue;
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    },
-    {
-      Open: 0,
-      Closed: 0,
-      Draft: 0,
-      Cancelled: 0,
-    }
-  );
+  // ✅ FIX: Hiển thị loading khi chưa mount
+  if (!isMounted || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
-    <div className='flex bg-amber-200-50 p-6 gap-6'>
+    <div key={`procurement-list-${isMounted}`} className='flex bg-amber-200-50 p-6 gap-6'>
       {/* Sidebar */}
       <aside className='w-64 space-y-4'>
-        {/* Search block */}
         <div className='bg-white rounded-xl shadow-sm p-4 space-y-4'>
-          <h2 className='text-sm font-medium text-gray-700'>
-            {t("procurementPlan.pages.list.search.title")}
-          </h2>
+          <h2 className='text-sm font-medium text-gray-700'>{t("procurementPlan.pages.list.search.title")}</h2>
           <div className='relative'>
-            <Input
-              placeholder={t("procurementPlan.pages.list.search.placeholder")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className='pr-10'
-            />
+            <Input placeholder={t("procurementPlan.pages.list.search.placeholder")} value={search} onChange={(e) => setSearch(e.target.value)} className='pr-10' />
             <Search className='absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
           </div>
         </div>
-
         <FilterStatusPanel<ProcurementPlanStatusValue>
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
@@ -314,12 +233,7 @@ export default function BusinessProcurementPlansPage() {
       <main className='flex-1 space-y-6'>
         <div className='bg-white rounded-xl shadow-sm p-4'>
           <div className='flex justify-end mb-4'>
-            <Button
-              onClick={() =>
-                router.push("/dashboard/manager/procurement-plans/create")
-              }
-              variant='default'
-            >
+            <Button onClick={() => router.push("/dashboard/manager/procurement-plans/create")} variant='default'>
               {t("procurementPlan.pages.list.actions.createNew")}
             </Button>
           </div>
@@ -333,28 +247,12 @@ export default function BusinessProcurementPlansPage() {
             <table className='w-full text-sm table-auto'>
               <thead className='bg-gray-100 text-gray-700 font-medium'>
                 <tr>
-                  <th className='px-4 py-3 text-left'>
-                    {t("procurementPlan.pages.list.table.headers.planName")}
-                  </th>
-                  <th className='px-4 py-3 text-left'>
-                    {t("procurementPlan.pages.list.table.headers.totalOutput")}
-                  </th>
-                  <th className='px-4 py-3 text-left'>
-                    {t(
-                      "procurementPlan.pages.list.table.headers.registeredRatio"
-                    )}
-                  </th>
-                  <th className='px-4 py-3 text-left'>
-                    {t("procurementPlan.pages.list.table.headers.status")}
-                  </th>
-                  <th className='px-4 py-3 text-left'>
-                    {t(
-                      "procurementPlan.pages.list.table.headers.registrationPeriod"
-                    )}
-                  </th>
-                  <th className='px-4 py-3 text-left'>
-                    {t("procurementPlan.pages.list.table.headers.actions")}
-                  </th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.planName")}</th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.totalOutput")}</th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.registeredRatio")}</th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.status")}</th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.registrationPeriod")}</th>
+                  <th className='px-4 py-3 text-left'>{t("procurementPlan.pages.list.table.headers.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -365,9 +263,7 @@ export default function BusinessProcurementPlansPage() {
                     openOpenRegisterDialog={() => openOpenRegisterDialog(plan)}
                     openCancelDialog={() => openCancelDialog(plan)}
                     openDeleteDialog={() => openDeleteDialog(plan)}
-                    openClosedRegisterDialog={() =>
-                      openClosedRegisterDialog(plan)
-                    }
+                    openClosedRegisterDialog={() => openClosedRegisterDialog(plan)}
                     statusMap={statusMap}
                   />
                 ))}
@@ -383,107 +279,43 @@ export default function BusinessProcurementPlansPage() {
             dialogType === "open"
               ? t("procurementPlan.dialogs.confirm.open.title")
               : dialogType === "closed"
-                ? t("procurementPlan.dialogs.confirm.close.title")
-                : dialogType === "cancel"
-                  ? t("procurementPlan.dialogs.confirm.cancel.title")
-                  : dialogType === "delete"
-                    ? t("procurementPlan.dialogs.confirm.delete.title")
-                    : ""
+              ? t("procurementPlan.dialogs.confirm.close.title")
+              : dialogType === "cancel"
+              ? t("procurementPlan.dialogs.confirm.cancel.title")
+              : dialogType === "delete"
+              ? t("procurementPlan.dialogs.confirm.delete.title")
+              : ""
           }
-          description={
-            dialogType === "open" ? (
-              <>
-                {t("procurementPlan.dialogs.confirm.open.description", {
-                  planName: selectedPlan?.title,
-                })}
-              </>
-            ) : dialogType === "closed" ? (
-              <>
-                {t("procurementPlan.dialogs.confirm.close.description", {
-                  planName: selectedPlan?.title,
-                })}
-              </>
-            ) : dialogType === "cancel" ? (
-              <>
-                {t("procurementPlan.dialogs.confirm.cancel.description", {
-                  planName: selectedPlan?.planId,
-                })}
-              </>
-            ) : dialogType === "delete" ? (
-              <>
-                {t("procurementPlan.dialogs.confirm.delete.description", {
-                  planName: selectedPlan?.title,
-                })}
-              </>
-            ) : (
-              ""
-            )
-          }
+          description={selectedPlan?.title || ""}
           loading={loadingConfirm}
           onConfirm={() => {
-            if (dialogType === "open") {
-              handleOpenRegister(selectedPlan?.planId);
-            } else if (dialogType === "closed") {
-              handleClose(selectedPlan?.planId);
-            } else if (dialogType === "cancel") {
-              handleCancel(selectedPlan?.planId);
-            } else if (dialogType === "delete") {
-              handleDelete(selectedPlan?.planId);
-            }
+            if (dialogType === "open") handleOpenRegister(selectedPlan?.planId);
+            else if (dialogType === "closed") handleClose(selectedPlan?.planId);
+            else if (dialogType === "cancel") handleCancel(selectedPlan?.planId);
+            else if (dialogType === "delete") handleDelete(selectedPlan?.planId);
           }}
         />
 
-        {/* Pagination */}
         {!isLoading && totalPages > 1 && (
           <div className='flex justify-between items-center'>
             <span className='text-sm text-muted-foreground'>
-              {t("procurementPlan.pages.list.pagination.showing")}{" "}
-              {(currentPage - 1) * pageSize + 1}–
-              {Math.min(currentPage * pageSize, filteredPlans.length)}{" "}
-              {t("procurementPlan.pages.list.pagination.of")}{" "}
-              {filteredPlans.length}{" "}
-              {t("procurementPlan.pages.list.pagination.plans")}
+              {t("procurementPlan.pages.list.pagination.showing")} {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filteredPlans.length)} {t("procurementPlan.pages.list.pagination.of")} {filteredPlans.length} {t("procurementPlan.pages.list.pagination.plans")}
             </span>
             <div className='flex items-center gap-2'>
-              <Button
-                variant='outline'
-                size='icon'
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              >
-                <ChevronLeft className='w-4 h-4' />
-              </Button>
+              <Button variant='outline' size='icon' disabled={currentPage === 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}><ChevronLeft className='w-4 h-4' /></Button>
               {[...Array(totalPages).keys()].map((_, i) => {
                 const page = i + 1;
                 return (
-                  <Button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={cn(
-                      "rounded-md px-3 py-1 text-sm",
-                      page === currentPage
-                        ? "bg-black text-white"
-                        : "bg-white text-black border"
-                    )}
-                  >
+                  <Button key={page} onClick={() => setCurrentPage(page)} className={cn("rounded-md px-3 py-1 text-sm", page === currentPage ? "bg-black text-white" : "bg-white text-black border")}>
                     {page}
                   </Button>
                 );
               })}
-              <Button
-                variant='outline'
-                size='icon'
-                disabled={currentPage === totalPages}
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-              >
-                <ChevronRight className='w-4 h-4' />
-              </Button>
+              <Button variant='outline' size='icon' disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}><ChevronRight className='w-4 h-4' /></Button>
             </div>
           </div>
         )}
-
       </main>
     </div>
   );
