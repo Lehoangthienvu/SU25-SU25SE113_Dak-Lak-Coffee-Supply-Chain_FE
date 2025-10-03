@@ -408,3 +408,21 @@ export async function softDeletePaymentConfiguration(configID: string): Promise<
     throw new Error(error.response?.data?.message || error.message || 'Lỗi khi xóa mềm cấu hình phí');
   }
 }
+
+/**
+ * Toggle trạng thái kích hoạt/vô hiệu hóa cấu hình phí
+ */
+export async function togglePaymentConfigurationStatus(configID: string): Promise<PaymentConfigurationViewDetailsDto> {
+  try {
+    const response = await api.patch(`/PaymentConfigurations/toggle-status/${configID}`);
+
+    if (response.data && typeof response.data === 'object') {
+      return response.data;
+    } else {
+      throw new Error('Lỗi khi thay đổi trạng thái cấu hình phí');
+    }
+  } catch (error: any) {
+    console.error("❌ Lỗi togglePaymentConfigurationStatus:", error);
+    throw new Error(error.response?.data?.message || error.message || 'Lỗi khi thay đổi trạng thái cấu hình phí');
+  }
+}
