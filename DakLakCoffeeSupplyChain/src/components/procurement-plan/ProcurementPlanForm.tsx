@@ -796,6 +796,9 @@ export default function ProcurementPlanForm({
                       {t(
                         "procurementPlan.components.procurementPlanForm.fields.targetRegion.label"
                       )}
+                      <span className='text-red-500 ml-1'>
+                        *
+                      </span>
                     </Label>
                     {loading ? (
                       <LoadingSpinner />
@@ -846,9 +849,9 @@ export default function ProcurementPlanForm({
                           }))}
                         />
 
-                        {errors[`targetRegion-${index}`] && (
+                        {errors[`targetRegions-${index}`] && (
                           <p className='text-red-500 text-xs mt-1'>
-                            {errors[`targetRegion-${index}`]}
+                            {errors[`targetRegions-${index}`]}
                           </p>
                         )}
                       </>

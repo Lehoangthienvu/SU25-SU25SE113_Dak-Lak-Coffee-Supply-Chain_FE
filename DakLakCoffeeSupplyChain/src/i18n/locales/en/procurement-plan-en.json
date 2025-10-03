@@ -214,7 +214,8 @@
           "targetRegion": {
             "label": "Target Region",
             "placeholder": "Select target region...",
-            "all" : "Select all target regions"
+            "all" : "All target regions",
+            "selectAll": "Select All"
           },
           "minimumRegistrationQuantity": {
             "label": "Minimum Registration Quantity",
@@ -260,7 +261,8 @@
           "minRegistrationQuantity": "Minimum registration quantity cannot be less than 100 kg.",
           "minRegistrationQuantityMax": "Minimum registration quantity cannot be greater than target quantity.",
           "minPrice": "Minimum price cannot be less than 1000 VND.",
-          "maxPrice": "Maximum price must be greater than or equal to minimum price."
+          "maxPrice": "Maximum price must be greater than or equal to minimum price.",
+          "targetRegions": "Please select at least one target region."
         },
         "estimatedCost": {
           "title": "Estimated Cost",

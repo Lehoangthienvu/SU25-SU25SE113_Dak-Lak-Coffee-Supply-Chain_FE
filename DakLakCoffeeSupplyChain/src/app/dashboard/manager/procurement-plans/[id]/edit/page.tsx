@@ -79,7 +79,8 @@ export default function EditProcurementPlanPage() {
                 targetQuantity: detail.targetQuantity ?? 0,
                 //targetRegion: detail.targetRegion || "",
                 targetRegions: detail.targetRegions ?? [],
-                minimumRegistrationQuantity: detail.minimumRegistrationQuantity ?? 0,
+                minimumRegistrationQuantity:
+                  detail.minimumRegistrationQuantity ?? 0,
                 minPriceRange: detail.minPriceRange ?? 0,
                 maxPriceRange: detail.maxPriceRange ?? 0,
                 expectedYieldPerHectare: detail.expectedYieldPerHectare ?? 0,
@@ -181,6 +182,14 @@ export default function EditProcurementPlanPage() {
           newErrors[`maxPriceRange-${index}`] = t(
             "procurementPlan.pages.edit.validation.maxPrice"
           );
+        if (
+          detail.targetRegions.length === 0 ||
+          detail.targetRegions.some((r) => r === "")
+        ) {
+          newErrors[`targetRegions-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.targetRegions"
+          );
+        }
         // if (detail.expectedYieldPerHectare <= 0)
         //   newErrors[`expectedYieldPerHectare-${index}`] =
         //     "Sản lượng dự kiến trên 1 ha phải lớn hơn 0.";

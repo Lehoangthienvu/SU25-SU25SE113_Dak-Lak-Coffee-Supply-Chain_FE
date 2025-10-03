@@ -393,7 +393,6 @@ export default function CultivationRegistrationForm({
                             {" - "} {d.processingMethodName}
                           </>
                         )}
-                        {d.targetRegion && <> ({d.targetRegion})</>}
                       </option>
                     ))}
                   </select>
