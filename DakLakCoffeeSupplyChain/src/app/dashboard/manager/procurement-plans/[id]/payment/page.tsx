@@ -59,7 +59,7 @@ export default function PaymentPage() {
       if (paymentMethod === 'VNPay') {
         // <<< THAY ĐỔI QUAN TRỌNG Ở ĐÂY >>>
         // URL này trỏ đến trang mới có logic polling, không phải trang 'success' tĩnh
-        const returnUrlForUser = `${window.location.origin}/dashboard/manager/procurement-plans/payment-return`;
+        const returnUrlForUser = `${window.location.origin}/dashboard/manager/procurement-plans/payment-result?planId=${id}`;
 
         const paymentUrl = await createVnPayUrl({
           planId: id as string,
