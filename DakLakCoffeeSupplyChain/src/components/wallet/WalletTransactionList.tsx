@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   getTransactionsByUserId,
   getTransactionsByWallet,
   getSystemWalletTransactions,
@@ -19,22 +19,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog';
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -45,12 +45,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { 
-  Edit, 
-  Trash2, 
-  MoreVertical, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  Edit,
+  Trash2,
+  MoreVertical,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 
@@ -64,9 +64,9 @@ interface WalletTransactionListProps {
   initialPageSize?: number;
 }
 
-export default function WalletTransactionList({ 
-  userId, 
-  walletId, 
+export default function WalletTransactionList({
+  userId,
+  walletId,
   isAdmin = false,
   onTransactionCreated,
   onTransactionClick,
@@ -95,9 +95,9 @@ export default function WalletTransactionList({
     try {
       setLoading(true);
       setError(null);
-      
+
       let result: WalletTransactionSearchResult;
-      
+
       if (userId) {
         // Xem giao dịch của user cụ thể
         result = await getTransactionsByUserId(userId, page, pageSize);
@@ -120,7 +120,7 @@ export default function WalletTransactionList({
         const currentUserId = '00000000-0000-0000-0000-000000000000';
         result = await getTransactionsByUserId(currentUserId, page, pageSize);
       }
-      
+
       setTransactions(result.data);
       setTotalPages(result.totalPages);
       setTotalRecords(result.totalRecords);
@@ -135,13 +135,13 @@ export default function WalletTransactionList({
 
   // Filter transactions
   const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       transaction.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       transaction.transactionType.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesType = transactionType === 'all' || 
+
+    const matchesType = transactionType === 'all' ||
       transaction.transactionType.toLowerCase() === transactionType.toLowerCase();
-    
+
     return matchesSearch && matchesType;
   });
 
@@ -154,12 +154,12 @@ export default function WalletTransactionList({
 
   const handleSaveEdit = async () => {
     if (!selectedTransaction) return;
-    
+
     try {
       await updateWalletTransaction(selectedTransaction.transactionId, {
         description: editDescription
       });
-      
+
       toast.success('Cập nhật giao dịch thành công');
       setEditDialogOpen(false);
       loadTransactions(currentPage);
@@ -177,7 +177,7 @@ export default function WalletTransactionList({
 
   const handleConfirmDelete = async () => {
     if (!selectedTransaction) return;
-    
+
     try {
       await deleteWalletTransaction(selectedTransaction.transactionId);
       toast.success('Xóa giao dịch thành công');
@@ -197,7 +197,7 @@ export default function WalletTransactionList({
 
   const handleConfirmHardDelete = async () => {
     if (!selectedTransaction) return;
-    
+
     try {
       await hardDeleteWalletTransaction(selectedTransaction.transactionId);
       toast.success('Xóa vĩnh viễn giao dịch thành công');
@@ -283,8 +283,8 @@ export default function WalletTransactionList({
           </Card>
         ) : (
           filteredTransactions.map((transaction) => (
-            <Card 
-              key={transaction.transactionId} 
+            <Card
+              key={transaction.transactionId}
               className="hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => onTransactionClick?.(transaction)}
             >
@@ -292,23 +292,23 @@ export default function WalletTransactionList({
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <Badge 
+                      <Badge
                         className={getTransactionTypeColor(transaction.transactionType)}
                       >
                         {formatTransactionType(transaction.transactionType)}
                       </Badge>
                       {transaction.paymentStatus && (
-                        <Badge 
-                          className={transaction.paymentStatus === 'Success' 
-                            ? 'bg-green-100 text-green-800' 
+                        <Badge
+                          className={transaction.paymentStatus === 'Success'
+                            ? 'bg-green-100 text-green-800'
                             : transaction.paymentStatus === 'Pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
                           }
                         >
-                          {transaction.paymentStatus === 'Success' ? 'Thành công' : 
-                           transaction.paymentStatus === 'Pending' ? 'Đang xử lý' : 
-                           transaction.paymentStatus}
+                          {transaction.paymentStatus === 'Success' ? 'Thành công' :
+                            transaction.paymentStatus === 'Pending' ? 'Đang xử lý' :
+                              transaction.paymentStatus}
                         </Badge>
                       )}
                       <span className="text-sm text-gray-500">
@@ -321,24 +321,24 @@ export default function WalletTransactionList({
                         })}
                       </span>
                     </div>
-                    
+
                     <p className="text-gray-700 mb-1">
                       {transaction.description || 'Không có mô tả'}
                     </p>
-                    
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+
+                    {/* <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span>ID: {transaction.transactionId.slice(0, 8)}...</span>
                       {transaction.walletType && (
                         <span>Ví: {transaction.walletType}</span>
                       )}
-                    </div>
+                    </div> */}
                   </div>
-                  
+
                   <div className="text-right">
                     <div className={`text-lg font-semibold ${getTransactionAmountColor(transaction.transactionType)}`}>
                       {formatAmount(transaction.amount, transaction.transactionType)}
                     </div>
-                    
+
                     {showActions && (
                       <div className="flex gap-2 mt-2">
                         <Button
@@ -351,7 +351,7 @@ export default function WalletTransactionList({
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        
+
                         <Button
                           variant="outline"
                           size="sm"
@@ -363,7 +363,7 @@ export default function WalletTransactionList({
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
-                        
+
                         {isAdmin && (
                           <Button
                             variant="outline"
@@ -399,11 +399,11 @@ export default function WalletTransactionList({
             <ChevronLeft className="h-4 w-4" />
             Trước
           </Button>
-          
+
           <span className="text-sm text-gray-600">
             Trang {currentPage} / {totalPages}
           </span>
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -425,7 +425,7 @@ export default function WalletTransactionList({
               Bạn chỉ có thể chỉnh sửa mô tả của giao dịch
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">Mô tả</label>
@@ -436,7 +436,7 @@ export default function WalletTransactionList({
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
               Hủy
@@ -477,7 +477,7 @@ export default function WalletTransactionList({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Hủy</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleConfirmHardDelete}
               className="bg-red-600 hover:bg-red-700"
             >
