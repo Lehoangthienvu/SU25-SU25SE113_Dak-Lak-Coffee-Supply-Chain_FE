@@ -4,7 +4,7 @@ import { CropViewAllDto } from '@/lib/api/crops';
 import { CropStatus, CropStatusLabels, CropStatusColors, CropStatusIconColors } from '@/lib/constants/cropStatus';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Ruler, Calendar, Trash2, Hash, Circle } from 'lucide-react';
+import { MapPin, Ruler, Calendar, Trash2, Hash, Circle, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface CropCardProps {
     crop: CropViewAllDto;
@@ -18,6 +18,31 @@ const getStatusColor = (status: CropStatus) => {
 
 const getStatusLabel = (status: CropStatus) => {
     return CropStatusLabels[status] || status;
+};
+
+const getApprovalBadge = (isApproved: boolean | null | undefined) => {
+    if (isApproved === true) {
+        return (
+            <Badge className="bg-green-100 text-green-800 border-green-200 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                Đã duyệt
+            </Badge>
+        );
+    } else if (isApproved === false) {
+        return (
+            <Badge className="bg-red-100 text-red-800 border-red-200 flex items-center gap-1">
+                <XCircle className="h-3 w-3" />
+                Từ chối
+            </Badge>
+        );
+    } else {
+        return (
+            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Chờ duyệt
+            </Badge>
+        );
+    }
 };
 
 export const CropCard: React.FC<CropCardProps> = ({ crop, onDelete, onView }) => {
@@ -42,11 +67,17 @@ export const CropCard: React.FC<CropCardProps> = ({ crop, onDelete, onView }) =>
                     <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
                         <MapPin className="h-5 w-5 text-white" />
                     </div>
-                    <div>
+                    <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-700 transition-colors">
                             {crop.farmName}
                         </h3>
+                        <p className="text-sm text-gray-500">{crop.cropCode}</p>
                     </div>
+                </div>
+
+                {/* Approval Status */}
+                <div className="mb-4">
+                    {getApprovalBadge(crop.isApproved)}
                 </div>
 
                 {/* Info Section */}
