@@ -107,6 +107,12 @@ export const useMenuConfig = () => {
       },
       {
         type: "link",
+        title: "Quản lý Crops",
+        href: "/dashboard/admin/crops",
+        icon: iconMap.crops,
+      },
+      {
+        type: "link",
         title: t('sidebar.users'),
         href: "/dashboard/admin/users",
         icon: iconMap.users,
