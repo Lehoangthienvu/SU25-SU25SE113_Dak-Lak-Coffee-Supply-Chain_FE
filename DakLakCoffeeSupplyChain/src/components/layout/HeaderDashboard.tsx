@@ -240,15 +240,23 @@ export default function HeaderDashboard() {
               </DropdownMenu.Item>
 
               <DropdownMenu.Item
-                className='px-3 py-2 hover:bg-green-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200'
-                onClick={() => router.push("/dashboard/wallet")}
-              >
-                <div className='w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center'>
-                  <Wallet size={16} className='text-green-600' />
-                </div>
-                <span>{t("sidebar.wallet", "Ví")}</span>
-              </DropdownMenu.Item>
-
+                    className='px-3 py-2 hover:bg-green-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200'
+                    onClick={() => {
+                      const user = authService.getUser();
+                      // Điều kiện này đã đúng, sẽ chuyển hướng Admin tới trang ví hệ thống
+                      if (user?.roleRaw === 'Admin') {
+                        router.push('/dashboard/admin/system-wallet');
+                      } else {
+                        router.push('/dashboard/wallet');
+                      }
+                    }}
+                  >
+                    <div className='w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center'>
+                      <Wallet size={16} className='text-green-600' />
+                    </div>
+                    {/* SỬA LỖI TẠI ĐÂY: Thay 'admin' (chữ thường) thành 'Admin' (chữ hoa) để khớp với logic */}
+                    <span>{authService.getUser()?.roleRaw === 'Admin' ? 'Ví Hệ Thống' : t("sidebar.wallet", "Ví")}</span>
+                  </DropdownMenu.Item>
               <DropdownMenu.Item
                 className='px-3 py-2 hover:bg-orange-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200'
                 onClick={() => router.push("/dashboard/settings")}
