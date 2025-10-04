@@ -32,11 +32,51 @@ export interface StageFailureDisplayInfo {
  * Format mới: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
  */
 export function parseStageFailureFromComments(comments: string): StageFailureInfo | null {
+  console.log('🔍 DEBUG parseStageFailureFromComments: Starting with comments:', comments);
+  
   if (!comments) {
+    console.log('🔍 DEBUG parseStageFailureFromComments: No comments provided');
     return null;
   }
 
   try {
+    // Pattern 0: "Giai đoạn cần cập nhật: StageId: 9" (Format mới từ backend)
+    const stageIdPattern = /Giai đoạn cần cập nhật:\s*StageId:\s*(\d+)/;
+    console.log('🔍 DEBUG parseStageFailureFromComments: Testing StageId pattern:', stageIdPattern);
+    const stageIdMatch = comments.match(stageIdPattern);
+    console.log('🔍 DEBUG parseStageFailureFromComments: StageId match result:', stageIdMatch);
+    
+    if (stageIdMatch) {
+      const stageId = parseInt(stageIdMatch[1]);
+      console.log('🔍 DEBUG parseStageFailureFromComments: Found StageId pattern:', stageId);
+      
+      // Tìm stage name từ comments
+      const stageNamePattern = /Phơi khô|Thu hoạch|Xát vỏ|Lên men|Rửa sạch|Xay vỏ trấu/;
+      const stageNameMatch = comments.match(stageNamePattern);
+      const stageName = stageNameMatch ? stageNameMatch[0] : `Stage ${stageId}`;
+      
+      // Map StageId thành OrderIndex dựa trên thông tin từ debug logs backend
+      // StageId 9 = "Phơi khô" = OrderIndex 5
+      let orderIndex = stageId;
+      if (stageId === 9) orderIndex = 5; // Phơi khô
+      else if (stageId === 10) orderIndex = 6; // Xay vỏ trấu
+      else if (stageId === 5) orderIndex = 1; // Thu hoạch
+      else if (stageId === 6) orderIndex = 2; // Xát vỏ
+      else if (stageId === 7) orderIndex = 3; // Lên men
+      else if (stageId === 8) orderIndex = 4; // Rửa sạch
+      
+      console.log('🔍 DEBUG parseStageFailureFromComments: Mapped StageId', stageId, 'to OrderIndex', orderIndex);
+      
+      return {
+        failedOrderIndex: orderIndex, // Sử dụng OrderIndex đã map
+        failedStageId: stageId,
+        failedStageName: stageName,
+        failureDetails: `Cần cập nhật giai đoạn: ${stageName} (StageId: ${stageId}, OrderIndex: ${orderIndex})`,
+        recommendations: 'Vui lòng cập nhật lại giai đoạn trên để đạt tiêu chuẩn chất lượng',
+        isFailure: true
+      };
+    }
+
     // Pattern 1: "Giai đoạn cần cập nhật: Thu hoạch (Thứ tự: 1), Phơi (Thứ tự: 2), Xay vỏ (Thứ tự: 3)"
     const stagePattern = /Giai đoạn cần cập nhật:\s*(.+?)(?:\n|$)/;
     const stageMatch = comments.match(stagePattern);
@@ -250,6 +290,10 @@ export function debugStageFailure(comments: string, context: string = '') {
     console.log(`    - Recommendations: ${failureInfo.recommendations}`);
   } else {
     console.log(`  - Failed to parse - not a failure comment`);
+    console.log(`  - Checking patterns:`);
+    console.log(`    - Contains 'Giai đoạn cần cập nhật:': ${comments.includes('Giai đoạn cần cập nhật:')}`);
+    console.log(`    - Contains 'StageId:': ${comments.includes('StageId:')}`);
+    console.log(`    - Contains 'Tiến trình có vấn đề:': ${comments.includes('Tiến trình có vấn đề:')}`);
   }
 }
 

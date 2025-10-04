@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { TrendingUp, X, Info, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { advanceToNextProcessingProgress, getBatchInfoBeforeRetry } from '@/lib/api/processingBatchProgress';
+import { getProcessingBatchById } from '@/lib/api/processingBatches';
 import { AppToast } from '@/components/ui/AppToast';
 import { getProcessingStagesByMethodId, ProcessingStage } from '@/lib/api/processingStages';
 
@@ -68,8 +69,59 @@ export default function UpdateNextStagesForm({
       if (methodId && currentStageOrder !== undefined) {
         try {
           const stages = await getProcessingStagesByMethodId(methodId);
-          // Tìm tất cả các stage có orderIndex lớn hơn currentStageOrder
-          const remainingStages = stages.filter(stage => stage.orderIndex > currentStageOrder);
+          console.log('🔍 DEBUG UpdateNextStagesForm: All stages:', stages);
+          console.log('🔍 DEBUG UpdateNextStagesForm: Current stage order:', currentStageOrder);
+          console.log('🔍 DEBUG UpdateNextStagesForm: Method ID:', methodId);
+          console.log('🔍 DEBUG UpdateNextStagesForm: Batch ID:', batchId);
+          
+          // 🔧 MỚI: Debug chi tiết từng stage
+          stages.forEach(stage => {
+            console.log(`🔍 DEBUG UpdateNextStagesForm: Stage ${stage.stageName} - OrderIndex: ${stage.orderIndex}, StageId: ${stage.stageId}`);
+          });
+          
+          // 🔧 MỚI: Tìm stage đã retry thay vì dựa vào currentStageOrder
+          // Lấy thông tin batch để tìm stage đã retry gần nhất
+          const batchInfo = await getProcessingBatchById(batchId);
+          console.log('🔍 DEBUG UpdateNextStagesForm: Batch info:', batchInfo);
+          
+          if (batchInfo?.progresses) {
+            // Tìm progress retry gần nhất
+            const retryProgresses = batchInfo.progresses
+              .filter((p: any) => !p.isDeleted && p.stageDescription && p.stageDescription.includes('Làm lại'))
+              .sort((a: any, b: any) => new Date(b.progressDate).getTime() - new Date(a.progressDate).getTime());
+            
+            console.log('🔍 DEBUG UpdateNextStagesForm: Retry progresses:', retryProgresses);
+            
+            if (retryProgresses.length > 0) {
+              const latestRetryProgress = retryProgresses[0];
+              const retryStage = stages.find(s => s.stageId === latestRetryProgress.stageId);
+              
+              if (retryStage) {
+                console.log('🔍 DEBUG UpdateNextStagesForm: Latest retry stage:', retryStage.stageName, 'OrderIndex:', retryStage.orderIndex);
+                
+                // Tìm stage tiếp theo sau stage đã retry
+                const remainingStages = stages.filter(stage => {
+                  const isNextStage = stage.orderIndex === retryStage.orderIndex + 1;
+                  console.log(`🔍 DEBUG UpdateNextStagesForm: Stage ${stage.stageName} (order: ${stage.orderIndex}) - Is next stage: ${isNextStage} (looking for order: ${retryStage.orderIndex + 1})`);
+                  return isNextStage;
+                });
+                
+                console.log('🔍 DEBUG UpdateNextStagesForm: Remaining stages:', remainingStages);
+                setNextStages(remainingStages);
+                return;
+              }
+            }
+          }
+          
+          // Fallback: Sử dụng logic cũ nếu không tìm thấy retry progress
+          console.log('🔍 DEBUG UpdateNextStagesForm: No retry progress found, using fallback logic');
+          const remainingStages = stages.filter(stage => {
+            const isNextStage = stage.orderIndex === currentStageOrder + 1;
+            console.log(`🔍 DEBUG UpdateNextStagesForm: Stage ${stage.stageName} (order: ${stage.orderIndex}) - Is next stage: ${isNextStage} (looking for order: ${currentStageOrder + 1})`);
+            return isNextStage;
+          });
+          
+          console.log('🔍 DEBUG UpdateNextStagesForm: Fallback remaining stages:', remainingStages);
           setNextStages(remainingStages);
         } catch (error) {
           console.error('Error fetching next stages:', error);
@@ -81,7 +133,7 @@ export default function UpdateNextStagesForm({
     if (isOpen) {
       fetchNextStages();
     }
-  }, [methodId, currentStageOrder, isOpen]);
+  }, [methodId, currentStageOrder, isOpen, batchId]);
 
   // 🔧 MỚI: Effect để lấy thông tin batch trước retry khi component mở
   useEffect(() => {
@@ -220,31 +272,21 @@ export default function UpdateNextStagesForm({
     
     // Validation
     if (!form.progressDate) {
-             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
+      AppToast.error('Vui lòng chọn ngày cập nhật');
       return;
     }
     if (form.outputQuantity <= 0) {
-             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityPositive'));
+      AppToast.error('Vui lòng nhập khối lượng đầu ra');
       return;
     }
     if (!form.outputUnit) {
-             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
-      return;
-    }
-
-    // Kiểm tra xem có ít nhất một thông tin cần thiết không
-    const hasParameter = parameters.length > 0 || (form.parameterName && form.parameterValue);
-    const hasPhotos = photoFiles.length > 0;
-    const hasVideos = videoFiles.length > 0;
-    
-    if (!hasParameter && !hasPhotos && !hasVideos) {
-             AppToast.error(t('componentsprocessing.updateNextStagesForm.validation.outputQuantityRequired'));
+      AppToast.error('Vui lòng chọn đơn vị');
       return;
     }
 
     // 🔧 MỚI: Kiểm tra validation cho output quantity
     if (retryValidation && !retryValidation.isValid) {
-             AppToast.error(retryValidation.errorMessage || t('componentsprocessing.updateNextStagesForm.validation.outputQuantityPositive'));
+      AppToast.error(retryValidation.errorMessage || 'Khối lượng không hợp lệ');
       return;
     }
 
