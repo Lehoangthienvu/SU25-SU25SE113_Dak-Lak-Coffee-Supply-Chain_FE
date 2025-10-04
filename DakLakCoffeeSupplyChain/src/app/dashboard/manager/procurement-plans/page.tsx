@@ -132,18 +132,20 @@ export default function BusinessProcurementPlansPage() {
     if (!planId) return;
     try {
       setLoadingConfirm(true);
-      const updatedPlan = await deleteProcurementPlan(planId);
-      if (updatedPlan) {
-        const newData = await getAllProcurementPlans().catch((error) => {
-          AppToast.error(getErrorMessage(error));
-          return [];
-        });
-        setProcurementPlans(newData);
-        adjustPagination(newData);
-        closeDialog();
-        AppToast.success(t("procurementPlan.messages.success.deleted"));
-      }
+      
+      // 🔧 SOFT DELETE: Gọi API xóa mềm
+      await deleteProcurementPlan(planId);
+      
+      // 🔧 SOFT DELETE: Cập nhật local state để loại bỏ item đã xóa mềm
+      setProcurementPlans(prev => prev.filter(p => p.planId !== planId));
+      adjustPagination(procurementPlans.filter(p => p.planId !== planId));
+      
+      closeDialog();
+      AppToast.success(t("procurementPlan.messages.success.deleted"));
     } catch (error) {
+      console.error("[ProcurementPlans] Soft delete failed:", error);
+      // 🔧 SOFT DELETE: Refresh lại dữ liệu từ server nếu có lỗi
+      fetchData();
       AppToast.error(getErrorMessage(error));
     } finally {
       setLoadingConfirm(false);
