@@ -9,6 +9,7 @@ import {
   updatePaymentConfiguration,
   deletePaymentConfiguration,
   softDeletePaymentConfiguration,
+  togglePaymentConfigurationStatus,
   PaymentConfigurationViewAllDto,
   PaymentConfigurationViewDetailsDto,
   PaymentConfigurationCreateDto,
@@ -238,13 +239,13 @@ export default function PaymentConfigurationsPage() {
     isActive: true,
   });
 
-  // Role options - có thể lấy từ API hoặc hardcode
+  // Role options
   const roleOptions = [
-    { id: 1, name: "Nông dân" },
+    { id: 1, name: "Quản trị viên" },
     { id: 2, name: "Quản lý doanh nghiệp" },
-    { id: 3, name: "Chuyên gia" },
-    { id: 4, name: "Nhân viên" },
-    { id: 5, name: "Quản trị viên" },
+    { id: 3, name: "Nhân viên" },
+    { id: 4, name: "Nông dân" },
+    { id: 5, name: "Chuyên gia" },
   ];
 
   // Fee type options - mapping với enum FeeType từ backend
@@ -297,6 +298,8 @@ export default function PaymentConfigurationsPage() {
       businessmanager: "Quản lý doanh nghiệp",
       manager: "Quản lý doanh nghiệp",
       enterprise_manager: "Quản lý doanh nghiệp",
+      businessstaff: "Nhân viên", // BusinessStaff → Nhân viên
+      agriculturalexpert: "Chuyên gia", // AgriculturalExpert → Chuyên gia
       expert: "Chuyên gia",
       specialist: "Chuyên gia",
       staff: "Nhân viên",
@@ -530,18 +533,7 @@ export default function PaymentConfigurationsPage() {
     if (!editingConfiguration) return;
 
     try {
-      // Tự động tính toán isActive dựa trên ngày hiệu lực
-      const today = new Date().toISOString().split("T")[0];
-      const effectiveFrom = formData.effectiveFrom;
-      const effectiveTo = formData.effectiveTo;
-
-      let isActive = false;
-      if (effectiveFrom <= today) {
-        if (!effectiveTo || effectiveTo >= today) {
-          isActive = true;
-        }
-      }
-
+      // Giữ nguyên trạng thái hiện tại từ form
       const updateData: PaymentConfigurationUpdateDto = {
         configId: editingConfiguration.configId,
         roleId: formData.roleId,
@@ -553,7 +545,7 @@ export default function PaymentConfigurationsPage() {
         description: formData.description,
         effectiveFrom: formData.effectiveFrom,
         effectiveTo: formData.effectiveTo,
-        isActive: isActive,
+        isActive: formData.isActive, // Giữ nguyên trạng thái hiện tại
       };
 
       await updatePaymentConfiguration(
@@ -588,28 +580,8 @@ export default function PaymentConfigurationsPage() {
     isActive: boolean
   ) => {
     try {
-      // Cần lấy chi tiết config trước để update
-      const configDetails = await getPaymentConfigurationById(config.configId);
-      if (!configDetails) {
-        AppToast.error("Không tìm thấy cấu hình phí");
-        return;
-      }
-
-      const updateData: PaymentConfigurationUpdateDto = {
-        configId: config.configId,
-        roleId: configDetails.roleId,
-        feeType: configDetails.feeType,
-        amount: configDetails.amount,
-        minTons: configDetails.minTons,
-        maxTons: configDetails.maxTons,
-        configName: configDetails.configName,
-        description: configDetails.description,
-        effectiveFrom: configDetails.effectiveFrom,
-        effectiveTo: configDetails.effectiveTo,
-        isActive: isActive,
-      };
-
-      await updatePaymentConfiguration(config.configId, updateData);
+      // Dùng API toggle-status
+      await togglePaymentConfigurationStatus(config.configId);
       AppToast.success(
         isActive
           ? "Kích hoạt cấu hình phí thành công"
@@ -1133,13 +1105,13 @@ export default function PaymentConfigurationsPage() {
                     effectiveFromFilter ||
                     effectiveToFilter ||
                     statusFilter !== "all") && (
-                    <Badge
-                      variant="secondary"
-                      className="bg-blue-100 text-blue-800"
-                    >
-                      Đã áp dụng bộ lọc
-                    </Badge>
-                  )}
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800"
+                      >
+                        Đã áp dụng bộ lọc
+                      </Badge>
+                    )}
                 </div>
                 <Button
                   variant="ghost"
@@ -1516,18 +1488,6 @@ export default function PaymentConfigurationsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="editIsActive"
-                  checked={formData.isActive ?? true}
-                  onChange={(e) =>
-                    setFormData({ ...formData, isActive: e.target.checked })
-                  }
-                />
-                <Label htmlFor="editIsActive">Đang hoạt động</Label>
-              </div>
-
               <div className="flex justify-end space-x-2">
                 <Button
                   variant="outline"
@@ -1563,7 +1523,7 @@ export default function PaymentConfigurationsPage() {
                         <div>
                           <h3 className="text-2xl font-bold text-gray-900 mb-2">
                             {viewingConfiguration.configName &&
-                            viewingConfiguration.configName.trim() !== ""
+                              viewingConfiguration.configName.trim() !== ""
                               ? viewingConfiguration.configName
                               : getFeeTypeLabel(viewingConfiguration.feeType)}
                           </h3>
@@ -1590,11 +1550,10 @@ export default function PaymentConfigurationsPage() {
                               ? "default"
                               : "secondary"
                           }
-                          className={`px-4 py-2 text-sm font-medium ${
-                            viewingConfiguration.isActive
-                              ? "bg-green-100 text-green-800 border-green-200"
-                              : "bg-gray-100 text-gray-600 border-gray-200"
-                          }`}
+                          className={`px-4 py-2 text-sm font-medium ${viewingConfiguration.isActive
+                            ? "bg-green-100 text-green-800 border-green-200"
+                            : "bg-gray-100 text-gray-600 border-gray-200"
+                            }`}
                         >
                           {viewingConfiguration.isActive ? (
                             <div className="flex items-center gap-2">
@@ -1663,7 +1622,7 @@ export default function PaymentConfigurationsPage() {
                       </div>
                       <div className="text-lg font-medium text-gray-900">
                         {viewingConfiguration.minTons != null ||
-                        viewingConfiguration.maxTons != null ? (
+                          viewingConfiguration.maxTons != null ? (
                           <div className="space-y-1">
                             {viewingConfiguration.minTons != null && (
                               <div className="flex items-center gap-2">
@@ -1735,11 +1694,10 @@ export default function PaymentConfigurationsPage() {
                     <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
                       <div className="flex items-center gap-3 mb-3">
                         <div
-                          className={`p-2 rounded-lg ${
-                            viewingConfiguration.isActive
-                              ? "bg-green-100"
-                              : "bg-red-100"
-                          }`}
+                          className={`p-2 rounded-lg ${viewingConfiguration.isActive
+                            ? "bg-green-100"
+                            : "bg-red-100"
+                            }`}
                         >
                           {viewingConfiguration.isActive ? (
                             <FiCheckCircle className="text-green-600 w-5 h-5" />
@@ -1752,11 +1710,10 @@ export default function PaymentConfigurationsPage() {
                         </Label>
                       </div>
                       <div
-                        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium ${
-                          viewingConfiguration.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium ${viewingConfiguration.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {viewingConfiguration.isActive ? (
                           <>

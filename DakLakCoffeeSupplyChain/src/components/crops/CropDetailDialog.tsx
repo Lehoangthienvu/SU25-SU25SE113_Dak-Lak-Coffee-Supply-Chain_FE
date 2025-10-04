@@ -2,9 +2,11 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { CropViewAllDto, CropViewDetailsDto, getCropById } from '@/lib/api/crops';
 import { CropStatus, CropStatusLabels, CropStatusColors, CropStatusIconColors } from '@/lib/constants/cropStatus';
-import { MapPin, Home, Ruler, Activity, Hash, Calendar, Edit, X, Loader2, Circle } from 'lucide-react';
+import { MapPin, Home, Ruler, Activity, Hash, Calendar, Edit, X, Loader2, Circle, CheckCircle, XCircle, Clock, FileText, Image, Video, File } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
 interface CropDetailDialogProps {
@@ -12,16 +14,57 @@ interface CropDetailDialogProps {
     onOpenChange: (open: boolean) => void;
     crop: CropViewAllDto | null;
     onEdit?: (cropWithDetails: CropViewDetailsDto) => void;
+    // Admin functions
+    onApprove?: (cropId: string) => void;
+    onReject?: (cropId: string, reason: string) => void;
+    isAdmin?: boolean;
 }
 
 export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
     open,
     onOpenChange,
     crop,
-    onEdit
+    onEdit,
+    onApprove,
+    onReject,
+    isAdmin = false
 }) => {
     const [cropDetails, setCropDetails] = useState<CropViewDetailsDto | null>(null);
     const [loading, setLoading] = useState(false);
+    
+    // Admin states
+    const [showRejectForm, setShowRejectForm] = useState(false);
+    const [rejectReason, setRejectReason] = useState('');
+    const [actionLoading, setActionLoading] = useState(false);
+
+    // Admin handlers
+    const handleApprove = async () => {
+        if (!crop || !onApprove) return;
+        try {
+            setActionLoading(true);
+            await onApprove(crop.cropId);
+            setShowRejectForm(false);
+            setRejectReason('');
+        } catch (error) {
+            console.error('Error approving crop:', error);
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleReject = async () => {
+        if (!crop || !onReject || !rejectReason.trim()) return;
+        try {
+            setActionLoading(true);
+            await onReject(crop.cropId, rejectReason);
+            setShowRejectForm(false);
+            setRejectReason('');
+        } catch (error) {
+            console.error('Error rejecting crop:', error);
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     const loadCropDetails = useCallback(async () => {
         if (!crop) return;
@@ -43,7 +86,10 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                 updatedAt: '',
                 createdBy: '',
                 updatedBy: '',
-                isDeleted: false
+                isDeleted: false,
+                images: [],
+                videos: [],
+                documents: []
             });
         } finally {
             setLoading(false);
@@ -53,6 +99,11 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
     useEffect(() => {
         if (open && crop) {
             loadCropDetails();
+        } else if (!open) {
+            // Reset admin states when dialog closes
+            setShowRejectForm(false);
+            setRejectReason('');
+            setActionLoading(false);
         }
     }, [open, crop, loadCropDetails]);
 
@@ -90,6 +141,41 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                 </DialogHeader>
 
                 <div className="space-y-6 py-4">
+                    {/* Approval Status */}
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Trạng thái duyệt</h3>
+                                {cropDetails?.isApproved === true ? (
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle className="h-5 w-5 text-green-600" />
+                                        <span className="text-green-600 font-semibold">Đã duyệt</span>
+                                    </div>
+                                ) : cropDetails?.isApproved === false ? (
+                                    <div className="flex items-center gap-2">
+                                        <XCircle className="h-5 w-5 text-red-600" />
+                                        <span className="text-red-600 font-semibold">Từ chối</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="h-5 w-5 text-yellow-600" />
+                                        <span className="text-yellow-600 font-semibold">Chờ duyệt</span>
+                                    </div>
+                                )}
+                                {cropDetails?.approvedAt && (
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        Ngày duyệt: {new Date(cropDetails.approvedAt).toLocaleDateString('vi-VN')}
+                                    </p>
+                                )}
+                                {cropDetails?.rejectReason && (
+                                    <p className="text-sm text-red-600 mt-1">
+                                        Lý do từ chối: {cropDetails.rejectReason}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Thông tin cơ bản */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Mã vùng trồng */}
@@ -159,6 +245,84 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                         </div>
                     </div>
 
+                    {/* Ghi chú */}
+                    {cropDetails?.note && (
+                        <div>
+                            <div className="bg-white border border-gray-200 rounded-lg p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <FileText className="w-4 h-4 text-green-500" />
+                                    <span className="text-sm font-semibold text-gray-700">Ghi chú</span>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-3">
+                                    <p className="text-gray-900">{cropDetails.note}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Media Files */}
+                    {(cropDetails?.images?.length || cropDetails?.videos?.length || cropDetails?.documents?.length) && (
+                        <div>
+                            <div className="bg-white border border-gray-200 rounded-lg p-4">
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Tài liệu đính kèm</h3>
+                                
+                                {/* Images */}
+                                {cropDetails.images && cropDetails.images.length > 0 && (
+                                    <div className="mb-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Image className="w-4 h-4 text-green-500" />
+                                            <span className="text-sm font-medium text-gray-700">Hình ảnh ({cropDetails.images.length})</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                            {cropDetails.images.map((url, index) => (
+                                                <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                                    <img src={url} alt={`Image ${index + 1}`} className="w-full h-full object-cover" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Videos */}
+                                {cropDetails.videos && cropDetails.videos.length > 0 && (
+                                    <div className="mb-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Video className="w-4 h-4 text-blue-500" />
+                                            <span className="text-sm font-medium text-gray-700">Video ({cropDetails.videos.length})</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {cropDetails.videos.map((url, index) => (
+                                                <div key={index} className="bg-gray-100 rounded-lg p-2">
+                                                    <video src={url} controls className="w-full h-32 object-cover rounded" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Documents */}
+                                {cropDetails.documents && cropDetails.documents.length > 0 && (
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <File className="w-4 h-4 text-orange-500" />
+                                            <span className="text-sm font-medium text-gray-700">Tài liệu ({cropDetails.documents.length})</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {cropDetails.documents.map((url, index) => (
+                                                <div key={index} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                                                    <File className="w-4 h-4 text-gray-500" />
+                                                    <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                                        Tài liệu {index + 1}
+                                                    </a>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Thông tin bổ sung */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Ngày tạo */}
@@ -205,6 +369,71 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
 
                 {/* Footer */}
                 <div className="pt-6 border-t border-orange-100">
+                    {/* Admin Actions */}
+                    {isAdmin && cropDetails && (
+                        <div className="mb-4">
+                            {/* Reject Form */}
+                            {showRejectForm && (
+                                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <Label className="text-sm font-semibold text-red-700">
+                                        Lý do từ chối *
+                                    </Label>
+                                    <Textarea
+                                        value={rejectReason}
+                                        onChange={(e) => setRejectReason(e.target.value)}
+                                        placeholder="Nhập lý do từ chối..."
+                                        className="min-h-[80px] border-red-300 focus:border-red-500 mt-2"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Admin Action Buttons */}
+                            {cropDetails.isApproved !== true ? (
+                                <div className="flex gap-2 mb-4">
+                                    <Button
+                                        onClick={() => setShowRejectForm(!showRejectForm)}
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-red-300 text-red-700 hover:bg-red-50"
+                                    >
+                                        <XCircle className="w-4 h-4 mr-1" />
+                                        {showRejectForm ? 'Hủy' : 'Từ chối'}
+                                    </Button>
+                                    
+                                    {showRejectForm ? (
+                                        <Button
+                                            onClick={handleReject}
+                                            disabled={actionLoading || !rejectReason.trim()}
+                                            size="sm"
+                                            className="bg-red-500 hover:bg-red-600 text-white"
+                                        >
+                                            {actionLoading ? 'Đang xử lý...' : 'Xác nhận từ chối'}
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={handleApprove}
+                                            disabled={actionLoading}
+                                            size="sm"
+                                            className="bg-green-500 hover:bg-green-600 text-white"
+                                        >
+                                            {actionLoading ? 'Đang xử lý...' : 'Duyệt'}
+                                        </Button>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <div className="flex items-center gap-2 text-green-700">
+                                        <CheckCircle className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {cropDetails.isApproved ? 'Đã duyệt' : 'Đã từ chối'}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Main Footer Buttons */}
                     <div className="flex gap-3 w-full">
                         <Button
                             type="button"
@@ -215,7 +444,7 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                             <X className="w-4 h-4 mr-2" />
                             Đóng
                         </Button>
-                        {onEdit && cropDetails && (
+                        {onEdit && cropDetails && !isAdmin && (
                             <Button
                                 type="button"
                                 onClick={() => onEdit(cropDetails)}

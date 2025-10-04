@@ -214,7 +214,8 @@
           "targetRegion": {
             "label": "Khu vực thu mua",
             "placeholder": "Chọn khu vực thu mua...",
-            "all" : "Chọn toàn bộ khu vực"
+            "all" : "Toàn bộ khu vực",
+            "selectAll": "Chọn tất cả"
           },
           "minimumRegistrationQuantity": {
             "label": "Sản lượng đăng ký tối thiểu",
@@ -260,7 +261,8 @@
           "minRegistrationQuantity": "Sản lượng đăng ký tối thiểu không thể nhỏ hơn 100 kg.",
           "minRegistrationQuantityMax": "Sản lượng đăng ký tối thiểu không thể lớn hơn sản lượng mục tiêu.",
           "minPrice": "Giá tối thiểu không thể nhỏ hơn 1000 đồng.",
-          "maxPrice": "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu."
+          "maxPrice": "Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.",
+          "targetRegions": "Vui lòng chọn ít nhất một khu vực thu mua."
         },
         "estimatedCost": {
           "title": "Chi phí ước tính",

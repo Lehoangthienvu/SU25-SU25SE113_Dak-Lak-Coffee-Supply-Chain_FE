@@ -9,6 +9,7 @@ import { createWarehouseOutboundRequest, getOrderItemsWithRemainingQuantity } fr
 import { getAllWarehouses } from '@/lib/api/warehouses';
 import { getInventoriesByWarehouseIdWithFifo } from '@/lib/api/inventory';
 import { getOrders } from '@/lib/api/orders';
+import { OrderStatus } from '@/lib/constants/orderStatus';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +35,13 @@ import {
 
 type Warehouse = { warehouseId: string; name: string; location?: string };
 
-type Order = { orderId: string; orderCode: string; contractNumber?: string; deliveryBatchCode?: string };
+type Order = { 
+  orderId: string; 
+  orderCode: string; 
+  contractNumber?: string; 
+  deliveryBatchCode?: string;
+  status: string;
+};
 
 type OrderItem = { 
   orderItemId: string; 
@@ -92,8 +99,13 @@ export default function CreateOutboundRequestPage() {
       }
 
       try {
+        // Chỉ lấy những Order có trạng thái "Preparing" hoặc "Shipped"
+        // Loại bỏ những Order đã "Delivered" vì không cần tạo yêu cầu xuất kho nữa
         const ores = await getOrders();
-        setOrders(ores || []);
+        const filteredOrders = (ores || []).filter(order => 
+          order.status === OrderStatus.Preparing || order.status === OrderStatus.Shipped
+        );
+        setOrders(filteredOrders);
       } catch (e: any) {
         toast.error(e.message || t('managerWarehouseRequest.create.errors.loadOrders'));
       }

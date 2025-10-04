@@ -390,49 +390,46 @@ export default function ProductForm({ initialData, onSuccess }: Props) {
       }
 
       // ✅ Test: Lấy thông tin chi tiết từ endpoint detail
-      getInventoryDetailTest(inventoryId).then((detailData: any) => {
-        if (detailData) {
-          console.log("🧪 Detail data has farmer info:", {
-            farmerId: detailData.farmerId,
-            farmerName: detailData.farmerName,
-            farmLocation: detailData.farmLocation,
-          });
-          console.log("🧪 Detail data has evaluation info:", {
-            evaluationResult: detailData.evaluationResult,
-            totalScore: detailData.totalScore,
-          });
-
-          // Tự động điền từ detail data
-          if (detailData.farmLocation) {
-            console.log(
-              "✅ Setting originRegion from detail:",
-              detailData.farmLocation
-            );
-            setField("originRegion", detailData.farmLocation);
+      getInventoryDetailTest(inventoryId)
+        .then((detailData: any) => {
+          if (detailData) {
+            // Tự động điền từ detail data
+            const growingRegion =
+              detailData.farmLocation || detailData.FarmLocation; // ✅ THÊM: Check cả 2 cases
+            if (growingRegion) {
+              setField("originRegion", growingRegion);
+            } else {
+              // ✅ THÊM: Fallback - thử lấy từ Crop API nếu có cropId
+              if (detailData.cropId) {
+                import("@/lib/api/crops").then(({ getCropById }) => {
+                  getCropById(detailData.cropId)
+                    .then((cropData: any) => {
+                      if (cropData.address) {
+                        setField("originRegion", cropData.address);
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("❌ Error getting crop data:", error);
+                    });
+                });
+              }
+            }
+            if (detailData.farmerName) {
+              setField("farmerName", detailData.farmerName);
+            }
+            if (detailData.evaluationResult) {
+              setField("evaluatedQuality", detailData.evaluationResult);
+            }
+            if (detailData.totalScore !== undefined) {
+              setField("evaluationScore", detailData.totalScore);
+            }
+          } else {
+            console.log("❌ No detail data received from API");
           }
-          if (detailData.farmerName) {
-            console.log(
-              "✅ Setting farmerName from detail:",
-              detailData.farmerName
-            );
-            setField("farmerName", detailData.farmerName);
-          }
-          if (detailData.evaluationResult) {
-            console.log(
-              "✅ Setting evaluatedQuality from detail:",
-              detailData.evaluationResult
-            );
-            setField("evaluatedQuality", detailData.evaluationResult);
-          }
-          if (detailData.totalScore !== undefined) {
-            console.log(
-              "✅ Setting evaluationScore from detail:",
-              detailData.totalScore
-            );
-            setField("evaluationScore", detailData.totalScore);
-          }
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("❌ Error getting inventory detail:", error);
+        });
     }
   };
 

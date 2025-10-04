@@ -65,7 +65,8 @@ export default function CultivationRegistrationForm({
       setLoading(false);
       return [];
     });
-    setExistingCrops(crops);
+    const filteredCrops = crops.filter((crop) => crop.isApproved);
+    setExistingCrops(filteredCrops);
     setLoading(false);
   };
 
@@ -393,7 +394,6 @@ export default function CultivationRegistrationForm({
                             {" - "} {d.processingMethodName}
                           </>
                         )}
-                        {d.targetRegion && <> ({d.targetRegion})</>}
                       </option>
                     ))}
                   </select>

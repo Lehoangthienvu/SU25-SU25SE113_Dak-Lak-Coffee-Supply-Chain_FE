@@ -191,6 +191,11 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
+        title: "Quản lý Crops",
+        href: "/dashboard/admin/crops",
+        icon: iconMap.crops,
+      },
+      {
         title: t("sidebar.navigation.userManagement"),
         href: "/dashboard/admin/users",
         icon: iconMap.users,

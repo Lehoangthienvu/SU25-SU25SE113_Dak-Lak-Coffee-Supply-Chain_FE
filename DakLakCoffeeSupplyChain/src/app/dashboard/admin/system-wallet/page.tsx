@@ -98,12 +98,12 @@ export default function SystemWalletPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Wallet ID */}
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-500">ID Ví</label>
                 <div className="text-sm font-mono bg-gray-100 p-2 rounded">
                   {systemWallet.walletId}
                 </div>
-              </div>
+              </div> */}
 
               {/* Wallet Type */}
               <div className="space-y-2">
@@ -138,8 +138,8 @@ export default function SystemWalletPage() {
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">Thông tin ví System</h3>
               <p className="text-sm text-blue-700">
-                Ví System là ví chính của hệ thống, nhận tất cả các khoản phí từ người dùng 
-                như phí đăng ký kế hoạch thu mua, phí đăng ký tài khoản, v.v. Số dư hiện tại 
+                Ví System là ví chính của hệ thống, nhận tất cả các khoản phí từ người dùng
+                như phí đăng ký kế hoạch thu mua, phí đăng ký tài khoản, v.v. Số dư hiện tại
                 phản ánh tổng số tiền đã thu được từ các giao dịch thanh toán.
               </p>
             </div>

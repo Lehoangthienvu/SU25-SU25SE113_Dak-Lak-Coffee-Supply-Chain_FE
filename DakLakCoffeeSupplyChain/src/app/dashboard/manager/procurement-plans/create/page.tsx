@@ -122,6 +122,11 @@ export default function CreateProcurementPlanPage() {
             "procurementPlan.components.procurementPlanForm.validation.maxPrice"
           );
         }
+        if (detail.targetRegions.length === 0 || detail.targetRegions.some(r => r === "")) {
+          newErrors[`targetRegions-${index}`] = t(
+            "procurementPlan.components.procurementPlanForm.validation.targetRegions"
+          );
+        }
         // if (detail.expectedYieldPerHectare <= 0) {
         //   newErrors[`expectedYieldPerHectare-${index}`] =
         //     "Sản lượng dự kiến trên 1 ha phải lớn hơn 0.";
