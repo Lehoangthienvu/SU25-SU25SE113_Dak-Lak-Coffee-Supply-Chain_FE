@@ -33,12 +33,12 @@ export default function CropSeasonDetail() {
         try {
             // Get basic season info
             const seasonData = await getCropSeasonById(cropSeasonId);
-            
+
             // Get detailed crop season details with address
             const detailsData = await getCropSeasonDetailsByCropSeasonId(cropSeasonId);
-            
+
             if (detailsData && detailsData.length > 0) {
-                
+
                 // Merge season data with detailed data
                 if (seasonData) {
                     seasonData.details = detailsData.map(detail => ({
@@ -66,7 +66,7 @@ export default function CropSeasonDetail() {
                     }));
                 }
             }
-            
+
             setSeason(seasonData);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : t('cropSeasons.details.error');
@@ -136,63 +136,63 @@ export default function CropSeasonDetail() {
                 <Card className="border-orange-200 shadow-sm">
                     <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
                         <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
-                                    <Leaf className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        {season.seasonName}
-                                    </h1>
-                                    <p className="text-gray-600 text-sm">{t('cropSeasons.details.title')}</p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+                                        <Leaf className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-800">
+                                            {season.seasonName}
+                                        </h1>
+                                        <p className="text-gray-600 text-sm">{t('cropSeasons.details.title')}</p>
+                                    </div>
                                 </div>
                             </div>
+                            <StatusBadge status={season.status} map={CropSeasonStatusMap} />
                         </div>
-                        <StatusBadge status={season.status} map={CropSeasonStatusMap} />
-                    </div>
 
-                    {/* Statistics Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-3 text-white">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-orange-100 text-xs">{t('cropSeasons.details.statistics.totalAreas')}</p>
-                                    <p className="text-xl font-bold">{totalDetails}</p>
+                        {/* Statistics Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-3 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-orange-100 text-xs">{t('cropSeasons.details.statistics.totalAreas')}</p>
+                                        <p className="text-xl font-bold">{totalDetails}</p>
+                                    </div>
+                                    <MapPin className="w-5 h-5 text-orange-200" />
                                 </div>
-                                <MapPin className="w-5 h-5 text-orange-200" />
+                            </div>
+                            <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-3 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-green-100 text-xs">{t('cropSeasons.details.statistics.completed')}</p>
+                                        <p className="text-xl font-bold">{completedDetails}</p>
+                                    </div>
+                                    <TrendingUp className="w-5 h-5 text-green-200" />
+                                </div>
+                            </div>
+                            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg p-3 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-blue-100 text-xs">{t('cropSeasons.details.statistics.inProgress')}</p>
+                                        <p className="text-xl font-bold">{inProgressDetails}</p>
+                                    </div>
+                                    <Calendar className="w-5 h-5 text-blue-200" />
+                                </div>
+                            </div>
+                            <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-3 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-purple-100 text-xs">Tổng diện tích</p>
+                                        <p className="text-xl font-bold">{totalArea.toFixed(1)} ha</p>
+                                    </div>
+                                    <MapPin className="w-5 h-5 text-purple-200" />
+                                </div>
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-3 text-white">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-green-100 text-xs">{t('cropSeasons.details.statistics.completed')}</p>
-                                    <p className="text-xl font-bold">{completedDetails}</p>
-                                </div>
-                                <TrendingUp className="w-5 h-5 text-green-200" />
-                            </div>
-                        </div>
-                        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg p-3 text-white">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-blue-100 text-xs">{t('cropSeasons.details.statistics.inProgress')}</p>
-                                    <p className="text-xl font-bold">{inProgressDetails}</p>
-                                </div>
-                                <Calendar className="w-5 h-5 text-blue-200" />
-                            </div>
-                        </div>
-                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-3 text-white">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-purple-100 text-xs">Tổng diện tích</p>
-                                    <p className="text-xl font-bold">{totalArea.toFixed(1)} ha</p>
-                                </div>
-                                <MapPin className="w-5 h-5 text-purple-200" />
-                            </div>
-                        </div>
-                    </div>
                     </CardHeader>
-                    
+
                     <CardContent className="p-4">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
@@ -275,7 +275,7 @@ export default function CropSeasonDetail() {
                                     areaAllocated: detail.areaAllocated || 0,
                                     plannedQuality: detail.plannedQuality || '',
                                     qualityGrade: detail.qualityGrade || '',
-                                    status: typeof detail.status === 'string' 
+                                    status: typeof detail.status === 'string'
                                         ? (CropSeasonDetailStatusValueToNumber[detail.status as keyof typeof CropSeasonDetailStatusValueToNumber] || 0)
                                         : (detail.status as number),
                                     farmerId: detail.farmerId || '',
@@ -289,8 +289,8 @@ export default function CropSeasonDetail() {
                                     Address: detail.Address,
                                     cropArea: detail.cropArea || detail.areaAllocated || 0
                                 };
-                                
-                                
+
+
                                 return mappedDetail;
                             })}
                             onReload={loadSeason}

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useAuthGuard } from "@/lib/auth/useAuthGuard";
 import { getCropSeasonById, CropSeason } from "@/lib/api/cropSeasons";
+import { getCropSeasonDetailsByCropSeasonId, type CropSeasonDetail } from "@/lib/api/cropSeasonDetail";
 import { getCropProgressesByDetailId, CropProgressViewAllDto } from "@/lib/api/cropProgress";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
@@ -45,8 +46,46 @@ export default function ManagerCropSeasonDetailPage() {
 
             setIsLoading(true);
             try {
-                // Fetch crop season details
+                // Get basic season info
                 const seasonData = await getCropSeasonById(cropSeasonId);
+                
+                // Try to get detailed crop season details with address (giống bên farmer nhưng có try-catch)
+                try {
+                    const detailsData = await getCropSeasonDetailsByCropSeasonId(cropSeasonId);
+                    
+                    if (detailsData && detailsData.length > 0) {
+                        // Merge season data with detailed data (giống hệt bên farmer)
+                        if (seasonData) {
+                            seasonData.details = detailsData.map(detail => ({
+                                detailId: detail.detailId,
+                                coffeeTypeId: detail.commitmentDetailId,
+                                typeName: detail.typeName,
+                                areaAllocated: detail.areaAllocated,
+                                expectedHarvestStart: detail.expectedHarvestStart,
+                                expectedHarvestEnd: detail.expectedHarvestEnd,
+                                estimatedYield: detail.estimatedYield,
+                                actualYield: detail.actualYield ?? null,
+                                plannedQuality: detail.plannedQuality,
+                                qualityGrade: detail.qualityGrade || '',
+                                status: detail.status.toString(),
+                                farmerId: detail.farmerId,
+                                farmerName: detail.farmerName,
+                                committedQuantity: detail.committedQuantity,
+                                // Crop information
+                                cropId: detail.cropId,
+                                cropCode: detail.cropCode,
+                                farmName: detail.farmName,
+                                address: detail.address,
+                                Address: detail.Address,
+                                cropArea: detail.cropArea
+                            }));
+                        }
+                    }
+                } catch (detailError) {
+                    console.warn('Không thể lấy chi tiết vùng trồng, sử dụng dữ liệu cơ bản:', detailError);
+                    // Tiếp tục với dữ liệu cơ bản từ getCropSeasonById
+                }
+                
                 setCropSeason(seasonData);
 
                 // Fetch progress for each detail
@@ -237,8 +276,8 @@ export default function ManagerCropSeasonDetailPage() {
                                                 <span className="font-medium">{cropSeason.farmerName}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">{t('manager.cropSeasonDetail.commitmentCode')}:</span>
-                                                <span>{cropSeason.commitmentName}</span>
+                                                <span className="text-gray-600">Tên cam kết:</span>
+                                                <span className="font-medium">{cropSeason.commitmentName}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">{t('manager.cropSeasonDetail.registrationCode')}:</span>
@@ -284,34 +323,95 @@ export default function ManagerCropSeasonDetailPage() {
                                                         {getCropSeasonDetailStatusMap(t)[detail.status as CropSeasonDetailStatusValue]?.label || detail.status}
                                                     </Badge>
                                                 </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.allocatedArea')}:</span>
-                                                        <span className="ml-2 font-medium">{detail.areaAllocated || 0} ha</span>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    {/* Thông tin trang trại */}
+                                                    <div className="space-y-2">
+                                                        <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                                            <MapPin className="w-4 h-4 text-green-600" />
+                                                            Thông tin trang trại
+                                                        </h4>
+                                                        <div className="space-y-1 text-sm">
+                                                            <div>
+                                                                <span className="text-gray-500">Tên trang trại:</span>
+                                                                <span className="ml-2 text-gray-900">
+                                                                    {detail.farmName && detail.farmName.trim() !== '' 
+                                                                        ? detail.farmName 
+                                                                        : 'Chưa có tên trang trại'}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Địa chỉ:</span>
+                                                                <span className="ml-2 text-gray-900">
+                                                                    {(detail.address && detail.address.trim() !== '') || (detail.Address && detail.Address.trim() !== '')
+                                                                        ? (detail.address || detail.Address)
+                                                                        : 'Chưa có địa chỉ'}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Mã vùng trồng:</span>
+                                                                <span className="ml-2 text-gray-900">
+                                                                    {detail.cropCode && detail.cropCode.trim() !== ''
+                                                                        ? detail.cropCode
+                                                                        : 'Chưa có mã vùng trồng'}
+                                                                </span>
+                                                            </div>
+                                                            {detail.cropArea && detail.cropArea > 0 && (
+                                                                <div>
+                                                                    <span className="text-gray-500">Tổng diện tích:</span>
+                                                                    <span className="ml-2 text-gray-900">{detail.cropArea} ha</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.estimatedYield')}:</span>
-                                                        <span className="ml-2 font-medium">{detail.estimatedYield || 0} kg</span>
+
+                                                    {/* Lịch thu hoạch */}
+                                                    <div className="space-y-2">
+                                                        <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                                            <Calendar className="w-4 h-4 text-blue-600" />
+                                                            Lịch thu hoạch
+                                                        </h4>
+                                                        <div className="space-y-1 text-sm">
+                                                            <div>
+                                                                <span className="text-gray-500">Bắt đầu:</span>
+                                                                <span className="ml-2 text-gray-900">
+                                                                    {detail.expectedHarvestStart ? new Date(detail.expectedHarvestStart).toLocaleDateString('vi-VN') : 'N/A'}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Kết thúc:</span>
+                                                                <span className="ml-2 text-gray-900">
+                                                                    {detail.expectedHarvestEnd ? new Date(detail.expectedHarvestEnd).toLocaleDateString('vi-VN') : 'N/A'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.actualYield')}:</span>
-                                                        <span className="ml-2 font-medium">{detail.actualYield || 0} kg</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.expectedHarvestStart')}:</span>
-                                                        <span className="ml-2">
-                                                            {detail.expectedHarvestStart ? new Date(detail.expectedHarvestStart).toLocaleDateString('vi-VN') : 'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.expectedHarvestEnd')}:</span>
-                                                        <span className="ml-2">
-                                                            {detail.expectedHarvestEnd ? new Date(detail.expectedHarvestEnd).toLocaleDateString('vi-VN') : 'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">{t('manager.cropSeasonDetail.plannedQuality')}:</span>
-                                                        <span className="ml-2">{detail.plannedQuality || 'N/A'}</span>
+
+                                                    {/* Chi tiết sản xuất */}
+                                                    <div className="space-y-2">
+                                                        <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                                            <TrendingUp className="w-4 h-4 text-orange-600" />
+                                                            Chi tiết sản xuất
+                                                        </h4>
+                                                        <div className="space-y-1 text-sm">
+                                                            <div>
+                                                                <span className="text-gray-500">Diện tích phân bổ:</span>
+                                                                <span className="ml-2 text-gray-900">{detail.areaAllocated || 0} ha</span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Sản lượng ước tính:</span>
+                                                                <span className="ml-2 text-gray-900">{detail.estimatedYield || 0} kg</span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Sản lượng thực tế:</span>
+                                                                <span className="ml-2 text-gray-900">{detail.actualYield || 0} kg</span>
+                                                            </div>
+                                                            {detail.plannedQuality && (
+                                                                <div>
+                                                                    <span className="text-gray-500">Chất lượng dự kiến:</span>
+                                                                    <span className="ml-2 text-gray-900">{detail.plannedQuality}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

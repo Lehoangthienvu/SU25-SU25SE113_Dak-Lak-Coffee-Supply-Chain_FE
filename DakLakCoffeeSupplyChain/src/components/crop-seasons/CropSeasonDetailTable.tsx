@@ -227,10 +227,10 @@ export default function CropSeasonDetailTable({
                     <div className="flex-1">
                       <div className="font-medium text-gray-900">{detail.typeName}</div>
                       <div className="text-sm text-gray-500 flex items-center gap-4">
-                        <span className="flex items-center gap-1">
+                        {/* <span className="flex items-center gap-1">
                           <Target className="w-3 h-3" />
                           {detail.areaAllocated} ha
-                        </span>
+                        </span> */}
                         <StatusBadge
                           status={CropSeasonDetailStatusNumberToValue[detail.status] || 'Planned'}
                           map={getCropSeasonDetailStatusMap(t)}
