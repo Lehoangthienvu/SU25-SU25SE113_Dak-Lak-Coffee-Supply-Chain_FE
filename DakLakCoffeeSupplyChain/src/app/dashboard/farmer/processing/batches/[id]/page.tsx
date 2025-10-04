@@ -298,8 +298,18 @@ export default function ViewProcessingBatch() {
     return hasEvaluationWithFailedStages;
   }, [evaluations]);
 
+  // State để lưu max OrderIndex của method và stages info
+  const [maxOrderIndex, setMaxOrderIndex] = useState<number>(0);
+  const [stagesInfo, setStagesInfo] = useState<Array<{stageId: number, stageName: string, orderIndex: number}>>([]);
+
   // Lấy thông tin stage bị fail
   const failedStageInfo = useMemo(() => {
+    console.log('🔍 DEBUG failedStageInfo useMemo triggered:');
+    console.log('  - hasFailedEvaluation:', hasFailedEvaluation);
+    console.log('  - evaluations length:', evaluations?.length);
+    console.log('  - stagesInfo length:', stagesInfo.length);
+    console.log('  - stagesInfo:', stagesInfo);
+    
     if (!hasFailedEvaluation || !evaluations || evaluations.length === 0) return null;
 
     // Tìm evaluation có thông tin về stages cần retry
@@ -316,8 +326,17 @@ export default function ViewProcessingBatch() {
     const failureInfo = StageFailureParser.parseFailureFromComments(comments);
 
     if (failureInfo) {
+      // FIX: Map OrderIndex thành StageId thực từ stagesInfo
+      const actualStageId = stagesInfo.find(stage => stage.orderIndex === failureInfo.failedOrderIndex)?.stageId;
+      
+      console.log('🔍 DEBUG failedStageInfo mapping:');
+      console.log('  - Parsed OrderIndex:', failureInfo.failedOrderIndex);
+      console.log('  - Parsed StageName:', failureInfo.failedStageName);
+      console.log('  - Available stagesInfo:', stagesInfo);
+      console.log('  - Mapped StageId:', actualStageId);
+      
       return {
-        stageId: failureInfo.failedOrderIndex,
+        stageId: actualStageId || failureInfo.failedOrderIndex, // Fallback về OrderIndex nếu không tìm thấy
         stageName: failureInfo.failedStageName || t('processing.pages.farmerBatches.batchDetail.status.unknown'),
         failureDetails: failureInfo.failureDetails || t('processing.pages.farmerBatches.batchDetail.status.canContinue'),
         evaluationId: evaluationWithFailedStages.evaluationId
@@ -325,11 +344,7 @@ export default function ViewProcessingBatch() {
     }
 
     return null;
-  }, [hasFailedEvaluation, evaluations, t]);
-
-  // State để lưu max OrderIndex của method và stages info
-  const [maxOrderIndex, setMaxOrderIndex] = useState<number>(0);
-  const [stagesInfo, setStagesInfo] = useState<Array<{stageId: number, stageName: string, orderIndex: number}>>([]);
+  }, [hasFailedEvaluation, evaluations, stagesInfo, t]);
 
   // Lấy OrderIndex lớn nhất trong method và thông tin stages
   useEffect(() => {
@@ -657,10 +672,12 @@ export default function ViewProcessingBatch() {
           </div>
           <div className="flex items-center gap-3">
             {/* Nút cập nhật tiến trình - hiển thị khi có thể cập nhật VÀ chưa ở stage cuối HOẶC có stages cần retry */}
+            {/* 🔧 FIX: Không hiển thị nút "Cập nhật tiến trình" khi có failed stages để tránh nhầm lẫn */}
             {batch.progresses && batch.progresses.length > 0 &&
               batch.status !== ProcessingStatus.Completed &&
               batch.status !== ProcessingStatus.AwaitingEvaluation &&
-              (!isAtLastStage || failedStages.length > 0) && (
+              !isAtLastStage && 
+              failedStages.length === 0 && (
                 <Button
                   onClick={() => setOpenAdvanceModal(true)}
                   className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white transition-all duration-200"
@@ -1166,6 +1183,57 @@ export default function ViewProcessingBatch() {
                 <p className="text-gray-500">{t('processing.pages.farmerBatches.batchDetail.progress.noProgress.description')}</p>
               </div>
             )}
+
+            {/* 🔧 Nút cập nhật tiếp các stages sau khi retry - cho farmer nhập thủ công */}
+            {(() => {
+              // Kiểm tra xem có progress retry không
+              const hasRetryProgress = batch?.progresses?.some(p => 
+                p.stageDescription && p.stageDescription.includes('Làm lại (Retry)')
+              );
+              
+              // Kiểm tra xem đã hoàn thành tất cả failed stages chưa (tức là không còn failed stages nào cần retry)
+              const allFailedStagesRetried = failedStages.length === 0 && hasFailedEvaluation;
+              
+              // Hiển thị nút khi: có retry progress, đã retry xong tất cả failed stages, chưa ở AwaitingEvaluation
+              const shouldShowUpdateNextStagesButton = hasRetryProgress && 
+                                                      allFailedStagesRetried && 
+                                                      batch?.status !== ProcessingStatus.AwaitingEvaluation &&
+                                                      batch?.status !== ProcessingStatus.Completed;
+              
+              console.log('🔍 Progress Section - Update Next Stages Button Logic:', {
+                hasRetryProgress,
+                allFailedStagesRetried,
+                failedStagesLength: failedStages.length,
+                hasFailedEvaluation,
+                batchStatus: batch?.status,
+                shouldShowUpdateNextStagesButton
+              });
+              
+              return shouldShowUpdateNextStagesButton;
+            })() && (
+              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-blue-900">Hoàn thành retry - Cần cập nhật tiếp</h4>
+                      <p className="text-sm text-blue-700">
+                        Bạn đã hoàn thành retry các giai đoạn bị lỗi. Hãy cập nhật tiếp các giai đoạn còn lại để hoàn thành quy trình.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={handleUpdateNextStages}
+                    className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                    Cập nhật tiếp các stages
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1318,24 +1386,105 @@ export default function ViewProcessingBatch() {
                             <p className="text-sm text-green-700">Khuyến nghị: Cần cải thiện công đoạn này theo khuyến nghị của chuyên gia</p>
                           </div>
                         </div>
-                                                 <Button
-                           onClick={() => {
-                             setSelectedStageForUpdate({
-                               stageName: stage.name,
-                               stageOrder: stage.order
-                             });
-                             setOpenUpdateAfterEvaluationModal(true);
-                           }}
-                           className="bg-red-600 hover:bg-red-700 text-white"
-                         >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Retry Stage
+                        <Button
+                          onClick={() => {
+                            setSelectedStageForUpdate({
+                              stageName: stage.name,
+                              stageOrder: stage.order
+                            });
+                            setOpenUpdateAfterEvaluationModal(true);
+                          }}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                        >
+                         <RefreshCw className="w-4 h-4 mr-2" />
+                          Cần cập nhật
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
+
+              {/* 🔧 MỚI: Debug log để kiểm tra */}
+              {(() => {
+                console.log('🔍 COMPONENT RENDER CHECK:', {
+                  batchExists: !!batch,
+                  progressesExists: !!batch?.progresses,
+                  progressesLength: batch?.progresses?.length,
+                  batchStatus: batch?.status
+                });
+                return null;
+              })()}
+
+              {/* 🔧 MỚI: Test nút đơn giản */}
+              <div className="bg-red-100 p-2 mt-2">
+                <p>TEST: Nút này có hiện không?</p>
+                <p>Batch status: {batch?.status}</p>
+                <p>Progresses length: {batch?.progresses?.length}</p>
+              </div>
+
+              {/* 🔧 MỚI: Nút cập nhật các giai đoạn tiếp theo sau khi retry */}
+              {(() => {
+                console.log('🔍 DEBUG BUTTON CHECK START');
+                console.log('🔍 batch:', batch);
+                console.log('🔍 batch?.progresses:', batch?.progresses);
+                
+                if (batch?.progresses) {
+                  console.log('🔍 All progresses:');
+                  batch.progresses.forEach((p, index) => {
+                    console.log(`  Progress ${index}:`, {
+                      stageDescription: p.stageDescription,
+                      hasRetryText: p.stageDescription?.includes('Làm lại (Retry)'),
+                      stageId: p.stageId,
+                      stepIndex: p.stepIndex
+                    });
+                  });
+                }
+                
+                const hasRetryProgress = batch?.progresses?.some(p => 
+                  p.stageDescription && p.stageDescription.includes('Làm lại (Retry)')
+                );
+                
+                console.log('🔍 DEBUG BUTTON LOGIC:', {
+                  failedStagesLength: failedStages.length,
+                  hasRetryProgress,
+                  batchStatus: batch?.status,
+                  shouldShowButton: hasRetryProgress && batch?.status !== 'AwaitingEvaluation'
+                });
+                
+                return hasRetryProgress && batch?.status !== 'AwaitingEvaluation';
+              })() && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold text-sm">✓</span>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-blue-900">Đã hoàn thành retry</h4>
+                        <p className="text-sm text-blue-700">
+                          {batch?.status === 'AwaitingEvaluation' 
+                            ? 'Các giai đoạn đã được cập nhật lại và đang chờ đánh giá từ chuyên gia'
+                            : 'Cần hoàn thành tất cả các giai đoạn tiếp theo để chuyển sang chờ đánh giá'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    {batch?.status !== 'AwaitingEvaluation' && (
+                      <Button
+                        onClick={() => {
+                          setOpenUpdateNextStagesModal(true);
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Cập nhật các giai đoạn tiếp theo
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
 
               {/* Hướng dẫn */}
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
