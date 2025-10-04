@@ -90,6 +90,8 @@ export default function FarmerDashboard() {
         unreadAdvice: number;
     } | null>(null);
 
+    const [allCropSeasons, setAllCropSeasons] = useState<any[]>([]);
+
     // Bỏ alerts state vì không còn sử dụng
     const [chartData, setChartData] = useState<ChartData | null>(null);
     const [overallProgressData, setOverallProgressData] = useState<DoughnutData>(getDefaultProgressData(t));
@@ -115,21 +117,38 @@ export default function FarmerDashboard() {
         try {
             setLoadingStates(prev => ({ ...prev, stats: true }));
 
-            // Tối ưu: Chỉ lấy dữ liệu cần thiết với pageSize nhỏ
-            const cropSeasons = await getCropSeasonsForCurrentUser({
-                status: "Đang hoạt động",
+            // Lấy tất cả mùa vụ của farmer để tính toán chính xác
+            const cropSeasonsData = await getCropSeasonsForCurrentUser({
                 page: 1,
-                pageSize: 10, // Giảm từ 100 xuống 10
+                pageSize: 100, // Lấy nhiều hơn để có dữ liệu đầy đủ
             });
+
+            // Lưu vào state để sử dụng ở các phần khác
+            setAllCropSeasons(cropSeasonsData);
+
+            // Tính toán stats thực tế
+            const activeSeasons = cropSeasonsData.filter(season => season.status === "Active").length;
+            const completedSeasons = cropSeasonsData.filter(season => season.status === "Completed").length;
+            
+            // Tính upcoming harvests dựa trên mùa vụ sắp kết thúc
+            const now = new Date();
+            const upcomingHarvests = cropSeasonsData.filter(season => {
+                const endDate = new Date(season.endDate);
+                const daysUntilEnd = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                return daysUntilEnd > 0 && daysUntilEnd <= 30; // Trong vòng 30 ngày tới
+            }).length;
+
+            // TODO: Thêm API call để lấy warehouse requests thực tế
+            // const warehouseRequests = await getWarehouseRequestsForCurrentUser();
+            // const pendingWarehouseRequests = warehouseRequests.filter(req => req.status === "PENDING").length;
 
             setStats({
-                activeSeasons: cropSeasons.length,
-                upcomingHarvests: Math.min(cropSeasons.length, 5), // Tính toán dựa trên data thực
-                pendingWarehouseRequests: 1,
-                unreadAdvice: 3,
+                activeSeasons,
+                upcomingHarvests,
+                pendingWarehouseRequests: 2, // Tạm thời dùng số cố định, sẽ thay bằng API thực tế
+                unreadAdvice: 1, // Tạm thời dùng số cố định, sẽ thay bằng API thực tế
             });
 
-            // Bỏ alerts để dashboard đơn giản hơn
         } catch (error) {
             console.error("Lỗi lấy stats:", error);
             // Fallback data nếu có lỗi
@@ -149,7 +168,89 @@ export default function FarmerDashboard() {
         try {
             setLoadingStates(prev => ({ ...prev, chart: true }));
 
-            // Tối ưu: Sử dụng data mẫu để load nhanh, có thể thay bằng API call thực tế sau
+            // Lấy dữ liệu mùa vụ để tạo chart thực tế
+            const cropSeasons = await getCropSeasonsForCurrentUser({
+                page: 1,
+                pageSize: 50,
+            });
+
+            // Tạo chart data dựa trên dữ liệu thực tế
+            if (cropSeasons.length > 0) {
+                // Nhóm theo tháng để tạo chart
+                const monthlyData = new Map<string, { actual: number; planned: number }>();
+                
+                cropSeasons.forEach(season => {
+                    const startDate = new Date(season.startDate);
+                    const monthKey = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`;
+                    
+                    if (!monthlyData.has(monthKey)) {
+                        monthlyData.set(monthKey, { actual: 0, planned: 0 });
+                    }
+                    
+                    const data = monthlyData.get(monthKey)!;
+                    // Ước tính yield dựa trên diện tích (giả sử 1 ha = 2 tấn)
+                    const estimatedYield = (season.area || 1) * 2;
+                    data.actual += estimatedYield;
+                    data.planned += estimatedYield * 1.2; // Planned thường cao hơn actual
+                });
+
+                // Sắp xếp theo tháng và lấy 5 tháng gần nhất
+                const sortedMonths = Array.from(monthlyData.keys()).sort().slice(-5);
+                const labels = sortedMonths.map(month => {
+                    const [year, monthNum] = month.split('-');
+                    return `T${parseInt(monthNum)}/${year.slice(-2)}`;
+                });
+
+                setChartData({
+                    labels,
+                    datasets: [
+                        {
+                            label: t("farmerDashboard.charts.monthlyYield.actual"),
+                            data: sortedMonths.map(month => monthlyData.get(month)!.actual),
+                            borderColor: "#FD7622",
+                            backgroundColor: "rgba(253, 118, 34, 0.2)",
+                            tension: 0.3,
+                            fill: false,
+                        },
+                        {
+                            label: t("farmerDashboard.charts.monthlyYield.planned"),
+                            data: sortedMonths.map(month => monthlyData.get(month)!.planned),
+                            borderColor: "#8884d8",
+                            borderDash: [5, 5],
+                            backgroundColor: "rgba(136, 132, 216, 0.2)",
+                            tension: 0.3,
+                            fill: false,
+                        },
+                    ],
+                });
+            } else {
+                // Nếu không có dữ liệu, hiển thị chart mẫu
+                setChartData({
+                    labels: ["T1", "T2", "T3", "T4", "T5"],
+                    datasets: [
+                        {
+                            label: t("farmerDashboard.charts.monthlyYield.actual"),
+                            data: [0, 0, 0, 0, 0],
+                            borderColor: "#FD7622",
+                            backgroundColor: "rgba(253, 118, 34, 0.2)",
+                            tension: 0.3,
+                            fill: false,
+                        },
+                        {
+                            label: t("farmerDashboard.charts.monthlyYield.planned"),
+                            data: [0, 0, 0, 0, 0],
+                            borderColor: "#8884d8",
+                            borderDash: [5, 5],
+                            backgroundColor: "rgba(136, 132, 216, 0.2)",
+                            tension: 0.3,
+                            fill: false,
+                        },
+                    ],
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi lấy chart data:", error);
+            // Fallback chart data
             setChartData({
                 labels: ["T1", "T2", "T3", "T4", "T5"],
                 datasets: [
@@ -172,8 +273,6 @@ export default function FarmerDashboard() {
                     },
                 ],
             });
-        } catch (error) {
-            console.error("Lỗi lấy chart data:", error);
         } finally {
             setLoadingStates(prev => ({ ...prev, chart: false }));
         }
@@ -359,7 +458,128 @@ export default function FarmerDashboard() {
                     </div>
                 </section>
 
-                {/* Bỏ phần cảnh báo để dashboard đơn giản hơn */}
+                {/* Thống kê chi tiết */}
+                <section>
+                    <DashboardSectionTitle title="Thống kê chi tiết" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white">
+                                    <FiBookOpen className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-bold text-gray-800">
+                                        {stats ? allCropSeasons.filter(s => s.status === "Completed").length : 0}
+                                    </p>
+                                    <p className="text-gray-600 text-xs">Mùa vụ hoàn thành</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white">
+                                    <FiPackage className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-bold text-gray-800">
+                                        {stats ? Math.round(allCropSeasons.reduce((total, season) => total + (season.area || 0), 0) * 100) / 100 : 0}
+                                    </p>
+                                    <p className="text-gray-600 text-xs">Tổng diện tích (ha)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white">
+                                    <FiTrendingUp className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-bold text-gray-800">
+                                        {stats ? Math.round(allCropSeasons.reduce((total, season) => total + (season.area || 0), 0) * 2) : 0}
+                                    </p>
+                                    <p className="text-gray-600 text-xs">Ước tính sản lượng (tấn)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white">
+                                    <FiCoffee className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xl font-bold text-gray-800">
+                                        {stats ? allCropSeasons.length : 0}
+                                    </p>
+                                    <p className="text-gray-600 text-xs">Tổng mùa vụ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Mùa vụ gần đây */}
+                <section>
+                    <DashboardSectionTitle title="Mùa vụ gần đây" />
+                    <div className="bg-white rounded-lg shadow-sm border border-orange-100 p-4">
+                        {allCropSeasons.length > 0 ? (
+                            <div className="space-y-3">
+                                {allCropSeasons.slice(0, 5).map((season, index) => (
+                                    <div key={season.id || index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-3 h-3 rounded-full ${
+                                                season.status === "Active" ? "bg-green-500" :
+                                                season.status === "Completed" ? "bg-blue-500" :
+                                                season.status === "Paused" ? "bg-yellow-500" : "bg-gray-500"
+                                            }`}></div>
+                                            <div>
+                                                <p className="font-medium text-gray-800">{season.seasonName}</p>
+                                                <p className="text-sm text-gray-600">
+                                                    {season.area ? `${season.area} ha` : "Chưa có diện tích"} • 
+                                                    {new Date(season.startDate).toLocaleDateString('vi-VN')} - {new Date(season.endDate).toLocaleDateString('vi-VN')}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                season.status === "Active" ? "bg-green-100 text-green-800" :
+                                                season.status === "Completed" ? "bg-blue-100 text-blue-800" :
+                                                season.status === "Paused" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"
+                                            }`}>
+                                                {season.status === "Active" ? "Đang hoạt động" :
+                                                 season.status === "Completed" ? "Hoàn thành" :
+                                                 season.status === "Paused" ? "Tạm dừng" : season.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                                {allCropSeasons.length > 5 && (
+                                    <div className="text-center pt-2">
+                                        <Link 
+                                            href="/dashboard/farmer/crop-seasons"
+                                            className="text-orange-600 hover:text-orange-700 text-sm font-medium"
+                                        >
+                                            Xem tất cả mùa vụ ({allCropSeasons.length})
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8">
+                                <FiCoffee className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                <p className="text-gray-500 mb-2">Chưa có mùa vụ nào</p>
+                                <Link 
+                                    href="/dashboard/farmer/crop-seasons"
+                                    className="text-orange-600 hover:text-orange-700 text-sm font-medium"
+                                >
+                                    Tạo mùa vụ đầu tiên
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </section>
 
                 <section>
                     <DashboardSectionTitle title={t("farmerDashboard.quickActions.title")} />
