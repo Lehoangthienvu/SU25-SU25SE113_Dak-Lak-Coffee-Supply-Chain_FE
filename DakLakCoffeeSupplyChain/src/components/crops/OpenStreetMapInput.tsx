@@ -36,7 +36,7 @@ const translateAddressToVietnamese = (displayName: string): string => {
         // Tỉnh/Thành phố
         'Dak Lak Province': 'Tỉnh Đắk Lắk',
         'Dak Lak': 'Đắk Lắk',
-        'Dak Lak, Vietnam': 'Đắk Lắk, Việt Nam',
+        'Dak Lak, Vietnam': 'Việt Nam',
 
         // Thành phố Buôn Ma Thuột
         'Buon Ma Thuot': 'Buôn Ma Thuột',
@@ -195,6 +195,58 @@ const translateAddressToVietnamese = (displayName: string): string => {
     return translatedName;
 };
 
+// Function để format địa chỉ theo đúng thứ tự từ nhỏ đến lớn (Phường/Xã -> Thành phố/Huyện -> Tỉnh -> Quốc gia)
+const formatAddressInCorrectOrder = (address: string): string => {
+    // Tách địa chỉ thành các phần
+    const parts = address.split(',').map(part => part.trim()).filter(part => part.length > 0);
+    
+    if (parts.length <= 1) {
+        return address; // Nếu chỉ có 1 phần thì không cần format
+    }
+    
+    const result: string[] = [];
+    let ward = '';
+    let city = '';
+    let province = '';
+    let country = '';
+    
+    // Phân loại các phần địa chỉ
+    parts.forEach(part => {
+        const lowerPart = part.toLowerCase();
+        
+        // Kiểm tra quốc gia
+        if (lowerPart.includes('việt nam') || lowerPart.includes('vietnam')) {
+            country = part;
+        }
+        // Kiểm tra tỉnh
+        else if (lowerPart.includes('tỉnh') || lowerPart.includes('province')) {
+            province = part;
+        }
+        // Kiểm tra thành phố/huyện
+        else if (lowerPart.includes('thành phố') || lowerPart.includes('huyện') || lowerPart.includes('thị xã') || 
+                 lowerPart.includes('city') || lowerPart.includes('district')) {
+            city = part;
+        }
+        // Kiểm tra phường/xã
+        else if (lowerPart.includes('phường') || lowerPart.includes('xã') || lowerPart.includes('thôn') || 
+                 lowerPart.includes('ward') || lowerPart.includes('commune')) {
+            ward = part;
+        }
+        // Các phần còn lại (địa chỉ chi tiết, tên đường, số nhà...)
+        else {
+            result.push(part);
+        }
+    });
+    
+    // Sắp xếp theo thứ tự: địa chỉ chi tiết -> phường/xã -> thành phố/huyện -> tỉnh -> quốc gia
+    if (ward) result.push(ward);
+    if (city) result.push(city);
+    if (province) result.push(province);
+    if (country) result.push(country);
+    
+    return result.join(', ');
+};
+
 export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
     value,
     onChange,
@@ -300,8 +352,9 @@ export const OpenStreetMapInput: React.FC<OpenStreetMapInputProps> = ({
 
     const handleSuggestionClick = (result: NominatimResult) => {
         const vietnameseAddress = translateAddressToVietnamese(result.display_name);
-        setInputValue(vietnameseAddress);
-        onChange(vietnameseAddress);
+        const formattedAddress = formatAddressInCorrectOrder(vietnameseAddress);
+        setInputValue(formattedAddress);
+        onChange(formattedAddress);
         setShowSuggestions(false);
     };
 
