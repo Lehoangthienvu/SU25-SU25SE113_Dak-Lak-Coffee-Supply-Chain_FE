@@ -70,14 +70,23 @@ export default function CropsPage() {
         console.log('handleEditFromDetail called with cropWithDetails:', cropWithDetails);
         console.log('cropWithDetails.address:', cropWithDetails.address);
 
+        // Validate crop data before setting
+        if (!cropWithDetails || !cropWithDetails.cropId) {
+            console.error('Invalid crop data for editing:', cropWithDetails);
+            toast.error('Dữ liệu vùng trồng không hợp lệ');
+            return;
+        }
+
         // Convert CropViewDetailsDto to CropViewAllDto for editing
         const cropForEdit: CropViewAllDto = {
             cropId: cropWithDetails.cropId,
-            cropCode: cropWithDetails.cropCode,
+            cropCode: cropWithDetails.cropCode || '',
             address: cropWithDetails.address || '',
-            farmName: cropWithDetails.farmName,
+            farmName: cropWithDetails.farmName || '',
             cropArea: cropWithDetails.cropArea,
-            status: cropWithDetails.status
+            status: cropWithDetails.status,
+            note: cropWithDetails.note,
+            isApproved: cropWithDetails.isApproved
         };
 
         console.log('cropForEdit created:', cropForEdit);

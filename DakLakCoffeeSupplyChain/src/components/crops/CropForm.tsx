@@ -77,7 +77,8 @@ export const CropForm: React.FC<CropFormProps> = ({
                 await createCrop({
                     address: formData.address,
                     farmName: formData.farmName,
-                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
+                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
+                    // documents không được hỗ trợ
                 });
                 toast.success('Tạo vùng trồng mới thành công!');
             }

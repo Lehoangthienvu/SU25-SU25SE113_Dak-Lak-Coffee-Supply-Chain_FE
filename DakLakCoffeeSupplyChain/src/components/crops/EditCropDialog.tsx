@@ -194,7 +194,11 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
         onOpenChange(false);
     };
 
-    if (!crop) return null;
+    if (!crop) {
+        console.warn('EditCropDialog: crop is null, closing dialog');
+        onOpenChange(false);
+        return null;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -315,11 +319,11 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                     </div>
 
                     {/* Note: Media files không được hỗ trợ trong update API */}
-                        <div className="border-t border-gray-200 pt-6">
+                    <div className="border-t border-gray-200 pt-6">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <p className="text-sm text-blue-700">
                                 <strong>Lưu ý:</strong> Chỉ có thể chỉnh sửa thông tin cơ bản của vùng trồng. 
-                                Tài liệu đính kèm không thể thay đổi sau khi tạo.
+                                Ảnh và video không thể thay đổi sau khi tạo.
                             </p>
                         </div>
                     </div>

@@ -116,8 +116,8 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                 updatedBy: '',
                 isDeleted: false,
                 images: [],
-                videos: [],
-                documents: []
+                videos: []
+                // documents: [] // Ẩn documents
             });
         } finally {
             setLoading(false);
@@ -288,8 +288,8 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                         </div>
                     )}
 
-                    {/* Media Files */}
-                    {(cropDetails?.images?.length || cropDetails?.videos?.length || cropDetails?.documents?.length) && (
+                    {/* Media Files (ẩn documents) */}
+                    {(cropDetails?.images?.length || cropDetails?.videos?.length) && (
                         <div>
                             <div className="bg-white border border-gray-200 rounded-lg p-4">
                                 <h3 className="text-sm font-semibold text-gray-700 mb-3">Tài liệu đính kèm</h3>
@@ -316,15 +316,15 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                                         </div>
                                     ))}
                                     
-                                    {/* Documents */}
-                                    {cropDetails.documents && cropDetails.documents.map((docUrl, index) => (
+                                    {/* Documents ẩn */}
+                                    {/* {cropDetails.documents && cropDetails.documents.map((docUrl, index) => (
                                         <div key={`doc-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
                                             <File className="w-4 h-4 text-gray-500" />
                                             <a href={docUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
                                                 {extractFileName(docUrl) || `Tài liệu ${(cropDetails.images?.length || 0) + (cropDetails.videos?.length || 0) + index + 1}`}
                                             </a>
                                         </div>
-                                    ))}
+                                    ))} */}
                                 </div>
                             </div>
                         </div>

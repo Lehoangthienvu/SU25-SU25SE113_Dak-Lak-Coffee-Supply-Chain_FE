@@ -8,7 +8,7 @@ export interface CropCreateDto {
   note?: string;
   images?: File[];
   videos?: File[];
-  documents?: File[];
+  // documents?: File[]; // Ẩn documents
 }
 
 export interface CropUpdateDto {
@@ -22,15 +22,15 @@ export interface CropUpdateDto {
   isApproved?: boolean | null;
   rejectReason?: string;
   
-  // Media files for update
+  // Media files for update (ẩn documents)
   images?: File[];
   videos?: File[];
-  documents?: File[];
+  // documents?: File[]; // Ẩn documents
   
   // Existing media URLs to keep (comma-separated strings)
   existingImages?: string;
   existingVideos?: string;
-  existingDocuments?: string;
+  // existingDocuments?: string; // Ẩn documents
 }
 
 export interface CropViewAllDto {
@@ -68,7 +68,7 @@ export interface CropViewDetailsDto {
   rejectReason?: string;
   images?: string[];
   videos?: string[];
-  documents?: string[]; // Backend returns List<string> URLs, not DocumentInfoDto[]
+  // documents?: string[]; // Ẩn documents
 }
 
 // API functions
@@ -102,9 +102,9 @@ export const createCrop = async (data: CropCreateDto): Promise<CropViewAllDto> =
   if (data.videos) {
     data.videos.forEach(file => formData.append('videos', file));
   }
-  if (data.documents) {
-    data.documents.forEach(file => formData.append('documents', file));
-  }
+  // if (data.documents) {
+  //   data.documents.forEach(file => formData.append('documents', file));
+  // } // Ẩn documents
   
   const response = await api.post('/crops', formData);
   // Handle new response structure: { message: "...", data: {...} }
