@@ -149,7 +149,8 @@ export default function ProcessingBatchForm({ onSuccess }: Props) {
 
       setSuccess(t('componentsprocessing.processingBatchForm.createSuccess'));
       onSuccess?.();
-      setTimeout(() => router.push("/dashboard/farmer/processing/batches"), 1200);
+      // Chuyển hướng ngay lập tức để người dùng thấy lô mới nhất
+      router.push("/dashboard/farmer/processing/batches");
     } catch (err: any) {
       console.error("❌ Create batch error:", err);
       setError(err);
