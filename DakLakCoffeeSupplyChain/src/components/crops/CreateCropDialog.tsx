@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Home, Ruler, Plus, X, Upload, Image, Video, File, Trash2 } from 'lucide-react';
+import { MapPin, Home, Ruler, Plus, X, Upload, Image, Trash2 } from 'lucide-react';
 
 interface CreateCropDialogProps {
     open: boolean;
@@ -29,8 +29,6 @@ export const CreateCropDialog: React.FC<CreateCropDialogProps> = ({
     });
 
     const [images, setImages] = useState<File[]>([]);
-    const [videos, setVideos] = useState<File[]>([]);
-    const [documents, setDocuments] = useState<File[]>([]);
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -143,9 +141,7 @@ export const CreateCropDialog: React.FC<CreateCropDialogProps> = ({
                 farmName: formData.farmName,
                 cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
                 note: formData.note,
-                images: images.length > 0 ? images : undefined,
-                videos: videos.length > 0 ? videos : undefined,
-                documents: documents.length > 0 ? documents : undefined
+                images: images.length > 0 ? images : undefined
             });
 
             // Success - show toast and close dialog
@@ -258,8 +254,6 @@ export const CreateCropDialog: React.FC<CreateCropDialogProps> = ({
             note: ''
         });
         setImages([]);
-        setVideos([]);
-        setDocuments([]);
         setErrors({});
         onOpenChange(false);
     };
@@ -270,26 +264,8 @@ export const CreateCropDialog: React.FC<CreateCropDialogProps> = ({
         setImages(prev => [...prev, ...files]);
     };
 
-    const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        setVideos(prev => [...prev, ...files]);
-    };
-
-    const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        setDocuments(prev => [...prev, ...files]);
-    };
-
     const removeImage = (index: number) => {
         setImages(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const removeVideo = (index: number) => {
-        setVideos(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const removeDocument = (index: number) => {
-        setDocuments(prev => prev.filter((_, i) => i !== index));
     };
 
     return (
@@ -470,94 +446,6 @@ export const CreateCropDialog: React.FC<CreateCropDialogProps> = ({
                                                 >
                                                     <Trash2 className="w-3 h-3" />
                                                 </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Videos Upload */}
-                        <div>
-                            <Label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                                <Video className="w-4 h-4 text-blue-500" />
-                                Video
-                            </Label>
-                            <div className="space-y-3">
-                                <input
-                                    type="file"
-                                    accept="video/*"
-                                    multiple
-                                    onChange={handleVideoUpload}
-                                    className="hidden"
-                                    id="video-upload"
-                                />
-                                <label
-                                    htmlFor="video-upload"
-                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
-                                >
-                                    <Upload className="w-4 h-4 text-blue-500" />
-                                    <span className="text-sm text-blue-600">Chọn video</span>
-                                </label>
-                                {videos.length > 0 && (
-                                    <div className="space-y-2">
-                                        {videos.map((file, index) => (
-                                            <div key={index} className="relative group bg-gray-100 rounded-lg p-2">
-                                                <div className="flex items-center gap-2">
-                                                    <Video className="w-4 h-4 text-blue-500" />
-                                                    <span className="text-sm text-gray-700 truncate">{file.name}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeVideo(index)}
-                                                        className="ml-auto w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Documents Upload */}
-                        <div>
-                            <Label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                                <File className="w-4 h-4 text-orange-500" />
-                                Tài liệu (PDF, Word, Excel...)
-                            </Label>
-                            <div className="space-y-3">
-                                <input
-                                    type="file"
-                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
-                                    multiple
-                                    onChange={handleDocumentUpload}
-                                    className="hidden"
-                                    id="document-upload"
-                                />
-                                <label
-                                    htmlFor="document-upload"
-                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-orange-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors"
-                                >
-                                    <Upload className="w-4 h-4 text-orange-500" />
-                                    <span className="text-sm text-orange-600">Chọn tài liệu</span>
-                                </label>
-                                {documents.length > 0 && (
-                                    <div className="space-y-2">
-                                        {documents.map((file, index) => (
-                                            <div key={index} className="relative group bg-gray-100 rounded-lg p-2">
-                                                <div className="flex items-center gap-2">
-                                                    <File className="w-4 h-4 text-orange-500" />
-                                                    <span className="text-sm text-gray-700 truncate">{file.name}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeDocument(index)}
-                                                        className="ml-auto w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </button>
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
