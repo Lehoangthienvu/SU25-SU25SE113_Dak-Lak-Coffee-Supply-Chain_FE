@@ -257,15 +257,6 @@ export default function HeaderDashboard() {
                     {/* SỬA LỖI TẠI ĐÂY: Thay 'admin' (chữ thường) thành 'Admin' (chữ hoa) để khớp với logic */}
                     <span>{authService.getUser()?.roleRaw === 'Admin' ? 'Ví Hệ Thống' : t("sidebar.wallet", "Ví")}</span>
                   </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className='px-3 py-2 hover:bg-orange-50 rounded-lg flex items-center gap-3 cursor-pointer transition-colors duration-200'
-                onClick={() => router.push("/dashboard/settings")}
-              >
-                <div className='w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center'>
-                  <Settings size={16} className='text-blue-600' />
-                </div>
-                <span>{t("sidebar.settings")}</span>
-              </DropdownMenu.Item>
 
               <DropdownMenu.Separator className='h-px bg-orange-100 my-2' />
 
