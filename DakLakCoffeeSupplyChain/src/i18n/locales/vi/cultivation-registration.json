@@ -192,7 +192,8 @@
         "totalQuantity": "Tổng số lượng",
         "progress": "Tiến độ",
         "farmerName": "Tên nông dân",
-        "farmerLocation": "Địa điểm"
+        "farmerLocation": "Địa điểm",
+        "cropCode": "Mã vùng trồng"
       }
     },
     "dialogs": {

@@ -7,8 +7,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiEdit, FiExternalLink } from "react-icons/fi";
 import { Separator } from "@/components/ui/separator";
-import { Package, FileText, User, TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
-
+import {
+  Package,
+  FileText,
+  User,
+  TrendingUp,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 import { AppToast } from "@/components/ui/AppToast";
 import { formatQuantity, getErrorMessage } from "@/lib/utils";
@@ -21,8 +27,14 @@ import { getProcurementPlanStatusMap } from "@/lib/constants/procurementPlanStat
 import { getCultivationRegistrationStatusMap } from "@/lib/constants/cultivationRegistrationStatus";
 import StatusBadge from "@/components/crop-seasons/StatusBadge";
 import Link from "next/link";
-import { ProcurementPlan, getProcurementPlanById } from "@/lib/api/procurementPlans";
-import { CultivationRegistration, getCultivationRegistrationsByPlanId } from "@/lib/api/cultivationRegistrations";
+import {
+  ProcurementPlan,
+  getProcurementPlanById,
+} from "@/lib/api/procurementPlans";
+import {
+  CultivationRegistration,
+  getCultivationRegistrationsByPlanId,
+} from "@/lib/api/cultivationRegistrations";
 
 export default function FarmingCommitmentDetailPageForBusiness() {
   const { t } = useTranslation();
@@ -30,10 +42,12 @@ export default function FarmingCommitmentDetailPageForBusiness() {
   const router = useRouter();
   const [commitment, setCommitment] = useState<FarmingCommitment | null>(null);
   const [plan, setPlan] = useState<ProcurementPlan | null>(null);
-  const [registration, setRegistration] = useState<CultivationRegistration | null>(null);
+  const [registration, setRegistration] =
+    useState<CultivationRegistration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [isRegistrationDetailsExpanded, setIsRegistrationDetailsExpanded] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -48,16 +62,20 @@ export default function FarmingCommitmentDetailPageForBusiness() {
     try {
       const data = await getCommitmentById(commitmentId);
       setCommitment(data);
-      
+
       // Fetch thông tin kế hoạch thu mua
       if (data?.planId) {
         const planData = await getProcurementPlanById(data.planId);
         setPlan(planData);
-        
+
         // Fetch thông tin đơn đăng ký
         if (data.registrationId) {
-          const registrations = await getCultivationRegistrationsByPlanId(data.planId);
-          const currentRegistration = registrations.find(r => r.registrationId === data.registrationId);
+          const registrations = await getCultivationRegistrationsByPlanId(
+            data.planId
+          );
+          const currentRegistration = registrations.find(
+            (r) => r.registrationId === data.registrationId
+          );
           setRegistration(currentRegistration || null);
         }
       }
@@ -72,17 +90,23 @@ export default function FarmingCommitmentDetailPageForBusiness() {
   //#endregion
 
   const formatDate = (date?: string) => {
-    if (!date) return t('farmingCommitment.pages.detail.common.notUpdated');
+    if (!date) return t("farmingCommitment.pages.detail.common.notUpdated");
     const d = new Date(date);
-    return isNaN(d.getTime()) ? t('farmingCommitment.pages.detail.common.notUpdated') : d.toLocaleDateString("vi-VN");
+    return isNaN(d.getTime())
+      ? t("farmingCommitment.pages.detail.common.notUpdated")
+      : d.toLocaleDateString("vi-VN");
   };
 
   if (loading)
-    return <div className='text-center py-8'>{t('farmingCommitment.pages.detail.loadingText')}</div>;
+    return (
+      <div className='text-center py-8'>
+        {t("farmingCommitment.pages.detail.loadingText")}
+      </div>
+    );
   if (error || !commitment)
     return (
       <div className='text-red-500 p-8'>
-        {error || t('farmingCommitment.pages.detail.notFoundText')}
+        {error || t("farmingCommitment.pages.detail.notFoundText")}
       </div>
     );
 
@@ -91,22 +115,30 @@ export default function FarmingCommitmentDetailPageForBusiness() {
       <div className='w-full max-w-6xl space-y-6'>
         <div className='flex items-center gap-3 text-2xl font-semibold text-gray-800'>
           <Package className='w-7 h-7 text-orange-600' />
-          {t('farmingCommitment.pages.detail.title', { commitmentName: commitment.commitmentName })}
+          {t("farmingCommitment.pages.detail.title", {
+            commitmentName: commitment.commitmentName,
+          })}
         </div>
 
         <Separator />
 
         {/* Card thông tin chính */}
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-          <CardHeader className="pb-4">
+        <Card className='bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'>
+          <CardHeader className='pb-4'>
             <div className='flex justify-between items-center'>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Package className="h-5 w-5 text-green-600" />
+              <div className='flex items-center gap-3'>
+                <div className='h-10 w-10 rounded-full bg-green-100 flex items-center justify-center'>
+                  <Package className='h-5 w-5 text-green-600' />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-green-800">{t('farmingCommitment.pages.detail.basicInfo.title')}</CardTitle>
-                  <p className="text-sm text-green-600 mt-1">{t('farmingCommitment.pages.detail.basicInfo.code', { code: commitment.commitmentCode })}</p>
+                  <CardTitle className='text-xl text-green-800'>
+                    {t("farmingCommitment.pages.detail.basicInfo.title")}
+                  </CardTitle>
+                  <p className='text-sm text-green-600 mt-1'>
+                    {t("farmingCommitment.pages.detail.basicInfo.code", {
+                      code: commitment.commitmentCode,
+                    })}
+                  </p>
                 </div>
               </div>
               {commitment.status !== "Active" && (
@@ -120,77 +152,156 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                       )
                     }
                   >
-                    <FiEdit className='mr-1' /> {t('farmingCommitment.pages.detail.basicInfo.edit')}
+                    <FiEdit className='mr-1' />{" "}
+                    {t("farmingCommitment.pages.detail.basicInfo.edit")}
                   </Button>
                 </div>
               )}
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
               {/* Thông tin cơ bản */}
-              <div className="space-y-3">
-                <h4 className="font-semibold text-green-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.sections.basicInfo.title')}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.status_label')}:</span>
+              <div className='space-y-3'>
+                <h4 className='font-semibold text-green-700 text-sm uppercase tracking-wide'>
+                  {t("farmingCommitment.pages.detail.sections.basicInfo.title")}
+                </h4>
+                <div className='space-y-2'>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.basicInfo.status_label"
+                      )}
+                      :
+                    </span>
                     <StatusBadge
                       status={commitment.status}
                       map={getFarmingCommitmentStatusMap(t)}
                     />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.progress_label')}:</span>
-                    <span className="font-medium text-gray-800">{Number(commitment.progressPercentage || 0).toFixed(1)}%</span>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.basicInfo.progress_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {Number(commitment.progressPercentage || 0).toFixed(1)}%
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.createdDate_label')}:</span>
-                    <span className="font-medium text-gray-800">{formatDate(commitment.commitmentDate)}</span>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.basicInfo.createdDate_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {formatDate(commitment.commitmentDate)}
+                    </span>
                   </div>
                   {commitment.approvedAt && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.basicInfo.approvedDate_label')}:</span>
-                      <span className="font-medium text-gray-800">{formatDate(commitment.approvedAt)}</span>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.sections.basicInfo.approvedDate_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {formatDate(commitment.approvedAt)}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Thông tin tài chính */}
-              <div className="space-y-3">
-                <h4 className="font-semibold text-green-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.sections.finance.title')}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.finance.totalCost_label')}:</span>
-                    <span className="font-medium text-gray-800">{commitment.totalPrice.toLocaleString()} VNĐ</span>
+              <div className='space-y-3'>
+                <h4 className='font-semibold text-green-700 text-sm uppercase tracking-wide'>
+                  {t("farmingCommitment.pages.detail.sections.finance.title")}
+                </h4>
+                <div className='space-y-2'>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.finance.totalCost_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {commitment.totalPrice.toLocaleString()} VNĐ
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.finance.advancePayment_label')}:</span>
-                    <span className="font-medium text-gray-800">{commitment.totalAdvancePayment.toLocaleString()} VNĐ</span>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.finance.advancePayment_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {commitment.totalAdvancePayment.toLocaleString()} VNĐ
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.finance.remaining_label')}:</span>
-                    <span className="font-medium text-gray-800">{(commitment.totalPrice - commitment.totalAdvancePayment).toLocaleString()} VNĐ</span>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.finance.remaining_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {(
+                        commitment.totalPrice - commitment.totalAdvancePayment
+                      ).toLocaleString()}{" "}
+                      VNĐ
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Thông tin đối tác */}
-              <div className="space-y-3">
-                <h4 className="font-semibold text-green-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.sections.partners.title')}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.partners.farmer_label')}:</span>
-                    <span className="font-medium text-gray-800">{commitment.farmerName}</span>
+              <div className='space-y-3'>
+                <h4 className='font-semibold text-green-700 text-sm uppercase tracking-wide'>
+                  {t("farmingCommitment.pages.detail.sections.partners.title")}
+                </h4>
+                <div className='space-y-2'>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.partners.farmer_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {commitment.farmerName}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.partners.business_label')}:</span>
-                    <span className="font-medium text-gray-800">{commitment.companyName}</span>
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.partners.business_label"
+                      )}
+                      :
+                    </span>
+                    <span className='font-medium text-gray-800'>
+                      {commitment.companyName}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('farmingCommitment.pages.detail.sections.partners.plan_label')}:</span>
-                    <Link href={`/dashboard/manager/procurement-plans/${commitment.planId}`} className="text-blue-600 hover:text-blue-800 font-medium">
-                      Link <FiExternalLink className="inline ml-1" />
+                  <div className='flex justify-between'>
+                    <span className='text-gray-600'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.partners.plan_label"
+                      )}
+                      :
+                    </span>
+                    <Link
+                      href={`/dashboard/manager/procurement-plans/${commitment.planId}`}
+                      className='text-blue-600 hover:text-blue-800 font-medium'
+                    >
+                      Link <FiExternalLink className='inline ml-1' />
                     </Link>
                   </div>
                 </div>
@@ -199,17 +310,29 @@ export default function FarmingCommitmentDetailPageForBusiness() {
 
             {/* Ghi chú và lý do từ chối */}
             {(commitment.note || commitment.rejectionReason) && (
-              <div className="mt-6 pt-4 border-t border-green-200">
+              <div className='mt-6 pt-4 border-t border-green-200'>
                 {commitment.note && (
-                  <div className="mb-3">
-                    <h4 className="font-semibold text-green-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.sections.notes.generalTerms')}</h4>
-                    <p className="text-gray-700 leading-relaxed">{commitment.note}</p>
+                  <div className='mb-3'>
+                    <h4 className='font-semibold text-green-700 text-sm uppercase tracking-wide mb-2'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.notes.generalTerms"
+                      )}
+                    </h4>
+                    <p className='text-gray-700 leading-relaxed'>
+                      {commitment.note}
+                    </p>
                   </div>
                 )}
                 {commitment.rejectionReason && (
                   <div>
-                    <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.sections.notes.rejectionReason')}</h4>
-                    <p className="text-red-700 leading-relaxed">{commitment.rejectionReason}</p>
+                    <h4 className='font-semibold text-red-700 text-sm uppercase tracking-wide mb-2'>
+                      {t(
+                        "farmingCommitment.pages.detail.sections.notes.rejectionReason"
+                      )}
+                    </h4>
+                    <p className='text-red-700 leading-relaxed'>
+                      {commitment.rejectionReason}
+                    </p>
                   </div>
                 )}
               </div>
@@ -219,63 +342,110 @@ export default function FarmingCommitmentDetailPageForBusiness() {
 
         {/* Card thông tin kế hoạch thu mua */}
         {plan && (
-          <Card className="">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-orange-600" />
+          <Card className=''>
+            <CardHeader className='pb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center'>
+                  <FileText className='h-5 w-5 text-orange-600' />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-orange-800">{t('farmingCommitment.pages.detail.procurementPlan.title')}</CardTitle>
-                  <p className="text-sm text-orange-600 mt-1">{t('farmingCommitment.pages.detail.procurementPlan.code', { code: plan.planCode })}</p>
+                  <CardTitle className='text-xl text-orange-800'>
+                    {t("farmingCommitment.pages.detail.procurementPlan.title")}
+                  </CardTitle>
+                  <p className='text-sm text-orange-600 mt-1'>
+                    {t("farmingCommitment.pages.detail.procurementPlan.code", {
+                      code: plan.planCode,
+                    })}
+                  </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 {/* Thông tin cơ bản */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.title_label')}:</span>
-                      <span className="font-medium text-gray-800">{plan.title}</span>
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-orange-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.title_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {plan.title}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.status_label')}:</span>
-                                              <StatusBadge
-                          status={plan.status}
-                          map={getProcurementPlanStatusMap(t)}
-                        />
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.status_label"
+                        )}
+                        :
+                      </span>
+                      <StatusBadge
+                        status={plan.status}
+                        map={getProcurementPlanStatusMap(t)}
+                      />
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.registrationPeriod_label')}:</span>
-                      <span className="font-medium text-gray-800">
-                        {formatDate(plan.startDate)} – {formatDate(plan.endDate)}
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.basicInfo.registrationPeriod_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {formatDate(plan.startDate)} –{" "}
+                        {formatDate(plan.endDate)}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Thông tin sản lượng */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.procurementPlan.sections.output.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.output.totalOutput_label')}:</span>
-                      <span className="font-medium text-gray-800">
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-orange-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.procurementPlan.sections.output.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.output.totalOutput_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
                         {plan.totalQuantity.toLocaleString()} kg
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.output.registrationProgress_label')}:</span>
-                      <span className="font-medium text-gray-800">
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.output.registrationProgress_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
                         {Number(plan.progressPercentage || 0).toFixed(1)}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.output.planDetailsCount_label')}:</span>
-                      <span className="font-medium text-gray-800">
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.output.planDetailsCount_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
                         {plan.procurementPlansDetails?.length || 0}
                       </span>
                     </div>
@@ -283,22 +453,45 @@ export default function FarmingCommitmentDetailPageForBusiness() {
                 </div>
 
                 {/* Thông tin doanh nghiệp */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.procurementPlan.sections.business.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.business.name_label')}:</span>
-                      <span className="font-medium text-gray-800">{plan.createdBy?.companyName || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.business.address_label')}:</span>
-                      <span className="font-medium text-gray-800 text-right max-w-[150px]">
-                        {plan.createdBy?.companyAddress || 'N/A'}
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-orange-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.procurementPlan.sections.business.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.business.name_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {plan.createdBy?.companyName || "N/A"}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.procurementPlan.sections.business.email_label')}:</span>
-                      <span className="font-medium text-gray-800">{plan.createdBy?.contactEmail || 'N/A'}</span>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.business.address_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800 text-right max-w-[150px]'>
+                        {plan.createdBy?.companyAddress || "N/A"}
+                      </span>
+                    </div>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.procurementPlan.sections.business.email_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {plan.createdBy?.contactEmail || "N/A"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -306,9 +499,15 @@ export default function FarmingCommitmentDetailPageForBusiness() {
 
               {/* Mô tả */}
               {plan.description && (
-                <div className="mt-6 pt-4 border-t border-orange-200">
-                  <h4 className="font-semibold text-orange-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.procurementPlan.sections.description.title')}</h4>
-                  <p className="text-gray-700 leading-relaxed">{plan.description}</p>
+                <div className='mt-6 pt-4 border-t border-orange-200'>
+                  <h4 className='font-semibold text-orange-700 text-sm uppercase tracking-wide mb-2'>
+                    {t(
+                      "farmingCommitment.pages.detail.procurementPlan.sections.description.title"
+                    )}
+                  </h4>
+                  <p className='text-gray-700 leading-relaxed'>
+                    {plan.description}
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -317,95 +516,184 @@ export default function FarmingCommitmentDetailPageForBusiness() {
 
         {/* Card thông tin đơn đăng ký */}
         {registration && (
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <User className="h-5 w-5 text-blue-600" />
+          <Card className='bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200'>
+            <CardHeader className='pb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center'>
+                  <User className='h-5 w-5 text-blue-600' />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-blue-800">{t('farmingCommitment.pages.detail.registration.title')}</CardTitle>
-                  <p className="text-sm text-blue-600 mt-1">{t('farmingCommitment.pages.detail.registration.code', { code: registration.registrationCode })}</p>
+                  <CardTitle className='text-xl text-blue-800'>
+                    {t("farmingCommitment.pages.detail.registration.title")}
+                  </CardTitle>
+                  <p className='text-sm text-blue-600 mt-1'>
+                    {t("farmingCommitment.pages.detail.registration.code", {
+                      code: registration.registrationCode,
+                    })}
+                  </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 {/* Thông tin nông dân */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-blue-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.registration.sections.farmer.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.farmer.name_label')}:</span>
-                      <span className="font-medium text-gray-800">{registration.farmerName}</span>
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-blue-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.registration.sections.farmer.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.farmer.name_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.farmerName}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.farmer.location_label')}:</span>
-                      <span className="font-medium text-gray-800">{registration.farmerLocation || 'N/A'}</span>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.farmer.location_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.farmerLocation || "N/A"}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.farmer.registrationDate_label')}:</span>
-                      <span className="font-medium text-gray-800">{formatDate(registration.registeredAt)}</span>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.farmer.registrationDate_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {formatDate(registration.registeredAt)}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Thông tin canh tác */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-blue-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.registration.sections.cultivation.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.cultivation.area_label')}:</span>
-                      <span className="font-medium text-gray-800">{registration.registeredArea} ha</span>
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-blue-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.registration.sections.cultivation.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.cultivation.area_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.registeredArea} ha
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.cultivation.status_label')}:</span>
-                                              <StatusBadge
-                          status={registration.status}
-                          map={getCultivationRegistrationStatusMap(t)}
-                        />
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.cultivation.status_label"
+                        )}
+                        :
+                      </span>
+                      <StatusBadge
+                        status={registration.status}
+                        map={getCultivationRegistrationStatusMap(t)}
+                      />
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.cultivation.detailsCount_label')}:</span>
-                      <span className="font-medium text-gray-800">
-                        {registration.cultivationRegistrationDetails?.length || 0}
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.cultivation.detailsCount_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.cultivationRegistrationDetails?.length ||
+                          0}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Thông tin chi tiết đăng ký */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-blue-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.registration.sections.details.title')}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.details.coffeeTypesCount_label')}:</span>
-                      <span className="font-medium text-gray-800">
-                        {registration.cultivationRegistrationDetails?.length || 0}
+                <div className='space-y-3'>
+                  <h4 className='font-semibold text-blue-700 text-sm uppercase tracking-wide'>
+                    {t(
+                      "farmingCommitment.pages.detail.registration.sections.details.title"
+                    )}
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.details.coffeeTypesCount_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.cultivationRegistrationDetails?.length ||
+                          0}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.details.totalOutput_label')}:</span>
-                      <span className="font-medium text-gray-800">
-                        {registration.cultivationRegistrationDetails?.reduce((total, detail) => 
-                          total + (detail.estimatedYield || 0), 0
-                        ).toLocaleString()} kg
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.details.totalOutput_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
+                        {registration.cultivationRegistrationDetails
+                          ?.reduce(
+                            (total, detail) =>
+                              total + (detail.estimatedYield || 0),
+                            0
+                          )
+                          .toLocaleString()}{" "}
+                        kg
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t('farmingCommitment.pages.detail.registration.sections.details.averagePrice_label')}:</span>
-                      <span className="font-medium text-gray-800">
+                    <div className='flex justify-between'>
+                      <span className='text-gray-600'>
+                        {t(
+                          "farmingCommitment.pages.detail.registration.sections.details.averagePrice_label"
+                        )}
+                        :
+                      </span>
+                      <span className='font-medium text-gray-800'>
                         {(() => {
-                          const details = registration.cultivationRegistrationDetails || [];
-                          if (details.length === 0) return 'N/A';
-                          const totalValue = details.reduce((sum, detail) => 
-                            sum + ((detail.estimatedYield || 0) * (detail.wantedPrice || 0)), 0
+                          const details =
+                            registration.cultivationRegistrationDetails || [];
+                          if (details.length === 0) return "N/A";
+                          const totalValue = details.reduce(
+                            (sum, detail) =>
+                              sum +
+                              (detail.estimatedYield || 0) *
+                                (detail.wantedPrice || 0),
+                            0
                           );
-                          const totalQuantity = details.reduce((sum, detail) => 
-                            sum + (detail.estimatedYield || 0), 0
+                          const totalQuantity = details.reduce(
+                            (sum, detail) => sum + (detail.estimatedYield || 0),
+                            0
                           );
-                          return totalQuantity > 0 ? `${Math.round(totalValue / totalQuantity).toLocaleString()}` : 'N/A';
-                        })()} VNĐ/kg
+                          return totalQuantity > 0
+                            ? `${Math.round(
+                                totalValue / totalQuantity
+                              ).toLocaleString()}`
+                            : "N/A";
+                        })()}{" "}
+                        VNĐ/kg
                       </span>
                     </div>
                   </div>
@@ -414,9 +702,349 @@ export default function FarmingCommitmentDetailPageForBusiness() {
 
               {/* Ghi chú */}
               {registration.note && (
-                <div className="mt-6 pt-4 border-t border-blue-200">
-                  <h4 className="font-semibold text-blue-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.registration.sections.notes.title')}</h4>
-                  <p className="text-gray-700 leading-relaxed">{registration.note}</p>
+                <div className='mt-6 pt-4 border-t border-blue-200'>
+                  <h4 className='font-semibold text-blue-700 text-sm uppercase tracking-wide mb-2'>
+                    {t(
+                      "farmingCommitment.pages.detail.registration.sections.notes.title"
+                    )}
+                  </h4>
+                  <p className='text-gray-700 leading-relaxed'>
+                    {registration.note}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Card chi tiết đăng ký */}
+        {registration && registration.cultivationRegistrationDetails && registration.cultivationRegistrationDetails.length > 0 && (
+          <Card className='bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-200'>
+            <CardHeader className='flex justify-between items-center pb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center'>
+                  <User className='h-5 w-5 text-cyan-600' />
+                </div>
+                <div>
+                  <CardTitle className='text-xl text-cyan-800'>
+                    {t("farmingCommitment.pages.detail.registrationDetails.title")}
+                  </CardTitle>
+                  <p className='text-sm text-cyan-600 mt-1'>
+                    {t(
+                      "farmingCommitment.pages.detail.registrationDetails.subtitle",
+                      { count: registration.cultivationRegistrationDetails.length }
+                    )}
+                  </p>
+                </div>
+              </div>
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={() => setIsRegistrationDetailsExpanded(!isRegistrationDetailsExpanded)}
+                className='text-cyan-600 border-cyan-200 hover:bg-cyan-50'
+              >
+                {isRegistrationDetailsExpanded ? (
+                  <>
+                    <ChevronUp className='h-4 w-4 mr-1' />
+                    {t(
+                      "farmingCommitment.pages.detail.registrationDetails.collapse"
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className='h-4 w-4 mr-1' />
+                    {t("farmingCommitment.pages.detail.registrationDetails.expand")}
+                  </>
+                )}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {Array.isArray(registration.cultivationRegistrationDetails) &&
+              registration.cultivationRegistrationDetails.length > 0 ? (
+                <>
+                  {/* Chế độ thu gọn - chỉ hiển thị danh sách tóm tắt */}
+                  {!isRegistrationDetailsExpanded && (
+                    <div className='space-y-3'>
+                      {registration.cultivationRegistrationDetails.map(
+                        (detail, index) => (
+                          <div
+                            key={detail.cultivationRegistrationDetailId}
+                            className='bg-white rounded-lg border border-cyan-200 p-3 shadow-sm hover:shadow-md transition-shadow'
+                          >
+                            <div className='flex items-center justify-between'>
+                              <div className='flex items-center gap-3'>
+                                <div className='h-8 w-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-semibold text-sm'>
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className='font-semibold text-cyan-800'>
+                                    {detail.coffeeType}
+                                  </h4>
+                                  <p className='text-sm text-cyan-600'>
+                                    {formatQuantity(detail.estimatedYield ?? 0)} kg - {detail.wantedPrice?.toLocaleString()} VNĐ/kg
+                                  </p>
+                                </div>
+                              </div>
+                              <div className='text-right text-sm'>
+                                <div className='text-gray-500'>Trạng thái</div>
+                                <StatusBadge
+                                  status={detail.status ?? ""}
+                                  map={getCultivationRegistrationStatusMap(t)}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {/* Chế độ mở rộng - hiển thị đầy đủ thông tin */}
+                  {isRegistrationDetailsExpanded && (
+                    <div className='space-y-4'>
+                      {registration.cultivationRegistrationDetails.map(
+                        (detail, index) => (
+                          <div
+                            key={detail.cultivationRegistrationDetailId}
+                            className='bg-white rounded-lg border border-cyan-200 p-4 shadow-sm hover:shadow-md transition-shadow'
+                          >
+                            {/* Header của chi tiết */}
+                            <div className='flex items-center justify-between mb-4'>
+                              <div className='flex items-center gap-3'>
+                                <div className='h-8 w-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-semibold text-sm'>
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className='font-semibold text-cyan-800 text-lg'>
+                                    {detail.coffeeType}
+                                  </h4>
+                                  {/* <p className='text-sm text-cyan-600'>
+                                    {detail.cultivationRegistrationDetailId}
+                                  </p> */}
+                                </div>
+                              </div>
+                              <div className='text-right'>
+                                <div className='text-sm text-gray-500'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.status"
+                                  )}
+                                </div>
+                                <StatusBadge
+                                  status={detail.status ?? ""}
+                                  map={getCultivationRegistrationStatusMap(t)}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Thông tin chi tiết */}
+                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                              {/* Thông tin sản lượng */}
+                              <div className='space-y-2'>
+                                <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.sections.yield.title"
+                                  )}
+                                </h5>
+                                <div className='space-y-1 text-sm'>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.yield.estimatedYield_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {formatQuantity(detail.estimatedYield ?? 0)}
+                                    </span>
+                                  </div>
+                                  {/* <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.yield.expectedYieldPerHectare_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {formatQuantity(detail.expectedYield ?? 0)} kg/ha
+                                    </span>
+                                  </div> */}
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.yield.registeredArea_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.registeredArea || "N/A"} ha
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Thông tin giá cả */}
+                              <div className='space-y-2'>
+                                <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.sections.pricing.title"
+                                  )}
+                                </h5>
+                                <div className='space-y-1 text-sm'>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.pricing.wantedPrice_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.wantedPrice?.toLocaleString()}{" "}
+                                      VNĐ/kg
+                                    </span>
+                                  </div>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.pricing.totalValue_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {(
+                                        (detail.wantedPrice ?? 0) *
+                                        (detail.estimatedYield ?? 0)
+                                      ).toLocaleString()}{" "}
+                                      VNĐ
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Thông tin thời gian */}
+                              <div className='space-y-2'>
+                                <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.sections.timing.title"
+                                  )}
+                                </h5>
+                                <div className='space-y-1 text-sm'>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.timing.harvestStart_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {formatDate(detail.expectedHarvestStart)}
+                                    </span>
+                                  </div>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.timing.harvestEnd_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {formatDate(detail.expectedHarvestEnd)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Thông tin crop */}
+                            {detail.crop && (
+                              <div className='mt-4 pt-3 border-t border-cyan-200'>
+                                <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide mb-2'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.sections.crop.title"
+                                  )}
+                                </h5>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-3 text-sm'>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.crop.farmName_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.crop.farmName || "N/A"}
+                                    </span>
+                                  </div>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.crop.address_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.crop.address || "N/A"}
+                                    </span>
+                                  </div>
+                                  <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.crop.cropArea_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.crop.cropArea || "N/A"} ha
+                                    </span>
+                                  </div>
+                                  {/* <div className='flex justify-between'>
+                                    <span className='text-gray-600'>
+                                      {t(
+                                        "farmingCommitment.pages.detail.registrationDetails.sections.crop.cropType_label"
+                                      )}
+                                      :
+                                    </span>
+                                    <span className='font-medium'>
+                                      {detail.crop.cropType || "N/A"}
+                                    </span>
+                                  </div> */}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Ghi chú */}
+                            {detail.note && (
+                              <div className='mt-4 pt-3 border-t border-cyan-200'>
+                                <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide mb-2'>
+                                  {t(
+                                    "farmingCommitment.pages.detail.registrationDetails.sections.notes.title"
+                                  )}
+                                </h5>
+                                <p className='text-gray-700 text-sm'>
+                                  {detail.note}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className='text-center py-8'>
+                  <div className='h-16 w-16 rounded-full bg-cyan-100 flex items-center justify-center mx-auto mb-3'>
+                    <div className='h-8 w-8 text-cyan-600'>📋</div>
+                  </div>
+                  <p className='text-muted-foreground text-sm'>
+                    {t(
+                      "farmingCommitment.pages.detail.registrationDetails.noDetails.title"
+                    )}
+                  </p>
+                  <p className='text-muted-foreground text-xs mt-1'>
+                    {t(
+                      "farmingCommitment.pages.detail.registrationDetails.noDetails.subtitle"
+                    )}
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -424,34 +1052,41 @@ export default function FarmingCommitmentDetailPageForBusiness() {
         )}
 
         {/* Card chi tiết cam kết */}
-        <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
+        <Card className='bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200'>
           <CardHeader className='flex justify-between items-center pb-4'>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+            <div className='flex items-center gap-3'>
+              <div className='h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center'>
+                <TrendingUp className='h-5 w-5 text-purple-600' />
               </div>
               <div>
-                                  <CardTitle className="text-xl text-purple-800">{t('farmingCommitment.pages.detail.commitmentDetails.title')}</CardTitle>
-                  <p className="text-sm text-purple-600 mt-1">
-                    {t('farmingCommitment.pages.detail.commitmentDetails.subtitle', { count: commitment.farmingCommitmentDetails?.length || 0 })}
-                  </p>
+                <CardTitle className='text-xl text-purple-800'>
+                  {t("farmingCommitment.pages.detail.commitmentDetails.title")}
+                </CardTitle>
+                <p className='text-sm text-purple-600 mt-1'>
+                  {t(
+                    "farmingCommitment.pages.detail.commitmentDetails.subtitle",
+                    { count: commitment.farmingCommitmentDetails?.length || 0 }
+                  )}
+                </p>
               </div>
             </div>
             <Button
               size='sm'
               variant='outline'
               onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-              className="text-purple-600 border-purple-200 hover:bg-purple-50"
+              className='text-purple-600 border-purple-200 hover:bg-purple-50'
             >
               {isDetailsExpanded ? (
                 <>
-                  <ChevronUp className="h-4 w-4 mr-1" />
-                  {t('farmingCommitment.pages.detail.commitmentDetails.collapse')}
+                  <ChevronUp className='h-4 w-4 mr-1' />
+                  {t(
+                    "farmingCommitment.pages.detail.commitmentDetails.collapse"
+                  )}
                 </>
               ) : (
                 <>
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                  {t('farmingCommitment.pages.detail.commitmentDetails.expand')}
+                  <ChevronDown className='h-4 w-4 mr-1' />
+                  {t("farmingCommitment.pages.detail.commitmentDetails.expand")}
                 </>
               )}
             </Button>
@@ -462,143 +1097,255 @@ export default function FarmingCommitmentDetailPageForBusiness() {
               <>
                 {/* Chế độ thu gọn - chỉ hiển thị danh sách tóm tắt */}
                 {!isDetailsExpanded && (
-                  <div className="space-y-3">
-                    {commitment.farmingCommitmentDetails.map((detail, index) => (
-                      <div
-                        key={detail.commitmentDetailId}
-                        className="bg-white rounded-lg border border-purple-200 p-3 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-semibold text-sm">
-                              {index + 1}
+                  <div className='space-y-3'>
+                    {commitment.farmingCommitmentDetails.map(
+                      (detail, index) => (
+                        <div
+                          key={detail.commitmentDetailId}
+                          className='bg-white rounded-lg border border-purple-200 p-3 shadow-sm hover:shadow-md transition-shadow'
+                        >
+                          <div className='flex items-center justify-between'>
+                            <div className='flex items-center gap-3'>
+                              <div className='h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-semibold text-sm'>
+                                {index + 1}
+                              </div>
+                              <div>
+                                <h4 className='font-semibold text-purple-800'>
+                                  {detail.commitmentDetailCode}
+                                </h4>
+                                <p className='text-sm text-purple-600'>
+                                  {detail.coffeeTypeName} -{" "}
+                                  {formatQuantity(
+                                    detail.committedQuantity ?? 0
+                                  )}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-purple-800">
-                                {detail.commitmentDetailCode}
-                              </h4>
-                              <p className="text-sm text-purple-600">
-                                {detail.coffeeTypeName} - {formatQuantity(detail.committedQuantity ?? 0)}
-                              </p>
+                            <div className='text-right text-sm'>
+                              <div className='text-gray-500'>Tiến độ</div>
+                              <div className='font-medium text-purple-600'>
+                                {Number(detail.progressPercentage || 0).toFixed(
+                                  1
+                                )}
+                                %
+                              </div>
                             </div>
-                          </div>
-                          <div className="text-right text-sm">
-                            <div className="text-gray-500">Tiến độ</div>
-                            <div className="font-medium text-purple-600">{Number(detail.progressPercentage || 0).toFixed(1)}%</div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 )}
 
                 {/* Chế độ mở rộng - hiển thị đầy đủ thông tin */}
                 {isDetailsExpanded && (
-                  <div className="space-y-4">
-                    {commitment.farmingCommitmentDetails.map((detail, index) => (
-                      <div
-                        key={detail.commitmentDetailId}
-                        className="bg-white rounded-lg border border-purple-200 p-4 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        {/* Header của chi tiết */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-semibold text-sm">
-                              {index + 1}
+                  <div className='space-y-4'>
+                    {commitment.farmingCommitmentDetails.map(
+                      (detail, index) => (
+                        <div
+                          key={detail.commitmentDetailId}
+                          className='bg-white rounded-lg border border-purple-200 p-4 shadow-sm hover:shadow-md transition-shadow'
+                        >
+                          {/* Header của chi tiết */}
+                          <div className='flex items-center justify-between mb-4'>
+                            <div className='flex items-center gap-3'>
+                              <div className='h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-semibold text-sm'>
+                                {index + 1}
+                              </div>
+                              <div>
+                                <h4 className='font-semibold text-purple-800 text-lg'>
+                                  {detail.commitmentDetailCode}
+                                </h4>
+                                <p className='text-sm text-purple-600'>
+                                  {detail.coffeeTypeName}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-purple-800 text-lg">
-                                {detail.commitmentDetailCode}
-                              </h4>
-                              <p className="text-sm text-purple-600">
-                                {detail.coffeeTypeName}
+                            <div className='text-right'>
+                              <div className='text-sm text-gray-500'>
+                                {t(
+                                  "farmingCommitment.pages.detail.commitmentDetails.progress"
+                                )}
+                              </div>
+                              <div className='font-medium text-purple-800'>
+                                {Number(detail.progressPercentage || 0).toFixed(
+                                  1
+                                )}
+                                %
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Thông tin chi tiết */}
+                          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                            {/* Thông tin sản lượng */}
+                            <div className='space-y-2'>
+                              <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                {t(
+                                  "farmingCommitment.pages.detail.commitmentDetails.sections.output.title"
+                                )}
+                              </h5>
+                              <div className='space-y-1 text-sm'>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.output.purchase_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {formatQuantity(
+                                      detail.committedQuantity ?? 0
+                                    )}
+                                  </span>
+                                </div>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.output.delivered_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {formatQuantity(
+                                      detail.deliveriedQuantity ?? 0
+                                    )}
+                                  </span>
+                                </div>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.output.remaining_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {formatQuantity(
+                                      (detail.committedQuantity ?? 0) -
+                                        (detail.deliveriedQuantity ?? 0)
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Thông tin giá cả */}
+                            <div className='space-y-2'>
+                              <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                {t(
+                                  "farmingCommitment.pages.detail.commitmentDetails.sections.pricing.title"
+                                )}
+                              </h5>
+                              <div className='space-y-1 text-sm'>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.pricing.confirmedPrice_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {detail.confirmedPrice?.toLocaleString()}{" "}
+                                    VNĐ/kg
+                                  </span>
+                                </div>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.pricing.advancePayment_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {detail.advancePayment?.toLocaleString()}{" "}
+                                    VNĐ
+                                  </span>
+                                </div>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.pricing.totalValue_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {(
+                                      (detail.confirmedPrice ?? 0) *
+                                      (detail.committedQuantity ?? 0)
+                                    ).toLocaleString()}{" "}
+                                    VNĐ
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Thông tin thời gian */}
+                            <div className='space-y-2'>
+                              <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide'>
+                                {t(
+                                  "farmingCommitment.pages.detail.commitmentDetails.sections.timing.title"
+                                )}
+                              </h5>
+                              <div className='space-y-1 text-sm'>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.timing.deliveryStart_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {formatDate(detail.estimatedDeliveryStart)}
+                                  </span>
+                                </div>
+                                <div className='flex justify-between'>
+                                  <span className='text-gray-600'>
+                                    {t(
+                                      "farmingCommitment.pages.detail.commitmentDetails.sections.timing.deliveryEnd_label"
+                                    )}
+                                    :
+                                  </span>
+                                  <span className='font-medium'>
+                                    {formatDate(detail.estimatedDeliveryEnd)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Ghi chú */}
+                          {detail.note && (
+                            <div className='mt-4 pt-3 border-t border-purple-200'>
+                              <h5 className='font-medium text-gray-700 text-sm uppercase tracking-wide mb-2'>
+                                {t(
+                                  "farmingCommitment.pages.detail.commitmentDetails.sections.terms.title"
+                                )}
+                              </h5>
+                              <p className='text-gray-700 text-sm'>
+                                {detail.note}
                               </p>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm text-gray-500">{t('farmingCommitment.pages.detail.commitmentDetails.progress')}</div>
-                            <div className="font-medium text-purple-800">{Number(detail.progressPercentage || 0).toFixed(1)}%</div>
-                          </div>
+                          )}
                         </div>
-
-                        {/* Thông tin chi tiết */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {/* Thông tin sản lượng */}
-                          <div className="space-y-2">
-                            <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.commitmentDetails.sections.output.title')}</h5>
-                            <div className="space-y-1 text-sm">
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.output.purchase_label')}:</span>
-                                <span className="font-medium">{formatQuantity(detail.committedQuantity ?? 0)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.output.delivered_label')}:</span>
-                                <span className="font-medium">{formatQuantity(detail.deliveriedQuantity ?? 0)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.output.remaining_label')}:</span>
-                                <span className="font-medium">{formatQuantity((detail.committedQuantity ?? 0) - (detail.deliveriedQuantity ?? 0))}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Thông tin giá cả */}
-                          <div className="space-y-2">
-                            <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.commitmentDetails.sections.pricing.title')}</h5>
-                            <div className="space-y-1 text-sm">
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.pricing.confirmedPrice_label')}:</span>
-                                <span className="font-medium">{detail.confirmedPrice?.toLocaleString()} VNĐ/kg</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.pricing.advancePayment_label')}:</span>
-                                <span className="font-medium">{detail.advancePayment?.toLocaleString()} VNĐ</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.pricing.totalValue_label')}:</span>
-                                <span className="font-medium">{((detail.confirmedPrice ?? 0) * (detail.committedQuantity ?? 0)).toLocaleString()} VNĐ</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Thông tin thời gian */}
-                          <div className="space-y-2">
-                            <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide">{t('farmingCommitment.pages.detail.commitmentDetails.sections.timing.title')}</h5>
-                            <div className="space-y-1 text-sm">
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.timing.deliveryStart_label')}:</span>
-                                <span className="font-medium">{formatDate(detail.estimatedDeliveryStart)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-600">{t('farmingCommitment.pages.detail.commitmentDetails.sections.timing.deliveryEnd_label')}:</span>
-                                <span className="font-medium">{formatDate(detail.estimatedDeliveryEnd)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Ghi chú */}
-                        {detail.note && (
-                          <div className="mt-4 pt-3 border-t border-purple-200">
-                            <h5 className="font-medium text-gray-700 text-sm uppercase tracking-wide mb-2">{t('farmingCommitment.pages.detail.commitmentDetails.sections.terms.title')}</h5>
-                            <p className="text-gray-700 text-sm">{detail.note}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 )}
               </>
             ) : (
-              <div className="text-center py-8">
-                <div className="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-3">
-                  <div className="h-8 w-8 text-purple-600">📋</div>
+              <div className='text-center py-8'>
+                <div className='h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-3'>
+                  <div className='h-8 w-8 text-purple-600'>📋</div>
                 </div>
                 <p className='text-muted-foreground text-sm'>
-                  {t('farmingCommitment.pages.detail.commitmentDetails.noDetails.title')}
+                  {t(
+                    "farmingCommitment.pages.detail.commitmentDetails.noDetails.title"
+                  )}
                 </p>
                 <p className='text-muted-foreground text-xs mt-1'>
-                  {t('farmingCommitment.pages.detail.commitmentDetails.noDetails.subtitle')}
+                  {t(
+                    "farmingCommitment.pages.detail.commitmentDetails.noDetails.subtitle"
+                  )}
                 </p>
               </div>
             )}

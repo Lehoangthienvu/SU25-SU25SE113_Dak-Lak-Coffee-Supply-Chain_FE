@@ -294,7 +294,7 @@
             },
             "cultivation": {
               "title": "Canh tác",
-              "area_label": "Diện tích",
+              "area_label": "Tổng diện tích",
               "status_label": "Trạng thái",
               "detailsCount_label": "Số chi tiết"
             },
@@ -303,6 +303,45 @@
               "coffeeTypesCount_label": "Số loại cà phê",
               "totalOutput_label": "Tổng sản lượng",
               "averagePrice_label": "Giá trung bình"
+            },
+            "notes": {
+              "title": "Ghi chú"
+            }
+          }
+        },
+        "registrationDetails": {
+          "title": "Chi tiết đăng ký",
+          "subtitle": "{{count}} chi tiết đăng ký",
+          "expand": "Mở rộng",
+          "collapse": "Thu gọn",
+          "status": "Trạng thái",
+          "noDetails": {
+            "title": "Không có chi tiết đăng ký nào.",
+            "subtitle": "Vui lòng thêm chi tiết đăng ký để bắt đầu thực hiện hợp đồng."
+          },
+          "sections": {
+            "yield": {
+              "title": "Sản lượng",
+              "estimatedYield_label": "Sản lượng ước tính",
+              "expectedYieldPerHectare_label": "Năng suất dự kiến/ha",
+              "registeredArea_label": "Diện tích đăng ký"
+            },
+            "pricing": {
+              "title": "Giá cả",
+              "wantedPrice_label": "Giá mong muốn",
+              "totalValue_label": "Tổng giá trị"
+            },
+            "timing": {
+              "title": "Thời gian",
+              "harvestStart_label": "Bắt đầu thu hoạch",
+              "harvestEnd_label": "Kết thúc thu hoạch"
+            },
+            "crop": {
+              "title": "Thông tin vùng trồng",
+              "farmName_label": "Tên trang trại",
+              "address_label": "Địa chỉ",
+              "cropArea_label": "Diện tích cây trồng",
+              "cropType_label": "Loại cây trồng"
             },
             "notes": {
               "title": "Ghi chú"

@@ -302,18 +302,62 @@ export default function CultivationRegistrationDetailPage() {
                               : "--"}
                           </p>
                         </div>
-
-                        {detail.note && (
-                          <div className='mt-3'>
-                            <label className='text-sm font-medium text-gray-500'>
-                              {t(
-                                "cultivationRegistration.components.registrationForm.labels.detailNote"
-                              )}
-                            </label>
-                            <p className='text-gray-900 mt-1'>{detail.note}</p>
-                          </div>
-                        )}
                       </div>
+
+                      {/* Thông tin vùng trồng */}
+                      {detail.crop && (
+                        <div className='mt-4 pt-4 border-t border-gray-200'>
+                          <h4 className='text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2'>
+                            <Coffee className='h-4 w-4 text-green-600' />
+                            {t("farmingCommitment.pages.detail.registrationDetails.sections.crop.title")}
+                          </h4>
+                          <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                            <div>
+                              <label className='text-sm font-medium text-gray-500'>
+                                {t("farmingCommitment.pages.detail.registrationDetails.sections.crop.farmName_label")}
+                              </label>
+                              <p className='text-gray-900'>
+                                {detail.crop.farmName || "--"}
+                              </p>
+                            </div>
+                            <div>
+                              <label className='text-sm font-medium text-gray-500'>
+                                {t("farmingCommitment.pages.detail.registrationDetails.sections.crop.address_label")}
+                              </label>
+                              <p className='text-gray-900'>
+                                {detail.crop.address || "--"}
+                              </p>
+                            </div>
+                            <div>
+                              <label className='text-sm font-medium text-gray-500'>
+                                {t("farmingCommitment.pages.detail.registrationDetails.sections.crop.cropArea_label")}
+                              </label>
+                              <p className='text-gray-900'>
+                                {detail.crop.cropArea ? `${detail.crop.cropArea} ha` : "--"}
+                              </p>
+                            </div>
+                            <div>
+                              <label className='text-sm font-medium text-gray-500'>
+                                {t("cultivationRegistration.pages.detail.cropCode")}
+                              </label>
+                              <p className='text-gray-900 font-mono'>
+                                {detail.crop.cropCode || "--"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {detail.note && (
+                        <div className='mt-4 pt-3 border-t border-gray-200'>
+                          <label className='text-sm font-medium text-gray-500'>
+                            {t(
+                              "cultivationRegistration.components.registrationForm.labels.detailNote"
+                            )}
+                          </label>
+                          <p className='text-gray-900 mt-1'>{detail.note}</p>
+                        </div>
+                      )}
                     </div>
                   )
                 )}

@@ -309,6 +309,45 @@
             }
           }
         },
+        "registrationDetails": {
+          "title": "Registration Details",
+          "subtitle": "{{count}} registration details",
+          "expand": "Expand",
+          "collapse": "Collapse",
+          "status": "Status",
+          "noDetails": {
+            "title": "No registration details found.",
+            "subtitle": "Please add registration details to start implementing the contract."
+          },
+          "sections": {
+            "yield": {
+              "title": "Yield",
+              "estimatedYield_label": "Estimated Yield",
+              "expectedYieldPerHectare_label": "Expected Yield per Hectare",
+              "registeredArea_label": "Registered Area"
+            },
+            "pricing": {
+              "title": "Pricing",
+              "wantedPrice_label": "Wanted Price",
+              "totalValue_label": "Total Value"
+            },
+            "timing": {
+              "title": "Timing",
+              "harvestStart_label": "Harvest Start",
+              "harvestEnd_label": "Harvest End"
+            },
+            "crop": {
+              "title": "Crop Information",
+              "farmName_label": "Farm Name",
+              "address_label": "Address",
+              "cropArea_label": "Crop Area",
+              "cropType_label": "Crop Type"
+            },
+            "notes": {
+              "title": "Notes"
+            }
+          }
+        },
         "commitmentDetails": {
           "title": "Commitment Details",
           "subtitle": "{{count}} commitment details",
