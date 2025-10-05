@@ -289,10 +289,10 @@ export default function CultivationRegistrationForm({
       {/* Thông báo số lần đăng ký tối đa */}
       {maxRegistrationCount !== null && (
         <p className='text-red-700 text-sm font-medium'>
-          {t(
+          {/* {t(
             "cultivationRegistration.components.registrationForm.messages.maxRegistrationsReached",
             { count: maxRegistrationCount }
-          )}
+          )} */}
         </p>
       )}
 

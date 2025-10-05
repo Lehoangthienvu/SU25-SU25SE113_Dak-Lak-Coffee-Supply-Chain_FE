@@ -376,7 +376,11 @@ export default function FarmingCommitmentDetailPageForFarmer() {
                   <User className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-blue-800">{t('farmingCommitment.pages.farmer.detail.registration.title')}</CardTitle>
+                  <CardTitle className="text-xl text-blue-800">{t('farmingCommitment.pages.farmer.detail.registration.title')}
+                    <Link href={`/dashboard/farmer/cultivation-registration/${registration.registrationId}`} className="text-blue-600 hover:text-blue-800 font-medium ml-2">
+                      <FiExternalLink className='inline ml-1' />
+                    </Link>
+                  </CardTitle>
                   <p className="text-sm text-blue-600 mt-1">{t('farmingCommitment.pages.farmer.detail.registration.code', { code: registration.registrationCode })}</p>
                 </div>
               </div>

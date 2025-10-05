@@ -191,7 +191,8 @@
         "totalQuantity": "Total Quantity",
         "progress": "Progress",
         "farmerName": "Farmer Name",
-        "farmerLocation": "Location"
+        "farmerLocation": "Location",
+        "cropCode": "Crop Code"
       }
     },
     "dialogs": {
