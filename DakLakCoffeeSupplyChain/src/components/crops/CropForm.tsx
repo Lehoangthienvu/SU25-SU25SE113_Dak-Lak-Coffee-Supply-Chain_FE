@@ -69,16 +69,9 @@ export const CropForm: React.FC<CropFormProps> = ({
                     status: formData.status,
                     note: undefined,
                     isApproved: undefined,
-                    rejectReason: undefined,
-                    // Media files
-                    images: [],
-                    videos: [],
-                    documents: [],
-                    existingImages: '',
-                    existingVideos: '',
-                    existingDocuments: ''
+                    rejectReason: undefined
                 });
-                toast.success('Cập nhật crop thành công!');
+                toast.success('Cập nhật vùng trồng thành công!');
             } else {
                 // Create new crop
                 await createCrop({
@@ -86,7 +79,7 @@ export const CropForm: React.FC<CropFormProps> = ({
                     farmName: formData.farmName,
                     cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
                 });
-                toast.success('Tạo crop mới thành công!');
+                toast.success('Tạo vùng trồng mới thành công!');
             }
 
             onSubmit();
