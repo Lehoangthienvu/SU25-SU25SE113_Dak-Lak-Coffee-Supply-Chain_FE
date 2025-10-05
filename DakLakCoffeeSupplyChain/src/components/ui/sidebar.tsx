@@ -191,7 +191,7 @@ export function SidebarGroup() {
         icon: iconMap.dashboard,
       },
       {
-        title: "Quản lý Crops",
+        title: "Quản lý Vùng Trồng",
         href: "/dashboard/admin/crops",
         icon: iconMap.crops,
       },
@@ -221,11 +221,6 @@ export function SidebarGroup() {
         icon: <FaSeedling />,
       },
       {
-        title: t("sidebar.navigation.contracts"),
-        href: "/dashboard/admin/contracts",
-        icon: iconMap.contracts,
-      },
-      {
         title: "Quản lý Giai đoạn",
         href: "/dashboard/admin/crop-stages",
         icon: iconMap.cropStages,
@@ -234,11 +229,6 @@ export function SidebarGroup() {
         title: "Quản lý Sơ chế",
         href: "/dashboard/admin/processing",
         icon: <FiSettings />,
-      },
-      {
-        title: t("sidebar.navigation.reports"),
-        href: "/dashboard/admin/reports",
-        icon: iconMap.reports,
       },
       {
         title: t("sidebar.navigation.settings"),
