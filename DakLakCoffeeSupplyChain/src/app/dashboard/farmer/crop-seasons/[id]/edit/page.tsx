@@ -252,8 +252,7 @@ export default function EditCropSeasonPage() {
 
                     <div className="border-t pt-4">
                         <p className="text-sm text-muted-foreground mb-1">{t('cropSeasons.edit.commitmentInfo')}</p>
-                        <p><strong>{t('cropSeasons.edit.commitmentName')}:</strong> {season.commitmentName}</p>
-                        <p><strong>{t('cropSeasons.edit.registrationCode')}:</strong> {season.registrationCode}</p>
+                        <p><strong>{t('cropSeasons.edit.commitmentCode')}:</strong> {season.commitmentName}</p>
                         <p><strong>{t('cropSeasons.edit.registeredArea')}:</strong> {season.area} ha</p>
 
                         {commitment && commitment.approvedAt && (
