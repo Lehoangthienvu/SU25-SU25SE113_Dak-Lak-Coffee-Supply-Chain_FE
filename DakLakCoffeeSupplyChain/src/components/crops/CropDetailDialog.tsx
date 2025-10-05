@@ -29,6 +29,34 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
     onReject,
     isAdmin = false
 }) => {
+    // Helper function to extract filename from URL
+    const extractFileName = (url: string): string => {
+        try {
+            // Remove query parameters and hash
+            const cleanUrl = url.split('?')[0].split('#')[0];
+            
+            // Get the last part of the URL
+            const fileName = cleanUrl.split('/').pop() || '';
+            
+            // If it's a Cloudinary URL, try to extract original filename
+            if (fileName.includes('.')) {
+                return fileName;
+            }
+            
+            // If no extension, try to get meaningful name from URL
+            const urlParts = cleanUrl.split('/');
+            const lastPart = urlParts[urlParts.length - 1];
+            
+            // If it's a UUID-like string, use generic name
+            if (lastPart.match(/^[a-f0-9-]{36}$/i)) {
+                return `File ${urlParts.length}`;
+            }
+            
+            return lastPart || 'File';
+        } catch {
+            return 'File';
+        }
+    };
     const [cropDetails, setCropDetails] = useState<CropViewDetailsDto | null>(null);
     const [loading, setLoading] = useState(false);
     
@@ -266,59 +294,38 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                             <div className="bg-white border border-gray-200 rounded-lg p-4">
                                 <h3 className="text-sm font-semibold text-gray-700 mb-3">Tài liệu đính kèm</h3>
                                 
-                                {/* Images */}
-                                {cropDetails.images && cropDetails.images.length > 0 && (
-                                    <div className="mb-4">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Image className="w-4 h-4 text-green-500" />
-                                            <span className="text-sm font-medium text-gray-700">Hình ảnh ({cropDetails.images.length})</span>
+                                {/* All Media as Documents */}
+                                <div className="space-y-2">
+                                    {/* Images as Documents */}
+                                    {cropDetails.images && cropDetails.images.map((url, index) => (
+                                        <div key={`img-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                                            <File className="w-4 h-4 text-gray-500" />
+                                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                                {extractFileName(url) || `Tài liệu ${index + 1}`}
+                                            </a>
                                         </div>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                            {cropDetails.images.map((url, index) => (
-                                                <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                                                    <img src={url} alt={`Image ${index + 1}`} className="w-full h-full object-cover" />
-                                                </div>
-                                            ))}
+                                    ))}
+                                    
+                                    {/* Videos as Documents */}
+                                    {cropDetails.videos && cropDetails.videos.map((url, index) => (
+                                        <div key={`vid-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                                            <File className="w-4 h-4 text-gray-500" />
+                                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                                {extractFileName(url) || `Tài liệu ${cropDetails.images?.length + index + 1}`}
+                                            </a>
                                         </div>
-                                    </div>
-                                )}
-
-                                {/* Videos */}
-                                {cropDetails.videos && cropDetails.videos.length > 0 && (
-                                    <div className="mb-4">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Video className="w-4 h-4 text-blue-500" />
-                                            <span className="text-sm font-medium text-gray-700">Video ({cropDetails.videos.length})</span>
+                                    ))}
+                                    
+                                    {/* Documents */}
+                                    {cropDetails.documents && cropDetails.documents.map((doc, index) => (
+                                        <div key={`doc-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                                            <File className="w-4 h-4 text-gray-500" />
+                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                                {doc.fileName}
+                                            </a>
                                         </div>
-                                        <div className="space-y-2">
-                                            {cropDetails.videos.map((url, index) => (
-                                                <div key={index} className="bg-gray-100 rounded-lg p-2">
-                                                    <video src={url} controls className="w-full h-32 object-cover rounded" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Documents */}
-                                {cropDetails.documents && cropDetails.documents.length > 0 && (
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <File className="w-4 h-4 text-orange-500" />
-                                            <span className="text-sm font-medium text-gray-700">Tài liệu ({cropDetails.documents.length})</span>
-                                        </div>
-                                        <div className="space-y-2">
-                                            {cropDetails.documents.map((url, index) => (
-                                                <div key={index} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
-                                                    <File className="w-4 h-4 text-gray-500" />
-                                                    <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                                                        Tài liệu {index + 1}
-                                                    </a>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     )}
