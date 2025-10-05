@@ -68,18 +68,18 @@ export interface CropViewDetailsDto {
   rejectReason?: string;
   images?: string[];
   videos?: string[];
-  documents?: DocumentInfoDto[];
+  documents?: string[]; // Backend returns List<string> URLs, not DocumentInfoDto[]
 }
 
 // API functions
 export const getCrops = async (): Promise<CropViewAllDto[]> => {
   const response = await api.get('/crops');
-  return response.data;
+  return response.data.data || response.data;
 };
 
 export const getCropById = async (id: string): Promise<CropViewDetailsDto> => {
   const response = await api.get(`/crops/${id}`);
-  return response.data;
+  return response.data.data || response.data;
 };
 
 export const createCrop = async (data: CropCreateDto): Promise<CropViewAllDto> => {
@@ -107,55 +107,27 @@ export const createCrop = async (data: CropCreateDto): Promise<CropViewAllDto> =
   }
   
   const response = await api.post('/crops', formData);
-  return response.data;
+  // Handle new response structure: { message: "...", data: {...} }
+  return response.data.data || response.data.crop || response.data;
 };
 
 export const updateCrop = async (data: CropUpdateDto): Promise<CropViewAllDto> => {
-  const formData = new FormData();
+  // Backend expects JSON body for update, not FormData
+  const updatePayload = {
+    cropId: data.cropId,
+    cropCode: data.cropCode,
+    address: data.address,
+    farmName: data.farmName,
+    cropArea: data.cropArea,
+    status: data.status,
+    note: data.note,
+    isApproved: data.isApproved,
+    rejectReason: data.rejectReason
+  };
   
-  // Add basic fields
-  formData.append('cropId', data.cropId);
-  formData.append('cropCode', data.cropCode);
-  formData.append('address', data.address);
-  formData.append('farmName', data.farmName);
-  if (data.cropArea) {
-    formData.append('cropArea', data.cropArea.toString());
-  }
-  if (data.note) {
-    formData.append('note', data.note);
-  }
-  formData.append('status', data.status);
-  if (data.isApproved !== undefined && data.isApproved !== null) {
-    formData.append('isApproved', data.isApproved.toString());
-  }
-  if (data.rejectReason) {
-    formData.append('rejectReason', data.rejectReason);
-  }
-  
-  // Add existing media URLs
-  if (data.existingImages) {
-    formData.append('existingImages', data.existingImages);
-  }
-  if (data.existingVideos) {
-    formData.append('existingVideos', data.existingVideos);
-  }
-  if (data.existingDocuments) {
-    formData.append('existingDocuments', data.existingDocuments);
-  }
-  
-  // Add new media files
-  if (data.images) {
-    data.images.forEach(file => formData.append('images', file));
-  }
-  if (data.videos) {
-    data.videos.forEach(file => formData.append('videos', file));
-  }
-  if (data.documents) {
-    data.documents.forEach(file => formData.append('documents', file));
-  }
-  
-  const response = await api.put(`/crops/${data.cropId}`, formData);
-  return response.data;
+  const response = await api.put(`/crops/${data.cropId}`, updatePayload);
+  // Handle new response structure: { message: "...", data: {...} }
+  return response.data.data || response.data;
 };
 
 export const deleteCrop = async (id: string): Promise<void> => {
@@ -168,12 +140,14 @@ export const hardDeleteCrop = async (id: string): Promise<void> => {
 };
 
 // Approve crop
-export const approveCrop = async (id: string): Promise<void> => {
-  await api.put(`/crops/${id}/approve`, {});
+export const approveCrop = async (id: string): Promise<CropViewDetailsDto> => {
+  const response = await api.put(`/crops/${id}/approve`, {});
+  return response.data.data || response.data;
 };
 
 // Reject crop
-export const rejectCrop = async (id: string, reason: string): Promise<void> => {
-  await api.put(`/crops/${id}/reject`, { rejectReason: reason });
+export const rejectCrop = async (id: string, reason: string): Promise<CropViewDetailsDto> => {
+  const response = await api.put(`/crops/${id}/reject`, { rejectReason: reason });
+  return response.data.data || response.data;
 };
 

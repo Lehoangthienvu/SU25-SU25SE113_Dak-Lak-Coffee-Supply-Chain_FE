@@ -317,11 +317,11 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                                     ))}
                                     
                                     {/* Documents */}
-                                    {cropDetails.documents && cropDetails.documents.map((doc, index) => (
+                                    {cropDetails.documents && cropDetails.documents.map((docUrl, index) => (
                                         <div key={`doc-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
                                             <File className="w-4 h-4 text-gray-500" />
-                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                                                {doc.fileName}
+                                            <a href={docUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                                                {extractFileName(docUrl) || `Tài liệu ${(cropDetails.images?.length || 0) + (cropDetails.videos?.length || 0) + index + 1}`}
                                             </a>
                                         </div>
                                     ))}

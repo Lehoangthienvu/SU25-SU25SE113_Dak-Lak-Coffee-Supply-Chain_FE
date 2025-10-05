@@ -62,15 +62,7 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     
-    // Media files state
-    const [selectedImages, setSelectedImages] = useState<File[]>([]);
-    const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
-    const [selectedDocuments, setSelectedDocuments] = useState<File[]>([]);
-    const [existingMedia, setExistingMedia] = useState<{
-        images: string[];
-        videos: string[];
-        documents: string[];
-    }>({ images: [], videos: [], documents: [] });
+    // Note: Media files state removed as not supported in update API
     const [cropDetails, setCropDetails] = useState<any>(null);
 
     // Load data khi crop thay đổi
@@ -83,26 +75,20 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                 cropArea: crop.cropArea?.toString() || ''
             });
             
-            // Load existing media files
-            loadExistingMedia();
+            // Load crop details for additional info
+            loadCropDetails();
         }
     }, [crop]);
     
-    const loadExistingMedia = async () => {
+    const loadCropDetails = async () => {
         if (!crop) return;
         
         try {
             const details = await getCropById(crop.cropId);
             setCropDetails(details);
-            setExistingMedia({
-                images: details.images || [],
-                videos: details.videos || [],
-                documents: details.documents?.map(doc => doc.url) || []
-            });
         } catch (error) {
-            console.error('Error loading existing media:', error);
+            console.error('Error loading crop details:', error);
             setCropDetails(null);
-            setExistingMedia({ images: [], videos: [], documents: [] });
         }
     };
 
@@ -152,15 +138,8 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                 status: crop.status, // Thêm status bắt buộc
                 note: cropDetails?.note || undefined, // Note từ cropDetails
                 isApproved: crop.isApproved, // Thêm isApproved
-                rejectReason: undefined, // Thêm rejectReason
-                // Media files mới
-                images: selectedImages,
-                videos: selectedVideos,
-                documents: selectedDocuments,
-                // Giữ nguyên media files hiện tại
-                existingImages: existingMedia.images.join(','),
-                existingVideos: existingMedia.videos.join(','),
-                existingDocuments: existingMedia.documents.join(',')
+                rejectReason: undefined // Thêm rejectReason
+                // Note: Media files không được hỗ trợ trong update API
             };
             
             console.log('Updating crop with data:', updateData);
@@ -335,116 +314,13 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
 
                     </div>
 
-                    {/* Media Files Section */}
-                    <div className="space-y-6">
+                    {/* Note: Media files không được hỗ trợ trong update API */}
                         <div className="border-t border-gray-200 pt-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tài liệu đính kèm</h3>
-                            
-                            {/* Existing Media - All as Documents */}
-                            {(existingMedia.images.length > 0 || existingMedia.videos.length > 0 || existingMedia.documents.length > 0) && (
-                                <div className="mb-4">
-                                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Tài liệu hiện tại</Label>
-                                    <div className="space-y-2">
-                                        {/* Images as Documents */}
-                                        {existingMedia.images.map((url, index) => (
-                                            <div key={`img-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                                <span className="text-sm text-gray-600">
-                                                    {extractFileName(url) || `Tài liệu ${index + 1}`}
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setExistingMedia(prev => ({
-                                                            ...prev,
-                                                            images: prev.images.filter((_, i) => i !== index)
-                                                        }));
-                                                    }}
-                                                    className="text-red-500 hover:text-red-700 text-sm"
-                                                >
-                                                    Xóa
-                                                </button>
-                                            </div>
-                                        ))}
-                                        
-                                        {/* Videos as Documents */}
-                                        {existingMedia.videos.map((url, index) => (
-                                            <div key={`vid-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                                <span className="text-sm text-gray-600">
-                                                    {extractFileName(url) || `Tài liệu ${existingMedia.images.length + index + 1}`}
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setExistingMedia(prev => ({
-                                                            ...prev,
-                                                            videos: prev.videos.filter((_, i) => i !== index)
-                                                        }));
-                                                    }}
-                                                    className="text-red-500 hover:text-red-700 text-sm"
-                                                >
-                                                    Xóa
-                                                </button>
-                                            </div>
-                                        ))}
-                                        
-                                        {/* Documents */}
-                                        {existingMedia.documents.map((url, index) => (
-                                            <div key={`doc-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                                <span className="text-sm text-gray-600">
-                                                    {extractFileName(url) || `Tài liệu ${existingMedia.images.length + existingMedia.videos.length + index + 1}`}
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setExistingMedia(prev => ({
-                                                            ...prev,
-                                                            documents: prev.documents.filter((_, i) => i !== index)
-                                                        }));
-                                                    }}
-                                                    className="text-red-500 hover:text-red-700 text-sm"
-                                                >
-                                                    Xóa
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* File Upload - All as Documents */}
-                            <div>
-                                <Label className="text-sm font-medium text-gray-700 mb-2 block">Thêm tài liệu</Label>
-                                <input
-                                    type="file"
-                                    accept="image/*,video/*,.pdf,.doc,.docx,.txt,.rtf"
-                                    multiple
-                                    onChange={(e) => {
-                                        const files = Array.from(e.target.files || []);
-                                        // Separate files by type
-                                        const images = files.filter(file => file.type.startsWith('image/'));
-                                        const videos = files.filter(file => file.type.startsWith('video/'));
-                                        const documents = files.filter(file => 
-                                            file.type === 'application/pdf' || 
-                                            file.type.includes('document') ||
-                                            file.type === 'text/plain' ||
-                                            file.name.endsWith('.rtf')
-                                        );
-                                        
-                                        setSelectedImages(images);
-                                        setSelectedVideos(videos);
-                                        setSelectedDocuments(documents);
-                                    }}
-                                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
-                                />
-                                {(selectedImages.length > 0 || selectedVideos.length > 0 || selectedDocuments.length > 0) && (
-                                    <div className="mt-2 text-xs text-gray-500">
-                                        Đã chọn {selectedImages.length + selectedVideos.length + selectedDocuments.length} tài liệu
-                                        {selectedImages.length > 0 && ` (${selectedImages.length} ảnh)`}
-                                        {selectedVideos.length > 0 && ` (${selectedVideos.length} video)`}
-                                        {selectedDocuments.length > 0 && ` (${selectedDocuments.length} tài liệu)`}
-                                    </div>
-                                )}
-                            </div>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p className="text-sm text-blue-700">
+                                <strong>Lưu ý:</strong> Chỉ có thể chỉnh sửa thông tin cơ bản của vùng trồng. 
+                                Tài liệu đính kèm không thể thay đổi sau khi tạo.
+                            </p>
                         </div>
                     </div>
 
