@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { OpenStreetMapInput } from './OpenStreetMapInput';
-import { updateCrop, CropViewAllDto } from '@/lib/api/crops';
+import { updateCrop, CropViewAllDto, getCropById } from '@/lib/api/crops';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,35 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
     crop
 }) => {
     console.log('EditCropDialog rendered with crop:', crop);
+    
+    // Helper function to extract filename from URL
+    const extractFileName = (url: string): string => {
+        try {
+            // Remove query parameters and hash
+            const cleanUrl = url.split('?')[0].split('#')[0];
+            
+            // Get the last part of the URL
+            const fileName = cleanUrl.split('/').pop() || '';
+            
+            // If it's a Cloudinary URL, try to extract original filename
+            if (fileName.includes('.')) {
+                return fileName;
+            }
+            
+            // If no extension, try to get meaningful name from URL
+            const urlParts = cleanUrl.split('/');
+            const lastPart = urlParts[urlParts.length - 1];
+            
+            // If it's a UUID-like string, use generic name
+            if (lastPart.match(/^[a-f0-9-]{36}$/i)) {
+                return `File ${urlParts.length}`;
+            }
+            
+            return lastPart || 'File';
+        } catch {
+            return 'File';
+        }
+    };
     const [formData, setFormData] = useState({
         address: '',
         farmName: '',
@@ -32,6 +61,16 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    
+    // Media files state
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+    const [selectedDocuments, setSelectedDocuments] = useState<File[]>([]);
+    const [existingMedia, setExistingMedia] = useState<{
+        images: string[];
+        videos: string[];
+        documents: string[];
+    }>({ images: [], videos: [], documents: [] });
 
     // Load data khi crop thay đổi
     useEffect(() => {
@@ -42,8 +81,27 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                 farmName: crop.farmName || '',
                 cropArea: crop.cropArea?.toString() || ''
             });
+            
+            // Load existing media files
+            loadExistingMedia();
         }
     }, [crop]);
+    
+    const loadExistingMedia = async () => {
+        if (!crop) return;
+        
+        try {
+            const cropDetails = await getCropById(crop.cropId);
+            setExistingMedia({
+                images: cropDetails.images || [],
+                videos: cropDetails.videos || [],
+                documents: cropDetails.documents?.map(doc => doc.url) || []
+            });
+        } catch (error) {
+            console.error('Error loading existing media:', error);
+            setExistingMedia({ images: [], videos: [], documents: [] });
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -82,20 +140,38 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
         try {
             setLoading(true);
 
-            // Call API update
-            await updateCrop({
+            const updateData = {
                 cropId: crop.cropId,
                 cropCode: crop.cropCode,
                 address: formData.address,
                 farmName: formData.farmName,
-                cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
-            });
+                cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
+                status: crop.status, // Thêm status bắt buộc
+                note: crop.note || undefined, // Thêm note từ crop hiện tại
+                isApproved: crop.isApproved, // Thêm isApproved
+                rejectReason: undefined, // Thêm rejectReason
+                // Media files mới
+                images: selectedImages,
+                videos: selectedVideos,
+                documents: selectedDocuments,
+                // Giữ nguyên media files hiện tại
+                existingImages: existingMedia.images.join(','),
+                existingVideos: existingMedia.videos.join(','),
+                existingDocuments: existingMedia.documents.join(',')
+            };
+            
+            console.log('Updating crop with data:', updateData);
+
+            // Call API update
+            await updateCrop(updateData);
 
             // Success - show toast and close dialog
             toast.success('Cập nhật vùng trồng thành công!');
             onSuccess();
             handleClose();
         } catch (error: unknown) {
+            console.error('Error updating crop:', error);
+            
             const getErrorMessage = (err: unknown): string => {
                 if (err && typeof err === 'object' && 'response' in err) {
                     const axiosError = err as { response?: { data?: unknown } };
@@ -254,6 +330,119 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                             </div>
                         </div>
 
+                    </div>
+
+                    {/* Media Files Section */}
+                    <div className="space-y-6">
+                        <div className="border-t border-gray-200 pt-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tài liệu đính kèm</h3>
+                            
+                            {/* Existing Media - All as Documents */}
+                            {(existingMedia.images.length > 0 || existingMedia.videos.length > 0 || existingMedia.documents.length > 0) && (
+                                <div className="mb-4">
+                                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Tài liệu hiện tại</Label>
+                                    <div className="space-y-2">
+                                        {/* Images as Documents */}
+                                        {existingMedia.images.map((url, index) => (
+                                            <div key={`img-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                                <span className="text-sm text-gray-600">
+                                                    {extractFileName(url) || `Tài liệu ${index + 1}`}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setExistingMedia(prev => ({
+                                                            ...prev,
+                                                            images: prev.images.filter((_, i) => i !== index)
+                                                        }));
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 text-sm"
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        ))}
+                                        
+                                        {/* Videos as Documents */}
+                                        {existingMedia.videos.map((url, index) => (
+                                            <div key={`vid-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                                <span className="text-sm text-gray-600">
+                                                    {extractFileName(url) || `Tài liệu ${existingMedia.images.length + index + 1}`}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setExistingMedia(prev => ({
+                                                            ...prev,
+                                                            videos: prev.videos.filter((_, i) => i !== index)
+                                                        }));
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 text-sm"
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        ))}
+                                        
+                                        {/* Documents */}
+                                        {existingMedia.documents.map((url, index) => (
+                                            <div key={`doc-${index}`} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                                <span className="text-sm text-gray-600">
+                                                    {extractFileName(url) || `Tài liệu ${existingMedia.images.length + existingMedia.videos.length + index + 1}`}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setExistingMedia(prev => ({
+                                                            ...prev,
+                                                            documents: prev.documents.filter((_, i) => i !== index)
+                                                        }));
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 text-sm"
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* File Upload - All as Documents */}
+                            <div>
+                                <Label className="text-sm font-medium text-gray-700 mb-2 block">Thêm tài liệu</Label>
+                                <input
+                                    type="file"
+                                    accept="image/*,video/*,.pdf,.doc,.docx,.txt,.rtf"
+                                    multiple
+                                    onChange={(e) => {
+                                        const files = Array.from(e.target.files || []);
+                                        // Separate files by type
+                                        const images = files.filter(file => file.type.startsWith('image/'));
+                                        const videos = files.filter(file => file.type.startsWith('video/'));
+                                        const documents = files.filter(file => 
+                                            file.type === 'application/pdf' || 
+                                            file.type.includes('document') ||
+                                            file.type === 'text/plain' ||
+                                            file.name.endsWith('.rtf')
+                                        );
+                                        
+                                        setSelectedImages(images);
+                                        setSelectedVideos(videos);
+                                        setSelectedDocuments(documents);
+                                    }}
+                                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                />
+                                {(selectedImages.length > 0 || selectedVideos.length > 0 || selectedDocuments.length > 0) && (
+                                    <div className="mt-2 text-xs text-gray-500">
+                                        Đã chọn {selectedImages.length + selectedVideos.length + selectedDocuments.length} tài liệu
+                                        {selectedImages.length > 0 && ` (${selectedImages.length} ảnh)`}
+                                        {selectedVideos.length > 0 && ` (${selectedVideos.length} video)`}
+                                        {selectedDocuments.length > 0 && ` (${selectedDocuments.length} tài liệu)`}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <DialogFooter className="pt-6 border-t border-orange-100">

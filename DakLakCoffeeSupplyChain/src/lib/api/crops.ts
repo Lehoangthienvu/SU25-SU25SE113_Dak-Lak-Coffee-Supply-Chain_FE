@@ -18,6 +18,19 @@ export interface CropUpdateDto {
   farmName: string;
   cropArea?: number;
   note?: string;
+  status: CropStatus;
+  isApproved?: boolean | null;
+  rejectReason?: string;
+  
+  // Media files for update
+  images?: File[];
+  videos?: File[];
+  documents?: File[];
+  
+  // Existing media URLs to keep (comma-separated strings)
+  existingImages?: string;
+  existingVideos?: string;
+  existingDocuments?: string;
 }
 
 export interface CropViewAllDto {
@@ -29,6 +42,11 @@ export interface CropViewAllDto {
   status: CropStatus;
   note?: string;
   isApproved?: boolean | null;
+}
+
+export interface DocumentInfoDto {
+  fileName: string;
+  url: string;
 }
 
 export interface CropViewDetailsDto {
@@ -50,7 +68,7 @@ export interface CropViewDetailsDto {
   rejectReason?: string;
   images?: string[];
   videos?: string[];
-  documents?: string[];
+  documents?: DocumentInfoDto[];
 }
 
 // API functions
@@ -93,7 +111,50 @@ export const createCrop = async (data: CropCreateDto): Promise<CropViewAllDto> =
 };
 
 export const updateCrop = async (data: CropUpdateDto): Promise<CropViewAllDto> => {
-  const response = await api.put(`/crops/${data.cropId}`, data);
+  const formData = new FormData();
+  
+  // Add basic fields
+  formData.append('cropId', data.cropId);
+  formData.append('cropCode', data.cropCode);
+  formData.append('address', data.address);
+  formData.append('farmName', data.farmName);
+  if (data.cropArea) {
+    formData.append('cropArea', data.cropArea.toString());
+  }
+  if (data.note) {
+    formData.append('note', data.note);
+  }
+  formData.append('status', data.status);
+  if (data.isApproved !== undefined && data.isApproved !== null) {
+    formData.append('isApproved', data.isApproved.toString());
+  }
+  if (data.rejectReason) {
+    formData.append('rejectReason', data.rejectReason);
+  }
+  
+  // Add existing media URLs
+  if (data.existingImages) {
+    formData.append('existingImages', data.existingImages);
+  }
+  if (data.existingVideos) {
+    formData.append('existingVideos', data.existingVideos);
+  }
+  if (data.existingDocuments) {
+    formData.append('existingDocuments', data.existingDocuments);
+  }
+  
+  // Add new media files
+  if (data.images) {
+    data.images.forEach(file => formData.append('images', file));
+  }
+  if (data.videos) {
+    data.videos.forEach(file => formData.append('videos', file));
+  }
+  if (data.documents) {
+    data.documents.forEach(file => formData.append('documents', file));
+  }
+  
+  const response = await api.put(`/crops/${data.cropId}`, formData);
   return response.data;
 };
 
