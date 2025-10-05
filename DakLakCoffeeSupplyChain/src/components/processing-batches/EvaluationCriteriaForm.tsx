@@ -123,17 +123,20 @@ export default function EvaluationCriteriaForm({
       const criteriaData = await getProcessingBatchCriteria();
 
       if (criteriaData && criteriaData.length > 0) {
-        setCriteria(criteriaData);
+        // 🔧 FIX: Filter chỉ lấy tiêu chí đang active
+        const activeCriteria = criteriaData.filter(criteria => criteria.isActive);
+        
+        setCriteria(activeCriteria);
         
         // Khởi tạo criteria results
-        const initialResults = criteriaData.map((criteria: ProcessingBatchCriteria) => ({
+        const initialResults = activeCriteria.map((criteria: ProcessingBatchCriteria) => ({
           criteria,
           actualValue: 0,
           result: '',
           isPass: false
         }));
         setCriteriaResults(initialResults);
-        console.log('✅ Loaded criteria:', criteriaData.length, 'items');
+        console.log('✅ Loaded active criteria:', activeCriteria.length, 'items (total:', criteriaData.length, ')');
       } else {
         showToast('warning', 'Không có tiêu chí đánh giá nào được cấu hình');
         setCriteria([]);
