@@ -281,7 +281,7 @@ export default function ManagerCropSeasonDetailPage() {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">{t('manager.cropSeasonDetail.registrationCode')}:</span>
-                                                <span>{cropSeason.registrationCode}</span>
+                                                <span className="font-medium">{cropSeason.registrationCode}</span>
                                             </div>
                                         </div>
                                     </div>

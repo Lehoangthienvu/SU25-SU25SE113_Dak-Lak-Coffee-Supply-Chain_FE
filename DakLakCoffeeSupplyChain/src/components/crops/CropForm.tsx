@@ -65,7 +65,18 @@ export const CropForm: React.FC<CropFormProps> = ({
                     cropCode: initialData.cropCode,
                     address: formData.address,
                     farmName: formData.farmName,
-                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined
+                    cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
+                    status: formData.status,
+                    note: undefined,
+                    isApproved: undefined,
+                    rejectReason: undefined,
+                    // Media files
+                    images: [],
+                    videos: [],
+                    documents: [],
+                    existingImages: '',
+                    existingVideos: '',
+                    existingDocuments: ''
                 });
                 toast.success('Cập nhật crop thành công!');
             } else {
