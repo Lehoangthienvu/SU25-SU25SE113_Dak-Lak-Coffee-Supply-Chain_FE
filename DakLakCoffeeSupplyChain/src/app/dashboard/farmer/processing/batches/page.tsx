@@ -102,7 +102,7 @@ export default function FarmerProcessingBatchesPage() {
   const filteredBatches = useMemo(() => {
     const normalizedTerm = searchTerm.trim().toLowerCase();
 
-    return batches.filter((batch) => {
+    const filtered = batches.filter((batch) => {
       const normalizedStatus = normalizeProcessingStatus((batch as any).status ?? (batch as any).currentStatus);
       const matchesStatus = filterStatus === "all" || normalizedStatus === filterStatus;
 
@@ -119,6 +119,13 @@ export default function FarmerProcessingBatchesPage() {
         .map((value) => String(value).toLowerCase());
 
       return haystack.some((value) => value.includes(normalizedTerm));
+    });
+
+    // Sắp xếp theo ngày tạo mới nhất (lô mới nhất lên đầu)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0).getTime();
+      const dateB = new Date(b.createdAt || 0).getTime();
+      return dateB - dateA; // Sắp xếp giảm dần (mới nhất trước)
     });
   }, [batches, filterStatus, searchTerm]);
 
@@ -151,98 +158,75 @@ export default function FarmerProcessingBatchesPage() {
         </div>
         <Button
           onClick={() => router.push("/dashboard/farmer/processing/batches/create")}
-          className="bg-orange-500 hover:bg-orange-600"
+          className="bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+          size="default"
         >
           <Box className="mr-2 h-4 w-4" />
           {t("processing.farmerBatches.actions.create", "Ghi nhận lô mới")}
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
-              {t("processing.farmerBatches.metrics.total", "Tổng số lô")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{summary.total}</div>
-          </CardContent>
-        </Card>
-        {dashboardCardsOrder.map((status) => (
-          <Card key={status}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                {ProcessingStatusMap[status].label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{summary.counts[status]}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       <Card>
-        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <CardTitle>{t("processing.farmerBatches.filterTitle", "Bộ lọc")}</CardTitle>
-          <div className="relative w-full max-w-xs md:ml-auto">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder={t("processing.farmerBatches.searchPlaceholder", "Tìm theo mã lô, mùa vụ, phương pháp")}
-              className="w-full pl-9"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant={filterStatus === "all" ? "default" : "outline"}
-              onClick={() => setFilterStatus("all")}
-              className={
-                filterStatus === "all"
-                  ? "bg-orange-500 text-white hover:bg-orange-600"
-                  : "border-orange-200 text-orange-600 hover:bg-orange-50"
-              }
-            >
-              {t("processing.farmerBatches.all", "Tất cả")}
-              <span
-                className={
-                  filterStatus === "all"
-                    ? "ml-2 rounded-full border border-white/40 bg-white/20 px-2 text-xs font-medium text-white"
-                    : "ml-2 rounded-full bg-orange-100 px-2 text-xs font-medium text-orange-700"
-                }
-              >
-                {summary.total}
-              </span>
-            </Button>
-
-            {statusOptions.map(({ value, label, count }) => {
-              const active = filterStatus === value;
-              return (
+        <CardContent className="pt-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-3">
+              <CardTitle className="text-base font-medium">{t("processing.farmerBatches.filterTitle", "Bộ lọc")}</CardTitle>
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
-                  key={value}
                   size="sm"
-                  variant={active ? "default" : "outline"}
-                  onClick={() => setFilterStatus(value)}
-                  className={active ? "bg-orange-500 text-white hover:bg-orange-600" : "border-orange-200 text-orange-600 hover:bg-orange-50"}
+                  variant={filterStatus === "all" ? "default" : "outline"}
+                  onClick={() => setFilterStatus("all")}
+                  className={`h-8 px-3 ${filterStatus === "all"
+                    ? "bg-orange-500 text-white hover:bg-orange-600"
+                    : "border-orange-200 text-orange-600 hover:bg-orange-50"
+                  }`}
                 >
-                  {label}
+                  {t("processing.farmerBatches.all", "Tất cả")}
                   <span
                     className={
-                      active
+                      filterStatus === "all"
                         ? "ml-2 rounded-full border border-white/40 bg-white/20 px-2 text-xs font-medium text-white"
                         : "ml-2 rounded-full bg-orange-100 px-2 text-xs font-medium text-orange-700"
                     }
                   >
-                    {count}
+                    {summary.total}
                   </span>
                 </Button>
-              );
-            })}
+
+                {statusOptions.map(({ value, label, count }) => {
+                  const active = filterStatus === value;
+                  return (
+                    <Button
+                      key={value}
+                      size="sm"
+                      variant={active ? "default" : "outline"}
+                      onClick={() => setFilterStatus(value)}
+                      className={`h-8 px-3 ${active ? "bg-orange-500 text-white hover:bg-orange-600" : "border-orange-200 text-orange-600 hover:bg-orange-50"}`}
+                    >
+                      {label}
+                      <span
+                        className={
+                          active
+                            ? "ml-2 rounded-full border border-white/40 bg-white/20 px-2 text-xs font-medium text-white"
+                            : "ml-2 rounded-full bg-orange-100 px-2 text-xs font-medium text-orange-700"
+                        }
+                      >
+                        {count}
+                      </span>
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="relative w-full max-w-xs lg:ml-auto">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder={t("processing.farmerBatches.searchPlaceholder", "Tìm theo mã lô, mùa vụ, phương pháp")}
+                className="w-full pl-9"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
