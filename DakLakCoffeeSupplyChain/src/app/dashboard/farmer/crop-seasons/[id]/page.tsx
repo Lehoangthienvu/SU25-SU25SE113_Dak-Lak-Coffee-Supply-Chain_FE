@@ -216,6 +216,16 @@ export default function CropSeasonDetail() {
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
                                 <FileText className="w-4 h-4 text-indigo-600" />
                                 <div>
+                                    <p className="text-xs text-gray-600">{t('cropSeasons.details.commitmentName')}</p>
+                                    <p className="font-medium text-gray-800">
+                                        {season.commitmentName || <span className="italic text-gray-500">{t('cropSeasons.details.notAvailable')}</span>}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
+                                <FileText className="w-4 h-4 text-purple-600" />
+                                <div>
                                     <p className="text-xs text-gray-600">{t('cropSeasons.details.registrationCode')}</p>
                                     <p className="font-medium text-gray-800">
                                         {season.registrationCode || <span className="italic text-gray-500">{t('cropSeasons.details.notAvailable')}</span>}
