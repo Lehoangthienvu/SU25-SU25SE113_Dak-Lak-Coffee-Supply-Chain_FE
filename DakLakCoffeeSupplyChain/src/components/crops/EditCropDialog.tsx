@@ -71,6 +71,7 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
         videos: string[];
         documents: string[];
     }>({ images: [], videos: [], documents: [] });
+    const [cropDetails, setCropDetails] = useState<any>(null);
 
     // Load data khi crop thay đổi
     useEffect(() => {
@@ -91,14 +92,16 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
         if (!crop) return;
         
         try {
-            const cropDetails = await getCropById(crop.cropId);
+            const details = await getCropById(crop.cropId);
+            setCropDetails(details);
             setExistingMedia({
-                images: cropDetails.images || [],
-                videos: cropDetails.videos || [],
-                documents: cropDetails.documents?.map(doc => doc.url) || []
+                images: details.images || [],
+                videos: details.videos || [],
+                documents: details.documents?.map(doc => doc.url) || []
             });
         } catch (error) {
             console.error('Error loading existing media:', error);
+            setCropDetails(null);
             setExistingMedia({ images: [], videos: [], documents: [] });
         }
     };
@@ -147,7 +150,7 @@ export const EditCropDialog: React.FC<EditCropDialogProps> = ({
                 farmName: formData.farmName,
                 cropArea: formData.cropArea ? parseFloat(formData.cropArea.toString()) : undefined,
                 status: crop.status, // Thêm status bắt buộc
-                note: crop.note || undefined, // Thêm note từ crop hiện tại
+                note: cropDetails?.note || undefined, // Note từ cropDetails
                 isApproved: crop.isApproved, // Thêm isApproved
                 rejectReason: undefined, // Thêm rejectReason
                 // Media files mới

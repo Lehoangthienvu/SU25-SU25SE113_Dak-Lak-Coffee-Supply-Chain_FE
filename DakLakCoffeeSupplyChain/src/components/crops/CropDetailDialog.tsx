@@ -267,7 +267,7 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                             </div>
                             <div className="bg-gray-50 rounded-lg p-3">
                                 <p className="text-gray-900">
-                                    {cropDetails?.address || crop.address || 'Chưa cập nhật địa chỉ'}
+                                    {cropDetails?.address || 'Chưa cập nhật địa chỉ'}
                                 </p>
                             </div>
                         </div>
@@ -311,7 +311,7 @@ export const CropDetailDialog: React.FC<CropDetailDialogProps> = ({
                                         <div key={`vid-${index}`} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
                                             <File className="w-4 h-4 text-gray-500" />
                                             <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                                                {extractFileName(url) || `Tài liệu ${cropDetails.images?.length + index + 1}`}
+                                                {extractFileName(url) || `Tài liệu ${(cropDetails.images?.length || 0) + index + 1}`}
                                             </a>
                                         </div>
                                     ))}
